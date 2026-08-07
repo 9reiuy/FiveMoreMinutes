@@ -1,0 +1,28 @@
+# Godot 项目 .gitattributes
+
+# 自动检测行 endings
+* text=auto
+
+# 源代码文件
+*.gd text diff=python
+*.tscn text diff=ini
+*.tres text diff=ini
+*.cfg text
+*.md text
+*.txt text
+*.json text
+*.gdshader text
+
+# 二进制资源文件（不尝试 diff）
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.mp3 binary
+*.ogg binary
+*.wav binary
+*.bin binary
+*.uid binary
+
+# 导入文件
+*.import text

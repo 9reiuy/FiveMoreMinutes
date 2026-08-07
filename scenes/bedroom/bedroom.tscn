@@ -1,0 +1,163 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/bedroom/bedroom.gd" id="1_bedroom"]
+[ext_resource type="PackedScene" path="res://scenes/ui/bedroom_phone.tscn" id="3_phone"]
+[ext_resource type="Resource" path="res://resources/demo_config.tres" id="4_config"]
+[ext_resource type="PackedScene" path="res://scenes/ui/melatonin_interaction.tscn" id="5_mel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/confirmation_dialog.tscn" id="6_dialog"]
+[ext_resource type="Texture2D" path="res://art/bedroom_background.png" id="7_background"]
+[ext_resource type="Texture2D" path="res://art/bedroom_bed.png" id="8_bed"]
+[ext_resource type="Texture2D" path="res://art/bedroom_desk.png" id="9_desk"]
+[ext_resource type="Texture2D" path="res://art/melatonin_bottle.png" id="10_bottle"]
+[ext_resource type="Shader" path="res://shaders/sprite_alpha_outline.gdshader" id="11_outline"]
+[ext_resource type="Script" path="res://scripts/bedroom/door_interaction.gd" id="12_door"]
+[ext_resource type="Script" path="res://scripts/ui/bedroom_status_hud.gd" id="13_status"]
+[ext_resource type="Script" path="res://scripts/bedroom/bedroom_weather.gd" id="14_weather"]
+[ext_resource type="Texture2D" path="res://art/sunshade.png" id="15_sunshade"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bed_outline"]
+resource_local_to_scene = true
+shader = ExtResource("11_outline")
+shader_parameter/outline_enabled = 0.0
+shader_parameter/outline_width_source_pixels = 6.0
+shader_parameter/outline_color = Color(1, 1, 1, 0.78)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bottle_outline"]
+resource_local_to_scene = true
+shader = ExtResource("11_outline")
+shader_parameter/outline_enabled = 0.0
+shader_parameter/outline_width_source_pixels = 6.0
+shader_parameter/outline_color = Color(1, 1, 1, 0.78)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sunshade_outline"]
+resource_local_to_scene = true
+shader = ExtResource("11_outline")
+shader_parameter/outline_enabled = 0.0
+shader_parameter/outline_width_source_pixels = 12.0
+shader_parameter/outline_color = Color(1, 1, 1, 0.78)
+
+[node name="Bedroom" type="Node2D"]
+script = ExtResource("1_bedroom")
+config = ExtResource("4_config")
+
+[node name="Layout" type="Node2D" parent="."]
+
+[node name="BackgroundColor" type="ColorRect" parent="Layout"]
+z_index = -100
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+color = Color(0.317647, 0.482353, 0.596078, 1)
+
+[node name="WeatherBackLayer" type="Control" parent="Layout"]
+z_index = -90
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("14_weather")
+config = ExtResource("4_config")
+
+[node name="ArtRoot" type="Node2D" parent="Layout"]
+texture_filter = 1
+scale = Vector2(0.25, 0.25)
+
+[node name="BedroomBackground" type="Sprite2D" parent="Layout/ArtRoot"]
+z_index = -80
+texture = ExtResource("7_background")
+centered = false
+
+[node name="BedroomBed" type="Sprite2D" parent="Layout/ArtRoot"]
+material = SubResource("ShaderMaterial_bed_outline")
+z_index = -3
+texture = ExtResource("8_bed")
+centered = false
+
+[node name="BedroomDesk" type="Sprite2D" parent="Layout/ArtRoot"]
+z_index = -2
+texture = ExtResource("9_desk")
+centered = false
+
+[node name="MelatoninBottle" type="Sprite2D" parent="Layout/ArtRoot"]
+visible = false
+material = SubResource("ShaderMaterial_bottle_outline")
+z_index = -1
+texture = ExtResource("10_bottle")
+centered = false
+
+[node name="Sunshade" type="Sprite2D" parent="Layout/ArtRoot"]
+visible = false
+material = SubResource("ShaderMaterial_sunshade_outline")
+z_index = 1
+texture = ExtResource("15_sunshade")
+centered = false
+
+[node name="BedAnchor" type="Marker2D" parent="Layout"]
+position = Vector2(424, 257)
+
+[node name="TableAnchor" type="Marker2D" parent="Layout"]
+position = Vector2(118.25, 211)
+
+[node name="MelatoninBottleAnchor" type="Marker2D" parent="Layout"]
+position = Vector2(171.5, 179.125)
+
+[node name="AlarmClockAnchor" type="Marker2D" parent="Layout"]
+position = Vector2(390, 226)
+
+[node name="BedClickArea" type="Area2D" parent="Layout"]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+monitorable = false
+input_pickable = true
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Layout/BedClickArea"]
+polygon = PackedVector2Array(217.75, 154, 630.25, 154, 630.25, 360, 217.75, 360)
+
+[node name="MelatoninClickArea" type="Area2D" parent="Layout"]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+monitorable = false
+input_pickable = true
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Layout/MelatoninClickArea"]
+polygon = PackedVector2Array(163.75, 165, 179.25, 165, 179.25, 193.25, 163.75, 193.25)
+
+[node name="SunshadeClickArea" type="Area2D" parent="Layout"]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+monitorable = false
+input_pickable = true
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Layout/SunshadeClickArea"]
+polygon = PackedVector2Array(434, 0, 613, 0, 613, 202, 434, 202)
+
+[node name="DoorInteraction" type="Node2D" parent="Layout"]
+z_index = 2
+script = ExtResource("12_door")
+config = ExtResource("4_config")
+
+[node name="PhoneLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="BedroomStatusHUD" type="Control" parent="PhoneLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("13_status")
+config = ExtResource("4_config")
+
+[node name="BedroomPhone" parent="PhoneLayer" instance=ExtResource("3_phone")]
+
+[node name="MelatoninInteraction" parent="PhoneLayer" instance=ExtResource("5_mel")]
+
+[node name="ConfirmationDialog" parent="PhoneLayer" instance=ExtResource("6_dialog")]

@@ -1,0 +1,79 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_pause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settings_panel.tscn" id="2_settings"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+process_mode = 3
+layer = 110
+script = ExtResource("1_pause")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shade" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.008, 0.01, 0.017, 0.9)
+
+[node name="Panel" type="PanelContainer" parent="Root"]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 30.0
+offset_right = 500.0
+offset_bottom = 330.0
+
+[node name="Layout" type="VBoxContainer" parent="Root/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Title" type="Label" parent="Root/Panel/Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "暂停 // PAUSED"
+horizontal_alignment = 1
+
+[node name="Rule" type="HSeparator" parent="Root/Panel/Layout"]
+layout_mode = 2
+
+[node name="MenuButtons" type="VBoxContainer" parent="Root/Panel/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Resume" type="Button" parent="Root/Panel/Layout/MenuButtons"]
+custom_minimum_size = Vector2(250, 38)
+layout_mode = 2
+text = "继续游戏"
+
+[node name="Settings" type="Button" parent="Root/Panel/Layout/MenuButtons"]
+custom_minimum_size = Vector2(250, 38)
+layout_mode = 2
+text = "设置"
+
+[node name="ExitToMenu" type="Button" parent="Root/Panel/Layout/MenuButtons"]
+custom_minimum_size = Vector2(250, 38)
+layout_mode = 2
+text = "退出到主菜单"
+
+[node name="SettingsPanel" parent="Root/Panel/Layout" instance=ExtResource("2_settings")]
+visible = false
+layout_mode = 2
+
+[node name="SettingsBack" type="Button" parent="Root/Panel/Layout"]
+visible = false
+custom_minimum_size = Vector2(250, 34)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "返回"

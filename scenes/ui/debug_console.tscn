@@ -1,0 +1,70 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/debug_console.gd" id="1_console"]
+[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+
+[node name="DebugConsole" type="CanvasLayer"]
+layer = 200
+script = ExtResource("1_console")
+config = ExtResource("2_config")
+
+[node name="Blocker" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Shade" type="ColorRect" parent="Blocker"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0.72)
+
+[node name="Panel" type="PanelContainer" parent="Blocker"]
+custom_minimum_size = Vector2(520, 210)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -105.0
+offset_right = 260.0
+offset_bottom = 105.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="Blocker/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="Blocker/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Blocker/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.72, 0.62, 1)
+text = "DEBUG CONSOLE"
+
+[node name="Output" type="Label" parent="Blocker/Panel/Margin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "TYPE A COMMAND"
+vertical_alignment = 1
+
+[node name="Command" type="LineEdit" parent="Blocker/Panel/Margin/Content"]
+layout_mode = 2
+placeholder_text = "COMMAND"
+caret_blink = true

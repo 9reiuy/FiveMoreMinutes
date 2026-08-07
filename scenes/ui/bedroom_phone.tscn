@@ -1,0 +1,98 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/bedroom_phone.gd" id="1_phone"]
+[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+[ext_resource type="Texture2D" path="res://art/Phone.png" id="3_phone_shell"]
+[ext_resource type="Script" path="res://scripts/ui/phone_drag_scroll.gd" id="4_drag_scroll"]
+[ext_resource type="Theme" path="res://resources/themes/phone_pixel_scrollbar.tres" id="5_scroll_theme"]
+[ext_resource type="Script" path="res://scripts/ui/quicklink_content.gd" id="6_quicklink"]
+
+[node name="BedroomPhone" type="Control"]
+offset_right = 150.0
+offset_bottom = 270.0
+mouse_filter = 0
+script = ExtResource("1_phone")
+config = ExtResource("2_config")
+
+[node name="PhoneShell" type="TextureRect" parent="."]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_phone_shell")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AppGrid" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 170.0
+offset_right = 146.0
+offset_bottom = 279.0
+mouse_filter = 2
+columns = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 3
+
+[node name="OnlineSlot" type="Control" parent="AppGrid"]
+custom_minimum_size = Vector2(64, 53)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="SomniaSlot" type="Control" parent="AppGrid"]
+custom_minimum_size = Vector2(64, 53)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="QuickLinkSlot" type="Control" parent="AppGrid"]
+custom_minimum_size = Vector2(64, 53)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="SettingsSlot" type="Control" parent="AppGrid"]
+custom_minimum_size = Vector2(64, 53)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="OnlineScroll" type="ScrollContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 12.0
+offset_top = 76.0
+offset_right = 138.0
+offset_bottom = 246.0
+mouse_filter = 0
+horizontal_scroll_mode = 0
+theme = ExtResource("5_scroll_theme")
+script = ExtResource("4_drag_scroll")
+
+[node name="ContentSafeMargin" type="MarginContainer" parent="OnlineScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_right = 10
+
+[node name="MessageList" type="VBoxContainer" parent="OnlineScroll/ContentSafeMargin"]
+custom_minimum_size = Vector2(116, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="QuicklinkScroll" type="ScrollContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 12.0
+offset_top = 76.0
+offset_right = 138.0
+offset_bottom = 246.0
+mouse_filter = 0
+horizontal_scroll_mode = 0
+theme = ExtResource("5_scroll_theme")
+script = ExtResource("4_drag_scroll")
+
+[node name="QuicklinkContent" type="Control" parent="QuicklinkScroll"]
+custom_minimum_size = Vector2(121, 290)
+layout_mode = 2
+script = ExtResource("6_quicklink")

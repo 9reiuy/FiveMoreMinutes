@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/sword_wave.gd" id="1_wave"]
+
+[sub_resource type="RectangleShape2D" id="Rectangle_wave"]
+resource_local_to_scene = true
+size = Vector2(8, 1)
+
+[node name="SwordWave" type="Node2D"]
+script = ExtResource("1_wave")
+
+[node name="HitArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitArea"]
+shape = SubResource("Rectangle_wave")

@@ -1,0 +1,84 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/dream_hud.gd" id="1_hud"]
+[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_track"]
+bg_color = Color(0.035, 0.047, 0.065, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.72, 0.76, 0.8, 0.9)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_fill"]
+bg_color = Color(0.2, 0.67, 0.75, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.92, 0.95, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_area"]
+bg_color = Color(0.018, 0.024, 0.036, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22, 0.3, 0.34, 0.85)
+content_margin_left = 8.0
+content_margin_right = 8.0
+
+[node name="DreamHUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_hud")
+config = ExtResource("2_config")
+
+[node name="ExperienceBarArea" type="PanelContainer" parent="."]
+z_index = 50
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 14.0
+offset_top = 14.0
+offset_right = -14.0
+offset_bottom = 38.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_area")
+
+[node name="Content" type="HBoxContainer" parent="ExperienceBarArea"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LevelLabel" type="Label" parent="ExperienceBarArea/Content"]
+custom_minimum_size = Vector2(66, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.86, 0.89, 1)
+theme_override_font_sizes/font_size = 13
+text = "LV. 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ExperienceProgressBar" type="ProgressBar" parent="ExperienceBarArea/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBox_track")
+theme_override_styles/fill = SubResource("StyleBox_fill")
+show_percentage = false
+
+[node name="ExperienceValueLabel" type="Label" parent="ExperienceBarArea/Content"]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.71, 0.78, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "0 / 20"
+horizontal_alignment = 1
+vertical_alignment = 1

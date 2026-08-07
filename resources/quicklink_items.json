@@ -1,0 +1,7 @@
+{
+  "items": [
+    {"id":"melatonin","name":"褪黑素","description":"延长梦境时间。"},
+    {"id":"cheap_meal","name":"廉价便当","description":"简单的能量摄入"},
+    {"id":"sunshade","name":"遮阳帘","description":"放下后可屏蔽闹钟白曝光"}
+  ]
+}

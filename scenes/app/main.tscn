@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/app/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/ui/debug_console.tscn" id="2_console"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="3_pause"]
+
+[node name="Main" type="Node"]
+process_mode = 3
+script = ExtResource("1_main")
+
+[node name="SceneContainer" type="Node" parent="."]
+process_mode = 1
+
+[node name="TransitionLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="Fade" type="ColorRect" parent="TransitionLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.015, 0.016, 0.024, 0)
+
+[node name="DebugConsole" parent="." instance=ExtResource("2_console")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("3_pause")]

@@ -1,0 +1,36 @@
+# ============================================
+# Godot 项目 .gitignore
+# ============================================
+
+# Godot 引擎生成的目录
+.godot/
+.runtime/
+
+# 导出和构建产物
+exports/
+build/
+export_templates/
+
+# 导出凭据（含敏感信息）
+export_credentials.cfg
+
+# 临时文件和用户特定设置
+tmp/
+.workbuddy/
+
+# 操作系统生成的文件
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
+*~
+
+# IDE / 编辑器
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 日志和崩溃报告
+*.log
+godot.log

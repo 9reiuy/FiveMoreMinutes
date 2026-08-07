@@ -1,0 +1,93 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/settings_panel.gd" id="1_settings"]
+
+[node name="SettingsPanel" type="VBoxContainer"]
+custom_minimum_size = Vector2(280, 210)
+theme_override_constants/separation = 8
+script = ExtResource("1_settings")
+
+[node name="Master" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Label" type="Label" parent="Master"]
+layout_mode = 2
+text = "总音量  MASTER"
+
+[node name="ControlRow" type="HBoxContainer" parent="Master"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Slider" type="HSlider" parent="Master/ControlRow"]
+custom_minimum_size = Vector2(214, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+
+[node name="Value" type="Label" parent="Master/ControlRow"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="Music" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Label" type="Label" parent="Music"]
+layout_mode = 2
+text = "音乐  MUSIC"
+
+[node name="ControlRow" type="HBoxContainer" parent="Music"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Slider" type="HSlider" parent="Music/ControlRow"]
+custom_minimum_size = Vector2(214, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+
+[node name="Value" type="Label" parent="Music/ControlRow"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+text = "70%"
+horizontal_alignment = 2
+
+[node name="SFX" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Label" type="Label" parent="SFX"]
+layout_mode = 2
+text = "音效  SFX"
+
+[node name="ControlRow" type="HBoxContainer" parent="SFX"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Slider" type="HSlider" parent="SFX/ControlRow"]
+custom_minimum_size = Vector2(214, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+
+[node name="Value" type="Label" parent="SFX/ControlRow"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+text = "80%"
+horizontal_alignment = 2
+
+[node name="FastSleep" type="CheckButton" parent="."]
+custom_minimum_size = Vector2(270, 28)
+layout_mode = 2
+text = "快速睡觉  FAST SLEEP"
+
+[node name="Sleepwalk" type="CheckButton" parent="."]
+custom_minimum_size = Vector2(270, 28)
+layout_mode = 2
+text = "梦游模式  SLEEPWALK MODE"

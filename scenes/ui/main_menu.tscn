@@ -1,0 +1,202 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settings_panel.tscn" id="3_settings"]
+[ext_resource type="PackedScene" path="res://scenes/ui/announcement_window.tscn" id="4_announcement"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+config = ExtResource("2_config")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.025, 0.029, 0.043, 1)
+
+[node name="GridA" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 35.0
+offset_right = 602.0
+offset_bottom = 37.0
+mouse_filter = 2
+color = Color(0.25, 0.33, 0.37, 0.35)
+
+[node name="GridB" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 321.0
+offset_right = 602.0
+offset_bottom = 323.0
+mouse_filter = 2
+color = Color(0.25, 0.33, 0.37, 0.2)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 50.0
+offset_right = 350.0
+offset_bottom = 112.0
+theme_override_colors/font_color = Color(0.71, 0.73, 0.76, 1)
+theme_override_font_sizes/font_size = 28
+text = "FIVE MINUTES MORE"
+
+[node name="Subtitle" type="Label" parent="."]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 94.0
+offset_right = 350.0
+offset_bottom = 120.0
+theme_override_colors/font_color = Color(0.31, 0.38, 0.42, 1)
+theme_override_font_sizes/font_size = 10
+text = "SLEEP PROTOCOL // MONDAY"
+
+[node name="FooterLink" type="Control" parent="."]
+z_index = 1
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -210.0
+offset_top = -31.0
+offset_right = 210.0
+offset_bottom = -7.0
+mouse_default_cursor_shape = 2
+
+[node name="Text" type="Label" parent="FooterLink"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "版本号V0.3　　游戏存活进度群:833796070"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MenuContent" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ButtonList" type="VBoxContainer" parent="MenuContent"]
+layout_mode = 0
+offset_left = 365.0
+offset_top = 70.0
+offset_right = 575.0
+offset_bottom = 300.0
+
+[node name="Continue" type="Button" parent="MenuContent/ButtonList"]
+custom_minimum_size = Vector2(210, 36)
+layout_mode = 2
+text = "继续游戏"
+
+[node name="Start" type="Button" parent="MenuContent/ButtonList"]
+custom_minimum_size = Vector2(210, 36)
+layout_mode = 2
+text = "开始游戏"
+
+[node name="Endless" type="Button" parent="MenuContent/ButtonList"]
+custom_minimum_size = Vector2(210, 36)
+layout_mode = 2
+text = "无尽模式"
+
+[node name="Settings" type="Button" parent="MenuContent/ButtonList"]
+custom_minimum_size = Vector2(210, 36)
+layout_mode = 2
+text = "设置"
+
+[node name="Quit" type="Button" parent="MenuContent/ButtonList"]
+custom_minimum_size = Vector2(210, 36)
+layout_mode = 2
+text = "退出游戏"
+
+[node name="AnnouncementWindow" parent="." instance=ExtResource("4_announcement")]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 128.0
+offset_right = 340.0
+offset_bottom = 303.0
+
+[node name="Overlay" type="Control" parent="."]
+z_index = 10
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shade" type="ColorRect" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.01, 0.012, 0.018, 0.84)
+
+[node name="Panel" type="PanelContainer" parent="Overlay"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 34.0
+offset_right = 490.0
+offset_bottom = 326.0
+
+[node name="Content" type="VBoxContainer" parent="Overlay/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Title" type="Label" parent="Overlay/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "标题"
+horizontal_alignment = 1
+
+[node name="Message" type="Label" parent="Overlay/Panel/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.62, 0.62, 0.66, 1)
+theme_override_font_sizes/font_size = 15
+text = "说明"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SettingsPanel" parent="Overlay/Panel/Content" instance=ExtResource("3_settings")]
+visible = false
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="Overlay/Panel/Content"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="Primary" type="Button" parent="Overlay/Panel/Content/Buttons"]
+custom_minimum_size = Vector2(128, 36)
+layout_mode = 2
+text = "确认"
+
+[node name="Back" type="Button" parent="Overlay/Panel/Content/Buttons"]
+custom_minimum_size = Vector2(128, 36)
+layout_mode = 2
+text = "返回"

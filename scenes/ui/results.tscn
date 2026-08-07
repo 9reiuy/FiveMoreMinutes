@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/results.gd" id="1_results"]
+[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+
+[node name="Results" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_results")
+config = ExtResource("2_config")
+
+[node name="StartNewDay" type="Button" parent="."]
+visible = false
+offset_left = 228.0
+offset_top = 278.0
+offset_right = 412.0
+offset_bottom = 324.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+text = "开始新一天"
+

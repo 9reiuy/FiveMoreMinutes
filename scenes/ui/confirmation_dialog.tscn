@@ -1,0 +1,143 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/confirmation_dialog.gd" id="1_dialog"]
+[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+[ext_resource type="Texture2D" path="res://art/chr.png" id="3_character"]
+[ext_resource type="Script" path="res://scripts/ui/dialogue_frame.gd" id="4_frame"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_character"]
+atlas = ExtResource("3_character")
+region = Rect2(226, 97, 1040, 1343)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_choice"]
+
+[node name="ConfirmationDialog" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_dialog")
+config = ExtResource("2_config")
+
+[node name="InputBlocker" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="DimBackground" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0156863, 0.0352941, 0.0470588, 0.62)
+
+[node name="Portrait" type="Control" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 90.0
+offset_right = 226.0
+offset_bottom = 360.0
+mouse_filter = 2
+
+[node name="CharacterArt" type="TextureRect" parent="Portrait"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_character")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DialoguePanel" type="Control" parent="."]
+layout_mode = 0
+offset_left = 235.0
+offset_top = 188.0
+offset_right = 620.0
+offset_bottom = 342.0
+mouse_filter = 1
+script = ExtResource("4_frame")
+
+[node name="Margin" type="MarginContainer" parent="DialoguePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="DialoguePanel/Margin"]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 6
+
+[node name="Prompt" type="Label" parent="DialoguePanel/Margin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.827451, 0.878431, 0.909804, 1)
+text = "要继续吗？"
+vertical_alignment = 1
+
+[node name="ChoiceContainer" type="VBoxContainer" parent="DialoguePanel/Margin/Content"]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 1
+
+[node name="ConfirmChoice" type="Button" parent="DialoguePanel/Margin/Content/ChoiceContainer"]
+custom_minimum_size = Vector2(170, 25)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.556863, 0.733333, 0.847059, 1)
+theme_override_colors/font_hover_color = Color(0.847059, 0.945098, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.847059, 0.945098, 1, 1)
+theme_override_colors/font_disabled_color = Color(0.337255, 0.458824, 0.541176, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxEmpty_choice")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_choice")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_choice")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_choice")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_choice")
+text = "  确认"
+alignment = 0
+flat = true
+
+[node name="CancelChoice" type="Button" parent="DialoguePanel/Margin/Content/ChoiceContainer"]
+custom_minimum_size = Vector2(170, 25)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.556863, 0.733333, 0.847059, 1)
+theme_override_colors/font_hover_color = Color(0.847059, 0.945098, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.847059, 0.945098, 1, 1)
+theme_override_colors/font_disabled_color = Color(0.337255, 0.458824, 0.541176, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxEmpty_choice")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_choice")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_choice")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_choice")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_choice")
+text = "  取消"
+alignment = 0
+flat = true

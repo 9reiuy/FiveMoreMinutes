@@ -1,0 +1,51 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/large_correction_tape_enemy.gd" id="1_enemy"]
+[ext_resource type="Texture2D" path="res://assets/art/enemies/generated/enemy_sprite_atlas.png" id="2_atlas"]
+
+[sub_resource type="AtlasTexture" id="Atlas_large_0"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 561, 350, 280)
+
+[sub_resource type="AtlasTexture" id="Atlas_large_1"]
+atlas = ExtResource("2_atlas")
+region = Rect2(350, 561, 351, 280)
+
+[sub_resource type="AtlasTexture" id="Atlas_large_2"]
+atlas = ExtResource("2_atlas")
+region = Rect2(701, 561, 350, 280)
+
+[sub_resource type="AtlasTexture" id="Atlas_large_3"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1051, 561, 351, 280)
+
+[sub_resource type="SpriteFrames" id="Frames_large"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Atlas_large_0")}, {"duration": 1.0, "texture": SubResource("Atlas_large_1")}],
+"loop": true,
+"name": &"walk",
+"speed": 4.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("Atlas_large_2")}, {"duration": 1.0, "texture": SubResource("Atlas_large_3")}],
+"loop": true,
+"name": &"charge",
+"speed": 7.0
+}]
+
+[sub_resource type="CircleShape2D" id="Circle_enemy"]
+radius = 14.0
+
+[node name="LargeCorrectionTapeEnemy" type="CharacterBody2D" groups=["dream_enemies"]]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_enemy")
+
+[node name="Visual" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("Frames_large")
+animation = &"walk"
+autoplay = "walk"
+scale = Vector2(0.17, 0.17)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Circle_enemy")
