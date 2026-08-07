@@ -13,6 +13,7 @@ var current_health := 18.0
 var contact_damage := 8.0
 var contact_cooldown := 0.0
 var dead := false
+var death_processed := false
 var experience_drop_count := 1
 var separation_strength := 24.0
 var separation_radius := 30.0
@@ -37,7 +38,7 @@ func _ready() -> void:
 	add_child(outline_controller)
 	outline_controller.configure(visual)
 	_configure_visual_animation_speeds()
-	_play_visual_animation(&"move_down" if visual.sprite_frames.has_animation(&"move_down") else &"walk")
+	_play_visual_animation(&"move_down" if visual.sprite_frames.has_animation(&"move_down") else (&"walk" if visual.sprite_frames.has_animation(&"walk") else &"idle"))
 
 
 func configure(new_target: Node2D, health: float, damage: float, bounds: Rect2, new_separation_strength: float, new_separation_radius: float, config: DemoConfig = null) -> void:
@@ -49,10 +50,27 @@ func configure(new_target: Node2D, health: float, damage: float, bounds: Rect2, 
 	separation_strength = new_separation_strength
 	separation_radius = new_separation_radius
 	feedback_config = config
-	if visual != null:
-		visual_base_scale = Vector2.ONE * config.basic_enemy_sprite_scale if config != null and visual.sprite_frames.has_animation(&"move_down") else visual.scale
+	if visual != null and config != null:
+		visual_base_scale = Vector2.ONE * get_visual_scale(config)
 		visual.scale = visual_base_scale
 		_configure_visual_animation_speeds()
+
+
+## 统一 visual_scale 入口：每种敌人按自身 Monster 素材返回配置缩放，碰撞体不受影响。
+func get_visual_scale(new_config: DemoConfig) -> float:
+	return new_config.slime_visual_scale
+
+
+## 伤害数字锚点偏移：按当前动画帧高 × 视觉缩放定位到头顶上方，
+## 适配放大后的新视觉（无有效帧时回退旧的固定偏移）。
+func get_damage_number_offset() -> Vector2:
+	if visual != null and visual.sprite_frames != null:
+		var animation_name: StringName = visual.animation
+		if visual.sprite_frames.get_frame_count(animation_name) > 0:
+			var frame_texture := visual.sprite_frames.get_frame_texture(animation_name, 0)
+			if frame_texture != null:
+				return Vector2(0.0, -(frame_texture.get_size().y * visual_base_scale.y * 0.5 + 6.0))
+	return Vector2(0.0, -18.0)
 
 
 func _process(delta: float) -> void:
@@ -136,14 +154,29 @@ func take_damage(amount: float, _hit_origin: Vector2 = Vector2.INF) -> void:
 		set_auto_aim_locked(false)
 		_spawn_combat_feedback(hit_direction, true)
 		SFX.play_event(&"enemy_kill")
-		defeated.emit(global_position, experience_drop_count)
-		queue_free()
+		_begin_death_sequence()
 		return
 	if feedback_config != null:
 		hit_flash_left = feedback_config.enemy_hit_flash_seconds
 		hit_scale_left = feedback_config.enemy_hit_scale_seconds
 		hit_visual_offset = hit_direction * feedback_config.enemy_hit_visual_knockback_pixels
 		_spawn_combat_feedback(hit_direction, false)
+
+
+## HP 归零后的统一死亡流程：停 AI、禁用接触伤害、播 death 序列帧，结束后才掉落结算并回收。
+func _begin_death_sequence() -> void:
+	if death_processed:
+		return
+	death_processed = true
+	velocity = Vector2.ZERO
+	set_physics_process(false)
+	if visual != null and visual.sprite_frames != null and visual.sprite_frames.has_animation(&"death"):
+		visual.play(&"death")
+		await visual.animation_finished
+	if not is_inside_tree():
+		return
+	defeated.emit(global_position, experience_drop_count)
+	queue_free()
 
 
 func _resolve_hit_direction(hit_origin: Vector2) -> Vector2:
@@ -178,27 +211,48 @@ func _play_visual_animation(animation_name: StringName) -> void:
 func _configure_visual_animation_speeds() -> void:
 	if feedback_config == null or visual == null:
 		return
-	var walk_fps := feedback_config.basic_enemy_walk_animation_fps
+	# Display name mapping: basic=史莱姆 correction=魔眼 stapler=精灵射手 alarm_clock=自爆蘑菇 mailbox=宝箱怪 large_correction=精英魔眼。
+	var move_fps := feedback_config.slime_move_fps
+	var death_fps := feedback_config.slime_death_fps
 	if name.contains("LargeCorrection"):
-		walk_fps = feedback_config.large_correction_enemy_walk_animation_fps
+		move_fps = feedback_config.flying_eye_move_fps
+		death_fps = feedback_config.flying_eye_death_fps
 	elif name.contains("Correction"):
-		walk_fps = feedback_config.correction_enemy_walk_animation_fps
+		move_fps = feedback_config.flying_eye_move_fps
+		death_fps = feedback_config.flying_eye_death_fps
 	elif name.contains("Stapler"):
-		walk_fps = feedback_config.stapler_enemy_walk_animation_fps
+		move_fps = feedback_config.huntress_move_fps
+		death_fps = feedback_config.huntress_death_fps
 	elif name.contains("AlarmClock"):
-		walk_fps = feedback_config.alarm_enemy_walk_fps
+		move_fps = feedback_config.mushroom_move_fps
+		death_fps = feedback_config.mushroom_death_fps
 	elif name.contains("Mailbox"):
-		walk_fps = feedback_config.mailbox_enemy_walk_fps
+		move_fps = feedback_config.mimic_move_fps
+		death_fps = feedback_config.mimic_death_fps
+	elif name.contains("Tentacle"):
+		move_fps = feedback_config.tentacle_idle_fps
+		death_fps = 0.0
 	if visual.sprite_frames.has_animation(&"walk"):
-		visual.sprite_frames.set_animation_speed(&"walk", walk_fps)
+		visual.sprite_frames.set_animation_speed(&"walk", move_fps)
+	if visual.sprite_frames.has_animation(&"idle"):
+		visual.sprite_frames.set_animation_speed(&"idle", move_fps)
 	for animation_name in [&"move_down", &"move_left", &"move_right", &"move_up"]:
 		if visual.sprite_frames.has_animation(animation_name):
-			visual.sprite_frames.set_animation_speed(animation_name, walk_fps)
+			visual.sprite_frames.set_animation_speed(animation_name, move_fps)
+	if death_fps > 0.0 and visual.sprite_frames.has_animation(&"death"):
+		visual.sprite_frames.set_animation_speed(&"death", death_fps)
 	if visual.sprite_frames.has_animation(&"charge"):
 		var charge_fps := feedback_config.large_correction_charge_animation_fps if name.contains("LargeCorrection") else feedback_config.correction_charge_animation_fps
+		if name.contains("AlarmClock"):
+			charge_fps = feedback_config.mushroom_move_fps
 		visual.sprite_frames.set_animation_speed(&"charge", charge_fps)
 	if visual.sprite_frames.has_animation(&"attack_prepare"):
-		visual.sprite_frames.set_animation_speed(&"attack_prepare", feedback_config.stapler_attack_animation_fps)
+		visual.sprite_frames.set_animation_speed(&"attack_prepare", feedback_config.huntress_shoot_fps)
+	for attack_animation in [&"slam_charge", &"slam"]:
+		if visual.sprite_frames.has_animation(attack_animation):
+			visual.sprite_frames.set_animation_speed(attack_animation, feedback_config.mimic_move_fps)
+	if visual.sprite_frames.has_animation(&"death_delay") and feedback_config != null:
+		visual.sprite_frames.set_animation_speed(&"death_delay", feedback_config.mushroom_death_fps)
 
 
 func set_movement_speed_multiplier(multiplier: float) -> void:

@@ -4,6 +4,8 @@ const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const FORMAT := preload("res://scripts/ui/display_format.gd")
 const STATE_RULES := preload("res://scripts/app/game_state_rules.gd")
 const GLITCH_SHADER := preload("res://shaders/glitch_overlay.gdshader")
+# 手机时间区域背景壁纸：只在锁屏/主页时间块内 cover 裁剪绘制，不超出手机屏幕区。
+const PHONE_WALLPAPER: Texture2D = preload("res://art/wallpaper/phone_background.png")
 
 enum PhoneState { COLLAPSED, EXPANDING, EXPANDED, COLLAPSING }
 enum ScreenState { LOCKED, HOME, ONLINE, SOMNIA, QUICKLINK, SETTINGS }
@@ -37,7 +39,7 @@ const UPGRADE_NAMES := ["枕叶视觉皮层", "脑干", "海马体", "前额叶�
 const PRODUCT_ICONS := {
 	"melatonin": preload("res://assets/ui/products/melatonin_icon.png"),
 	"cheap_meal": preload("res://assets/ui/products/cheap_meal_icon.png"),
-	"sunshade": preload("res://art/sunshade.png"),
+	"sunshade": preload("res://art/Badroom/sunshade.png"),
 	"visual_cortex": preload("res://assets/ui/products/visual_cortex_icon.png"),
 	"brainstem": preload("res://assets/ui/products/brainstem_icon.png"),
 	"hippocampus": preload("res://assets/ui/products/hippocampus_icon.png"),
@@ -55,11 +57,18 @@ var quicklink_items: Array = []
 var persistent_state: Dictionary = {}
 var purchase_locked := false
 var _shake_tween: Tween
+# 新消息震动提示专用 tween（与 glitch 屏幕震动 _shake_tween 互不影响）。
+var _vibrate_tween: Tween
 var balance_flash_left := 0.0
 var bedroom_time_minutes := 1260.0
 var movement_tween: Tween
 var hovered_app_index := -1
 var hovered_phone_action := ""
+# 手机静止基准位置：所有震动坐标都基于它计算，不基于当前 position 累计加减，
+# 保证震动结束后准确恢复原位，不会越震越偏。
+var phone_rest_position := Vector2.ZERO
+var lock_background_texture: AtlasTexture
+var home_background_texture: AtlasTexture
 @onready var app_grid: GridContainer = $AppGrid
 @onready var online_scroll: PhoneDragScroll = $OnlineScroll
 @onready var content_safe_margin: MarginContainer = $OnlineScroll/ContentSafeMargin
@@ -87,6 +96,9 @@ func _ready() -> void:
 	quicklink_content.custom_minimum_size.x = quicklink_scroll.size.x - config.online_scrollbar_width - config.online_message_right_safe_margin
 	quicklink_content.phone = self
 	screen_state = ScreenState.LOCKED if config.phone_lock_on_bedroom_entry else ScreenState.HOME
+	lock_background_texture = _build_time_background(_lock_time_rect())
+	home_background_texture = _build_time_background(_home_time_rect())
+	phone_rest_position = Vector2(config.phone_position_x, config.phone_collapsed_y)
 	messages = _load_array("res://resources/phone_messages.json", "messages")
 	quicklink_items = _load_array("res://resources/quicklink_items.json", "items")
 	mouse_exited.connect(_clear_app_hover)
@@ -293,9 +305,39 @@ func _notify_unread_batch_once() -> void:
 	var signature := JSON.stringify(unread_batch)
 	if str(persistent_state.get("online_notified_batch_signature", "")) == signature:
 		return
+	# 签名去重保证：每天新消息首次到达时只提示一次（震动+提示音），
+	# 反复打开/关闭手机或重新进入卧室不会重复震动；玩家读完后批次为空也不再提示。
 	persistent_state.online_notified_batch_signature = signature
 	SFX.play_event(&"new_message")
+	_play_new_message_vibrate()
 	state_changed.emit()
+
+
+## 新消息震动提示：快速短促的“嗡嗡”感——每轮 左→右→左→右→中，
+## 每步约 config.phone_vibration_step_duration 秒，两轮之间停顿
+## config.phone_vibration_pause_duration 秒；总振幅仅
+## config.phone_vibration_offset_px 个像素，结束后精确归位。
+## 只动 position.x，展开动画只动 position.y；展开/收起不重复触发（签名去重）。
+func _play_new_message_vibrate() -> void:
+	if _vibrate_tween != null and _vibrate_tween.is_valid():
+		_vibrate_tween.kill()
+	SFX.play_event(&"phone_buzz")
+	var home_x := phone_rest_position.x
+	var amplitude := config.phone_vibration_offset_px
+	var step := maxf(config.phone_vibration_step_duration, 0.01)
+	var rounds := maxi(1, int(config.phone_vibration_rounds))
+	var tween := create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.set_trans(Tween.TRANS_SINE)
+	for round in rounds:
+		tween.tween_property(self, "position:x", home_x - amplitude, step)
+		tween.tween_property(self, "position:x", home_x + amplitude, step)
+		tween.tween_property(self, "position:x", home_x - amplitude, step)
+		tween.tween_property(self, "position:x", home_x + amplitude, step)
+		tween.tween_property(self, "position:x", home_x, step)
+		if round < rounds - 1:
+			tween.tween_interval(maxf(config.phone_vibration_pause_duration, 0.0))
+	_vibrate_tween = tween
 
 
 func _build_online_messages() -> void:
@@ -725,6 +767,11 @@ func _draw_quicklink_header(font: Font) -> void:
 
 
 func _draw_lock_screen(font: Font) -> void:
+	if lock_background_texture != null:
+		var background_rect := _lock_time_rect()
+		draw_texture_rect(lock_background_texture, background_rect, false)
+		# 暗化薄层保证时间文字在壁纸上仍清晰可读。
+		draw_rect(background_rect, Color(0.02, 0.05, 0.09, 0.3))
 	draw_string(font, Vector2(0, 76), RunSettlement.format_time(bedroom_time_minutes), HORIZONTAL_ALIGNMENT_CENTER, size.x, 24, Color("b2b3bb"))
 	draw_string(font, Vector2(0, 102), _weekday_name(), HORIZONTAL_ALIGNMENT_CENTER, size.x, 12, Color("696c76"))
 	var pulse := 0.25 + fingerprint_progress * 0.65
@@ -737,8 +784,34 @@ func _weekday_name() -> String:
 	return ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"][int(persistent_state.get("weekday_index", 0)) % 7]
 
 
+func _lock_time_rect() -> Rect2:
+	return Rect2(12, 40, size.x - 24, 78)
+
+
+func _home_time_rect() -> Rect2:
+	return Rect2(12, 36, size.x - 24, 112)
+
+
+## 按目标矩形对壁纸做 cover 式居中裁剪，绘制时永远不超出该矩形。
+func _build_time_background(target_rect: Rect2) -> AtlasTexture:
+	var texture_size := PHONE_WALLPAPER.get_size()
+	var crop := AtlasTexture.new()
+	crop.atlas = PHONE_WALLPAPER
+	if texture_size.x <= 0.0 or texture_size.y <= 0.0:
+		crop.region = Rect2(Vector2.ZERO, texture_size)
+		return crop
+	var cover_scale := maxf(target_rect.size.x / texture_size.x, target_rect.size.y / texture_size.y)
+	var source_size := target_rect.size / maxf(cover_scale, 0.001)
+	crop.region = Rect2((texture_size - source_size) * 0.5, source_size)
+	return crop
+
+
 func _draw_home_screen(font: Font) -> void:
-	draw_rect(Rect2(12, 36, size.x - 24, 112), Color("20232d"))
+	var widget_rect := _home_time_rect()
+	draw_rect(widget_rect, Color("20232d"))
+	if home_background_texture != null:
+		draw_texture_rect(home_background_texture, widget_rect, false)
+		draw_rect(widget_rect, Color(0.02, 0.05, 0.09, 0.28))
 	draw_string(font, Vector2(0, 72), RunSettlement.format_time(bedroom_time_minutes), HORIZONTAL_ALIGNMENT_CENTER, size.x, 21, Color("b2b3bb"))
 	draw_string(font, Vector2(0, 94), _weekday_name(), HORIZONTAL_ALIGNMENT_CENTER, size.x, 10, Color("6f7380"))
 	for index in APP_IDS.size():

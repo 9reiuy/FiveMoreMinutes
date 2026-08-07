@@ -2,6 +2,7 @@ class_name EnemyOutlineController
 extends Node
 
 const OUTLINE_SHADER := preload("res://shaders/sprite_alpha_outline.gdshader")
+const CONFIG := preload("res://resources/demo_config.tres")
 
 var target_sprite: AnimatedSprite2D
 var locked := false
@@ -15,7 +16,9 @@ func configure(sprite: AnimatedSprite2D) -> void:
 	var outline_material := ShaderMaterial.new()
 	outline_material.shader = OUTLINE_SHADER
 	outline_material.set_shader_parameter("outline_enabled", 0.0)
-	outline_material.set_shader_parameter("outline_width_source_pixels", 5.0)
+	# 统一白描边宽度（源纹理像素空间）：shader 基于 TEXTURE_PIXEL_SIZE 换算，
+	# 不乘节点 scale，因此 VisualRoot 放大 4 倍也不会变成巨描边。
+	outline_material.set_shader_parameter("outline_width_source_pixels", CONFIG.enemy_outline_width_px)
 	outline_material.set_shader_parameter("outline_color", Color.WHITE)
 	target_sprite.material = outline_material
 

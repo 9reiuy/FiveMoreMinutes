@@ -25,6 +25,7 @@ var persistent_day_state: Dictionary = {}
 var day_start_snapshot = DAY_START_SNAPSHOT.new()
 var night_state: Dictionary = {"melatonin_count": 0, "is_hungry_run": false, "run_stress_value": 0}
 var transition_running := false
+var transition_queue: Array = []
 var pause_allowed := false
 var current_is_endless_mode := false
 var endless_weapon_id := "basic"
@@ -43,6 +44,11 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if not pause_allowed or transition_running or not event is InputEventKey or not event.pressed or event.echo or event.keycode != KEY_ESCAPE:
+		return
+	# ESC 优先级：当前画面若有更高优先级窗口（如电脑界面）需要消费 ESC，
+	# 先交给它处理，不打开暂停菜单。
+	if is_instance_valid(current_screen) and current_screen.has_method("consume_escape") and bool(current_screen.call("consume_escape")):
+		get_viewport().set_input_as_handled()
 		return
 	if pause_menu.is_open():
 		pause_menu.handle_escape()
@@ -108,6 +114,8 @@ func _create_initial_state() -> Dictionary:
 		"delivery_state": "NONE",
 		"delivery_seconds_remaining": 0.0,
 		"is_hungry_run": false,
+		# 电脑当天是否已打开（false -> 息屏素材；新的一天开始时重置，见 _reset_daily_state）。
+		"computer_opened_today": false,
 		"permanent_upgrades": {
 			"visual_cortex": 0,
 			"brainstem": 0,
@@ -200,6 +208,8 @@ func _reset_daily_state() -> void:
 	persistent_day_state.delivery_state = "NONE"
 	persistent_day_state.delivery_seconds_remaining = 0.0
 	persistent_day_state.is_hungry_run = false
+	# 新的一天：电脑回到默认息屏状态（computer_opened_today 跨天重置）。
+	persistent_day_state.computer_opened_today = false
 
 
 func _save_progress() -> void:
@@ -304,6 +314,13 @@ func _show_weapon_selection(melatonin_count: int = 0, is_hungry_run: bool = fals
 		"katana": bool(persistent_day_state.get("katana_unlocked", false)),
 		"grenade": bool(persistent_day_state.get("grenade_weapon_unlocked", false))
 	}
+	# 武器池不能为空：basic 永远合法，若异常为空则报错并回退基础池，
+	# 绝不允许跳过武器选择或直接带默认武器进梦境。
+	var available_weapons := _get_available_weapon_ids(selection.unlock_state)
+	if available_weapons.is_empty():
+		push_error("Initial weapon selection has no available weapons.")
+		selection.unlock_state = {"shotgun": false, "beam": false, "katana": false, "grenade": false}
+		available_weapons = ["basic"]
 	selection.weapon_selected.connect(_show_dream)
 	_transition_to(selection)
 
@@ -658,8 +675,17 @@ func _apply_day_based_unlocks(state: Dictionary) -> bool:
 
 func _transition_to(next_screen: Node, duration: float = 0.35) -> void:
 	if transition_running:
-		next_screen.queue_free()
+		# 转场进行中时排队而非丢弃新画面：旧实现会直接 queue_free 新场景，
+		# 可能静默丢掉武器选择界面导致睡觉后无任何 UI 可交互。
+		transition_queue.append({"screen": next_screen, "duration": duration})
 		return
+	await _run_transition(next_screen, duration)
+	while not transition_queue.is_empty():
+		var next: Dictionary = transition_queue.pop_front()
+		await _run_transition(next["screen"], float(next["duration"]))
+
+
+func _run_transition(next_screen: Node, duration: float) -> void:
 	transition_running = true
 	var tween := create_tween()
 	tween.tween_property(fade, "color:a", 1.0, duration)
@@ -669,3 +695,11 @@ func _transition_to(next_screen: Node, duration: float = 0.35) -> void:
 	reveal.tween_property(fade, "color:a", 0.0, duration)
 	await reveal.finished
 	transition_running = false
+
+
+func _get_available_weapon_ids(unlock_state: Dictionary) -> Array[String]:
+	var pool: Array[String] = ["basic"]
+	for weapon_id in ["beam", "shotgun", "katana", "grenade"]:
+		if bool(unlock_state.get(weapon_id, false)):
+			pool.append(weapon_id)
+	return pool

@@ -22,16 +22,26 @@ const SUNSHADE_HOVER_BRIGHTNESS := 1.25
 @onready var bed_sprite: Sprite2D = $Layout/ArtRoot/BedroomBed
 @onready var bottle_sprite: Sprite2D = $Layout/ArtRoot/MelatoninBottle
 @onready var sunshade_sprite: Sprite2D = $Layout/ArtRoot/Sunshade
+# 电脑 Sprite：默认息屏素材，当天首次打开后切换为亮屏素材（见 _sync_computer_visual）。
+@onready var computer_sprite: Sprite2D = $Layout/ArtRoot/BedroomComputer
 @onready var bed_click_area: Area2D = $Layout/BedClickArea
 @onready var bottle_click_area: Area2D = $Layout/MelatoninClickArea
 @onready var sunshade_click_area: Area2D = $Layout/SunshadeClickArea
+@onready var computer_click_polygon: CollisionPolygon2D = $Layout/ComputerClickArea/CollisionPolygon2D
 @onready var bed_click_polygon: CollisionPolygon2D = $Layout/BedClickArea/CollisionPolygon2D
 @onready var bottle_click_polygon: CollisionPolygon2D = $Layout/MelatoninClickArea/CollisionPolygon2D
 @onready var sunshade_click_polygon: CollisionPolygon2D = $Layout/SunshadeClickArea/CollisionPolygon2D
 @onready var bottle_anchor: Marker2D = $Layout/MelatoninBottleAnchor
-@onready var door_interaction: BedroomDoorInteraction = $Layout/DoorInteraction
+@onready var door_interaction: BedroomDoorInteraction = $Layout/BottomEdgeInteraction
 @onready var status_hud: BedroomStatusHUD = $PhoneLayer/BedroomStatusHUD
 @onready var weather: BedroomWeather = $Layout/WeatherBackLayer
+# 像素风动态光照：CanvasModulate 控制卧室基础环境亮度，
+# ComputerScreenLight 为电脑屏幕发光（卧室当前唯一的动态光源；窗户光照系统已废弃删除）。
+@onready var ambient_modulate: CanvasModulate = $Layout/BedroomLighting/CanvasModulate
+@onready var computer_screen_light: PointLight2D = $Layout/BedroomLighting/ComputerScreenLight
+# 21:00→00:00 动态暗角：只覆盖卧室主画布，不影响 CanvasLayer 上的 UI。
+@onready var vignette_material: ShaderMaterial = $Layout/VignetteLayer.material as ShaderMaterial
+@onready var computer_overlay: ComputerOverlay = $ComputerLayer/ComputerOverlay
 
 var after_dream := false
 var summary: Dictionary = {}
@@ -45,10 +55,19 @@ var pending_confirmation := ""
 var bed_image: Image
 var bottle_image: Image
 var sunshade_image: Image
+# 电脑 alpha 检测用图像：亮/息屏两张素材的不透明区域完全一致，用亮屏图即可。
+var computer_image: Image
 var bed_outline_material: ShaderMaterial
 var bottle_outline_material: ShaderMaterial
 var sunshade_outline_material: ShaderMaterial
+var computer_outline_material: ShaderMaterial
 var hungry_sleep_committed := false
+
+# 电脑素材路径（亮屏 / 息屏）：
+#   亮屏：res://art/Badroom/bedroom_computer_light.png（当天首次打开电脑后显示）
+#   息屏：res://art/Badroom/bedroom_computer_dark.png（新的一天开始时的默认状态）
+const COMPUTER_LIGHT_TEXTURE := preload("res://art/Badroom/bedroom_computer_light.png")
+const COMPUTER_DARK_TEXTURE := preload("res://art/Badroom/bedroom_computer_dark.png")
 
 
 func _ready() -> void:
@@ -57,28 +76,36 @@ func _ready() -> void:
 	bed_image = bed_sprite.texture.get_image()
 	bottle_image = bottle_sprite.texture.get_image()
 	sunshade_image = sunshade_sprite.texture.get_image()
+	computer_image = COMPUTER_LIGHT_TEXTURE.get_image()
 	bed_outline_material = bed_sprite.material as ShaderMaterial
 	bottle_outline_material = bottle_sprite.material as ShaderMaterial
 	sunshade_outline_material = sunshade_sprite.material as ShaderMaterial
+	computer_outline_material = computer_sprite.material as ShaderMaterial
 	var outline_source_width := config.bedroom_interaction_outline_width / maxf(absf(art_root.scale.x), 0.001)
 	var outline_color := config.bedroom_interaction_outline_color
 	outline_color.a = config.bedroom_interaction_outline_opacity
 	bed_outline_material.set_shader_parameter("outline_color", outline_color)
 	bottle_outline_material.set_shader_parameter("outline_color", outline_color)
 	sunshade_outline_material.set_shader_parameter("outline_color", outline_color)
+	computer_outline_material.set_shader_parameter("outline_color", outline_color)
 	bed_outline_material.set_shader_parameter("outline_width_source_pixels", outline_source_width)
 	bottle_outline_material.set_shader_parameter("outline_width_source_pixels", outline_source_width)
+	# 电脑描边与床使用同一套 shader 与同一宽度参数（统一描边组件）。
+	computer_outline_material.set_shader_parameter("outline_width_source_pixels", outline_source_width)
 	# 遮光帘使用独立材质实例，描边宽度单独控制（3 屏幕像素 = 12 源像素）。
 	sunshade_outline_material.set_shader_parameter("outline_width_source_pixels", 3.0 / maxf(absf(art_root.scale.x), 0.001))
 	bed_click_area.mouse_entered.connect(_set_highlighted.bind("bed"))
 	bed_click_area.mouse_exited.connect(_clear_highlighted.bind("bed"))
 	bottle_click_area.mouse_entered.connect(_set_highlighted.bind("bottle"))
 	bottle_click_area.mouse_exited.connect(_clear_highlighted.bind("bottle"))
-	# 遮光帘的悬停检测完全由 _update_mouse_highlight（逐帧多边形+alpha 检测）负责，
+	# 遮光帘与电脑的悬停检测完全由 _update_mouse_highlight（逐帧多边形+alpha 检测）负责，
 	# 不连接 Area2D 信号，避免与状态切换后的 hover 刷新产生竞争。
 	_sync_art_visibility()
 	_sync_sunshade_visibility()
 	_apply_sunshade_ambient()
+	_setup_lighting()
+	_sync_computer_visual()
+	computer_overlay.closed.connect(_close_computer)
 	phone.balance_changed.connect(_on_balance_changed)
 	phone.permanent_upgrade_changed.connect(_on_persistent_state_changed)
 	phone.state_changed.connect(_on_persistent_state_changed)
@@ -109,11 +136,12 @@ func _process(delta: float) -> void:
 		_begin_sleep(not bool(persistent_state.get("food_eaten_today", false)))
 	_update_mouse_highlight()
 	_update_door_and_status()
+	_update_vignette()
 	queue_redraw()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if input_locked or melatonin_ui.visible or confirmation_dialog.visible or phone.blocks_bedroom_interaction():
+	if input_locked or melatonin_ui.visible or confirmation_dialog.visible or computer_overlay.visible or phone.blocks_bedroom_interaction():
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if highlighted == "bed":
@@ -122,6 +150,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_request_confirmation("bottle")
 		elif highlighted == "sunshade":
 			_toggle_sunshade()
+		elif highlighted == "computer":
+			_open_computer()
 		elif highlighted == "door":
 			_request_door_interaction()
 		else:
@@ -129,8 +159,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## ESC 优先级钩子（由 main.gd 的 _input 在打开暂停菜单前调用）：
+## 电脑界面打开时，ESC 先关闭电脑界面而不是打开暂停菜单。
+## 返回 true 表示已消费本次 ESC。
+func consume_escape() -> bool:
+	if computer_overlay.visible:
+		_close_computer()
+		return true
+	return false
+
+
 func _update_mouse_highlight() -> void:
-	if input_locked or melatonin_ui.visible or confirmation_dialog.visible or phone.blocks_bedroom_interaction():
+	if input_locked or melatonin_ui.visible or confirmation_dialog.visible or computer_overlay.visible or phone.blocks_bedroom_interaction():
 		_set_highlighted("")
 		return
 	var mouse_position := get_viewport().get_mouse_position()
@@ -145,6 +185,10 @@ func _update_mouse_highlight() -> void:
 	# The bottle is visually above the table and therefore wins before the bed.
 	if persistent_state.get("melatonin_bottle_present", false) and _click_polygon_has_point(bottle_click_polygon, mouse_position) and _is_opaque_at(bottle_sprite, bottle_image, mouse_position):
 		_set_highlighted("bottle")
+	# 电脑在桌面上，位于床的左上方，与床/药瓶区域不重叠；同样做逐像素 alpha 检测，
+	# 避免电脑素材周围的透明空白区域可点。
+	elif _click_polygon_has_point(computer_click_polygon, mouse_position) and _is_opaque_at(computer_sprite, computer_image, mouse_position):
+		_set_highlighted("computer")
 	elif _click_polygon_has_point(bed_click_polygon, mouse_position) and _is_opaque_at(bed_sprite, bed_image, mouse_position):
 		_set_highlighted("bed")
 	else:
@@ -182,6 +226,7 @@ func _sync_sunshade_visibility() -> void:
 			_set_highlighted("")
 		return
 	# 已购买后交互区域始终可检测；sprite 的显示由状态 + 悬停共同决定。
+	# 遮阳帘不再影响任何光源（窗户光照已删除），只保留美术与交互。
 	_apply_sunshade_state_visual()
 
 
@@ -234,6 +279,79 @@ func _toggle_sunshade() -> void:
 	SFX.play_event(&"phone_operation")
 
 
+# ============================================================
+# 电脑交互与息屏逻辑
+# ============================================================
+
+## 电脑当天状态字段：persistent_state.computer_opened_today（bool）。
+##   - 新的一天开始：main.gd _reset_daily_state() 重置为 false
+##   - 当天首次打开电脑：置为 true 并存档
+##   - false -> 息屏素材 computer_dark，true -> 亮屏素材 computer_light
+
+## 打开电脑界面：当天首次打开时记录状态并点亮卧室中的电脑屏幕。
+## Overlay 覆盖全屏（mouse_filter=STOP），自动阻断手机/床/药瓶/遮光帘交互。
+func _open_computer() -> void:
+	if input_locked or computer_overlay.visible:
+		return
+	if not bool(persistent_state.get("computer_opened_today", false)):
+		persistent_state.computer_opened_today = true
+		save_requested.emit()
+	_sync_computer_visual()
+	_set_highlighted("")
+	phone.force_collapse()
+	SFX.play_event(&"confirm")
+	computer_overlay.open()
+
+
+## 关闭电脑界面：恢复卧室交互（高亮检测会在下一帧自动恢复）。
+func _close_computer() -> void:
+	computer_overlay.close()
+
+
+## 电脑亮屏/息屏素材切换与屏幕光同步：
+## 本函数是唯一更新电脑灯光状态的入口（bedroom.gd）。
+func _sync_computer_visual() -> void:
+	var opened_today := bool(persistent_state.get("computer_opened_today", false))
+	computer_sprite.texture = COMPUTER_LIGHT_TEXTURE if opened_today else COMPUTER_DARK_TEXTURE
+	# 亮屏 -> 屏幕光开启；息屏 -> 屏幕光关闭（不残留开机感）。
+	computer_screen_light.visible = opened_today
+
+
+## 初始化像素风动态光照参数（统一从 DemoConfig 读取，便于调参）。
+## 节点位置/旋转/贴图在 bedroom.tscn 的 Layout/BedroomLighting 下配置。
+## 窗户光照系统（WindowLight / CurtainLightOccluder）已彻底删除，卧室只保留电脑屏幕光。
+## 注意：点光必须使用 Mix 混合（blend_mode=1 的 Add 在本渲染环境下
+## 会把照射区渲染成黑色）。电脑光增强倍率只在配置乘数一处生效，不重复叠加。
+func _setup_lighting() -> void:
+	ambient_modulate.color = config.bedroom_ambient_modulate_color
+	computer_screen_light.blend_mode = PointLight2D.BLEND_MODE_MIX
+	computer_screen_light.color = config.bedroom_computer_light_color
+	computer_screen_light.energy = config.bedroom_computer_light_energy * config.computer_light_energy_multiplier
+
+
+## 越接近 00:00（强制睡觉时间）暗角越强；用卧室游戏时间驱动，不用系统时间。
+## Ease-In（progress²）避免线性过强；跨午夜时按当天夜间分钟归一化，防止插值反向。
+## 强度不设置任何人为上限：final = (min_strength + progress²) × vignette_intensity_multiplier，
+## 正常流程 00:00 会强制睡觉；Debug 让时间超过 00:00 时 progress > 1，计算值继续增长不截断。
+func _update_vignette() -> void:
+	if vignette_material == null:
+		return
+	var progress := _vignette_progress()
+	var base_strength := config.bedroom_vignette_min_strength + progress * progress
+	vignette_material.set_shader_parameter("strength", maxf(base_strength * config.vignette_intensity_multiplier, 0.0))
+
+
+func _vignette_progress() -> float:
+	var start_minutes := config.bedroom_vignette_start_minutes
+	var end_minutes := config.bedroom_vignette_end_minutes
+	if end_minutes < start_minutes:
+		end_minutes += 1440.0
+	var minutes := current_minutes
+	if minutes < start_minutes:
+		minutes += 1440.0
+	return maxf((minutes - start_minutes) / maxf(end_minutes - start_minutes, 1.0), 0.0)
+
+
 func _set_highlighted(next_highlight: String) -> void:
 	if highlighted == next_highlight:
 		return
@@ -242,6 +360,8 @@ func _set_highlighted(next_highlight: String) -> void:
 	bottle_outline_material.set_shader_parameter("outline_enabled", 1.0 if highlighted == "bottle" else 0.0)
 	if sunshade_outline_material != null:
 		sunshade_outline_material.set_shader_parameter("outline_enabled", 1.0 if highlighted == "sunshade" else 0.0)
+	if computer_outline_material != null:
+		computer_outline_material.set_shader_parameter("outline_enabled", 1.0 if highlighted == "computer" else 0.0)
 	# 遮光帘悬停时提亮、离开恢复（收起状态也随描边恢复全不透明度）。
 	_apply_sunshade_state_visual()
 
@@ -372,11 +492,26 @@ func _update_delivery(delta: float) -> void:
 		save_requested.emit()
 
 
+## 底部边缘交互（开门/取餐）统一输入优先级判断：
+## 手机展开、电脑界面、对话/确认弹窗、褪黑素界面、输入锁定期间一律禁用，
+## 不依赖节点视觉遮挡碰运气阻断输入。
+func can_use_bottom_edge_interaction() -> bool:
+	if input_locked:
+		return false
+	if phone.blocks_bedroom_interaction() or not phone.is_fully_collapsed():
+		return false
+	if computer_overlay.visible:
+		return false
+	if confirmation_dialog.visible or melatonin_ui.visible:
+		return false
+	return true
+
+
 func _update_door_and_status() -> void:
-	var ordinary_state := not input_locked and not melatonin_ui.visible and not confirmation_dialog.visible
+	var ordinary_state := not input_locked and not melatonin_ui.visible and not confirmation_dialog.visible and not computer_overlay.visible
 	var phone_collapsed: bool = bool(phone.is_fully_collapsed())
 	var waiting := str(persistent_state.get("delivery_state", "NONE")) == "WAITING_AT_DOOR"
-	door_interaction.set_state(ordinary_state and phone_collapsed, highlighted == "door", waiting)
+	door_interaction.set_state(can_use_bottom_edge_interaction(), highlighted == "door", waiting)
 	status_hud.visible = ordinary_state and phone_collapsed
 	status_hud.set_stress(int(persistent_state.get("stress_value", config.stress_default)))
 

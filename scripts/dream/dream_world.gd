@@ -6,25 +6,30 @@ signal dream_finished(summary: Dictionary)
 
 const ENEMY_SCENE := preload("res://scenes/entities/basic_enemy.tscn")
 const XP_GEM_SCENE := preload("res://scenes/entities/xp_gem.tscn")
+const HEART_PICKUP_SCENE := preload("res://scenes/entities/heart_pickup.tscn")
 const CORRECTION_SCENE := preload("res://scenes/entities/correction_tape_enemy.tscn")
 const STAPLER_SCENE := preload("res://scenes/entities/stapler_enemy.tscn")
 const LARGE_CORRECTION_SCENE := preload("res://scenes/entities/large_correction_tape_enemy.tscn")
 const ALARM_CLOCK_SCENE := preload("res://scenes/entities/alarm_clock_enemy.tscn")
 const MAILBOX_SCENE := preload("res://scenes/entities/mailbox_enemy.tscn")
+const TENTACLE_SCENE := preload("res://scenes/entities/tentacle_enemy.tscn")
 const STAPLE_SCENE := preload("res://scenes/entities/staple_projectile.tscn")
 const MUZZLE_EFFECT_SCENE := preload("res://scenes/entities/weapon_muzzle_effect.tscn")
 const DAMAGE_NUMBER_SCENE := preload("res://scenes/ui/damage_number.tscn")
 const DEATH_CRT_SCENE := preload("res://scenes/ui/death_crt_effect.tscn")
-const WAKE_POINT := Vector2(88, 273)
-const ARENA_BOUNDS := Rect2(30, 54, 580, 258)
+const WAKE_POINT_SCRIPT := preload("res://scripts/dream/bed_visual.gd")
+const ARENA_BOUNDS := Rect2(24, 24, 992, 432)
+const WORLD_SIZE := Vector2(1040, 480)
 
 enum RunPhase { RUNNING, ALARM, ENDING }
 
 @export var config: DemoConfig
 
 @onready var player: CharacterBody2D = $Player
+@onready var camera: Camera2D = $Player/DreamCamera
 @onready var clock: Node = $DreamClock
 @onready var spawner: Node = $EnemySpawner
+@onready var tentacle_spawner: Node = $TentacleSpawner
 @onready var enemy_container: Node2D = $EnemyContainer
 @onready var projectile_container: Node2D = $ProjectileContainer
 @onready var pickup_container: Node2D = $PickupContainer
@@ -66,11 +71,24 @@ var stress_enemy_speed_multiplier := 1.0
 var rapid_eye_speed_multiplier := 1.0
 var dream_game_speed_multiplier := 1.0
 var damage_number_pool: Array[Node2D] = []
+# 07:00 床生成点：梦境地图世界中心（_ready 时按实际地图边界计算，中心不合法时螺旋搜索最近地面）。
+var wake_point := Vector2(520.0, 240.0)
+var bed_visual: Node2D
 
 @onready var damage_flash: ColorRect = $UILayer/DamageFlash
 
 
 func _ready() -> void:
+	add_to_group("dream_world")
+	wake_point = _find_bed_spawn_position()
+	bed_visual = Node2D.new()
+	bed_visual.set_script(WAKE_POINT_SCRIPT)
+	bed_visual.name = "BedVisual"
+	bed_visual.z_index = 2
+	bed_visual.position = wake_point
+	bed_visual.interaction_radius = config.wake_interaction_radius
+	bed_visual.visible = false
+	add_child(bed_visual)
 	dream_game_speed_multiplier = config.fast_sleep_game_speed_multiplier if SettingsManager.get_fast_sleep_enabled() else 1.0
 	Engine.time_scale = dream_game_speed_multiplier
 	SFX.play_battle_music()
@@ -99,6 +117,9 @@ func _ready() -> void:
 	clock.time_changed.connect(_on_time_changed)
 	clock.alarm_started.connect(_on_alarm_started)
 	spawner.spawn_requested.connect(_on_spawn_requested)
+	tentacle_spawner.player = player
+	tentacle_spawner.arena_bounds = ARENA_BOUNDS
+	tentacle_spawner.tentacle_spawn_requested.connect(_on_tentacle_spawn_requested)
 	upgrade_panel.upgrade_chosen.connect(_on_upgrade_chosen)
 	upgrade_panel.refresh_requested.connect(_on_upgrade_refresh_requested)
 	skills_menu.close_requested.connect(_close_skills_menu)
@@ -143,7 +164,7 @@ func _process(delta: float) -> void:
 		return
 	alarm_real_elapsed_seconds += unscaled_delta
 	spawner.set_alarm_state(true, alarm_real_elapsed_seconds)
-	var near_wake_point := player.global_position.distance_to(WAKE_POINT) <= config.wake_interaction_radius
+	var near_wake_point := player.global_position.distance_to(wake_point) <= config.wake_interaction_radius
 	var growth_interval := maxf(config.extra_hold_every_seconds, 0.001)
 	var required_hold: float = config.base_wake_hold_seconds + floor(alarm_real_elapsed_seconds / growth_interval) * config.extra_hold_seconds
 	var wants_to_wake := near_wake_point and Input.is_action_pressed("interact")
@@ -172,7 +193,9 @@ func resolve_player_hit(enemy: Node, base_damage: float, hit_origin: Vector2) ->
 		return {}
 	var result: Dictionary = player.calculate_player_damage(base_damage)
 	enemy.take_damage(float(result.damage), hit_origin)
-	_show_damage_number(enemy.global_position + Vector2(0, -18), int(result.damage), bool(result.is_critical))
+	# 伤害数字锚点随敌人新视觉高度自动上移（基类 get_damage_number_offset）。
+	var number_offset: Vector2 = enemy.get_damage_number_offset() if enemy.has_method("get_damage_number_offset") else Vector2(0.0, -18.0)
+	_show_damage_number(enemy.global_position + number_offset, int(result.damage), bool(result.is_critical))
 	return result
 
 
@@ -281,16 +304,40 @@ func _configure_enemy(enemy: Node, spawn_position: Vector2, health: float, damag
 		enemy.configure_special(config)
 
 
+## 相机当前可见的世界空间矩形：viewport 尺寸 ÷ zoom，中心取相机屏幕中心。
+## 所有生成器共用本函数计算生成禁区（可见矩形 + enemy_spawn_visibility_margin），
+## 不使用任何固定像素猜测值。
+func get_camera_visible_world_rect() -> Rect2:
+	var viewport_size := get_viewport_rect().size
+	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		viewport_size = Vector2(640, 360)
+	var zoom := camera.zoom if camera != null else Vector2.ONE
+	var visible_size := Vector2(viewport_size.x / maxf(absf(zoom.x), 0.001), viewport_size.y / maxf(absf(zoom.y), 0.001))
+	var center := camera.get_screen_center_position() if camera != null else player.global_position
+	return Rect2(center - visible_size * 0.5, visible_size)
+
+
 func _spawn_large_correction() -> void:
-	elite_spawned = true
 	var spawn_position: Variant = spawner.request_valid_spawn_position()
 	if spawn_position == null:
-		spawn_position = ARENA_BOUNDS.position + Vector2(18, 18)
+		# 尚无屏幕外合法点：本帧放弃，下帧重试；绝不回退到场上固定点（可能进视野）。
+		return
+	elite_spawned = true
 	var elite := LARGE_CORRECTION_SCENE.instantiate()
 	_configure_enemy(elite, spawn_position, config.base_enemy_health * config.large_correction_health_multiplier, config.base_enemy_damage)
 	elite.defeated.connect(_on_elite_defeated)
 	enemy_container.add_child(elite)
 	_apply_slow_to_enemy(elite)
+
+
+func _on_tentacle_spawn_requested(spawn_position: Vector2) -> void:
+	if phase == RunPhase.ENDING:
+		return
+	var tentacle := TENTACLE_SCENE.instantiate()
+	_configure_enemy(tentacle, spawn_position, config.tentacle_max_hp, config.tentacle_contact_damage)
+	tentacle.special_defeated.connect(_on_special_enemy_defeated)
+	tentacle.heart_drop_requested.connect(_on_tentacle_heart_drop_requested)
+	enemy_container.add_child(tentacle)
 
 
 func _on_enemy_defeated(at_position: Vector2, drop_count: int = 1) -> void:
@@ -323,6 +370,8 @@ func _on_special_enemy_defeated(at_position: Vector2, experience_value: int, rar
 
 
 func _on_mailbox_split_requested(at_position: Vector2, count: int) -> void:
+	# 宝箱怪死亡分裂属于怪物技能：故意在死亡点原地环形生成，
+	# 不受屏幕外生成禁区限制。
 	var reserved_positions: Array[Vector2] = []
 	for split_index in range(maxi(0, count)):
 		var spawn_position: Variant = null
@@ -352,6 +401,24 @@ func _is_split_position_valid(candidate: Vector2, reserved_positions: Array[Vect
 		if candidate.distance_to(reserved) < 26.0:
 			return false
 	return true
+
+
+func _on_tentacle_heart_drop_requested(at_position: Vector2) -> void:
+	if phase == RunPhase.ENDING:
+		return
+	var heart := HEART_PICKUP_SCENE.instantiate()
+	heart.position = at_position + Vector2(10.0, 0.0)
+	heart.heal_amount = config.heart_pickup_heal_amount
+	heart.target = player
+	heart.collected.connect(_on_heart_collected)
+	pickup_container.add_child(heart)
+
+
+func _on_heart_collected(heal_amount: float) -> void:
+	if phase == RunPhase.ENDING:
+		return
+	# heal 内部已限制不超过最大生命，且真正回血时才播放 Heal 特效。
+	player.heal(heal_amount)
 
 
 func _on_experience_collected(raw_amount: int) -> void:
@@ -570,6 +637,8 @@ func _on_alarm_started() -> void:
 		return
 	phase = RunPhase.ALARM
 	alarm_real_elapsed_seconds = 0.0
+	if is_instance_valid(bed_visual):
+		bed_visual.visible = true
 	wake_overlay.start_alarm()
 	queue_redraw()
 
@@ -653,7 +722,7 @@ func _update_stress_vision() -> void:
 	var material := stress_vision_overlay.material as ShaderMaterial
 	if material == null:
 		return
-	material.set_shader_parameter("player_screen_position", player.global_position)
+	material.set_shader_parameter("player_screen_position", player.get_global_transform_with_canvas().origin)
 	material.set_shader_parameter("vision_radius", minf(player.get_effective_attack_range(), config.stress_vision_max_radius))
 
 
@@ -662,6 +731,7 @@ func _on_player_died() -> void:
 		return
 	phase = RunPhase.ENDING
 	spawner.running = false
+	tentacle_spawner.running = false
 	_cancel_wake_hold()
 	Engine.time_scale = 1.0
 	wake_overlay.stop_alarm()
@@ -680,6 +750,7 @@ func _complete_wake() -> void:
 		return
 	phase = RunPhase.ENDING
 	spawner.running = false
+	tentacle_spawner.running = false
 	player.movement_enabled = false
 	player.set_attacking_enabled(false)
 	player.set_dash_enabled(false)
@@ -745,14 +816,26 @@ func _build_summary(reason: String) -> Dictionary:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(0, 0, 640, 360), Color("11101a"))
-	draw_rect(Rect2(24, 46, 592, 274), Color("24202e"))
-	draw_rect(Rect2(31, 53, 578, 260), Color("191824"))
-	for x in range(48, 610, 56):
-		for y in range(70, 314, 48):
-			draw_circle(Vector2(x, y), 1.5, Color("393143"))
-	draw_rect(Rect2(24, 46, 592, 274), Color("53475f"), false, 2.0)
-	if phase == RunPhase.ALARM:
-		draw_rect(Rect2(46, 251, 84, 49), Color("59505e"))
-		draw_rect(Rect2(54, 242, 33, 15), Color("989098"))
-		draw_circle(WAKE_POINT, config.wake_interaction_radius, Color(0.6, 0.48, 0.55, 0.09))
+	# Crawling Depths TileMap 覆盖整个世界；这里只垫底色防止缝隙露白。
+	draw_rect(Rect2(Vector2.ZERO, WORLD_SIZE), Color("0d0b12"))
+
+
+## 地图世界中心 = 可走区域世界矩形中心（非屏幕中心、非玩家/相机位置）。
+## 中心若落在墙 Tile 上，从中心向外逐环搜索最近的非墙格，返回其世界坐标。
+func _find_bed_spawn_position() -> Vector2:
+	var center := ARENA_BOUNDS.get_center()
+	var wall_layer: TileMapLayer = get_node_or_null("DreamMap/WallLayer")
+	if wall_layer == null:
+		return center
+	var center_cell := wall_layer.local_to_map(center)
+	if wall_layer.get_cell_source_id(center_cell) != 1:
+		return center
+	for ring in range(1, 24):
+		for dy in range(-ring, ring + 1):
+			for dx in range(-ring, ring + 1):
+				if maxi(absi(dx), absi(dy)) != ring:
+					continue
+				var cell := center_cell + Vector2i(dx, dy)
+				if wall_layer.get_cell_source_id(cell) != 1:
+					return wall_layer.map_to_local(cell)
+	return center

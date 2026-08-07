@@ -53,9 +53,10 @@ const EVENT_BUSES := {
 	&"enemy_kill": &"Characters",
 	&"door_knock": &"Environment",
 	&"thunder": &"Environment",
-	&"crt_off": &"UI"
+	&"crt_off": &"UI",
+	&"phone_buzz": &"UI"
 }
-const GENERATED_EVENTS := [&"ui_hover", &"dash", &"player_hurt", &"weapon_fire", &"pistol_fire", &"shotgun_fire", &"enemy_kill", &"thunder", &"crt_off"]
+const GENERATED_EVENTS := [&"ui_hover", &"dash", &"player_hurt", &"weapon_fire", &"pistol_fire", &"shotgun_fire", &"enemy_kill", &"thunder", &"crt_off", &"phone_buzz"]
 
 var players: Dictionary = {}
 var last_experience_play_msec := -1000000
@@ -436,6 +437,7 @@ func _volume_for(event_id: StringName) -> float:
 		&"enemy_kill": return CONFIG.sfx_enemy_kill_volume_db
 		&"door_knock": return CONFIG.sfx_door_knock_volume_db
 		&"thunder": return CONFIG.sfx_thunder_volume_db
+		&"phone_buzz": return CONFIG.sfx_phone_buzz_volume_db
 		_: return 0.0
 
 
@@ -487,6 +489,10 @@ func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
 	var sample_count := int(stream.mix_rate * duration)
 	var bytes := PackedByteArray()
 	bytes.resize(sample_count)
+	if event_id == &"phone_buzz":
+		_fill_phone_buzz(stream, bytes)
+		stream.data = bytes
+		return stream
 	var phase := 0.0
 	for index in sample_count:
 		var progress := float(index) / float(maxi(1, sample_count - 1))
@@ -505,3 +511,34 @@ func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
 		bytes[index] = clampi(int(128.0 + square * amplitude * envelope), 0, 255)
 	stream.data = bytes
 	return stream
+
+
+## 临时程序化手机震动音效（占位，待人工替换 res://sfx/手机震动.wav）：
+## 低沉（约 145Hz）短包络 buzz，两段振动中间留与视觉震动相同的停顿，
+## 音画同步：第一轮震动→第一声 buzz，第二轮震动→第二声 buzz。
+func _fill_phone_buzz(stream: AudioStreamWAV, bytes: PackedByteArray) -> void:
+	var step := maxf(CONFIG.phone_vibration_step_duration, 0.01)
+	var pause := maxf(CONFIG.phone_vibration_pause_duration, 0.0)
+	var rounds := maxi(1, int(CONFIG.phone_vibration_rounds))
+	var burst_seconds := step * 5.0
+	var total_seconds := burst_seconds * float(rounds) + pause * float(rounds - 1)
+	var sample_count := int(stream.mix_rate * total_seconds)
+	bytes.resize(sample_count)
+	var phase := 0.0
+	var buzz_hz := 145.0
+	var tremolo_hz := 26.0
+	for index in sample_count:
+		var t := float(index) / float(stream.mix_rate)
+		# 判断当前采样落在第几段振动内，段间为静音停顿。
+		var cycle := burst_seconds + pause
+		var local := fmod(t, cycle) if rounds > 1 else t
+		var envelope := 0.0
+		if local < burst_seconds:
+			var burst_progress := local / burst_seconds
+			var attack := clampf(burst_progress / 0.06, 0.0, 1.0)
+			var release := clampf((1.0 - burst_progress) / 0.12, 0.0, 1.0)
+			envelope = minf(attack, release)
+		phase += TAU * buzz_hz / float(stream.mix_rate)
+		var square := 1.0 if sin(phase) >= 0.0 else -1.0
+		var tremolo := 0.62 + 0.38 * sin(TAU * tremolo_hz * t)
+		bytes[index] = clampi(int(128.0 + square * tremolo * envelope * 30.0), 0, 255)

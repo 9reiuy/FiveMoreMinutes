@@ -1,6 +1,9 @@
 extends Node2D
 
-const ARENA_BOUNDS := Rect2(30, 54, 580, 258)
+# 三倍扩图后的梦境地图可走区域；旧小地图尺寸会让榴弹出生即越界立即爆炸（脚底爆炸根因）。
+const ARENA_BOUNDS := Rect2(24, 24, 992, 432)
+# 爆炸视觉统一使用 HolyNova 序列帧，尺寸随爆炸视觉半径联动。
+const HOLY_NOVA_SCENE := preload("res://scenes/entities/holy_nova_effect.tscn")
 
 var target_position := Vector2.ZERO
 var direction := Vector2.RIGHT
@@ -13,15 +16,14 @@ var owner_player: Node2D
 var travel_time := 0.0
 var minimum_travel_seconds := 0.12
 var exploded := false
-var explosion_visual_progress := 0.0
-var explosion_alpha := 1.0
 
 
-func setup(target: Vector2, new_speed: float, radius: float, visual_radius: float, damage: float, player_damage: float, player: Node2D) -> void:
+func setup(target: Vector2, new_speed: float, radius: float, visual_radius: float, damage: float, player_damage: float, player: Node2D, fallback_direction: Vector2 = Vector2.RIGHT) -> void:
 	target_position = target
 	direction = global_position.direction_to(target_position)
 	if direction.length_squared() < 0.001:
-		direction = Vector2.RIGHT
+		# 目标与出生点重合（鼠标贴在玩家身上）：优先用最近一次有效瞄准方向，绝不取消本次投掷。
+		direction = fallback_direction.normalized() if fallback_direction.length_squared() > 0.0001 else Vector2.RIGHT
 	speed = new_speed
 	explosion_radius = radius
 	explosion_visual_radius = visual_radius
@@ -53,21 +55,21 @@ func _explode() -> void:
 				world.resolve_player_hit(enemy, enemy_damage, global_position)
 	if is_instance_valid(owner_player) and global_position.distance_to(owner_player.global_position) <= explosion_radius:
 		owner_player.receive_damage(self_damage)
-	set_process(false)
-	var tween := create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(self, "explosion_visual_progress", 1.0, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "explosion_alpha", 0.0, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.tween_method(func(_value: float): queue_redraw(), 0.0, 1.0, 0.18)
-	await tween.finished
+	_spawn_explosion_visual()
 	queue_free()
+
+
+## 爆炸特效交给 HolyNova 播放，榴弹本体在爆炸后立即回收。
+func _spawn_explosion_visual() -> void:
+	var effect := HOLY_NOVA_SCENE.instantiate()
+	effect.global_position = global_position
+	effect.setup(explosion_visual_radius)
+	var container := get_parent()
+	if is_instance_valid(container):
+		container.add_child(effect)
 
 
 func _draw() -> void:
 	if not exploded:
 		draw_circle(Vector2.ZERO, 6.0, Color("647b8c"))
 		draw_rect(Rect2(-2, -8, 4, 3), Color("b7c6cc"))
-	else:
-		var radius := explosion_visual_radius * explosion_visual_progress
-		draw_circle(Vector2.ZERO, radius, Color(0.32, 0.48, 0.60, 0.25 * explosion_alpha))
-		draw_circle(Vector2.ZERO, radius, Color(0.60, 0.71, 0.78, explosion_alpha), false, 3.0)

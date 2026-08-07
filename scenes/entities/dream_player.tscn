@@ -101,7 +101,7 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="Circle_player"]
-radius = 10.0
+radius = 7.5
 
 [node name="DreamPlayer" type="CharacterBody2D"]
 collision_layer = 1
@@ -110,7 +110,7 @@ script = ExtResource("1_player")
 
 [node name="Visual" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-position = Vector2(0, -13)
+position = Vector2(0, -9.75)
 sprite_frames = SubResource("PlayerFrames")
 animation = &"idle_down"
 autoplay = "idle_down"

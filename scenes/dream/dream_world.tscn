@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/dream/dream_world.gd" id="1_world"]
 [ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
@@ -11,6 +11,9 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="9_cross"]
 [ext_resource type="PackedScene" path="res://scenes/ui/skills_menu.tscn" id="10_skills"]
 [ext_resource type="Shader" path="res://shaders/stress_vision.gdshader" id="11_stress_vision"]
+[ext_resource type="Script" path="res://scripts/dream/dream_map_builder.gd" id="12_map_builder"]
+[ext_resource type="TileSet" path="res://assets/art/dream/crawling_depths/crawling_depths_tileset.tres" id="13_tileset"]
+[ext_resource type="Script" path="res://scripts/dream/tentacle_spawner.gd" id="14_tentacle_spawner"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_stress_vision"]
 resource_local_to_scene = true
@@ -19,6 +22,20 @@ shader = ExtResource("11_stress_vision")
 [node name="DreamWorld" type="Node2D" groups=["dream_world"]]
 script = ExtResource("1_world")
 config = ExtResource("2_config")
+
+[node name="DreamMap" type="Node2D" parent="."]
+script = ExtResource("12_map_builder")
+
+[node name="GroundLayer" type="TileMapLayer" parent="DreamMap"]
+tile_set = ExtResource("13_tileset")
+
+[node name="TilePatchLayer" type="TileMapLayer" parent="DreamMap"]
+tile_set = ExtResource("13_tileset")
+
+[node name="WallLayer" type="TileMapLayer" parent="DreamMap"]
+tile_set = ExtResource("13_tileset")
+
+[node name="Decorations" type="Node2D" parent="DreamMap"]
 
 [node name="EnemyContainer" type="Node2D" parent="."]
 z_index = 2
@@ -34,7 +51,16 @@ z_index = 1
 
 [node name="Player" parent="." instance=ExtResource("3_player")]
 z_index = 3
-position = Vector2(320, 190)
+position = Vector2(520, 240)
+collision_mask = 8
+
+[node name="DreamCamera" type="Camera2D" parent="Player"]
+limit_left = 0
+limit_top = 0
+limit_right = 1040
+limit_bottom = 480
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
 
 [node name="DreamClock" type="Node" parent="."]
 script = ExtResource("4_clock")
@@ -42,6 +68,10 @@ config = ExtResource("2_config")
 
 [node name="EnemySpawner" type="Node" parent="."]
 script = ExtResource("5_spawner")
+config = ExtResource("2_config")
+
+[node name="TentacleSpawner" type="Node" parent="."]
+script = ExtResource("14_tentacle_spawner")
 config = ExtResource("2_config")
 
 [node name="StressVisionLayer" type="CanvasLayer" parent="."]

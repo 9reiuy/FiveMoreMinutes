@@ -36,6 +36,12 @@ func configure_special(config: DemoConfig) -> void:
 	queue_redraw()
 
 
+## 精英魔眼：视觉已换为 Flying Eye 完整模型，缩放走集中配置 large_correction_visual_scale，
+## 数值（HP/伤害/冲刺）与碰撞体倍率仍保留精英原规则。
+func get_visual_scale(new_config: DemoConfig) -> float:
+	return new_config.large_correction_visual_scale
+
+
 func _physics_process(delta: float) -> void:
 	if dead:
 		return

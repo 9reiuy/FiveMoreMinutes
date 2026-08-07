@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
+const HEAL_EFFECT_SCENE := preload("res://scenes/entities/heal_effect.tscn")
 
 signal health_changed(current: float, maximum: float)
 signal died
@@ -68,11 +69,13 @@ var dissociation_ready := false
 var dissociation_revive_health := 30.0
 var dissociation_invulnerability_seconds := 3.0
 var feedback_audio: AudioStreamPlayer
-var visual_home_position := Vector2(0, -13)
+var visual_home_position := Vector2(0, -9.75)
 var run_damage_multiplier := 1.0
 var dash_disabled_by_hunger := false
 var critical_chance := 0.10
 var critical_damage_multiplier := 1.50
+var last_heal_effect_msec := 0
+const HEAL_EFFECT_THROTTLE_MSEC := 700
 
 
 func configure_weapon(weapon_id: String, config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
@@ -356,6 +359,18 @@ func heal(amount: float) -> void:
 		return
 	current_health = minf(maximum_health, current_health + amount)
 	health_changed.emit(current_health, maximum_health)
+	_play_heal_effect()
+
+
+## 真正发生回血时在角色身体中心播放一次 Heal 动画；节流避免连续回血时叠播。
+func _play_heal_effect() -> void:
+	var now_msec := Time.get_ticks_msec()
+	if last_heal_effect_msec > 0 and now_msec - last_heal_effect_msec < HEAL_EFFECT_THROTTLE_MSEC:
+		return
+	last_heal_effect_msec = now_msec
+	var effect := HEAL_EFFECT_SCENE.instantiate()
+	effect.position = visual_home_position
+	add_child(effect)
 
 
 func configure_sleep_paralysis(still_seconds: float, heal_per_second: float) -> void:

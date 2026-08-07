@@ -6,7 +6,7 @@ const FORMAT := preload("res://scripts/ui/display_format.gd")
 const PRODUCT_ICONS := {
 	"melatonin": preload("res://assets/ui/products/melatonin_icon.png"),
 	"cheap_meal": preload("res://assets/ui/products/cheap_meal_icon.png"),
-	"sunshade": preload("res://art/sunshade.png"),
+	"sunshade": preload("res://art/Badroom/sunshade.png"),
 }
 
 # Content 局部坐标：原点 = QuicklinkScroll 左上角（= phone 的 (12, 76)）。

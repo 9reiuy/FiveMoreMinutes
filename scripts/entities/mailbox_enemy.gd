@@ -68,12 +68,17 @@ func take_damage(amount: float, hit_origin: Vector2 = Vector2.INF) -> void:
 		dead = true
 		set_auto_aim_locked(false)
 		state = State.DEAD
+		velocity = Vector2.ZERO
+		set_physics_process(false)
 		_play_visual_animation(&"death")
+		if visual != null and visual.sprite_frames != null and visual.sprite_frames.has_animation(&"death"):
+			await visual.animation_finished
+		if not is_inside_tree():
+			return
 		if not reward_emitted:
 			reward_emitted = true
 			special_defeated.emit(global_position, enemy_config.mailbox_enemy_purple_exp_value, "purple")
 			split_requested.emit(global_position, enemy_config.mailbox_enemy_split_count)
-		await get_tree().create_timer(0.18, false).timeout
 		queue_free()
 	else:
 		super.take_damage(0.0, hit_origin)

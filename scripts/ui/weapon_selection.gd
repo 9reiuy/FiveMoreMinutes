@@ -17,20 +17,35 @@ var selection_locked := false
 var unlock_state: Dictionary = {"shotgun": false, "beam": false, "katana": false, "grenade": false}
 
 
-func _gui_input(event: InputEvent) -> void:
+func _ready() -> void:
+	# 武器选择是阻断性 UI：强制 ALWAYS 处理，确保任何暂停原因集合下输入不被冻结；
+	# 显式恢复鼠标可见（防止上一个场景残留 HIDDEN 导致无法点击）。
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+## 点击/悬停用 _input 处理（先于 GUI 路由），避免鼠标事件被其它全屏
+## Control 的 GUI 拾取拦截导致界面无法交互；本界面为 640×360 全屏且
+## 位于视口原点，_input 的视口坐标与卡片 Rect 常量直接对应。
+func _input(event: InputEvent) -> void:
+	if not visible:
+		return
 	if event is InputEventMouseMotion:
 		var next_hovered := _weapon_at(event.position)
 		if not next_hovered.is_empty() and next_hovered != hovered_weapon:
 			SFX.play_event(&"ui_hover")
 		hovered_weapon = next_hovered
 		queue_redraw()
-	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not selection_locked:
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		accept_event()
+		if selection_locked:
+			return
 		var selected := _weapon_at(event.position)
 		if not selected.is_empty() and _is_unlocked(selected):
 			selection_locked = true
 			SFX.play_event(&"confirm")
 			weapon_selected.emit(selected)
-		accept_event()
 
 
 func _weapon_at(point: Vector2) -> String:

@@ -14,7 +14,7 @@
 
 - 玩家图集：`res://assets/characters/player/player_sprite_atlas.png`
 - 基础敌人方向图集：`res://assets/enemies/basic/basic_enemy_directional_atlas.png`
-- 来源：OpenAI ImageGen，根据项目自有 `res://art/chr.png` 与既有敌人占位图集生成并整理。
+- 来源：OpenAI ImageGen，根据项目自有 `res://art/Badroom/chr.png` 与既有敌人占位图集生成并整理。
 - 用途：开发阶段角色和基础敌人的四方向动画占位资源。
 - 说明：没有引用网页素材或未知版权第三方图片。
 

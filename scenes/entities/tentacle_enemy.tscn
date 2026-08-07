@@ -1,0 +1,51 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/tentacle_enemy.gd" id="1_enemy"]
+[ext_resource type="Texture2D" path="res://assets/art/dream/crawling_depths/tentacle_sheet.png" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="T0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(10, 0, 40, 64)
+[sub_resource type="AtlasTexture" id="T1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(58, 0, 40, 64)
+[sub_resource type="AtlasTexture" id="T2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(106, 0, 40, 64)
+[sub_resource type="AtlasTexture" id="T3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(154, 0, 40, 64)
+[sub_resource type="AtlasTexture" id="T4"]
+atlas = ExtResource("2_sheet")
+region = Rect2(202, 0, 40, 64)
+[sub_resource type="AtlasTexture" id="T5"]
+atlas = ExtResource("2_sheet")
+region = Rect2(250, 0, 40, 64)
+
+[sub_resource type="SpriteFrames" id="Frames_tentacle"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("T0")}, {"duration": 1.0, "texture": SubResource("T1")}, {"duration": 1.0, "texture": SubResource("T2")}, {"duration": 1.0, "texture": SubResource("T3")}, {"duration": 1.0, "texture": SubResource("T4")}, {"duration": 1.0, "texture": SubResource("T5")}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}]
+
+[sub_resource type="CircleShape2D" id="Shape_tentacle"]
+radius = 13.0
+
+[node name="TentacleEnemy" type="CharacterBody2D" groups=["dream_enemies", "tentacle_enemies"]]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_enemy")
+
+[node name="Visual" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -10)
+sprite_frames = SubResource("Frames_tentacle")
+animation = &"idle"
+autoplay = "idle"
+scale = Vector2(1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -6)
+shape = SubResource("Shape_tentacle")

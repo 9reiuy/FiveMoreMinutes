@@ -101,7 +101,7 @@ func _test_phone_and_documentation() -> void:
 	root.add_child(phone)
 	await process_frame
 	var shell := phone.get_node("PhoneShell") as TextureRect
-	_assert(shell.texture.resource_path == "res://art/Phone.png" and phone.size == Vector2(160, 336), "Phone.png is not bound at its original aspect")
+	_assert(shell.texture.resource_path == "res://art/Badroom/Phone.png" and phone.size == Vector2(160, 336), "Phone.png is not bound at its original aspect")
 	_assert(shell.mouse_filter == Control.MOUSE_FILTER_IGNORE and phone._app_rect(0).position.y >= phone.config.phone_upper_collapse_height, "Phone shell blocks input or app grid overlaps collapse area")
 	phone.state = phone.PhoneState.EXPANDED
 	phone.screen_state = phone.ScreenState.HOME

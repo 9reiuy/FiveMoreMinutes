@@ -1,19 +1,24 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="Script" path="res://scripts/bedroom/bedroom.gd" id="1_bedroom"]
 [ext_resource type="PackedScene" path="res://scenes/ui/bedroom_phone.tscn" id="3_phone"]
 [ext_resource type="Resource" path="res://resources/demo_config.tres" id="4_config"]
 [ext_resource type="PackedScene" path="res://scenes/ui/melatonin_interaction.tscn" id="5_mel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/confirmation_dialog.tscn" id="6_dialog"]
-[ext_resource type="Texture2D" path="res://art/bedroom_background.png" id="7_background"]
-[ext_resource type="Texture2D" path="res://art/bedroom_bed.png" id="8_bed"]
-[ext_resource type="Texture2D" path="res://art/bedroom_desk.png" id="9_desk"]
-[ext_resource type="Texture2D" path="res://art/melatonin_bottle.png" id="10_bottle"]
+[ext_resource type="Texture2D" path="res://art/Badroom/bedroom_background.png" id="7_background"]
+[ext_resource type="Texture2D" path="res://art/Badroom/bedroom_bed.png" id="8_bed"]
+[ext_resource type="Texture2D" path="res://art/Badroom/bedroom_desk.png" id="9_desk"]
+[ext_resource type="Texture2D" path="res://art/Badroom/melatonin_bottle.png" id="10_bottle"]
 [ext_resource type="Shader" path="res://shaders/sprite_alpha_outline.gdshader" id="11_outline"]
 [ext_resource type="Script" path="res://scripts/bedroom/door_interaction.gd" id="12_door"]
 [ext_resource type="Script" path="res://scripts/ui/bedroom_status_hud.gd" id="13_status"]
 [ext_resource type="Script" path="res://scripts/bedroom/bedroom_weather.gd" id="14_weather"]
-[ext_resource type="Texture2D" path="res://art/sunshade.png" id="15_sunshade"]
+[ext_resource type="Texture2D" path="res://art/Badroom/sunshade.png" id="15_sunshade"]
+[ext_resource type="Texture2D" path="res://art/Badroom/bedroom_computer_light.png" id="16_computer_light"]
+[ext_resource type="Texture2D" path="res://art/Badroom/bedroom_computer_dark.png" id="17_computer_dark"]
+[ext_resource type="PackedScene" path="res://scenes/ui/computer_overlay.tscn" id="18_overlay"]
+[ext_resource type="Texture2D" path="res://art/lighting/screen_light.png" id="20_screen_light"]
+[ext_resource type="Shader" path="res://shaders/bedroom_vignette.gdshader" id="21_vignette"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bed_outline"]
 resource_local_to_scene = true
@@ -35,6 +40,22 @@ shader = ExtResource("11_outline")
 shader_parameter/outline_enabled = 0.0
 shader_parameter/outline_width_source_pixels = 12.0
 shader_parameter/outline_color = Color(1, 1, 1, 0.78)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_computer_outline"]
+resource_local_to_scene = true
+shader = ExtResource("11_outline")
+shader_parameter/outline_enabled = 0.0
+shader_parameter/outline_width_source_pixels = 6.0
+shader_parameter/outline_color = Color(1, 1, 1, 0.78)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("21_vignette")
+shader_parameter/strength = 0.1
+shader_parameter/inner_radius = 0.42
+shader_parameter/softness = 0.62
+shader_parameter/bands = 6.0
+shader_parameter/pixel_size = 3.0
+shader_parameter/vignette_color = Color(0.063, 0.09, 0.133, 1)
 
 [node name="Bedroom" type="Node2D"]
 script = ExtResource("1_bedroom")
@@ -81,6 +102,11 @@ z_index = -2
 texture = ExtResource("9_desk")
 centered = false
 
+[node name="BedroomComputer" type="Sprite2D" parent="Layout/ArtRoot"]
+material = SubResource("ShaderMaterial_computer_outline")
+texture = ExtResource("17_computer_dark")
+centered = false
+
 [node name="MelatoninBottle" type="Sprite2D" parent="Layout/ArtRoot"]
 visible = false
 material = SubResource("ShaderMaterial_bottle_outline")
@@ -94,6 +120,27 @@ material = SubResource("ShaderMaterial_sunshade_outline")
 z_index = 1
 texture = ExtResource("15_sunshade")
 centered = false
+
+[node name="BedroomLighting" type="Node2D" parent="Layout"]
+
+[node name="CanvasModulate" type="CanvasModulate" parent="Layout/BedroomLighting"]
+color = Color(0.82, 0.84, 0.92, 1)
+
+[node name="ComputerScreenLight" type="PointLight2D" parent="Layout/BedroomLighting"]
+visible = false
+position = Vector2(64, 168)
+color = Color(0.62, 0.86, 0.95, 1)
+energy = 2.3
+texture = ExtResource("20_screen_light")
+texture_scale = 3.2
+item_cull_mask = 2
+
+[node name="VignetteLayer" type="ColorRect" parent="Layout"]
+z_index = 2
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+material = SubResource("ShaderMaterial_vignette")
 
 [node name="BedAnchor" type="Marker2D" parent="Layout"]
 position = Vector2(424, 257)
@@ -137,7 +184,17 @@ input_pickable = true
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Layout/SunshadeClickArea"]
 polygon = PackedVector2Array(434, 0, 613, 0, 613, 202, 434, 202)
 
-[node name="DoorInteraction" type="Node2D" parent="Layout"]
+[node name="ComputerClickArea" type="Area2D" parent="Layout"]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+monitorable = false
+input_pickable = true
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Layout/ComputerClickArea"]
+polygon = PackedVector2Array(18, 145, 127, 145, 127, 208, 18, 208)
+
+[node name="BottomEdgeInteraction" type="Node2D" parent="Layout"]
 z_index = 2
 script = ExtResource("12_door")
 config = ExtResource("4_config")
@@ -161,3 +218,8 @@ config = ExtResource("4_config")
 [node name="MelatoninInteraction" parent="PhoneLayer" instance=ExtResource("5_mel")]
 
 [node name="ConfirmationDialog" parent="PhoneLayer" instance=ExtResource("6_dialog")]
+
+[node name="ComputerLayer" type="CanvasLayer" parent="."]
+layer = 12
+
+[node name="ComputerOverlay" parent="ComputerLayer" instance=ExtResource("18_overlay")]

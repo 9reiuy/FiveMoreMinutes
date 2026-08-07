@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/confirmation_dialog.gd" id="1_dialog"]
 [ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
-[ext_resource type="Texture2D" path="res://art/chr.png" id="3_character"]
+[ext_resource type="Texture2D" path="res://art/Badroom/chr.png" id="3_character"]
 [ext_resource type="Script" path="res://scripts/ui/dialogue_frame.gd" id="4_frame"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_character"]

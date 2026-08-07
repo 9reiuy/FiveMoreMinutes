@@ -75,6 +75,7 @@
 | 剑气初始速度比例 | `katana_wave_initial_speed_ratio` | 0.35 | 比例 | 刚发射时速度占最终速度的比例 | 0.1—1.0 | 越低起步越慢 |
 | 剑气加速时间 | `katana_wave_acceleration_duration` | 0.25 | 秒 | 从初速达到最终速度所需时间 | 0.05—0.8 | 使用游戏时间，会随暂停和慢动作停止/减速 |
 | 剑气加速曲线 | `katana_wave_acceleration_curve` | Ease-In | Curve | 控制速度随进度的变化形状 | 保持0—1输出 | 轨迹仍是直线，只改变速度；默认曲线近似二次Ease-In |
+| 剑气素材朝向补偿角 | `katana_wave_texture_forward_angle_deg` | 180 | 度 | SP301_04 月牙素材默认尖端朝 -x，最终 rotation = 飞行方向角 + 本补偿角 | -180—180 | 保证视觉尖端/碰撞/运动方向三者一致；换剑气素材时只改本参数 |
 
 ## 敌人生成与敌人数值
 
@@ -87,6 +88,7 @@
 | 玩家最小生成距离 | `enemy_minimum_spawn_distance` | 150 | px | 候选点与玩家的安全距离 | 50—400 | 与场地尺寸共同决定成功率 |
 | 怪物间最小间距 | `enemy_spawn_minimum_spacing` | 30 | px | 新怪与现有/同批怪物距离 | 0—100 | 防止完全重叠 |
 | 生成最大重试 | `enemy_spawn_position_max_retries` | 12 | 次/只 | 单只怪寻找合法位置的次数上限 | 1—50 | 达到上限后放弃该只，防止死循环 |
+| 屏幕外生成安全边距 | `enemy_spawn_visibility_margin` | 64 | px | 常规/触手怪必须生成在相机可见矩形外扩该边距的禁区之外 | 0—200 | 可见矩形由 `dream_world.get_camera_visible_world_rect()`（viewport ÷ zoom）计算，不使用固定像素猜测值；宝箱怪死亡分裂等怪物技能不受限 |
 | 修正带解锁时间 | `correction_unlock_seconds` | 30 | 本局秒 | 加入随机生成池的经过时间 | 0—600 | 按单局实际经过时间，不看钟点 |
 | 订书机解锁时间 | `stapler_unlock_seconds` | 90 | 本局秒 | 加入随机生成池的经过时间 | 0—900 | 90秒前不会出现 |
 | 大修正带登场时间 | `large_correction_unlock_seconds` | 180 | 本局秒 | 每局唯一精英触发时间 | 1—1800 | 本次保持不变，不进入普通随机池 |
@@ -102,6 +104,14 @@
 | 订书钉速度 | `staple_speed` | 170 | px/s | 投射物移动速度 | 20—1500 | 不追踪玩家 |
 | 订书钉最大距离 | `staple_max_distance` | 300 | px | 飞行累计距离上限 | 20—1500 | 达到后销毁 |
 | 大修正带生命倍率 | `large_correction_health_multiplier` | 10 | 倍 | 相对基础敌人生命的倍率 | 1—50 | 不改变普通修正带生命 |
+| 触手怪生命 | `tentacle_max_hp` | 100 | HP | 触手怪固定生命 | 10—1000 | 不随难度成长 |
+| 触手怪接触伤害 | `tentacle_contact_damage` | 5 | HP | 靠近触手时按受击冷却结算 | 0—100 | 0.8s 冷却，不每帧扣血 |
+| 触手怪生成间隔 | `tentacle_spawn_interval` | 30 | 秒 | 梦境时间体系（跟随 Engine.time_scale，暂停即停） | 5—300 | 不使用真实时间 |
+| 触手怪每批最少 | `tentacle_spawn_batch_min` | 1 | 只 | 每次间隔到点随机下限 | 1—10 | 与上限取 min |
+| 触手怪每批最多 | `tentacle_spawn_batch_max` | 5 | 只 | 每次间隔到点随机上限 | 1—10 | 实际生成=min(随机, 剩余额度) |
+| 触手怪全图上限 | `tentacle_max_alive` | 10 | 只 | 同时存活触手数量上限 | 0—30 | 按 tentacle_enemies 组计数 |
+| 触手怪距玩家最小生成距离 | `tentacle_min_spawn_distance_from_player` | 120 | px | 生成点与玩家的安全距离 | 40—400 | 优先相机禁区外（屏幕外），找不到屏外点时退而只满足该距离 |
+| 触手怪紫色经验值 | `tentacle_purple_exp_value` | 25 | 经验 | 死亡掉落 1 个紫色经验球 | 1—1000 | 沿用宝箱怪紫色经验数值 |
 
 ## 经验、升级与掉落
 
@@ -134,7 +144,7 @@
 
 ## 手机外观相关参数
 
-手机外壳资源为 `res://art/Phone.png`，节点为 `BedroomPhone/PhoneShell`。图片保持160×336原始比例、关闭过滤，节点设置为忽略鼠标输入并绘制在运行时内容后方。
+手机外壳资源为 `res://art/Badroom/Phone.png`，节点为 `BedroomPhone/PhoneShell`。图片保持160×336原始比例、关闭过滤，节点设置为忽略鼠标输入并绘制在运行时内容后方。
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
 |---|---|---:|---|---|---|---|
@@ -160,6 +170,8 @@
 
 层级在 `res://scenes/dream/dream_world.tscn` 中使用容器 `z_index` 固定：背景为0、`PickupContainer`为1、`EnemyContainer`为2、玩家为3、投射物与战斗特效为4、UI使用CanvasLayer 20。经验节点和拾取脚本未改变，只移动其绘制容器，因此吸附、碰撞距离和经验结算规则保持不变。
 
+经验与红心视觉已换为 `res://art/icon/EXP/` 序列帧动画（循环、Nearest、按各帧自身尺寸居中绘制防抖）：蓝经验 = `Blue_EXP.png` 5帧（10×9 @ x=0/16/32/48/64），紫经验 = `Purple_EXP.png` 6帧（10×9 @ x=0/16/32/48/64/81，宝箱怪/触手怪等所有正式紫色 EXP 统一复用），红心 = `health.png` 6帧（高13，宽 14/12/10/4/12/14）。EXP 数值、磁吸半径、拾取判定与红心 15HP 回复（拾取后仍播 Heal 角色恢复动画）全部不变，碰撞/拾取半径不跟美术放大。脚本：`res://scripts/entities/xp_gem.gd`、`res://scripts/entities/heart_pickup.gd`。
+
 ## 打击感与集中音效
 
 统一音效入口为 `res://scripts/audio/sfx_manager.gd`。已有导入音效继续使用 `res://sfx/`；`ui_hover`、`dash`、`player_hurt`、`weapon_fire`、`pistol_fire`、`shotgun_fire`、`enemy_kill` 当前由管理器集中生成原创8-bit占位声，不存在每个按钮单独建立管理器的情况。事件分别进入UI、Characters或Weapons总线，替换正式素材时只需改管理器事件映射。
@@ -184,27 +196,42 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 ## 敌人像素素材与动画
 
-四种敌人共享项目内原创占位图集 `res://assets/art/enemies/generated/enemy_sprite_atlas.png`，没有引入第三方素材。每个敌人场景通过自己的 `SpriteFrames` 子资源切分对应行，关闭过滤并只缩放视觉节点；碰撞体和AI状态机保持原结构。
+五种常规敌人已替换为 Monster 素材包的真实序列帧（AnimatedSprite2D + SpriteFrames，帧数为实测切分）；触手怪使用 Crawling Depths 的 tentacle_sheet.png；精英魔眼（internal_id 仍为 `large_correction_tape`）已换用 Flying Eye 完整动画模型（walk/charge/death 全部接入，共用描边/Hit Flash/死亡序列，HP/伤害/冲刺/EXP 数值不变）。素材目录/帧明细见 `docs/ASSET_INDEX.md`，署名与授权见 `docs/THIRD_PARTY_ASSETS.md`。全部敌人（含精英魔眼）统一接入 EnemyOutlineController 白描边（材质实例独立、宽度统一由 `enemy_outline_width_px`=2.0 集中配置，源纹理像素空间、基于 `TEXTURE_PIXEL_SIZE`，不随节点缩放放大，VisualRoot ×4 不会变成巨描边）、Hit Flash（visual.modulate，与描边材质兼容）与基类死亡序列（停 AI→播 death→动画结束后才掉落/回收）。内部 ID 保留：basic/correction_tape/stapler/alarm_clock/mailbox/tentacle/large_correction_tape，显示名称依次为史莱姆/魔眼/精灵射手/自爆蘑菇/宝箱怪/触手怪/精英魔眼。
 
-| 敌人 | 场景资源 | 移动动画 | 蓄力/攻击动画 | 状态同步位置 |
-|---|---|---|---|---|
-| 基础敌人 | `res://scenes/entities/basic_enemy.tscn` | `move_down/left/right/up`（各2帧） | — | `res://scripts/entities/basic_enemy.gd` |
-| 修正带 | `res://scenes/entities/correction_tape_enemy.tscn` | `walk`（2帧循环） | `charge`（2帧循环） | `res://scripts/entities/correction_tape_enemy.gd` |
-| 大体型修正带 | `res://scenes/entities/large_correction_tape_enemy.tscn` | `walk`（2帧循环） | `charge`（2帧循环） | `res://scripts/entities/large_correction_tape_enemy.gd` |
-| 订书机 | `res://scenes/entities/stapler_enemy.tscn` | `walk`（2帧循环） | `attack_prepare`（2帧非循环） | `res://scripts/entities/stapler_enemy.gd` |
+| 敌人 | 场景资源 | 移动动画 | 蓄力/攻击动画 | 死亡动画 | 状态同步位置 |
+|---|---|---|---|---|---|
+| 史莱姆（basic） | `res://scenes/entities/basic_enemy.tscn` | `walk`（6帧循环） | — | `death`（11帧非循环） | `res://scripts/entities/basic_enemy.gd` |
+| 魔眼（correction_tape） | `res://scenes/entities/correction_tape_enemy.tscn` | `walk`（8帧循环） | `charge`（8帧循环） | `death`（4帧非循环） | `res://scripts/entities/correction_tape_enemy.gd` |
+| 精英魔眼（large_correction_tape，Flying Eye） | `res://scenes/entities/large_correction_tape_enemy.tscn` | `walk`（Flight.png 8帧循环） | `charge`（Attack.png 8帧循环） | `death`（Death.png 4帧非循环） | `res://scripts/entities/large_correction_tape_enemy.gd` |
+| 精灵射手（stapler） | `res://scenes/entities/stapler_enemy.tscn` | `walk`（8帧循环） | `attack_prepare`（6帧非循环） | `death`（10帧非循环） | `res://scripts/entities/stapler_enemy.gd` |
+| 自爆蘑菇（alarm_clock） | `res://scenes/entities/alarm_clock_enemy.tscn` | `walk`（8帧循环） | `charge`（8帧循环） | `death_delay`（4帧非循环）+ `explode` 单帧 | `res://scripts/entities/alarm_clock_enemy.gd` |
+| 宝箱怪（mailbox） | `res://scenes/entities/mailbox_enemy.tscn` | `walk`（6帧循环） | `slam_charge`（5帧循环）/`slam`（9帧非循环） | `death`（6帧非循环） | `res://scripts/entities/mailbox_enemy.gd` |
+| 触手怪（tentacle） | `res://scenes/entities/tentacle_enemy.tscn` | `idle`（6帧循环，不移动） | — | 无帧：淡出0.5s | `res://scripts/entities/tentacle_enemy.gd` |
 
-修正带的 `charge` 与实际 `correction_charge_seconds` / `large_correction_charge_seconds` 同时开始并结束，同时加入后缩、抖动、收紧危险圈和冲刺方向线。订书机在每个原有2秒发射周期末段进入 `attack_prepare`，到原发射时刻才生成订书钉，因此没有改变攻击间隔或判定。
+魔眼的 `charge` 与实际蓄力时间同时开始并结束。精灵射手冷却到点后**立即停止移动（velocity=0，`huntress_attack_stop_before_shot` 门控）并原地完整播放 attack_prepare 序列**，动画帧号 ≥ `huntress_shoot_projectile_frame`（默认3，即弓弦释放帧）时生成箭矢；动画播完恢复 walk 移动，周期到点未触发则兜底发射，发射间隔与判定不变；进入攻击时锁定 `attack_target_position`，目标失效时用锁定位置兜底方向。精英魔眼移动/死亡帧率与普通魔眼共用 `flying_eye_move_fps`/`flying_eye_death_fps`。自爆蘑菇的死亡帧融入原“死亡→延迟→爆炸”流程，爆炸机制不变；宝箱怪分裂机制保持（仍分裂为修正带场景，现为魔眼视觉）。触手怪生成器位于 `res://scripts/dream/tentacle_spawner.gd`，由 `dream_world.tscn` 的 `TentacleSpawner` 节点承载。
+
+敌人体型放大（只改视觉与必要碰撞，不改任何战斗数值）：五种 Monster 敌人最终视觉尺寸为旧版的 **×4**（史莱姆/魔眼/精灵射手/自爆蘑菇/宝箱怪），触手怪单独 **×2**；放大只发生一次（配置保存绝对最终 scale，运行时不二次乘倍率），素材保持 Nearest 过滤、无 Mipmaps，不重采样。碰撞体按新视觉“身体核心”单独适配（不机械×4，弓/翅膀/触角/透明区不计入）：史莱姆 r18@(0,10)、魔眼 r13@原点（不含翅膀）、精灵射手 r14@(0,6)（不含弓）、自爆蘑菇 r11@(0,4)（爆炸半径仍用原配置）、宝箱怪 r46@(0,10)、触手怪 r13@(0,-6) 固定不随触须摆动。伤害数字锚点由基类 `get_damage_number_offset()` 按帧高×视觉缩放自动上移；EXP 仍从敌人锚点附近掉落；描边/Hit Flash/自动瞄准不受影响。
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
 |---|---|---:|---|---|---|---|
-| 基础敌人移动帧率 | `basic_enemy_walk_animation_fps` | 5 | FPS | 基础敌人walk速度 | 2—12 | 修改后重新进入梦境 |
-| 修正带移动帧率 | `correction_enemy_walk_animation_fps` | 5 | FPS | 普通修正带walk速度 | 2—12 | 与AI移动速度无关 |
-| 大修正带移动帧率 | `large_correction_enemy_walk_animation_fps` | 4 | FPS | 大型修正带walk速度 | 2—10 | 与大小倍率无关 |
-| 订书机移动帧率 | `stapler_enemy_walk_animation_fps` | 4 | FPS | 订书机walk速度 | 2—10 | 与发射周期无关 |
-| 修正带蓄力帧率 | `correction_charge_animation_fps` | 8 | FPS | 普通修正带charge速度 | 2—16 | 动画循环，实际结束由蓄力计时控制 |
-| 大修正带蓄力帧率 | `large_correction_charge_animation_fps` | 7 | FPS | 大型修正带charge速度 | 2—16 | 动画循环，实际结束由蓄力计时控制 |
-| 订书机攻击帧率 | `stapler_attack_animation_fps` | 8 | FPS | `attack_prepare`开合速度 | 2—16 | 不改变实际发射时刻 |
-| 订书机前摇窗口 | `stapler_attack_windup_seconds` | 0.35 | 秒 | 每次发射前切入预警动画的时间 | 0.15—0.8 | 自动限制为攻击间隔的80%以内 |
+| 史莱姆移动帧率 | `slime_move_fps` | 7 | FPS | 史莱姆 walk 速度 | 2—15 | 修改后重新进入梦境 |
+| 史莱姆死亡帧率 | `slime_death_fps` | 9 | FPS | 史莱姆 death 速度 | 2—15 | 死亡序列结束后才掉落 |
+| 魔眼移动帧率 | `flying_eye_move_fps` | 9 | FPS | 魔眼 walk 速度 | 2—15 | 与 AI 移动速度无关 |
+| 魔眼死亡帧率 | `flying_eye_death_fps` | 6 | FPS | 魔眼 death 速度 | 2—15 | 非循环播完回收 |
+| 精灵射手移动帧率 | `huntress_move_fps` | 10 | FPS | 精灵射手 walk 速度 | 2—20 | 与发射周期无关 |
+| 精灵射手射击帧率 | `huntress_shoot_fps` | 12 | FPS | attack_prepare 速度 | 2—24 | 与发射帧门槛联动 |
+| 精灵射手死亡帧率 | `huntress_death_fps` | 8 | FPS | 精灵射手 death 速度 | 2—20 | 非循环播完回收 |
+| 自爆蘑菇移动帧率 | `mushroom_move_fps` | 8 | FPS | walk 与 charge 速度 | 2—15 | 不影响自爆计时 |
+| 自爆蘑菇死亡帧率 | `mushroom_death_fps` | 4 | FPS | death_delay 速度 | 1—12 | 播完后仍按原延迟爆炸 |
+| 宝箱怪移动帧率 | `mimic_move_fps` | 6 | FPS | walk/slam_charge/slam 速度 | 2—15 | 与砸击判定无关 |
+| 宝箱怪死亡帧率 | `mimic_death_fps` | 7 | FPS | 宝箱怪 death 速度 | 2—15 | 动画结束后才掉落/分裂 |
+| 触手怪待机帧率 | `tentacle_idle_fps` | 3 | FPS | 触手 idle 速度 | 1—10 | 环境型缓慢摆动 |
+| 发射帧门槛 | `huntress_shoot_projectile_frame` | 3 | 帧号 | attack_prepare 达到该帧发射订书钉 | 0—5 | 不得超过动画末帧 |
+| 修正带蓄力帧率 | `correction_charge_animation_fps` | 8 | FPS | 魔眼 charge 速度 | 2—16 | 动画循环，实际结束由蓄力计时控制 |
+| 精英魔眼移动/死亡帧率 | `flying_eye_move_fps` / `flying_eye_death_fps` | 9 / 6 | FPS | 精英魔眼（换 Flying Eye 后）walk/death 速度，与普通魔眼共用 | 2—16 | `large_correction_enemy_walk_animation_fps` 已不再被精英读取 |
+| 精英魔眼蓄力帧率 | `large_correction_charge_animation_fps` | 7 | FPS | 精英 charge 速度 | 2—16 | 动画循环，实际结束由蓄力计时控制 |
+| 射手攻击前停步 | `huntress_attack_stop_before_shot` | `true` | 布尔 | 进入攻击序列立即 velocity=0 并暂停寻路，动画播完才恢复 | true/false | 关闭后退化为可移动射击（不推荐） |
+| 订书机前摇窗口 | `stapler_attack_windup_seconds` | 0.35 | 秒 | （已废弃，保留避免旧资源报错）旧预警窗口 | — | 新实现改为冷却到点直接进入完整攻击序列 |
 
 ## 像素角色、武器特效与音频质感
 
@@ -212,8 +239,8 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
 |---|---|---:|---|---|---|---|
-| 玩家像素缩放 | `player_sprite_scale` | 1 | 倍 | 玩家图集的整数缩放 | 1—4 | 使用整数值，关联像素吸附与碰撞体视觉对齐 |
-| 基础敌人像素缩放 | `basic_enemy_sprite_scale` | 1 | 倍 | 四方向基础敌人图集缩放 | 1—4 | 只改视觉，不改碰撞半径 |
+| 玩家像素缩放 | `player_sprite_scale` | 0.75 | 倍 | 玩家图集缩放（视觉与身体碰撞缩到 75%） | 0.25—4 | 只在 VisualRoot 一处应用，禁止根节点与 Sprite 重复缩放；碰撞圆半径同步 10→7.5 |
+| 敌人视觉缩放组 | `slime/flying_eye/huntress/mushroom/mimic/tentacle_visual_scale` | 0.60/0.76/1.02/0.96/1.68/1.0 | 倍 | 各素材统一缩放入口（绝对最终值，运行时不二次乘倍率；自爆蘑菇已基于上一版 0.48 ×2 = 0.96） | 0.02—2 | 只改视觉；碰撞体按身体核心单独适配；精英魔眼使用独立 `large_correction_visual_scale`=1.0；运行时不二次乘倍率 |
 | 玩家待机帧率 | `player_idle_animation_fps` | 1 | FPS | 四方向待机动画速度 | 0.5—4 | 当前每个方向使用一帧，为后续增帧保留接口 |
 | 玩家行走帧率 | `player_walk_animation_fps` | 7 | FPS | 四方向四帧行走循环速度 | 4—12 | 不改变实际移动速度 |
 | 枪口闪光时长 | `weapon_muzzle_flash_seconds` | 0.07 | 秒 | 手枪和霰弹枪像素枪口反馈 | 0.03—0.15 | 仅视觉，受暂停与慢动作影响 |
@@ -261,7 +288,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 - 帧区域：所有动画帧固定为`64×64 px`
 - 可见角色高度：所有方向、所有帧固定为`48 px`
 - 脚底线：每帧固定在单元格`y=58`
-- 缩放参数：`player_sprite_scale=1`
+- 缩放参数：`player_sprite_scale=0.75`（视觉与身体碰撞均为当前的 75%，只在 VisualRoot 一处缩放；身体碰撞圆半径 7.5，视觉锚点 `visual_home_position=(0,-9.75)`）
 - 行走帧率：`player_walk_animation_fps=7`
 - 待机帧率：`player_idle_animation_fps=1`
 
@@ -271,18 +298,31 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 快照实现位于 `res://scripts/app/day_start_snapshot.gd`。进入新一天时复制局外状态并写入正常存档；卧室购买、服药和本局梦境状态只修改当日工作副本。通过暂停菜单退出到主菜单时，工作副本被快照覆盖，因此继续游戏回到当天21:00开始状态。设置由独立的SettingsManager永久保存，不参与快照回滚。
 
-## 卧室门口与廉价便当
+## 卧室底边与廉价便当
 
-配置路径统一为 `res://resources/demo_config.tres`，字段声明位于 `res://scripts/data/demo_config.gd`。门口交互节点为 `res://scenes/bedroom/bedroom.tscn` 的 `Layout/DoorInteraction`；配送状态使用 `NONE`、`DELIVERING`、`WAITING_AT_DOOR`、`RECEIVED` 四个明确值。
+配置路径统一为 `res://resources/demo_config.tres`，字段声明位于 `res://scripts/data/demo_config.gd`。门口/外卖交互已从屏幕左侧迁移到屏幕底部：交互节点为 `res://scenes/bedroom/bedroom.tscn` 的 `Layout/BottomEdgeInteraction`（脚本 `res://scripts/bedroom/door_interaction.gd`，对白与取餐逻辑不变）；配送状态使用 `NONE`、`DELIVERING`、`WAITING_AT_DOOR`、`RECEIVED` 四个明确值。
+
+交互区域限定在**屏幕底部横带**（640×360 下为 Rect(173.3, 300, 213.3, 60)，中心 x=280px、高60px、宽度保持中间三分之一），左右边界外不触发悬停、点击与光效。光效为**底部真径向半圆白光**（`res://shaders/door_glow_semicircle.gdshader`，由脚本内动态 ColorRect 承载），几何由集中参数控制：水平直径 = 视口宽 × `bottom_glow_width_ratio`（默认 0.59375，640 下宽 380px、半径 190px），高度 = 半径 × `bottom_glow_height_multiplier`（默认 0.631579，即高 120px 的椭圆半光，只向上变化），圆心 x = 视口宽 × `bottom_glow_center_x_ratio`（默认 0.5），底边贴屏幕底；圆心即局部 UV(0.5,1.0)。Shader 由脚本传入 `rect_size` 重建真实像素坐标并按椭圆距离计算 alpha（`vertical_scale` 只拉伸垂直方向距离，水平半径仍为 outer_radius，左右边界处 alpha 仍为 0；ColorRect 无纹理，`TEXTURE_PIXEL_SIZE` 不可用，禁用圆角 Panel/GradientTexture2D 拉伸/白色 PNG 伪装），`alpha = 1 - smoothstep(inner_radius, outer_radius, dist)` 且 dist≥outer 强制为 0（半圆外与上方两角完全透明，不是方块），像素空间距离天然 aspect 正确；峰值 alpha 0.32，距离按 `door_glow_pixel_step_size`=4px 轻微量化出像素风同心环。交互区（BottomEdgeInteraction）不随视觉高度扩大，仍为原底部横带。旧横向分段光条与 `door_glow_width` 配置已删除。
+
+外卖到达（`WAITING_AT_DOOR`）后在底部中央交互区上方同时显示像素字体文字“**有人敲门**”与**朝下往返箭头**（现有像素字体/UI 文字色、水平居中、无气泡框；箭头只做垂直往返，往返距离 `delivery_arrow_bounce_distance_px`=5px、单次往返周期 `delivery_arrow_bounce_duration`=0.65s，偏移逐帧取整为整数像素，无 Blur/旋转/横漂）；等待期间白光不依赖鼠标悬停保持可见（strength 取 max(悬停, 等待) 再乘等待倍率）。不恢复旧包裹/外卖图标。领取后或手机/电脑/弹窗等 Modal UI 打开时文字、箭头与白光同时立即隐藏（状态不丢失，关闭后若仍在门口则重新显示；手机展开完全阻断输入）。敲门音效保留：`DELIVERING → WAITING_AT_DOOR` 转换时播放一次（`bedroom.gd _update_delivery()` 内 `SFX.play_door_knock()`）。
+
+可用条件由 `bedroom.gd can_use_bottom_edge_interaction()` 统一判断：场景输入锁定、手机展开或未完全收回、电脑界面、确认对话框、褪黑素界面任一存在时禁用并隐藏白光，不依赖视觉遮挡阻断输入。
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
 |---|---|---:|---|---|---|---|
-| 门口热区宽度 | `door_interaction_width_ratio` | 0.12 | 屏幕宽度比例 | 屏幕左侧可悬停与点击的门口区域 | 0.10—0.15 | 仅手机完全收回且没有弹窗时可点击 |
-| 门口白光宽度 | `door_glow_width` | 92 | px | 左边缘向画面内部延伸的低分辨率分段渐变 | 48—140 | 不改变实际点击宽度 |
-| 门口白光透明度 | `door_glow_opacity` | 0.32 | Alpha | 普通悬停白光强度 | 0.10—0.60 | 到货时再乘等待倍率 |
+| 底边热区高度 | `bottom_edge_interaction_height` | 60 | px | 屏幕底部可悬停与点击的交互条高度 | 16—120 | 交互区中心 x=280px；仅手机完全收回且没有弹窗时可点击 |
+| 交互区左边界比例 | `bottom_interaction_horizontal_start_ratio` | 0.270833 | 比例 | 交互区水平起点（视口宽度比例） | 0—1 | 与右边界共同限定中心 x=280px、宽中间三分之一 |
+| 交互区右边界比例 | `bottom_interaction_horizontal_end_ratio` | 0.604167 | 比例 | 交互区水平终点（视口宽度比例） | 0—1 | 白光与点击均只在此范围内生效 |
+| 门口白光透明度 | `door_glow_opacity` | 0.32 | Alpha | 悬停半圆白光峰值强度 | 0.10—0.60 | 到货时再乘等待倍率；保持低饱和氛围不变成纯白块 |
 | 白光淡入时间 | `door_glow_fade_in_seconds` | 0.16 | 秒 | 鼠标进入后的亮起时间 | 0.05—0.5 | 受场景暂停影响 |
 | 白光淡出时间 | `door_glow_fade_out_seconds` | 0.24 | 秒 | 鼠标离开后的消退时间 | 0.05—0.8 | 手机展开后立即以该速度淡出 |
-| 到货白光倍率 | `door_waiting_glow_multiplier` | 1.55 | 倍 | 便当等待领取时强化门口反馈 | 1.0—2.5 | 像素包裹提示可在手机打开时保留，但不能领取 |
+| 到货白光倍率 | `door_waiting_glow_multiplier` | 1.55 | 倍 | 便当等待领取时强化门口半圆光 | 1.0—2.5 | 手机打开时文字与光均隐藏，不能领取 |
+| 白光像素量化步长 | `door_glow_pixel_step_size` | 4 | px | 半圆光距离量化的同心环宽度 | 0—12 | 0=不量化；不可过强，保持柔和渐变 |
+| 半圆白光宽度比例 | `bottom_glow_width_ratio` | 0.59375 | 比例 | 半圆水平直径 = 视口宽 × 本值 | 0.05—1 | 0.59375 即 640 下宽 380px |
+| 半圆白光圆心比例 | `bottom_glow_center_x_ratio` | 0.5 | 比例 | 圆心 x = 视口宽 × 本值，底边贴屏幕底 | 0—1 | 0.5 即屏幕底部中央 |
+| 半圆白光高度倍率 | `bottom_glow_height_multiplier` | 0.631579 | 倍 | 半圆高度 = 水平半径 × 本值，只向上变化 | 0.1—4 | 0.631579 即半径190px、高120px；交互区不随之变化 |
+| 敲门箭头往返距离 | `delivery_arrow_bounce_distance_px` | 5 | px | 朝下箭头垂直往返幅度（整数像素） | 4—6 | 不产生横漂/旋转/Blur |
+| 敲门箭头往返周期 | `delivery_arrow_bounce_duration` | 0.65 | 秒 | 单次完整往返时长 | 0.5—0.8 | 领取/Modal 打开时箭头立即隐藏 |
 | 廉价便当价格 | `cheap_meal_price` | 200 | 元 | 速联跑腿购买时立即扣除的金额 | 0—10,000 | 使用统一货币格式；余额不足播放禁止音 |
 | 配送时间 | `cheap_meal_delivery_seconds` | 5.0 | 秒 | 从购买成功到进入等待领取状态的时间 | 1—60 | 到时只触发一次独立`door_knock`事件 |
 | 每日购买上限 | `cheap_meal_daily_purchase_limit` | 1 | 份/日 | 限制廉价便当当天购买数量 | 当前建议1 | 新一天重置购买计数；本阶段不建立食物背包 |
@@ -386,6 +426,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 - `grenade_explosion_radius`：默认 `150.0 px`，当前规则固定为150。敌人/玩家实际判定半径；视觉由 `grenade_explosion_visual_radius` 单独控制。
 - `grenade_enemy_damage`：默认 `30` 点，推荐 `1—300`。对每个敌人的基础伤害，各目标独立暴击。
 - `grenade_player_self_damage`：默认 `10` 点，推荐 `0—100`。对玩家固定自伤，不暴击并遵守无敌帧。
+- `grenade_spawn_offset_px`：默认 `14` px，推荐 `0—64`。榴弹出生点沿瞄准方向的偏移，保证出生在当前玩家碰撞体外侧；目标仍为攻击瞬间鼠标世界坐标快照，飞行不追踪鼠标。榴弹本体为纯 Node2D 无碰撞体，不会因触碰玩家提前爆炸，玩家自伤只来自爆炸 AoE（Dodge/出生无敌仍可阻挡）。飞行越界判定使用扩图后的 `ARENA_BOUNDS = Rect2(24, 24, 992, 432)`（旧小地图尺寸是脚底爆炸根因，已修正）。目标与出生点重合时方向回退最近一次有效瞄准方向（`last_aim_direction`），再兑底玩家默认面朝，绝不取消投掷；每次正式攻击必创建 1 枚投射物，链路断裂时 push_error 明确报错。
 
 ## 闹钟怪
 
@@ -416,7 +457,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 ## 主菜单版本与社区链接
 
-- `game_version_text`：默认 `版本号V0.3`。
+- `game_version_text`：默认 `版本号V0.4.1`。唯一版本字段，主菜单底部文字运行时由 `main_menu.gd` 以 `%s　　%s` 拼接本字段与群号；`main_menu.tscn` 内同文本仅为编辑器默认值，两处已同步为 V0.4.1。
 - `community_group_text`：默认 `游戏存活进度群:833796070`。
 - `community_group_url`：默认 `https://qm.qq.com/q/Mq3wuCuZQ6`；点击底部文字后交由系统浏览器打开。
 
@@ -449,12 +490,10 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 - `grenade_explosion_radius`：默认 `150 px`，实际敌人伤害与玩家自伤判定半径。
 - `grenade_explosion_visual_radius`：默认 `150 px`，推荐 `100—160`，仅控制圆环、闪光和烟雾最外缘。本版固定视觉节点缩放为 `1`，避免视觉被二次放大。
 
-### 闹钟怪与邮箱怪动画
+### 自爆蘑菇与宝箱怪动画
 
-- `alarm_enemy_visual_scale`：默认 `0.32`，推荐 `0.20—0.50`；小体型闹钟怪统一视觉缩放。
-- `alarm_enemy_walk_fps`：默认 `6` FPS，推荐 `3—10`；四帧 `walk` 循环速度。
-- `mailbox_enemy_walk_fps`：默认 `4` FPS，推荐 `2—8`；四帧重型 `walk` 循环速度。
-- 两套步行帧分别位于 `res://assets/enemies/alarm_clock/walk_0.png` 至 `walk_3.png`、`res://assets/enemies/mailbox/walk_0.png` 至 `walk_3.png`，固定画布与脚底基准。
+- 旧字段 `alarm_enemy_visual_scale`、`alarm_enemy_walk_fps`、`mailbox_enemy_walk_fps` 已删除，由 Monster 素材统一配置组接管：自爆蘑菇（原闹钟怪）用 `mushroom_move_fps`/`mushroom_death_fps`/`mushroom_visual_scale`，宝箱怪（原邮箱怪）用 `mimic_move_fps`/`mimic_death_fps`/`mimic_visual_scale`。
+- 新素材为 `res://art/Monster/Mushroom/` 与 `res://art/Monster/Mimic/` 的横条等分序列帧（帧明细见 `docs/ASSET_INDEX.md`），旧的 `assets/enemies/alarm_clock/`、`assets/enemies/mailbox/` 单帧贴图不再被敌人场景引用。
 
 ### 噩梦文字条件
 
@@ -493,3 +532,100 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 ## 连续未进食短信安全规则
 
 每日正式睡觉时按“更新当日计数 → 第3天发送妈妈提醒 → 第4天判定饥饿结局 → 保存”处理。同一天由 `hunger_checked_day_id` 防止重复累计。妈妈提醒严格在 `consecutive_hungry_days == 3` 且 `mom_hunger_message_sent == false` 时加入；消息安全入口位于 `res://scripts/app/main.gd` 的 `_add_online_message()`，会验证ID和正文、按消息ID防重复、补齐 `received_day_id`、分配 `message_sequence`、设置未读并只更新数据层。手机未实例化时不会访问UI节点。旧存档缺少 `mom_hunger_message_sent`、`mom_hunger_message_day_id` 或消息序号时，分别迁移为 `false`、`-1` 和一次性递增序号。
+
+## 卧室电脑交互、息屏与电脑界面
+
+电脑素材为 2560×1440 共享画布，与床、遮光帘等家具一样挂在 `Bedroom/Layout/ArtRoot`（缩放 0.25）下。
+
+- 亮屏素材：`res://art/Badroom/bedroom_computer_light.png`（对应需求中的 `computer`）。
+- 息屏素材：`res://art/Badroom/bedroom_computer_dark.png`（对应需求中的 `computer_dark`），两素材 Alpha 轮廓一致，仅屏幕明暗不同。
+- 电脑精灵节点：`Bedroom/Layout/ArtRoot/BedroomComputer`（Sprite2D，`centered=false`）。
+- 点击区域：`Bedroom/Layout/ComputerClickArea`（Area2D + CollisionPolygon2D，视口坐标约 (18,145)-(127,208)，略宽于素材不透明边界）。
+- 描边：复用现有 `res://shaders/sprite_alpha_outline.gdshader`，电脑使用独立 ShaderMaterial（`resource_local_to_scene`），宽度与床同为 `bedroom_interaction_outline_width / ArtRoot缩放`，沿 Alpha 边缘生成，无矩形框。
+- 高亮与点击判定沿用卧室统一流程（`_update_mouse_highlight()` 多边形检测 + `_is_opaque_at()` 逐像素 Alpha 检测），透明区域不可点。
+- 电脑界面场景：`res://scenes/ui/computer_overlay.tscn`，脚本 `res://scripts/ui/computer_overlay.gd`，实例挂在 `Bedroom/ComputerLayer`（CanvasLayer layer=12，高于手机 PhoneLayer=10）。界面为纯 `_draw()` 绘制的 Y2K/旧电脑像素桌面（壁纸、顶栏、任务栏、图标、假窗口），仅右上角关闭按钮有功能；打开时全屏 `mouse_filter=STOP` 阻断卧室交互，ESC 由 `bedroom.gd consume_escape()` 优先关闭。
+- 当天状态字段：`persistent_state.computer_opened_today`（bool）。`false` 显示 `computer_dark`，当天第一次打开后置 `true` 并切换亮屏素材；`res://scripts/app/main.gd` 的 `_reset_daily_state()` 在新的一天重置为 `false`。素材切换与灯光同步的唯一入口为 `bedroom.gd _sync_computer_visual()`。
+
+## 手机新消息震动提示与震动音效
+
+震动逻辑位于 `res://scripts/ui/bedroom_phone.gd` 的 `_play_new_message_vibrate()`，由 `_notify_unread_batch_once()` 在播放 `new_message` 提示音后触发。去重沿用现有未读批次签名机制（`online_notified_batch_signature`）：同一批未读消息只提示一次，因此每天新的一天开始收到新消息时只震动一次，重复开关手机、读消息、切换App、重新进入卧室不会重复震动。所有震动坐标基于 `_ready` 记录的 `phone_rest_position`（不基于当前 position 累计加减），结束后准确恢复原位。音效与视觉同步：每轮震动开始时播放一次 `phone_buzz` 事件（UI Bus → SFX 总线），共两轮短促低频“嗡嗡”。
+
+| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
+|---|---|---:|---|---|---|---|
+| 震动幅度 | `phone_vibration_offset_px` | 3.0 | px | 手机左右抖动的单边位移 | 1—6 | 0 等于关闭视觉震动 |
+| 单步时长 | `phone_vibration_step_duration` | 0.05 | 秒 | 每次方向变化的间隔（左→右→左→右→中 5步/轮） | 0.04—0.06 | 总时长 = 步长×5×轮数 + 轮间停顿×(轮数-1) |
+| 轮间停顿 | `phone_vibration_pause_duration` | 0.10 | 秒 | 两轮震动之间的短暂停顿 | 0.08—0.12 | 默认2轮总时长约0.6秒 |
+| 震动轮数 | `phone_vibration_rounds` | 2 | 轮 | bzz-bzz 两段振动的轮数 | 1—4 | 每轮同步播放一次 buzz 音效 |
+| 震动音效音量 | `sfx_phone_buzz_volume_db` | -18.0 | dB | buzz 音效在 SFX 总线内的相对音量 | -30—0 | 受主 SFX 滑轨控制 |
+
+**临时音效说明**：当前 buzz 为 `sfx_manager.gd _fill_phone_buzz()` 程序化生成的占位音频（约145Hz方波 + 26Hz tremolo，两段短包络 burst，8-bit/11025Hz），明确非最终美术音频；后续提供 `res://sfx/手机震动.wav` 并加入 `IMPORTED_SFX_EVENTS` 即可替换，无需修改逻辑。旧参数 `phone_new_message_vibrate_amplitude / cycles / seconds` 已废弃保留，不再被震动逻辑使用。
+
+## 卧室像素风动态光照与动态暗角
+
+光照节点统一位于 `Bedroom/Layout/BedroomLighting`，只影响主画布；手机、对话、公告、电脑界面等 UI 均在更高 CanvasLayer，不受光照影响。
+
+**窗户光照已废弃**：`WindowLight`、窗户光贴图/Shader/Tween、`CurtainLightOccluder` 及其专用 Occluder/Light Mask 已全部删除；`bedroom_window_light_energy` / `bedroom_window_light_color` 等配置字段同步移除。遮阳帘保留 Sprite、开关状态、鼠标交互与白色 Alpha 描边，但不再影响任何光源；卧室光照不再随遮阳帘、时间或天气产生窗户光。
+
+**重要**：本项目 gl_compatibility 渲染环境下，PointLight2D 的 `Add` 混合模式会把照射区渲染成黑色（实测异常）。电脑光源必须保持 `blend_mode = Mix`（代码 `_setup_lighting()` 每次进入卧室强制设置，防止回归）。
+
+当前卧室唯一动态光源为电脑屏幕光：
+
+- `CanvasModulate`：卧室基础环境色调，颜色由 `bedroom_ambient_modulate_color` 控制。
+- `ComputerScreenLight`（PointLight2D，路径 `Bedroom/Layout/BedroomLighting/ComputerScreenLight`）：电脑屏幕冷色发光，贴图 `res://art/lighting/screen_light.png`，位置约 (64,168)（屏幕区域而非机身中心），`blend_mode=Mix`、`color=(0.62,0.86,0.95)`、`texture_scale=3.2`、`item_cull_mask=2`。`visible` 与 `computer_opened_today` 同步：息屏（`computer_dark`）关闭、亮屏（`computer`）开启。灯光状态更新入口为 `bedroom.gd _sync_computer_visual()`。
+- 电脑光强度 = `bedroom_computer_light_energy × computer_light_energy_multiplier`，倍率只在 `bedroom.gd _setup_lighting()` **一处**乘算（禁止配置与运行时双重叠加）：1.15 × 2.0 = 2.3，即当前实际亮度为原版的 2 倍。
+
+| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
+|---|---|---:|---|---|---|---|
+| 卧室环境色调 | `bedroom_ambient_modulate_color` | `(0.82, 0.84, 0.92)` | 颜色 | CanvasModulate 基础亮度与色温 | 0.6—1.0 灰蓝区间 | 过低会让整个卧室过暗 |
+| 电脑屏幕光基础强度 | `bedroom_computer_light_energy` | 1.15 | 能量 | ComputerScreenLight 基础亮度 | 0—3 | 仅亮屏状态可见；最终再乘下方倍率 |
+| 电脑光增强倍率 | `computer_light_energy_multiplier` | 2.0 | 倍 | 电脑屏幕光全局增强倍率 | 0.5—4 | 只在 `_setup_lighting()` 一处乘算 |
+| 电脑屏幕光颜色 | `bedroom_computer_light_color` | `(0.62, 0.86, 0.95)` | 颜色 | 冷蓝/青白屏幕发光 | 冷色区间 | 只照亮电脑附近小范围 |
+
+### 21:00→00:00 动态像素暗角
+
+暗角 Shader 位于 `res://shaders/bedroom_vignette.gdshader`，承载节点为 `Bedroom/Layout/VignetteLayer`（全屏 ColorRect、`mouse_filter=IGNORE`、位于卧室世界内，z_index 高于光照层但低于所有 CanvasLayer UI，因此压力值、手机、对话、电脑界面、ESC菜单、公告、设置均不受影响）。Shader 将 UV 按 `pixel_size` 块取整并按 `bands` 分段量化 alpha，边缘暗中间透明，颜色为深蓝黑 `#101722` 附近，非纯黑。
+
+强度计算位于 `bedroom.gd` 的 `_update_vignette()` / `_vignette_progress()`（每帧以卧室游戏时间驱动，非现实时间）：`progress = max((当前分钟 - start) / (end - start), 0)`（不设上限，Debug 超过 00:00 时继续增长），跨午夜（00:00=1440>21:00=1260）通过 +1440 归一处理不会反向；最终 `strength = max((min_strength + progress²) × vignette_intensity_multiplier, 0)`（Ease-In）。**强度不设任何人为上限**：旧 `bedroom_vignette_max_strength`/`bedroom_vignette_safe_max` 配置与 GDScript Clamp 已删除，Shader 内也不 clamp strength；超过 1.0 的 alpha 由 GPU 渲染自然限制。示例（min=0.10、倍率=2.0）：21:00→0.20，22:00→0.42，23:00→1.09，00:00→2.20。正常流程 00:00 仍按现有规则强制睡觉。
+
+| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
+|---|---|---:|---|---|---|---|
+| 暗角开始时间 | `bedroom_vignette_start_minutes` | 1260 | 游戏分钟 | 21:00，暗角最弱 | — | 使用卧室游戏时间 |
+| 暗角结束时间 | `bedroom_vignette_end_minutes` | 1440 | 游戏分钟 | 00:00（强制睡觉），progress=1 | — | 按当晚分钟归一，跨午夜不反向；超过后 progress 继续增长 |
+| 暗角最低强度 | `bedroom_vignette_min_strength` | 0.10 | 比例 | 21:00 时的基础暗角 | 0—0.3 | 不建议完全为0 |
+| 暗角强度倍率 | `vignette_intensity_multiplier` | 2.0 | 倍 | 暗角视觉强度整体倍率 | 0.5—4 | 只在 `_update_vignette()` 一处乘算；乘后不再封顶 |
+
+## 压力值表情图标
+
+卧室左上角压力UI（`scripts/ui/bedroom_status_hud.gd`）绘制一个随压力值变化的像素表情，每帧随 `set_stress()` 实时刷新（非仅进入卧室时刷新一次）。分档阈值集中配置：`stress <= stress_face_happy_max` 显示开心，`stress < stress_face_sweat_min` 显示一般，其余显示流汗。
+
+| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
+|---|---|---:|---|---|---|---|
+| 开心上限 | `stress_face_happy_max` | 30 | 点 | 压力 ≤ 该值显示开心表情 | 0—100 | 默认 0—30 开心 |
+| 流汗下限 | `stress_face_sweat_min` | 70 | 点 | 压力 ≥ 该值显示流汗表情 | 0—100 | 默认 70—100 流汗，中间为一般 |
+
+表情资源：`res://assets/art/ui/stress/stress_happy.png`、`stress_normal.png`、`stress_sweat.png`，三张 16×16 画布尺寸与脸部位置一致，沿用压力UI调色板，Nearest 过滤。**当前为程序生成的像素占位图，需人工替换为最终美术**（同名覆盖即可，无需改逻辑）。
+
+## 梦境地图（Crawling Depths）
+
+梦境战斗地图已用第三方素材 **Crawling Depths**（作者 pingupollas，https://pingupollas.itch.io/crawling-depths）重做，16×16 俯视像素恐怖 Tileset。署名与许可详情见 `docs/THIRD_PARTY_ASSETS.md`；素材仅作为游戏内美术使用，不重新分发素材包本身。
+
+地图结构（世界 1040×480 px = 65×30 tile）：
+
+- TileSet：`res://assets/art/dream/crawling_depths/crawling_depths_tileset.tres`（tile_size 16×16，无 Margin/Separation；源0=tiles.png 地面20种变体，源1=cliff.png 墙砖7种变体带全格物理碰撞，源2=cracks.png 裂纹8种覆盖层）。贴图全局 Nearest 过滤、无 Mipmaps（`project.godot default_texture_filter=0`）。
+- 节点：`res://scenes/dream/dream_world.tscn` 的 `DreamMap`（脚本 `res://scripts/dream/dream_map_builder.gd`，固定种子 `MAP_SEED=20260807` 运行时填充）下含 `GroundLayer`/`TilePatchLayer`/`WallLayer`（TileMapLayer）与 `Decorations`（Node2D）。外圈一环墙砖（真实碰撞，碰撞层 8）。
+- 地表构成：**可走内区 63×28=1764 格全部以 Cracks（源2，8种变体）为主体铺底，约占90%以上**；Tiles（源0）仅作为被裂纹吞噬后残存的人工地面碎片，总预算为内区格数的 10%（176格）且只以小片零星分布：Patch 形状为 2×2（35%）/3×2（25%）/单块（20%）/不规则3格（20%），任意两格 Tiles 之间保持 5×5 邻域隔离，禁止大面积连续/棋盘/对半分布。**Tentacle 地图装饰占比 = 0**：旧动画装饰列表中的 tentacle_sheet 条目已删除，TileMap 不随机摆放任何触手，地图更加空旷压抑，也不用 Tiles 填补；触手素材唯一允许的用途是触手怪敌人（`TentacleSpawner` 每30秒生成 1～5 只、全图上限10）。装饰含雕像/瓮/脉络柱/书坛与慢速动画（眼/嘴/脉络/浮石/小眼，2—4 FPS）；装饰纯视觉，不参与战斗碰撞、不造成伤害；场景树暂停（升级卡片/ESC等）时动画自动停止。
+- 可探索区域：`ARENA_BOUNDS = Rect2(24, 24, 992, 432)`（`dream_world.gd`），面积 992×432≈428,544 px²，约为旧地图 580×258=149,640 px² 的 **2.86 倍**；按墙内地板 1008×448=451,584 px² 计为 **3.02 倍**（目标 `dream_map_area_multiplier=3.0`，长宽各约√3≈1.73 倍保持长宽比）。
+- 玩家出生在地图中心 (520, 240)，附近半径约 140 px 内不放置装饰；玩家 `collision_mask=8` 与墙砖物理层碰撞，移动/冲刺另受 `arena_bounds` Clamp 双重约束。
+- 相机：`Player/DreamCamera`（Camera2D），`limit_left/top/right/bottom = 0/0/1040/480`，带位置平滑；不会拍到地图外空白。瞄准使用 `get_global_mouse_position()` 自动兼容相机；压力视野 Shader 的玩家屏幕坐标改用 `get_global_transform_with_canvas().origin`。手动准星（`scripts/ui/crosshair.gd`）位于 CanvasLayer 屏幕坐标系，每帧按 `(世界瞄准点 - 相机屏幕中心) × zoom + 视口/2` 换算，精确跟随鼠标世界位置，不随 WASD/玩家/相机漂移；后坐力仅是屏幕局部视觉偏移，不改变瞄准目标；梦游模式仍隐藏准星。
+- **07:00 唤醒床生成在地图世界中心**：`dream_world.gd _find_bed_spawn_position()` 按 `ARENA_BOUNDS.get_center()`（当前地图为 (520,240)，非屏幕中心/玩家/相机/旧固定坐标）计算；中心若落在墙 Tile 上则向外逐环搜索最近合法地面。床为独立 `BedVisual` 节点（`scripts/dream/bed_visual.gd`，z_index=2，位于地面 TileMap 之上、HUD 之下，闹钟响后才显示），交互/睡醒长按逻辑不变（`wake_point` 变量驱动）。
+- 刷怪/经验/敌人边界全部由 `ARENA_BOUNDS` 传参驱动（刷怪用 `grow(-14)`），仍维持屏幕外围绕玩家生成原则；**地图扩大不改变敌人生成速度、数量、HP、移速等任何数值**。
+
+| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
+|---|---|---:|---|---|---|---|
+| 梦境地图面积倍率 | `dream_map_area_multiplier` | 3.0 | 倍 | 目标可探索面积相对旧地图的倍率 | 1—9 | 记录本次扩大目标；地图已按该值建成 |
+| TileSet 基础Tile尺寸 | `dream_tileset_base_tile_size` | 16 | px | Crawling Depths 素材的 tile 尺寸 | 固定16 | 与 TileSet 实际切分一致 |
+
+## V0.4.1 可靠性修复
+
+- **太刀剑气必中生成**：`katana_weapon.gd perform_katana_attack()` 为原子攻击事件（近战判定 + 1 道剑气同步执行），`katana_attack_sequence_id` / `wave_spawned_for_sequence` 序号 guard 保证每个攻击周期恰好 1 道，不依赖 animation_finished、近战是否命中或场上是否有敌人；零方向回退 `last_aim_direction` → 玩家默认面朝。偶发无剑气的实际根因是 `sword_wave.gd` 残留旧小地图 `ARENA_BOUNDS = Rect2(30, 54, 580, 258)`，玩家处于新地图右/下部时剑气出生即越界被释放，已同步为 `Rect2(24, 24, 992, 432)`。剑气伤害/速度/距离/宽度/Ease-In/暴击等数值均未改动。
+- **版本号统一**：当前版本 `V0.4.1`，唯一配置字段 `game_version_text`（demo_config.gd 默认值与 demo_config.tres 均为 `版本号V0.4.1`），主菜单 tscn 编辑器默认文本同步；脚本/场景/资源中无其它玩家可见旧版本残留（公告文本中的历史更新日志条目不属于当前版本显示）。

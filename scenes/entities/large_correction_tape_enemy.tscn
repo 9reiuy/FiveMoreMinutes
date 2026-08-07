@@ -1,35 +1,87 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/entities/large_correction_tape_enemy.gd" id="1_enemy"]
-[ext_resource type="Texture2D" path="res://assets/art/enemies/generated/enemy_sprite_atlas.png" id="2_atlas"]
+[ext_resource type="Texture2D" path="res://art/Monster/Flying eye/Flight.png" id="2_flight"]
+[ext_resource type="Texture2D" path="res://art/Monster/Flying eye/Attack.png" id="3_attack"]
+[ext_resource type="Texture2D" path="res://art/Monster/Flying eye/Death.png" id="4_death"]
 
-[sub_resource type="AtlasTexture" id="Atlas_large_0"]
-atlas = ExtResource("2_atlas")
-region = Rect2(0, 561, 350, 280)
+[sub_resource type="AtlasTexture" id="FW0"]
+atlas = ExtResource("2_flight")
+region = Rect2(0, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FW1"]
+atlas = ExtResource("2_flight")
+region = Rect2(150, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FW2"]
+atlas = ExtResource("2_flight")
+region = Rect2(300, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FW3"]
+atlas = ExtResource("2_flight")
+region = Rect2(450, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FW4"]
+atlas = ExtResource("2_flight")
+region = Rect2(600, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FW5"]
+atlas = ExtResource("2_flight")
+region = Rect2(750, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FW6"]
+atlas = ExtResource("2_flight")
+region = Rect2(900, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FW7"]
+atlas = ExtResource("2_flight")
+region = Rect2(1050, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FA0"]
+atlas = ExtResource("3_attack")
+region = Rect2(0, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FA1"]
+atlas = ExtResource("3_attack")
+region = Rect2(150, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FA2"]
+atlas = ExtResource("3_attack")
+region = Rect2(300, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FA3"]
+atlas = ExtResource("3_attack")
+region = Rect2(450, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FA4"]
+atlas = ExtResource("3_attack")
+region = Rect2(600, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FA5"]
+atlas = ExtResource("3_attack")
+region = Rect2(750, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FA6"]
+atlas = ExtResource("3_attack")
+region = Rect2(900, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FA7"]
+atlas = ExtResource("3_attack")
+region = Rect2(1050, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FD0"]
+atlas = ExtResource("4_death")
+region = Rect2(0, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FD1"]
+atlas = ExtResource("4_death")
+region = Rect2(150, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FD2"]
+atlas = ExtResource("4_death")
+region = Rect2(300, 0, 150, 150)
+[sub_resource type="AtlasTexture" id="FD3"]
+atlas = ExtResource("4_death")
+region = Rect2(450, 0, 150, 150)
 
-[sub_resource type="AtlasTexture" id="Atlas_large_1"]
-atlas = ExtResource("2_atlas")
-region = Rect2(350, 561, 351, 280)
-
-[sub_resource type="AtlasTexture" id="Atlas_large_2"]
-atlas = ExtResource("2_atlas")
-region = Rect2(701, 561, 350, 280)
-
-[sub_resource type="AtlasTexture" id="Atlas_large_3"]
-atlas = ExtResource("2_atlas")
-region = Rect2(1051, 561, 351, 280)
-
-[sub_resource type="SpriteFrames" id="Frames_large"]
+[sub_resource type="SpriteFrames" id="Frames_elite_flying_eye"]
 animations = [{
-"frames": [{"duration": 1.0, "texture": SubResource("Atlas_large_0")}, {"duration": 1.0, "texture": SubResource("Atlas_large_1")}],
+"frames": [{"duration": 1.0, "texture": SubResource("FW0")}, {"duration": 1.0, "texture": SubResource("FW1")}, {"duration": 1.0, "texture": SubResource("FW2")}, {"duration": 1.0, "texture": SubResource("FW3")}, {"duration": 1.0, "texture": SubResource("FW4")}, {"duration": 1.0, "texture": SubResource("FW5")}, {"duration": 1.0, "texture": SubResource("FW6")}, {"duration": 1.0, "texture": SubResource("FW7")}],
 "loop": true,
 "name": &"walk",
-"speed": 4.0
+"speed": 9.0
 }, {
-"frames": [{"duration": 1.0, "texture": SubResource("Atlas_large_2")}, {"duration": 1.0, "texture": SubResource("Atlas_large_3")}],
+"frames": [{"duration": 1.0, "texture": SubResource("FA0")}, {"duration": 1.0, "texture": SubResource("FA1")}, {"duration": 1.0, "texture": SubResource("FA2")}, {"duration": 1.0, "texture": SubResource("FA3")}, {"duration": 1.0, "texture": SubResource("FA4")}, {"duration": 1.0, "texture": SubResource("FA5")}, {"duration": 1.0, "texture": SubResource("FA6")}, {"duration": 1.0, "texture": SubResource("FA7")}],
 "loop": true,
 "name": &"charge",
 "speed": 7.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("FD0")}, {"duration": 1.0, "texture": SubResource("FD1")}, {"duration": 1.0, "texture": SubResource("FD2")}, {"duration": 1.0, "texture": SubResource("FD3")}],
+"loop": false,
+"name": &"death",
+"speed": 6.0
 }]
 
 [sub_resource type="CircleShape2D" id="Circle_enemy"]
@@ -42,10 +94,10 @@ script = ExtResource("1_enemy")
 
 [node name="Visual" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-sprite_frames = SubResource("Frames_large")
+sprite_frames = SubResource("Frames_elite_flying_eye")
 animation = &"walk"
 autoplay = "walk"
-scale = Vector2(0.17, 0.17)
+scale = Vector2(1.0, 1.0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("Circle_enemy")

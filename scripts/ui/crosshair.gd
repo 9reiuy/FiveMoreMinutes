@@ -34,9 +34,20 @@ func _on_weapon_fired(multiplier: float) -> void:
 func _draw() -> void:
 	if not is_instance_valid(player):
 		return
-	var p: Vector2 = player.get_constrained_aim_position() + recoil_offset
+	# 准星位于 CanvasLayer 的屏幕坐标系，必须把瞄准点世界坐标换算为屏幕坐标，
+	# 否则会随相机/玩家移动漂移（不再跟随 WASD/相机）。
+	var p: Vector2 = _world_to_ui(player.get_constrained_aim_position()) + recoil_offset
 	draw_line(p+Vector2(-9,0),p+Vector2(-3,0),current_color,2)
 	draw_line(p+Vector2(3,0),p+Vector2(9,0),current_color,2)
 	draw_line(p+Vector2(0,-9),p+Vector2(0,-3),current_color,2)
 	draw_line(p+Vector2(0,3),p+Vector2(0,9),current_color,2)
 	draw_circle(p,2,current_color,false,1)
+
+
+## 世界坐标 → 屏幕坐标：以相机实际屏幕中心为基准，乘相机缩放后平移到视口中心。
+## 手动模式下瞄准点即鼠标世界坐标，换算后准星精确贴合鼠标位置。
+func _world_to_ui(world_position: Vector2) -> Vector2:
+	var camera: Camera2D = player.get_node_or_null("DreamCamera")
+	if camera == null:
+		return world_position
+	return (world_position - camera.get_screen_center_position()) * camera.zoom + get_viewport_rect().size * 0.5

@@ -1,39 +1,103 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=31 format=3]
 
 [ext_resource type="Script" path="res://scripts/entities/stapler_enemy.gd" id="1_enemy"]
-[ext_resource type="Texture2D" path="res://assets/art/enemies/generated/enemy_sprite_atlas.png" id="2_atlas"]
+[ext_resource type="Texture2D" path="res://art/Monster/Huntress 2/Sprites/Character/Run.png" id="2_run"]
+[ext_resource type="Texture2D" path="res://art/Monster/Huntress 2/Sprites/Character/Attack.png" id="3_attack"]
+[ext_resource type="Texture2D" path="res://art/Monster/Huntress 2/Sprites/Character/Death.png" id="4_death"]
 
-[sub_resource type="AtlasTexture" id="Atlas_stapler_0"]
-atlas = ExtResource("2_atlas")
-region = Rect2(0, 841, 350, 281)
+[sub_resource type="AtlasTexture" id="HW0"]
+atlas = ExtResource("2_run")
+region = Rect2(0, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HW1"]
+atlas = ExtResource("2_run")
+region = Rect2(100, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HW2"]
+atlas = ExtResource("2_run")
+region = Rect2(200, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HW3"]
+atlas = ExtResource("2_run")
+region = Rect2(300, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HW4"]
+atlas = ExtResource("2_run")
+region = Rect2(400, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HW5"]
+atlas = ExtResource("2_run")
+region = Rect2(500, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HW6"]
+atlas = ExtResource("2_run")
+region = Rect2(600, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HW7"]
+atlas = ExtResource("2_run")
+region = Rect2(700, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HA0"]
+atlas = ExtResource("3_attack")
+region = Rect2(0, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HA1"]
+atlas = ExtResource("3_attack")
+region = Rect2(100, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HA2"]
+atlas = ExtResource("3_attack")
+region = Rect2(200, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HA3"]
+atlas = ExtResource("3_attack")
+region = Rect2(300, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HA4"]
+atlas = ExtResource("3_attack")
+region = Rect2(400, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HA5"]
+atlas = ExtResource("3_attack")
+region = Rect2(500, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD0"]
+atlas = ExtResource("4_death")
+region = Rect2(0, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD1"]
+atlas = ExtResource("4_death")
+region = Rect2(100, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD2"]
+atlas = ExtResource("4_death")
+region = Rect2(200, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD3"]
+atlas = ExtResource("4_death")
+region = Rect2(300, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD4"]
+atlas = ExtResource("4_death")
+region = Rect2(400, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD5"]
+atlas = ExtResource("4_death")
+region = Rect2(500, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD6"]
+atlas = ExtResource("4_death")
+region = Rect2(600, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD7"]
+atlas = ExtResource("4_death")
+region = Rect2(700, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD8"]
+atlas = ExtResource("4_death")
+region = Rect2(800, 0, 100, 100)
+[sub_resource type="AtlasTexture" id="HD9"]
+atlas = ExtResource("4_death")
+region = Rect2(900, 0, 100, 100)
 
-[sub_resource type="AtlasTexture" id="Atlas_stapler_1"]
-atlas = ExtResource("2_atlas")
-region = Rect2(350, 841, 351, 281)
-
-[sub_resource type="AtlasTexture" id="Atlas_stapler_2"]
-atlas = ExtResource("2_atlas")
-region = Rect2(701, 841, 350, 281)
-
-[sub_resource type="AtlasTexture" id="Atlas_stapler_3"]
-atlas = ExtResource("2_atlas")
-region = Rect2(1051, 841, 351, 281)
-
-[sub_resource type="SpriteFrames" id="Frames_stapler"]
+[sub_resource type="SpriteFrames" id="Frames_huntress"]
 animations = [{
-"frames": [{"duration": 1.0, "texture": SubResource("Atlas_stapler_0")}, {"duration": 1.0, "texture": SubResource("Atlas_stapler_1")}],
+"frames": [{"duration": 1.0, "texture": SubResource("HW0")}, {"duration": 1.0, "texture": SubResource("HW1")}, {"duration": 1.0, "texture": SubResource("HW2")}, {"duration": 1.0, "texture": SubResource("HW3")}, {"duration": 1.0, "texture": SubResource("HW4")}, {"duration": 1.0, "texture": SubResource("HW5")}, {"duration": 1.0, "texture": SubResource("HW6")}, {"duration": 1.0, "texture": SubResource("HW7")}],
 "loop": true,
 "name": &"walk",
-"speed": 4.0
+"speed": 10.0
 }, {
-"frames": [{"duration": 1.0, "texture": SubResource("Atlas_stapler_2")}, {"duration": 1.0, "texture": SubResource("Atlas_stapler_3")}],
+"frames": [{"duration": 1.0, "texture": SubResource("HA0")}, {"duration": 1.0, "texture": SubResource("HA1")}, {"duration": 1.0, "texture": SubResource("HA2")}, {"duration": 1.0, "texture": SubResource("HA3")}, {"duration": 1.0, "texture": SubResource("HA4")}, {"duration": 1.0, "texture": SubResource("HA5")}],
 "loop": false,
 "name": &"attack_prepare",
+"speed": 12.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("HD0")}, {"duration": 1.0, "texture": SubResource("HD1")}, {"duration": 1.0, "texture": SubResource("HD2")}, {"duration": 1.0, "texture": SubResource("HD3")}, {"duration": 1.0, "texture": SubResource("HD4")}, {"duration": 1.0, "texture": SubResource("HD5")}, {"duration": 1.0, "texture": SubResource("HD6")}, {"duration": 1.0, "texture": SubResource("HD7")}, {"duration": 1.0, "texture": SubResource("HD8")}, {"duration": 1.0, "texture": SubResource("HD9")}],
+"loop": false,
+"name": &"death",
 "speed": 8.0
 }]
 
 [sub_resource type="CircleShape2D" id="Circle_enemy"]
-radius = 14.0
+radius = 10.5
 
 [node name="StaplerEnemy" type="CharacterBody2D" groups=["dream_enemies"]]
 collision_layer = 2
@@ -42,10 +106,11 @@ script = ExtResource("1_enemy")
 
 [node name="Visual" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-sprite_frames = SubResource("Frames_stapler")
+sprite_frames = SubResource("Frames_huntress")
 animation = &"walk"
 autoplay = "walk"
-scale = Vector2(0.13, 0.13)
+scale = Vector2(1.02, 1.02)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4.5)
 shape = SubResource("Circle_enemy")

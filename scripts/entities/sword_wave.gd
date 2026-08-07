@@ -1,6 +1,10 @@
 extends Node2D
 
-const ARENA_BOUNDS := Rect2(30, 54, 580, 258)
+# 三倍扩图后的梦境地图可走区域；旧小地图尺寸会让剑气出生即越界被释放（偶发无剑气根因）。
+const ARENA_BOUNDS := Rect2(24, 24, 992, 432)
+# 剑气视觉使用 SP301_04 月牙帧；素材自身默认朝向为尖端朝 -x（开口朝 +x），
+# 因此默认补偿 180°，使视觉尖端与飞行方向一致（katana_wave_texture_forward_angle_deg）。
+const WAVE_TEXTURE: Texture2D = preload("res://art/Effects/SP301_nyknck/SP301_04.png")
 
 var direction := Vector2.RIGHT
 var damage := 10.0
@@ -14,7 +18,7 @@ var acceleration_duration := 0.001
 var acceleration_curve: Curve
 var hit_enemies: Dictionary = {}
 
-func setup(new_direction: Vector2, new_damage: float, new_speed: float, new_distance: float, new_width: float, new_initial_speed_ratio: float, new_acceleration_duration: float, new_acceleration_curve: Curve) -> void:
+func setup(new_direction: Vector2, new_damage: float, new_speed: float, new_distance: float, new_width: float, new_initial_speed_ratio: float, new_acceleration_duration: float, new_acceleration_curve: Curve, texture_forward_angle_deg: float = 180.0) -> void:
 	direction = new_direction.normalized()
 	damage = new_damage
 	speed = new_speed
@@ -23,7 +27,8 @@ func setup(new_direction: Vector2, new_damage: float, new_speed: float, new_dist
 	initial_speed_ratio = clampf(new_initial_speed_ratio, 0.0, 1.0)
 	acceleration_duration = maxf(new_acceleration_duration, 0.001)
 	acceleration_curve = new_acceleration_curve
-	rotation = direction.angle()
+	# 游戏逻辑运动方向与素材默认朝向拆开：最终旋转 = 瞄准方向角 + 素材补偿角。
+	rotation = direction.angle() + deg_to_rad(texture_forward_angle_deg)
 	var hit_shape := get_node("HitArea/CollisionShape2D") as CollisionShape2D
 	var rectangle := hit_shape.shape as RectangleShape2D
 	if rectangle != null:
@@ -56,7 +61,8 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	draw_line(Vector2(0, -wave_width * 0.5), Vector2(0, wave_width * 0.5), Color(0.78, 0.88, 1.0, 0.85), 3.0)
-	draw_line(Vector2(-5, -wave_width * 0.35), Vector2(-5, wave_width * 0.35), Color(0.42, 0.55, 0.76, 0.55), 2.0)
-	for offset in [10.0, 16.0, 23.0]:
-		draw_line(Vector2(-offset, -wave_width * 0.22), Vector2(-offset, wave_width * 0.22), Color("517b98", 0.42), 2.0)
+	# 月牙高度随 wave_width 联动，保持宽度按帧原始比例缩放，旋转已由 setup 对准飞行方向。
+	var frame_size := WAVE_TEXTURE.get_size()
+	var height := maxf(wave_width * 1.6, 20.0)
+	var width := height * frame_size.x / frame_size.y
+	draw_texture_rect(WAVE_TEXTURE, Rect2(-width * 0.35, -height * 0.5, width, height), false)

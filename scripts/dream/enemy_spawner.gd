@@ -96,15 +96,32 @@ func get_current_spawn_interval() -> float:
 func _find_valid_spawn_position(reserved_positions: Array[Vector2] = []) -> Variant:
 	if not is_instance_valid(player):
 		return null
-	# A finite retry count prevents impossible distance settings from stalling the game.
+	# 屏幕外环带策略：候选点在场地内随机，必须落在相机可见矩形外扩
+	# enemy_spawn_visibility_margin 的禁区之外；重试有限次，失败则跳过
+	# 该只敌人，绝不回退到玩家脚下/屏幕中央或无限循环。
+	var forbidden_rect := _get_forbidden_spawn_rect()
 	for _attempt in range(maxi(1, config.enemy_spawn_position_max_retries)):
-		var candidate := _random_edge_position()
+		var candidate := _random_arena_position()
+		if forbidden_rect.has_point(candidate):
+			continue
 		if _is_spawn_position_valid(candidate, reserved_positions):
 			return candidate
 	return null
 
 
+## 生成禁区：dream_world 相机可见矩形 + 安全边距；取不到相机信息时
+## 退化为以玩家为中心的可见尺寸估计（viewport 640×360），仍保证屏外。
+func _get_forbidden_spawn_rect() -> Rect2:
+	var margin := config.enemy_spawn_visibility_margin
+	var dream_world := get_tree().get_first_node_in_group("dream_world")
+	if dream_world != null and dream_world.has_method("get_camera_visible_world_rect"):
+		return dream_world.get_camera_visible_world_rect().grow(margin)
+	return Rect2(player.global_position - Vector2(320, 180), Vector2(640, 360)).grow(margin)
+
+
 func _is_spawn_position_valid(candidate: Vector2, reserved_positions: Array[Vector2]) -> bool:
+	if not arena_bounds.has_point(candidate):
+		return false
 	if candidate.distance_to(player.global_position) < config.enemy_minimum_spawn_distance:
 		return false
 	for enemy in get_tree().get_nodes_in_group("dream_enemies"):
@@ -116,12 +133,5 @@ func _is_spawn_position_valid(candidate: Vector2, reserved_positions: Array[Vect
 	return true
 
 
-func _random_edge_position() -> Vector2:
-	var side := random.randi_range(0, 3)
-	if side == 0:
-		return Vector2(arena_bounds.position.x, random.randf_range(arena_bounds.position.y, arena_bounds.end.y))
-	if side == 1:
-		return Vector2(arena_bounds.end.x, random.randf_range(arena_bounds.position.y, arena_bounds.end.y))
-	if side == 2:
-		return Vector2(random.randf_range(arena_bounds.position.x, arena_bounds.end.x), arena_bounds.position.y)
-	return Vector2(random.randf_range(arena_bounds.position.x, arena_bounds.end.x), arena_bounds.end.y)
+func _random_arena_position() -> Vector2:
+	return Vector2(random.randf_range(arena_bounds.position.x, arena_bounds.end.x), random.randf_range(arena_bounds.position.y, arena_bounds.end.y))

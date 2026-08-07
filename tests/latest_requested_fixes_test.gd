@@ -407,7 +407,7 @@ func _test_sunshade() -> void:
 	# Price + image asset must be configured.
 	_assert(CONFIG.sunshade_price == 1000, "Sunshade price is not 1000")
 	_assert(CONFIG.sunshade_ambient_volume_multiplier <= 0.6, "Ambient multiplier should clearly reduce the ambience")
-	_assert(ResourceLoader.exists("res://art/sunshade.png"), "sunshade.png is missing")
+	_assert(ResourceLoader.exists("res://art/Badroom/sunshade.png"), "sunshade.png is missing")
 	# 1. SFXManager multiplier must change the weather player's volume_db.
 	var manager := get_tree().root.get_node_or_null("SFXManager")
 	_assert(manager != null, "SFXManager autoload missing")

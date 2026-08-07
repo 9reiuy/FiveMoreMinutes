@@ -118,7 +118,9 @@ func _test_weapon_selection() -> void:
 	await process_frame
 	var state := {"weapon": ""}
 	selection.weapon_selected.connect(func(id: String) -> void: state.weapon = id)
-	selection._gui_input(_mouse_click(selection.BEAM_CARD.get_center()))
+	# beam 受解锁门槛门控（第一次迟到后解锁），测试直接置为已解锁再模拟点击。
+	selection.unlock_state.beam = true
+	selection._input(_mouse_click(selection.BEAM_CARD.get_center()))
 	_assert(state.weapon == "beam", "Mouse card selection did not choose the beam weapon.")
 	selection.queue_free()
 	await process_frame
@@ -223,7 +225,7 @@ func _test_dream_combat_dash_and_alarm() -> void:
 	_assert(dream.phase == dream.RunPhase.ALARM, "Clock did not enter alarm phase.")
 	var finish := {"received": false}
 	dream.dream_finished.connect(func(_summary: Dictionary) -> void: finish.received = true)
-	dream.player.position = dream.WAKE_POINT
+	dream.player.position = dream.wake_point
 	Input.action_press("interact")
 	var wake_deadline := Time.get_ticks_msec() + 3500
 	while not finish.received and Time.get_ticks_msec() < wake_deadline:
@@ -255,6 +257,8 @@ func _test_results_sequence() -> void:
 	var state := {"new_day": false}
 	results.new_day_requested.connect(func() -> void: state.new_day = true)
 	results.start_button.pressed.emit()
+	# 新一天按钮带门缝过场动画（约 0.63s）后才 emit，必须等待序列完成。
+	await create_timer(1.0).timeout
 	_assert(state.new_day, "Start New Day button did not emit its mouse-button action.")
 	results.queue_free()
 	await process_frame

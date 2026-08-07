@@ -1,5 +1,8 @@
 extends "res://scripts/entities/basic_enemy.gd"
 
+# 最终爆炸视觉统一使用 HolyNova 序列帧，蓄力/连锁/伤害结算逻辑保持不变。
+const HOLY_NOVA_SCENE := preload("res://scenes/entities/holy_nova_effect.tscn")
+
 signal special_defeated(at_position: Vector2, experience_value: int, rarity: String)
 
 enum State { APPROACH, CHARGE, DEATH_DELAY, CHAIN_TRIGGERED, DEAD }
@@ -9,13 +12,6 @@ var state_left := 0.0
 var has_exploded := false
 var reward_emitted := false
 var enemy_config: DemoConfig
-
-
-func _ready() -> void:
-	super._ready()
-	if enemy_config != null and visual != null:
-		visual_base_scale = Vector2.ONE * enemy_config.alarm_enemy_visual_scale
-		visual.scale = visual_base_scale
 
 
 func configure(new_target: Node2D, _health: float, _damage: float, bounds: Rect2, new_separation_strength: float, new_separation_radius: float, config: DemoConfig = null) -> void:
@@ -79,6 +75,7 @@ func _explode() -> void:
 	set_auto_aim_locked(false)
 	state = State.DEAD
 	_play_visual_animation(&"explode")
+	_spawn_explosion_visual()
 	if is_instance_valid(target) and global_position.distance_to(target.global_position) <= enemy_config.alarm_enemy_explosion_radius:
 		target.receive_damage(enemy_config.alarm_enemy_explosion_damage)
 	for enemy in get_tree().get_nodes_in_group("dream_enemies"):
@@ -96,6 +93,16 @@ func _explode() -> void:
 	queue_redraw()
 	await get_tree().create_timer(0.16, false).timeout
 	queue_free()
+
+
+## 爆炸特效按当前固定爆炸半径适配，挂到父容器避免随本体回收。
+func _spawn_explosion_visual() -> void:
+	var effect := HOLY_NOVA_SCENE.instantiate()
+	effect.global_position = global_position
+	effect.setup(enemy_config.alarm_enemy_explosion_radius)
+	var container := get_parent()
+	if is_instance_valid(container):
+		container.add_child(effect)
 
 
 func _draw() -> void:

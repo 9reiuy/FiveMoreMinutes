@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/bedroom_phone.gd" id="1_phone"]
 [ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
-[ext_resource type="Texture2D" path="res://art/Phone.png" id="3_phone_shell"]
+[ext_resource type="Texture2D" path="res://art/Badroom/Phone.png" id="3_phone_shell"]
 [ext_resource type="Script" path="res://scripts/ui/phone_drag_scroll.gd" id="4_drag_scroll"]
 [ext_resource type="Theme" path="res://resources/themes/phone_pixel_scrollbar.tres" id="5_scroll_theme"]
 [ext_resource type="Script" path="res://scripts/ui/quicklink_content.gd" id="6_quicklink"]

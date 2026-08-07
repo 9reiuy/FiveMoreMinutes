@@ -22,6 +22,8 @@ extends Resource
 @export var enemy_minimum_spawn_distance: float = 150.0
 @export var enemy_spawn_minimum_spacing: float = 30.0
 @export var enemy_spawn_position_max_retries: int = 12
+## 屏幕外生成安全边距：常规/触手怪必须生成在相机可见矩形外扩该边距的禁区之外。
+@export_range(0.0, 200.0, 4.0) var enemy_spawn_visibility_margin: float = 64.0
 @export var enemy_separation_strength: float = 24.0
 @export var enemy_separation_radius: float = 30.0
 ## 压力倍率作用在现有难度曲线之后，但不会突破这个硬下限。
@@ -66,9 +68,9 @@ extends Resource
 @export var damage_upgrade_multiplier: float = 1.5
 
 @export_group("Pixel Art and Effects")
-## 角色与基础小怪使用整数倍缩放，避免像素边缘模糊。
-@export_range(1.0, 4.0, 1.0) var player_sprite_scale: float = 1.0
-@export_range(1.0, 4.0, 1.0) var basic_enemy_sprite_scale: float = 1.0
+## 玩家图集缩放：0.75 = 视觉与身体碰撞缩到 75%（只在 VisualRoot 一处应用，
+## 禁止根节点与 Sprite 重复缩放）。
+@export_range(0.25, 4.0, 0.05) var player_sprite_scale: float = 0.75
 @export_range(0.5, 8.0, 0.5) var player_idle_animation_fps: float = 1.0
 @export_range(2.0, 16.0, 0.5) var player_walk_animation_fps: float = 7.0
 @export_range(0.02, 0.3, 0.01) var weapon_muzzle_flash_seconds: float = 0.07
@@ -112,6 +114,11 @@ extends Resource
 @export_range(0.1, 1.0, 0.01) var katana_wave_initial_speed_ratio: float = 0.35
 @export_range(0.05, 0.8, 0.01) var katana_wave_acceleration_duration: float = 0.25
 @export var katana_wave_acceleration_curve: Curve
+## SP301_04 月牙素材自身默认朝向（尖端朝 -x）与飞行方向（+x）的补偿角：
+## 最终 rotation = aim_direction.angle() + deg_to_rad(本值)，使视觉尖端/碰撞/运动三者一致。
+@export_range(-180.0, 180.0, 1.0) var katana_wave_texture_forward_angle_deg: float = 180.0
+## 榴弹出生点沿瞄准方向偏移的像素数，保证出生在当前玩家碰撞体外侧。
+@export_range(0.0, 64.0, 1.0) var grenade_spawn_offset_px: float = 14.0
 @export var grenade_attack_interval: float = 3.0
 @export var grenade_projectile_speed: float = 300.0
 @export var grenade_explosion_radius: float = 150.0
@@ -165,6 +172,14 @@ extends Resource
 @export var large_correction_dash_interval: float = 0.2
 @export var large_correction_recovery_seconds: float = 0.5
 @export var large_correction_experience_ratio: float = 0.5
+## 精英魔眼（internal_id 仍为 large_correction_tape）换用 Flying Eye 视觉后的统一缩放，
+## 与普通魔眼共用描边/Hit Flash/死亡序列，数值（HP/伤害/冲刺）不变。
+@export_range(0.02, 2.0, 0.01) var large_correction_visual_scale: float = 1.0
+
+@export_group("Enemy Outline")
+## 敌人被锁定/选中时的白描边宽度（源纹理像素空间，基于 TEXTURE_PIXEL_SIZE，
+## 不随节点缩放放大；VisualRoot ×4 时屏幕实际观感仍为细描边）。
+@export_range(0.5, 8.0, 0.5) var enemy_outline_width_px: float = 2.0
 
 @export_group("Enemy Hit Feedback")
 @export var enemy_hit_flash_color: Color = Color(1.8, 1.8, 1.8, 1.0)
@@ -178,14 +193,34 @@ extends Resource
 @export_range(0.05, 1.0, 0.01) var kill_pop_animation_seconds: float = 0.24
 
 @export_group("Enemy Animation")
-@export_range(1.0, 20.0, 0.5) var basic_enemy_walk_animation_fps: float = 5.0
-@export_range(1.0, 20.0, 0.5) var correction_enemy_walk_animation_fps: float = 5.0
+## 敌人视觉身份已替换为 Monster 素材；内部 ID 仍为 correction_tape/stapler/alarm_clock/mailbox。
+@export_range(1.0, 24.0, 0.5) var slime_move_fps: float = 7.0
+@export_range(1.0, 24.0, 0.5) var slime_death_fps: float = 9.0
+@export_range(1.0, 24.0, 0.5) var flying_eye_move_fps: float = 9.0
+@export_range(1.0, 24.0, 0.5) var flying_eye_death_fps: float = 6.0
+@export_range(1.0, 24.0, 0.5) var huntress_move_fps: float = 10.0
+@export_range(1.0, 24.0, 0.5) var huntress_shoot_fps: float = 12.0
+@export_range(1.0, 24.0, 0.5) var huntress_death_fps: float = 8.0
+@export_range(1.0, 24.0, 0.5) var mushroom_move_fps: float = 8.0
+@export_range(1.0, 24.0, 0.5) var mushroom_death_fps: float = 4.0
+@export_range(1.0, 24.0, 0.5) var mimic_move_fps: float = 6.0
+@export_range(1.0, 24.0, 0.5) var mimic_death_fps: float = 7.0
+@export_range(1.0, 24.0, 0.5) var tentacle_idle_fps: float = 3.0
 @export_range(1.0, 20.0, 0.5) var large_correction_enemy_walk_animation_fps: float = 4.0
-@export_range(1.0, 20.0, 0.5) var stapler_enemy_walk_animation_fps: float = 4.0
 @export_range(1.0, 24.0, 0.5) var correction_charge_animation_fps: float = 8.0
 @export_range(1.0, 24.0, 0.5) var large_correction_charge_animation_fps: float = 7.0
-@export_range(1.0, 24.0, 0.5) var stapler_attack_animation_fps: float = 8.0
 @export_range(0.1, 1.0, 0.01) var stapler_attack_windup_seconds: float = 0.35
+
+@export_group("Enemy Visual Scale")
+## 统一 visual_scale：不同画布尺寸的序列帧统一缩放到最终游戏内体型，碰撞体单独适配不随缩放变化。
+## 本组保存的是绝对最终缩放（已包含 ×4 放大：旧值 0.15/0.19/0.34/0.12/0.42；触手怪 ×2：0.5→1.0），
+## 运行时代码直接使用该值，不再二次乘倍率。
+@export_range(0.02, 2.0, 0.01) var slime_visual_scale: float = 0.60
+@export_range(0.02, 2.0, 0.01) var flying_eye_visual_scale: float = 0.76
+@export_range(0.02, 2.0, 0.01) var huntress_visual_scale: float = 1.02
+@export_range(0.02, 2.0, 0.01) var mushroom_visual_scale: float = 0.96
+@export_range(0.02, 2.0, 0.01) var mimic_visual_scale: float = 1.68
+@export_range(0.02, 2.0, 0.01) var tentacle_visual_scale: float = 1.0
 
 @export_group("Stapler Enemy")
 @export var stapler_fire_interval: float = 2.0
@@ -195,8 +230,6 @@ extends Resource
 @export var staple_collision_radius: float = 5.0
 
 @export_group("Alarm Clock Enemy")
-@export_range(0.1, 2.0, 0.01) var alarm_enemy_visual_scale: float = 0.32
-@export_range(1.0, 20.0, 0.5) var alarm_enemy_walk_fps: float = 6.0
 @export var alarm_enemy_max_hp: float = 10.0
 @export var alarm_enemy_contact_damage: float = 0.0
 @export var alarm_enemy_movement_speed: float = 72.0
@@ -209,7 +242,6 @@ extends Resource
 @export var alarm_enemy_blue_exp_value: int = 5
 
 @export_group("Mailbox Enemy")
-@export_range(1.0, 20.0, 0.5) var mailbox_enemy_walk_fps: float = 4.0
 @export var mailbox_enemy_max_hp: float = 100.0
 @export var mailbox_enemy_contact_damage: float = 8.0
 @export var mailbox_enemy_movement_speed: float = 28.0
@@ -221,6 +253,26 @@ extends Resource
 @export var mailbox_enemy_attack_cooldown: float = 2.5
 @export var mailbox_enemy_split_count: int = 3
 @export var mailbox_enemy_purple_exp_value: int = 25
+
+@export_group("Tentacle Enemy")
+## 触手怪：不移动的环境型可破坏怪物，使用 Crawling Depths Tentacle 素材。
+@export var tentacle_max_hp: float = 100.0
+@export var tentacle_contact_damage: float = 5.0
+@export var tentacle_spawn_interval: float = 30.0
+@export_range(1, 10, 1) var tentacle_spawn_batch_min: int = 1
+@export_range(1, 10, 1) var tentacle_spawn_batch_max: int = 5
+@export_range(0, 30, 1) var tentacle_max_alive: int = 10
+@export var tentacle_min_spawn_distance_from_player: float = 120.0
+## 死亡掉落 1 个紫色经验球，数值沿用现有紫色经验球配置（mailbox_enemy_purple_exp_value）。
+@export var tentacle_purple_exp_value: int = 25
+## 触手怪死亡额外掉落的红心拾取后回复的生命值。
+@export_range(1.0, 100.0, 1.0) var heart_pickup_heal_amount: float = 15.0
+
+@export_group("Huntress Attack")
+## 精灵射手（Legacy internal ID: stapler）投射物绑定到 shoot 动画的指定帧。
+@export_range(0, 5, 1) var huntress_shoot_projectile_frame: int = 3
+## 进入攻击状态立即 velocity=0 并暂停寻路/追踪，攻击动画完整播完才恢复移动。
+@export var huntress_attack_stop_before_shot: bool = true
 
 @export_group("Opening Text")
 @export_range(1.0, 120.0, 1.0) var opening_characters_per_second: float = 22.0
@@ -265,7 +317,7 @@ extends Resource
 @export_group("Main Menu")
 @export_range(4, 40, 1) var main_menu_button_spacing: int = 12
 @export_range(0.0, 12.0, 0.5) var main_menu_hover_offset: float = 4.0
-@export var game_version_text: String = "版本号V0.3"
+@export var game_version_text: String = "版本号V0.4.1"
 @export var community_group_text: String = "游戏存活进度群:833796070"
 @export var community_group_url: String = "https://qm.qq.com/q/Mq3wuCuZQ6"
 
@@ -281,13 +333,82 @@ extends Resource
 @export_range(0.0, 1.0, 0.01) var bedroom_interaction_outline_opacity: float = 0.78
 @export var bedroom_show_click_regions: bool = false
 
+@export_group("Bedroom Computer")
+## 电脑素材：亮屏 res://art/Badroom/bedroom_computer_light.png，息屏 res://art/Badroom/bedroom_computer_dark.png。
+## 电脑界面场景：res://scenes/ui/computer_overlay.tscn（脚本 scripts/ui/computer_overlay.gd）。
+## 当天状态字段：persistent_state.computer_opened_today（新的一天开始时重置为 false）。
+
+@export_group("Phone New Message Notification")
+## 以下三个旧震动参数已废弃（保留避免存档/资源报错），新实现使用下方 Phone Vibration 组。
+@export_range(0.0, 8.0, 0.5) var phone_new_message_vibrate_amplitude: float = 3.0
+@export_range(1, 6, 1) var phone_new_message_vibrate_cycles: int = 3
+@export_range(0.2, 2.0, 0.05) var phone_new_message_vibrate_seconds: float = 0.75
+
+@export_group("Phone Vibration")
+## 快速短促“嗡嗡”震动（bedroom_phone.gd _play_new_message_vibrate）：
+## 每轮 左→右→左→右→中，共 phone_vibration_rounds 轮，轮间停顿 pause_duration。
+## 所有坐标基于 phone_rest_position 计算，震动后精确归位。
+@export_range(1.0, 6.0, 0.5) var phone_vibration_offset_px: float = 3.0
+@export_range(0.02, 0.2, 0.005) var phone_vibration_step_duration: float = 0.05
+@export_range(0.0, 0.5, 0.01) var phone_vibration_pause_duration: float = 0.10
+@export_range(1, 4, 1) var phone_vibration_rounds: int = 2
+
+@export_group("Bedroom Lighting")
+## 卧室基础环境光（CanvasModulate）：整体压暗并偏冷色，光源会把局部照亮。
+## 节点路径：卧室场景 Layout/BedroomLighting/{CanvasModulate, ComputerScreenLight}。
+## 窗户光照系统（WindowLight / CurtainLightOccluder / 时间驱动窗光）已彻底废弃删除，
+## 卧室唯一的动态光源是电脑屏幕光；遮阳帘不再影响任何光照。
+## 重要：点光必须使用 Mix 混合（Add 混合在本渲染环境会把照射区渲染成黑色）。
+@export var bedroom_ambient_modulate_color: Color = Color(0.82, 0.84, 0.92)
+## 电脑屏幕发光：冷蓝/青白，只照亮电脑附近小范围；仅亮屏状态可见
+## （由 bedroom.gd _sync_computer_visual 控制开关）。
+@export_range(0.0, 3.0, 0.05) var bedroom_computer_light_energy: float = 1.15
+@export var bedroom_computer_light_color: Color = Color(0.62, 0.86, 0.95)
+## 电脑光整体增强倍率：最终 energy = bedroom_computer_light_energy × 本倍率，
+## 只在 _setup_lighting 一处乘算，不在其它位置重复叠加。
+@export_range(0.5, 4.0, 0.1) var computer_light_energy_multiplier: float = 2.0
+
+@export_group("Bedroom Vignette")
+## 21:00→00:00 动态像素暗角（shaders/bedroom_vignette.gdshader，bedroom.gd _update_vignette）：
+## 用卧室游戏时间驱动，Ease-In 曲线，只覆盖卧室主画布，不影响手机/HUD/弹窗 UI。
+## 1260 = 21:00，1440 = 00:00（强制睡觉时间）；跨午夜按夜间分钟归一化。
+## 强度不设置任何人为上限（旧 bedroom_vignette_max_strength / bedroom_vignette_safe_max 已删除）：
+## final = (min_strength + progress²) × 倍率，progress 允许超过 1（Debug 超时继续增长），由 GPU 自然限制输出。
+@export var bedroom_vignette_start_minutes: float = 1260.0
+@export var bedroom_vignette_end_minutes: float = 1440.0
+@export_range(0.0, 1.0, 0.01) var bedroom_vignette_min_strength: float = 0.10
+## 暗角整体强度倍率：final = (min + progress²) × 倍率；只在 _update_vignette 一处乘算。
+@export_range(0.5, 4.0, 0.1) var vignette_intensity_multiplier: float = 2.0
+
 @export_group("Bedroom Door")
-@export_range(0.05, 0.25, 0.01) var door_interaction_width_ratio: float = 0.12
-@export_range(16.0, 180.0, 1.0) var door_glow_width: float = 92.0
+## BottomEdgeInteraction：底部交互横带高度（原左侧白光已移到底部）。
+@export_range(16.0, 120.0, 1.0) var bottom_edge_interaction_height: float = 60.0
+## 底部交互的水平范围：交互区中心 x = 280px（视口 640），宽度保持中间三分之一。
+@export_range(0.0, 1.0, 0.0001) var bottom_interaction_horizontal_start_ratio: float = 0.270833
+@export_range(0.0, 1.0, 0.0001) var bottom_interaction_horizontal_end_ratio: float = 0.604167
 @export_range(0.0, 1.0, 0.01) var door_glow_opacity: float = 0.32
 @export_range(0.02, 2.0, 0.01) var door_glow_fade_in_seconds: float = 0.16
 @export_range(0.02, 2.0, 0.01) var door_glow_fade_out_seconds: float = 0.24
 @export_range(1.0, 3.0, 0.05) var door_waiting_glow_multiplier: float = 1.55
+## 半圆白光的像素风距离量化步长（像素）：同心环宽度，<=0 不量化；不可过强。
+@export_range(0.0, 12.0, 1.0) var door_glow_pixel_step_size: float = 4.0
+## 半圆白光几何：水平直径 = 视口宽 × width_ratio，圆心 x = 视口宽 × center_x_ratio，
+## 底边贴屏幕底；0.59375 即视口 640 下宽 380px，圆心仍在屏幕水平中央。
+@export_range(0.05, 1.0, 0.0001) var bottom_glow_width_ratio: float = 0.59375
+@export_range(0.0, 1.0, 0.0001) var bottom_glow_center_x_ratio: float = 0.5
+## 半圆光效高度 = 水平半径 × 本倍率；只向上变化，水平宽度由 width_ratio 单独控制。
+## 0.631579 即视口 640 下半径 190px、高度 120px 的椭圆半光。
+@export_range(0.1, 4.0, 0.0001) var bottom_glow_height_multiplier: float = 0.631579
+## 有人敲门时底部朝下箭头的往返位移（整数像素）与单次往返周期。
+@export_range(1.0, 12.0, 1.0) var delivery_arrow_bounce_distance_px: float = 5.0
+@export_range(0.2, 2.0, 0.05) var delivery_arrow_bounce_duration: float = 0.65
+
+@export_group("Dream Map")
+## 梦境战斗地图（Crawling Depths 16×16 Tileset，docs/THIRD_PARTY_ASSETS.md 署名）。
+## 可探索面积目标 = 旧竞技场（580×258）× dream_map_area_multiplier，
+## 长宽各 ×sqrt(倍率) 保持长宽比；实际网格按 Tile 整数取整（见 dream_map_builder.gd）。
+@export_range(1.0, 9.0, 0.1) var dream_map_area_multiplier: float = 3.0
+@export_range(8, 64, 1) var dream_tileset_base_tile_size: int = 16
 
 @export_group("Cheap Meal Delivery")
 @export var cheap_meal_price: int = 200
@@ -321,6 +442,10 @@ extends Resource
 @export_range(1, 99, 1) var stress_threshold_spawn: int = 30
 @export_range(1, 99, 1) var stress_threshold_speed: int = 50
 @export_range(1, 99, 1) var stress_threshold_vision: int = 70
+## 压力三档像素表情阈值（bedroom_status_hud.gd update_stress_face）：
+## <= happy_max 开心；< sweat_min 一般；>= sweat_min 流汗。
+@export_range(0, 99, 1) var stress_face_happy_max: int = 30
+@export_range(1, 100, 1) var stress_face_sweat_min: int = 70
 @export_range(1.0, 5.0, 0.1) var stress_spawn_multiplier_over_30: float = 1.5
 @export_range(1.0, 5.0, 0.1) var stress_spawn_multiplier_over_50: float = 2.0
 @export_range(1.0, 5.0, 0.1) var stress_spawn_multiplier_over_70: float = 2.5
@@ -400,6 +525,8 @@ extends Resource
 @export_range(-60.0, 6.0, 1.0) var sfx_enemy_kill_volume_db: float = -14.0
 @export_range(-60.0, 6.0, 1.0) var sfx_door_knock_volume_db: float = -13.0
 @export_range(-60.0, 6.0, 1.0) var sfx_thunder_volume_db: float = -18.0
+## 临时程序化 buzz 占位音量（待人工替换 res://sfx/手机震动.wav）。
+@export_range(-60.0, 6.0, 1.0) var sfx_phone_buzz_volume_db: float = -18.0
 
 @export_group("Pause Menus")
 @export var tab_menu_pauses_tree: bool = true
