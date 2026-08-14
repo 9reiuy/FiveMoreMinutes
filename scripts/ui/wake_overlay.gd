@@ -5,7 +5,6 @@ extends Control
 
 var alarm_active := false
 var alarm_elapsed := 0.0
-var player_near_wake_point := false
 var hold_progress := 0.0
 var required_hold := 5.0
 var hand_transition_progress := -1.0
@@ -28,9 +27,8 @@ func start_alarm() -> void:
 	queue_redraw()
 
 
-func update_alarm(elapsed: float, near_point: bool, progress: float, required: float) -> void:
+func update_alarm(elapsed: float, progress: float, required: float) -> void:
 	alarm_elapsed = elapsed
-	player_near_wake_point = near_point
 	hold_progress = progress
 	required_hold = required
 	queue_redraw()
@@ -74,12 +72,11 @@ func _draw() -> void:
 		draw_rect(Rect2(0, 0, size.x, lid_size), Color(0.025, 0.02, 0.028, 0.84))
 		draw_rect(Rect2(0, size.y - lid_size, size.x, lid_size), Color(0.025, 0.02, 0.028, 0.84))
 		draw_string(font, Vector2(0, 88), RunSettlement.format_time(config.alarm_start_minutes) + "  闹钟正在响", HORIZONTAL_ALIGNMENT_CENTER, 640, 18, Color("5b3338"))
-		draw_string(font, Vector2(0, 112), "回到床边，让自己醒来", HORIZONTAL_ALIGNMENT_CENTER, 640, 14, Color("604d53"))
-		if player_near_wake_point:
-			draw_rect(Rect2(155, 300, 330, 43), Color(0.03, 0.025, 0.04, 0.86))
-			draw_rect(Rect2(177, 326, 286, 8), Color("302f3b"))
-			draw_rect(Rect2(177, 326, 286.0 * clampf(hold_progress / maxf(required_hold, 0.001), 0.0, 1.0), 8), Color("a68383"))
-			draw_string(font, Vector2(0, 319), "按住 F 醒来  %.1f / %.1f 秒" % [hold_progress, required_hold], HORIZONTAL_ALIGNMENT_CENTER, 640, 14, Color("d4c9c9"))
+		draw_string(font, Vector2(0, 112), "无论身在何处，按住 F 让自己醒来", HORIZONTAL_ALIGNMENT_CENTER, 640, 14, Color("604d53"))
+		draw_rect(Rect2(155, 300, 330, 43), Color(0.03, 0.025, 0.04, 0.86))
+		draw_rect(Rect2(177, 326, 286, 8), Color("302f3b"))
+		draw_rect(Rect2(177, 326, 286.0 * clampf(hold_progress / maxf(required_hold, 0.001), 0.0, 1.0), 8), Color("a68383"))
+		draw_string(font, Vector2(0, 319), "按住 F 醒来  %.1f / %.1f 秒" % [hold_progress, required_hold], HORIZONTAL_ALIGNMENT_CENTER, 640, 14, Color("d4c9c9"))
 	if hand_transition_progress >= 0.0:
 		draw_rect(Rect2(Vector2.ZERO, size), Color(0.02, 0.018, 0.025, 0.72))
 		var alarm_position := Vector2(320, 117)

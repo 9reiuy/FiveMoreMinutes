@@ -1,14 +1,21 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://bwvgi4l63cypt"]
 
-[ext_resource type="Script" path="res://scripts/ui/computer_overlay.gd" id="1_overlay"]
+[ext_resource type="Script" uid="uid://b1g67ufjk5jn5" path="res://scripts/ui/computer_overlay.gd" id="1_overlay"]
+[ext_resource type="PackedScene" path="res://scenes/ui/blackjack_app.tscn" id="2_blackjack"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dream_browser_app.tscn" id="3_browser"]
 
-[node name="ComputerOverlay" type="Control"]
+[node name="ComputerOverlay" type="Control" unique_id=1699351865]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-visible = false
-mouse_filter = 0
 script = ExtResource("1_overlay")
+
+[node name="BlackjackApp" parent="." instance=ExtResource("2_blackjack")]
+visible = false
+
+[node name="DreamBrowserApp" parent="." instance=ExtResource("3_browser")]
+visible = false

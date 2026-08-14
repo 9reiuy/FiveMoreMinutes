@@ -51,7 +51,14 @@ func _explode() -> void:
 	var world := get_tree().get_first_node_in_group("dream_world")
 	if world != null:
 		for enemy in get_tree().get_nodes_in_group("dream_enemies"):
-			if is_instance_valid(enemy) and not bool(enemy.get("dead")) and global_position.distance_to(enemy.global_position) <= explosion_radius:
+			if not is_instance_valid(enemy) or bool(enemy.get("dead")):
+				continue
+			# 保持原有“敌人中心在爆炸半径内”判定；触手怪等大体型敌人
+			# 额外按受击区形状判定，炸到身体任意有效部位都结算伤害。
+			var in_radius := global_position.distance_to(enemy.global_position) <= explosion_radius
+			if not in_radius and enemy.has_method("distance_to_hurtbox"):
+				in_radius = float(enemy.distance_to_hurtbox(global_position)) <= explosion_radius
+			if in_radius:
 				world.resolve_player_hit(enemy, enemy_damage, global_position)
 	if is_instance_valid(owner_player) and global_position.distance_to(owner_player.global_position) <= explosion_radius:
 		owner_player.receive_damage(self_damage)

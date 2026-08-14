@@ -62,11 +62,13 @@ func _fire_full_volley(direction: Vector2, allow_extra: bool) -> void:
 			var maximum_angle := minimum_angle + sector_width
 			var pellet_direction := center.rotated(deg_to_rad(randf_range(minimum_angle, maximum_angle)))
 			var projectile := PROJECTILE_SCENE.instantiate()
-			projectile.global_position = get_parent().global_position
+			projectile.global_position = get_parent().get_projectile_origin()
 			projectile.setup(pellet_direction, damage, attack_range, projectile_speed)
 			world.add_projectile(projectile)
 		if world.has_method("spawn_weapon_muzzle"):
-			world.spawn_weapon_muzzle(get_parent().global_position, direction, &"shotgun")
+			world.spawn_weapon_muzzle(get_parent().get_projectile_origin(), direction, &"shotgun")
+		if world.has_method("spawn_bullet_sequence"):
+			world.spawn_bullet_sequence(get_parent().get_projectile_origin(), direction)
 	if firing_audio != null and firing_audio.stream != null:
 		firing_audio.stop()
 		firing_audio.play()

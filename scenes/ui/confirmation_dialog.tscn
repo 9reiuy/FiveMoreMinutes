@@ -1,13 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/ui/confirmation_dialog.gd" id="1_dialog"]
+[ext_resource type="Script" uid="uid://y8delcqnxbu7" path="res://scripts/ui/confirmation_dialog.gd" id="1_dialog"]
 [ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
-[ext_resource type="Texture2D" path="res://art/Badroom/chr.png" id="3_character"]
-[ext_resource type="Script" path="res://scripts/ui/dialogue_frame.gd" id="4_frame"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_character"]
-atlas = ExtResource("3_character")
-region = Rect2(226, 97, 1040, 1343)
+[ext_resource type="Texture2D" uid="uid://7ncaeqa0mrp3" path="res://art/Chr/chr.png" id="3_character"]
+[ext_resource type="Script" uid="uid://cxjnqjiip4wp1" path="res://scripts/ui/dialogue_frame.gd" id="4_frame"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_choice"]
 
@@ -44,9 +40,7 @@ color = Color(0.0156863, 0.0352941, 0.0470588, 0.62)
 
 [node name="Portrait" type="Control" parent="."]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 90.0
-offset_right = 226.0
+offset_right = 640.0
 offset_bottom = 360.0
 mouse_filter = 2
 
@@ -59,7 +53,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = SubResource("AtlasTexture_character")
+texture = ExtResource("3_character")
 expand_mode = 1
 stretch_mode = 5
 

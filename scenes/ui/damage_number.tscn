@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/damage_number.gd" id="1"]
+[ext_resource type="Shader" path="res://shaders/world_ui_unshaded.gdshader" id="2_unshaded"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_unshaded"]
+shader = ExtResource("2_unshaded")
 
 [node name="DamageNumber" type="Node2D"]
+material = SubResource("ShaderMaterial_unshaded")
 script = ExtResource("1")

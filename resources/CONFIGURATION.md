@@ -120,7 +120,7 @@
 
 ## 既有核心参数
 
-敌人生成、敌人上限、基础生命/伤害、7:00后成长、梦境时钟、醒来长按、慢动作、升级公式、两种武器、闪避、逐字速度/音效和手机位置也继续集中在同一资源中。其中 `base_wake_hold_seconds` 默认5秒，`bullet_time_scale` 默认0.20，梦境默认04:00开始、07:00响铃。
+敌人生成、敌人上限、基础生命/伤害、06:00后成长、梦境时钟、醒来长按、慢动作、升级公式、武器、闪避、逐字速度/音效和手机位置也继续集中在同一资源中。其中 `base_wake_hold_seconds` 默认5秒，`bullet_time_scale` 默认0.20，梦境默认04:00开始、剧情模式06:00响铃。
 
 ## 本阶段：敌人解锁与大体型修正带
 
@@ -148,8 +148,9 @@
 
 | 参数 | 默认值 | 推荐范围 | 作用 |
 |---|---:|---:|---|
-| `weekday_alarm_minutes` | 420（07:00） | 0–1439 | 星期一至星期六的梦境闹钟时间 |
-| `sunday_alarm_minutes` | 540（09:00） | 0–1439 | 星期日梦境闹钟时间 |
+| `story_wake_minutes` | 360（06:00） | 0–1439 | 剧情模式每天统一正式起床与任意地点长按F开放时间 |
+| `weekday_alarm_minutes` | 360（06:00） | 0–1439 | 旧接口兼容值；考勤阈值不随之改变 |
+| `sunday_alarm_minutes` | 360（06:00） | 0–1439 | 旧接口兼容值；星期日结算规则不变 |
 
 星期索引保存在局外状态：0为星期一、6为星期日。手机锁屏不维护独立计时器，而是直接显示卧室的 `current_minutes`。
 
@@ -225,7 +226,17 @@
 | `katana_wave_acceleration_curve` | Ease-In | Curve输出0–1 | 只控制直线剑气的速度变化形状 |
 | `correction_experience_drop_count` | 2 | 1–16 | 普通修正带正式死亡后生成的经验物数量 |
 | `stapler_experience_drop_count` | 3 | 1–16 | 订书机正式死亡后生成的经验物数量 |
-| `upgrade_refreshes_per_level` | 1 | 0–3 | 每个独立升级三选一界面的刷新次数 |
+| `slot_rerolls_per_run` | 1 | 0–3 | 每个Battle Run老虎机总重抽次数，仅三格锁定且非Jackpot时可用 |
+| `upgrade_reel_start_speeds` | `(84,92,78)` | 正数 | 三列起步速度；由上一版`(42,46,39)`翻倍 |
+| `upgrade_reel_max_speeds` | `(440,472,416)` | 正数 | 三列Ease-In后的速度上限；由上一版`(220,236,208)`翻倍 |
+
+老虎机武器池使用本局`used_weapon_reward_ids`排除：初始武器进场即加入；新武器只有真正结算并装备后加入。Reel仅显示或Reroll不会消耗武器，下一局由新DreamWorld重新初始化。
+
+## 本次界面与饥饿参数
+
+- 手机设置页三条音量滑条：视觉和横向命中宽度均由128px缩为64px，矩形分别为`(48,92,64,22)`、`(48,137,64,22)`、`(48,182,64,22)`。
+- `hungry_bed_direct_sleep_balance_threshold=200`：未吃饭且权威`balance < 200`时，床直接显示“那就这样睡吧”；200及以上沿用原饥饿劝告/尝试次数逻辑。
+- 饱腹图标直接读取当天`food_eaten_today`。当前没有专用胃素材，临时使用`res://art/icon/bowl.png`，新一天该字段重置后自动隐藏。
 | `normal_life_ending_required_workdays` | 14 | 1–365 | 触发正常生活结局所需的连续正常出勤工作日 |
 
 出勤计数字段为 `normal_attendance_workday_streak`，结局解锁字段为 `normal_life_ending_unlocked`；二者保存在现有单槽存档状态中，旧存档加载时由默认状态补齐。
@@ -277,6 +288,7 @@ Tab菜单内容由当前单局技能状态和角色/武器运行时数值即时�
 | `phone_app_chinese_title_font_size` | 13 px | 8–24 px | 手机应用页中文主标题字号 |
 | `phone_app_english_title_font_size` | 8 px | 6–18 px | 手机应用页英文副标题字号 |
 | `phone_app_content_margin` | 12 px | 4–24 px | 应用正文区左右留白 |
+| `online_scrollbar_width` | 5 px（基础） | 3–8 px | 手机正式 App 的滚动条基础宽度；运行时视觉与命中宽度统一取 50%，当前为 2.5 px |
 | `online_message_spacing` | 8 px | 2–20 px | ONLINE消息块之间的垂直间距 |
 | `online_unread_dot_size` | 4 px | 2–10 px | ONLINE未读红点半径 |
 | `online_unread_dot_offset` | `(2, 0)` | 依图标调整 | 未读红点相对 ONLINE 图标右上角的偏移 |
@@ -287,3 +299,20 @@ Tab菜单内容由当前单局技能状态和角色/武器运行时数值即时�
 | `console_font_size` | 14 px | 8–28 px | Debug控制台输出与输入字号 |
 
 ONLINE消息的 `is_read` 位于 `res://resources/phone_messages.json`，运行后复制到局外状态；手机主页和锁屏仍直接使用卧室唯一时间源。Debug控制台只在调试构建启用。
+
+## 对话立绘描边与梦境动态照明
+
+| 参数 | 默认值 | 推荐范围 | 作用 |
+|---|---:|---:|---|
+| `dialogue_portrait_outline_color` | `#346DB3` | 任意可见颜色 | 所有正式对话角色共用的Alpha轮廓颜色 |
+| `dialogue_portrait_outline_width_px` | 2 px | 1–4 px | 对话立绘最终屏幕描边宽度；运行时按贴图显示比例换算 |
+| `dialogue_portrait_filter_color` | `#8DB9D8` | 低饱和冷色 | 对话立绘主体的统一冷蓝调和颜色，不影响描边 |
+| `dialogue_portrait_filter_strength` | 0.18 | 0.0–0.35 | 冷蓝滤镜混合强度；过高会降低五官和衣服辨识度 |
+| `dream_ambient_color` | `#26313F` | 深灰蓝、避免纯黑 | 仅压暗梦境世界画布，不影响独立CanvasLayer中的HUD |
+| `player_light_radius` | 104 世界px | 72–144 | 玩家周围柔和可视亮区半径，约设计视口短边的29% |
+| `player_light_energy` | 1.15 | 0.7–1.8 | 玩家PointLight2D的照明能量 |
+| `player_light_color` | `#E7F0F8` | 接近白色 | 略偏冷但不过度染色的玩家照明颜色 |
+| `player_light_falloff` | 0.32 | 0.15–0.55 | 256×256程序化径向渐变的明亮中心结束位置 |
+| `stress_light_radius_multiplier` | 0.72 | 0.5–1.0 | 压力高于视野阈值后，同一PlayerLight的半径倍率 |
+
+梦境只创建一盏主要动态光源：`DreamWorld/Player/PlayerLight`。旧压力圆孔遮罩不再实例化，避免环境暗化、玩家灯光和黑幕三层叠加。XP条、准星、升级卡片、暂停菜单和伤害闪光位于`DreamWorld/UILayer`，不受世界CanvasModulate影响；世界坐标中的伤害数字单独使用Unshaded材质保持可读。

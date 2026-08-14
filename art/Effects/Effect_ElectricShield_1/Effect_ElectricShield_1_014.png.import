@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7ncaeqa0mrp3"
-path="res://.godot/imported/chr.png-bd4eeabd180b69f99c5e02dc77b78cd5.ctex"
+uid="uid://bssheerogu8fp"
+path="res://.godot/imported/Effect_ElectricShield_1_014.png-9d52db2d37aacd5f5aefe71f4ce413cf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/Badroom/chr.png"
-dest_files=["res://.godot/imported/chr.png-bd4eeabd180b69f99c5e02dc77b78cd5.ctex"]
+source_file="res://art/Effects/Effect_ElectricShield_1/Effect_ElectricShield_1_014.png"
+dest_files=["res://.godot/imported/Effect_ElectricShield_1_014.png-9d52db2d37aacd5f5aefe71f4ce413cf.ctex"]
 
 [params]
 

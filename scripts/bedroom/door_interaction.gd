@@ -104,14 +104,17 @@ func _draw() -> void:
 	var viewport_size := get_viewport_rect().size
 	if viewport_size.x <= 0.0:
 		viewport_size = Vector2(640, 360)
-	var interaction_rect := get_interaction_rect(viewport_size)
-	var center_x := interaction_rect.position.x + interaction_rect.size.x * 0.5
+	# “有人敲门”与箭头固定在屏幕底部正中间（视口中心 x），
+	# 不再跟随交互区中心（280px）偏左；垂直位置紧贴视口底部。
+	var center_x := viewport_size.x * 0.5
 	var font := PixelFont.get_font()
 	var text := "有人敲门"
 	var font_size := 10
 	var color := Color(0.82, 0.91, 0.96, 0.92)
 	var text_width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-	var text_baseline_y := interaction_rect.position.y - 18.0
+	# 文字紧贴屏幕底部：基线固定在视口底上方 30px，箭头紧随其下，
+	# 往返最高点仍留在屏幕内（360 视口下箭头最低约 y=348）。
+	var text_baseline_y := viewport_size.y - 30.0
 	draw_string(font, Vector2(center_x - text_width * 0.5, text_baseline_y), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)
 	# 朝下箭头：文字下方、交互区上方，只做垂直往返（整数像素，无旋转/横漂/Blur）。
 	var bounce_distance := clampf(config.delivery_arrow_bounce_distance_px, 1.0, 12.0)

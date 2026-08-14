@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/endless_results.gd" id="1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_panel"]
 
 [node name="EndlessResults" type="Control"]
 layout_mode = 3
@@ -27,6 +29,7 @@ offset_left = 180.0
 offset_top = 80.0
 offset_right = 460.0
 offset_bottom = 280.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
 
 [node name="Content" type="VBoxContainer" parent="Panel"]
 layout_mode = 2

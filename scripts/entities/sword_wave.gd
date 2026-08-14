@@ -1,7 +1,6 @@
 extends Node2D
 
 # 三倍扩图后的梦境地图可走区域；旧小地图尺寸会让剑气出生即越界被释放（偶发无剑气根因）。
-const ARENA_BOUNDS := Rect2(24, 24, 992, 432)
 # 剑气视觉使用 SP301_04 月牙帧；素材自身默认朝向为尖端朝 -x（开口朝 +x），
 # 因此默认补偿 180°，使视觉尖端与飞行方向一致（katana_wave_texture_forward_angle_deg）。
 const WAVE_TEXTURE: Texture2D = preload("res://art/Effects/SP301_nyknck/SP301_04.png")
@@ -19,7 +18,7 @@ var acceleration_curve: Curve
 var hit_enemies: Dictionary = {}
 
 func setup(new_direction: Vector2, new_damage: float, new_speed: float, new_distance: float, new_width: float, new_initial_speed_ratio: float, new_acceleration_duration: float, new_acceleration_curve: Curve, texture_forward_angle_deg: float = 180.0) -> void:
-	direction = new_direction.normalized()
+	direction = new_direction.normalized() if new_direction.length_squared() > 0.0001 else Vector2.RIGHT
 	damage = new_damage
 	speed = new_speed
 	max_distance = new_distance
@@ -51,12 +50,15 @@ func _process(delta: float) -> void:
 			continue
 		var enemy_id := enemy.get_instance_id()
 		var closest_point := Geometry2D.get_closest_point_to_segment(enemy.global_position, movement_start, movement_end)
-		if not hit_enemies.has(enemy_id) and closest_point.distance_to(enemy.global_position) <= wave_width * 0.5 + 13.0:
+		# 受击区接口：普通敌人等效原 13px 半径圆，触手怪等大体型按身体形状判定。
+		var hurt_distance: float = enemy.distance_to_hurtbox(closest_point) if enemy.has_method("distance_to_hurtbox") else maxf(0.0, closest_point.distance_to(enemy.global_position) - 13.0)
+		if not hit_enemies.has(enemy_id) and hurt_distance <= wave_width * 0.5:
 			hit_enemies[enemy_id] = true
 			var world := get_tree().get_first_node_in_group("dream_world")
 			if world != null:
 				world.resolve_player_hit(enemy, damage, global_position - direction)
-	if traveled >= max_distance or not ARENA_BOUNDS.has_point(global_position):
+	# 剑气是 World projectile；生命周期只由已飞行距离决定，不用地图/镜头边界做出生资格。
+	if traveled >= max_distance:
 		queue_free()
 
 

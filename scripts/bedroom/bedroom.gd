@@ -5,6 +5,7 @@ const STATE_RULES := preload("res://scripts/app/game_state_rules.gd")
 
 signal sleep_requested(melatonin_count: int, is_hungry_run: bool)
 signal save_requested
+signal story_weapon_changed(weapon_id: String)
 
 # The art shares a 2560×1440 transparent canvas and is uniformly scaled to 640×360.
 # These bounds are the scaled non-transparent extents; the final hit test also checks alpha.
@@ -24,6 +25,7 @@ const SUNSHADE_HOVER_BRIGHTNESS := 1.25
 @onready var sunshade_sprite: Sprite2D = $Layout/ArtRoot/Sunshade
 # 电脑 Sprite：默认息屏素材，当天首次打开后切换为亮屏素材（见 _sync_computer_visual）。
 @onready var computer_sprite: Sprite2D = $Layout/ArtRoot/BedroomComputer
+@onready var bedroom_chr_sprite: Sprite2D = $Layout/ArtRoot/BedroomChrOnBed
 @onready var bed_click_area: Area2D = $Layout/BedClickArea
 @onready var bottle_click_area: Area2D = $Layout/MelatoninClickArea
 @onready var sunshade_click_area: Area2D = $Layout/SunshadeClickArea
@@ -31,10 +33,12 @@ const SUNSHADE_HOVER_BRIGHTNESS := 1.25
 @onready var bed_click_polygon: CollisionPolygon2D = $Layout/BedClickArea/CollisionPolygon2D
 @onready var bottle_click_polygon: CollisionPolygon2D = $Layout/MelatoninClickArea/CollisionPolygon2D
 @onready var sunshade_click_polygon: CollisionPolygon2D = $Layout/SunshadeClickArea/CollisionPolygon2D
+@onready var bedroom_chr_click_polygon: CollisionPolygon2D = $Layout/BedroomChrClickArea/CollisionPolygon2D
 @onready var bottle_anchor: Marker2D = $Layout/MelatoninBottleAnchor
 @onready var door_interaction: BedroomDoorInteraction = $Layout/BottomEdgeInteraction
 @onready var status_hud: BedroomStatusHUD = $PhoneLayer/BedroomStatusHUD
 @onready var weather: BedroomWeather = $Layout/WeatherBackLayer
+@onready var hallway: HallwayView = $Hallway
 # 像素风动态光照：CanvasModulate 控制卧室基础环境亮度，
 # ComputerScreenLight 为电脑屏幕发光（卧室当前唯一的动态光源；窗户光照系统已废弃删除）。
 @onready var ambient_modulate: CanvasModulate = $Layout/BedroomLighting/CanvasModulate
@@ -57,11 +61,17 @@ var bottle_image: Image
 var sunshade_image: Image
 # 电脑 alpha 检测用图像：亮/息屏两张素材的不透明区域完全一致，用亮屏图即可。
 var computer_image: Image
+var bedroom_chr_image: Image
 var bed_outline_material: ShaderMaterial
 var bottle_outline_material: ShaderMaterial
 var sunshade_outline_material: ShaderMaterial
 var computer_outline_material: ShaderMaterial
+var bedroom_chr_outline_material: ShaderMaterial
 var hungry_sleep_committed := false
+var bedroom_chr_interaction_enabled := true
+var bedroom_chr_interaction_before_dialog := true
+var bedroom_chr_dialogue_visibility: Dictionary = {}
+var bedroom_chr_dialogue_hidden := false
 
 # 电脑素材路径（亮屏 / 息屏）：
 #   亮屏：res://art/Badroom/bedroom_computer_light.png（当天首次打开电脑后显示）
@@ -71,16 +81,18 @@ const COMPUTER_DARK_TEXTURE := preload("res://art/Badroom/bedroom_computer_dark.
 
 
 func _ready() -> void:
-	SFX.play_bedroom_music()
+	SFX.play_bedroom_music(false, get_instance_id())
 	current_minutes = config.bedroom_start_minutes
 	bed_image = bed_sprite.texture.get_image()
 	bottle_image = bottle_sprite.texture.get_image()
 	sunshade_image = sunshade_sprite.texture.get_image()
 	computer_image = COMPUTER_LIGHT_TEXTURE.get_image()
+	bedroom_chr_image = bedroom_chr_sprite.texture.get_image()
 	bed_outline_material = bed_sprite.material as ShaderMaterial
 	bottle_outline_material = bottle_sprite.material as ShaderMaterial
 	sunshade_outline_material = sunshade_sprite.material as ShaderMaterial
 	computer_outline_material = computer_sprite.material as ShaderMaterial
+	bedroom_chr_outline_material = bedroom_chr_sprite.material as ShaderMaterial
 	var outline_source_width := config.bedroom_interaction_outline_width / maxf(absf(art_root.scale.x), 0.001)
 	var outline_color := config.bedroom_interaction_outline_color
 	outline_color.a = config.bedroom_interaction_outline_opacity
@@ -88,10 +100,12 @@ func _ready() -> void:
 	bottle_outline_material.set_shader_parameter("outline_color", outline_color)
 	sunshade_outline_material.set_shader_parameter("outline_color", outline_color)
 	computer_outline_material.set_shader_parameter("outline_color", outline_color)
+	bedroom_chr_outline_material.set_shader_parameter("outline_color", outline_color)
 	bed_outline_material.set_shader_parameter("outline_width_source_pixels", outline_source_width)
 	bottle_outline_material.set_shader_parameter("outline_width_source_pixels", outline_source_width)
 	# 电脑描边与床使用同一套 shader 与同一宽度参数（统一描边组件）。
 	computer_outline_material.set_shader_parameter("outline_width_source_pixels", outline_source_width)
+	bedroom_chr_outline_material.set_shader_parameter("outline_width_source_pixels", outline_source_width)
 	# 遮光帘使用独立材质实例，描边宽度单独控制（3 屏幕像素 = 12 源像素）。
 	sunshade_outline_material.set_shader_parameter("outline_width_source_pixels", 3.0 / maxf(absf(art_root.scale.x), 0.001))
 	bed_click_area.mouse_entered.connect(_set_highlighted.bind("bed"))
@@ -106,22 +120,35 @@ func _ready() -> void:
 	_setup_lighting()
 	_sync_computer_visual()
 	computer_overlay.closed.connect(_close_computer)
+	computer_overlay.shutdown_requested.connect(_shutdown_computer)
+	computer_overlay.balance_changed.connect(_on_balance_changed)
+	computer_overlay.story_weapon_changed.connect(_on_story_weapon_changed)
+	computer_overlay.configure(persistent_state)
 	phone.balance_changed.connect(_on_balance_changed)
 	phone.permanent_upgrade_changed.connect(_on_persistent_state_changed)
 	phone.state_changed.connect(_on_persistent_state_changed)
 	phone.configure_state(persistent_state)
+	status_hud.bind_state(persistent_state)
 	status_hud.set_stress(int(persistent_state.get("stress_value", config.stress_default)))
 	weather.configure(str(persistent_state.get("daily_weather_type", "overcast")))
 	melatonin_ui.completed.connect(_on_melatonin_completed)
 	melatonin_ui.cancelled.connect(_on_melatonin_cancelled)
 	confirmation_dialog.confirmed.connect(_on_confirmation_confirmed)
 	confirmation_dialog.cancelled.connect(_on_confirmation_cancelled)
+	confirmation_dialog.session_started.connect(_on_dialogue_session_started)
+	confirmation_dialog.session_ended.connect(_on_dialogue_session_ended)
+	hallway.door_clicked.connect(_on_hallway_door_clicked)
+	hallway.return_requested.connect(_close_hallway)
 	_show_pending_entry_notice()
 	queue_redraw()
 
 
 func _exit_tree() -> void:
-	SFX.stop_music(config.music_fade_duration)
+	# CanvasModulate/PointLight2D 都严格属于 Bedroom；转场释放前先关闭，
+	# 避免 queue_free 延迟到帧末时短暂影响下一个场景。
+	ambient_modulate.visible = false
+	computer_screen_light.visible = false
+	SFX.stop_music(config.music_fade_duration, get_instance_id())
 	SFX.stop_weather_ambience(config.ambience_fade_duration)
 
 
@@ -131,6 +158,7 @@ func _process(delta: float) -> void:
 	if not confirmation_dialog.visible:
 		current_minutes += delta / maxf(config.bedroom_real_seconds_per_game_minute, 0.001)
 	phone.set_bedroom_time(current_minutes)
+	computer_overlay.set_bedroom_time(current_minutes)
 	_sync_art_visibility()
 	if not input_locked and not confirmation_dialog.visible and current_minutes >= config.bedroom_force_sleep_minutes:
 		_begin_sleep(not bool(persistent_state.get("food_eaten_today", false)))
@@ -141,7 +169,7 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if input_locked or melatonin_ui.visible or confirmation_dialog.visible or computer_overlay.visible or phone.blocks_bedroom_interaction():
+	if hallway.visible or input_locked or melatonin_ui.visible or confirmation_dialog.visible or computer_overlay.visible or phone.blocks_bedroom_interaction():
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if highlighted == "bed":
@@ -152,6 +180,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_toggle_sunshade()
 		elif highlighted == "computer":
 			_open_computer()
+		elif highlighted == "bedroom_chr":
+			_request_confirmation("bedroom_chr")
 		elif highlighted == "door":
 			_request_door_interaction()
 		else:
@@ -166,11 +196,15 @@ func consume_escape() -> bool:
 	if computer_overlay.visible:
 		_close_computer()
 		return true
+	# 走廊没有新增返回按钮；复用主流程已有的 ESC/Back 优先级返回卧室。
+	if hallway.visible and not confirmation_dialog.visible:
+		_close_hallway()
+		return true
 	return false
 
 
 func _update_mouse_highlight() -> void:
-	if input_locked or melatonin_ui.visible or confirmation_dialog.visible or computer_overlay.visible or phone.blocks_bedroom_interaction():
+	if hallway.visible or input_locked or melatonin_ui.visible or confirmation_dialog.visible or computer_overlay.visible or phone.blocks_bedroom_interaction():
 		_set_highlighted("")
 		return
 	var mouse_position := get_viewport().get_mouse_position()
@@ -189,6 +223,8 @@ func _update_mouse_highlight() -> void:
 	# 避免电脑素材周围的透明空白区域可点。
 	elif _click_polygon_has_point(computer_click_polygon, mouse_position) and _is_opaque_at(computer_sprite, computer_image, mouse_position):
 		_set_highlighted("computer")
+	elif bedroom_chr_interaction_enabled and bedroom_chr_sprite.visible and _click_polygon_has_point(bedroom_chr_click_polygon, mouse_position) and _is_opaque_at(bedroom_chr_sprite, bedroom_chr_image, mouse_position):
+		_set_highlighted("bedroom_chr")
 	elif _click_polygon_has_point(bed_click_polygon, mouse_position) and _is_opaque_at(bed_sprite, bed_image, mouse_position):
 		_set_highlighted("bed")
 	else:
@@ -308,13 +344,21 @@ func _close_computer() -> void:
 	computer_overlay.close()
 
 
+func _shutdown_computer() -> void:
+	# 关机只改变电脑电源状态，不碰房间时间、手机、余额或配送状态。
+	persistent_state.computer_opened_today = false
+	_sync_computer_visual()
+	save_requested.emit()
+
+
 ## 电脑亮屏/息屏素材切换与屏幕光同步：
 ## 本函数是唯一更新电脑灯光状态的入口（bedroom.gd）。
 func _sync_computer_visual() -> void:
 	var opened_today := bool(persistent_state.get("computer_opened_today", false))
 	computer_sprite.texture = COMPUTER_LIGHT_TEXTURE if opened_today else COMPUTER_DARK_TEXTURE
-	# 亮屏 -> 屏幕光开启；息屏 -> 屏幕光关闭（不残留开机感）。
-	computer_screen_light.visible = opened_today
+	# 电脑光只在 Bedroom 地点显示；Hallway 虽与 Bedroom 共用同一夜状态，但不继承其灯光。
+	ambient_modulate.visible = not hallway.visible
+	computer_screen_light.visible = opened_today and not hallway.visible
 
 
 ## 初始化像素风动态光照参数（统一从 DemoConfig 读取，便于调参）。
@@ -356,12 +400,15 @@ func _set_highlighted(next_highlight: String) -> void:
 	if highlighted == next_highlight:
 		return
 	highlighted = next_highlight
+	Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND if not highlighted.is_empty() else Input.CURSOR_ARROW)
 	bed_outline_material.set_shader_parameter("outline_enabled", 1.0 if highlighted == "bed" else 0.0)
 	bottle_outline_material.set_shader_parameter("outline_enabled", 1.0 if highlighted == "bottle" else 0.0)
 	if sunshade_outline_material != null:
 		sunshade_outline_material.set_shader_parameter("outline_enabled", 1.0 if highlighted == "sunshade" else 0.0)
 	if computer_outline_material != null:
 		computer_outline_material.set_shader_parameter("outline_enabled", 1.0 if highlighted == "computer" else 0.0)
+	if bedroom_chr_outline_material != null:
+		bedroom_chr_outline_material.set_shader_parameter("outline_enabled", 1.0 if highlighted == "bedroom_chr" else 0.0)
 	# 遮光帘悬停时提亮、离开恢复（收起状态也随描边恢复全不透明度）。
 	_apply_sunshade_state_visual()
 
@@ -381,6 +428,7 @@ func _begin_sleep(is_hungry: bool = false) -> void:
 	else:
 		persistent_state.is_hungry_run = false
 	input_locked = true
+	_close_hallway()
 	pending_confirmation = ""
 	confirmation_dialog.close_without_signal()
 	melatonin_ui.force_cancel()
@@ -393,9 +441,15 @@ func _request_confirmation(kind: String) -> void:
 	pending_confirmation = kind
 	_set_highlighted("")
 	phone.force_collapse()
-	if kind == "bed":
+	if kind == "bedroom_chr":
+		confirmation_dialog.open_message("这是我")
+	elif kind == "bed":
 		if bool(persistent_state.get("food_eaten_today", false)):
 			confirmation_dialog.open("要睡觉了吗？", "睡觉", "再等等")
+		elif int(persistent_state.get("balance", 0)) < config.hungry_bed_direct_sleep_balance_threshold:
+			# 余额不足一份便当时不先闪现购买劝告，直接进入现有饥饿入睡确认。
+			pending_confirmation = "hungry_force"
+			confirmation_dialog.open("那就这样睡吧", "确认", "算了")
 		else:
 			var attempts := int(persistent_state.get("hungry_bed_attempts_today", 0))
 			if attempts < config.hungry_bed_attempts_before_force:
@@ -459,6 +513,11 @@ func _on_balance_changed() -> void:
 	save_requested.emit()
 
 
+func _on_story_weapon_changed(_weapon_id: String) -> void:
+	# 交给主流程的既有剧情武器入口，同时更新存档与当天快照。
+	story_weapon_changed.emit(_weapon_id)
+
+
 func _on_persistent_state_changed() -> void:
 	_sync_sunshade_visibility()
 	_apply_sunshade_ambient()
@@ -498,6 +557,8 @@ func _update_delivery(delta: float) -> void:
 func can_use_bottom_edge_interaction() -> bool:
 	if input_locked:
 		return false
+	if hallway.visible:
+		return false
 	if phone.blocks_bedroom_interaction() or not phone.is_fully_collapsed():
 		return false
 	if computer_overlay.visible:
@@ -508,7 +569,7 @@ func can_use_bottom_edge_interaction() -> bool:
 
 
 func _update_door_and_status() -> void:
-	var ordinary_state := not input_locked and not melatonin_ui.visible and not confirmation_dialog.visible and not computer_overlay.visible
+	var ordinary_state := not hallway.visible and not input_locked and not melatonin_ui.visible and not confirmation_dialog.visible and not computer_overlay.visible
 	var phone_collapsed: bool = bool(phone.is_fully_collapsed())
 	var waiting := str(persistent_state.get("delivery_state", "NONE")) == "WAITING_AT_DOOR"
 	door_interaction.set_state(can_use_bottom_edge_interaction(), highlighted == "door", waiting)
@@ -521,13 +582,43 @@ func _request_door_interaction() -> void:
 		return
 	_set_highlighted("")
 	if str(persistent_state.get("delivery_state", "NONE")) != "WAITING_AT_DOOR":
-		pending_confirmation = "door_empty"
-		confirmation_dialog.open_message("门外没有人")
+		_open_hallway()
+		return
+	_claim_delivery()
+
+
+func _open_hallway() -> void:
+	if hallway.visible or not can_use_bottom_edge_interaction():
+		return
+	_set_highlighted("")
+	hallway.open()
+	_sync_computer_visual()
+
+
+func _close_hallway() -> void:
+	if hallway.visible:
+		hallway.close()
+		_sync_computer_visual()
+
+
+func _on_hallway_door_clicked() -> void:
+	if not hallway.visible or confirmation_dialog.visible:
+		return
+	if str(persistent_state.get("delivery_state", "NONE")) == "WAITING_AT_DOOR":
+		_claim_delivery()
+		return
+	pending_confirmation = "hallway_door"
+	confirmation_dialog.open_message("门外没有人")
+
+
+func _claim_delivery() -> void:
+	if str(persistent_state.get("delivery_state", "NONE")) != "WAITING_AT_DOOR":
 		return
 	persistent_state.delivery_state = "RECEIVED"
 	persistent_state.delivery_seconds_remaining = 0.0
 	pending_confirmation = "door_received"
 	input_locked = true
+	hallway.set_interaction_enabled(false)
 	SFX.play_event(&"home_door")
 	await get_tree().create_timer(config.door_open_close_gap_seconds, false).timeout
 	SFX.play_event(&"home_door")
@@ -542,7 +633,39 @@ func _finish_eating_delivery() -> void:
 	persistent_state.hungry_bed_attempts_today = 0
 	persistent_state.is_hungry_run = false
 	_change_stress(-config.stress_food_reduction, &"food")
+	status_hud.refresh()
 	save_requested.emit()
+
+
+func _on_dialogue_session_started() -> void:
+	hallway.set_interaction_enabled(false)
+	# Hallway 对话不操作卧室角色；卧室角色只是被不透明 Hallway 背景自然遮住。
+	if hallway.visible or bedroom_chr_dialogue_hidden:
+		return
+	bedroom_chr_dialogue_hidden = true
+	bedroom_chr_dialogue_visibility.clear()
+	bedroom_chr_interaction_before_dialog = bedroom_chr_interaction_enabled
+	bedroom_chr_interaction_enabled = false
+	if highlighted == "bedroom_chr":
+		_set_highlighted("")
+	for node in get_tree().get_nodes_in_group("bedroom_chr_visuals"):
+		if node is CanvasItem and is_ancestor_of(node):
+			bedroom_chr_dialogue_visibility[node.get_instance_id()] = node.visible
+			node.visible = false
+
+
+func _on_dialogue_session_ended() -> void:
+	if hallway.visible:
+		hallway.set_interaction_enabled(true)
+	if not bedroom_chr_dialogue_hidden:
+		return
+	for node in get_tree().get_nodes_in_group("bedroom_chr_visuals"):
+		if node is CanvasItem and is_ancestor_of(node):
+			var original_visibility := bool(bedroom_chr_dialogue_visibility.get(node.get_instance_id(), false))
+			node.visible = original_visibility
+	bedroom_chr_interaction_enabled = bedroom_chr_interaction_before_dialog
+	bedroom_chr_dialogue_visibility.clear()
+	bedroom_chr_dialogue_hidden = false
 
 
 func _show_pending_entry_notice() -> void:

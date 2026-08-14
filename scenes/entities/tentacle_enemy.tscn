@@ -1,26 +1,26 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/entities/tentacle_enemy.gd" id="1_enemy"]
-[ext_resource type="Texture2D" path="res://assets/art/dream/crawling_depths/tentacle_sheet.png" id="2_sheet"]
+[ext_resource type="Texture2D" path="res://assets/art/dream/crawling_depths/tentacle_sheet_padded.png" id="2_sheet"]
 
 [sub_resource type="AtlasTexture" id="T0"]
 atlas = ExtResource("2_sheet")
-region = Rect2(10, 0, 40, 64)
+region = Rect2(4, 4, 40, 64)
 [sub_resource type="AtlasTexture" id="T1"]
 atlas = ExtResource("2_sheet")
-region = Rect2(58, 0, 40, 64)
+region = Rect2(52, 4, 40, 64)
 [sub_resource type="AtlasTexture" id="T2"]
 atlas = ExtResource("2_sheet")
-region = Rect2(106, 0, 40, 64)
+region = Rect2(100, 4, 40, 64)
 [sub_resource type="AtlasTexture" id="T3"]
 atlas = ExtResource("2_sheet")
-region = Rect2(154, 0, 40, 64)
+region = Rect2(148, 4, 40, 64)
 [sub_resource type="AtlasTexture" id="T4"]
 atlas = ExtResource("2_sheet")
-region = Rect2(202, 0, 40, 64)
+region = Rect2(196, 4, 40, 64)
 [sub_resource type="AtlasTexture" id="T5"]
 atlas = ExtResource("2_sheet")
-region = Rect2(250, 0, 40, 64)
+region = Rect2(244, 4, 40, 64)
 
 [sub_resource type="SpriteFrames" id="Frames_tentacle"]
 animations = [{
@@ -30,8 +30,12 @@ animations = [{
 "speed": 3.0
 }]
 
-[sub_resource type="CircleShape2D" id="Shape_tentacle"]
-radius = 13.0
+[sub_resource type="CapsuleShape2D" id="Shape_tentacle"]
+radius = 11.0
+height = 26.0
+
+[sub_resource type="CircleShape2D" id="Shape_tentacle_root"]
+radius = 12.0
 
 [node name="TentacleEnemy" type="CharacterBody2D" groups=["dream_enemies", "tentacle_enemies"]]
 collision_layer = 2
@@ -47,5 +51,9 @@ autoplay = "idle"
 scale = Vector2(1, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -6)
+position = Vector2(0, -15)
 shape = SubResource("Shape_tentacle")
+
+[node name="CollisionShape2DRoot" type="CollisionShape2D" parent="."]
+position = Vector2(0, 10)
+shape = SubResource("Shape_tentacle_root")

@@ -1,8 +1,8 @@
-[gd_resource type="TileSet" format=3]
+[gd_resource type="TileSet" format=3 uid="uid://cvd2uhrujftan"]
 
-[ext_resource type="Texture2D" path="res://assets/art/dream/crawling_depths/tiles.png" id="1_qma2j"]
-[ext_resource type="Texture2D" path="res://assets/art/dream/crawling_depths/cliff.png" id="2_db703"]
-[ext_resource type="Texture2D" path="res://assets/art/dream/crawling_depths/cracks.png" id="3_f5bhq"]
+[ext_resource type="Texture2D" uid="uid://35xcit6c7lwy" path="res://assets/art/dream/crawling_depths/tiles.png" id="1_qma2j"]
+[ext_resource type="Texture2D" uid="uid://iq1o4g6asq2g" path="res://assets/art/dream/crawling_depths/cliff.png" id="2_db703"]
+[ext_resource type="Texture2D" uid="uid://cei14u8k5fbsf" path="res://assets/art/dream/crawling_depths/cracks.png" id="3_f5bhq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fh3yx"]
 texture = ExtResource("1_qma2j")

@@ -49,6 +49,7 @@ func take_damage(amount: float, hit_origin: Vector2 = Vector2.INF) -> void:
 	if current_health <= 0.0:
 		dead = true
 		set_auto_aim_locked(false)
+		apply_death_z_bias()
 		state = State.DEATH_DELAY
 		state_left = enemy_config.alarm_enemy_death_delay
 		_play_visual_animation(&"death_delay")
@@ -62,6 +63,7 @@ func trigger_chain() -> void:
 		return
 	dead = true
 	set_auto_aim_locked(false)
+	apply_death_z_bias()
 	state = State.CHAIN_TRIGGERED
 	state_left = enemy_config.alarm_enemy_chain_delay
 	_play_visual_animation(&"death_delay")
@@ -73,6 +75,7 @@ func _explode() -> void:
 	has_exploded = true
 	dead = true
 	set_auto_aim_locked(false)
+	apply_death_z_bias()
 	state = State.DEAD
 	_play_visual_animation(&"explode")
 	_spawn_explosion_visual()

@@ -54,16 +54,21 @@ const EVENT_BUSES := {
 	&"door_knock": &"Environment",
 	&"thunder": &"Environment",
 	&"crt_off": &"UI",
-	&"phone_buzz": &"UI"
+	&"phone_buzz": &"UI",
+	&"heal": &"Characters",
+	&"text_blip": &"UI",
+	&"slot_tick": &"UI"
 }
-const GENERATED_EVENTS := [&"ui_hover", &"dash", &"player_hurt", &"weapon_fire", &"pistol_fire", &"shotgun_fire", &"enemy_kill", &"thunder", &"crt_off", &"phone_buzz"]
+const GENERATED_EVENTS := [&"ui_hover", &"dash", &"player_hurt", &"weapon_fire", &"pistol_fire", &"shotgun_fire", &"enemy_kill", &"thunder", &"crt_off", &"phone_buzz", &"heal", &"text_blip", &"slot_tick"]
 
 var players: Dictionary = {}
 var last_experience_play_msec := -1000000
 var last_bottle_shake_play_msec := -1000000
+var last_slot_tick_play_msec := -1000000
 var music_player: AudioStreamPlayer
 var weather_player: AudioStreamPlayer
 var current_music_id: StringName = &""
+var current_music_owner_id: int = 0
 var current_weather_id: StringName = &""
 var music_tween: Tween
 var weather_tween: Tween
@@ -92,16 +97,16 @@ static func stop_event(event_id: StringName) -> void:
 		manager.stop(event_id)
 
 
-static func play_bedroom_music(use_short: bool = false) -> void:
+static func play_bedroom_music(use_short: bool = false, owner_id: int = 0) -> void:
 	var manager := _manager()
 	if manager != null:
-		manager.play_music(&"bedroom_short" if use_short else &"bedroom")
+		manager.play_music(&"bedroom_short" if use_short else &"bedroom", owner_id)
 
 
-static func play_battle_music(use_short: bool = false) -> void:
+static func play_battle_music(use_short: bool = false, owner_id: int = 0) -> void:
 	var manager := _manager()
 	if manager != null:
-		manager.play_music(&"battle_short" if use_short else &"battle")
+		manager.play_music(&"battle_short" if use_short else &"battle", owner_id)
 
 
 static func play_weather_ambience(weather_type: StringName) -> void:
@@ -110,10 +115,10 @@ static func play_weather_ambience(weather_type: StringName) -> void:
 		manager.play_weather(weather_type)
 
 
-static func stop_music(fade_duration: float = -1.0) -> void:
+static func stop_music(fade_duration: float = -1.0, owner_id: int = 0) -> void:
 	var manager := _manager()
 	if manager != null:
-		manager.fade_out_music(CONFIG.music_fade_duration if fade_duration < 0.0 else fade_duration)
+		manager.fade_out_music(CONFIG.music_fade_duration if fade_duration < 0.0 else fade_duration, owner_id)
 
 
 static func stop_weather_ambience(fade_duration: float = -1.0) -> void:
@@ -212,6 +217,11 @@ func play(event_id: StringName) -> bool:
 		if shake_now - last_bottle_shake_play_msec < int(CONFIG.sfx_bottle_shake_min_interval * 1000.0):
 			return false
 		last_bottle_shake_play_msec = shake_now
+	elif event_id == &"slot_tick":
+		var tick_now := Time.get_ticks_msec()
+		if tick_now - last_slot_tick_play_msec < int(CONFIG.sfx_slot_tick_min_interval * 1000.0):
+			return false
+		last_slot_tick_play_msec = tick_now
 	var player: AudioStreamPlayer = players[event_id]
 	player.stop()
 	player.play()
@@ -224,10 +234,19 @@ func stop(event_id: StringName) -> void:
 		(players[event_id] as AudioStreamPlayer).stop()
 
 
-func play_music(track_id: StringName) -> void:
+func play_music(track_id: StringName, owner_id: int = 0) -> void:
 	if not MUSIC_STREAMS.has(track_id) or not is_instance_valid(music_player):
 		return
+	var owner_changed := owner_id != 0 and owner_id != current_music_owner_id
+	if owner_changed:
+		# 场景切换时清除上一场升级UI留下的临时Duck；玩家Music Bus设置不在此处改写。
+		music_duck_reasons.clear()
+		if music_duck_tween != null and music_duck_tween.is_valid():
+			music_duck_tween.kill()
+		music_player.volume_db = 0.0
+	current_music_owner_id = owner_id
 	if current_music_id == track_id and music_player.playing:
+		music_player.stream_paused = false
 		return
 	current_music_id = track_id
 	_crossfade_unique(music_player, MUSIC_STREAMS[track_id], CONFIG.music_fade_duration, true)
@@ -243,8 +262,12 @@ func play_weather(weather_type: StringName) -> void:
 	_crossfade_unique(weather_player, WEATHER_STREAMS[weather_type], CONFIG.ambience_fade_duration, false)
 
 
-func fade_out_music(duration: float) -> void:
+func fade_out_music(duration: float, owner_id: int = 0) -> void:
+	# 旧场景的_exit_tree可能晚于新场景_ready执行；它只能停止自己拥有的音乐。
+	if owner_id != 0 and current_music_owner_id != owner_id:
+		return
 	current_music_id = &""
+	current_music_owner_id = 0
 	if music_duck_tween != null and music_duck_tween.is_valid():
 		music_duck_tween.kill()
 	music_tween = _fade_out_player(music_player, duration, music_tween)
@@ -438,6 +461,9 @@ func _volume_for(event_id: StringName) -> float:
 		&"door_knock": return CONFIG.sfx_door_knock_volume_db
 		&"thunder": return CONFIG.sfx_thunder_volume_db
 		&"phone_buzz": return CONFIG.sfx_phone_buzz_volume_db
+		&"heal": return CONFIG.sfx_heal_volume_db
+		&"text_blip": return CONFIG.dialogue_text_blip_volume_db
+		&"slot_tick": return CONFIG.sfx_slot_tick_volume_db
 		_: return 0.0
 
 
@@ -450,6 +476,10 @@ func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
 	var start_frequency: float = CONFIG.sfx_ui_hover_tone_hz
 	var end_frequency: float = CONFIG.sfx_ui_hover_tone_hz * 0.72
 	match event_id:
+		&"text_blip":
+			duration = CONFIG.dialogue_text_blip_duration
+			start_frequency = CONFIG.dialogue_text_blip_frequency_hz
+			end_frequency = CONFIG.dialogue_text_blip_frequency_hz * 0.82
 		&"dash":
 			duration = 0.11
 			start_frequency = 180.0
@@ -486,6 +516,16 @@ func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
 			duration = 0.32
 			start_frequency = 620.0
 			end_frequency = 58.0
+		&"heal":
+			# 升调正向 blip：短促上扬，区别于受伤降调。
+			duration = 0.16
+			start_frequency = 420.0
+			end_frequency = 880.0
+		&"slot_tick":
+			# 原创45ms低音量像素铃声；单播放器重触发并配合最短间隔限制叠音。
+			duration = 0.045
+			start_frequency = 760.0
+			end_frequency = 610.0
 	var sample_count := int(stream.mix_rate * duration)
 	var bytes := PackedByteArray()
 	bytes.resize(sample_count)
@@ -499,6 +539,11 @@ func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
 		var frequency := lerpf(start_frequency, end_frequency, progress)
 		phase += TAU * frequency / float(stream.mix_rate)
 		var square := 1.0 if sin(phase) >= 0.0 else -1.0
+		if event_id == &"text_blip":
+			# 原创柔和短音：正弦为主、少量三角波，单播放器重触发避免叠加爆音。
+			var sine := sin(phase)
+			var triangle := asin(sin(phase)) * (2.0 / PI)
+			square = sine * 0.82 + triangle * 0.18
 		if event_id == &"shotgun_fire":
 			var noise := sin(float(index * 73 + 19))
 			square = square * 0.68 + noise * 0.32
@@ -507,7 +552,7 @@ func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
 			envelope += pow(1.0 - (progress - 0.58) / 0.42, 2.0) * 0.16
 		if event_id == &"crt_off" and progress > 0.82:
 			envelope += pow(1.0 - (progress - 0.82) / 0.18, 2.0) * 0.5
-		var amplitude := 16.0 if event_id == &"ui_hover" else (48.0 if event_id == &"shotgun_fire" else 34.0)
+		var amplitude := 15.0 if event_id == &"text_blip" else (16.0 if event_id == &"ui_hover" else (48.0 if event_id == &"shotgun_fire" else 34.0))
 		bytes[index] = clampi(int(128.0 + square * amplitude * envelope), 0, 255)
 	stream.data = bytes
 	return stream

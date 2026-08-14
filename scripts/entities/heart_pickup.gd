@@ -4,6 +4,7 @@ extends Node2D
 # 6帧宽度不同（14/12/10/4/12/14，高13），按各帧自身尺寸居中绘制防抖。
 # 拾取手感（弹出+磁吸）与旧版一致，回复量 heal_amount 不变，拾取后仍触发角色 Heal 动画。
 const CONFIG := preload("res://resources/demo_config.tres")
+const PICKUP_ATTRACTION := preload("res://scripts/entities/pickup_attraction.gd")
 const HEART_SHEET := preload("res://art/icon/EXP/health.png")
 const HEART_FRAME_REGIONS: Array[Rect2] = [
 	Rect2(0, 0, 14, 13), Rect2(16, 0, 12, 13), Rect2(32, 0, 10, 13),
@@ -20,10 +21,14 @@ var pop_elapsed := 0.0
 var anim_elapsed := 0.0
 var draw_offset := Vector2.ZERO
 var frames: Array[AtlasTexture] = []
+var attraction := PICKUP_ATTRACTION.new()
 
 
 func _ready() -> void:
 	scale = Vector2.ONE * 0.35
+	var glow := get_node_or_null("SoftGlow") as SoftGlow
+	if glow != null:
+		glow.configure(Color("65c979"), CONFIG.heart_glow_alpha, CONFIG.heart_glow_radius)
 	if frames.is_empty():
 		for region in HEART_FRAME_REGIONS:
 			var frame := AtlasTexture.new()
@@ -42,10 +47,7 @@ func _process(delta: float) -> void:
 	queue_redraw()
 	if consumed or not is_instance_valid(target):
 		return
-	var distance := global_position.distance_to(target.global_position)
-	if distance < 92.0:
-		global_position = global_position.move_toward(target.global_position, 145.0 * delta)
-	if global_position.distance_to(target.global_position) < 15.0:
+	if attraction.update(self, target, delta, CONFIG):
 		consumed = true
 		collected.emit(heal_amount)
 		queue_free()
@@ -57,4 +59,4 @@ func _draw() -> void:
 	var frame_index := int(anim_elapsed / FRAME_SECONDS) % frames.size()
 	var frame_texture: AtlasTexture = frames[frame_index]
 	var frame_size := frame_texture.region.size
-	draw_texture_rect(frame_texture, Rect2(draw_offset - frame_size * 0.5, frame_size), false)
+	draw_texture_rect(frame_texture, Rect2(draw_offset - frame_size * 0.5, frame_size), false, Color(1.42, 1.42, 1.42, 1.0))

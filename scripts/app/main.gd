@@ -13,6 +13,8 @@ const DAY_START_SNAPSHOT := preload("res://scripts/app/day_start_snapshot.gd")
 const UNLOCK_STORE := preload("res://scripts/app/weapon_unlock_store.gd")
 const STATE_RULES := preload("res://scripts/app/game_state_rules.gd")
 const FORMAT := preload("res://scripts/ui/display_format.gd")
+const CURSOR_POINTER: Texture2D = preload("res://art/icon/Computer Systems/1. Pointer.png")
+const CURSOR_HAND: Texture2D = preload("res://art/icon/Computer Systems/2. Hand Pointer.png")
 
 @onready var scene_container: Node = $SceneContainer
 @onready var fade: ColorRect = $TransitionLayer/Fade
@@ -29,11 +31,18 @@ var transition_queue: Array = []
 var pause_allowed := false
 var current_is_endless_mode := false
 var endless_weapon_id := "basic"
+var cursor_pointer_scaled: Texture2D
+var cursor_hand_scaled: Texture2D
 const WEEKDAYS := ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# 普通UI Cursor由当前12×12实际显示尺寸等比放大3倍；战斗Crosshair是独立节点，不受影响。
+	cursor_pointer_scaled = _scaled_cursor(CURSOR_POINTER, 3)
+	cursor_hand_scaled = _scaled_cursor(CURSOR_HAND, 3)
+	Input.set_custom_mouse_cursor(cursor_pointer_scaled, Input.CURSOR_ARROW, Vector2(6, 6))
+	Input.set_custom_mouse_cursor(cursor_hand_scaled, Input.CURSOR_POINTING_HAND, Vector2(15, 6))
 	persistent_day_state = _create_initial_state()
 	_configure_input_map()
 	pause_menu.resume_requested.connect(_resume_from_pause)
@@ -101,6 +110,7 @@ func _create_initial_state() -> Dictionary:
 		"shotgun_unlocked": false,
 		"beam_weapon_unlocked": false,
 		"katana_unlocked": false,
+		"current_weapon_id": "basic",
 		"sunday_event_week_id": -1,
 		"sunday_event_resolved": false,
 		"sunday_event_id": -1,
@@ -289,8 +299,9 @@ func _show_opening() -> void:
 
 func _show_bedroom(after_dream: bool = false) -> void:
 	var bedroom := BEDROOM_SCENE.instantiate()
-	bedroom.sleep_requested.connect(_show_weapon_selection)
+	bedroom.sleep_requested.connect(_start_story_dream)
 	bedroom.save_requested.connect(_save_progress)
+	bedroom.story_weapon_changed.connect(_on_story_weapon_equipped)
 	bedroom.after_dream = after_dream
 	bedroom.summary = last_summary.duplicate(true)
 	bedroom.persistent_state = persistent_day_state
@@ -298,7 +309,7 @@ func _show_bedroom(after_dream: bool = false) -> void:
 	_transition_to(bedroom)
 
 
-func _show_weapon_selection(melatonin_count: int = 0, is_hungry_run: bool = false) -> void:
+func _start_story_dream(melatonin_count: int = 0, is_hungry_run: bool = false) -> void:
 	if _register_hunger_sleep_for_day():
 		_show_starvation_ending()
 		return
@@ -307,32 +318,18 @@ func _show_weapon_selection(melatonin_count: int = 0, is_hungry_run: bool = fals
 	night_state.run_stress_value = clampi(int(persistent_day_state.get("stress_value", CONFIG.stress_default)), 0, CONFIG.stress_max)
 	persistent_day_state.is_hungry_run = is_hungry_run
 	persistent_day_state.has_entered_dream = true
-	var selection := WEAPON_SELECTION_SCENE.instantiate()
-	selection.unlock_state = {
-		"shotgun": bool(persistent_day_state.get("shotgun_unlocked", false)),
-		"beam": bool(persistent_day_state.get("beam_weapon_unlocked", false)),
-		"katana": bool(persistent_day_state.get("katana_unlocked", false)),
-		"grenade": bool(persistent_day_state.get("grenade_weapon_unlocked", false))
-	}
-	# 武器池不能为空：basic 永远合法，若异常为空则报错并回退基础池，
-	# 绝不允许跳过武器选择或直接带默认武器进梦境。
-	var available_weapons := _get_available_weapon_ids(selection.unlock_state)
-	if available_weapons.is_empty():
-		push_error("Initial weapon selection has no available weapons.")
-		selection.unlock_state = {"shotgun": false, "beam": false, "katana": false, "grenade": false}
-		available_weapons = ["basic"]
-	selection.weapon_selected.connect(_show_dream)
-	_transition_to(selection)
+	_show_dream(_validated_story_weapon_id())
 
 
 func _show_dream(weapon_id: String) -> void:
 	current_is_endless_mode = false
 	var dream := DREAM_SCENE.instantiate()
-	dream.selected_weapon_id = weapon_id
+	var story_weapon_ids: Array[String] = _get_available_weapon_ids(_story_weapon_unlock_state())
+	dream.configure_run_weapon_state(weapon_id, story_weapon_ids, false)
 	var run_config: DemoConfig = CONFIG.duplicate(true)
 	# The result belongs to the morning after this bedroom night.
 	var is_sunday := (int(persistent_day_state.get("weekday_index", 0)) + 1) % WEEKDAYS.size() == 6
-	run_config.alarm_start_minutes = CONFIG.sunday_alarm_minutes if is_sunday else CONFIG.weekday_alarm_minutes
+	run_config.alarm_start_minutes = CONFIG.story_wake_minutes
 	run_config.dream_start_minutes = _dream_start_minutes_for_melatonin_count(int(night_state.get("melatonin_count", 0)))
 	dream.config = run_config
 	dream.get_node("DreamClock").config = run_config
@@ -343,6 +340,7 @@ func _show_dream(weapon_id: String) -> void:
 	dream.is_hungry_run = bool(night_state.get("is_hungry_run", false))
 	dream.run_stress_value = int(night_state.get("run_stress_value", CONFIG.stress_default))
 	dream.sleepwalk_mode = SettingsManager.get_sleepwalk_mode()
+	dream.weapon_equipped.connect(_on_story_weapon_equipped)
 	dream.dream_finished.connect(_show_results)
 	var sunshade_active := bool(persistent_day_state.get("sunshade_purchased", false)) and bool(persistent_day_state.get("sunshade_visible", true))
 	dream.get_node("UILayer/WakeOverlay").update_sunshade(sunshade_active)
@@ -359,9 +357,11 @@ func _start_endless_mode() -> void:
 
 func _show_endless_dream(weapon_id: String) -> void:
 	current_is_endless_mode = true
-	endless_weapon_id = weapon_id
+	# Endless武器仅存在本次Run；不读取或写入剧情current_weapon_id/DaySnapshot。
+	var available_endless: Array[String] = ["basic", "beam", "shotgun", "katana", "grenade"]
+	endless_weapon_id = weapon_id if weapon_id in available_endless else "basic"
 	var dream := DREAM_SCENE.instantiate()
-	dream.selected_weapon_id = weapon_id
+	dream.configure_run_weapon_state(endless_weapon_id, available_endless, true)
 	var run_config: DemoConfig = CONFIG.duplicate(true)
 	dream.config = run_config
 	dream.get_node("DreamClock").config = run_config
@@ -372,7 +372,6 @@ func _show_endless_dream(weapon_id: String) -> void:
 	dream.is_hungry_run = false
 	dream.run_stress_value = CONFIG.stress_default
 	dream.sleepwalk_mode = SettingsManager.get_sleepwalk_mode()
-	dream.is_endless_mode = true
 	dream.dream_finished.connect(_show_endless_results)
 	var sunshade_active := bool(persistent_day_state.get("sunshade_purchased", false)) and bool(persistent_day_state.get("sunshade_visible", true))
 	dream.get_node("UILayer/WakeOverlay").update_sunshade(sunshade_active)
@@ -496,6 +495,7 @@ func _set_screen(next_screen: Node) -> void:
 	if is_instance_valid(current_screen):
 		current_screen.queue_free()
 	current_screen = next_screen
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	scene_container.add_child(current_screen)
 	pause_allowed = current_screen.scene_file_path != "res://scenes/ui/main_menu.tscn"
 
@@ -703,3 +703,34 @@ func _get_available_weapon_ids(unlock_state: Dictionary) -> Array[String]:
 		if bool(unlock_state.get(weapon_id, false)):
 			pool.append(weapon_id)
 	return pool
+
+
+func _story_weapon_unlock_state() -> Dictionary:
+	return {
+		"shotgun": bool(persistent_day_state.get("shotgun_unlocked", false)),
+		"beam": bool(persistent_day_state.get("beam_weapon_unlocked", false)),
+		"katana": bool(persistent_day_state.get("katana_unlocked", false)),
+		"grenade": bool(persistent_day_state.get("grenade_weapon_unlocked", false))
+	}
+
+
+func _validated_story_weapon_id() -> String:
+	var current := str(persistent_day_state.get("current_weapon_id", "basic"))
+	if current in _get_available_weapon_ids(_story_weapon_unlock_state()):
+		return current
+	persistent_day_state.current_weapon_id = "basic"
+	return "basic"
+
+
+func _on_story_weapon_equipped(weapon_id: String) -> void:
+	if current_is_endless_mode or not weapon_id in _get_available_weapon_ids(_story_weapon_unlock_state()):
+		return
+	persistent_day_state.current_weapon_id = weapon_id
+	day_start_snapshot.set_persistent_value(&"current_weapon_id", weapon_id)
+	_save_progress()
+
+
+func _scaled_cursor(source: Texture2D, multiplier: int) -> Texture2D:
+	var image := source.get_image()
+	image.resize(image.get_width() * multiplier, image.get_height() * multiplier, Image.INTERPOLATE_NEAREST)
+	return ImageTexture.create_from_image(image)

@@ -6,6 +6,7 @@ extends Node2D
 ## 数值、磁吸半径、拾取判定与旧版完全一致，只替换视觉。
 
 const CONFIG := preload("res://resources/demo_config.tres")
+const PICKUP_ATTRACTION := preload("res://scripts/entities/pickup_attraction.gd")
 const BLUE_SHEET := preload("res://art/icon/EXP/Blue_EXP.png")
 const PURPLE_SHEET := preload("res://art/icon/EXP/Purple_EXP.png")
 const BLUE_FRAME_REGIONS: Array[Rect2] = [
@@ -27,16 +28,22 @@ var pop_elapsed := 0.0
 var anim_elapsed := 0.0
 var draw_offset := Vector2.ZERO
 var frames: Array[AtlasTexture] = []
+var gem_rarity := "normal"
+var attraction := PICKUP_ATTRACTION.new()
 
 
 func _ready() -> void:
 	scale = Vector2.ONE * 0.35
+	var glow := get_node_or_null("SoftGlow") as SoftGlow
+	if glow != null:
+		glow.configure(_rarity_glow_color(), CONFIG.xp_glow_alpha, CONFIG.xp_glow_radius)
 	if frames.is_empty():
 		_build_frames(BLUE_SHEET, BLUE_FRAME_REGIONS)
 
 
 func configure(new_value: int, rarity: String = "normal") -> void:
 	value = maxi(1, new_value)
+	gem_rarity = rarity
 	if rarity == "purple":
 		_build_frames(PURPLE_SHEET, PURPLE_FRAME_REGIONS)
 	else:
@@ -62,10 +69,7 @@ func _process(delta: float) -> void:
 	queue_redraw()
 	if consumed or not is_instance_valid(target):
 		return
-	var distance := global_position.distance_to(target.global_position)
-	if distance < 92.0:
-		global_position = global_position.move_toward(target.global_position, 145.0 * delta)
-	if global_position.distance_to(target.global_position) < 15.0:
+	if attraction.update(self, target, delta, CONFIG):
 		consumed = true
 		collected.emit(value)
 		queue_free()
@@ -78,4 +82,9 @@ func _draw() -> void:
 	var frame_texture: AtlasTexture = frames[frame_index]
 	var frame_size := frame_texture.region.size
 	# 按各帧自身尺寸居中绘制，避免帧间尺寸差异造成抖动。
-	draw_texture_rect(frame_texture, Rect2(draw_offset - frame_size * 0.5, frame_size), false)
+	# HDR modulate 只提亮原素材，不改变蓝/紫稀有度。
+	draw_texture_rect(frame_texture, Rect2(draw_offset - frame_size * 0.5, frame_size), false, Color(1.48, 1.48, 1.48, 1.0))
+
+
+func _rarity_glow_color() -> Color:
+	return Color("b084ef") if gem_rarity == "purple" else Color("69cfff")

@@ -27,3 +27,10 @@ func set_locked(value: bool) -> void:
 	locked = value
 	if target_sprite != null and target_sprite.material is ShaderMaterial:
 		(target_sprite.material as ShaderMaterial).set_shader_parameter("outline_enabled", 1.0 if locked else 0.0)
+
+
+## 受击白色闪烁：所有敌人共用同一套描边 shader 的 flash_amount 参数，
+## 无需每种敌人单独实现；value<=0 时主体恢复原色。
+func set_flash(value: float) -> void:
+	if target_sprite != null and target_sprite.material is ShaderMaterial:
+		(target_sprite.material as ShaderMaterial).set_shader_parameter("flash_amount", clampf(value, 0.0, 1.0))

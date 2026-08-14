@@ -2,6 +2,10 @@ class_name GlobalPauseMenu
 extends CanvasLayer
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
+# 纯文字选项配色（与主菜单统一）：无底框/描边，悬停仅变亮。
+const TEXT_COLOR := Color("374c4d")
+const TEXT_HOVER_COLOR := Color("8fb3bc")
+const TEXT_DISABLED_COLOR := Color("223032")
 
 signal resume_requested
 signal exit_to_main_menu_requested
@@ -23,12 +27,27 @@ func _ready() -> void:
 	var settings_button: Button = $Root/Panel/Layout/MenuButtons/Settings
 	var exit_button: Button = $Root/Panel/Layout/MenuButtons/ExitToMenu
 	for button in [resume_button, settings_button, exit_button, settings_back]:
-		button.focus_mode = Control.FOCUS_NONE
+		_style_text_button(button)
 		button.mouse_entered.connect(_play_hover.bind(button))
 	resume_button.pressed.connect(_request_resume)
 	settings_button.pressed.connect(_open_settings)
 	exit_button.pressed.connect(_request_exit)
 	settings_back.pressed.connect(_close_settings)
+
+
+func _style_text_button(button: Button) -> void:
+	# 纯文字按钮：删除像素底框，最细字重单次绘制，悬停只变色。
+	button.focus_mode = Control.FOCUS_NONE
+	button.flat = true
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	var empty := StyleBoxEmpty.new()
+	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
+		button.add_theme_stylebox_override(state, empty)
+	button.add_theme_color_override("font_color", TEXT_COLOR)
+	button.add_theme_color_override("font_hover_color", TEXT_HOVER_COLOR)
+	button.add_theme_color_override("font_pressed_color", TEXT_HOVER_COLOR)
+	button.add_theme_color_override("font_focus_color", TEXT_COLOR)
+	button.add_theme_color_override("font_disabled_color", TEXT_DISABLED_COLOR)
 
 
 func open_pause() -> void:

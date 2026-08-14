@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/bedroom_phone.gd" id="1_phone"]
 [ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
@@ -6,10 +6,11 @@
 [ext_resource type="Script" path="res://scripts/ui/phone_drag_scroll.gd" id="4_drag_scroll"]
 [ext_resource type="Theme" path="res://resources/themes/phone_pixel_scrollbar.tres" id="5_scroll_theme"]
 [ext_resource type="Script" path="res://scripts/ui/quicklink_content.gd" id="6_quicklink"]
+[ext_resource type="Script" path="res://scripts/ui/screen_clip.gd" id="7_screen_clip"]
 
 [node name="BedroomPhone" type="Control"]
-offset_right = 150.0
-offset_bottom = 270.0
+offset_right = 160.0
+offset_bottom = 336.0
 mouse_filter = 0
 script = ExtResource("1_phone")
 config = ExtResource("2_config")
@@ -27,72 +28,100 @@ texture = ExtResource("3_phone_shell")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AppGrid" type="GridContainer" parent="."]
+[node name="ScreenClip" type="Control" parent="."]
+clip_contents = true
 layout_mode = 0
-offset_left = 14.0
-offset_top = 170.0
-offset_right = 146.0
-offset_bottom = 279.0
+offset_left = 6.0
+offset_top = 20.0
+offset_right = 154.0
+offset_bottom = 325.0
+mouse_filter = 2
+script = ExtResource("7_screen_clip")
+
+[node name="AppGrid" type="GridContainer" parent="ScreenClip"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 139.0
+offset_right = 140.0
+offset_bottom = 248.0
 mouse_filter = 2
 columns = 2
 theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 3
 
-[node name="OnlineSlot" type="Control" parent="AppGrid"]
+[node name="OnlineSlot" type="Control" parent="ScreenClip/AppGrid"]
 custom_minimum_size = Vector2(64, 53)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SomniaSlot" type="Control" parent="AppGrid"]
+[node name="SomniaSlot" type="Control" parent="ScreenClip/AppGrid"]
 custom_minimum_size = Vector2(64, 53)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="QuickLinkSlot" type="Control" parent="AppGrid"]
+[node name="QuickLinkSlot" type="Control" parent="ScreenClip/AppGrid"]
 custom_minimum_size = Vector2(64, 53)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SettingsSlot" type="Control" parent="AppGrid"]
+[node name="SettingsSlot" type="Control" parent="ScreenClip/AppGrid"]
 custom_minimum_size = Vector2(64, 53)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="OnlineScroll" type="ScrollContainer" parent="."]
+[node name="OnlineScroll" type="ScrollContainer" parent="ScreenClip"]
 visible = false
 layout_mode = 0
-offset_left = 12.0
-offset_top = 76.0
-offset_right = 138.0
-offset_bottom = 246.0
+offset_left = 6.0
+offset_top = 60.0
+offset_right = 132.0
+offset_bottom = 230.0
 mouse_filter = 0
 horizontal_scroll_mode = 0
 theme = ExtResource("5_scroll_theme")
 script = ExtResource("4_drag_scroll")
 
-[node name="ContentSafeMargin" type="MarginContainer" parent="OnlineScroll"]
+[node name="ContentSafeMargin" type="MarginContainer" parent="ScreenClip/OnlineScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_right = 10
 
-[node name="MessageList" type="VBoxContainer" parent="OnlineScroll/ContentSafeMargin"]
+[node name="MessageList" type="VBoxContainer" parent="ScreenClip/OnlineScroll/ContentSafeMargin"]
 custom_minimum_size = Vector2(116, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="QuicklinkScroll" type="ScrollContainer" parent="."]
+[node name="QuicklinkScroll" type="ScrollContainer" parent="ScreenClip"]
 visible = false
 layout_mode = 0
-offset_left = 12.0
-offset_top = 76.0
-offset_right = 138.0
-offset_bottom = 246.0
+offset_left = 6.0
+offset_top = 60.0
+offset_right = 132.0
+offset_bottom = 230.0
 mouse_filter = 0
 horizontal_scroll_mode = 0
 theme = ExtResource("5_scroll_theme")
 script = ExtResource("4_drag_scroll")
 
-[node name="QuicklinkContent" type="Control" parent="QuicklinkScroll"]
-custom_minimum_size = Vector2(121, 290)
+[node name="QuicklinkContent" type="Control" parent="ScreenClip/QuicklinkScroll"]
+custom_minimum_size = Vector2(121, 313)
 layout_mode = 2
 script = ExtResource("6_quicklink")
+
+[node name="SomniaScrollBar" type="VScrollBar" parent="ScreenClip"]
+visible = false
+layout_mode = 0
+offset_left = 145.0
+offset_top = 60.0
+offset_right = 150.0
+offset_bottom = 305.0
+theme = ExtResource("5_scroll_theme")
+
+[node name="SettingsScrollBar" type="VScrollBar" parent="ScreenClip"]
+visible = false
+layout_mode = 0
+offset_left = 145.0
+offset_top = 60.0
+offset_right = 150.0
+offset_bottom = 305.0
+theme = ExtResource("5_scroll_theme")

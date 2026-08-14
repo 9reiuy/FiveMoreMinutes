@@ -1,87 +1,80 @@
-[gd_resource type="Theme" load_steps=14 format=3]
+[gd_resource type="Theme" format=3 uid="uid://cma8i20toy0p2"]
 
 [ext_resource type="FontFile" uid="uid://buocnx7mgifcp" path="res://assets/fonts/fusion_pixel/fusion-pixel-12px-proportional-zh_hans.ttf" id="1_font"]
 
-[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
-bg_color = Color(0.055, 0.067, 0.096, 0.96)
-border_width_left = 2
-border_width_top = 1
-border_width_right = 3
-border_width_bottom = 2
-border_color = Color(0.20, 0.27, 0.32, 1)
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
-shadow_color = Color(0, 0, 0, 0.55)
-shadow_size = 3
-shadow_offset = Vector2(3, 3)
-
-[sub_resource type="StyleBoxFlat" id="ButtonHover"]
-bg_color = Color(0.09, 0.13, 0.17, 1)
-border_width_left = 3
-border_width_top = 1
-border_width_right = 2
-border_width_bottom = 3
-border_color = Color(0.317647, 0.482353, 0.596078, 1)
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
-shadow_color = Color(0, 0, 0, 0.6)
-shadow_size = 3
-shadow_offset = Vector2(3, 3)
-
-[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
-bg_color = Color(0.12, 0.18, 0.22, 1)
-border_width_left = 3
-border_width_top = 2
-border_width_right = 1
-border_width_bottom = 2
-border_color = Color(0.603922, 0.713726, 0.784314, 1)
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
-
 [sub_resource type="StyleBoxFlat" id="ButtonDisabled"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
 bg_color = Color(0.035, 0.04, 0.055, 0.8)
 border_width_left = 2
 border_width_top = 1
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.13, 0.16, 1)
+
+[sub_resource type="StyleBoxEmpty" id="NoFocus"]
+
+[sub_resource type="StyleBoxFlat" id="ButtonHover"]
 content_margin_left = 10.0
 content_margin_top = 6.0
 content_margin_right = 10.0
 content_margin_bottom = 6.0
-
-[sub_resource type="StyleBoxEmpty" id="NoFocus"]
-
-[sub_resource type="StyleBoxFlat" id="Panel"]
-bg_color = Color(0.035, 0.047, 0.07, 0.98)
+bg_color = Color(0.09, 0.13, 0.17, 1)
 border_width_left = 3
 border_width_top = 1
 border_width_right = 2
 border_width_bottom = 3
-border_color = Color(0.317647, 0.482353, 0.596078, 0.85)
-content_margin_left = 18.0
-content_margin_top = 14.0
-content_margin_right = 18.0
-content_margin_bottom = 14.0
-shadow_color = Color(0, 0, 0, 0.72)
-shadow_size = 6
-shadow_offset = Vector2(5, 5)
+border_color = Color(0.317647, 0.482353, 0.596078, 1)
+shadow_size = 3
+shadow_offset = Vector2(3, 3)
 
-[sub_resource type="StyleBoxFlat" id="SliderTrack"]
-bg_color = Color(0.035, 0.047, 0.065, 1)
-border_width_left = 1
+[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.055, 0.067, 0.096, 0.96)
+border_width_left = 2
 border_width_top = 1
-border_width_right = 2
+border_width_right = 3
 border_width_bottom = 2
-border_color = Color(0.20, 0.27, 0.32, 1)
-content_margin_top = 3.0
-content_margin_bottom = 3.0
+border_color = Color(0.2, 0.27, 0.32, 1)
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 3
+shadow_offset = Vector2(3, 3)
+
+[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.12, 0.18, 0.22, 1)
+border_width_left = 3
+border_width_top = 2
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.603922, 0.713726, 0.784314, 1)
+
+[sub_resource type="Gradient" id="GrabberGradient"]
+colors = PackedColorArray(0.603922, 0.713726, 0.784314, 1, 0.603922, 0.713726, 0.784314, 1)
+
+[sub_resource type="GradientTexture2D" id="GrabberTexture"]
+gradient = SubResource("GrabberGradient")
+width = 8
+height = 12
+
+[sub_resource type="Gradient" id="UncheckedGradient"]
+colors = PackedColorArray(0.08, 0.1, 0.14, 1, 0.08, 0.1, 0.14, 1)
+
+[sub_resource type="GradientTexture2D" id="UncheckedTexture"]
+gradient = SubResource("UncheckedGradient")
+width = 12
+height = 12
+
+[sub_resource type="StyleBoxLine" id="Separator"]
+color = Color(0.317647, 0.482353, 0.596078, 0.55)
 
 [sub_resource type="StyleBoxFlat" id="SliderFill"]
 bg_color = Color(0.317647, 0.482353, 0.596078, 1)
@@ -91,51 +84,54 @@ border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.603922, 0.713726, 0.784314, 1)
 
-[sub_resource type="Gradient" id="GrabberGradient"]
-offsets = PackedFloat32Array(0, 1)
-colors = PackedColorArray(0.603922, 0.713726, 0.784314, 1, 0.603922, 0.713726, 0.784314, 1)
+[sub_resource type="StyleBoxFlat" id="SliderTrack"]
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(0.035, 0.047, 0.065, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.27, 0.32, 1)
 
-[sub_resource type="GradientTexture2D" id="GrabberTexture"]
-gradient = SubResource("GrabberGradient")
-width = 8
-height = 12
-
-[sub_resource type="Gradient" id="UncheckedGradient"]
-offsets = PackedFloat32Array(0, 1)
-colors = PackedColorArray(0.08, 0.10, 0.14, 1, 0.08, 0.10, 0.14, 1)
-
-[sub_resource type="GradientTexture2D" id="UncheckedTexture"]
-gradient = SubResource("UncheckedGradient")
-width = 12
-height = 12
-
-[sub_resource type="StyleBoxLine" id="Separator"]
-color = Color(0.317647, 0.482353, 0.596078, 0.55)
-thickness = 1
+[sub_resource type="StyleBoxFlat" id="Panel"]
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(0.035, 0.047, 0.07, 0.98)
+border_width_left = 3
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 3
+border_color = Color(0.317647, 0.482353, 0.596078, 0.85)
+shadow_color = Color(0, 0, 0, 0.72)
+shadow_size = 6
+shadow_offset = Vector2(5, 5)
 
 [resource]
 default_font = ExtResource("1_font")
 default_font_size = 12
 Button/colors/font_color = Color(0.76, 0.79, 0.81, 1)
+Button/colors/font_disabled_color = Color(0.3, 0.32, 0.36, 1)
 Button/colors/font_hover_color = Color(0.84, 0.89, 0.91, 1)
-Button/colors/font_pressed_color = Color(0.90, 0.94, 0.95, 1)
-Button/colors/font_disabled_color = Color(0.30, 0.32, 0.36, 1)
+Button/colors/font_pressed_color = Color(0.9, 0.94, 0.95, 1)
 Button/font_sizes/font_size = 14
-Button/styles/normal = SubResource("ButtonNormal")
-Button/styles/hover = SubResource("ButtonHover")
-Button/styles/pressed = SubResource("ButtonPressed")
 Button/styles/disabled = SubResource("ButtonDisabled")
 Button/styles/focus = SubResource("NoFocus")
-CheckButton/colors/font_color = Color(0.72, 0.77, 0.80, 1)
+Button/styles/hover = SubResource("ButtonHover")
+Button/styles/normal = SubResource("ButtonNormal")
+Button/styles/pressed = SubResource("ButtonPressed")
+CheckButton/colors/font_color = Color(0.72, 0.77, 0.8, 1)
 CheckButton/colors/font_hover_color = Color(0.84, 0.89, 0.91, 1)
 CheckButton/icons/checked = SubResource("GrabberTexture")
 CheckButton/icons/unchecked = SubResource("UncheckedTexture")
 CheckButton/styles/focus = SubResource("NoFocus")
+HSeparator/styles/separator = SubResource("Separator")
 HSlider/icons/grabber = SubResource("GrabberTexture")
 HSlider/icons/grabber_highlight = SubResource("GrabberTexture")
-HSlider/styles/slider = SubResource("SliderTrack")
 HSlider/styles/grabber_area = SubResource("SliderFill")
 HSlider/styles/grabber_area_highlight = SubResource("SliderFill")
+HSlider/styles/slider = SubResource("SliderTrack")
 Panel/styles/panel = SubResource("Panel")
 PanelContainer/styles/panel = SubResource("Panel")
-HSeparator/styles/separator = SubResource("Separator")

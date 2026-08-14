@@ -5,7 +5,6 @@ const FORMAT := preload("res://scripts/ui/display_format.gd")
 const STATE_RULES := preload("res://scripts/app/game_state_rules.gd")
 const GLITCH_SHADER := preload("res://shaders/glitch_overlay.gdshader")
 # 手机时间区域背景壁纸：只在锁屏/主页时间块内 cover 裁剪绘制，不超出手机屏幕区。
-const PHONE_WALLPAPER: Texture2D = preload("res://art/wallpaper/phone_background.png")
 
 enum PhoneState { COLLAPSED, EXPANDING, EXPANDED, COLLAPSING }
 enum ScreenState { LOCKED, HOME, ONLINE, SOMNIA, QUICKLINK, SETTINGS }
@@ -16,6 +15,18 @@ signal state_changed
 
 const FINGERPRINT_AREA := Rect2(54, 220, 52, 52)
 const BACK_BUTTON := Rect2(14, 40, 48, 22)
+# Phone.png（160×336）的屏幕可显示区（手机局部坐标，逐像素实测屏幕暗区）：
+# 顶栏/图标/消息等一切内容不得超出它；底部内容不再被手机外壳遮住。
+const SCREEN_RECT := Rect2(6, 20, 148, 305)
+# 收起判定基于手机背景层：纵向覆盖整个手机背景（最顶到最底），
+# 但只响应“背景空白处”点击——内容层（APP 图标/顶栏/滚动列表/滑杆等）
+# 优先响应，点内容绝不收起。APP 顶栏色带（返回按钮所在行）。
+const APP_TOP_BAR := Rect2(6, 32, 148, 44)
+# APP 内容安全区：顶部在顶栏下方，底边停在屏幕实际底边上方一小段。
+const APP_CONTENT_TOP := 76.0
+const APP_CONTENT_BOTTOM_MARGIN := 4.0
+# 滚动列表末尾的底部 padding，保证最后一条内容能完整滚到可见区域。
+const ONLINE_BOTTOM_PADDING := 12.0
 const SETTINGS_MASTER_SLIDER := Rect2(16, 92, 128, 22)
 const SETTINGS_MUSIC_SLIDER := Rect2(16, 137, 128, 22)
 const SETTINGS_SFX_SLIDER := Rect2(16, 182, 128, 22)
@@ -67,37 +78,56 @@ var hovered_phone_action := ""
 # 手机静止基准位置：所有震动坐标都基于它计算，不基于当前 position 累计加减，
 # 保证震动结束后准确恢复原位，不会越震越偏。
 var phone_rest_position := Vector2.ZERO
-var lock_background_texture: AtlasTexture
-var home_background_texture: AtlasTexture
-@onready var app_grid: GridContainer = $AppGrid
-@onready var online_scroll: PhoneDragScroll = $OnlineScroll
-@onready var content_safe_margin: MarginContainer = $OnlineScroll/ContentSafeMargin
-@onready var message_list: VBoxContainer = $OnlineScroll/ContentSafeMargin/MessageList
-@onready var quicklink_scroll: PhoneDragScroll = $QuicklinkScroll
-@onready var quicklink_content: Control = $QuicklinkScroll/QuicklinkContent
+var page_drag_candidate := false
+var page_drag_active := false
+var page_drag_start_y := 0.0
+var page_drag_last_y := 0.0
+@onready var screen_clip: Control = $ScreenClip
+@onready var app_grid: GridContainer = $ScreenClip/AppGrid
+@onready var online_scroll: PhoneDragScroll = $ScreenClip/OnlineScroll
+@onready var content_safe_margin: MarginContainer = $ScreenClip/OnlineScroll/ContentSafeMargin
+@onready var message_list: VBoxContainer = $ScreenClip/OnlineScroll/ContentSafeMargin/MessageList
+@onready var quicklink_scroll: PhoneDragScroll = $ScreenClip/QuicklinkScroll
+@onready var quicklink_content: Control = $ScreenClip/QuicklinkScroll/QuicklinkContent
+@onready var somnia_scrollbar: VScrollBar = $ScreenClip/SomniaScrollBar
+@onready var settings_scrollbar: VScrollBar = $ScreenClip/SettingsScrollBar
 
 
 func _ready() -> void:
 	size = Vector2(config.phone_panel_width, config.phone_panel_height)
 	position = Vector2(config.phone_position_x, config.phone_collapsed_y)
 	var content_margin := config.phone_app_content_margin
-	online_scroll.position = Vector2(content_margin, 76.0)
-	online_scroll.size = Vector2(size.x - content_margin * 2.0, size.y - 100.0)
+	# APP 可视区严格处于手机真实屏幕内部：顶部在顶栏下方，
+	# 底边停在屏幕实际底边上方，滚动到底不会被手机外壳挡住。
+	var app_content_height := SCREEN_RECT.end.y - APP_CONTENT_BOTTOM_MARGIN - APP_CONTENT_TOP
+	var slim_scrollbar_width := config.online_scrollbar_width * 0.5
+	# 滚动列表是 ScreenClip 的子节点，坐标需换算到裁剪容器局部空间。
+	online_scroll.position = Vector2(content_margin, APP_CONTENT_TOP) - screen_clip.position
+	online_scroll.size = Vector2(size.x - content_margin * 2.0, app_content_height)
 	content_safe_margin.add_theme_constant_override("margin_right", int(config.online_message_right_safe_margin))
 	message_list.custom_minimum_size.x = online_scroll.size.x - config.online_scrollbar_width - config.online_message_right_safe_margin
 	online_scroll.drag_threshold = config.phone_scroll_drag_threshold
-	online_scroll.get_v_scroll_bar().custom_minimum_size.x = config.online_scrollbar_width
+	online_scroll.get_v_scroll_bar().custom_minimum_size.x = slim_scrollbar_width
 	# 速联跑腿™复用与在线！™完全相同的拖动滚动组件、阈值与像素滚动条。
-	quicklink_scroll.position = Vector2(content_margin, 76.0)
-	quicklink_scroll.size = Vector2(size.x - content_margin * 2.0, size.y - 100.0)
+	var quicklink_horizontal_margin := 8.0
+	quicklink_scroll.position = Vector2(quicklink_horizontal_margin, APP_CONTENT_TOP) - screen_clip.position
+	quicklink_scroll.size = Vector2(size.x - quicklink_horizontal_margin * 2.0, app_content_height)
 	quicklink_scroll.drag_threshold = config.phone_scroll_drag_threshold
-	quicklink_scroll.get_v_scroll_bar().custom_minimum_size.x = config.online_scrollbar_width
+	quicklink_scroll.get_v_scroll_bar().custom_minimum_size.x = slim_scrollbar_width
 	# 商品内容宽度预留滚动条 + 右侧安全边距，避免被滚动条遮挡。
-	quicklink_content.custom_minimum_size.x = quicklink_scroll.size.x - config.online_scrollbar_width - config.online_message_right_safe_margin
+	quicklink_content.custom_minimum_size.x = quicklink_scroll.size.x - slim_scrollbar_width - config.online_message_right_safe_margin
+	quicklink_content.custom_minimum_size.y = 313.0
 	quicklink_content.phone = self
+	for scrollbar in [somnia_scrollbar, settings_scrollbar]:
+		scrollbar.position = Vector2(SCREEN_RECT.end.x - slim_scrollbar_width, APP_CONTENT_TOP) - screen_clip.position
+		scrollbar.size = Vector2(slim_scrollbar_width, app_content_height)
+		scrollbar.custom_minimum_size.x = slim_scrollbar_width
+		scrollbar.value_changed.connect(_on_phone_page_scrolled)
+	somnia_scrollbar.max_value = 274.0
+	somnia_scrollbar.page = app_content_height
+	settings_scrollbar.max_value = 286.0
+	settings_scrollbar.page = app_content_height
 	screen_state = ScreenState.LOCKED if config.phone_lock_on_bedroom_entry else ScreenState.HOME
-	lock_background_texture = _build_time_background(_lock_time_rect())
-	home_background_texture = _build_time_background(_home_time_rect())
 	phone_rest_position = Vector2(config.phone_position_x, config.phone_collapsed_y)
 	messages = _load_array("res://resources/phone_messages.json", "messages")
 	quicklink_items = _load_array("res://resources/quicklink_items.json", "items")
@@ -182,6 +212,48 @@ func open_quicklink_from_bedroom() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
+	if state == PhoneState.EXPANDED and screen_state in [ScreenState.SOMNIA, ScreenState.SETTINGS]:
+		var page_scrollbar := somnia_scrollbar if screen_state == ScreenState.SOMNIA else settings_scrollbar
+		var content_rect := Rect2(6, APP_CONTENT_TOP, 148, SCREEN_RECT.end.y - APP_CONTENT_BOTTOM_MARGIN - APP_CONTENT_TOP)
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and content_rect.has_point(event.position):
+			if event.pressed:
+				# Slider、开关和升级按钮仍走原点击逻辑；只有正文空白区启动拖动滚动。
+				if not _phone_action_at(event.position).is_empty():
+					page_drag_candidate = false
+				else:
+					page_drag_candidate = true
+					page_drag_active = false
+					page_drag_start_y = event.position.y
+					page_drag_last_y = event.position.y
+				if not page_drag_candidate:
+					# 不消费正式控件的按下事件。
+					pass
+				else:
+					accept_event()
+					return
+			else:
+				if page_drag_candidate and not page_drag_active:
+					_activate_scrolled_page_point(event.position)
+				page_drag_candidate = false
+				page_drag_active = false
+				accept_event()
+				return
+		if event is InputEventMouseMotion and page_drag_candidate and event.button_mask & MOUSE_BUTTON_MASK_LEFT:
+			if not page_drag_active and absf(event.position.y - page_drag_start_y) >= config.phone_scroll_drag_threshold:
+				page_drag_active = true
+			if page_drag_active:
+				page_scrollbar.value += page_drag_last_y - event.position.y
+				page_drag_last_y = event.position.y
+				accept_event()
+				return
+		if event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and event.pressed:
+			page_scrollbar.value += -18.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 18.0
+			accept_event()
+			return
+		if event is InputEventPanGesture:
+			page_scrollbar.value += event.delta.y * 28.0
+			accept_event()
+			return
 	if event is InputEventMouseMotion:
 		if state == PhoneState.EXPANDED and screen_state == ScreenState.SETTINGS and event.button_mask & MOUSE_BUTTON_MASK_LEFT:
 			_update_phone_setting(event.position)
@@ -194,6 +266,7 @@ func _gui_input(event: InputEvent) -> void:
 					next_hovered = index
 					break
 		var next_action := _phone_action_at(event.position)
+		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if next_hovered >= 0 or not next_action.is_empty() else Control.CURSOR_ARROW
 		if not next_action.is_empty() and next_action != hovered_phone_action:
 			SFX.play_event(&"ui_hover")
 		if next_action != hovered_phone_action:
@@ -213,9 +286,10 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if state != PhoneState.EXPANDED:
 		return
-	# 点击手机上部区域向下收回：HOME/LOCKED 使用原有较大区域；
-	# 其他 APP 页使用返回按钮上方的细条（不遮挡返回按钮），收回时返回主界面。
-	if _collapse_area_for_state().has_point(event.position):
+	# 点击手机背景空白处收回手机：判定纵向覆盖整个手机背景，
+	# 但内容层（图标/顶栏/列表/滑杆）优先，点内容不会误收起；
+	# 收起时非主页先返回主界面。
+	if _phone_action_at(event.position) == "collapse":
 		SFX.play_event(&"phone_operation")
 		if screen_state != ScreenState.HOME:
 			screen_state = ScreenState.HOME
@@ -239,8 +313,9 @@ func _gui_input(event: InputEvent) -> void:
 				_sync_content_visibility()
 				queue_redraw()
 			elif screen_state == ScreenState.SOMNIA:
+				var content_point: Vector2 = event.position + Vector2(0, somnia_scrollbar.value)
 				for index in UPGRADE_IDS.size():
-					if _upgrade_buy_rect(index).has_point(event.position):
+					if _upgrade_buy_rect(index).has_point(content_point):
 						_purchase_permanent_upgrade(UPGRADE_IDS[index])
 						break
 			elif screen_state == ScreenState.SETTINGS:
@@ -266,8 +341,9 @@ func _sync_content_visibility() -> void:
 	app_grid.visible = screen_state == ScreenState.HOME
 	online_scroll.visible = screen_state == ScreenState.ONLINE
 	quicklink_scroll.visible = screen_state == ScreenState.QUICKLINK
+	somnia_scrollbar.visible = screen_state == ScreenState.SOMNIA
+	settings_scrollbar.visible = screen_state == ScreenState.SETTINGS
 	if quicklink_scroll.visible:
-		quicklink_scroll.scroll_vertical = 0
 		quicklink_content.queue_redraw()
 
 
@@ -364,18 +440,21 @@ func _build_online_messages() -> void:
 		var header := HBoxContainer.new()
 		header.custom_minimum_size.x = content_width
 		var deleted := str(message.get("id", "")) == "day5_northern_times" and bool(persistent_state.get("day5_northern_times_deleted", false))
+		# 非当前游戏日收到的消息整体显示为清晰的中灰色（发送者/日期/正文），
+		# 已删除消息继续保持现有删除态样式，优先级高于历史灰。
+		var history_gray := not deleted and int(message.get("received_day_id", 0)) < int(persistent_state.get("calendar_day_id", 0))
 		var category := Label.new()
 		# 被删除的北方时报消息：作者名（分类）改为"匿名"。
 		category.text = "匿名" if deleted else str(message.get("category", "消息"))
 		category.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		category.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		category.add_theme_font_size_override("font_size", 9 if not deleted else 7)
-		category.modulate = Color("8da0a5") if not deleted else Color("686f78")
+		category.modulate = Color("686f78") if deleted else (Color("6e7980") if history_gray else Color("8da0a5"))
 		var date := Label.new()
 		date.text = _relative_day_label(int(message.get("received_day_id", 0)))
 		date.add_theme_font_size_override("font_size", 7)
 		date.custom_minimum_size.x = 30.0
-		date.modulate = Color("686f78")
+		date.modulate = Color("5d646c") if history_gray else Color("686f78")
 		date.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		header.add_child(category)
 		header.add_child(date)
@@ -384,7 +463,7 @@ func _build_online_messages() -> void:
 		body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		body.custom_minimum_size.x = content_width
 		body.add_theme_font_size_override("font_size", 7 if deleted else 9)
-		body.modulate = Color("686f78") if deleted else Color("b2afb5")
+		body.modulate = Color("686f78") if deleted else (Color("7e828a") if history_gray else Color("b2afb5"))
 		body.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		category.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		date.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -401,6 +480,11 @@ func _build_online_messages() -> void:
 	ending.add_theme_font_size_override("font_size", 8)
 	ending.modulate = Color("5f626c")
 	message_list.add_child(ending)
+	# 底部 padding：让最后一条消息能完整滚出屏幕底部遮挡区。
+	var bottom_padding := Control.new()
+	bottom_padding.custom_minimum_size.y = ONLINE_BOTTOM_PADDING
+	bottom_padding.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	message_list.add_child(bottom_padding)
 	call_deferred("_scroll_online_to_top")
 
 
@@ -492,30 +576,42 @@ func _scroll_online_to_top() -> void:
 
 
 func _app_rect(index: int) -> Rect2:
-	var grid := get_node_or_null("AppGrid") as GridContainer
+	var grid := get_node_or_null("ScreenClip/AppGrid") as GridContainer
 	if grid != null and index >= 0 and index < grid.get_child_count():
 		var cell := grid.get_child(index) as Control
 		if cell != null and cell.size.x > 0.0:
-			return Rect2(grid.position + cell.position, cell.size)
+			# 图标命中矩形换算回手机局部坐标（绘制与点击共用同一坐标）。
+			return Rect2(screen_clip.position + grid.position + cell.position, cell.size)
 	var column := index % 2
 	var row := index / 2
-	return Rect2(14 + column * 67, 170 + row * 56, 64, 53)
+	return Rect2(screen_clip.position + Vector2(8.0 + column * 68.0, 139.0 + row * 56.0), Vector2(64, 53))
 
 
-func _upper_collapse_area() -> Rect2:
-	return Rect2(0, 0, size.x, config.phone_upper_collapse_height)
-
-
-## 当前页面可点击收回手机的区域。HOME/LOCKED 使用配置的较大区域；
-## 其他 APP 页限定在返回按钮上方，避免遮挡返回按钮。
-func _collapse_area_for_state() -> Rect2:
-	if screen_state == ScreenState.HOME or screen_state == ScreenState.LOCKED:
-		return _upper_collapse_area()
-	return Rect2(0, 0, size.x, maxf(4.0, BACK_BUTTON.position.y - 4.0))
+## 当前页面可点击收回手机的区域：仅手机整体高度的顶部 1/3（最新规则覆盖
+## “全背景可收”），且仅背景空白处生效；内容层由 _is_content_point 优先拦截，
+## 因此点击 APP 图标（包括 ONLINE）或 APP 内容不会再误触发收起。
 
 
 func _upgrade_buy_rect(index: int) -> Rect2:
 	return Rect2(96, 84 + index * 47, 48, 16)
+
+
+## 当前页面的内容层命中：APP 图标、锁屏指纹、APP 顶栏与内容视口等。
+## 这些区域优先响应交互，点击它们绝不触发收起。
+func _is_content_point(point: Vector2) -> bool:
+	match screen_state:
+		ScreenState.HOME:
+			for index in APP_IDS.size():
+				if _app_rect(index).has_point(point):
+					return true
+		ScreenState.LOCKED:
+			return FINGERPRINT_AREA.has_point(point)
+		_:
+			if APP_TOP_BAR.has_point(point):
+				return true
+			var content_rect := Rect2(6, APP_CONTENT_TOP, 148, SCREEN_RECT.end.y - APP_CONTENT_BOTTOM_MARGIN - APP_CONTENT_TOP)
+			return content_rect.has_point(point)
+	return false
 
 
 func _phone_action_at(point: Vector2) -> String:
@@ -525,25 +621,40 @@ func _phone_action_at(point: Vector2) -> String:
 		for index in APP_IDS.size():
 			if _app_rect(index).has_point(point):
 				return "app_" + APP_IDS[index]
-		if _upper_collapse_area().has_point(point):
-			return "collapse"
-		return ""
-	if BACK_BUTTON.has_point(point):
-		return "back"
+	elif screen_state == ScreenState.LOCKED:
+		if FINGERPRINT_AREA.has_point(point):
+			return "fingerprint"
+	else:
+		if BACK_BUTTON.has_point(point):
+			return "back"
 	if screen_state == ScreenState.SOMNIA:
+		var content_point := point + Vector2(0, somnia_scrollbar.value)
 		for index in UPGRADE_IDS.size():
-			if _upgrade_buy_rect(index).has_point(point):
+			if _upgrade_buy_rect(index).has_point(content_point):
 				return "upgrade_" + UPGRADE_IDS[index]
 	if screen_state == ScreenState.SETTINGS:
-		if SETTINGS_MASTER_SLIDER.has_point(point): return "settings_master"
-		if SETTINGS_MUSIC_SLIDER.has_point(point): return "settings_music"
-		if SETTINGS_SFX_SLIDER.has_point(point): return "settings_sfx"
-		if SETTINGS_SLEEPWALK.has_point(point): return "settings_sleepwalk"
-		if SETTINGS_FAST_SLEEP.has_point(point): return "settings_fast_sleep"
+		var content_point := point + Vector2(0, settings_scrollbar.value)
+		if SETTINGS_MASTER_SLIDER.has_point(content_point): return "settings_master"
+		if SETTINGS_MUSIC_SLIDER.has_point(content_point): return "settings_music"
+		if SETTINGS_SFX_SLIDER.has_point(content_point): return "settings_sfx"
+		if SETTINGS_SLEEPWALK.has_point(content_point): return "settings_sleepwalk"
+		if SETTINGS_FAST_SLEEP.has_point(content_point): return "settings_fast_sleep"
+	# 内容层优先：点到内容返回空动作；只有点到手机顶部 1/3 的背景空白处
+	# 才返回 collapse，下方 2/3 完全不触发收起。
+	if _is_content_point(point):
+		return ""
+	if _retract_area_rect().has_point(point):
+		return "collapse"
 	return ""
 
 
+## 收起触发区 = 手机整体高度的顶部 1/3（phone_height * ratio，不是上半部再取 1/3）。
+func _retract_area_rect() -> Rect2:
+	return Rect2(0, 0, size.x, size.y * config.phone_retract_height_ratio)
+
+
 func _update_phone_setting(point: Vector2) -> void:
+	point.y += settings_scrollbar.value
 	if SETTINGS_MASTER_SLIDER.has_point(point):
 		SettingsManager.set_volume(&"master_volume", _slider_percent(SETTINGS_MASTER_SLIDER, point.x))
 	elif SETTINGS_MUSIC_SLIDER.has_point(point):
@@ -556,6 +667,18 @@ func _update_phone_setting(point: Vector2) -> void:
 		SettingsManager.set_fast_sleep_enabled(not SettingsManager.get_fast_sleep_enabled())
 
 
+func _activate_scrolled_page_point(point: Vector2) -> void:
+	if screen_state == ScreenState.SOMNIA:
+		var content_point := point + Vector2(0, somnia_scrollbar.value)
+		for index in UPGRADE_IDS.size():
+			if _upgrade_buy_rect(index).has_point(content_point):
+				_purchase_permanent_upgrade(UPGRADE_IDS[index])
+				return
+	elif screen_state == ScreenState.SETTINGS:
+		SFX.play_event(&"phone_operation")
+		_update_phone_setting(point)
+
+
 func _slider_percent(rect: Rect2, mouse_x: float) -> float:
 	return clampf((mouse_x - rect.position.x) / maxf(rect.size.x, 1.0) * 100.0, 0.0, 100.0)
 
@@ -563,6 +686,10 @@ func _slider_percent(rect: Rect2, mouse_x: float) -> float:
 func _on_setting_changed(_setting_name: StringName, _value: Variant) -> void:
 	if screen_state == ScreenState.SETTINGS:
 		queue_redraw()
+
+
+func _on_phone_page_scrolled(_value: float) -> void:
+	queue_redraw()
 
 
 func _animate_phone(expand: bool) -> void:
@@ -710,8 +837,8 @@ func _purchase_sunshade() -> void:
 		SFX.play_event(&"purchase")
 		_flash_balance()
 		state_changed.emit()
-		# 收起手机，让玩家立刻能点击卧室里的遮阳帘切换显示/隐藏。
-		force_collapse()
+		# 购买只刷新当前商品状态；手机、APP和滚动位置保持不变。
+		quicklink_content.queue_redraw()
 	else:
 		SFX.play_event(&"forbidden")
 	purchase_locked = false
@@ -749,35 +876,39 @@ func _flash_balance() -> void:
 
 func _draw() -> void:
 	# Phone.png is drawn by the input-ignoring PhoneShell child behind this runtime content.
+	# 屏幕内的全部内容改由 ScreenClip 画布绘制并严格裁剪在手机屏幕区内，
+	# 手机本体只绘制屏幕外底部下巴（屏幕底边 325 以下）的 home 指示条。
+	draw_line(Vector2(size.x * 0.5 - 18, size.y - 6), Vector2(size.x * 0.5 + 18, size.y - 6), Color("6f7179"), 3.0)
+
+
+## 由 ScreenClip 委托绘制：所有屏幕内容画到 canvas 上，坐标仍为手机局部坐标
+## （ScreenClip 已用 draw_set_transform 平移补偿），并被裁剪在屏幕可显示区内。
+func _draw_screen(canvas: CanvasItem) -> void:
 	var font := PixelFont.get_font()
+	# 收起交互区视觉完全隐藏：不画任何 hover 高亮/边框/色块，
+	# 交互判定（_phone_action_at / _retract_area_rect）保持不变。
 	match screen_state:
-		ScreenState.LOCKED: _draw_lock_screen(font)
-		ScreenState.HOME: _draw_home_screen(font)
-		ScreenState.ONLINE: _draw_online(font)
-		ScreenState.SOMNIA: _draw_somnia(font)
-		ScreenState.QUICKLINK: _draw_quicklink_header(font)
-		ScreenState.SETTINGS: _draw_settings(font)
-	draw_line(Vector2(size.x * 0.5 - 18, size.y - 17), Vector2(size.x * 0.5 + 18, size.y - 17), Color("6f7179"), 3.0)
+		ScreenState.LOCKED: _draw_lock_screen(canvas, font)
+		ScreenState.HOME: _draw_home_screen(canvas, font)
+		ScreenState.ONLINE: _draw_online(canvas, font)
+		ScreenState.SOMNIA: _draw_somnia(canvas, font)
+		ScreenState.QUICKLINK: _draw_quicklink_header(canvas, font)
+		ScreenState.SETTINGS: _draw_settings(canvas, font)
 
 
 # 速联跑腿™ 只在此绘制共用的顶部返回按钮与标题；商品列表由
 # QuicklinkScroll/QuicklinkContent 自绘（支持滚动）。
-func _draw_quicklink_header(font: Font) -> void:
-	PhoneShopUI.draw_app_header(self, BACK_BUTTON, "速联跑腿™", "QUICKLINK™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
+func _draw_quicklink_header(canvas: CanvasItem, font: Font) -> void:
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "速联跑腿™", "QUICKLINK™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
 
 
-func _draw_lock_screen(font: Font) -> void:
-	if lock_background_texture != null:
-		var background_rect := _lock_time_rect()
-		draw_texture_rect(lock_background_texture, background_rect, false)
-		# 暗化薄层保证时间文字在壁纸上仍清晰可读。
-		draw_rect(background_rect, Color(0.02, 0.05, 0.09, 0.3))
-	draw_string(font, Vector2(0, 76), RunSettlement.format_time(bedroom_time_minutes), HORIZONTAL_ALIGNMENT_CENTER, size.x, 24, Color("b2b3bb"))
-	draw_string(font, Vector2(0, 102), _weekday_name(), HORIZONTAL_ALIGNMENT_CENTER, size.x, 12, Color("696c76"))
+func _draw_lock_screen(canvas: CanvasItem, font: Font) -> void:
+	canvas.draw_rect(_lock_time_rect(), Color("102437"))
+	canvas.draw_string(font, Vector2(0, 76), RunSettlement.format_time(bedroom_time_minutes), HORIZONTAL_ALIGNMENT_CENTER, size.x, 24, Color("b2b3bb"))
+	canvas.draw_string(font, Vector2(0, 102), _weekday_name(), HORIZONTAL_ALIGNMENT_CENTER, size.x, 12, Color("696c76"))
 	var pulse := 0.25 + fingerprint_progress * 0.65
-	draw_circle(FINGERPRINT_AREA.get_center(), 22.0, Color(0.35, 0.45, 0.5, pulse), false, 3.0)
-	draw_circle(FINGERPRINT_AREA.get_center(), 13.0, Color(0.5, 0.62, 0.68, pulse), false, 2.0)
-	draw_string(font, Vector2(0, 233), "点击指纹解锁", HORIZONTAL_ALIGNMENT_CENTER, size.x, 11, Color("71757e"))
+	canvas.draw_circle(FINGERPRINT_AREA.get_center(), 22.0, Color(0.35, 0.45, 0.5, pulse), false, 3.0)
+	canvas.draw_circle(FINGERPRINT_AREA.get_center(), 13.0, Color(0.5, 0.62, 0.68, pulse), false, 2.0)
 
 
 func _weekday_name() -> String:
@@ -789,76 +920,110 @@ func _lock_time_rect() -> Rect2:
 
 
 func _home_time_rect() -> Rect2:
-	return Rect2(12, 36, size.x - 24, 112)
+	# 紧凑的像素时间卡：与顶部状态栏分离，并为2×2图标保留稳定留白。
+	return Rect2(12, 47, size.x - 24, 82)
 
 
-## 按目标矩形对壁纸做 cover 式居中裁剪，绘制时永远不超出该矩形。
-func _build_time_background(target_rect: Rect2) -> AtlasTexture:
-	var texture_size := PHONE_WALLPAPER.get_size()
-	var crop := AtlasTexture.new()
-	crop.atlas = PHONE_WALLPAPER
-	if texture_size.x <= 0.0 or texture_size.y <= 0.0:
-		crop.region = Rect2(Vector2.ZERO, texture_size)
-		return crop
-	var cover_scale := maxf(target_rect.size.x / texture_size.x, target_rect.size.y / texture_size.y)
-	var source_size := target_rect.size / maxf(cover_scale, 0.001)
-	crop.region = Rect2((texture_size - source_size) * 0.5, source_size)
-	return crop
-
-
-func _draw_home_screen(font: Font) -> void:
+func _draw_home_screen(canvas: CanvasItem, font: Font) -> void:
+	# 深冷蓝桌面底色 + 像素分段，不使用现代渐变或圆角控件。
+	canvas.draw_rect(SCREEN_RECT, Color("09131e"))
+	canvas.draw_rect(Rect2(SCREEN_RECT.position, Vector2(SCREEN_RECT.size.x, 84)), Color("102437"))
+	canvas.draw_rect(Rect2(SCREEN_RECT.position + Vector2(0, 84), Vector2(SCREEN_RECT.size.x, 96)), Color("0d1d2c"))
+	canvas.draw_rect(Rect2(SCREEN_RECT.position + Vector2(0, 180), Vector2(SCREEN_RECT.size.x, SCREEN_RECT.size.y - 180)), Color("0a1622"))
+	_draw_home_status_bar(canvas, font)
 	var widget_rect := _home_time_rect()
-	draw_rect(widget_rect, Color("20232d"))
-	if home_background_texture != null:
-		draw_texture_rect(home_background_texture, widget_rect, false)
-		draw_rect(widget_rect, Color(0.02, 0.05, 0.09, 0.28))
-	draw_string(font, Vector2(0, 72), RunSettlement.format_time(bedroom_time_minutes), HORIZONTAL_ALIGNMENT_CENTER, size.x, 21, Color("b2b3bb"))
-	draw_string(font, Vector2(0, 94), _weekday_name(), HORIZONTAL_ALIGNMENT_CENTER, size.x, 10, Color("6f7380"))
+	_draw_pixel_panel(canvas, widget_rect, Color("142b3d"), Color("416d88"), Color("07101a"))
+	canvas.draw_string(font, Vector2(0, 77), RunSettlement.format_time(bedroom_time_minutes), HORIZONTAL_ALIGNMENT_CENTER, size.x, 20, Color("d8eef4"))
+	canvas.draw_string(font, Vector2(0, 101), _weekday_name(), HORIZONTAL_ALIGNMENT_CENTER, size.x, 9, Color("8eb6c8"))
 	for index in APP_IDS.size():
 		var rect := _app_rect(index)
-		_draw_app_icon(rect, APP_NAMES[index][0], APP_NAMES[index][1], index, font, hovered_app_index == index)
+		_draw_app_icon(canvas, rect, APP_NAMES[index][0], APP_NAMES[index][1], index, font, hovered_app_index == index)
 		if index == 0 and _has_unread_online_messages():
 			var icon_top_right := rect.position + Vector2(45.0, 2.0)
 			var dot_center := icon_top_right + config.online_unread_dot_offset
-			draw_circle(dot_center, config.online_unread_dot_size, Color("d84b56"))
+			canvas.draw_circle(dot_center, config.online_unread_dot_size, Color("d84b56"))
+	_draw_home_navigation(canvas)
 
 
-func _draw_app_icon(rect: Rect2, chinese: String, english: String, index: int, font: Font, hovered: bool) -> void:
+func _draw_home_status_bar(canvas: CanvasItem, font: Font) -> void:
+	var bar := Rect2(9, 24, 142, 17)
+	canvas.draw_rect(bar, Color("0a1825"))
+	canvas.draw_line(bar.position + Vector2(0, bar.size.y - 1), bar.end, Color("294a60"), 1.0)
+	canvas.draw_string(font, Vector2(13, 35), RunSettlement.format_time(bedroom_time_minutes), HORIZONTAL_ALIGNMENT_LEFT, 45, 7, Color("9ec3d1"))
+	# 右侧用硬边像素信号格和电池，不引入额外功能或点击区域。
+	for bar_index in range(3):
+		canvas.draw_rect(Rect2(112 + bar_index * 4, 34 - bar_index * 2, 2, 2 + bar_index * 2), Color("7faabd"))
+	canvas.draw_rect(Rect2(128, 28, 17, 8), Color("7faabd"), false, 1.0)
+	canvas.draw_rect(Rect2(145, 30, 2, 4), Color("7faabd"))
+	canvas.draw_rect(Rect2(130, 30, 11, 4), Color("477b98"))
+
+
+func _draw_home_navigation(canvas: CanvasItem) -> void:
+	var nav := Rect2(24, 296, 112, 21)
+	_draw_pixel_panel(canvas, nav, Color("0e2130"), Color("315b78"), Color("050d16"))
+	# 返回、主页、任务三个轻量像素符号；当前只作为视觉导航，不改变原交互。
+	canvas.draw_line(Vector2(43, 307), Vector2(49, 302), Color("749caf"), 2.0)
+	canvas.draw_line(Vector2(43, 307), Vector2(49, 312), Color("749caf"), 2.0)
+	canvas.draw_rect(Rect2(76, 302, 8, 10), Color("c7e1ea"), false, 2.0)
+	canvas.draw_rect(Rect2(110, 303, 9, 9), Color("749caf"), false, 1.0)
+
+
+func _draw_pixel_panel(canvas: CanvasItem, rect: Rect2, fill: Color, highlight: Color, shadow: Color) -> void:
+	canvas.draw_rect(rect, shadow)
+	canvas.draw_rect(rect.grow(-2), fill)
+	canvas.draw_line(rect.position + Vector2(2, 2), rect.position + Vector2(rect.size.x - 3, 2), highlight, 1.0)
+	canvas.draw_line(rect.position + Vector2(2, rect.size.y - 3), rect.position + Vector2(rect.size.x - 3, rect.size.y - 3), shadow, 1.0)
+
+
+func _draw_app_icon(canvas: CanvasItem, rect: Rect2, chinese: String, english: String, index: int, font: Font, hovered: bool) -> void:
 	var brightness := config.phone_app_hover_brightness if hovered else 0.0
 	var icon_modulate := Color.WHITE.lightened(brightness)
-	draw_texture(APP_ICONS[index], rect.position + Vector2(16, -2), icon_modulate)
-	draw_string(font, Vector2(rect.position.x, rect.position.y + 38), chinese, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 8, Color("c0bdc4").lightened(brightness))
-	draw_string(font, Vector2(rect.position.x, rect.position.y + 49), english, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 7, Color("858893").lightened(brightness))
+	var panel := Rect2(rect.position + Vector2(7, -3), Vector2(rect.size.x - 14, 36))
+	_draw_pixel_panel(
+		canvas,
+		panel,
+		Color("183248") if hovered else Color("102638"),
+		Color("5a8ca6") if hovered else Color("315b78"),
+		Color("050d16")
+	)
+	var icon_position := rect.position + Vector2(16, -1 if hovered else 0)
+	canvas.draw_texture(APP_ICONS[index], icon_position, icon_modulate)
+	canvas.draw_string(font, Vector2(rect.position.x, rect.position.y + 39), chinese, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 8, Color("d3e7ed").lightened(brightness))
+	canvas.draw_string(font, Vector2(rect.position.x, rect.position.y + 49), english, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 6, Color("7899a9").lightened(brightness))
 
 
-func _draw_online(font: Font) -> void:
-	PhoneShopUI.draw_app_header(self, BACK_BUTTON, "在线！™", "ONLINE!™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
+func _draw_online(canvas: CanvasItem, font: Font) -> void:
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "在线！™", "ONLINE!™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
 
 
-func _draw_somnia(font: Font) -> void:
-	PhoneShopUI.draw_app_header(self, BACK_BUTTON, "眠网™", "SOMNIA NET™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
-	draw_string(font, Vector2(72, 78), "RAM %04d" % int(persistent_state.get("ram", 0)), HORIZONTAL_ALIGNMENT_RIGHT, 66, 10, Color("9fb5c1"))
+func _draw_somnia(canvas: CanvasItem, font: Font) -> void:
+	canvas.draw_set_transform(-screen_clip.position + Vector2(0, -somnia_scrollbar.value))
+	canvas.draw_string(font, Vector2(72, 78), "RAM %04d" % int(persistent_state.get("ram", 0)), HORIZONTAL_ALIGNMENT_RIGHT, 66, 10, Color("9fb5c1"))
 	var levels: Dictionary = persistent_state.get("permanent_upgrades", {})
 	for index in UPGRADE_IDS.size():
 		var id: String = UPGRADE_IDS[index]
 		var level := int(levels.get(id, 0))
 		var y := 82.0 + index * 47.0
 		var card := Rect2(10, y, 140, 45)
-		draw_rect(card, Color("151b26"))
-		draw_rect(card, Color("3f6075"), false, 1.0)
-		draw_line(card.position + Vector2(4, 4), card.position + Vector2(14, 4), Color("7595aa"), 1.0)
-		draw_texture_rect(PRODUCT_ICONS[id], Rect2(14, y + 8, 26, 26), false)
-		draw_string(font, Vector2(44, y + 10), "%s  %d/%d" % [UPGRADE_NAMES[index], level, config.permanent_upgrade_max_level], HORIZONTAL_ALIGNMENT_LEFT, 92, 6, Color("c1cbd1"))
+		# 升级卡：与商店商品卡同一套 16bit 像素斜面语言。
+		canvas.draw_rect(card, Color("101823"))
+		canvas.draw_rect(card.grow(-2), Color("182431"))
+		canvas.draw_line(card.position, card.position + Vector2(card.size.x, 0), Color("3e627a"), 1.0)
+		canvas.draw_line(card.position + Vector2(0, card.size.y - 1), card.end, Color("0a0e15"), 1.0)
+		canvas.draw_texture_rect(PRODUCT_ICONS[id], Rect2(14, y + 8, 26, 26), false)
+		canvas.draw_string(font, Vector2(44, y + 10), "%s  %d/%d" % [UPGRADE_NAMES[index], level, config.permanent_upgrade_max_level], HORIZONTAL_ALIGNMENT_LEFT, 92, 6, Color("c1cbd1"))
 		var button := _upgrade_buy_rect(index)
 		var capped := level >= config.permanent_upgrade_max_level
 		var price := 0 if capped else int(config.permanent_upgrade_prices[level])
 		var ram := int(persistent_state.get("ram", 0))
 		var disabled := capped or ram < price
 		var label := _somnia_button_label(level, ram)
-		PhoneShopUI.draw_pixel_shop_button(self, button, label, disabled, hovered_phone_action == "upgrade_" + id, font)
-		draw_string(font, Vector2(44, y + 21), "当前：%s" % _permanent_effect_value(id, level), HORIZONTAL_ALIGNMENT_LEFT, 96, 5, Color("8799a4"))
-		draw_string(font, Vector2(44, y + 30), "下一级：%s" % ("--" if capped else _permanent_effect_value(id, level + 1)), HORIZONTAL_ALIGNMENT_LEFT, 96, 5, Color("8799a4"))
-		draw_string(font, Vector2(44, y + 39), "需要：%s  持有：%d RAM" % ["--" if capped else "%d RAM" % price, ram], HORIZONTAL_ALIGNMENT_LEFT, 100, 5, Color("718894"))
+		PhoneShopUI.draw_pixel_shop_button(canvas, button, label, disabled, hovered_phone_action == "upgrade_" + id, font)
+		canvas.draw_string(font, Vector2(44, y + 21), "当前：%s" % _permanent_effect_value(id, level), HORIZONTAL_ALIGNMENT_LEFT, 96, 5, Color("8799a4"))
+		canvas.draw_string(font, Vector2(44, y + 30), "下一级：%s" % ("--" if capped else _permanent_effect_value(id, level + 1)), HORIZONTAL_ALIGNMENT_LEFT, 96, 5, Color("8799a4"))
+		canvas.draw_string(font, Vector2(44, y + 39), "需要：%s  持有：%d RAM" % ["--" if capped else "%d RAM" % price, ram], HORIZONTAL_ALIGNMENT_LEFT, 100, 5, Color("718894"))
+	canvas.draw_set_transform(-screen_clip.position)
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "眠网™", "SOMNIA NET™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
 
 
 func _permanent_effect_text(id: String, level: int) -> String:
@@ -884,31 +1049,42 @@ func _somnia_button_label(level: int, ram: int) -> String:
 	return "升级 %d RAM" % price if ram >= price else "RAM不足 需要%d" % price
 
 
-func _draw_settings(font: Font) -> void:
-	PhoneShopUI.draw_app_header(self, BACK_BUTTON, "设置", "SETTINGS", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
-	_draw_phone_slider(font, "总音量", &"master_volume", SETTINGS_MASTER_SLIDER)
-	_draw_phone_slider(font, "音乐", &"music_volume", SETTINGS_MUSIC_SLIDER)
-	_draw_phone_slider(font, "音效", &"sfx_volume", SETTINGS_SFX_SLIDER)
+func _draw_settings(canvas: CanvasItem, font: Font) -> void:
+	canvas.draw_set_transform(-screen_clip.position + Vector2(0, -settings_scrollbar.value))
+	_draw_phone_slider(canvas, font, "总音量", &"master_volume", SETTINGS_MASTER_SLIDER)
+	_draw_phone_slider(canvas, font, "音乐", &"music_volume", SETTINGS_MUSIC_SLIDER)
+	_draw_phone_slider(canvas, font, "音效", &"sfx_volume", SETTINGS_SFX_SLIDER)
 	var enabled := SettingsManager.get_sleepwalk_mode()
-	draw_rect(SETTINGS_SLEEPWALK, Color("26303a"))
-	draw_rect(SETTINGS_SLEEPWALK, Color("7894a5") if enabled else Color("46515d"), false, 2.0)
-	draw_rect(Rect2(SETTINGS_SLEEPWALK.position + Vector2(5, 7), Vector2(12, 12)), Color("517b98") if enabled else Color("252933"))
-	draw_string(font, SETTINGS_SLEEPWALK.position + Vector2(23, 17), "梦游模式  %s" % ("ON" if enabled else "OFF"), HORIZONTAL_ALIGNMENT_LEFT, 98, 9, Color("bdc8cd"))
+	# 开关项：16bit 像素斜面底 + 方块指示灯，命中矩形不变。
+	var sleepwalk_hovered := hovered_phone_action == "settings_sleepwalk"
+	canvas.draw_rect(SETTINGS_SLEEPWALK, Color("000000") if enabled and sleepwalk_hovered else (Color("1b2b3d") if enabled else Color("151d27")))
+	canvas.draw_line(SETTINGS_SLEEPWALK.position, SETTINGS_SLEEPWALK.position + Vector2(SETTINGS_SLEEPWALK.size.x, 0), Color("3e627a") if enabled else Color("26323d"), 1.0)
+	canvas.draw_line(SETTINGS_SLEEPWALK.position + Vector2(0, SETTINGS_SLEEPWALK.size.y - 1), SETTINGS_SLEEPWALK.end, Color("0a0e15"), 1.0)
+	canvas.draw_rect(Rect2(SETTINGS_SLEEPWALK.position + Vector2(5, 7), Vector2(12, 12)), Color("4fb3c9") if enabled else Color("252933"))
+	canvas.draw_rect(Rect2(SETTINGS_SLEEPWALK.position + Vector2(5, 7), Vector2(12, 12)), Color("8fd0de") if enabled else Color("38424c"), false, 1.0)
+	canvas.draw_string(font, SETTINGS_SLEEPWALK.position + Vector2(23, 17), "梦游模式  %s" % ("ON" if enabled else "OFF"), HORIZONTAL_ALIGNMENT_LEFT, 98, 9, Color("cfe0e7") if enabled else Color("8fa0a9"))
 
 
 	var fast_sleep_enabled := SettingsManager.get_fast_sleep_enabled()
-	draw_rect(SETTINGS_FAST_SLEEP, Color("26303a"))
-	draw_rect(SETTINGS_FAST_SLEEP, Color("7894a5") if fast_sleep_enabled else Color("46515d"), false, 2.0)
-	draw_rect(Rect2(SETTINGS_FAST_SLEEP.position + Vector2(5, 7), Vector2(12, 12)), Color("517b98") if fast_sleep_enabled else Color("252933"))
-	draw_string(font, SETTINGS_FAST_SLEEP.position + Vector2(23, 17), "快速睡觉  %s" % ("ON" if fast_sleep_enabled else "OFF"), HORIZONTAL_ALIGNMENT_LEFT, 98, 9, Color("bdc8cd"))
+	var fast_sleep_hovered := hovered_phone_action == "settings_fast_sleep"
+	canvas.draw_rect(SETTINGS_FAST_SLEEP, Color("000000") if fast_sleep_enabled and fast_sleep_hovered else (Color("1b2b3d") if fast_sleep_enabled else Color("151d27")))
+	canvas.draw_line(SETTINGS_FAST_SLEEP.position, SETTINGS_FAST_SLEEP.position + Vector2(SETTINGS_FAST_SLEEP.size.x, 0), Color("3e627a") if fast_sleep_enabled else Color("26323d"), 1.0)
+	canvas.draw_line(SETTINGS_FAST_SLEEP.position + Vector2(0, SETTINGS_FAST_SLEEP.size.y - 1), SETTINGS_FAST_SLEEP.end, Color("0a0e15"), 1.0)
+	canvas.draw_rect(Rect2(SETTINGS_FAST_SLEEP.position + Vector2(5, 7), Vector2(12, 12)), Color("4fb3c9") if fast_sleep_enabled else Color("252933"))
+	canvas.draw_rect(Rect2(SETTINGS_FAST_SLEEP.position + Vector2(5, 7), Vector2(12, 12)), Color("8fd0de") if fast_sleep_enabled else Color("38424c"), false, 1.0)
+	canvas.draw_string(font, SETTINGS_FAST_SLEEP.position + Vector2(23, 17), "快速睡觉  %s" % ("ON" if fast_sleep_enabled else "OFF"), HORIZONTAL_ALIGNMENT_LEFT, 98, 9, Color("cfe0e7") if fast_sleep_enabled else Color("8fa0a9"))
+	canvas.draw_set_transform(-screen_clip.position)
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "设置", "SETTINGS", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
 
 
-func _draw_phone_slider(font: Font, label_text: String, setting_name: StringName, rect: Rect2) -> void:
+func _draw_phone_slider(canvas: CanvasItem, font: Font, label_text: String, setting_name: StringName, rect: Rect2) -> void:
 	var value := SettingsManager.get_volume(setting_name)
-	draw_string(font, rect.position + Vector2(0, -3), "%s  %d%%" % [label_text, value], HORIZONTAL_ALIGNMENT_LEFT, rect.size.x, 8, Color("aeb9bf"))
+	canvas.draw_string(font, rect.position + Vector2(0, -3), "%s  %d%%" % [label_text, value], HORIZONTAL_ALIGNMENT_LEFT, rect.size.x, 8, Color("aeb9bf"))
+	# 分段音量条：16bit 风格青蓝填充段 + 硬边框凹槽。
 	var bar := Rect2(rect.position + Vector2(0, 8), Vector2(rect.size.x, 8))
-	draw_rect(bar, Color("171c24"))
+	canvas.draw_rect(bar, Color("0c141d"))
+	var segment_width := bar.size.x / 10.0
 	for segment in range(10):
-		var segment_rect := Rect2(bar.position + Vector2(segment * 13.0 + 1.0, 1.0), Vector2(10.0, 6.0))
-		draw_rect(segment_rect, Color("517b98") if value >= (segment + 1) * 10 else Color("303945"))
-	draw_rect(bar, Color("657b88"), false, 1.0)
+		var segment_rect := Rect2(bar.position + Vector2(segment * segment_width + 1.0, 1.0), Vector2(maxf(segment_width - 2.0, 2.0), 6.0))
+		canvas.draw_rect(segment_rect, Color("4fb3c9") if value >= (segment + 1) * 10 else Color("1d2733"))
+	canvas.draw_rect(bar, Color("3e627a"), false, 1.0)

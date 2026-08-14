@@ -1,9 +1,12 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3 uid="uid://blk8w2mjpth54"]
 
-[ext_resource type="Script" path="res://scripts/ui/opening.gd" id="1_opening"]
-[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+[ext_resource type="Script" uid="uid://bsakeqg8nmamb" path="res://scripts/ui/opening.gd" id="1_opening"]
+[ext_resource type="Resource" uid="uid://b1f2o7rqduk6v" path="res://resources/demo_config.tres" id="2_config"]
+[ext_resource type="Texture2D" uid="uid://c5uwlq7cdh3n7" path="res://art/Background/textbackground.png" id="3_frame"]
+[ext_resource type="Texture2D" uid="uid://bjv1qihq82u2l" path="res://art/Background/citynight_1.png" id="4_city_a"]
+[ext_resource type="Script" path="res://scripts/ui/ending_text_canvas.gd" id="5_ending_canvas"]
 
-[node name="Opening" type="Control"]
+[node name="Opening" type="Control" unique_id=1198244365]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,7 +16,80 @@ grow_vertical = 2
 script = ExtResource("1_opening")
 config = ExtResource("2_config")
 
-[node name="ReturnToMenu" type="Button" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1343398456]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.035, 0.055, 0.075, 1)
+
+[node name="NightCityBackground" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = -237.0
+offset_right = 640.0
+offset_bottom = 403.0
+mouse_filter = 2
+texture = ExtResource("4_city_a")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FrameArea" type="Control" parent="." unique_id=1689878835]
+anchors_preset = 0
+offset_left = 0.888916
+offset_top = -1.0
+offset_right = 644.44446
+offset_bottom = 361.0
+mouse_filter = 2
+
+[node name="Frame" type="TextureRect" parent="FrameArea" unique_id=1017697098]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_frame")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="StoryText" type="Label" parent="FrameArea" unique_id=969252712]
+layout_mode = 0
+offset_left = 39.111084
+offset_top = 245.0
+offset_right = 609.1555
+offset_bottom = 300.0
+theme_override_colors/font_color = Color(0.86, 0.88, 0.9, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.035, 0.05, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="ContinueArrow" type="Polygon2D" parent="FrameArea" unique_id=524495974]
+visible = false
+position = Vector2(322, 310)
+color = Color(0.55, 0.56, 0.6, 1)
+polygon = PackedVector2Array(-7, -4, 7, -4, 0, 5)
+
+[node name="EndingCanvas" type="Control" parent="."]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("5_ending_canvas")
+
+[node name="ReturnToMenu" type="Button" parent="." unique_id=1555193893]
 visible = false
 layout_mode = 0
 offset_left = 245.0

@@ -60,8 +60,9 @@ func perform_katana_attack(allow_extra: bool) -> void:
 	var sequence := katana_attack_sequence_id
 	var direction := _resolve_attack_direction()
 	SFX.play_event(&"weapon_fire")
-	var origin: Vector2 = get_parent().global_position
+	var origin: Vector2 = get_parent().get_katana_origin()
 	_perform_melee_hit(origin, direction)
+	# 近战与剑气共用稳定 KatanaOrigin；攻击范围数值保持不变。
 	_spawn_katana_wave(origin, direction, sequence)
 	if allow_extra and randf() < extra_attack_chance:
 		await get_tree().create_timer(extra_attack_delay, false).timeout
@@ -80,7 +81,14 @@ func _resolve_attack_direction() -> Vector2:
 
 func _perform_melee_hit(origin: Vector2, direction: Vector2) -> void:
 	for enemy in get_tree().get_nodes_in_group("dream_enemies"):
-		if is_instance_valid(enemy) and not enemy.dead and origin.distance_to(enemy.global_position) <= attack_range:
+		if not is_instance_valid(enemy) or enemy.dead:
+			continue
+		# 保持原有“敌人中心在攻击范围内”判定；触手怪等大体型敌人
+		# 额外按受击区形状判定，打到身体任意有效部位都算命中。
+		var in_range := origin.distance_to(enemy.global_position) <= attack_range
+		if not in_range and enemy.has_method("distance_to_hurtbox"):
+			in_range = float(enemy.distance_to_hurtbox(origin)) <= attack_range
+		if in_range:
 			var hit_world := get_tree().get_first_node_in_group("dream_world")
 			if hit_world != null:
 				hit_world.resolve_player_hit(enemy, damage, origin)

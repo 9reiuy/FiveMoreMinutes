@@ -48,12 +48,16 @@ func _process(delta: float) -> void:
 func _fire(direction: Vector2, allow_extra: bool) -> void:
 	var world := get_tree().get_first_node_in_group("dream_world")
 	if world != null:
+		# 发射点对齐恢复原尺寸后的躯干挂点（仅视觉出生位置，射程不变）。
+		var origin: Vector2 = get_parent().get_projectile_origin()
 		var projectile := PROJECTILE_SCENE.instantiate()
-		projectile.global_position = get_parent().global_position
+		projectile.global_position = origin
 		projectile.setup(direction, damage, attack_range, projectile_speed)
 		world.add_projectile(projectile)
 		if world.has_method("spawn_weapon_muzzle"):
-			world.spawn_weapon_muzzle(get_parent().global_position, direction, &"pistol")
+			world.spawn_weapon_muzzle(origin, direction, &"pistol")
+		if world.has_method("spawn_bullet_sequence"):
+			world.spawn_bullet_sequence(origin, direction)
 	if firing_audio != null and firing_audio.stream != null:
 		# One reusable player caps high-rate pistol audio at a single concurrent voice.
 		firing_audio.stop()

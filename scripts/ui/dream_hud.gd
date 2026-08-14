@@ -3,9 +3,9 @@ extends Control
 @export var config: DemoConfig
 
 @onready var experience_area: Control = $ExperienceBarArea
-@onready var level_label: Label = $ExperienceBarArea/Content/LevelLabel
-@onready var experience_bar: ProgressBar = $ExperienceBarArea/Content/ExperienceProgressBar
-@onready var experience_value_label: Label = $ExperienceBarArea/Content/ExperienceValueLabel
+@onready var experience_bar: ProgressBar = $ExperienceBarArea/ExperienceProgressBar
+@onready var experience_value_label: Label = $ExperienceBarArea/ExperienceValueLabel
+@onready var dash_icon: TextureRect = $DashIndicator/DashIcon
 
 var time_text := "04:00"
 var health := 100.0
@@ -28,11 +28,14 @@ var level_flash_left := 0.0
 
 
 func _ready() -> void:
-	experience_area.offset_left = config.experience_bar_margin
-	experience_area.offset_top = config.experience_bar_margin
-	experience_area.offset_right = -config.experience_bar_margin
-	experience_area.offset_bottom = config.experience_bar_margin + config.experience_bar_height
+	# 顶部只保留经验条：Y=0 贴顶、横向满宽、极薄，无外围 Panel。
+	# 高度为旧版 12 的一半（6）；EXP 文字由 Label 垂直居中自动适配。
+	experience_area.offset_left = 0.0
+	experience_area.offset_top = 0.0
+	experience_area.offset_right = 0.0
+	experience_area.offset_bottom = 6.0
 	_update_experience_labels()
+	_update_dash_indicator()
 
 
 func _process(delta: float) -> void:
@@ -71,7 +74,7 @@ func set_progression(new_level: int, new_experience: int, target: int, new_kills
 func _update_experience_labels() -> void:
 	if not is_node_ready():
 		return
-	level_label.text = "LV. %d" % level
+	# 等级显示已移除（内部 level 变量保留），EXP 数值居中叠在经验条内。
 	experience_value_label.text = "%d / %d" % [experience, experience_target]
 
 
@@ -81,12 +84,30 @@ func set_dash_state(remaining: float, total: float, active: bool, charges: int =
 	dash_active = active
 	dash_charges = charges
 	dash_max_charges = maximum_charges
+	_update_dash_indicator()
 	queue_redraw()
 
 
 func set_hungry_run(enabled: bool) -> void:
 	dash_hunger_disabled = enabled
+	_update_dash_indicator()
 	queue_redraw()
+
+
+func _update_dash_indicator() -> void:
+	if not is_instance_valid(dash_icon):
+		return
+	var material := dash_icon.material as ShaderMaterial
+	if material == null:
+		return
+	# 仍有可用次数时保持完整图标；次数耗尽后，按剩余冷却比例让灰色遮罩
+	# 从底部逐步退去。空腹禁用和冲刺动作本身显示为完全灰色。
+	var cooldown_ratio := 0.0
+	if dash_hunger_disabled or dash_active:
+		cooldown_ratio = 1.0
+	elif dash_charges <= 0:
+		cooldown_ratio = clampf(dash_remaining / maxf(dash_total, 0.001), 0.0, 1.0)
+	material.set_shader_parameter("cooldown_ratio", cooldown_ratio)
 
 
 func set_skill_state(has_shield: bool, revive_ready: bool) -> void:
@@ -97,25 +118,9 @@ func set_skill_state(has_shield: bool, revive_ready: bool) -> void:
 
 func _draw() -> void:
 	var font := PixelFont.get_font()
-	# Secondary combat information stays below the top experience strip.
-	draw_rect(Rect2(14, 48, 168, 19), Color(0.035, 0.04, 0.06, 0.82))
-	draw_rect(Rect2(18, 52, 160.0 * clampf(health / maxf(maximum_health, 1.0), 0.0, 1.0), 11), Color("81515b"))
-	draw_string(font, Vector2(16, 83), "生命 %d/%d" % [int(health), int(maximum_health)], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("b5b1bb"))
-	var dash_ready := dash_charges > 0 and not dash_active and not dash_hunger_disabled
-	var button := Rect2(15, 93, 56, 34)
-	var icon_color := Color("3f6075") if dash_ready else Color("222a34")
-	draw_rect(button, icon_color)
-	draw_rect(button, Color("8eabbc") if dash_ready else Color("46515d"), false, 2.0)
-	draw_rect(Rect2(button.position, Vector2(3, 3)), Color("101620"))
-	draw_rect(Rect2(button.end - Vector2(3, 3), Vector2(3, 3)), Color("101620"))
-	var cooldown_ratio := clampf(dash_remaining / dash_total, 0.0, 1.0)
-	if cooldown_ratio > 0.0 and not dash_hunger_disabled:
-		draw_rect(Rect2(button.position, Vector2(button.size.x * cooldown_ratio, button.size.y)), Color(0.04, 0.055, 0.08, 0.72))
-	draw_string(font, Vector2(button.position.x, button.position.y + 14), "SPACE", HORIZONTAL_ALIGNMENT_CENTER, button.size.x, 9, Color("d2dbe0") if dash_ready else Color("69737b"))
-	draw_string(font, Vector2(button.position.x, button.position.y + 27), "空腹" if dash_hunger_disabled else "冲刺", HORIZONTAL_ALIGNMENT_CENTER, button.size.x, 8, Color("9b5965") if dash_hunger_disabled else Color("a8b6bd"))
-	draw_string(font, Vector2(77, 103), "禁用" if dash_hunger_disabled else "充能 %d/%d" % [dash_charges, dash_max_charges], HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("8f5961") if dash_hunger_disabled else Color("a4a8b5"))
-	if dash_remaining > 0.0 and not dash_hunger_disabled:
-		draw_string(font, Vector2(77, 117), "%.1fs" % dash_remaining, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("858995"))
+	# HP 条与 HP 文字已全部移除（受伤/回血逻辑不受影响）；
+	# Dash 图标由 DashIndicator 节点绘制；文字只保留状态说明。
+	# 冲刺状态仅由DashIcon内部灰色冷却遮罩表达，不再显示任何就绪/充能文字。
 	draw_string(font, Vector2(0, 66), time_text, HORIZONTAL_ALIGNMENT_CENTER, 640, 19, Color("d2ced6"))
 	draw_string(font, Vector2(510, 61), "击败 %d" % kills, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("8f8c98"))
 	if shielded:

@@ -1,0 +1,40 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/hallway/hallway.gd" id="1_hallway"]
+[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+[ext_resource type="Texture2D" path="res://art/hallway/hallway.png" id="3_background"]
+[ext_resource type="Texture2D" path="res://art/hallway/door.png" id="4_door"]
+[ext_resource type="Shader" path="res://shaders/sprite_alpha_outline.gdshader" id="5_outline"]
+[ext_resource type="Script" path="res://scripts/bedroom/door_interaction.gd" id="6_bottom_edge"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_door_outline"]
+resource_local_to_scene = true
+shader = ExtResource("5_outline")
+shader_parameter/outline_enabled = 0.0
+shader_parameter/outline_width_source_pixels = 8.0
+shader_parameter/outline_color = Color(1, 1, 1, 0.78)
+
+[node name="Hallway" type="Node2D"]
+visible = false
+z_index = 50
+script = ExtResource("1_hallway")
+config = ExtResource("2_config")
+
+[node name="ArtRoot" type="Node2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.25, 0.25)
+
+[node name="Background" type="Sprite2D" parent="ArtRoot"]
+texture = ExtResource("3_background")
+centered = false
+
+[node name="Door" type="Sprite2D" parent="ArtRoot"]
+material = SubResource("ShaderMaterial_door_outline")
+z_index = 1
+texture = ExtResource("4_door")
+centered = false
+
+[node name="BottomEdgeInteraction" type="Node2D" parent="."]
+z_index = 2
+script = ExtResource("6_bottom_edge")
+config = ExtResource("2_config")

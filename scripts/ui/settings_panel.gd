@@ -22,8 +22,12 @@ func _ready() -> void:
 		slider.drag_ended.connect(_on_slider_drag_ended)
 	sleepwalk_toggle.focus_mode = Control.FOCUS_NONE
 	sleepwalk_toggle.mouse_entered.connect(_play_hover)
+	sleepwalk_toggle.mouse_entered.connect(_refresh_toggle_hover.bind(sleepwalk_toggle, true))
+	sleepwalk_toggle.mouse_exited.connect(_refresh_toggle_hover.bind(sleepwalk_toggle, false))
 	fast_sleep_toggle.focus_mode = Control.FOCUS_NONE
 	fast_sleep_toggle.mouse_entered.connect(_play_hover)
+	fast_sleep_toggle.mouse_entered.connect(_refresh_toggle_hover.bind(fast_sleep_toggle, true))
+	fast_sleep_toggle.mouse_exited.connect(_refresh_toggle_hover.bind(fast_sleep_toggle, false))
 	master_slider.value_changed.connect(_on_volume_changed.bind(&"master_volume"))
 	music_slider.value_changed.connect(_on_volume_changed.bind(&"music_volume"))
 	sfx_slider.value_changed.connect(_on_volume_changed.bind(&"sfx_volume"))
@@ -41,6 +45,8 @@ func _sync_all() -> void:
 	sleepwalk_toggle.button_pressed = SettingsManager.get_sleepwalk_mode()
 	fast_sleep_toggle.button_pressed = SettingsManager.get_fast_sleep_enabled()
 	_refresh_value_labels()
+	_refresh_toggle_hover(sleepwalk_toggle, sleepwalk_toggle.is_hovered())
+	_refresh_toggle_hover(fast_sleep_toggle, fast_sleep_toggle.is_hovered())
 	syncing = false
 
 
@@ -81,3 +87,13 @@ func _on_slider_drag_ended(_value_changed: bool) -> void:
 
 func _play_hover() -> void:
 	SFX.play_event(&"ui_hover")
+
+
+func _refresh_toggle_hover(toggle: CheckButton, hovered: bool) -> void:
+	var empty := StyleBoxEmpty.new()
+	var selected_hover := StyleBoxFlat.new()
+	selected_hover.bg_color = Color("000000")
+	selected_hover.content_margin_left = 4.0
+	selected_hover.content_margin_right = 4.0
+	toggle.add_theme_stylebox_override("hover", selected_hover if hovered and toggle.button_pressed else empty)
+	toggle.add_theme_color_override("font_hover_color", Color("d8eef4"))

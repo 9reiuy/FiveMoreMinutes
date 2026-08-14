@@ -67,6 +67,7 @@ func take_damage(amount: float, hit_origin: Vector2 = Vector2.INF) -> void:
 	if current_health <= 0.0:
 		dead = true
 		set_auto_aim_locked(false)
+		apply_death_z_bias()
 		state = State.DEAD
 		velocity = Vector2.ZERO
 		set_physics_process(false)

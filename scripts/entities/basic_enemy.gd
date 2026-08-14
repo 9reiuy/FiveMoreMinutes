@@ -74,9 +74,13 @@ func get_damage_number_offset() -> Vector2:
 
 
 func _process(delta: float) -> void:
+	# 白色受击闪烁随 hit_flash 窗口衰减，死亡后也继续归零，
+	# 避免残留闪白进入死亡动画；所有敌人共用描边 shader 的 flash 参数。
+	hit_flash_left = maxf(0.0, hit_flash_left - delta)
+	if outline_controller != null and feedback_config != null:
+		outline_controller.set_flash(hit_flash_left / maxf(feedback_config.enemy_hit_flash_seconds, 0.001))
 	if dead or feedback_config == null:
 		return
-	hit_flash_left = maxf(0.0, hit_flash_left - delta)
 	hit_scale_left = maxf(0.0, hit_scale_left - delta)
 	if visual == null:
 		return
@@ -152,6 +156,12 @@ func take_damage(amount: float, _hit_origin: Vector2 = Vector2.INF) -> void:
 	if current_health <= 0.0:
 		dead = true
 		set_auto_aim_locked(false)
+		# 死亡层级：不为“让死亡动画明显”而强制提升 z_index，反而施加轻微负 bias，
+		# 使死亡动画留在世界层排序内且低于存活怪物，避免尸体盖住正在战斗的敌人；
+		# 容器 y_sort 保持开启，死亡怪物仍可见、不会掉到地板下。
+		apply_death_z_bias()
+		if visual != null:
+			visual.modulate = Color.WHITE
 		_spawn_combat_feedback(hit_direction, true)
 		SFX.play_event(&"enemy_kill")
 		_begin_death_sequence()
@@ -199,6 +209,17 @@ func _spawn_combat_feedback(direction: Vector2, is_kill: bool) -> void:
 
 func set_visual_state_offset(offset: Vector2) -> void:
 	visual_state_offset = offset
+
+
+## 受击区接口：默认等效原有“距敌人中心 13px”的圆形判定，
+## 大体型敌人（如触手怪）可覆写 distance_to_hurtbox 用贴合身体的形状。
+func get_hurt_radius() -> float:
+	return 13.0
+
+
+## 返回世界坐标点到受击区表面的距离（在受击区内返回 0）。
+func distance_to_hurtbox(world_point: Vector2) -> float:
+	return maxf(0.0, global_position.distance_to(world_point) - get_hurt_radius())
 
 
 func _play_visual_animation(animation_name: StringName) -> void:
@@ -257,6 +278,12 @@ func _configure_visual_animation_speeds() -> void:
 
 func set_movement_speed_multiplier(multiplier: float) -> void:
 	movement_speed_multiplier = maxf(0.0, multiplier)
+
+
+## 死亡层级统一入口：施加轻微负 z bias（默认 -1），死亡动画低于存活怪物
+## 但仍留在世界层排序内；覆写 take_damage 的敌人（自爆蘑菇/宝箱怪）也须调用。
+func apply_death_z_bias() -> void:
+	z_index = feedback_config.enemy_death_z_bias if feedback_config != null else -1
 
 
 func set_auto_aim_locked(locked: bool) -> void:

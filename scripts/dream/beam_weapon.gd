@@ -37,7 +37,7 @@ func _process(delta: float) -> void:
 		charge_preview_started = true
 		var world := get_tree().get_first_node_in_group("dream_world")
 		if world != null and world.has_method("spawn_weapon_muzzle"):
-			world.spawn_weapon_muzzle(get_parent().global_position, get_parent().get_aim_direction(), &"beam_charge")
+			world.spawn_weapon_muzzle(get_parent().get_projectile_origin(), get_parent().get_aim_direction(), &"beam_charge")
 	if cooldown_left > 0.0:
 		return
 	cooldown_left = attack_interval
@@ -75,20 +75,23 @@ func _find_nearest_target() -> Node2D:
 func _fire_beam(direction: Vector2) -> void:
 	# This function is reached only after cooldown validation (or a real drift shot).
 	SFX.play_event(&"laser")
-	var origin: Vector2 = get_parent().global_position
+	var origin: Vector2 = get_parent().get_projectile_origin()
 	var endpoint := origin + direction.normalized() * attack_range
 	# Damage is resolved once at emission, so a visible multi-frame beam cannot multi-hit.
 	for enemy in get_tree().get_nodes_in_group("dream_enemies"):
 		if not is_instance_valid(enemy) or enemy.dead:
 			continue
 		var closest := Geometry2D.get_closest_point_to_segment(enemy.global_position, origin, endpoint)
-		if enemy.global_position.distance_to(closest) <= beam_width * 0.5 + 13.0:
+		# 受击区接口：普通敌人等效原 13px 半径圆，触手怪等大体型按身体形状判定。
+		var hurt_distance: float = enemy.distance_to_hurtbox(closest) if enemy.has_method("distance_to_hurtbox") else maxf(0.0, enemy.global_position.distance_to(closest) - 13.0)
+		if hurt_distance <= beam_width * 0.5:
 			var hit_world := get_tree().get_first_node_in_group("dream_world")
 			if hit_world != null:
 				hit_world.resolve_player_hit(enemy, damage, origin)
 	var world := get_tree().get_first_node_in_group("dream_world")
 	if world != null:
 		var effect := BEAM_EFFECT_SCENE.instantiate()
+		# 光束伤害判定仍用脚底 origin（射程不变），视觉出生对齐躯干挂点。
 		effect.position = origin
 		effect.setup(direction.normalized(), attack_range, beam_width, display_seconds)
 		world.add_beam(effect)

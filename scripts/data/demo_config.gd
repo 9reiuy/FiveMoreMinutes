@@ -4,7 +4,7 @@ extends Resource
 ## All vertical-slice tuning lives here so later balancing does not touch gameplay code.
 @export_group("Dream Clock")
 @export var dream_start_minutes: float = 240.0
-@export var alarm_start_minutes: float = 420.0
+@export var alarm_start_minutes: float = 360.0
 @export var real_seconds_per_game_minute: float = 1.0
 
 @export_group("Enemy Spawning")
@@ -48,6 +48,24 @@ extends Resource
 @export_range(0.0, 1.0, 0.01) var player_hurt_screen_flash_alpha: float = 0.24
 @export_range(0.01, 0.5, 0.01) var player_hurt_screen_flash_seconds: float = 0.12
 
+@export_group("Dialogue Portrait")
+## 统一立绘节点使用 Alpha-aware Shader；运行时把屏幕像素宽度换算到源纹理像素。
+@export var dialogue_portrait_outline_color: Color = Color("346db3")
+@export_range(0.5, 8.0, 0.5) var dialogue_portrait_outline_width_px: float = 2.0
+## 轻度冷蓝调和只影响角色主体，不改变2px描边颜色。
+@export var dialogue_portrait_filter_color: Color = Color("8db9d8")
+@export_range(0.0, 0.6, 0.01) var dialogue_portrait_filter_strength: float = 0.18
+
+@export_group("Dream Lighting")
+## 梦境世界保留低可见度，不使用纯黑环境色。
+@export var dream_ambient_color: Color = Color("26313f")
+@export_range(48.0, 240.0, 1.0) var player_light_radius: float = 104.0
+@export_range(0.0, 4.0, 0.05) var player_light_energy: float = 1.15
+@export var player_light_color: Color = Color("e7f0f8")
+@export_range(0.05, 0.8, 0.01) var player_light_falloff: float = 0.32
+## 高压力只收缩同一盏PlayerLight，不再叠加旧黑色圆孔遮罩。
+@export_range(0.25, 1.0, 0.01) var stress_light_radius_multiplier: float = 0.72
+
 @export_group("Alarm Visuals")
 @export_range(0.0, 0.75, 0.01) var alarm_screen_brightness_alpha: float = 0.30
 @export_range(0.0, 120.0, 1.0) var alarm_eyelid_max_height: float = 42.0
@@ -59,7 +77,6 @@ extends Resource
 @export var extra_hold_seconds: float = 2.0
 @export var wake_progress_regress_per_second: float = 2.0
 @export_range(0.05, 1.0, 0.05) var bullet_time_scale: float = 0.20
-@export var wake_interaction_radius: float = 58.0
 
 @export_group("Progression")
 @export var first_level_experience_requirement: int = 20
@@ -68,11 +85,41 @@ extends Resource
 @export var damage_upgrade_multiplier: float = 1.5
 
 @export_group("Pixel Art and Effects")
-## 玩家图集缩放：0.75 = 视觉与身体碰撞缩到 75%（只在 VisualRoot 一处应用，
-## 禁止根节点与 Sprite 重复缩放）。
-@export_range(0.25, 4.0, 0.05) var player_sprite_scale: float = 0.75
+## Pix_chr只在Visual/HealOverlay使用稳定绝对缩放；不得在进场时累乘。
+@export_range(0.25, 4.0, 0.05) var player_visual_scale: float = 0.75
+@export var player_visual_offset: Vector2 = Vector2(0.0, -18.25)
+@export_range(1.0, 32.0, 0.5) var player_collision_radius: float = 7.5
+@export var player_collision_offset: Vector2 = Vector2(0.0, -13.0)
+@export var player_weapon_root_offset: Vector2 = Vector2(0.0, -18.25)
+## 玩家 1px Alpha 描边宽度（源纹理像素空间，基于 TEXTURE_PIXEL_SIZE；
+## 玩家 1:1 显示时 1 源像素 ≈ 1 视觉像素）。
+@export_range(0.5, 8.0, 0.5) var player_outline_width_px: float = 1.0
 @export_range(0.5, 8.0, 0.5) var player_idle_animation_fps: float = 1.0
-@export_range(2.0, 16.0, 0.5) var player_walk_animation_fps: float = 7.0
+@export_range(2.0, 16.0, 0.5) var player_walk_animation_fps: float = 8.0
+@export_range(0.1, 1.0, 0.05) var heal_feedback_seconds: float = 0.3
+## 弹丸/掉落物仅使用低成本绘制光晕，不创建PointLight2D。
+@export var projectile_glow_color: Color = Color("6fa8c4")
+@export_range(0.0, 0.5, 0.01) var projectile_glow_alpha: float = 0.16
+@export_range(2.0, 24.0, 1.0) var projectile_glow_radius: float = 9.0
+@export var pickup_glow_color: Color = Color("77b8cf")
+@export_range(0.0, 0.5, 0.01) var pickup_glow_alpha: float = 0.18
+@export_range(2.0, 24.0, 1.0) var pickup_glow_radius: float = 10.0
+@export_range(0.0, 0.5, 0.01) var xp_glow_alpha: float = 0.30
+@export_range(2.0, 12.0, 0.5) var xp_glow_radius: float = 5.0
+@export_range(0.0, 0.5, 0.01) var heart_glow_alpha: float = 0.30
+@export_range(2.0, 12.0, 0.5) var heart_glow_radius: float = 5.0
+@export_range(32.0, 180.0, 1.0) var pickup_magnet_radius: float = 92.0
+@export_range(2.0, 12.0, 0.5) var pickup_lift_height: float = 7.0
+@export_range(0.04, 0.4, 0.01) var pickup_lift_duration: float = 0.12
+@export_range(0.08, 0.8, 0.01) var pickup_suction_duration: float = 0.28
+@export var pickup_suction_curve: Curve
+@export_range(4.0, 24.0, 1.0) var pickup_snap_distance: float = 12.0
+@export_range(1.0, 60.0, 1.0) var electric_shield_animation_fps: float = 30.0
+@export_range(0.05, 1.0, 0.01) var electric_shield_visual_scale: float = 0.18
+@export_range(20.0, 100.0, 1.0) var player_hp_bar_width: float = 50.0
+@export_range(2.0, 10.0, 1.0) var player_hp_bar_height: float = 5.0
+@export var player_hp_bar_offset: Vector2 = Vector2(0.0, 7.0)
+@export_range(0.25, 8.0, 0.05) var player_hp_bar_visible_duration: float = 2.5
 @export_range(0.02, 0.3, 0.01) var weapon_muzzle_flash_seconds: float = 0.07
 @export_range(0.04, 0.5, 0.01) var weapon_hit_effect_seconds: float = 0.14
 @export_range(2.0, 32.0, 1.0) var projectile_trail_length: float = 10.0
@@ -136,6 +183,10 @@ extends Resource
 @export var dash_duration: float = 0.18
 @export var dash_cooldown: float = 2.0
 @export var dash_invulnerability_seconds: float = 0.18
+## Thunder.png 实际切帧数（512×256 横向 8 列 64×256，从左到右播放）。
+@export_range(1, 16, 1) var dash_thunder_frame_count: int = 8
+## Thunder 序列帧播放 FPS：与 Dash 位移/冷却/无敌完全解耦，仅控制视觉。
+@export_range(4.0, 60.0, 1.0) var dash_thunder_fps: float = 24.0
 
 @export_group("Aim")
 ## 梦游模式是玩家设置；此字段仅提供首次启动时的默认值。
@@ -180,6 +231,9 @@ extends Resource
 ## 敌人被锁定/选中时的白描边宽度（源纹理像素空间，基于 TEXTURE_PIXEL_SIZE，
 ## 不随节点缩放放大；VisualRoot ×4 时屏幕实际观感仍为细描边）。
 @export_range(0.5, 8.0, 0.5) var enemy_outline_width_px: float = 2.0
+## 怪物死亡时的相对层级偏移：-1 = 死亡动画低于存活怪物（仍参与世界层排序，
+## 不会掉到地板下），禁止死亡时强制提升 z_index。
+@export_range(-4, 0, 1) var enemy_death_z_bias: int = -1
 
 @export_group("Enemy Hit Feedback")
 @export var enemy_hit_flash_color: Color = Color(1.8, 1.8, 1.8, 1.0)
@@ -279,6 +333,9 @@ extends Resource
 @export_range(-60.0, 0.0, 1.0) var opening_text_sound_volume_db: float = -22.0
 @export_range(1, 10, 1) var opening_text_sound_every_characters: int = 2
 @export_range(100.0, 3000.0, 10.0) var opening_text_sound_frequency_hz: float = 760.0
+@export_range(-60.0, 0.0, 1.0) var dialogue_text_blip_volume_db: float = -25.0
+@export_range(120.0, 1200.0, 10.0) var dialogue_text_blip_frequency_hz: float = 420.0
+@export_range(0.02, 0.08, 0.005) var dialogue_text_blip_duration: float = 0.045
 @export_range(1.0, 120.0, 1.0) var results_characters_per_second: float = 22.0
 
 @export_group("Bedroom Phone")
@@ -291,6 +348,9 @@ extends Resource
 @export_range(0.05, 2.0, 0.05) var phone_fingerprint_animation_seconds: float = 0.55
 @export var phone_lock_on_bedroom_entry: bool = true
 @export var phone_upper_collapse_height: float = 166.0
+## 手机收起触发区 = 手机整体高度的顶部比例（最新规则覆盖“全背景可收”）：
+## 只有顶部 1/3 的背景空白可收起，下方 2/3 完全不触发。
+@export_range(0.1, 1.0, 0.01) var phone_retract_height_ratio: float = 0.333333
 @export_range(8, 24, 1) var phone_app_chinese_title_font_size: int = 13
 @export_range(6, 18, 1) var phone_app_english_title_font_size: int = 8
 @export_range(4.0, 24.0, 1.0) var phone_app_content_margin: float = 12.0
@@ -317,7 +377,7 @@ extends Resource
 @export_group("Main Menu")
 @export_range(4, 40, 1) var main_menu_button_spacing: int = 12
 @export_range(0.0, 12.0, 0.5) var main_menu_hover_offset: float = 4.0
-@export var game_version_text: String = "版本号V0.4.1"
+@export var game_version_text: String = "V0.4.7"
 @export var community_group_text: String = "游戏存活进度群:833796070"
 @export var community_group_url: String = "https://qm.qq.com/q/Mq3wuCuZQ6"
 
@@ -425,6 +485,7 @@ extends Resource
 @export_group("Hunger")
 @export_range(0.05, 1.0, 0.05) var hungry_damage_multiplier: float = 0.5
 @export_range(1, 10, 1) var hungry_bed_attempts_before_force: int = 2
+@export_range(0, 10000, 1) var hungry_bed_direct_sleep_balance_threshold: int = 200
 @export_range(1, 30, 1) var starvation_ending_required_days: int = 4
 
 @export_group("Stress")
@@ -451,9 +512,6 @@ extends Resource
 @export_range(1.0, 5.0, 0.1) var stress_spawn_multiplier_over_70: float = 2.5
 @export_range(1.0, 4.0, 0.1) var stress_enemy_speed_multiplier_over_50: float = 1.5
 @export_range(1.0, 4.0, 0.1) var stress_enemy_speed_multiplier_over_70: float = 1.5
-@export_range(50.0, 600.0, 1.0) var stress_vision_max_radius: float = 300.0
-@export_range(0.0, 1.0, 0.01) var stress_vision_darkness: float = 0.94
-@export_range(0.05, 1.0, 0.01) var stress_vision_edge_softness_ratio: float = 0.28
 @export_range(1, 100, 1) var stress_unemployment_threshold: int = 90
 @export_range(1, 14, 1) var stress_unemployment_required_days: int = 3
 
@@ -518,6 +576,7 @@ extends Resource
 @export_range(80.0, 1000.0, 10.0) var sfx_ui_hover_tone_hz: float = 260.0
 @export_range(-60.0, 6.0, 1.0) var sfx_dash_volume_db: float = -12.0
 @export_range(-60.0, 6.0, 1.0) var sfx_player_hurt_volume_db: float = -12.0
+@export_range(-60.0, 6.0, 1.0) var sfx_heal_volume_db: float = -8.0
 @export_range(-60.0, 6.0, 1.0) var sfx_weapon_fire_volume_db: float = -17.0
 @export_range(-60.0, 6.0, 1.0) var sfx_pistol_fire_volume_db: float = -20.0
 @export_range(-60.0, 6.0, 1.0) var sfx_shotgun_fire_volume_db: float = -16.0
@@ -541,8 +600,10 @@ extends Resource
 @export var bedroom_real_seconds_per_game_minute: float = 1.0
 
 @export_group("Week")
-@export var weekday_alarm_minutes: float = 420.0
-@export var sunday_alarm_minutes: float = 540.0
+## 剧情模式每天统一06:00起床；出勤/工资阈值仍由RunSettlement单独维护。
+@export var story_wake_minutes: float = 360.0
+@export var weekday_alarm_minutes: float = 360.0
+@export var sunday_alarm_minutes: float = 360.0
 
 @export_group("Death Wake Delay")
 @export var death_wake_delay_min_minutes: int = 30
@@ -597,7 +658,27 @@ extends Resource
 @export var rarity_purple_probability: float = 0.10
 @export var rarity_gold_probability: float = 0.02
 @export var rarity_reroll_attempts: int = 10
-@export_range(0, 3, 1) var upgrade_refreshes_per_level: int = 1
+## 三列每次打开都从起始速度按同一条Ease-In曲线加速至各自上限。
+@export var upgrade_reel_start_speeds: Vector3 = Vector3(84.0, 92.0, 78.0)
+@export var upgrade_reel_max_speeds: Vector3 = Vector3(440.0, 472.0, 416.0)
+@export_range(0.1, 4.0, 0.05) var upgrade_reel_acceleration_duration: float = 1.35
+@export var upgrade_reel_acceleration_curve: Curve
+@export_range(0.05, 0.5, 0.01) var upgrade_slot_lock_deceleration: float = 0.16
+@export_range(0.2, 2.0, 0.05) var upgrade_jackpot_feedback_seconds: float = 0.7
+@export_range(-60.0, 0.0, 1.0) var sfx_slot_tick_volume_db: float = -28.0
+@export_range(0.0, 0.2, 0.005) var sfx_slot_tick_min_interval: float = 0.025
+@export_range(0.0, 1.0, 0.01) var upgrade_crt_scanline_strength: float = 0.10
+@export_range(0.0, 1.0, 0.01) var upgrade_crt_noise_strength: float = 0.025
+@export_range(0.0, 1.0, 0.01) var upgrade_crt_vignette_strength: float = 0.14
+@export_range(0.2, 1.0, 0.05) var upgrade_panel_enter_seconds: float = 0.42
+@export_range(0.15, 0.8, 0.05) var upgrade_panel_exit_seconds: float = 0.32
+@export_range(0.1, 0.4, 0.05) var upgrade_reward_confirm_seconds: float = 0.20
+@export_range(0, 3, 1) var slot_rerolls_per_run: int = 1
+
+@export_group("Computer Blackjack")
+@export var blackjack_chip_values: PackedInt32Array = PackedInt32Array([10, 50, 100, 500])
+@export_range(1, 1000, 1) var blackjack_dealer_stand_value: int = 17
+@export_range(1.0, 3.0, 0.5) var blackjack_natural_payout_ratio: float = 1.5
 
 @export_group("Drops")
 @export_range(1, 16, 1) var correction_experience_drop_count: int = 2

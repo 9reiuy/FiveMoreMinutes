@@ -2,6 +2,9 @@ extends CharacterBody2D
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const HEAL_EFFECT_SCENE := preload("res://scenes/entities/heal_effect.tscn")
+const DASH_EFFECT_SCENE := preload("res://scenes/entities/dash_effect.tscn")
+const OUTLINE_SHADER := preload("res://shaders/sprite_alpha_outline.gdshader")
+const CONFIG := preload("res://resources/demo_config.tres")
 
 signal health_changed(current: float, maximum: float)
 signal died
@@ -9,6 +12,7 @@ signal dash_state_changed(remaining: float, total: float, active: bool, charges:
 signal weapon_fired(recoil_multiplier: float)
 signal skill_state_changed(shielded: bool, dissociation_ready: bool)
 signal effective_damage_taken(amount: float)
+signal healed(amount: float)
 signal revived
 
 @export var movement_speed := 112.0
@@ -20,6 +24,17 @@ signal revived
 @onready var katana_weapon: Node = $KatanaWeapon
 @onready var grenade_weapon: Node = get_node_or_null("GrenadeWeapon")
 @onready var visual: AnimatedSprite2D = $Visual
+@onready var heal_overlay: AnimatedSprite2D = $HealOverlay
+@onready var shield_visual: ElectricShieldVisual = $ElectricShieldVisual
+@onready var player_light: PointLight2D = $PlayerLight
+@onready var body_collision: CollisionShape2D = $CollisionShape2D
+@onready var weapon_root: Node2D = $WeaponRoot
+@onready var weapon_origin: Marker2D = $WeaponRoot/WeaponOrigin
+@onready var projectile_origin: Marker2D = $WeaponRoot/ProjectileOrigin
+@onready var aim_origin: Marker2D = $WeaponRoot/AimOrigin
+@onready var grenade_origin: Marker2D = $WeaponRoot/GrenadeOrigin
+@onready var katana_origin: Marker2D = $WeaponRoot/KatanaOrigin
+@onready var player_hp_bar: PlayerWorldHealthBar = $PlayerHPBar
 
 var current_health := 100.0
 var movement_enabled := true
@@ -56,6 +71,7 @@ var hurt_shake_pixels := 2.0
 var hurt_flash_left := 0.0
 var shield_break_left := 0.0
 var revive_flash_left := 0.0
+var heal_overlay_tween: Tween
 
 var sleep_paralysis_still_seconds := 0.0
 var sleep_paralysis_heal_per_second := 0.0
@@ -69,8 +85,11 @@ var dissociation_ready := false
 var dissociation_revive_health := 30.0
 var dissociation_invulnerability_seconds := 3.0
 var feedback_audio: AudioStreamPlayer
-var visual_home_position := Vector2(0, -9.75)
+var visual_home_position := Vector2(0, -18.25)
 var run_damage_multiplier := 1.0
+var acquired_damage_multiplier := 1.0
+var acquired_attack_speed_multiplier := 1.0
+var acquired_range_pixels := 0.0
 var dash_disabled_by_hunger := false
 var critical_chance := 0.10
 var critical_damage_multiplier := 1.50
@@ -100,8 +119,18 @@ func configure_weapon(weapon_id: String, config: DemoConfig, permanent_upgrades:
 	hurt_shake_pixels = config.hurt_shake_pixels
 	maximum_health = config.player_base_maximum_health + int(permanent_upgrades.get("hippocampus", 0)) * config.hippocampus_health_per_level
 	current_health = maximum_health
-	# Scale is configured once. Animation playback never writes the transform again.
-	visual.scale = Vector2.ONE * config.player_sprite_scale
+	# 使用绝对配置值，禁止每次进场scale *= 0.75造成累计缩小。
+	visual.scale = Vector2.ONE * config.player_visual_scale
+	heal_overlay.scale = visual.scale
+	shield_visual.configure(config.electric_shield_animation_fps, config.electric_shield_visual_scale)
+	visual_home_position = config.player_visual_offset
+	visual.position = visual_home_position
+	heal_overlay.position = visual_home_position
+	body_collision.position = config.player_collision_offset
+	var body_shape := body_collision.shape as CircleShape2D
+	if body_shape != null:
+		body_shape.radius = config.player_collision_radius
+	weapon_root.position = config.player_weapon_root_offset
 	for animation_name in [&"walk_down", &"walk_left", &"walk_right", &"walk_up"]:
 		visual.sprite_frames.set_animation_speed(animation_name, config.player_walk_animation_fps)
 	for animation_name in [&"idle_down", &"idle_left", &"idle_right", &"idle_up"]:
@@ -109,6 +138,31 @@ func configure_weapon(weapon_id: String, config: DemoConfig, permanent_upgrades:
 	dissociation_revive_health = config.dissociation_revive_health
 	dissociation_invulnerability_seconds = config.dissociation_invulnerability_seconds
 	health_changed.emit(current_health, maximum_health)
+	player_hp_bar.configure(config, current_health, maximum_health)
+
+
+## 剧情局内换武器：只改变未来攻击源，世界中已发射的Projectile保持独立生命周期。
+func equip_weapon(weapon_id: String, config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
+	_set_weapon_activity(false)
+	selected_weapon_id = weapon_id
+	auto_weapon.configure_weapon(config, permanent_upgrades)
+	beam_weapon.configure_weapon(config, permanent_upgrades)
+	shotgun_weapon.configure_weapon(config, permanent_upgrades)
+	katana_weapon.configure_weapon(config, permanent_upgrades)
+	if grenade_weapon != null:
+		grenade_weapon.configure_weapon(config, permanent_upgrades)
+	var weapon := get_active_weapon()
+	if acquired_damage_multiplier > 1.0:
+		if weapon.has_method("apply_damage_upgrade"): weapon.apply_damage_upgrade(acquired_damage_multiplier)
+		else: weapon.damage *= acquired_damage_multiplier
+	if acquired_attack_speed_multiplier > 1.0:
+		if weapon.has_method("apply_attack_speed_upgrade"): weapon.apply_attack_speed_upgrade(acquired_attack_speed_multiplier)
+		else: weapon.attack_interval /= acquired_attack_speed_multiplier
+	if acquired_range_pixels > 0.0:
+		if weapon.has_method("apply_range_upgrade"): weapon.apply_range_upgrade(acquired_range_pixels)
+		else: weapon.attack_range += acquired_range_pixels
+	weapon.set("cooldown_left", minf(float(weapon.get("cooldown_left")), 0.25))
+	_set_weapon_activity(not dead)
 
 
 func configure_aim(use_sleepwalk_mode: bool, config: DemoConfig) -> void:
@@ -123,6 +177,30 @@ func configure_run_modifiers(is_hungry_run: bool, config: DemoConfig) -> void:
 	run_damage_multiplier = config.hungry_damage_multiplier if is_hungry_run else 1.0
 	dash_disabled_by_hunger = is_hungry_run
 	set_dash_enabled(not dash_disabled_by_hunger)
+
+
+func configure_dream_light(config: DemoConfig, stress_value: int) -> void:
+	# 单个256px程序化径向纹理；不创建巨大PNG，也不给敌人、子弹或掉落物增加实时光源。
+	if player_light.texture == null:
+		var gradient := Gradient.new()
+		gradient.offsets = PackedFloat32Array([0.0, clampf(config.player_light_falloff, 0.05, 0.8), 1.0])
+		gradient.colors = PackedColorArray([
+			Color(1.0, 1.0, 1.0, 1.0),
+			Color(1.0, 1.0, 1.0, 0.78),
+			Color(1.0, 1.0, 1.0, 0.0),
+		])
+		var light_texture := GradientTexture2D.new()
+		light_texture.width = 256
+		light_texture.height = 256
+		light_texture.fill = GradientTexture2D.FILL_RADIAL
+		light_texture.fill_from = Vector2(0.5, 0.5)
+		light_texture.fill_to = Vector2(1.0, 0.5)
+		light_texture.gradient = gradient
+		player_light.texture = light_texture
+	player_light.color = config.player_light_color
+	player_light.energy = config.player_light_energy
+	var radius_multiplier := config.stress_light_radius_multiplier if stress_value > config.stress_threshold_vision else 1.0
+	player_light.texture_scale = maxf(config.player_light_radius * radius_multiplier, 1.0) / 128.0
 
 
 func calculate_player_damage(base_damage: float) -> Dictionary:
@@ -156,6 +234,14 @@ func _ready() -> void:
 	feedback_audio = AudioStreamPlayer.new()
 	feedback_audio.bus = &"Characters"
 	add_child(feedback_audio)
+	# 玩家 1px Alpha 描边：复用敌人同款 shader，宽度基于 TEXTURE_PIXEL_SIZE，
+	# 玩家 1:1 显示时 1 源像素 ≈ 1 视觉像素；图集每帧四周预留 1px 透明 padding 防裁切。
+	var outline_material := ShaderMaterial.new()
+	outline_material.shader = OUTLINE_SHADER
+	outline_material.set_shader_parameter("outline_enabled", 1.0)
+	outline_material.set_shader_parameter("outline_width_source_pixels", CONFIG.player_outline_width_px)
+	outline_material.set_shader_parameter("outline_color", Color.WHITE)
+	visual.material = outline_material
 	queue_redraw()
 
 
@@ -215,9 +301,15 @@ func _update_direction_animation(motion: Vector2) -> void:
 		suffix = "down" if direction.y >= 0.0 else "up"
 	var prefix := "walk" if motion.length_squared() > 0.0001 else "idle"
 	var animation_name := StringName(prefix + "_" + suffix)
-	visual.flip_h = suffix == "right"
+	# Pix_chr 图集自带独立右向行（row3），不再用 flip_h 镜像左向帧，
+	# 彻底避免镜像翻转带来的朝向/缩放异常。
+	visual.flip_h = false
 	if visual.animation != animation_name or not visual.is_playing():
 		visual.play(animation_name)
+	if heal_overlay.animation != animation_name:
+		heal_overlay.animation = animation_name
+	heal_overlay.frame = visual.frame
+	heal_overlay.frame_progress = visual.frame_progress
 
 
 func _update_visual_feedback() -> void:
@@ -232,6 +324,8 @@ func _update_visual_feedback() -> void:
 	visual.modulate.a = 0.72 if visible_invulnerability > 0.0 else 1.0
 	var shake := Vector2(sin(hurt_flash_left * 90.0), cos(hurt_flash_left * 73.0)) * hurt_shake_pixels if hurt_flash_left > 0.0 else Vector2.ZERO
 	visual.position = visual_home_position + shake
+	heal_overlay.position = visual.position
+	heal_overlay.visible = visual.visible
 
 
 func _update_dash_recharge(delta: float) -> void:
@@ -261,7 +355,20 @@ func _start_dash(direction: Vector2) -> void:
 	dashing = true
 	dash_invulnerability_left = maxf(active_dash_duration, dash_invulnerability_seconds)
 	SFX.play_event(&"dash")
+	_spawn_dash_effect(dash_end - dash_start)
 	_reset_stillness()
+
+
+## 空格瞬移的 Thunder 序列帧特效：独立节点，跟随玩家位置与位移过程，
+## 不影响 Dash 距离/冷却/无敌逻辑；父节点缺失时仅告警，不阻断 dash。
+func _spawn_dash_effect(direction: Vector2) -> void:
+	var parent := get_parent()
+	if parent == null:
+		push_error("dream_player: dash 特效生成失败，缺少父节点")
+		return
+	var effect := DASH_EFFECT_SCENE.instantiate()
+	parent.add_child(effect)
+	effect.setup(self, direction, active_dash_duration, dash_start.distance_to(dash_end))
 
 
 func _update_dash(delta: float) -> void:
@@ -306,32 +413,39 @@ func receive_damage(amount: float) -> void:
 		return
 	if has_shield:
 		has_shield = false
+		shield_visual.set_shield_active(false)
 		shield_break_left = 0.45
 		_play_feedback()
 		skill_state_changed.emit(has_shield, dissociation_ready)
 		queue_redraw()
 		return
+	var health_before := current_health
 	var next_health := maxf(0.0, current_health - amount)
 	if next_health <= 0.0 and dissociation_ready:
 		dissociation_ready = false
 		current_health = minf(maximum_health, dissociation_revive_health)
+		var actual_damage := maxf(0.0, health_before - current_health)
 		invulnerability_left = maxf(invulnerability_left, dissociation_invulnerability_seconds)
 		invulnerability_reason = &"dissociation"
 		revive_flash_left = 0.9
+		_apply_heal_feedback()
 		_play_feedback()
 		health_changed.emit(current_health, maximum_health)
-		effective_damage_taken.emit(amount)
+		effective_damage_taken.emit(actual_damage)
+		player_hp_bar.show_after_damage(current_health, maximum_health, CONFIG.player_hp_bar_visible_duration)
 		skill_state_changed.emit(has_shield, dissociation_ready)
 		revived.emit()
 		SFX.play_event(&"player_hurt")
 		queue_redraw()
 		return
 	current_health = next_health
+	var actual_damage := maxf(0.0, health_before - current_health)
 	invulnerability_left = hurt_invulnerability_seconds
 	invulnerability_reason = &"hurt"
 	hurt_flash_left = hurt_flash_seconds
 	health_changed.emit(current_health, maximum_health)
-	effective_damage_taken.emit(amount)
+	effective_damage_taken.emit(actual_damage)
+	player_hp_bar.show_after_damage(current_health, maximum_health, CONFIG.player_hp_bar_visible_duration)
 	queue_redraw()
 	if current_health <= 0.0:
 		dead = true
@@ -357,9 +471,28 @@ func start_invulnerability(duration: float, reason: StringName = &"external") ->
 func heal(amount: float) -> void:
 	if dead or amount <= 0.0 or current_health >= maximum_health:
 		return
+	var health_before := current_health
 	current_health = minf(maximum_health, current_health + amount)
+	var actual_heal := maxf(0.0, current_health - health_before)
+	if actual_heal <= 0.0:
+		return
 	health_changed.emit(current_health, maximum_health)
+	player_hp_bar.update_health(current_health, maximum_health)
+	healed.emit(actual_heal)
+	_apply_heal_feedback()
 	_play_heal_effect()
+
+
+## 统一恢复反馈入口：任何真实回血（actual_heal > 0）播放一次恢复 SFX，
+## 并在角色身体上叠加同帧绿色 Sprite。Overlay 不替换主 Sprite 的描边材质，
+## 因此能与 1px 描边、受伤闪红、无敌闪烁和现有 Heal 动画共存。
+func _apply_heal_feedback() -> void:
+	SFX.play_event(&"heal")
+	if heal_overlay_tween != null and heal_overlay_tween.is_valid():
+		heal_overlay_tween.kill()
+	heal_overlay.modulate = Color(0.36, 1.0, 0.45, 0.72)
+	heal_overlay_tween = create_tween()
+	heal_overlay_tween.tween_property(heal_overlay, "modulate:a", 0.0, CONFIG.heal_feedback_seconds).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
 ## 真正发生回血时在角色身体中心播放一次 Heal 动画；节流避免连续回血时叠播。
@@ -413,6 +546,7 @@ func _update_sleep_spindle(delta: float) -> void:
 		sleep_spindle_left = sleep_spindle_interval
 		if sleep_spindle_max_layers > 0 and not has_shield:
 			has_shield = true
+			shield_visual.set_shield_active(true)
 			skill_state_changed.emit(has_shield, dissociation_ready)
 
 
@@ -461,16 +595,38 @@ func get_active_weapon() -> Node:
 		_: return auto_weapon
 
 
+## 武器挂点固定在 Player 本地坐标，不挂到 AnimatedSprite2D，
+## 因此换帧和四方向动画不会让发射点抖动。
+func get_weapon_origin() -> Vector2:
+	return weapon_origin.global_position
+
+
+func get_projectile_origin() -> Vector2:
+	return projectile_origin.global_position
+
+
+func get_aim_origin() -> Vector2:
+	return aim_origin.global_position
+
+
+func get_grenade_origin() -> Vector2:
+	return grenade_origin.global_position
+
+
+func get_katana_origin() -> Vector2:
+	return katana_origin.global_position
+
+
 func get_aim_direction() -> Vector2:
 	if sleepwalk_mode:
 		if not _is_valid_auto_aim_target(auto_aim_target):
 			_refresh_auto_aim_target()
 		if _is_valid_auto_aim_target(auto_aim_target):
-			var auto_direction := global_position.direction_to(auto_aim_target.global_position)
+			var auto_direction := get_aim_origin().direction_to(auto_aim_target.global_position)
 			if auto_direction.length_squared() > 0.0001:
 				last_aim_direction = auto_direction
 		return last_aim_direction
-	var direction := global_position.direction_to(get_global_mouse_position())
+	var direction := get_aim_origin().direction_to(get_global_mouse_position())
 	if direction.length_squared() > 0.0001:
 		last_aim_direction = direction
 	return last_aim_direction
@@ -484,12 +640,13 @@ func get_constrained_aim_position() -> Vector2:
 	var attack_range := maxf(get_effective_attack_range(), 1.0)
 	if not sleepwalk_mode:
 		return get_global_mouse_position()
+	var origin := get_aim_origin()
 	var direction := get_aim_direction()
 	var target_node := get_auto_aim_target()
 	if target_node != null:
-		var distance := global_position.distance_to(target_node.global_position)
-		return target_node.global_position if distance <= attack_range else global_position + direction * attack_range
-	return global_position + direction * attack_range
+		var distance := origin.distance_to(target_node.global_position)
+		return target_node.global_position if distance <= attack_range else origin + direction * attack_range
+	return origin + direction * attack_range
 
 
 func _update_auto_aim(delta: float) -> void:
@@ -542,6 +699,7 @@ func get_weapon_cooldown_progress() -> float:
 
 
 func apply_damage_upgrade(multiplier: float) -> void:
+	acquired_damage_multiplier *= multiplier
 	var weapon := get_active_weapon()
 	if weapon.has_method("apply_damage_upgrade"):
 		weapon.apply_damage_upgrade(multiplier)
@@ -550,6 +708,7 @@ func apply_damage_upgrade(multiplier: float) -> void:
 
 
 func apply_attack_speed_upgrade(multiplier: float) -> void:
+	acquired_attack_speed_multiplier *= multiplier
 	var weapon := get_active_weapon()
 	if weapon.has_method("apply_attack_speed_upgrade"):
 		weapon.apply_attack_speed_upgrade(multiplier)
@@ -558,6 +717,7 @@ func apply_attack_speed_upgrade(multiplier: float) -> void:
 
 
 func apply_range_upgrade(pixels: float) -> void:
+	acquired_range_pixels += pixels
 	var weapon := get_active_weapon()
 	if weapon.has_method("apply_range_upgrade"):
 		weapon.apply_range_upgrade(pixels)
@@ -566,8 +726,6 @@ func apply_range_upgrade(pixels: float) -> void:
 
 
 func _draw() -> void:
-	if has_shield:
-		draw_circle(Vector2(0, 2), 21, Color("7ba6c8"), false, 2)
 	if shield_break_left > 0.0:
 		for angle in range(0, 360, 45):
 			draw_line(Vector2.RIGHT.rotated(deg_to_rad(angle)) * 15, Vector2.RIGHT.rotated(deg_to_rad(angle)) * 27, Color("b4d5e6"), 2)

@@ -1,12 +1,4 @@
-[gd_resource type="Theme" load_steps=4 format=3]
-
-[sub_resource type="StyleBoxFlat" id="Track"]
-bg_color = Color(0.0705882, 0.0901961, 0.133333, 0.72)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.188235, 0.231373, 0.278431, 1)
+[gd_resource type="Theme" format=3 uid="uid://c3lffu7xb8n5x"]
 
 [sub_resource type="StyleBoxFlat" id="Grabber"]
 bg_color = Color(0.317647, 0.482353, 0.596078, 0.72)
@@ -24,8 +16,16 @@ border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.658824, 0.764706, 0.819608, 1)
 
+[sub_resource type="StyleBoxFlat" id="Track"]
+bg_color = Color(0.0705882, 0.0901961, 0.133333, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.188235, 0.231373, 0.278431, 1)
+
 [resource]
-VScrollBar/styles/scroll = SubResource("Track")
 VScrollBar/styles/grabber = SubResource("Grabber")
 VScrollBar/styles/grabber_highlight = SubResource("GrabberHover")
 VScrollBar/styles/grabber_pressed = SubResource("GrabberHover")
+VScrollBar/styles/scroll = SubResource("Track")

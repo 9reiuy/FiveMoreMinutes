@@ -1,6 +1,9 @@
 extends Control
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
+const CARD_DARK_TEXTURE: Texture2D = preload("res://art/ui_imported/button_dark_panel.png")
+const CARD_LIGHT_TEXTURE: Texture2D = preload("res://art/ui_imported/button_panel.png")
+const CARD_PATCH_MARGIN := 12.0
 
 signal weapon_selected(weapon_id: String)
 
@@ -15,6 +18,8 @@ const GRENADE_CARD := Rect2(330, 202, 176, 104)
 var hovered_weapon := ""
 var selection_locked := false
 var unlock_state: Dictionary = {"shotgun": false, "beam": false, "katana": false, "grenade": false}
+var card_style_dark: StyleBoxTexture
+var card_style_light: StyleBoxTexture
 
 
 func _ready() -> void:
@@ -23,6 +28,22 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	card_style_dark = _card_style(CARD_DARK_TEXTURE)
+	card_style_light = _card_style(CARD_LIGHT_TEXTURE)
+
+
+func _card_style(texture: Texture2D) -> StyleBoxTexture:
+	var box := StyleBoxTexture.new()
+	box.texture = texture
+	box.texture_margin_left = CARD_PATCH_MARGIN
+	box.texture_margin_top = CARD_PATCH_MARGIN
+	box.texture_margin_right = CARD_PATCH_MARGIN
+	box.texture_margin_bottom = CARD_PATCH_MARGIN
+	box.content_margin_left = 6.0
+	box.content_margin_right = 6.0
+	box.content_margin_top = 6.0
+	box.content_margin_bottom = 6.0
+	return box
 
 
 ## 点击/悬停用 _input 处理（先于 GUI 路由），避免鼠标事件被其它全屏
@@ -81,10 +102,10 @@ func _draw() -> void:
 func _draw_card(rect: Rect2, weapon_id: String, title: String, description: String, damage: float, interval: float, font: Font) -> void:
 	var hovered := hovered_weapon == weapon_id
 	var unlocked := _is_unlocked(weapon_id)
-	var fill := Color("31313e") if hovered and unlocked else Color("23242e")
-	var border := Color("a49aaa") if hovered and unlocked else Color("555563")
-	draw_rect(rect, fill)
-	draw_rect(rect.grow(-4), border, false, 2.0)
+	# 卡片底图：默认 button_dark.png，悬停高亮 button.png；未解锁时压暗处理。
+	draw_style_box(card_style_light if hovered and unlocked else card_style_dark, rect)
+	if not unlocked:
+		draw_rect(rect, Color(0.0, 0.0, 0.02, 0.5))
 	draw_string(font, Vector2(rect.position.x, rect.position.y + 26), title, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 18, Color("d3ced4") if unlocked else Color("656570"))
 	if not unlocked:
 		var reason := "完成任意结局后解锁" if weapon_id == "grenade" else ("第2天解锁" if weapon_id == "shotgun" else ("第一次迟到后解锁" if weapon_id == "beam" else "第一次旷工后解锁"))

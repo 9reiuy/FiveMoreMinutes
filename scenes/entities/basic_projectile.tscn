@@ -1,7 +1,10 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/entities/basic_projectile.gd" id="1_projectile"]
+[ext_resource type="Script" path="res://scripts/entities/soft_glow.gd" id="2_glow"]
 
 [node name="BasicProjectile" type="Node2D"]
 script = ExtResource("1_projectile")
 
+[node name="SoftGlow" type="Node2D" parent="."]
+script = ExtResource("2_glow")

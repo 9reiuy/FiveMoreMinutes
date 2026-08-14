@@ -53,8 +53,9 @@ func _throw(target_position: Vector2, allow_extra: bool) -> void:
 	if aim_direction.length_squared() < 0.0001:
 		aim_direction = Vector2.RIGHT
 	var grenade := GRENADE_SCENE.instantiate()
-	# 出生点沿瞄准方向偏移，保证落在当前玩家碰撞体外侧，视觉仍像从手中投出。
-	grenade.global_position = player.global_position + aim_direction * spawn_offset_px
+	# 出生点沿瞄准方向偏移，保证落在当前玩家碰撞体外侧，视觉仍像从手中投出；
+	# 挂点对齐恢复原尺寸后的躯干中心。
+	grenade.global_position = player.get_grenade_origin() + aim_direction * spawn_offset_px
 	grenade.setup(target_position, projectile_speed, explosion_radius, explosion_visual_radius, damage, self_damage, player, aim_direction)
 	world.add_projectile(grenade)
 	if allow_extra and randf() < extra_attack_chance:

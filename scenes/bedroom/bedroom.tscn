@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/bedroom/bedroom.gd" id="1_bedroom"]
 [ext_resource type="PackedScene" path="res://scenes/ui/bedroom_phone.tscn" id="3_phone"]
@@ -19,6 +19,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/computer_overlay.tscn" id="18_overlay"]
 [ext_resource type="Texture2D" path="res://art/lighting/screen_light.png" id="20_screen_light"]
 [ext_resource type="Shader" path="res://shaders/bedroom_vignette.gdshader" id="21_vignette"]
+[ext_resource type="PackedScene" path="res://scenes/hallway/hallway.tscn" id="22_hallway"]
+[ext_resource type="Texture2D" path="res://art/Badroom/bedroom_Chr_on_bed.png" id="23_bedroom_chr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bed_outline"]
 resource_local_to_scene = true
@@ -46,6 +48,13 @@ resource_local_to_scene = true
 shader = ExtResource("11_outline")
 shader_parameter/outline_enabled = 0.0
 shader_parameter/outline_width_source_pixels = 6.0
+shader_parameter/outline_color = Color(1, 1, 1, 0.78)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bedroom_chr_outline"]
+resource_local_to_scene = true
+shader = ExtResource("11_outline")
+shader_parameter/outline_enabled = 0.0
+shader_parameter/outline_width_source_pixels = 8.0
 shader_parameter/outline_color = Color(1, 1, 1, 0.78)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
@@ -95,6 +104,12 @@ centered = false
 material = SubResource("ShaderMaterial_bed_outline")
 z_index = -3
 texture = ExtResource("8_bed")
+centered = false
+
+[node name="BedroomChrOnBed" type="Sprite2D" parent="Layout/ArtRoot" groups=["bedroom_chr_visuals"]]
+material = SubResource("ShaderMaterial_bedroom_chr_outline")
+z_index = -2
+texture = ExtResource("23_bedroom_chr")
 centered = false
 
 [node name="BedroomDesk" type="Sprite2D" parent="Layout/ArtRoot"]
@@ -194,10 +209,22 @@ input_pickable = true
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Layout/ComputerClickArea"]
 polygon = PackedVector2Array(18, 145, 127, 145, 127, 208, 18, 208)
 
+[node name="BedroomChrClickArea" type="Area2D" parent="Layout"]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+monitorable = false
+input_pickable = true
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Layout/BedroomChrClickArea"]
+polygon = PackedVector2Array(293.5, 145.75, 530.5, 145.75, 530.5, 246, 293.5, 246)
+
 [node name="BottomEdgeInteraction" type="Node2D" parent="Layout"]
 z_index = 2
 script = ExtResource("12_door")
 config = ExtResource("4_config")
+
+[node name="Hallway" parent="." instance=ExtResource("22_hallway")]
 
 [node name="PhoneLayer" type="CanvasLayer" parent="."]
 layer = 10

@@ -34,6 +34,39 @@ static func generate_options(config: DemoConfig, owned: Dictionary, random: Rand
 	return result
 
 
+## 老虎机三列允许同一Upgrade重复出现；候选仍来自同一正式目录、稀有度和上限过滤。
+static func generate_slot_options(config: DemoConfig, owned: Dictionary, random: RandomNumberGenerator, count: int = 9, unlocked_weapon_ids: Array[String] = [], excluded_weapon_ids: Array[String] = []) -> Array[Dictionary]:
+	var catalog := _build_catalog(config)
+	for weapon_id in unlocked_weapon_ids:
+		if not weapon_id in excluded_weapon_ids:
+			catalog.append(_weapon_entry(weapon_id, config))
+	var valid: Array[Dictionary] = []
+	for option in catalog:
+		if str(option.get("reward_type", "upgrade")) == "weapon":
+			valid.append(option)
+			continue
+		var current := int(owned.get(option.family, 0))
+		if int(option.get("replace_rank", 0)) > 0:
+			if int(option.replace_rank) <= current:
+				continue
+		elif current >= int(option.max_level):
+			continue
+		valid.append(option)
+	var result: Array[Dictionary] = []
+	if valid.is_empty():
+		return result
+	for _index in maxi(count, 3):
+		# 按正式稀有度滚动；若该稀有度当前无候选则回退到任意合法升级。
+		var rarity := _roll_rarity(config, random)
+		var rarity_candidates: Array[Dictionary] = []
+		for option in valid:
+			if str(option.rarity) == rarity:
+				rarity_candidates.append(option)
+		var source := rarity_candidates if not rarity_candidates.is_empty() else valid
+		result.append(source[random.randi_range(0, source.size() - 1)].duplicate(true))
+	return result
+
+
 static func get_owned_cards(config: DemoConfig, owned: Dictionary) -> Array[Dictionary]:
 	var catalog := _build_catalog(config)
 	var result: Array[Dictionary] = []
@@ -119,3 +152,12 @@ static func _entry(id: String, family: String, rarity: String, name: String, des
 
 static func _variant(id: String, family: String, rarity: String, name: String, description: String, rank: int) -> Dictionary:
 	return {"id": id, "family": family, "rarity": rarity, "name": name, "description": description, "max_level": 1, "replace_rank": rank}
+
+
+static func _weapon_entry(weapon_id: String, config: DemoConfig) -> Dictionary:
+	match weapon_id:
+		"beam": return {"id":"weapon_beam", "family":"weapon_beam", "rarity":RARITY_PURPLE, "name":"光束武器", "description":"发射贯穿直线光束。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"beam"}
+		"shotgun": return {"id":"weapon_shotgun", "family":"weapon_shotgun", "rarity":RARITY_BLUE, "name":"霰弹枪", "description":"一次发射%d枚散射弹丸。选择后替换当前武器" % config.shotgun_pellet_count, "max_level":1, "reward_type":"weapon", "weapon_id":"shotgun"}
+		"katana": return {"id":"weapon_katana", "family":"weapon_katana", "rarity":RARITY_PURPLE, "name":"太刀", "description":"近身斩击并发射直线剑气。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"katana"}
+		"grenade": return {"id":"weapon_grenade", "family":"weapon_grenade", "rarity":RARITY_GOLD, "name":"榴弹", "description":"投掷范围爆炸物并会造成自伤。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"grenade"}
+		_: return {"id":"weapon_basic", "family":"weapon_basic", "rarity":RARITY_BLUE, "name":"小手枪", "description":"快速发射单发子弹。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"basic"}

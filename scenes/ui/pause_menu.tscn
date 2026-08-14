@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_pause"]
 [ext_resource type="PackedScene" path="res://scenes/ui/settings_panel.tscn" id="2_settings"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_panel"]
 
 [node name="PauseMenu" type="CanvasLayer"]
 process_mode = 3
@@ -32,6 +34,7 @@ offset_left = 140.0
 offset_top = 30.0
 offset_right = 500.0
 offset_bottom = 330.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
 
 [node name="Layout" type="VBoxContainer" parent="Root/Panel"]
 layout_mode = 2
@@ -43,9 +46,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "暂停 // PAUSED"
 horizontal_alignment = 1
-
-[node name="Rule" type="HSeparator" parent="Root/Panel/Layout"]
-layout_mode = 2
 
 [node name="MenuButtons" type="VBoxContainer" parent="Root/Panel/Layout"]
 layout_mode = 2

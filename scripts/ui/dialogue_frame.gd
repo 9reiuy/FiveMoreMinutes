@@ -1,9 +1,9 @@
 extends Control
 
-## 对话框边框：使用 2bitcrook "GB free frames" 图包的 Chunky simple 1b 样式，
+## 对话框底图：使用 talk.png 裁剪出的面板主体（黑色不规则边框 + 深蓝底），
 ## 按九宫格拉伸适配任意面板尺寸，文本字体仍走全局像素主题（含中文回退）。
-const FRAME_TEXTURE: Texture2D = preload("res://art/icon/GB free frames/GBS frames Black/Chunky simple 1b.png")
-const FRAME_MARGIN := 5
+const FRAME_TEXTURE: Texture2D = preload("res://art/ui_imported/talk_panel.png")
+const FRAME_MARGIN := 12
 
 var frame_patches: Array[AtlasTexture] = []
 

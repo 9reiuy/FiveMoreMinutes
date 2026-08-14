@@ -18,21 +18,19 @@ func _ready() -> void:
 	stats.add_theme_font_override("font", PixelFont.get_font())
 	for button in [restart_button, menu_button]:
 		button.add_theme_font_override("font", PixelFont.get_font())
+		# 纯文字按钮：无像素底框，悬停仅变亮。
 		button.focus_mode = Control.FOCUS_NONE
-		button.add_theme_stylebox_override("normal", _button_box(Color("17202a"), Color("517b98")))
-		button.add_theme_stylebox_override("hover", _button_box(Color("243543"), Color("8caec1")))
+		button.flat = true
+		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		button.add_theme_color_override("font_color", Color("8fb3bc"))
+		button.add_theme_color_override("font_hover_color", Color("d5dde0"))
+		button.add_theme_color_override("font_pressed_color", Color("d5dde0"))
+		var empty := StyleBoxEmpty.new()
+		for state in ["normal", "hover", "pressed", "focus", "disabled"]:
+			button.add_theme_stylebox_override(state, empty)
 	restart_button.pressed.connect(func() -> void: restart_requested.emit())
 	menu_button.pressed.connect(func() -> void: main_menu_requested.emit())
 	stats.text = "生存时间  %s\n最终等级  %d" % [_format_duration(float(summary.get("survival_seconds", 0.0))), int(summary.get("level", 1))]
-
-
-func _button_box(fill: Color, border: Color) -> StyleBoxFlat:
-	var box := StyleBoxFlat.new()
-	box.bg_color = fill
-	box.border_color = border
-	box.set_border_width_all(2)
-	box.set_content_margin_all(7.0)
-	return box
 
 
 func _format_duration(seconds: float) -> String:

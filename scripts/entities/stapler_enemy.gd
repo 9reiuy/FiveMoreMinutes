@@ -83,7 +83,11 @@ func _fire_staple() -> void:
 	var direction := global_position.direction_to(aim_position)
 	if direction.length_squared() < 0.0001:
 		direction = Vector2.RIGHT
+	# 每次攻击独立生成一枚新弹丸；world.spawn_staple 每次实例化新节点，
+	# 不持有也不销毁上一发仍在飞行中的弹丸。
 	world.spawn_staple(global_position, direction, staple_damage, staple_speed, staple_distance, staple_radius, target)
+	if world.has_method("spawn_bullet_sequence"):
+		world.spawn_bullet_sequence(global_position, direction)
 
 
 func _draw() -> void:
