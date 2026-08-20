@@ -19,12 +19,21 @@ var round_settled := true
 var dealer_hidden := false
 var result_text := "选择下注金额开始"
 var hovered_action := ""
+var option_triangle_elapsed := 0.0
 var random := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	mouse_exited.connect(_clear_hover)
 	random.randomize()
+	queue_redraw()
+
+
+func _process(delta: float) -> void:
+	if hovered_action.is_empty():
+		return
+	option_triangle_elapsed += delta
 	queue_redraw()
 
 
@@ -38,6 +47,9 @@ func _gui_input(event: InputEvent) -> void:
 		var next := _action_at(event.position)
 		if next != hovered_action:
 			hovered_action = next
+			option_triangle_elapsed = 0.0
+			if not next.is_empty():
+				SFX.play_event(&"ui_hover")
 			mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if not next.is_empty() else Control.CURSOR_ARROW
 			queue_redraw()
 		return
@@ -51,6 +63,13 @@ func _gui_input(event: InputEvent) -> void:
 	elif action == "stand":
 		_stand()
 	accept_event()
+
+
+func _clear_hover() -> void:
+	hovered_action = ""
+	option_triangle_elapsed = 0.0
+	mouse_default_cursor_shape = Control.CURSOR_ARROW
+	queue_redraw()
 
 
 func _action_at(point: Vector2) -> String:
@@ -177,7 +196,4 @@ func _draw_hand(label: String, cards: Array[String], origin: Vector2, hide_secon
 
 
 func _draw_button(rect: Rect2, text: String, hovered: bool, enabled: bool, font: Font) -> void:
-	var fill := Color("294b62") if hovered and enabled else (Color("182c3d") if enabled else Color("151b24"))
-	draw_rect(rect, fill)
-	draw_rect(rect, Color("628ba1") if enabled else Color("343d46"), false, 1.0)
-	draw_string(font, rect.position + Vector2(0, 16), text, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 9, Color("d0e1e7") if enabled else Color("56616a"))
+	PixelOptionGroup.draw_custom_option(self, rect, text, hovered, enabled, font, 9, option_triangle_elapsed)

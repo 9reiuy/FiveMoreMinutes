@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/announcement_window.gd" id="1_announce"]
 [ext_resource type="Script" path="res://scripts/ui/phone_drag_scroll.gd" id="2_scroll"]
+[ext_resource type="Script" path="res://scripts/ui/pixel_option_group.gd" id="3_option"]
 
 [node name="AnnouncementWindow" type="Control"]
 layout_mode = 3
@@ -50,6 +51,16 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.62, 0.68, 0.72, 1)
 theme_override_font_sizes/font_size = 12
 autowrap_mode = 3
+
+[node name="OptionGroup" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_option")
 
 [node name="CloseButton" type="Button" parent="."]
 layout_mode = 1

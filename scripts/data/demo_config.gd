@@ -28,11 +28,28 @@ extends Resource
 @export var enemy_separation_radius: float = 30.0
 ## 压力倍率作用在现有难度曲线之后，但不会突破这个硬下限。
 @export_range(0.05, 2.0, 0.05) var stress_absolute_minimum_spawn_interval: float = 0.25
-@export var correction_unlock_seconds: float = 30.0
-@export var stapler_unlock_seconds: float = 90.0
-@export var large_correction_unlock_seconds: float = 180.0
-@export var alarm_enemy_unlock_time: float = 120.0
-@export var mailbox_enemy_unlock_time: float = 180.0
+## 正式敌人解锁日程；tentacle与large_correction由各自生成器读取同一张表。
+@export var enemy_unlock_days: Dictionary = {
+	"basic": 1,
+	"correction": 1,
+	"tentacle": 1,
+	"stapler": 2,
+	"alarm_clock": 3,
+	"mailbox": 4,
+	"large_correction": 5,
+}
+@export var enemy_base_spawn_weights: Dictionary = {
+	"basic": 1.0,
+	"correction": 1.0,
+	"stapler": 1.0,
+	"alarm_clock": 1.0,
+	"mailbox": 1.0,
+	"tentacle": 1.0,
+	"large_correction": 1.0,
+}
+## 每提升一天，沿用旧线性秒成长曲线所对应的秒数，不改写既有HP/伤害调参。
+@export_range(1.0, 600.0, 1.0) var difficulty_seconds_per_day: float = 120.0
+@export_range(10.0, 600.0, 1.0) var endless_day_duration: float = 120.0
 
 @export_group("Interaction Highlight")
 @export var interaction_outline_color: Color = Color.WHITE
@@ -65,6 +82,16 @@ extends Resource
 @export_range(0.05, 0.8, 0.01) var player_light_falloff: float = 0.32
 ## 高压力只收缩同一盏PlayerLight，不再叠加旧黑色圆孔遮罩。
 @export_range(0.25, 1.0, 0.01) var stress_light_radius_multiplier: float = 0.72
+## 正式敌人/掉落物读取玩家当局实际有效半径的比例，不复制固定像素值。
+@export_range(0.1, 1.0, 0.05) var enemy_light_radius_multiplier: float = 0.50
+## Enemy PointLight2D energy relative to the effective PlayerLight energy.
+@export_range(0.1, 1.0, 0.05) var enemy_light_energy_multiplier: float = 0.55
+@export_range(0.01, 0.5, 0.01) var pickup_light_radius_multiplier: float = 0.10
+## Kept for old resource compatibility; enemies now use a real PointLight2D.
+@export_range(0.0, 0.5, 0.01) var enemy_environment_glow_alpha: float = 0.12
+@export_range(0.0, 0.5, 0.01) var pickup_environment_glow_alpha: float = 0.14
+## 由DreamWorld启动时写入；非导出运行态字段，不会污染平衡资源。
+var runtime_player_light_radius: float = -1.0
 
 @export_group("Alarm Visuals")
 @export_range(0.0, 0.75, 0.01) var alarm_screen_brightness_alpha: float = 0.30
@@ -116,10 +143,14 @@ extends Resource
 @export_range(4.0, 24.0, 1.0) var pickup_snap_distance: float = 12.0
 @export_range(1.0, 60.0, 1.0) var electric_shield_animation_fps: float = 30.0
 @export_range(0.05, 1.0, 0.01) var electric_shield_visual_scale: float = 0.18
-@export_range(20.0, 100.0, 1.0) var player_hp_bar_width: float = 50.0
+@export_range(20.0, 100.0, 1.0) var player_hp_bar_width: float = 30.0
 @export_range(2.0, 10.0, 1.0) var player_hp_bar_height: float = 5.0
 @export var player_hp_bar_offset: Vector2 = Vector2(0.0, 7.0)
 @export_range(0.25, 8.0, 0.05) var player_hp_bar_visible_duration: float = 2.5
+@export_range(8.0, 20.0, 1.0) var enemy_hp_bar_width: float = 20.0
+@export_range(2.0, 6.0, 1.0) var enemy_hp_bar_height: float = 3.0
+@export_range(0.0, 12.0, 1.0) var enemy_hp_bar_bottom_margin: float = 2.0
+@export_range(0.25, 8.0, 0.05) var enemy_hp_bar_visible_duration: float = 2.5
 @export_range(0.02, 0.3, 0.01) var weapon_muzzle_flash_seconds: float = 0.07
 @export_range(0.04, 0.5, 0.01) var weapon_hit_effect_seconds: float = 0.14
 @export_range(2.0, 32.0, 1.0) var projectile_trail_length: float = 10.0
@@ -377,9 +408,26 @@ extends Resource
 @export_group("Main Menu")
 @export_range(4, 40, 1) var main_menu_button_spacing: int = 12
 @export_range(0.0, 12.0, 0.5) var main_menu_hover_offset: float = 4.0
+@export_range(1.0, 1.2, 0.01) var main_menu_hover_scale: float = 1.04
+@export var main_menu_selection_padding: Vector2 = Vector2(16.0, 8.0)
+@export_range(0.08, 0.4, 0.01) var main_menu_selection_tween_duration: float = 0.18
+@export var main_menu_selection_fill_color: Color = Color(0.055, 0.12, 0.13, 0.58)
+@export var main_menu_selection_border_color: Color = Color(0.216, 0.298, 0.302, 0.92)
 @export var game_version_text: String = "V0.4.7"
 @export var community_group_text: String = "游戏存活进度群:833796070"
 @export var community_group_url: String = "https://qm.qq.com/q/Mq3wuCuZQ6"
+
+@export_group("Pixel Options")
+## 普通文本Action共用：每个Option Group只绘制一个共享选框和一个像素三角。
+@export_range(1.0, 1.2, 0.01) var option_hover_scale: float = 1.04
+@export var option_frame_padding: Vector2 = Vector2(14.0, 6.0)
+@export_range(5.0, 8.0, 1.0) var option_triangle_size: float = 6.0
+@export_range(6.0, 10.0, 1.0) var option_triangle_text_gap: float = 8.0
+@export_range(2.0, 4.0, 0.5) var option_triangle_animation_amplitude: float = 3.0
+@export_range(0.45, 0.8, 0.05) var option_triangle_animation_period: float = 0.60
+@export_range(0.08, 0.4, 0.01) var option_hover_tween_duration: float = 0.16
+@export var option_frame_fill_color: Color = Color(0.290, 0.322, 0.329, 0.48)
+@export var option_triangle_color: Color = Color(0.443, 0.502, 0.514, 0.86)
 
 @export_group("Pixel UI")
 @export var ui_border_color: Color = Color("517b98")
@@ -616,6 +664,7 @@ extends Resource
 @export_group("Economy")
 @export var initial_balance: int = 1325
 @export var daily_base_wage: int = 500
+@export_range(0, 100, 1) var ram_per_completed_day: int = 1
 @export var wage_ratio_on_time: float = 1.0
 @export var wage_ratio_slightly_late: float = 0.8
 @export var wage_ratio_severely_late: float = 0.5
@@ -714,3 +763,15 @@ extends Resource
 @export var dissociation_revive_health: float = 30.0
 @export var dissociation_invulnerability_seconds: float = 3.0
 @export var dissociation_max_acquisitions: int = 1
+@export_group("Bedroom Character Glow")
+@export var bedroom_chr_glow_enabled: bool = true
+@export var bedroom_chr_glow_color: Color = Color("dceeff")
+@export_range(0.0, 1.0, 0.01) var bedroom_chr_glow_alpha_normal_min: float = 0.68
+@export_range(0.0, 1.0, 0.01) var bedroom_chr_glow_alpha_normal_max: float = 0.86
+@export_range(0.0, 1.0, 0.01) var bedroom_chr_glow_alpha_dark_min: float = 0.55
+@export_range(0.0, 1.0, 0.01) var bedroom_chr_glow_alpha_dark_max: float = 0.68
+@export_range(0.0, 1.0, 0.01) var bedroom_chr_glow_alpha_bright_min: float = 0.86
+@export_range(0.0, 1.0, 0.01) var bedroom_chr_glow_alpha_bright_max: float = 0.95
+@export_range(0.05, 1.0, 0.01) var bedroom_chr_glow_interval_min: float = 0.06
+@export_range(0.05, 1.0, 0.01) var bedroom_chr_glow_interval_max: float = 0.18
+@export_range(0.0, 1.0, 0.01) var bedroom_chr_glow_big_change_chance: float = 0.15

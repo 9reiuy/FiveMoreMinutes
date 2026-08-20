@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/endless_results.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/pixel_option_group.gd" id="2_option"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_panel"]
 
@@ -23,12 +24,22 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.035, 0.043, 0.063, 1)
 
+[node name="OptionGroup" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_option")
+
 [node name="Panel" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 180.0
 offset_top = 80.0
 offset_right = 460.0
-offset_bottom = 280.0
+offset_bottom = 306.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
 
 [node name="Content" type="VBoxContainer" parent="Panel"]
@@ -45,7 +56,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.65, 0.7, 0.74, 1)
 theme_override_font_sizes/font_size = 14
-text = "生存时间  00:00\n最终等级  1"
+text = "生存时间  00:00\n完成天数  0\n最终等级  1\n本局 RAM  +0"
 horizontal_alignment = 1
 
 [node name="Buttons" type="HBoxContainer" parent="Panel/Content"]

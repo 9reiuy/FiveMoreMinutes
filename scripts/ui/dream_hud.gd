@@ -6,6 +6,9 @@ extends Control
 @onready var experience_bar: ProgressBar = $ExperienceBarArea/ExperienceProgressBar
 @onready var experience_value_label: Label = $ExperienceBarArea/ExperienceValueLabel
 @onready var dash_icon: TextureRect = $DashIndicator/DashIcon
+@onready var endless_day_area: Control = $EndlessDayArea
+@onready var endless_day_label: Label = $EndlessDayArea/DayLabel
+@onready var endless_day_progress: ProgressBar = $EndlessDayArea/DayProgress
 
 var time_text := "04:00"
 var health := 100.0
@@ -25,6 +28,8 @@ var dissociation_ready := false
 var displayed_experience_ratio := 0.0
 var target_experience_ratio := 0.0
 var level_flash_left := 0.0
+var endless_mode := false
+var endless_day_duration := 120.0
 
 
 func _ready() -> void:
@@ -36,6 +41,7 @@ func _ready() -> void:
 	experience_area.offset_bottom = 6.0
 	_update_experience_labels()
 	_update_dash_indicator()
+	endless_day_area.visible = endless_mode
 
 
 func _process(delta: float) -> void:
@@ -51,6 +57,20 @@ func _process(delta: float) -> void:
 func set_clock(value: String) -> void:
 	time_text = value
 	queue_redraw()
+
+
+func configure_endless_mode(enabled: bool, day_duration: float) -> void:
+	endless_mode = enabled
+	endless_day_duration = maxf(day_duration, 0.001)
+	if is_node_ready():
+		endless_day_area.visible = enabled
+
+
+func set_endless_day_progress(day: int, progress: float) -> void:
+	if not is_node_ready():
+		return
+	endless_day_label.text = "第%d天" % maxi(day, 1)
+	endless_day_progress.value = clampf(progress, 0.0, 1.0) * 100.0
 
 
 func set_health(current: float, maximum: float) -> void:
@@ -121,7 +141,9 @@ func _draw() -> void:
 	# HP 条与 HP 文字已全部移除（受伤/回血逻辑不受影响）；
 	# Dash 图标由 DashIndicator 节点绘制；文字只保留状态说明。
 	# 冲刺状态仅由DashIcon内部灰色冷却遮罩表达，不再显示任何就绪/充能文字。
-	draw_string(font, Vector2(0, 66), time_text, HORIZONTAL_ALIGNMENT_CENTER, 640, 19, Color("d2ced6"))
+	# 无尽模式仍保留内部 elapsed_time、Day 和 RAM 结算，只隐藏顶部经过时间。
+	if not endless_mode:
+		draw_string(font, Vector2(0, 66), time_text, HORIZONTAL_ALIGNMENT_CENTER, 640, 19, Color("d2ced6"))
 	draw_string(font, Vector2(510, 61), "击败 %d" % kills, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("8f8c98"))
 	if shielded:
 		draw_string(font, Vector2(510, 80), "护盾 ◆", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("8ebad0"))

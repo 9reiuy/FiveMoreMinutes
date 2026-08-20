@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="Script" path="res://scripts/bedroom/bedroom.gd" id="1_bedroom"]
 [ext_resource type="PackedScene" path="res://scenes/ui/bedroom_phone.tscn" id="3_phone"]
@@ -21,6 +21,8 @@
 [ext_resource type="Shader" path="res://shaders/bedroom_vignette.gdshader" id="21_vignette"]
 [ext_resource type="PackedScene" path="res://scenes/hallway/hallway.tscn" id="22_hallway"]
 [ext_resource type="Texture2D" path="res://art/Badroom/bedroom_Chr_on_bed.png" id="23_bedroom_chr"]
+[ext_resource type="Texture2D" path="res://art/Badroom/bedroom_Chr_on_bed_light.png" id="24_bedroom_chr_light"]
+[ext_resource type="Material" path="res://resources/materials/bedroom_chr_glow_material.tres" id="25_bedroom_chr_glow_material"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bed_outline"]
 resource_local_to_scene = true
@@ -106,11 +108,22 @@ z_index = -3
 texture = ExtResource("8_bed")
 centered = false
 
-[node name="BedroomChrOnBed" type="Sprite2D" parent="Layout/ArtRoot" groups=["bedroom_chr_visuals"]]
-material = SubResource("ShaderMaterial_bedroom_chr_outline")
+[node name="BedroomChrRoot" type="Node2D" parent="Layout/ArtRoot"]
 z_index = -2
+
+[node name="BedroomChrOnBed" type="Sprite2D" parent="Layout/ArtRoot/BedroomChrRoot" groups=["bedroom_chr_visuals"]]
+material = SubResource("ShaderMaterial_bedroom_chr_outline")
 texture = ExtResource("23_bedroom_chr")
 centered = false
+
+[node name="BedroomChrOnBedLight" type="Sprite2D" parent="Layout/ArtRoot/BedroomChrRoot" groups=["bedroom_chr_visuals"]]
+material = ExtResource("25_bedroom_chr_glow_material")
+texture = ExtResource("24_bedroom_chr_light")
+centered = false
+self_modulate = Color(0.862745, 0.933333, 1, 0.6)
+
+[node name="GlowFlickerTimer" type="Timer" parent="Layout/ArtRoot/BedroomChrRoot"]
+one_shot = true
 
 [node name="BedroomDesk" type="Sprite2D" parent="Layout/ArtRoot"]
 z_index = -2

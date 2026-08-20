@@ -22,6 +22,7 @@ var anim_elapsed := 0.0
 var draw_offset := Vector2.ZERO
 var frames: Array[AtlasTexture] = []
 var attraction := PICKUP_ATTRACTION.new()
+var environment_reference_radius := CONFIG.player_light_radius
 
 
 func _ready() -> void:
@@ -29,12 +30,17 @@ func _ready() -> void:
 	var glow := get_node_or_null("SoftGlow") as SoftGlow
 	if glow != null:
 		glow.configure(Color("65c979"), CONFIG.heart_glow_alpha, CONFIG.heart_glow_radius)
+		glow.configure_environment(CONFIG.player_light_color, CONFIG.pickup_environment_glow_alpha, environment_reference_radius * CONFIG.pickup_light_radius_multiplier)
 	if frames.is_empty():
 		for region in HEART_FRAME_REGIONS:
 			var frame := AtlasTexture.new()
 			frame.atlas = HEART_SHEET
 			frame.region = region
 			frames.append(frame)
+
+
+func set_environment_reference(config: DemoConfig) -> void:
+	environment_reference_radius = config.runtime_player_light_radius if config.runtime_player_light_radius > 0.0 else config.player_light_radius
 
 
 func _process(delta: float) -> void:

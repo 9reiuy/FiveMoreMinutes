@@ -54,11 +54,6 @@ custom_minimum_size = Vector2(64, 53)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SomniaSlot" type="Control" parent="ScreenClip/AppGrid"]
-custom_minimum_size = Vector2(64, 53)
-layout_mode = 2
-mouse_filter = 2
-
 [node name="QuickLinkSlot" type="Control" parent="ScreenClip/AppGrid"]
 custom_minimum_size = Vector2(64, 53)
 layout_mode = 2
@@ -107,15 +102,6 @@ script = ExtResource("4_drag_scroll")
 custom_minimum_size = Vector2(121, 313)
 layout_mode = 2
 script = ExtResource("6_quicklink")
-
-[node name="SomniaScrollBar" type="VScrollBar" parent="ScreenClip"]
-visible = false
-layout_mode = 0
-offset_left = 145.0
-offset_top = 60.0
-offset_right = 150.0
-offset_bottom = 305.0
-theme = ExtResource("5_scroll_theme")
 
 [node name="SettingsScrollBar" type="VScrollBar" parent="ScreenClip"]
 visible = false

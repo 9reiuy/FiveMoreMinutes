@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
 [ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
 [ext_resource type="PackedScene" path="res://scenes/ui/settings_panel.tscn" id="3_settings"]
 [ext_resource type="PackedScene" path="res://scenes/ui/announcement_window.tscn" id="4_announcement"]
+[ext_resource type="PackedScene" path="res://scenes/ui/global_upgrade_panel.tscn" id="5_global_upgrades"]
+[ext_resource type="Script" path="res://scripts/ui/pixel_option_group.gd" id="6_option"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_overlay"]
 
@@ -99,12 +101,23 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="MenuSelectionFrame" type="Control" parent="MenuContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_option")
+
 [node name="ButtonList" type="VBoxContainer" parent="MenuContent"]
+z_index = 1
 layout_mode = 0
 offset_left = 365.0
-offset_top = 70.0
+offset_top = 52.0
 offset_right = 575.0
-offset_bottom = 300.0
+offset_bottom = 314.0
 
 [node name="Continue" type="Button" parent="MenuContent/ButtonList"]
 custom_minimum_size = Vector2(210, 36)
@@ -121,10 +134,10 @@ custom_minimum_size = Vector2(210, 36)
 layout_mode = 2
 text = "无尽模式"
 
-[node name="Settings" type="Button" parent="MenuContent/ButtonList"]
+[node name="Somnia" type="Button" parent="MenuContent/ButtonList"]
 custom_minimum_size = Vector2(210, 36)
 layout_mode = 2
-text = "设置"
+text = "眠网"
 
 [node name="Quit" type="Button" parent="MenuContent/ButtonList"]
 custom_minimum_size = Vector2(210, 36)
@@ -154,12 +167,22 @@ grow_vertical = 2
 mouse_filter = 0
 color = Color(0.01, 0.012, 0.018, 0.84)
 
+[node name="OverlayOptionGroup" type="Control" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_option")
+
 [node name="Panel" type="PanelContainer" parent="Overlay"]
 layout_mode = 0
 offset_left = 150.0
-offset_top = 34.0
+offset_top = 18.0
 offset_right = 490.0
-offset_bottom = 326.0
+offset_bottom = 342.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_overlay")
 
 [node name="Content" type="VBoxContainer" parent="Overlay/Panel"]
@@ -183,6 +206,10 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SettingsPanel" parent="Overlay/Panel/Content" instance=ExtResource("3_settings")]
+visible = false
+layout_mode = 2
+
+[node name="GlobalUpgradePanel" parent="Overlay/Panel/Content" instance=ExtResource("5_global_upgrades")]
 visible = false
 layout_mode = 2
 

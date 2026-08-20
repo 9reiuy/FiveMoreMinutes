@@ -5,23 +5,27 @@ const SFX := preload("res://scripts/audio/sfx_manager.gd")
 signal continue_requested
 signal new_game_requested
 signal endless_requested
+signal global_progress_changed
 signal quit_requested
 
 @export var config: DemoConfig
 
 @onready var menu_content: Control = $MenuContent
+@onready var menu_option_group: PixelOptionGroup = $MenuContent/MenuSelectionFrame
 @onready var button_list: VBoxContainer = $MenuContent/ButtonList
 @onready var continue_button: Button = $MenuContent/ButtonList/Continue
 @onready var start_button: Button = $MenuContent/ButtonList/Start
 @onready var endless_button: Button = $MenuContent/ButtonList/Endless
-@onready var settings_button: Button = $MenuContent/ButtonList/Settings
+@onready var somnia_button: Button = $MenuContent/ButtonList/Somnia
 @onready var quit_button: Button = $MenuContent/ButtonList/Quit
 @onready var overlay: Control = $Overlay
+@onready var overlay_option_group: PixelOptionGroup = $Overlay/OverlayOptionGroup
 @onready var overlay_title: Label = $Overlay/Panel/Content/Title
 @onready var overlay_message: Label = $Overlay/Panel/Content/Message
 @onready var primary_button: Button = $Overlay/Panel/Content/Buttons/Primary
 @onready var back_button: Button = $Overlay/Panel/Content/Buttons/Back
 @onready var settings_panel: UnifiedSettingsPanel = $Overlay/Panel/Content/SettingsPanel
+@onready var global_upgrade_panel: Control = $Overlay/Panel/Content/GlobalUpgradePanel
 @onready var footer_link: Control = $FooterLink
 @onready var version_label: Label = $FooterLink/VersionText
 @onready var group_label: Label = $FooterLink/GroupText
@@ -29,7 +33,7 @@ signal quit_requested
 
 var has_save := false
 var overlay_mode := ""
-var buttons: Array[Button] = []
+var progression_state: Dictionary = {}
 
 # 主菜单选项纯文字配色：默认 #374C4D，悬停变亮。
 const MENU_ENTRY_COLOR := Color("374c4d")
@@ -39,23 +43,24 @@ const MENU_ENTRY_DISABLED_COLOR := Color("233031")
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	buttons = [continue_button, start_button, endless_button, settings_button, quit_button, primary_button, back_button]
 	button_list.add_theme_constant_override("separation", config.main_menu_button_spacing)
-	for entry in [continue_button, start_button, endless_button, settings_button, quit_button]:
+	for entry in [continue_button, start_button, endless_button, somnia_button, quit_button]:
 		_style_menu_entry(entry)
-	for button in buttons:
-		button.mouse_entered.connect(_on_button_hovered.bind(button))
 	for overlay_button in [primary_button, back_button]:
 		_style_button(overlay_button)
 	continue_button.disabled = not has_save
+	menu_option_group.register_options([continue_button, start_button, endless_button, somnia_button, quit_button])
+	overlay_option_group.register_options([primary_button, back_button])
 	continue_button.gui_input.connect(_on_continue_gui_input)
 	continue_button.pressed.connect(_on_continue)
 	start_button.pressed.connect(_on_start)
 	endless_button.pressed.connect(_on_endless)
-	settings_button.pressed.connect(_show_settings)
+	somnia_button.pressed.connect(_show_somnia)
 	quit_button.pressed.connect(_show_confirmation.bind("quit"))
 	primary_button.pressed.connect(_on_primary)
 	back_button.pressed.connect(_return_to_menu)
+	global_upgrade_panel.progression_changed.connect(_on_global_progress_changed)
+	global_upgrade_panel.configure(progression_state)
 	# 底栏拆为两个独立点击区：版本号（Hover 变亮 + 点击开全屏公告）
 	# 与进度群号（保留原有群链接），两者不重叠。
 	footer_link.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -81,23 +86,6 @@ func _style_menu_entry(button: Button) -> void:
 	var empty := StyleBoxEmpty.new()
 	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
 		button.add_theme_stylebox_override(state, empty)
-	button.mouse_entered.connect(_on_menu_entry_hover.bind(button))
-	button.mouse_exited.connect(_on_menu_entry_exited.bind(button))
-
-
-func _on_menu_entry_hover(button: Button) -> void:
-	if not button.visible:
-		return
-	button.pivot_offset = button.size * 0.5
-	var tween := button.create_tween()
-	tween.tween_property(button, "scale", Vector2(1.04, 1.04), 0.08)
-
-
-func _on_menu_entry_exited(button: Button) -> void:
-	if not button.visible:
-		return
-	var tween := button.create_tween()
-	tween.tween_property(button, "scale", Vector2.ONE, 0.08)
 
 
 func _style_button(button: Button) -> void:
@@ -119,11 +107,6 @@ func _style_button(button: Button) -> void:
 
 func _play_confirm() -> void:
 	SFX.play_event(&"confirm")
-
-
-func _on_button_hovered(button: BaseButton) -> void:
-	if button.visible and not button.disabled:
-		SFX.play_event(&"ui_hover")
 
 
 func _on_continue_gui_input(event: InputEvent) -> void:
@@ -150,6 +133,31 @@ func _on_endless() -> void:
 	endless_requested.emit()
 
 
+func configure_progression(state: Dictionary) -> void:
+	progression_state = state
+	if is_node_ready():
+		global_upgrade_panel.configure(progression_state)
+
+
+func _show_somnia() -> void:
+	_play_confirm()
+	overlay_mode = "somnia"
+	overlay_title.text = "眠网 // GLOBAL UPGRADES"
+	overlay_message.visible = false
+	primary_button.visible = false
+	settings_panel.visible = false
+	global_upgrade_panel.visible = true
+	global_upgrade_panel.configure(progression_state)
+	back_button.text = "返回"
+	menu_content.visible = false
+	menu_option_group.clear_highlight()
+	overlay.visible = true
+
+
+func _on_global_progress_changed() -> void:
+	global_progress_changed.emit()
+
+
 func _show_placeholder(title: String, message: String) -> void:
 	_play_confirm()
 	overlay_mode = "placeholder"
@@ -164,14 +172,18 @@ func _show_placeholder(title: String, message: String) -> void:
 
 
 func _show_settings() -> void:
+	if overlay.visible and overlay_mode == "settings":
+		return
 	_play_confirm()
 	overlay_mode = "settings"
 	overlay_title.text = "设置 // SETTINGS"
 	overlay_message.visible = false
 	primary_button.visible = false
 	settings_panel.visible = true
+	global_upgrade_panel.visible = false
 	back_button.text = "返回"
 	menu_content.visible = false
+	menu_option_group.clear_highlight()
 	overlay.visible = true
 
 
@@ -180,6 +192,7 @@ func _show_confirmation(mode: String) -> void:
 	overlay_mode = mode
 	primary_button.visible = true
 	settings_panel.visible = false
+	global_upgrade_panel.visible = false
 	overlay_message.visible = true
 	if mode == "new_game":
 		overlay_title.text = "覆盖存档"
@@ -191,6 +204,7 @@ func _show_confirmation(mode: String) -> void:
 		primary_button.text = "退出"
 	back_button.text = "返回"
 	menu_content.visible = false
+	menu_option_group.clear_highlight()
 	overlay.visible = true
 
 
@@ -206,13 +220,23 @@ func _on_primary() -> void:
 
 func _return_to_menu() -> void:
 	_play_confirm()
+	overlay_option_group.clear_highlight()
 	overlay.visible = false
 	menu_content.visible = true
 	overlay_mode = ""
 	settings_panel.visible = false
+	global_upgrade_panel.visible = false
 	overlay_message.visible = true
 	primary_button.disabled = false
 	back_button.disabled = false
+
+
+func consume_escape() -> bool:
+	if overlay.visible:
+		_return_to_menu()
+	else:
+		_show_settings()
+	return true
 
 
 func _setup_footer_label(label: Label, text: String, on_click: Callable) -> void:

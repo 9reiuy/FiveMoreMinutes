@@ -10,6 +10,7 @@ var summary: Dictionary = {}
 @onready var stats: Label = $Panel/Content/Stats
 @onready var restart_button: Button = $Panel/Content/Buttons/Restart
 @onready var menu_button: Button = $Panel/Content/Buttons/Menu
+@onready var option_group: PixelOptionGroup = $OptionGroup
 
 
 func _ready() -> void:
@@ -28,9 +29,15 @@ func _ready() -> void:
 		var empty := StyleBoxEmpty.new()
 		for state in ["normal", "hover", "pressed", "focus", "disabled"]:
 			button.add_theme_stylebox_override(state, empty)
+	option_group.register_options([restart_button, menu_button])
 	restart_button.pressed.connect(func() -> void: restart_requested.emit())
 	menu_button.pressed.connect(func() -> void: main_menu_requested.emit())
-	stats.text = "生存时间  %s\n最终等级  %d" % [_format_duration(float(summary.get("survival_seconds", 0.0))), int(summary.get("level", 1))]
+	stats.text = "生存时间  %s\n完成天数  %d\n最终等级  %d\n本局 RAM  +%d" % [
+		_format_duration(float(summary.get("survival_seconds", 0.0))),
+		int(summary.get("completed_endless_days", 0)),
+		int(summary.get("level", 1)),
+		int(summary.get("run_ram", 0)),
+	]
 
 
 func _format_duration(seconds: float) -> String:

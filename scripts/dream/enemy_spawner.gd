@@ -15,6 +15,7 @@ var player: Node2D
 var run_elapsed_seconds := 0.0
 var stress_spawn_multiplier := 1.0
 var endless_mode := false
+var difficulty_day := 1
 
 
 func _ready() -> void:
@@ -33,9 +34,8 @@ func _process(delta: float) -> void:
 	if accumulator > 0.0:
 		return
 	accumulator = get_current_spawn_interval()
-	var difficulty_elapsed := run_elapsed_seconds if endless_mode else alarm_elapsed
-	var health_multiplier := 1.0 + difficulty_elapsed * config.enemy_health_growth_per_second
-	var damage_multiplier := 1.0 + difficulty_elapsed * config.enemy_damage_growth_per_second
+	var health_multiplier := get_health_multiplier()
+	var damage_multiplier := get_damage_multiplier()
 	var batch_count := mini(maxi(1, config.enemy_spawn_count_per_interval), config.maximum_enemies - current_count)
 	var reserved_positions: Array[Vector2] = []
 	for _spawn_index in range(batch_count):
@@ -49,6 +49,11 @@ func set_run_elapsed(seconds: float) -> void:
 	run_elapsed_seconds = maxf(0.0, seconds)
 
 
+func set_difficulty_day(day: int) -> void:
+	difficulty_day = maxi(day, 1)
+	accumulator = minf(accumulator, get_current_spawn_interval())
+
+
 func set_stress_spawn_multiplier(multiplier: float) -> void:
 	stress_spawn_multiplier = maxf(1.0, multiplier)
 	accumulator = minf(accumulator, get_current_spawn_interval())
@@ -56,20 +61,44 @@ func set_stress_spawn_multiplier(multiplier: float) -> void:
 
 func _choose_enemy_type() -> String:
 	var pool := get_unlocked_enemy_types()
-	return pool[random.randi_range(0, pool.size() - 1)]
+	var total_weight := 0.0
+	for enemy_id in pool:
+		total_weight += maxf(0.0, float(config.enemy_base_spawn_weights.get(enemy_id, 1.0)))
+	if total_weight <= 0.0:
+		return pool[0]
+	var roll := random.randf_range(0.0, total_weight)
+	for enemy_id in pool:
+		roll -= maxf(0.0, float(config.enemy_base_spawn_weights.get(enemy_id, 1.0)))
+		if roll <= 0.0:
+			return enemy_id
+	return pool.back()
 
 
 func get_unlocked_enemy_types() -> Array[String]:
-	var pool: Array[String] = ["basic"]
-	if run_elapsed_seconds >= config.correction_unlock_seconds:
-		pool.append("correction")
-	if run_elapsed_seconds >= config.stapler_unlock_seconds:
-		pool.append("stapler")
-	if run_elapsed_seconds >= config.alarm_enemy_unlock_time:
-		pool.append("alarm_clock")
-	if run_elapsed_seconds >= config.mailbox_enemy_unlock_time:
-		pool.append("mailbox")
+	var pool: Array[String] = []
+	for enemy_id in ["basic", "correction", "stapler", "alarm_clock", "mailbox"]:
+		if difficulty_day >= get_enemy_unlock_day(enemy_id):
+			pool.append(enemy_id)
+	if pool.is_empty():
+		pool.append("basic")
 	return pool
+
+
+func get_enemy_unlock_day(enemy_id: String) -> int:
+	return maxi(1, int(config.enemy_unlock_days.get(enemy_id, 999999)))
+
+
+func get_difficulty_stage_seconds(for_day: int = -1) -> float:
+	var day := difficulty_day if for_day < 1 else for_day
+	return float(maxi(day - 1, 0)) * maxf(config.difficulty_seconds_per_day, 0.0)
+
+
+func get_health_multiplier(for_day: int = -1) -> float:
+	return 1.0 + get_difficulty_stage_seconds(for_day) * config.enemy_health_growth_per_second
+
+
+func get_damage_multiplier(for_day: int = -1) -> float:
+	return 1.0 + get_difficulty_stage_seconds(for_day) * config.enemy_damage_growth_per_second
 
 
 func request_valid_spawn_position() -> Variant:
@@ -86,8 +115,8 @@ func set_dream_time(total_minutes: float) -> void:
 
 
 func get_current_spawn_interval() -> float:
-	var total_duration := maxf(config.alarm_start_minutes - config.dream_start_minutes, 0.001)
-	var progress := clampf(run_elapsed_seconds / (total_duration * config.real_seconds_per_game_minute), 0.0, 1.0) if endless_mode else clampf((current_dream_minutes - config.dream_start_minutes) / total_duration, 0.0, 1.0)
+	# 保留旧线性lerp曲线：一天等价于旧曲线的一个完整阶段；达到正式最小间隔后继续由硬下限保护。
+	var progress := clampf(float(difficulty_day - 1), 0.0, 1.0)
 	var interval := lerpf(config.enemy_initial_spawn_interval, config.enemy_minimum_spawn_interval, progress)
 	var stress_adjusted := interval / maxf(stress_spawn_multiplier, 1.0)
 	return maxf(stress_adjusted, config.stress_absolute_minimum_spawn_interval)

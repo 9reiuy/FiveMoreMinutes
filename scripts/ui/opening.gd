@@ -24,6 +24,7 @@ var ending_paragraphs = []:
 var dramatic_text := ""
 
 @onready var return_button: Button = $ReturnToMenu
+@onready var option_group: PixelOptionGroup = $OptionGroup
 @onready var city_night: TextureRect = $NightCityBackground
 @onready var story_text: Label = $FrameArea/StoryText
 @onready var continue_arrow: Polygon2D = $FrameArea/ContinueArrow
@@ -72,6 +73,11 @@ func _ready() -> void:
 	ending_canvas.visible = ending_mode
 	ending_canvas.configure(self)
 	return_button.visible = false
+	return_button.add_theme_font_override("font", PixelFont.get_font())
+	return_button.add_theme_color_override("font_color", Color("8fb3bc"))
+	return_button.add_theme_color_override("font_hover_color", Color("d5dde0"))
+	return_button.add_theme_color_override("font_pressed_color", Color("d5dde0"))
+	option_group.register_options([return_button])
 	return_button.pressed.connect(_on_return_to_menu)
 	text_audio = AudioStreamPlayer.new()
 	text_audio.bus = &"UI"

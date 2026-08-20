@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const OUTLINE_CONTROLLER := preload("res://scripts/entities/enemy_outline_controller.gd")
+const WORLD_HEALTH_BAR := preload("res://scripts/ui/player_world_health_bar.gd")
 
 signal defeated(at_position: Vector2, experience_drop_count: int)
 
@@ -10,6 +11,7 @@ signal defeated(at_position: Vector2, experience_drop_count: int)
 var target: Node2D
 var arena_bounds := Rect2(24, 44, 592, 282)
 var current_health := 18.0
+var maximum_health := 18.0
 var contact_damage := 8.0
 var contact_cooldown := 0.0
 var dead := false
@@ -26,10 +28,14 @@ var visual_state_offset := Vector2.ZERO
 var visual_base_scale := Vector2.ONE
 var auto_aim_locked := false
 var outline_controller: EnemyOutlineController
+var health_bar: PlayerWorldHealthBar
+var enemy_light: PointLight2D
 @onready var visual: AnimatedSprite2D = get_node_or_null("Visual")
 
 
 func _ready() -> void:
+	_setup_health_bar()
+	_setup_enemy_light()
 	if visual == null:
 		return
 	visual_base_scale = visual.scale
@@ -43,7 +49,8 @@ func _ready() -> void:
 
 func configure(new_target: Node2D, health: float, damage: float, bounds: Rect2, new_separation_strength: float, new_separation_radius: float, config: DemoConfig = null) -> void:
 	target = new_target
-	current_health = health
+	maximum_health = maxf(health, 1.0)
+	current_health = maximum_health
 	contact_damage = damage
 	movement_speed = config.base_enemy_movement_speed if config != null else movement_speed
 	arena_bounds = bounds
@@ -54,6 +61,107 @@ func configure(new_target: Node2D, health: float, damage: float, bounds: Rect2, 
 		visual_base_scale = Vector2.ONE * get_visual_scale(config)
 		visual.scale = visual_base_scale
 		_configure_visual_animation_speeds()
+	if health_bar != null and config != null:
+		_configure_health_bar()
+	if enemy_light != null and config != null:
+		_configure_enemy_light()
+
+
+func _setup_enemy_light() -> void:
+	# EnemyLight is a sibling of Visual, so hit/death animation scale never changes
+	# the actual light radius. Unlike the old SoftGlow draw circles, PointLight2D
+	# participates in the same canvas-lighting pass as PlayerLight and lights Ground.
+	enemy_light = PointLight2D.new()
+	enemy_light.name = "EnemyLight"
+	enemy_light.position = Vector2.ZERO
+	enemy_light.shadow_enabled = false
+	enemy_light.enabled = false
+	enemy_light.visible = false
+	add_child(enemy_light)
+	if feedback_config != null:
+		_configure_enemy_light()
+
+
+func _configure_enemy_light() -> void:
+	if enemy_light == null or feedback_config == null:
+		return
+	var player_light := target.get_node_or_null("PlayerLight") as PointLight2D if is_instance_valid(target) else null
+	if player_light != null:
+		# Reuse the exact texture and canvas-light ranges that are already proven to
+		# illuminate this DreamWorld. Only radius and energy differ for enemies.
+		enemy_light.texture = player_light.texture
+		enemy_light.color = player_light.color
+		enemy_light.blend_mode = player_light.blend_mode
+		enemy_light.range_item_cull_mask = player_light.range_item_cull_mask
+		enemy_light.range_layer_min = player_light.range_layer_min
+		enemy_light.range_layer_max = player_light.range_layer_max
+		enemy_light.range_z_min = player_light.range_z_min
+		enemy_light.range_z_max = player_light.range_z_max
+		enemy_light.texture_scale = player_light.texture_scale * feedback_config.enemy_light_radius_multiplier
+		enemy_light.energy = player_light.energy * feedback_config.enemy_light_energy_multiplier
+	else:
+		# Defensive fallback for isolated enemy-scene previews. Runtime DreamWorld
+		# always takes the branch above and shares PlayerLight's texture resource.
+		enemy_light.texture = _make_player_compatible_light_texture()
+		enemy_light.color = feedback_config.player_light_color
+		var reference_radius := feedback_config.runtime_player_light_radius if feedback_config.runtime_player_light_radius > 0.0 else feedback_config.player_light_radius
+		enemy_light.texture_scale = reference_radius * feedback_config.enemy_light_radius_multiplier / 128.0
+		enemy_light.energy = feedback_config.player_light_energy * feedback_config.enemy_light_energy_multiplier
+	enemy_light.enabled = enemy_light.texture != null and enemy_light.energy > 0.0
+	enemy_light.visible = enemy_light.enabled
+
+
+func _make_player_compatible_light_texture() -> GradientTexture2D:
+	var gradient := Gradient.new()
+	gradient.offsets = PackedFloat32Array([0.0, clampf(feedback_config.player_light_falloff, 0.05, 0.8), 1.0])
+	gradient.colors = PackedColorArray([
+		Color(1.0, 1.0, 1.0, 1.0),
+		Color(1.0, 1.0, 1.0, 0.78),
+		Color(1.0, 1.0, 1.0, 0.0),
+	])
+	var light_texture := GradientTexture2D.new()
+	light_texture.width = 256
+	light_texture.height = 256
+	light_texture.fill = GradientTexture2D.FILL_RADIAL
+	light_texture.fill_from = Vector2(0.5, 0.5)
+	light_texture.fill_to = Vector2(1.0, 0.5)
+	light_texture.gradient = gradient
+	return light_texture
+
+
+func _setup_health_bar() -> void:
+	health_bar = WORLD_HEALTH_BAR.new()
+	health_bar.name = "EnemyHPBar"
+	health_bar.z_index = 20
+	add_child(health_bar)
+	if feedback_config != null:
+		_configure_health_bar()
+
+
+func _configure_health_bar() -> void:
+	health_bar.configure_values(
+		minf(feedback_config.enemy_hp_bar_width, 20.0),
+		feedback_config.enemy_hp_bar_height,
+		_get_health_bar_offset(),
+		current_health,
+		maximum_health
+	)
+
+
+## 以实际碰撞核心的最下缘定位，避免Monster图集大透明边缘把血条推离主体。
+func _get_health_bar_offset() -> Vector2:
+	var body_bottom := 0.0
+	for child in get_children():
+		if not child is CollisionShape2D:
+			continue
+		var collision := child as CollisionShape2D
+		if collision.shape is CircleShape2D:
+			body_bottom = maxf(body_bottom, collision.position.y + (collision.shape as CircleShape2D).radius)
+		elif collision.shape is CapsuleShape2D:
+			body_bottom = maxf(body_bottom, collision.position.y + (collision.shape as CapsuleShape2D).height * 0.5)
+		elif collision.shape is RectangleShape2D:
+			body_bottom = maxf(body_bottom, collision.position.y + (collision.shape as RectangleShape2D).size.y * 0.5)
+	return Vector2(0.0, body_bottom + feedback_config.enemy_hp_bar_bottom_margin)
 
 
 ## 统一 visual_scale 入口：每种敌人按自身 Monster 素材返回配置缩放，碰撞体不受影响。
@@ -149,12 +257,15 @@ func _get_separation_velocity() -> Vector2:
 
 
 func take_damage(amount: float, _hit_origin: Vector2 = Vector2.INF) -> void:
-	if dead:
+	if dead or amount <= 0.0:
 		return
+	var health_before := current_health
 	var hit_direction := _resolve_hit_direction(_hit_origin)
-	current_health -= amount
+	current_health = maxf(0.0, current_health - amount)
+	var actual_damage := maxf(0.0, health_before - current_health)
 	if current_health <= 0.0:
 		dead = true
+		_hide_health_bar()
 		set_auto_aim_locked(false)
 		# 死亡层级：不为“让死亡动画明显”而强制提升 z_index，反而施加轻微负 bias，
 		# 使死亡动画留在世界层排序内且低于存活怪物，避免尸体盖住正在战斗的敌人；
@@ -166,6 +277,14 @@ func take_damage(amount: float, _hit_origin: Vector2 = Vector2.INF) -> void:
 		SFX.play_event(&"enemy_kill")
 		_begin_death_sequence()
 		return
+	_apply_nonlethal_hit_feedback(actual_damage, hit_direction)
+
+
+func _apply_nonlethal_hit_feedback(actual_damage: float, hit_direction: Vector2) -> void:
+	if dead or current_health <= 0.0 or actual_damage <= 0.0:
+		return
+	if health_bar != null and feedback_config != null:
+		health_bar.show_after_damage(current_health, maximum_health, feedback_config.enemy_hp_bar_visible_duration)
 	if feedback_config != null:
 		hit_flash_left = feedback_config.enemy_hit_flash_seconds
 		hit_scale_left = feedback_config.enemy_hit_scale_seconds
@@ -173,11 +292,17 @@ func take_damage(amount: float, _hit_origin: Vector2 = Vector2.INF) -> void:
 		_spawn_combat_feedback(hit_direction, false)
 
 
+func _hide_health_bar() -> void:
+	if health_bar != null:
+		health_bar.hide_immediately()
+
+
 ## HP 归零后的统一死亡流程：停 AI、禁用接触伤害、播 death 序列帧，结束后才掉落结算并回收。
 func _begin_death_sequence() -> void:
 	if death_processed:
 		return
 	death_processed = true
+	_hide_health_bar()
 	velocity = Vector2.ZERO
 	set_physics_process(false)
 	if visual != null and visual.sprite_frames != null and visual.sprite_frames.has_animation(&"death"):
@@ -284,6 +409,9 @@ func set_movement_speed_multiplier(multiplier: float) -> void:
 ## 但仍留在世界层排序内；覆写 take_damage 的敌人（自爆蘑菇/宝箱怪）也须调用。
 func apply_death_z_bias() -> void:
 	z_index = feedback_config.enemy_death_z_bias if feedback_config != null else -1
+	if enemy_light != null:
+		enemy_light.enabled = false
+		enemy_light.visible = false
 
 
 func set_auto_aim_locked(locked: bool) -> void:

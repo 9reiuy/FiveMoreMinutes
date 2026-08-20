@@ -25,7 +25,9 @@ const SUNSHADE_HOVER_BRIGHTNESS := 1.25
 @onready var sunshade_sprite: Sprite2D = $Layout/ArtRoot/Sunshade
 # 电脑 Sprite：默认息屏素材，当天首次打开后切换为亮屏素材（见 _sync_computer_visual）。
 @onready var computer_sprite: Sprite2D = $Layout/ArtRoot/BedroomComputer
-@onready var bedroom_chr_sprite: Sprite2D = $Layout/ArtRoot/BedroomChrOnBed
+@onready var bedroom_chr_sprite: Sprite2D = $Layout/ArtRoot/BedroomChrRoot/BedroomChrOnBed
+@onready var bedroom_chr_glow_sprite: Sprite2D = $Layout/ArtRoot/BedroomChrRoot/BedroomChrOnBedLight
+@onready var bedroom_chr_glow_timer: Timer = $Layout/ArtRoot/BedroomChrRoot/GlowFlickerTimer
 @onready var bed_click_area: Area2D = $Layout/BedClickArea
 @onready var bottle_click_area: Area2D = $Layout/MelatoninClickArea
 @onready var sunshade_click_area: Area2D = $Layout/SunshadeClickArea
@@ -106,6 +108,7 @@ func _ready() -> void:
 	# 电脑描边与床使用同一套 shader 与同一宽度参数（统一描边组件）。
 	computer_outline_material.set_shader_parameter("outline_width_source_pixels", outline_source_width)
 	bedroom_chr_outline_material.set_shader_parameter("outline_width_source_pixels", outline_source_width)
+	_setup_bedroom_chr_glow()
 	# 遮光帘使用独立材质实例，描边宽度单独控制（3 屏幕像素 = 12 源像素）。
 	sunshade_outline_material.set_shader_parameter("outline_width_source_pixels", 3.0 / maxf(absf(art_root.scale.x), 0.001))
 	bed_click_area.mouse_entered.connect(_set_highlighted.bind("bed"))
@@ -125,7 +128,6 @@ func _ready() -> void:
 	computer_overlay.story_weapon_changed.connect(_on_story_weapon_changed)
 	computer_overlay.configure(persistent_state)
 	phone.balance_changed.connect(_on_balance_changed)
-	phone.permanent_upgrade_changed.connect(_on_persistent_state_changed)
 	phone.state_changed.connect(_on_persistent_state_changed)
 	phone.configure_state(persistent_state)
 	status_hud.bind_state(persistent_state)
@@ -148,6 +150,7 @@ func _exit_tree() -> void:
 	# 避免 queue_free 延迟到帧末时短暂影响下一个场景。
 	ambient_modulate.visible = false
 	computer_screen_light.visible = false
+	bedroom_chr_glow_timer.stop()
 	SFX.stop_music(config.music_fade_duration, get_instance_id())
 	SFX.stop_weather_ambience(config.ambience_fade_duration)
 
@@ -253,6 +256,68 @@ func _sync_art_visibility() -> void:
 	bottle_sprite.visible = bool(persistent_state.get("melatonin_bottle_present", false)) and (not melatonin_ui.visible or not bool(melatonin_ui.call("is_table_bottle_taken")))
 	if not bottle_sprite.visible and highlighted == "bottle":
 		_set_highlighted("")
+	# 发光层只跟随主体显隐，不参与角色的点击、碰撞或悬停描边。
+	var glow_should_be_visible := config.bedroom_chr_glow_enabled and bedroom_chr_sprite.visible and not bedroom_chr_dialogue_hidden
+	bedroom_chr_glow_sprite.visible = glow_should_be_visible
+	if glow_should_be_visible:
+		if bedroom_chr_glow_timer.is_stopped():
+			_restart_bedroom_chr_glow_flicker()
+	else:
+		bedroom_chr_glow_timer.stop()
+
+
+func _setup_bedroom_chr_glow() -> void:
+	if not bedroom_chr_glow_timer.timeout.is_connected(_on_bedroom_chr_glow_flicker_timeout):
+		bedroom_chr_glow_timer.timeout.connect(_on_bedroom_chr_glow_flicker_timeout)
+	_sync_art_visibility()
+
+
+func _restart_bedroom_chr_glow_flicker(reset_alpha: bool = true) -> void:
+	if reset_alpha:
+		var normal_min := minf(config.bedroom_chr_glow_alpha_normal_min, config.bedroom_chr_glow_alpha_normal_max)
+		var normal_max := maxf(config.bedroom_chr_glow_alpha_normal_min, config.bedroom_chr_glow_alpha_normal_max)
+		bedroom_chr_glow_sprite.self_modulate = Color(config.bedroom_chr_glow_color, randf_range(normal_min, normal_max))
+	_schedule_bedroom_chr_glow_flicker()
+
+
+func _schedule_bedroom_chr_glow_flicker() -> void:
+	var interval_min := minf(config.bedroom_chr_glow_interval_min, config.bedroom_chr_glow_interval_max)
+	var interval_max := maxf(config.bedroom_chr_glow_interval_min, config.bedroom_chr_glow_interval_max)
+	bedroom_chr_glow_timer.start(randf_range(maxf(interval_min, 0.05), maxf(interval_max, 0.05)))
+
+
+func _on_bedroom_chr_glow_flicker_timeout() -> void:
+	if not config.bedroom_chr_glow_enabled or bedroom_chr_dialogue_hidden or not bedroom_chr_sprite.visible:
+		bedroom_chr_glow_timer.stop()
+		return
+	var next_alpha := _next_bedroom_chr_glow_alpha(bedroom_chr_glow_sprite.self_modulate.a)
+	# 视频画面切换采用直接硬切，不创建Tween，也不在_process中逐帧随机。
+	bedroom_chr_glow_sprite.self_modulate = Color(config.bedroom_chr_glow_color, next_alpha)
+	_schedule_bedroom_chr_glow_flicker()
+
+
+func _next_bedroom_chr_glow_alpha(current_alpha: float) -> float:
+	var normal_min := minf(config.bedroom_chr_glow_alpha_normal_min, config.bedroom_chr_glow_alpha_normal_max)
+	var normal_max := maxf(config.bedroom_chr_glow_alpha_normal_min, config.bedroom_chr_glow_alpha_normal_max)
+	var big_change_chance := clampf(config.bedroom_chr_glow_big_change_chance, 0.0, 1.0)
+	if randf() < big_change_chance:
+		# 强切换总是选当前亮度的另一侧，避免抽到数值接近的“伪强切换”。
+		if current_alpha >= (normal_min + normal_max) * 0.5:
+			var dark_min := minf(config.bedroom_chr_glow_alpha_dark_min, config.bedroom_chr_glow_alpha_dark_max)
+			var dark_max := maxf(config.bedroom_chr_glow_alpha_dark_min, config.bedroom_chr_glow_alpha_dark_max)
+			return randf_range(dark_min, dark_max)
+		var bright_min := minf(config.bedroom_chr_glow_alpha_bright_min, config.bedroom_chr_glow_alpha_bright_max)
+		var bright_max := maxf(config.bedroom_chr_glow_alpha_bright_min, config.bedroom_chr_glow_alpha_bright_max)
+		return randf_range(bright_min, bright_max)
+	# 同一视频镜头内优先围绕当前值小幅跳变；离开极端亮/暗画面后回到普通区间。
+	if current_alpha < normal_min or current_alpha > normal_max:
+		return randf_range(normal_min, normal_max)
+	var change_amount := randf_range(0.03, 0.10)
+	if current_alpha <= normal_min + 0.03:
+		return minf(current_alpha + change_amount, normal_max)
+	if current_alpha >= normal_max - 0.03:
+		return maxf(current_alpha - change_amount, normal_min)
+	return clampf(current_alpha + change_amount * (-1.0 if randf() < 0.5 else 1.0), normal_min, normal_max)
 
 
 func _sync_sunshade_visibility() -> void:
@@ -643,6 +708,7 @@ func _on_dialogue_session_started() -> void:
 	if hallway.visible or bedroom_chr_dialogue_hidden:
 		return
 	bedroom_chr_dialogue_hidden = true
+	bedroom_chr_glow_timer.stop()
 	bedroom_chr_dialogue_visibility.clear()
 	bedroom_chr_interaction_before_dialog = bedroom_chr_interaction_enabled
 	bedroom_chr_interaction_enabled = false
@@ -666,6 +732,7 @@ func _on_dialogue_session_ended() -> void:
 	bedroom_chr_interaction_enabled = bedroom_chr_interaction_before_dialog
 	bedroom_chr_dialogue_visibility.clear()
 	bedroom_chr_dialogue_hidden = false
+	_sync_art_visibility()
 
 
 func _show_pending_entry_notice() -> void:

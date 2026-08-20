@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/global_upgrade_panel.gd" id="1_panel"]
+[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+[ext_resource type="Theme" path="res://resources/themes/phone_pixel_scrollbar.tres" id="3_scroll_theme"]
+[ext_resource type="Script" path="res://scripts/ui/pixel_option_group.gd" id="4_option"]
+
+[node name="GlobalUpgradePanel" type="Control"]
+custom_minimum_size = Vector2(320, 216)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_panel")
+config = ExtResource("2_config")
+
+[node name="OptionGroup" type="Control" parent="."]
+z_index = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_option")
+
+[node name="RAM" type="Label" parent="."]
+layout_mode = 0
+offset_right = 304.0
+offset_bottom = 22.0
+theme_override_colors/font_color = Color(0.623529, 0.709804, 0.756863, 1)
+theme_override_font_sizes/font_size = 13
+text = "RAM  0"
+horizontal_alignment = 2
+
+[node name="UpgradeScroll" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_top = 26.0
+offset_right = 316.0
+offset_bottom = 216.0
+horizontal_scroll_mode = 0
+theme = ExtResource("3_scroll_theme")
+
+[node name="UpgradeList" type="VBoxContainer" parent="UpgradeScroll"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6

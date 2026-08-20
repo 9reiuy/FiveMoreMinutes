@@ -43,11 +43,14 @@ func _physics_process(delta: float) -> void:
 
 
 func take_damage(amount: float, hit_origin: Vector2 = Vector2.INF) -> void:
-	if state in [State.DEATH_DELAY, State.CHAIN_TRIGGERED, State.DEAD]:
+	if state in [State.DEATH_DELAY, State.CHAIN_TRIGGERED, State.DEAD] or amount <= 0.0:
 		return
-	current_health -= amount
+	var health_before := current_health
+	current_health = maxf(0.0, current_health - amount)
+	var actual_damage := maxf(0.0, health_before - current_health)
 	if current_health <= 0.0:
 		dead = true
+		_hide_health_bar()
 		set_auto_aim_locked(false)
 		apply_death_z_bias()
 		state = State.DEATH_DELAY
@@ -55,13 +58,14 @@ func take_damage(amount: float, hit_origin: Vector2 = Vector2.INF) -> void:
 		_play_visual_animation(&"death_delay")
 		queue_redraw()
 	else:
-		super.take_damage(0.0, hit_origin)
+		_apply_nonlethal_hit_feedback(actual_damage, _resolve_hit_direction(hit_origin))
 
 
 func trigger_chain() -> void:
 	if has_exploded or state in [State.DEATH_DELAY, State.CHAIN_TRIGGERED, State.DEAD]:
 		return
 	dead = true
+	_hide_health_bar()
 	set_auto_aim_locked(false)
 	apply_death_z_bias()
 	state = State.CHAIN_TRIGGERED
@@ -74,6 +78,7 @@ func _explode() -> void:
 		return
 	has_exploded = true
 	dead = true
+	_hide_health_bar()
 	set_auto_aim_locked(false)
 	apply_death_z_bias()
 	state = State.DEAD

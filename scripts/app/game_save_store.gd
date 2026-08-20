@@ -35,3 +35,8 @@ static func save_game(state: Dictionary) -> bool:
 	file.close()
 	return true
 
+
+static func clear_game() -> bool:
+	if not FileAccess.file_exists(SAVE_PATH):
+		return true
+	return DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH)) == OK

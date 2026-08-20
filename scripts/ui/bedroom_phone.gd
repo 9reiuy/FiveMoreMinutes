@@ -7,10 +7,9 @@ const GLITCH_SHADER := preload("res://shaders/glitch_overlay.gdshader")
 # 手机时间区域背景壁纸：只在锁屏/主页时间块内 cover 裁剪绘制，不超出手机屏幕区。
 
 enum PhoneState { COLLAPSED, EXPANDING, EXPANDED, COLLAPSING }
-enum ScreenState { LOCKED, HOME, ONLINE, SOMNIA, QUICKLINK, SETTINGS }
+enum ScreenState { LOCKED, HOME, ONLINE, QUICKLINK, SETTINGS }
 
 signal balance_changed
-signal permanent_upgrade_changed
 signal state_changed
 
 const FINGERPRINT_AREA := Rect2(54, 220, 52, 52)
@@ -32,30 +31,17 @@ const SETTINGS_MUSIC_SLIDER := Rect2(16, 137, 128, 22)
 const SETTINGS_SFX_SLIDER := Rect2(16, 182, 128, 22)
 const SETTINGS_SLEEPWALK := Rect2(16, 222, 128, 26)
 const SETTINGS_FAST_SLEEP := Rect2(16, 254, 128, 26)
-const APP_IDS := ["online", "somnia", "quicklink", "settings"]
+const APP_IDS := ["online", "quicklink", "settings"]
 const APP_NAMES := [
 	["在线！™", "ONLINE!™"],
-	["眠网™", "SOMNIA NET™"],
 	["速联跑腿™", "QUICKLINK™"],
 	["设置", "SETTINGS"]
 ]
 const APP_ICONS := [
 	preload("res://assets/ui/icons/online_icon.png"),
-	preload("res://assets/ui/icons/somnia_icon.png"),
 	preload("res://assets/ui/icons/delivery_icon.png"),
 	preload("res://assets/ui/icons/settings_icon.png")
 ]
-const UPGRADE_IDS := ["visual_cortex", "brainstem", "hippocampus", "prefrontal"]
-const UPGRADE_NAMES := ["枕叶视觉皮层", "脑干", "海马体", "前额叶皮层"]
-const PRODUCT_ICONS := {
-	"melatonin": preload("res://assets/ui/products/melatonin_icon.png"),
-	"cheap_meal": preload("res://assets/ui/products/cheap_meal_icon.png"),
-	"sunshade": preload("res://art/Badroom/sunshade.png"),
-	"visual_cortex": preload("res://assets/ui/products/visual_cortex_icon.png"),
-	"brainstem": preload("res://assets/ui/products/brainstem_icon.png"),
-	"hippocampus": preload("res://assets/ui/products/hippocampus_icon.png"),
-	"prefrontal": preload("res://assets/ui/products/prefrontal_icon.png")
-}
 
 @export var config: DemoConfig
 
@@ -71,10 +57,12 @@ var _shake_tween: Tween
 # 新消息震动提示专用 tween（与 glitch 屏幕震动 _shake_tween 互不影响）。
 var _vibrate_tween: Tween
 var balance_flash_left := 0.0
+var last_battery_ratio := -1.0
 var bedroom_time_minutes := 1260.0
 var movement_tween: Tween
 var hovered_app_index := -1
 var hovered_phone_action := ""
+var phone_option_triangle_elapsed := 0.0
 # 手机静止基准位置：所有震动坐标都基于它计算，不基于当前 position 累计加减，
 # 保证震动结束后准确恢复原位，不会越震越偏。
 var phone_rest_position := Vector2.ZERO
@@ -89,7 +77,6 @@ var page_drag_last_y := 0.0
 @onready var message_list: VBoxContainer = $ScreenClip/OnlineScroll/ContentSafeMargin/MessageList
 @onready var quicklink_scroll: PhoneDragScroll = $ScreenClip/QuicklinkScroll
 @onready var quicklink_content: Control = $ScreenClip/QuicklinkScroll/QuicklinkContent
-@onready var somnia_scrollbar: VScrollBar = $ScreenClip/SomniaScrollBar
 @onready var settings_scrollbar: VScrollBar = $ScreenClip/SettingsScrollBar
 
 
@@ -118,13 +105,10 @@ func _ready() -> void:
 	quicklink_content.custom_minimum_size.x = quicklink_scroll.size.x - slim_scrollbar_width - config.online_message_right_safe_margin
 	quicklink_content.custom_minimum_size.y = 313.0
 	quicklink_content.phone = self
-	for scrollbar in [somnia_scrollbar, settings_scrollbar]:
-		scrollbar.position = Vector2(SCREEN_RECT.end.x - slim_scrollbar_width, APP_CONTENT_TOP) - screen_clip.position
-		scrollbar.size = Vector2(slim_scrollbar_width, app_content_height)
-		scrollbar.custom_minimum_size.x = slim_scrollbar_width
-		scrollbar.value_changed.connect(_on_phone_page_scrolled)
-	somnia_scrollbar.max_value = 274.0
-	somnia_scrollbar.page = app_content_height
+	settings_scrollbar.position = Vector2(SCREEN_RECT.end.x - slim_scrollbar_width, APP_CONTENT_TOP) - screen_clip.position
+	settings_scrollbar.size = Vector2(slim_scrollbar_width, app_content_height)
+	settings_scrollbar.custom_minimum_size.x = slim_scrollbar_width
+	settings_scrollbar.value_changed.connect(_on_phone_page_scrolled)
 	settings_scrollbar.max_value = 286.0
 	settings_scrollbar.page = app_content_height
 	screen_state = ScreenState.LOCKED if config.phone_lock_on_bedroom_entry else ScreenState.HOME
@@ -141,11 +125,6 @@ func _ready() -> void:
 
 func configure_state(meta: Dictionary) -> void:
 	persistent_state = meta
-	if not persistent_state.has("permanent_upgrades"):
-		persistent_state.permanent_upgrades = {}
-	for id in UPGRADE_IDS:
-		if not persistent_state.permanent_upgrades.has(id):
-			persistent_state.permanent_upgrades[id] = 0
 	if not persistent_state.has("online_messages"):
 		var message_templates := messages if not messages.is_empty() else _load_array("res://resources/phone_messages.json", "messages")
 		persistent_state.online_messages = message_templates.duplicate(true)
@@ -172,6 +151,13 @@ func set_bedroom_time(total_minutes: float) -> void:
 
 
 func _process(delta: float) -> void:
+	if not hovered_phone_action.is_empty():
+		phone_option_triangle_elapsed += delta
+		queue_redraw()
+	var battery_ratio := _get_battery_ratio()
+	if not is_equal_approx(battery_ratio, last_battery_ratio):
+		last_battery_ratio = battery_ratio
+		queue_redraw()
 	if balance_flash_left > 0.0:
 		balance_flash_left = maxf(0.0, balance_flash_left - delta)
 		queue_redraw()
@@ -182,6 +168,7 @@ func _process(delta: float) -> void:
 func _clear_app_hover() -> void:
 	hovered_app_index = -1
 	hovered_phone_action = ""
+	phone_option_triangle_elapsed = 0.0
 	queue_redraw()
 
 
@@ -212,8 +199,8 @@ func open_quicklink_from_bedroom() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
-	if state == PhoneState.EXPANDED and screen_state in [ScreenState.SOMNIA, ScreenState.SETTINGS]:
-		var page_scrollbar := somnia_scrollbar if screen_state == ScreenState.SOMNIA else settings_scrollbar
+	if state == PhoneState.EXPANDED and screen_state == ScreenState.SETTINGS:
+		var page_scrollbar := settings_scrollbar
 		var content_rect := Rect2(6, APP_CONTENT_TOP, 148, SCREEN_RECT.end.y - APP_CONTENT_BOTTOM_MARGIN - APP_CONTENT_TOP)
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and content_rect.has_point(event.position):
 			if event.pressed:
@@ -271,6 +258,7 @@ func _gui_input(event: InputEvent) -> void:
 			SFX.play_event(&"ui_hover")
 		if next_action != hovered_phone_action:
 			hovered_phone_action = next_action
+			phone_option_triangle_elapsed = 0.0
 			queue_redraw()
 		if next_hovered != hovered_app_index:
 			hovered_app_index = next_hovered
@@ -306,18 +294,12 @@ func _gui_input(event: InputEvent) -> void:
 					SFX.play_event(&"phone_operation")
 					_open_app(APP_IDS[index])
 					break
-		ScreenState.ONLINE, ScreenState.SOMNIA, ScreenState.QUICKLINK, ScreenState.SETTINGS:
+		ScreenState.ONLINE, ScreenState.QUICKLINK, ScreenState.SETTINGS:
 			if BACK_BUTTON.has_point(event.position):
 				SFX.play_event(&"phone_operation")
 				screen_state = ScreenState.HOME
 				_sync_content_visibility()
 				queue_redraw()
-			elif screen_state == ScreenState.SOMNIA:
-				var content_point: Vector2 = event.position + Vector2(0, somnia_scrollbar.value)
-				for index in UPGRADE_IDS.size():
-					if _upgrade_buy_rect(index).has_point(content_point):
-						_purchase_permanent_upgrade(UPGRADE_IDS[index])
-						break
 			elif screen_state == ScreenState.SETTINGS:
 				SFX.play_event(&"phone_operation")
 				_update_phone_setting(event.position)
@@ -328,7 +310,6 @@ func _open_app(id: String) -> void:
 		"online":
 			screen_state = ScreenState.ONLINE
 			_mark_online_messages_read()
-		"somnia": screen_state = ScreenState.SOMNIA
 		"quicklink": screen_state = ScreenState.QUICKLINK
 		"settings": screen_state = ScreenState.SETTINGS
 	_sync_content_visibility()
@@ -341,7 +322,6 @@ func _sync_content_visibility() -> void:
 	app_grid.visible = screen_state == ScreenState.HOME
 	online_scroll.visible = screen_state == ScreenState.ONLINE
 	quicklink_scroll.visible = screen_state == ScreenState.QUICKLINK
-	somnia_scrollbar.visible = screen_state == ScreenState.SOMNIA
 	settings_scrollbar.visible = screen_state == ScreenState.SETTINGS
 	if quicklink_scroll.visible:
 		quicklink_content.queue_redraw()
@@ -592,10 +572,6 @@ func _app_rect(index: int) -> Rect2:
 ## 因此点击 APP 图标（包括 ONLINE）或 APP 内容不会再误触发收起。
 
 
-func _upgrade_buy_rect(index: int) -> Rect2:
-	return Rect2(96, 84 + index * 47, 48, 16)
-
-
 ## 当前页面的内容层命中：APP 图标、锁屏指纹、APP 顶栏与内容视口等。
 ## 这些区域优先响应交互，点击它们绝不触发收起。
 func _is_content_point(point: Vector2) -> bool:
@@ -627,11 +603,6 @@ func _phone_action_at(point: Vector2) -> String:
 	else:
 		if BACK_BUTTON.has_point(point):
 			return "back"
-	if screen_state == ScreenState.SOMNIA:
-		var content_point := point + Vector2(0, somnia_scrollbar.value)
-		for index in UPGRADE_IDS.size():
-			if _upgrade_buy_rect(index).has_point(content_point):
-				return "upgrade_" + UPGRADE_IDS[index]
 	if screen_state == ScreenState.SETTINGS:
 		var content_point := point + Vector2(0, settings_scrollbar.value)
 		if SETTINGS_MASTER_SLIDER.has_point(content_point): return "settings_master"
@@ -668,13 +639,7 @@ func _update_phone_setting(point: Vector2) -> void:
 
 
 func _activate_scrolled_page_point(point: Vector2) -> void:
-	if screen_state == ScreenState.SOMNIA:
-		var content_point := point + Vector2(0, somnia_scrollbar.value)
-		for index in UPGRADE_IDS.size():
-			if _upgrade_buy_rect(index).has_point(content_point):
-				_purchase_permanent_upgrade(UPGRADE_IDS[index])
-				return
-	elif screen_state == ScreenState.SETTINGS:
+	if screen_state == ScreenState.SETTINGS:
 		SFX.play_event(&"phone_operation")
 		_update_phone_setting(point)
 
@@ -845,30 +810,6 @@ func _purchase_sunshade() -> void:
 	queue_redraw()
 
 
-func _purchase_permanent_upgrade(id: String) -> void:
-	if purchase_locked:
-		return
-	purchase_locked = true
-	var levels: Dictionary = persistent_state.get("permanent_upgrades", {})
-	var level := int(levels.get(id, 0))
-	if level < config.permanent_upgrade_max_level:
-		var price := int(config.permanent_upgrade_prices[level])
-		var ram := int(persistent_state.get("ram", 0))
-		if ram >= price:
-			persistent_state.ram = ram - price
-			levels[id] = level + 1
-			persistent_state.permanent_upgrades = levels
-			balance_flash_left = 0.45
-			SFX.play_event(&"purchase")
-			permanent_upgrade_changed.emit()
-		else:
-			SFX.play_event(&"forbidden")
-	else:
-		SFX.play_event(&"forbidden")
-	purchase_locked = false
-	queue_redraw()
-
-
 func _flash_balance() -> void:
 	balance_flash_left = 0.45
 	balance_changed.emit()
@@ -891,7 +832,6 @@ func _draw_screen(canvas: CanvasItem) -> void:
 		ScreenState.LOCKED: _draw_lock_screen(canvas, font)
 		ScreenState.HOME: _draw_home_screen(canvas, font)
 		ScreenState.ONLINE: _draw_online(canvas, font)
-		ScreenState.SOMNIA: _draw_somnia(canvas, font)
 		ScreenState.QUICKLINK: _draw_quicklink_header(canvas, font)
 		ScreenState.SETTINGS: _draw_settings(canvas, font)
 
@@ -899,7 +839,7 @@ func _draw_screen(canvas: CanvasItem) -> void:
 # 速联跑腿™ 只在此绘制共用的顶部返回按钮与标题；商品列表由
 # QuicklinkScroll/QuicklinkContent 自绘（支持滚动）。
 func _draw_quicklink_header(canvas: CanvasItem, font: Font) -> void:
-	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "速联跑腿™", "QUICKLINK™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "速联跑腿™", "QUICKLINK™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size, phone_option_triangle_elapsed)
 
 
 func _draw_lock_screen(canvas: CanvasItem, font: Font) -> void:
@@ -955,7 +895,14 @@ func _draw_home_status_bar(canvas: CanvasItem, font: Font) -> void:
 		canvas.draw_rect(Rect2(112 + bar_index * 4, 34 - bar_index * 2, 2, 2 + bar_index * 2), Color("7faabd"))
 	canvas.draw_rect(Rect2(128, 28, 17, 8), Color("7faabd"), false, 1.0)
 	canvas.draw_rect(Rect2(145, 30, 2, 4), Color("7faabd"))
-	canvas.draw_rect(Rect2(130, 30, 11, 4), Color("477b98"))
+	var fill_width := roundi(11.0 * _get_battery_ratio())
+	if fill_width > 0:
+		canvas.draw_rect(Rect2(130, 30, fill_width, 4), Color("477b98"))
+
+
+func _get_battery_ratio() -> float:
+	var stress := clampf(float(persistent_state.get("stress_value", config.stress_default)), 0.0, float(config.stress_max))
+	return 1.0 - clampf(stress / maxf(float(config.stress_max), 1.0), 0.0, 1.0)
 
 
 func _draw_home_navigation(canvas: CanvasItem) -> void:
@@ -993,60 +940,7 @@ func _draw_app_icon(canvas: CanvasItem, rect: Rect2, chinese: String, english: S
 
 
 func _draw_online(canvas: CanvasItem, font: Font) -> void:
-	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "在线！™", "ONLINE!™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
-
-
-func _draw_somnia(canvas: CanvasItem, font: Font) -> void:
-	canvas.draw_set_transform(-screen_clip.position + Vector2(0, -somnia_scrollbar.value))
-	canvas.draw_string(font, Vector2(72, 78), "RAM %04d" % int(persistent_state.get("ram", 0)), HORIZONTAL_ALIGNMENT_RIGHT, 66, 10, Color("9fb5c1"))
-	var levels: Dictionary = persistent_state.get("permanent_upgrades", {})
-	for index in UPGRADE_IDS.size():
-		var id: String = UPGRADE_IDS[index]
-		var level := int(levels.get(id, 0))
-		var y := 82.0 + index * 47.0
-		var card := Rect2(10, y, 140, 45)
-		# 升级卡：与商店商品卡同一套 16bit 像素斜面语言。
-		canvas.draw_rect(card, Color("101823"))
-		canvas.draw_rect(card.grow(-2), Color("182431"))
-		canvas.draw_line(card.position, card.position + Vector2(card.size.x, 0), Color("3e627a"), 1.0)
-		canvas.draw_line(card.position + Vector2(0, card.size.y - 1), card.end, Color("0a0e15"), 1.0)
-		canvas.draw_texture_rect(PRODUCT_ICONS[id], Rect2(14, y + 8, 26, 26), false)
-		canvas.draw_string(font, Vector2(44, y + 10), "%s  %d/%d" % [UPGRADE_NAMES[index], level, config.permanent_upgrade_max_level], HORIZONTAL_ALIGNMENT_LEFT, 92, 6, Color("c1cbd1"))
-		var button := _upgrade_buy_rect(index)
-		var capped := level >= config.permanent_upgrade_max_level
-		var price := 0 if capped else int(config.permanent_upgrade_prices[level])
-		var ram := int(persistent_state.get("ram", 0))
-		var disabled := capped or ram < price
-		var label := _somnia_button_label(level, ram)
-		PhoneShopUI.draw_pixel_shop_button(canvas, button, label, disabled, hovered_phone_action == "upgrade_" + id, font)
-		canvas.draw_string(font, Vector2(44, y + 21), "当前：%s" % _permanent_effect_value(id, level), HORIZONTAL_ALIGNMENT_LEFT, 96, 5, Color("8799a4"))
-		canvas.draw_string(font, Vector2(44, y + 30), "下一级：%s" % ("--" if capped else _permanent_effect_value(id, level + 1)), HORIZONTAL_ALIGNMENT_LEFT, 96, 5, Color("8799a4"))
-		canvas.draw_string(font, Vector2(44, y + 39), "需要：%s  持有：%d RAM" % ["--" if capped else "%d RAM" % price, ram], HORIZONTAL_ALIGNMENT_LEFT, 100, 5, Color("718894"))
-	canvas.draw_set_transform(-screen_clip.position)
-	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "眠网™", "SOMNIA NET™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
-
-
-func _permanent_effect_text(id: String, level: int) -> String:
-	match id:
-		"visual_cortex": return "范围 +%d → +%d px" % [int(level * config.visual_cortex_range_per_level), int(mini(level + 1, 5) * config.visual_cortex_range_per_level)]
-		"brainstem": return "经验 ×%.1f → ×%.1f" % [1.0 + level * config.brainstem_experience_per_level, 1.0 + mini(level + 1, 5) * config.brainstem_experience_per_level]
-		"hippocampus": return "生命 +%d → +%d" % [int(level * config.hippocampus_health_per_level), int(mini(level + 1, 5) * config.hippocampus_health_per_level)]
-		_: return "攻速 ×%.1f → ×%.1f" % [1.0 + level * config.prefrontal_attack_speed_per_level, 1.0 + mini(level + 1, 5) * config.prefrontal_attack_speed_per_level]
-
-
-func _permanent_effect_value(id: String, level: int) -> String:
-	match id:
-		"visual_cortex": return "范围 +%dpx" % int(level * config.visual_cortex_range_per_level)
-		"brainstem": return "经验 ×%.1f" % (1.0 + level * config.brainstem_experience_per_level)
-		"hippocampus": return "生命 +%d" % int(level * config.hippocampus_health_per_level)
-		_: return "攻速 ×%.1f" % (1.0 + level * config.prefrontal_attack_speed_per_level)
-
-
-func _somnia_button_label(level: int, ram: int) -> String:
-	if level >= config.permanent_upgrade_max_level:
-		return "已达到最高等级"
-	var price := int(config.permanent_upgrade_prices[level])
-	return "升级 %d RAM" % price if ram >= price else "RAM不足 需要%d" % price
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "在线！™", "ONLINE!™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size, phone_option_triangle_elapsed)
 
 
 func _draw_settings(canvas: CanvasItem, font: Font) -> void:
@@ -1074,7 +968,7 @@ func _draw_settings(canvas: CanvasItem, font: Font) -> void:
 	canvas.draw_rect(Rect2(SETTINGS_FAST_SLEEP.position + Vector2(5, 7), Vector2(12, 12)), Color("8fd0de") if fast_sleep_enabled else Color("38424c"), false, 1.0)
 	canvas.draw_string(font, SETTINGS_FAST_SLEEP.position + Vector2(23, 17), "快速睡觉  %s" % ("ON" if fast_sleep_enabled else "OFF"), HORIZONTAL_ALIGNMENT_LEFT, 98, 9, Color("cfe0e7") if fast_sleep_enabled else Color("8fa0a9"))
 	canvas.draw_set_transform(-screen_clip.position)
-	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "设置", "SETTINGS", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "设置", "SETTINGS", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size, phone_option_triangle_elapsed)
 
 
 func _draw_phone_slider(canvas: CanvasItem, font: Font, label_text: String, setting_name: StringName, rect: Rect2) -> void:

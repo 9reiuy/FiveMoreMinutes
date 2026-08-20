@@ -66,6 +66,38 @@ text = "0 / 20"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="EndlessDayArea" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 8.0
+offset_bottom = 31.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="DayLabel" type="Label" parent="EndlessDayArea"]
+layout_mode = 0
+offset_left = 290.0
+offset_right = 350.0
+offset_bottom = 12.0
+theme_override_colors/font_color = Color(0.552941, 0.705882, 0.741176, 1)
+theme_override_font_sizes/font_size = 9
+text = "第1天"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DayProgress" type="ProgressBar" parent="EndlessDayArea"]
+layout_mode = 0
+offset_left = 290.7
+offset_top = 15.0
+offset_right = 349.3
+offset_bottom = 20.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBox_track")
+theme_override_styles/fill = SubResource("StyleBox_fill")
+show_percentage = false
+
 [node name="DashIndicator" type="Control" parent="."]
 layout_mode = 0
 offset_left = 16.0

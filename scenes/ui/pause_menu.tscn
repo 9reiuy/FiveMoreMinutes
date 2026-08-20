@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_pause"]
 [ext_resource type="PackedScene" path="res://scenes/ui/settings_panel.tscn" id="2_settings"]
+[ext_resource type="Script" path="res://scripts/ui/pixel_option_group.gd" id="3_option"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_panel"]
 
@@ -27,6 +28,16 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
 color = Color(0.008, 0.01, 0.017, 0.9)
+
+[node name="PauseOptionGroup" type="Control" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_option")
 
 [node name="Panel" type="PanelContainer" parent="Root"]
 layout_mode = 0

@@ -14,9 +14,14 @@ func _ready() -> void:
 
 
 func configure(config: DemoConfig, current: float, maximum: float) -> void:
-	bar_width = config.player_hp_bar_width
-	bar_height = config.player_hp_bar_height
-	position = config.player_hp_bar_offset
+	configure_values(config.player_hp_bar_width, config.player_hp_bar_height, config.player_hp_bar_offset, current, maximum)
+
+
+## 玩家和敌人共用同一轻量World Bar；节点只做CanvasItem绘制，不创建Timer或独立CanvasLayer。
+func configure_values(width: float, height: float, offset: Vector2, current: float, maximum: float) -> void:
+	bar_width = maxf(width, 2.0)
+	bar_height = maxf(height, 2.0)
+	position = offset
 	update_health(current, maximum)
 
 
@@ -31,6 +36,12 @@ func update_health(current: float, maximum: float) -> void:
 	current_health = maxf(current, 0.0)
 	maximum_health = maxf(maximum, 1.0)
 	queue_redraw()
+
+
+func hide_immediately() -> void:
+	visible_left = 0.0
+	visible = false
+	set_process(false)
 
 
 func _process(delta: float) -> void:

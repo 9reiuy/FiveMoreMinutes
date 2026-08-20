@@ -22,6 +22,7 @@ signal session_ended
 @onready var portrait: Control = $Portrait
 @onready var character_art: TextureRect = $Portrait/CharacterArt
 @onready var dialogue_panel: Control = $DialoguePanel
+@onready var choice_option_group: PixelOptionGroup = $DialoguePanel/ChoiceOptionGroup
 @onready var prompt_label: Label = $DialoguePanel/Margin/Content/Prompt
 @onready var buttons: VBoxContainer = $DialoguePanel/Margin/Content/ChoiceContainer
 @onready var confirm_button: Button = $DialoguePanel/Margin/Content/ChoiceContainer/ConfirmChoice
@@ -32,8 +33,6 @@ var message_only := false
 var animation_token := 0
 var active_tween: Tween
 var dialogue_target_position := Vector2.ZERO
-var confirm_choice_text := ""
-var cancel_choice_text := ""
 var full_prompt_text := ""
 var typewriter_active := false
 var typewriter_accumulator := 0.0
@@ -44,12 +43,12 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	dialogue_target_position = dialogue_panel.position
 	_apply_choice_styles()
+	choice_option_group.register_options([confirm_button, cancel_button])
+	for button in [confirm_button, cancel_button]:
+		button.set_meta(&"pixel_option_center_pivot", true)
+	_center_choice_visuals()
 	confirm_button.pressed.connect(_on_confirmed)
 	cancel_button.pressed.connect(_on_cancelled)
-	confirm_button.mouse_entered.connect(_set_choice_hover.bind(confirm_button, true))
-	confirm_button.mouse_exited.connect(_set_choice_hover.bind(confirm_button, false))
-	cancel_button.mouse_entered.connect(_set_choice_hover.bind(cancel_button, true))
-	cancel_button.mouse_exited.connect(_set_choice_hover.bind(cancel_button, false))
 	input_blocker.gui_input.connect(_on_blocker_gui_input)
 	character_art.texture = PORTRAIT_IDLE
 	_apply_portrait_outline()
@@ -104,17 +103,40 @@ func _apply_choice_styles() -> void:
 			button.add_theme_stylebox_override(state, empty)
 
 
+func _center_choice_visuals() -> void:
+	_center_choice_visual(confirm_button)
+	_center_choice_visual(cancel_button)
+
+
+func _center_choice_visual(button: Button) -> void:
+	if button == null or button.size.x <= 0.0:
+		return
+	var font := button.get_theme_font(&"font")
+	var font_size := button.get_theme_font_size(&"font_size")
+	var text_width := font.get_string_size(button.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	var leading_width := config.option_triangle_size + config.option_triangle_text_gap
+	var combined_width := leading_width + text_width
+	# Each choice gets its own left content margin. Triangle + gap + actual text
+	# therefore share one independently measured group centered in the row.
+	var text_left := maxf(0.0, (button.size.x - combined_width) * 0.5 + leading_width)
+	var centered_empty := StyleBoxEmpty.new()
+	centered_empty.content_margin_left = text_left
+	for state in [&"normal", &"hover", &"pressed", &"focus", &"disabled"]:
+		button.add_theme_stylebox_override(state, centered_empty)
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+
 func open(prompt: String, confirm_text: String, cancel_text: String, confirm_enabled: bool = true) -> void:
 	if visible:
 		return
 	message_only = false
 	buttons.visible = true
 	_begin_typewriter(prompt)
-	confirm_choice_text = confirm_text
-	cancel_choice_text = cancel_text
-	_set_choice_hover(confirm_button, false)
-	_set_choice_hover(cancel_button, false)
+	confirm_button.text = confirm_text
+	cancel_button.text = cancel_text
+	_center_choice_visuals()
 	confirm_button.disabled = not confirm_enabled
+	choice_option_group.clear_highlight()
 	await _animate_in()
 
 
@@ -123,6 +145,7 @@ func open_message(prompt: String) -> void:
 		return
 	message_only = true
 	buttons.visible = false
+	choice_option_group.clear_highlight()
 	_begin_typewriter(prompt)
 	await _animate_in()
 
@@ -155,6 +178,7 @@ func close_without_signal() -> void:
 	visible = false
 	animating = false
 	message_only = false
+	choice_option_group.clear_highlight()
 	_stop_talking_portrait()
 	portrait.modulate.a = 0.0
 	dialogue_panel.modulate.a = 0.0
@@ -184,6 +208,7 @@ func _on_cancelled() -> void:
 
 func _finish_dialog(was_confirmed: bool) -> void:
 	animating = true
+	choice_option_group.clear_highlight()
 	animation_token += 1
 	var token := animation_token
 	active_tween = create_tween().set_parallel(true)
@@ -215,13 +240,6 @@ func _on_blocker_gui_input(event: InputEvent) -> void:
 	if visible and message_only and not animating and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		_on_cancelled()
 	input_blocker.accept_event()
-
-
-func _set_choice_hover(button: Button, hovered: bool) -> void:
-	var choice_text := confirm_choice_text if button == confirm_button else cancel_choice_text
-	button.text = ("› " if hovered else "  ") + choice_text
-	if hovered and visible and not animating and not button.disabled:
-		SFX.play_event(&"ui_hover")
 
 
 func _begin_typewriter(prompt: String) -> void:

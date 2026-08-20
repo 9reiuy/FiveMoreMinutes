@@ -22,9 +22,9 @@ static func wage_ratio_for_status(status: String, config: DemoConfig) -> float:
 		_: return config.wage_ratio_absent
 
 
-## 局内RAM只由最终等级决定，避免经验倍率或剩余经验重复影响结算。
-static func calculate_run_ram(final_level: int) -> int:
-	return maxi(final_level - 1, 0)
+## RAM唯一来源：本次真正完成并提交的天数。最终等级、经验和当前累计Day均不参与。
+static func calculate_completed_day_ram(completed_days: int, config: DemoConfig) -> int:
+	return maxi(completed_days, 0) * maxi(config.ram_per_completed_day, 0)
 
 
 static func _apply_attendance_stress(meta: Dictionary, status: String, is_sunday: bool, config: DemoConfig) -> int:
@@ -83,7 +83,13 @@ static func settle(summary: Dictionary, meta: Dictionary, config: DemoConfig) ->
 	var is_sunday := bool(summary.get("is_sunday", false))
 	var status := "休息日" if is_sunday else attendance_for_minutes(float(summary.get("wake_minutes", 420.0)))
 	var ratio := 0.0 if is_sunday else wage_ratio_for_status(status, config)
-	var run_ram := calculate_run_ram(int(summary.get("level", 1)))
+	var story_day_id := int(meta.get("calendar_day_id", 0))
+	var completed_days_now := 0
+	if int(meta.get("last_ram_settled_story_day_id", -1)) != story_day_id:
+		completed_days_now = 1
+		meta.last_ram_settled_story_day_id = story_day_id
+		meta.completed_story_days = int(meta.get("completed_story_days", 0)) + 1
+	var run_ram := calculate_completed_day_ram(completed_days_now, config)
 	meta.ram = int(meta.get("ram", 0)) + run_ram
 	var stress_before := int(meta.get("stress_value", config.stress_default))
 	summary.early_wake_stress_change = apply_early_wake_stress(summary, meta, config)
@@ -114,9 +120,23 @@ static func settle(summary: Dictionary, meta: Dictionary, config: DemoConfig) ->
 	summary.wage_ratio = 0.0 if unemployed_now or is_sunday else ratio
 	summary.wage = actual_wage
 	summary.run_ram = run_ram
+	summary.completed_days_settled_now = completed_days_now
 	summary.total_ram = meta.ram
 	summary.total_balance = meta.balance
 	summary.settled = true
+	return summary
+
+
+static func settle_endless(summary: Dictionary, meta: Dictionary, config: DemoConfig) -> Dictionary:
+	if bool(summary.get("ram_settlement_committed", false)):
+		return summary
+	var completed_days := maxi(0, int(summary.get("completed_endless_days", 0)))
+	var run_ram := calculate_completed_day_ram(completed_days, config)
+	meta.ram = int(meta.get("ram", 0)) + run_ram
+	summary.completed_endless_days = completed_days
+	summary.run_ram = run_ram
+	summary.total_ram = int(meta.ram)
+	summary.ram_settlement_committed = true
 	return summary
 
 

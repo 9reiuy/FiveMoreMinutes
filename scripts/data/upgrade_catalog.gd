@@ -49,8 +49,9 @@ static func generate_slot_options(config: DemoConfig, owned: Dictionary, random:
 		if int(option.get("replace_rank", 0)) > 0:
 			if int(option.replace_rank) <= current:
 				continue
-		elif current >= int(option.max_level):
-			continue
+		else:
+			if current >= int(option.max_level):
+				continue
 		valid.append(option)
 	var result: Array[Dictionary] = []
 	if valid.is_empty():
@@ -97,6 +98,25 @@ static func get_owned_cards(config: DemoConfig, owned: Dictionary) -> Array[Dict
 	return result
 
 
+## 将存档中的family->level限制到当前正式目录，旧档缺字段或损坏数值也不会绕过Max过滤。
+static func normalize_owned_levels(config: DemoConfig, owned: Dictionary) -> Dictionary:
+	var family_limits: Dictionary = {}
+	for option in _build_catalog(config):
+		var family := str(option.get("family", ""))
+		if family.is_empty():
+			continue
+		var limit := int(option.get("replace_rank", 0))
+		if limit <= 0:
+			limit = int(option.get("max_level", 1))
+		family_limits[family] = maxi(int(family_limits.get(family, 0)), limit)
+	var normalized: Dictionary = {}
+	for family in family_limits:
+		var level := clampi(int(owned.get(family, 0)), 0, int(family_limits[family]))
+		if level > 0:
+			normalized[family] = level
+	return normalized
+
+
 static func _rarity_name(rarity: String) -> String:
 	if rarity == RARITY_GOLD: return "金色"
 	if rarity == RARITY_PURPLE: return "紫色"
@@ -112,8 +132,9 @@ static func _valid_candidates(catalog: Array[Dictionary], owned: Dictionary, use
 		if option.get("replace_rank", 0) > 0:
 			if int(option.replace_rank) <= current:
 				continue
-		elif current >= int(option.max_level):
-			continue
+		else:
+			if current >= int(option.max_level):
+				continue
 		valid.append(option)
 	return valid
 

@@ -30,6 +30,7 @@ var draw_offset := Vector2.ZERO
 var frames: Array[AtlasTexture] = []
 var gem_rarity := "normal"
 var attraction := PICKUP_ATTRACTION.new()
+var environment_reference_radius := CONFIG.player_light_radius
 
 
 func _ready() -> void:
@@ -37,6 +38,7 @@ func _ready() -> void:
 	var glow := get_node_or_null("SoftGlow") as SoftGlow
 	if glow != null:
 		glow.configure(_rarity_glow_color(), CONFIG.xp_glow_alpha, CONFIG.xp_glow_radius)
+		glow.configure_environment(CONFIG.player_light_color, CONFIG.pickup_environment_glow_alpha, environment_reference_radius * CONFIG.pickup_light_radius_multiplier)
 	if frames.is_empty():
 		_build_frames(BLUE_SHEET, BLUE_FRAME_REGIONS)
 
@@ -48,6 +50,10 @@ func configure(new_value: int, rarity: String = "normal") -> void:
 		_build_frames(PURPLE_SHEET, PURPLE_FRAME_REGIONS)
 	else:
 		_build_frames(BLUE_SHEET, BLUE_FRAME_REGIONS)
+
+
+func set_environment_reference(config: DemoConfig) -> void:
+	environment_reference_radius = config.runtime_player_light_radius if config.runtime_player_light_radius > 0.0 else config.player_light_radius
 
 
 func _build_frames(sheet: Texture2D, regions: Array[Rect2]) -> void:

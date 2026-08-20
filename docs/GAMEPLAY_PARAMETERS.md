@@ -84,7 +84,7 @@
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
 |---|---|---:|---|---|---|---|
-| 初始刷新间隔 | `enemy_initial_spawn_interval` | 2.0 | 秒 | 梦境开始时生成计时器间隔 | 0.1—10 | 随梦境进度向最小值线性变化 |
+| 初始刷新间隔 | `enemy_initial_spawn_interval` | 2.0 | 秒 | Day 1 的生成计时器间隔 | 0.1—10 | 难度日提升后沿用既有曲线向最小值变化 |
 | 最小刷新间隔 | `enemy_minimum_spawn_interval` | 0.65 | 秒 | 刷新间隔下限 | 0.05—5 | 本次没有缩短 |
 | 每次生成数量 | `enemy_spawn_count_per_interval` | 2 | 只 | 每次计时器触发尝试生成数量 | 1—8 | 原值1的2倍；合法点不足时允许少生成 |
 | 场上怪物上限 | `maximum_enemies` | 110 | 只 | 同时存活怪物数量上限 | 10—300 | 原值55的2倍；过高会影响CPU |
@@ -92,9 +92,10 @@
 | 怪物间最小间距 | `enemy_spawn_minimum_spacing` | 30 | px | 新怪与现有/同批怪物距离 | 0—100 | 防止完全重叠 |
 | 生成最大重试 | `enemy_spawn_position_max_retries` | 12 | 次/只 | 单只怪寻找合法位置的次数上限 | 1—50 | 达到上限后放弃该只，防止死循环 |
 | 屏幕外生成安全边距 | `enemy_spawn_visibility_margin` | 64 | px | 常规/触手怪必须生成在相机可见矩形外扩该边距的禁区之外 | 0—200 | 可见矩形由 `dream_world.get_camera_visible_world_rect()`（viewport ÷ zoom）计算，不使用固定像素猜测值；宝箱怪死亡分裂等怪物技能不受限 |
-| 修正带解锁时间 | `correction_unlock_seconds` | 30 | 本局秒 | 加入随机生成池的经过时间 | 0—600 | 按单局实际经过时间，不看钟点 |
-| 订书机解锁时间 | `stapler_unlock_seconds` | 90 | 本局秒 | 加入随机生成池的经过时间 | 0—900 | 90秒前不会出现 |
-| 大修正带登场时间 | `large_correction_unlock_seconds` | 180 | 本局秒 | 每局唯一精英触发时间 | 1—1800 | 本次保持不变，不进入普通随机池 |
+| 敌人解锁日表 | `enemy_unlock_days` | 见下表 | 剧情/虚拟日 | 决定敌人首次加入生成池的难度日 | 1—999 | 唯一的敌人类型解锁来源，不再读取局内经过时间 |
+| 敌人基础生成权重 | `enemy_base_spawn_weights` | 常规类型均为1.0 | 权重 | 已解锁普通生成池中的相对抽取权重 | 0—20 | `0`可临时停用类型；触手与唯一精英使用各自生成入口 |
+| 难度日等效曲线时间 | `difficulty_seconds_per_day` | 120 | 秒/阶段 | 将Day N映射为既有线性难度曲线的`(N-1)×120秒`输入 | 10—600 | 只复用既有HP/伤害曲线，不表示按秒解锁怪物 |
+| 无尽虚拟日长度 | `endless_day_duration` | 120 | 秒/日 | 无尽模式每满该时长完成一日并进入下一日 | 10—600 | Day 1从0%开始；暂停时不推进 |
 | 敌人基础生命 | `base_enemy_health` | 18 | HP | 基础怪、修正带、订书机共同基础生命 | 1—10000 | 大修正带再乘生命倍率 |
 | 敌人基础接触伤害 | `base_enemy_damage` | 8 | HP | 通用接触伤害 | 0—1000 | 修正带冲刺和订书钉有独立伤害 |
 | 敌人基础移动速度 | `base_enemy_movement_speed` | 42 | px/s | 继承基础敌人类的追踪速度 | 0—500 | 快速眼动会乘移动倍率 |
@@ -116,6 +117,28 @@
 | 触手怪全图上限 | `tentacle_max_alive` | 10 | 只 | 同时存活触手数量上限 | 0—30 | 按 tentacle_enemies 组计数 |
 | 触手怪距玩家最小生成距离 | `tentacle_min_spawn_distance_from_player` | 120 | px | 生成点与玩家的安全距离 | 40—400 | 优先相机禁区外（屏幕外），找不到屏外点时退而只满足该距离 |
 | 触手怪紫色经验值 | `tentacle_purple_exp_value` | 25 | 经验 | 死亡掉落 1 个紫色经验球 | 1—1000 | 沿用宝箱怪紫色经验数值 |
+
+敌人解锁表由 `enemy_unlock_days` 集中维护，剧情模式使用 `calendar_day_id + 1`，无尽模式使用当前虚拟日：
+
+| 显示名 | 配置ID | 场景/实现 | 解锁日 |
+|---|---|---|---:|
+| 史莱姆 | `basic` | `res://scenes/entities/basic_enemy.tscn` | 1 |
+| 冲刺怪（魔眼） | `correction` | `res://scenes/entities/correction_tape_enemy.tscn` | 1 |
+| 触手怪 | `tentacle` | `res://scenes/entities/tentacle_enemy.tscn` | 1 |
+| 精灵射手 | `stapler` | `res://scenes/entities/stapler_enemy.tscn` | 2 |
+| 自爆蘑菇 | `alarm_clock` | `res://scenes/entities/alarm_clock_enemy.tscn` | 3 |
+| 宝箱怪 | `mailbox` | `res://scenes/entities/mailbox_enemy.tscn` | 4 |
+| 精英魔眼 | `large_correction` | `res://scenes/entities/large_correction_tape_enemy.tscn` | 5 |
+
+当前HP/伤害难度曲线保持原线性调参，只把输入改为难度日对应的阶段时间。Day 1—5实际倍率如下；Day 6以后继续沿同一曲线增长，不会重新锁怪：
+
+| Day | 等效阶段秒数 | HP倍率 | 伤害倍率 | 刷新间隔 |
+|---:|---:|---:|---:|---:|
+| 1 | 0 | 1.00 | 1.00 | 2.00s |
+| 2 | 120 | 3.16 | 2.44 | 0.65s |
+| 3 | 240 | 5.32 | 3.88 | 0.65s |
+| 4 | 360 | 7.48 | 5.32 | 0.65s |
+| 5 | 480 | 9.64 | 6.76 | 0.65s |
 
 ## 经验、升级与掉落
 
@@ -143,7 +166,7 @@
 | 旷工工资比例 | `wage_ratio_absent` | 0.0 | 比例 | 09:00后工资比例 | 0—2 | 同时清零连续正常出勤数 |
 | 褪黑素价格 | `melatonin_price` | 100 | 元/片 | 速联跑腿购买价格 | 0—1,000,000 | 受库存上限限制 |
 | 褪黑素库存上限 | `melatonin_inventory_cap` | 99 | 片 | 跨天库存最大值 | 1—999 | 与每晚上限是不同概念 |
-| RAM结算规则 | `RunSettlement.calculate_run_ram(final_level)` | `max(最终等级-1,0)` | RAM/局 | 主动醒来和死亡统一按最终等级结算 | 固定规则 | 不再读取累计经验；`settled`标记防止重复结算 |
+| 每个完成日获得RAM | `ram_per_completed_day` | 1 | RAM/完成日 | 剧情正式完成一天、无尽每完成一个120秒虚拟日均按此奖励 | 0—100 | 不读取等级或经验；剧情按`last_ram_settled_story_day_id`、无尽按Run提交标记防重 |
 | 正常生活结局天数 | `normal_life_ending_required_workdays` | 14 | 工作日 | 连续正常上班达到该值触发结局 | 1—365 | 星期日保持计数，迟到/旷工/失业清零 |
 
 ## 手机外观相关参数
@@ -197,7 +220,7 @@
 | 受伤屏幕闪光强度 | `player_hurt_screen_flash_alpha` | 0.24 | Alpha | 有效受伤时覆盖画面的红色闪光 | 0—0.5 | UI绘制在闪光之上 |
 | 受伤屏幕闪光时长 | `player_hurt_screen_flash_seconds` | 0.12 | 秒 | 红色闪光淡出时间 | 0.05—0.35 | 无敌帧闪烁仍由玩家脚本负责 |
 
-UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡片/刷新、手机应用、眠网升级按钮、速联跑腿购买按钮与武器选择卡。手机点击仍使用 `phone_operation`，购买成功/失败仍分别使用 `purchase` / `forbidden`，避免同一次点击重复播放确认音。
+UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡片/刷新、手机应用、主菜单眠网升级按钮、速联跑腿购买按钮与武器选择卡。手机点击仍使用 `phone_operation`，购买成功/失败仍分别使用 `purchase` / `forbidden`，避免同一次点击重复播放确认音。
 
 ## 敌人像素素材与动画
 
@@ -399,12 +422,14 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 - `xp_glow_alpha=0.30`、`xp_glow_radius=5px`：EXP局部光晕的透明度与半径（直径约10px）；蓝色与紫色EXP使用各自的稀有度颜色，不使用`PointLight2D`。
 - `electric_shield_animation_fps=30`、`electric_shield_visual_scale=0.18`：意识固化电气护盾60帧循环的帧率与独立视觉节点缩放，不影响护盾挡伤机制。
 - 老虎机CRT使用`res://shaders/upgrade_slot_crt.gdshader`的`barrel_distortion=0.075`，仅扭曲最终视觉采样，卡片、重抽按钮与描述区仍使用未扭曲的Control坐标接收输入。
-- `player_hp_bar_width=50px`、`player_hp_bar_height=5px`、`player_hp_bar_visible_duration=2.5秒`：血条只在实际受伤后出现，回血只刷新已显示填充。
+- `player_hp_bar_width=30px`、`player_hp_bar_height=5px`、`player_hp_bar_visible_duration=2.5秒`：玩家世界血条只在实际受伤后出现，回血只刷新已显示填充；玩家Sprite尺寸不受影响。
+- `enemy_hp_bar_width=20px`、`enemy_hp_bar_height=3px`、`enemy_hp_bar_bottom_margin=2px`、`enemy_hp_bar_visible_duration=2.5秒`：敌人出生时隐藏，非致死实际伤害后在碰撞核心下缘显示；死亡立即隐藏。所有敌人复用同一轻量World Bar脚本，无独立Timer、CanvasLayer或Shader。
 - `dialogue_text_blip_volume_db=-25dB`、`dialogue_text_blip_frequency_hz=420Hz`、`dialogue_text_blip_duration=0.045秒`：每个可见字符由SFX单播放器重触发原创短音。
 - 升级老虎机每次打开从`upgrade_reel_start_speeds=(84,92,78)px/s`开始，使用原有`upgrade_reel_acceleration_curve`的Quadratic Ease-In在`upgrade_reel_acceleration_duration=1.35秒`内加速到`upgrade_reel_max_speeds=(440,472,416)px/s`，之后保持上限。两组速度均为上一版实际值的2倍；锁定仍由`upgrade_slot_lock_deceleration=0.16秒`短暂Ease-Out并吸附完整Cell。
 - 每跨过一个完整Cell触发原创程序化`slot_tick`（45ms、`sfx_slot_tick_volume_db=-28dB`、`sfx_slot_tick_min_interval=0.025秒`），走UI/SFX总线，单播放器重触发避免三列叠音爆音。锁定格子的名称和描述直接读取同一个Upgrade/Weapon字典。
-- CRT仅覆盖`UpgradePanel/CRTOverlay`，参数为Scanline `0.10`、Noise `0.025`、Vignette `0.14`；Overlay忽略鼠标，Shader不改变Control输入坐标，暂停期间仍由GPU时间更新。
+- CRT覆盖`UpgradePanel/CRTOverlay`（Y=94—316），参数为Scanline `0.10`、Noise `0.025`、Vignette `0.14`；Reel高度调整为174px，Hover描述矩形Y=282—306完整包含在Overlay安全区，并与底边保留10px，因此屏幕上只保留参与Barrel Distortion的一份可读描述。Overlay忽略鼠标，Shader不改变Control输入坐标，暂停期间仍由GPU时间更新。
 - 剧情模式武器分离为解锁资格和当前装备：存档字段`current_weapon_id`默认`basic`并跨天/死亡保留。本局`used_weapon_reward_ids`在开始时加入初始武器，真正选择并装备新武器后再加入；这些武器随后从本局老虎机池排除。仅滚到、锁定或Reroll不会加入，下一局重新初始化。无尽模式通过强类型`configure_run_weapon_state()`接收本局选择与全武器池，不写剧情字段。
+- 剧情老虎机卡片权威字段为`persistent_day_state.story_upgrade_levels`，结构为`upgrade_family -> level/rank`。正式获得卡片后立即同步存档及当天快照；死亡、换日和Continue继续保留。新Dream总是先重建Base与眠网加成，再通过`_apply_restored_story_upgrades()`应用保存等级一次，避免重复叠加。New Game默认空字典；无尽模式不读取也不写入该字段，每个新Run从空`skill_levels`开始。目录Max过滤读取恢复后的等级，达到上限的卡片不再进入候选池。
 - 升级面板Root以`y=390`为离屏位置，`upgrade_panel_enter_seconds=0.42秒`Ease-Out滑入；领取后保留`upgrade_reward_confirm_seconds=0.20秒`反馈，再以`upgrade_panel_exit_seconds=0.32秒`Ease-In滑出，完全离屏后才恢复战斗。面板底层使用程序化16束低透明度旋转放射光，普通状态为冷蓝，Passive三同Jackpot切换蓝/紫/青/粉/黄低频彩色状态；CRT仍只覆盖主体屏幕并位于放射光上层。
 
 ## 电脑21点
@@ -472,7 +497,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 ## 闹钟怪
 
-- `alarm_enemy_unlock_time`：默认 `120.0` 秒；本局经过此时间后进入普通生成池。
+- 生成池ID为`alarm_clock`，由`enemy_unlock_days`在Day 3解锁；不再读取局内经过秒数。
 - `alarm_enemy_max_hp`：默认 `10` 点；基础生命。
 - `alarm_enemy_contact_damage`：默认 `0` 点；接触玩家不造成伤害。
 - `alarm_enemy_explosion_radius`：默认 `50.0 px`；预警、连锁和爆炸判定半径。
@@ -482,7 +507,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 ## 邮箱怪
 
-- `mailbox_enemy_unlock_time`：默认 `180.0` 秒；解锁生成池的本局经过时间。
+- 生成池ID为`mailbox`，由`enemy_unlock_days`在Day 4解锁；不再读取局内经过秒数。
 - `mailbox_enemy_max_hp`：默认 `100` 点。
 - `mailbox_enemy_attack_trigger_distance`：默认 `50.0 px`；开始震地前摇的距离。
 - `mailbox_enemy_slam_angle`：默认 `30.0` 度；扇形总角度。
@@ -549,7 +574,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 - 连续未进食达到 3 天：妈妈消息，字段 `mom_hunger_message_sent`、`mom_hunger_message_day_id`。
 - 游戏第 3 天（`calendar_day_id + 1 >= 3`）：速联快讯，字段 `day3_quicklink_news_sent`、`day3_quicklink_news_day_id`。
 - 游戏第 5 天（`calendar_day_id + 1 >= 5`）：北方时报，字段 `day5_northern_times_sent`、`day5_northern_times_day_id`、`day5_northern_times_deleted`。点击后永久显示灰色删除提示，但保留联系人和日期。
-- 手机正式 App 共用 `res://resources/themes/phone_pixel_scrollbar.tres`。`online_scrollbar_width=5 px`保留为基础值，运行时 VScrollBar 的视觉宽度和鼠标命中宽度统一取其50%（当前2.5 px）；ONLINE、眠网、QUICKLINK与设置继续支持滚轮、轨道/滑块操作，内容拖动阈值为`phone_scroll_drag_threshold=6 px`。设置中的Master/Music/SFX音量滑轨已恢复128 px宽，与本条滚动条调整无关。
+- 手机正式 App 共用 `res://resources/themes/phone_pixel_scrollbar.tres`。`online_scrollbar_width=5 px`保留为基础值，运行时 VScrollBar 的视觉宽度和鼠标命中宽度统一取其50%（当前2.5 px）；ONLINE、QUICKLINK与设置继续支持滚轮、轨道/滑块操作，内容拖动阈值为`phone_scroll_drag_threshold=6 px`。手机主页仍为2×2 Grid，第四格留空；眠网已迁移至主菜单。设置中的Master/Music/SFX音量滑轨已恢复128 px宽，与本条滚动条调整无关。
 
 - 卧室电脑的记事本、21点与梦境浏览器共用`res://scripts/ui/computer_window_shell.gd`绘制的窗口壳。21点与浏览器支持最小化、电脑屏幕内最大化/还原及关闭；21点牌局数据仍保留在原`BlackjackApp`实例中，窗口状态变化不退款也不重复扣款。
 
@@ -559,7 +584,13 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 ### 无尽模式
 
-主菜单“无尽模式”直接进入全武器临时可选的武器选择与梦境，不写入普通存档解锁。`is_endless_mode=true` 时关闭闹钟触发、工资/RAM/出勤/日期推进和普通结算；刷新间隔维持绝对下限与同屏上限，敌人数值随生存秒数继续增长。死亡后进入独立的 `res://scenes/ui/endless_results.tscn`，只显示生存时间和最终等级，可直接重开或返回主菜单。
+主菜单“无尽模式”直接进入全武器临时可选的武器选择与梦境，不写入普通存档解锁。`is_endless_mode=true` 时关闭闹钟触发、工资、出勤、剧情日期推进和普通结算。虚拟日由同一个集中计算更新：`completed_endless_days=floor(run_elapsed_seconds/endless_day_duration)`、`endless_day=completed_endless_days+1`、日内进度为`fmod(run_elapsed_seconds,endless_day_duration)/endless_day_duration`。当前虚拟日同时驱动敌人解锁与既有线性难度曲线；Day 6以后难度仍继续增长。
+
+无尽HUD在XP条下方显示薄型`EndlessDayArea`（`DAY N`及日内进度），剧情模式隐藏。死亡后进入`res://scenes/ui/endless_results.tscn`，显示生存时间、完成日数、最终等级、本局RAM和总RAM；本局奖励为`completed_endless_days × ram_per_completed_day`，由Run提交标记保证只结算一次。无尽虚拟日仅存在于Run，不写入剧情日历、出勤或当天快照。
+
+### 主菜单眠网与全局强化
+
+手机不再包含SOMNIA NET入口。主菜单节点`MenuContent/ButtonList/Somnia`打开独立页面`Overlay/Panel/Content/GlobalUpgradePanel`，场景为`res://scenes/ui/global_upgrade_panel.tscn`。升级目录与购买规则由`res://scripts/data/permanent_upgrade_catalog.gd`统一提供，继续读取旧存档的`persistent_day_state.permanent_upgrades`与全局`ram`字段；不迁移或重置旧等级。剧情和无尽创建DreamWorld时都把同一永久升级字典传入玩家战斗初始化。剧情老虎机卡片另存于`story_upgrade_levels`并跨天保留；无尽老虎机卡片仍只属于当前Run。
 
 ## 快速睡觉、升级音乐与在线布局
 
@@ -692,5 +723,23 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 ## V0.4.7 升级稳定性与拾取反馈
 
 - **Typed Array**：剧情升级武器奖励池由`_slot_weapon_ids_for_mode()`显式返回`Array[String]`，不再将三元表达式产生的普通`Array`赋给typed array。
-- **CRT范围**：`UpgradePanel/CRTOverlay`只覆盖三列Reel主体，不覆盖下方Description与Reroll区域。
+- **CRT范围**：`UpgradePanel/CRTOverlay`覆盖三列Reel与Hover Description安全区，Description只保留参与曲变的一份；Reroll仍位于Overlay外并保持原交互。
 - **拾取物**：EXP与Heart复用`res://scripts/entities/pickup_attraction.gd`，按“抬升Ease-Out → 二次Bezier Ease-In吸入”移动，终点每帧跟随玩家。
+
+## 卧室床上角色手绘发光
+
+床上角色主体与发光图均为 2560×1440 透明画布，共用 `Layout/ArtRoot/BedroomChrRoot` 的位置与 0.25 倍统一缩放。发光层使用 `res://resources/materials/bedroom_chr_glow_material.tres` 的 Add 混合，仅叠加素材自身的手绘亮部，不参与点击、碰撞或悬停描边。亮度由低频 `GlowFlickerTimer` 按随机间隔直接硬切，模拟手机视频画面变化；不使用Tween、插值或逐帧随机。对话开始时停止计时并隐藏，结束后重新随机普通亮度并启动。
+
+| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
+|---|---|---:|---|---|---|---|
+| 启用角色发光 | `bedroom_chr_glow_enabled` | true | 开关 | 控制床上角色发光层 | true/false | 关闭后主体仍正常显示 |
+| 发光颜色 | `bedroom_chr_glow_color` | `#DCEEFF` | 色值 | 冷灰蓝手绘光颜色 | 低饱和冷色 | 与 Add 材质共同作用 |
+| 普通亮度下限 | `bedroom_chr_glow_alpha_normal_min` | 0.68 | 比例 | 大部分视频画面的最低亮度 | 0.55—0.90 | 与普通亮度上限自动排序 |
+| 普通亮度上限 | `bedroom_chr_glow_alpha_normal_max` | 0.86 | 比例 | 大部分视频画面的最高亮度 | 0.60—0.95 | 普通变化围绕当前值小幅硬切 |
+| 暗场亮度下限 | `bedroom_chr_glow_alpha_dark_min` | 0.55 | 比例 | 视频切到暗画面时的最低亮度 | 0.50—0.70 | 永远不会降到完全透明 |
+| 暗场亮度上限 | `bedroom_chr_glow_alpha_dark_max` | 0.68 | 比例 | 视频切到暗画面时的最高亮度 | 0.55—0.75 | 与下限自动排序 |
+| 亮场亮度下限 | `bedroom_chr_glow_alpha_bright_min` | 0.86 | 比例 | 视频切到明亮画面时的最低亮度 | 0.75—0.95 | 仅强切换时使用 |
+| 亮场亮度上限 | `bedroom_chr_glow_alpha_bright_max` | 0.95 | 比例 | 短暂高亮峰值 | 0.85—1.0 | 不会长期停留在峰值 |
+| 最短变化间隔 | `bedroom_chr_glow_interval_min` | 0.06 | 秒 | 两次硬切之间的最短间隔 | 0.05—0.20 | 不低于0.05秒，不逐帧随机 |
+| 最长变化间隔 | `bedroom_chr_glow_interval_max` | 0.18 | 秒 | 两次硬切之间的最长间隔 | 0.08—0.40 | 每次重新随机间隔 |
+| 大幅变化概率 | `bedroom_chr_glow_big_change_chance` | 0.15 | 比例 | 切到明显亮场或暗场的概率 | 0.05—0.30 | 普通变化维持相近亮度节奏 |

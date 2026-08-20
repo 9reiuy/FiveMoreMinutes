@@ -24,6 +24,7 @@ signal closed
 
 @onready var title_label: Label = $Title
 @onready var close_button: Button = $CloseButton
+@onready var option_group: PixelOptionGroup = $OptionGroup
 @onready var content_scroll: ScrollContainer = $BodyScroll
 @onready var announcement_text: Label = $BodyScroll/AnnouncementText
 
@@ -35,6 +36,7 @@ func _ready() -> void:
 	# 进入主菜单不自动弹公告：默认隐藏，等待主菜单版本号点击调用 show_announcement()。
 	visible = false
 	_style_close_button()
+	option_group.register_options([close_button])
 	close_button.pressed.connect(_on_close)
 	announcement_text.add_theme_font_override("font", PixelFont.get_font())
 	title_label.add_theme_font_override("font", PixelFont.get_font())
@@ -83,6 +85,7 @@ func _play_enter_animation() -> void:
 
 func _on_close() -> void:
 	SFX.play_event(&"phone_operation")
+	option_group.clear_highlight()
 	visible = false
 	closed.emit()
 

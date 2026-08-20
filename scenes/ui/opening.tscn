@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://blk8w2mjpth54"]
+[gd_scene load_steps=7 format=3 uid="uid://blk8w2mjpth54"]
 
 [ext_resource type="Script" uid="uid://bsakeqg8nmamb" path="res://scripts/ui/opening.gd" id="1_opening"]
 [ext_resource type="Resource" uid="uid://b1f2o7rqduk6v" path="res://resources/demo_config.tres" id="2_config"]
 [ext_resource type="Texture2D" uid="uid://c5uwlq7cdh3n7" path="res://art/Background/textbackground.png" id="3_frame"]
 [ext_resource type="Texture2D" uid="uid://bjv1qihq82u2l" path="res://art/Background/citynight_1.png" id="4_city_a"]
 [ext_resource type="Script" path="res://scripts/ui/ending_text_canvas.gd" id="5_ending_canvas"]
+[ext_resource type="Script" path="res://scripts/ui/pixel_option_group.gd" id="6_option"]
 
 [node name="Opening" type="Control" unique_id=1198244365]
 layout_mode = 3
@@ -89,7 +90,19 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("5_ending_canvas")
 
+[node name="OptionGroup" type="Control" parent="."]
+z_index = 11
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_option")
+
 [node name="ReturnToMenu" type="Button" parent="." unique_id=1555193893]
+z_index = 12
 visible = false
 layout_mode = 0
 offset_left = 245.0

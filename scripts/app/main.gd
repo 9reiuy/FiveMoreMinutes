@@ -31,6 +31,7 @@ var transition_queue: Array = []
 var pause_allowed := false
 var current_is_endless_mode := false
 var endless_weapon_id := "basic"
+var endless_ram_settlement_committed := false
 var cursor_pointer_scaled: Texture2D
 var cursor_hand_scaled: Texture2D
 const WEEKDAYS := ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
@@ -52,12 +53,14 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not pause_allowed or transition_running or not event is InputEventKey or not event.pressed or event.echo or event.keycode != KEY_ESCAPE:
+	if transition_running or not event is InputEventKey or not event.pressed or event.echo or event.keycode != KEY_ESCAPE:
 		return
 	# ESC 优先级：当前画面若有更高优先级窗口（如电脑界面）需要消费 ESC，
 	# 先交给它处理，不打开暂停菜单。
 	if is_instance_valid(current_screen) and current_screen.has_method("consume_escape") and bool(current_screen.call("consume_escape")):
 		get_viewport().set_input_as_handled()
+		return
+	if not pause_allowed:
 		return
 	if pause_menu.is_open():
 		pause_menu.handle_escape()
@@ -73,6 +76,7 @@ func _create_initial_state() -> Dictionary:
 		if initial_messages[index] is Dictionary:
 			initial_messages[index].message_sequence = index + 1
 	return {
+		"save_version": CONFIG.game_version_text,
 		"balance": CONFIG.initial_balance,
 		"ram": 0,
 		"melatonin_inventory": 0,
@@ -94,6 +98,8 @@ func _create_initial_state() -> Dictionary:
 		"hunger_checked_day_id": -1,
 		"weekday_index": 0,
 		"calendar_day_id": 0,
+		"completed_story_days": 0,
+		"last_ram_settled_story_day_id": -1,
 		"online_messages": initial_messages,
 		"online_message_sequence_next": initial_messages.size() + 1,
 		"mom_hunger_message_sent": false,
@@ -111,6 +117,7 @@ func _create_initial_state() -> Dictionary:
 		"beam_weapon_unlocked": false,
 		"katana_unlocked": false,
 		"current_weapon_id": "basic",
+		"story_upgrade_levels": {},
 		"sunday_event_week_id": -1,
 		"sunday_event_resolved": false,
 		"sunday_event_id": -1,
@@ -138,13 +145,24 @@ func _create_initial_state() -> Dictionary:
 func _show_main_menu() -> void:
 	PauseManager.clear_all()
 	current_is_endless_mode = false
+	var saved_state := _load_current_version_progress()
+	if not saved_state.is_empty():
+		persistent_day_state = _merge_with_defaults(saved_state)
+	debug_console.configure(persistent_day_state, _on_debug_ram_changed)
 	var menu := MAIN_MENU_SCENE.instantiate()
 	menu.has_save = SAVE_STORE.has_valid_save()
+	menu.configure_progression(persistent_day_state)
 	menu.continue_requested.connect(_continue_game)
 	menu.new_game_requested.connect(_start_new_game)
 	menu.endless_requested.connect(_start_endless_mode)
+	menu.global_progress_changed.connect(_on_global_progress_changed)
 	menu.quit_requested.connect(_quit_game)
 	_set_screen(menu)
+
+
+func _on_global_progress_changed() -> void:
+	_save_progress()
+	debug_console.configure(persistent_day_state, _on_debug_ram_changed)
 
 
 func _start_new_game() -> void:
@@ -161,7 +179,7 @@ func _start_new_game() -> void:
 
 func _continue_game() -> void:
 	current_is_endless_mode = false
-	var loaded := SAVE_STORE.load_game()
+	var loaded := _load_current_version_progress()
 	if loaded.is_empty():
 		_show_main_menu()
 		return
@@ -191,6 +209,8 @@ func _merge_with_defaults(loaded: Dictionary) -> Dictionary:
 		if not upgrades.has(id):
 			upgrades[id] = 0
 	loaded.permanent_upgrades = upgrades
+	var story_levels: Dictionary = loaded.get("story_upgrade_levels", {}) if loaded.get("story_upgrade_levels", {}) is Dictionary else {}
+	loaded.story_upgrade_levels = story_levels
 	loaded.stress_value = clampi(int(loaded.get("stress_value", CONFIG.stress_default)), 0, CONFIG.stress_max)
 	loaded.is_unemployed = bool(loaded.get("is_unemployed", false)) if had_is_unemployed else legacy_unemployed
 	loaded.unemployed = loaded.is_unemployed
@@ -223,9 +243,25 @@ func _reset_daily_state() -> void:
 
 
 func _save_progress() -> void:
+	persistent_day_state.save_version = CONFIG.game_version_text
 	# 存档时把当前已解锁的武器同步到全局（跨存档继承）。
 	UNLOCK_STORE.sync_from(persistent_day_state)
 	SAVE_STORE.save_game(persistent_day_state)
+
+
+func _load_current_version_progress() -> Dictionary:
+	var loaded := SAVE_STORE.load_game()
+	if loaded.is_empty():
+		return {}
+	if str(loaded.get("save_version", "")) == CONFIG.game_version_text:
+		return loaded
+	# 版本变化只清理游戏进度：主存档与跨存档武器解锁都属于Progression；
+	# SettingsManager的user://game_settings.cfg完全独立，不在这里触碰。
+	SAVE_STORE.clear_game()
+	UNLOCK_STORE.clear_all()
+	var fresh := _create_initial_state()
+	SAVE_STORE.save_game(fresh)
+	return fresh
 
 
 func _commit_day_start() -> void:
@@ -336,11 +372,14 @@ func _show_dream(weapon_id: String) -> void:
 	dream.get_node("EnemySpawner").config = run_config
 	dream.get_node("UILayer/WakeOverlay").config = run_config
 	dream.permanent_upgrades = persistent_day_state.get("permanent_upgrades", {}).duplicate(true)
+	dream.configure_story_upgrade_levels(persistent_day_state.get("story_upgrade_levels", {}))
+	dream.difficulty_day = maxi(1, int(persistent_day_state.get("calendar_day_id", 0)) + 1)
 	dream.is_sunday = is_sunday
 	dream.is_hungry_run = bool(night_state.get("is_hungry_run", false))
 	dream.run_stress_value = int(night_state.get("run_stress_value", CONFIG.stress_default))
 	dream.sleepwalk_mode = SettingsManager.get_sleepwalk_mode()
 	dream.weapon_equipped.connect(_on_story_weapon_equipped)
+	dream.story_card_progress_changed.connect(_on_story_card_progress_changed)
 	dream.dream_finished.connect(_show_results)
 	var sunshade_active := bool(persistent_day_state.get("sunshade_purchased", false)) and bool(persistent_day_state.get("sunshade_visible", true))
 	dream.get_node("UILayer/WakeOverlay").update_sunshade(sunshade_active)
@@ -357,6 +396,7 @@ func _start_endless_mode() -> void:
 
 func _show_endless_dream(weapon_id: String) -> void:
 	current_is_endless_mode = true
+	endless_ram_settlement_committed = false
 	# Endless武器仅存在本次Run；不读取或写入剧情current_weapon_id/DaySnapshot。
 	var available_endless: Array[String] = ["basic", "beam", "shotgun", "katana", "grenade"]
 	endless_weapon_id = weapon_id if weapon_id in available_endless else "basic"
@@ -368,6 +408,7 @@ func _show_endless_dream(weapon_id: String) -> void:
 	dream.get_node("EnemySpawner").config = run_config
 	dream.get_node("UILayer/WakeOverlay").config = run_config
 	dream.permanent_upgrades = persistent_day_state.get("permanent_upgrades", {}).duplicate(true)
+	dream.difficulty_day = 1
 	dream.is_sunday = false
 	dream.is_hungry_run = false
 	dream.run_stress_value = CONFIG.stress_default
@@ -379,8 +420,13 @@ func _show_endless_dream(weapon_id: String) -> void:
 
 
 func _show_endless_results(summary: Dictionary) -> void:
+	var settled_summary := summary.duplicate(true)
+	if not endless_ram_settlement_committed:
+		settled_summary = RunSettlement.settle_endless(settled_summary, persistent_day_state, CONFIG)
+		endless_ram_settlement_committed = true
+		_save_progress()
 	var results := ENDLESS_RESULTS_SCENE.instantiate()
-	results.summary = summary.duplicate(true)
+	results.summary = settled_summary
 	results.restart_requested.connect(_show_endless_dream.bind(endless_weapon_id))
 	results.main_menu_requested.connect(_show_main_menu)
 	_transition_to(results)
@@ -727,6 +773,15 @@ func _on_story_weapon_equipped(weapon_id: String) -> void:
 		return
 	persistent_day_state.current_weapon_id = weapon_id
 	day_start_snapshot.set_persistent_value(&"current_weapon_id", weapon_id)
+	_save_progress()
+
+
+func _on_story_card_progress_changed(levels: Dictionary) -> void:
+	if current_is_endless_mode:
+		return
+	persistent_day_state.story_upgrade_levels = levels.duplicate(true)
+	# 卡片属于跨天剧情成长；同步到当天快照，ESC回主菜单也不会回滚已正式获得的卡片。
+	day_start_snapshot.set_persistent_value(&"story_upgrade_levels", persistent_day_state.story_upgrade_levels.duplicate(true))
 	_save_progress()
 
 

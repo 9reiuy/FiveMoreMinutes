@@ -12,6 +12,7 @@ const SILENT_CHARACTERS := " \t\n，。！？、；：,.!?;:\"“”‘’"
 @export var config: DemoConfig
 
 @onready var start_button: Button = $StartNewDay
+@onready var option_group: PixelOptionGroup = $OptionGroup
 
 var summary: Dictionary = {}
 var paragraphs: Array = []
@@ -52,6 +53,11 @@ func _ready() -> void:
 	text_audio.volume_db = config.opening_text_sound_volume_db
 	text_audio.stream = TextBlipFactory.create(config)
 	add_child(text_audio)
+	start_button.add_theme_font_override("font", PixelFont.get_font())
+	start_button.add_theme_color_override("font_color", Color("8fb3bc"))
+	start_button.add_theme_color_override("font_hover_color", Color("d5dde0"))
+	start_button.add_theme_color_override("font_pressed_color", Color("d5dde0"))
+	option_group.register_options([start_button])
 	start_button.pressed.connect(_on_start_new_day)
 	queue_redraw()
 
@@ -133,9 +139,8 @@ func _draw() -> void:
 		return
 	draw_rect(Rect2(106, 55, 428, 200), Color("20212a"))
 	_draw_result_row(font, 102, "醒来时间", str(summary.get("wake_time", "--:--")))
-	_draw_result_row(font, 138, "本局 RAM", "+%d" % int(summary.get("run_ram", 0)))
 	var wage := int(summary.get("wage", 0))
-	_draw_result_row(font, 174, "工资", ("+" if wage > 0 else "") + FORMAT.format_currency(wage))
+	_draw_result_row(font, 156, "今日工资", ("+" if wage > 0 else "") + FORMAT.format_currency(wage))
 	_draw_result_row(font, 210, "余额", FORMAT.format_currency(int(summary.get("total_balance", 0))))
 	if door_transition_alpha > 0.0:
 		draw_rect(Rect2(Vector2.ZERO, size), Color(0.01, 0.01, 0.015, door_transition_alpha))

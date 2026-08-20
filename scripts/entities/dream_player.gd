@@ -200,7 +200,8 @@ func configure_dream_light(config: DemoConfig, stress_value: int) -> void:
 	player_light.color = config.player_light_color
 	player_light.energy = config.player_light_energy
 	var radius_multiplier := config.stress_light_radius_multiplier if stress_value > config.stress_threshold_vision else 1.0
-	player_light.texture_scale = maxf(config.player_light_radius * radius_multiplier, 1.0) / 128.0
+	config.runtime_player_light_radius = maxf(config.player_light_radius * radius_multiplier, 1.0)
+	player_light.texture_scale = config.runtime_player_light_radius / 128.0
 
 
 func calculate_player_damage(base_damage: float) -> Dictionary:

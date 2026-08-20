@@ -10,10 +10,9 @@ signal exit_finished
 
 enum State { CLOSED, ENTERING, SPINNING, SELECT_ONE, JACKPOT, RESOLVING, EXITING }
 
-const SLOT_SIZE := Vector2(156.0, 190.0)
+const SLOT_SIZE := Vector2(156.0, 174.0)
 const SLOT_GAP := 18.0
 const CELL_HEIGHT := 54.0
-const REROLL_RECT := Rect2(246, 318, 148, 28)
 const OFFSCREEN_Y := 390.0
 
 var state := State.CLOSED
@@ -29,6 +28,7 @@ var reel_results: Array[Dictionary] = [{}, {}, {}]
 var next_reel_to_lock := 0
 var hovered_index := -1
 var reroll_hovered := false
+var reroll_triangle_elapsed := 0.0
 var rerolls_remaining := 0
 var jackpot_left := 0.0
 var reel_spin_elapsed := 0.0
@@ -37,6 +37,7 @@ var radial_rotation := 0.0
 var panel_tween: Tween
 
 @onready var crt_overlay: ColorRect = $CRTOverlay
+@onready var reroll_area: Control = $RerollArea
 
 
 func _ready() -> void:
@@ -73,6 +74,7 @@ func _start_reels(new_options: Array[Dictionary]) -> void:
 	next_reel_to_lock = 0
 	hovered_index = -1
 	reroll_hovered = false
+	reroll_triangle_elapsed = 0.0
 	jackpot_left = 0.0
 	reel_spin_elapsed = 0.0
 	for index in 3:
@@ -89,6 +91,8 @@ func _start_reels(new_options: Array[Dictionary]) -> void:
 func _process(delta: float) -> void:
 	if not visible:
 		return
+	if reroll_hovered:
+		reroll_triangle_elapsed += delta
 	radial_rotation += delta * 0.22
 	if state == State.JACKPOT:
 		jackpot_left = maxf(0.0, jackpot_left - delta)
@@ -139,7 +143,7 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		var old_hover := hovered_index
 		var old_refresh := reroll_hovered
-		reroll_hovered = _can_reroll() and REROLL_RECT.has_point(event.position)
+		reroll_hovered = _can_reroll() and _reroll_rect().has_point(event.position)
 		hovered_index = -1
 		if state == State.SELECT_ONE or state == State.SPINNING:
 			for index in 3:
@@ -147,6 +151,8 @@ func _gui_input(event: InputEvent) -> void:
 					hovered_index = index
 					break
 		if old_hover != hovered_index or old_refresh != reroll_hovered:
+			if old_refresh != reroll_hovered:
+				reroll_triangle_elapsed = 0.0
 			if hovered_index >= 0 or reroll_hovered:
 				SFX.play_event(&"ui_hover")
 			mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if hovered_index >= 0 or reroll_hovered else Control.CURSOR_ARROW
@@ -154,7 +160,7 @@ func _gui_input(event: InputEvent) -> void:
 		accept_event()
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		if _can_reroll() and REROLL_RECT.has_point(event.position):
+		if _can_reroll() and _reroll_rect().has_point(event.position):
 			if rerolls_remaining > 0:
 				rerolls_remaining -= 1
 				SFX.play_event(&"confirm")
@@ -268,9 +274,8 @@ func _draw() -> void:
 		_draw_reel(index, font)
 	_draw_hover_description(font)
 	if state == State.SELECT_ONE and rerolls_remaining > 0:
-		draw_rect(REROLL_RECT, Color("24455a") if reroll_hovered else Color("122535"))
-		draw_rect(REROLL_RECT, Color("517b98"), false, 1.0)
-		draw_string(font, Vector2(REROLL_RECT.position.x, REROLL_RECT.position.y + 19), "重新抽取  %d" % rerolls_remaining, HORIZONTAL_ALIGNMENT_CENTER, REROLL_RECT.size.x, 10, Color("c6dce4"))
+		var reroll_rect := _reroll_rect()
+		PixelOptionGroup.draw_custom_option(self, reroll_rect, "重新抽取  %d" % rerolls_remaining, reroll_hovered, true, font, 10, reroll_triangle_elapsed)
 
 
 func _draw_radial_rays() -> void:
@@ -329,17 +334,23 @@ func _draw_hover_description(font: Font) -> void:
 	if not state in [State.SPINNING, State.SELECT_ONE] or hovered_index < 0 or not reel_locked[hovered_index]:
 		return
 	var result: Dictionary = reel_results[hovered_index]
-	var rect := Rect2(62, 294, 516, 21)
+	# 描述矩形完整落在CRTOverlay(94..316)安全区：只显示Shader曲变后的单份结果，
+	# 与Reel底部留出5px、与Overlay底边留出10px，避免Barrel边缘裁切。
+	var rect := Rect2(62, 282, 516, 24)
 	draw_rect(rect, Color("091824"))
 	draw_rect(rect, Color("315b78"), false, 1.0)
 	var title := str(result.get("name", "未知"))
 	var description := str(result.get("description", ""))
-	draw_string(font, Vector2(rect.position.x + 8, rect.position.y + 14), title + " · " + description, HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 16, 9, Color("bcd7e2"))
+	draw_string(font, Vector2(rect.position.x + 8, rect.position.y + 15), title + " · " + description, HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 16, 9, Color("bcd7e2"))
 
 
 func _slot_rect(index: int) -> Rect2:
 	var total_width := SLOT_SIZE.x * 3.0 + SLOT_GAP * 2.0
 	return Rect2(Vector2((640.0 - total_width) * 0.5 + index * (SLOT_SIZE.x + SLOT_GAP), 103.0), SLOT_SIZE)
+
+
+func _reroll_rect() -> Rect2:
+	return Rect2(reroll_area.position, reroll_area.size)
 
 
 func _rarity_color(rarity: String) -> Color:

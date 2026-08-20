@@ -11,6 +11,7 @@ signal resume_requested
 signal exit_to_main_menu_requested
 
 @onready var root: Control = $Root
+@onready var option_group: PixelOptionGroup = $Root/PauseOptionGroup
 @onready var title: Label = $Root/Panel/Layout/Title
 @onready var menu_buttons: VBoxContainer = $Root/Panel/Layout/MenuButtons
 @onready var settings_panel: UnifiedSettingsPanel = $Root/Panel/Layout/SettingsPanel
@@ -28,7 +29,7 @@ func _ready() -> void:
 	var exit_button: Button = $Root/Panel/Layout/MenuButtons/ExitToMenu
 	for button in [resume_button, settings_button, exit_button, settings_back]:
 		_style_text_button(button)
-		button.mouse_entered.connect(_play_hover.bind(button))
+	option_group.register_options([resume_button, settings_button, exit_button, settings_back])
 	resume_button.pressed.connect(_request_resume)
 	settings_button.pressed.connect(_open_settings)
 	exit_button.pressed.connect(_request_exit)
@@ -56,11 +57,13 @@ func open_pause() -> void:
 	previous_mouse_mode = Input.mouse_mode
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	settings_open = false
+	option_group.clear_highlight()
 	_sync_page()
 	root.visible = true
 
 
 func close_pause() -> void:
+	option_group.clear_highlight()
 	root.visible = false
 	settings_open = false
 	Input.mouse_mode = previous_mouse_mode
@@ -100,12 +103,8 @@ func _request_exit() -> void:
 
 
 func _sync_page() -> void:
+	option_group.clear_highlight()
 	title.text = "设置 // SETTINGS" if settings_open else "暂停 // PAUSED"
 	menu_buttons.visible = not settings_open
 	settings_panel.visible = settings_open
 	settings_back.visible = settings_open
-
-
-func _play_hover(button: BaseButton) -> void:
-	if button.visible and not button.disabled:
-		SFX.play_event(&"ui_hover")

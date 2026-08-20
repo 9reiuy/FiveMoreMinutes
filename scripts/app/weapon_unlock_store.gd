@@ -9,6 +9,7 @@ class_name WeaponUnlockStore
 extends RefCounted
 
 const UNLOCK_FILE := "user://weapon_unlocks.cfg"
+const CONFIG := preload("res://resources/demo_config.tres")
 const WEAPON_IDS := ["shotgun", "beam", "katana", "grenade"]
 const STATE_KEYS := {
 	"shotgun": "shotgun_unlocked",
@@ -24,6 +25,9 @@ static func get_unlocked() -> Dictionary:
 	var config := ConfigFile.new()
 	if config.load(UNLOCK_FILE) != OK:
 		return result
+	if str(config.get_value("meta", "save_version", "")) != CONFIG.game_version_text:
+		clear_all()
+		return result
 	for weapon in WEAPON_IDS:
 		result[weapon] = bool(config.get_value("weapons", weapon, false))
 	return result
@@ -34,6 +38,10 @@ static func sync_from(state: Dictionary) -> void:
 	var config := ConfigFile.new()
 	config.load(UNLOCK_FILE)
 	var changed := false
+	if str(config.get_value("meta", "save_version", "")) != CONFIG.game_version_text:
+		config = ConfigFile.new()
+		changed = true
+	config.set_value("meta", "save_version", CONFIG.game_version_text)
 	for weapon in WEAPON_IDS:
 		if bool(state.get(STATE_KEYS[weapon], false)):
 			config.set_value("weapons", weapon, true)
@@ -48,3 +56,9 @@ static func apply_to(state: Dictionary) -> void:
 	for weapon in WEAPON_IDS:
 		if bool(unlocked.get(weapon, false)):
 			state[STATE_KEYS[weapon]] = true
+
+
+static func clear_all() -> bool:
+	if not FileAccess.file_exists(UNLOCK_FILE):
+		return true
+	return DirAccess.remove_absolute(ProjectSettings.globalize_path(UNLOCK_FILE)) == OK

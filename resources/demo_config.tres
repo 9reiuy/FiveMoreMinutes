@@ -17,6 +17,38 @@ point_count = 2
 [resource]
 script = ExtResource("1_config")
 game_version_text = "V0.4.7"
+bedroom_chr_glow_enabled = true
+bedroom_chr_glow_color = Color(0.862745, 0.933333, 1, 1)
+bedroom_chr_glow_alpha_normal_min = 0.68
+bedroom_chr_glow_alpha_normal_max = 0.86
+bedroom_chr_glow_alpha_dark_min = 0.55
+bedroom_chr_glow_alpha_dark_max = 0.68
+bedroom_chr_glow_alpha_bright_min = 0.86
+bedroom_chr_glow_alpha_bright_max = 0.95
+bedroom_chr_glow_interval_min = 0.06
+bedroom_chr_glow_interval_max = 0.18
+bedroom_chr_glow_big_change_chance = 0.15
+enemy_unlock_days = {
+"alarm_clock": 3,
+"basic": 1,
+"correction": 1,
+"large_correction": 5,
+"mailbox": 4,
+"stapler": 2,
+"tentacle": 1
+}
+enemy_base_spawn_weights = {
+"alarm_clock": 1.0,
+"basic": 1.0,
+"correction": 1.0,
+"large_correction": 1.0,
+"mailbox": 1.0,
+"stapler": 1.0,
+"tentacle": 1.0
+}
+difficulty_seconds_per_day = 120.0
+endless_day_duration = 120.0
+ram_per_completed_day = 1
 dialogue_portrait_outline_color = Color(0.203922, 0.427451, 0.701961, 1)
 dialogue_portrait_outline_width_px = 2.0
 dialogue_portrait_filter_color = Color(0.552941, 0.72549, 0.847059, 1)
@@ -39,10 +71,14 @@ pickup_suction_curve = SubResource("Curve_pickup_suction_ease_in")
 pickup_snap_distance = 12.0
 electric_shield_animation_fps = 30.0
 electric_shield_visual_scale = 0.18
-player_hp_bar_width = 50.0
+player_hp_bar_width = 30.0
 player_hp_bar_height = 5.0
 player_hp_bar_offset = Vector2(0, 7)
 player_hp_bar_visible_duration = 2.5
+enemy_hp_bar_width = 20.0
+enemy_hp_bar_height = 3.0
+enemy_hp_bar_bottom_margin = 2.0
+enemy_hp_bar_visible_duration = 2.5
 player_visual_scale = 0.75
 player_visual_offset = Vector2(0, -18.25)
 player_collision_radius = 7.5
@@ -75,6 +111,25 @@ player_light_energy = 1.15
 player_light_color = Color(0.905882, 0.941176, 0.972549, 1)
 player_light_falloff = 0.32
 stress_light_radius_multiplier = 0.72
+enemy_light_radius_multiplier = 0.5
+enemy_light_energy_multiplier = 0.55
+pickup_light_radius_multiplier = 0.1
+enemy_environment_glow_alpha = 0.12
+pickup_environment_glow_alpha = 0.14
+main_menu_hover_scale = 1.04
+main_menu_selection_padding = Vector2(16, 8)
+main_menu_selection_tween_duration = 0.18
+main_menu_selection_fill_color = Color(0.054902, 0.121569, 0.129412, 0.58)
+main_menu_selection_border_color = Color(0.215686, 0.298039, 0.301961, 0.92)
+option_hover_scale = 1.04
+option_frame_padding = Vector2(14, 6)
+option_triangle_size = 6.0
+option_triangle_text_gap = 8.0
+option_triangle_animation_amplitude = 3.0
+option_triangle_animation_period = 0.6
+option_hover_tween_duration = 0.16
+option_frame_fill_color = Color(0.290196, 0.321569, 0.329412, 0.48)
+option_triangle_color = Color(0.443137, 0.501961, 0.513726, 0.86)
 weapon_effect_primary_color = Color(0.317647, 0.482353, 0.596078, 1)
 weapon_effect_secondary_color = Color(0.603922, 0.713726, 0.784314, 1)
 weapon_effect_warning_color = Color(0.607843, 0.27451, 0.345098, 1)

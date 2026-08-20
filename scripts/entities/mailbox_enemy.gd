@@ -61,11 +61,14 @@ func _perform_slam() -> void:
 
 
 func take_damage(amount: float, hit_origin: Vector2 = Vector2.INF) -> void:
-	if state == State.DEAD:
+	if state == State.DEAD or amount <= 0.0:
 		return
-	current_health -= amount
+	var health_before := current_health
+	current_health = maxf(0.0, current_health - amount)
+	var actual_damage := maxf(0.0, health_before - current_health)
 	if current_health <= 0.0:
 		dead = true
+		_hide_health_bar()
 		set_auto_aim_locked(false)
 		apply_death_z_bias()
 		state = State.DEAD
@@ -82,7 +85,7 @@ func take_damage(amount: float, hit_origin: Vector2 = Vector2.INF) -> void:
 			split_requested.emit(global_position, enemy_config.mailbox_enemy_split_count)
 		queue_free()
 	else:
-		super.take_damage(0.0, hit_origin)
+		_apply_nonlethal_hit_feedback(actual_damage, _resolve_hit_direction(hit_origin))
 
 
 func _draw() -> void:

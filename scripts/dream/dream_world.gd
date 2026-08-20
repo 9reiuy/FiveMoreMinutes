@@ -4,6 +4,7 @@ const SFX := preload("res://scripts/audio/sfx_manager.gd")
 
 signal dream_finished(summary: Dictionary)
 signal weapon_equipped(weapon_id: String)
+signal story_card_progress_changed(levels: Dictionary)
 
 const ENEMY_SCENE := preload("res://scenes/entities/basic_enemy.tscn")
 const XP_GEM_SCENE := preload("res://scenes/entities/xp_gem.tscn")
@@ -56,12 +57,16 @@ var total_experience_earned := 0
 var run_elapsed_seconds := 0.0
 var elite_spawned := false
 var permanent_upgrades: Dictionary = {}
+var story_upgrade_levels: Dictionary = {}
 var skill_levels: Dictionary = {}
 var experience_fractional_carry := 0.0
 var rapid_eye_left := 0.0
 var is_sunday := false
 var sleepwalk_mode := false
 var is_endless_mode := false
+var difficulty_day := 1
+var endless_day := 1
+var completed_endless_days := 0
 var random := RandomNumberGenerator.new()
 var damage_flash_left := 0.0
 var hit_stop_in_progress := false
@@ -93,6 +98,11 @@ func _ready() -> void:
 	player.arena_bounds = ARENA_BOUNDS
 	player.configure_weapon(selected_weapon_id, config, permanent_upgrades)
 	player.configure_run_modifiers(is_hungry_run, config)
+	# 每个Dream都从Player/Weapon基础值重建；剧情卡片只在基础和眠网加成之后恢复一次。
+	skill_levels.clear()
+	if not is_endless_mode:
+		skill_levels = UpgradeCatalog.normalize_owned_levels(config, story_upgrade_levels)
+		_apply_restored_story_upgrades()
 	player.configure_aim(sleepwalk_mode, config)
 	dream_canvas_modulate.color = config.dream_ambient_color
 	player.configure_feedback_audio(config)
@@ -104,6 +114,7 @@ func _ready() -> void:
 	clock.alarm_enabled = not is_endless_mode
 	spawner.player = player
 	spawner.endless_mode = is_endless_mode
+	spawner.set_difficulty_day(difficulty_day)
 	spawner.arena_bounds = ARENA_BOUNDS.grow(-14.0)
 	_configure_stress_difficulty()
 	wake_overlay.config = config
@@ -118,6 +129,7 @@ func _ready() -> void:
 	spawner.spawn_requested.connect(_on_spawn_requested)
 	tentacle_spawner.player = player
 	tentacle_spawner.arena_bounds = ARENA_BOUNDS
+	tentacle_spawner.running = difficulty_day >= int(config.enemy_unlock_days.get("tentacle", 1))
 	tentacle_spawner.tentacle_spawn_requested.connect(_on_tentacle_spawn_requested)
 	upgrade_panel.upgrade_chosen.connect(_on_upgrade_chosen)
 	upgrade_panel.jackpot_chosen.connect(_on_upgrade_jackpot)
@@ -127,8 +139,10 @@ func _ready() -> void:
 	PauseManager.pause_state_changed.connect(_on_pause_state_changed)
 	hud.set_health(player.current_health, player.maximum_health)
 	hud.set_progression(level, experience, get_experience_requirement(level), kills)
-	hud.set_skill_state(false, false)
+	hud.set_skill_state(player.has_shield, player.dissociation_ready)
 	hud.set_hungry_run(is_hungry_run)
+	hud.configure_endless_mode(is_endless_mode, config.endless_day_duration)
+	hud.set_endless_day_progress(endless_day, 0.0)
 	queue_redraw()
 	for _index in range(32):
 		var number := DAMAGE_NUMBER_SCENE.instantiate()
@@ -156,7 +170,9 @@ func _process(delta: float) -> void:
 	var unscaled_delta := delta / frame_time_scale
 	run_elapsed_seconds += delta
 	spawner.set_run_elapsed(run_elapsed_seconds)
-	if not elite_spawned and run_elapsed_seconds >= config.large_correction_unlock_seconds:
+	if is_endless_mode:
+		_update_endless_day_state()
+	if not elite_spawned and difficulty_day >= int(config.enemy_unlock_days.get("large_correction", 5)):
 		_spawn_large_correction()
 	_update_rapid_eye(delta)
 	if phase != RunPhase.ALARM:
@@ -377,6 +393,7 @@ func _on_enemy_defeated(at_position: Vector2, drop_count: int = 1) -> void:
 	kills += 1
 	for drop_index in range(maxi(1, drop_count)):
 		var gem := XP_GEM_SCENE.instantiate()
+		gem.set_environment_reference(config)
 		var angle := TAU * float(drop_index) / float(maxi(1, drop_count))
 		gem.position = at_position + Vector2.RIGHT.rotated(angle) * (6.0 if drop_count > 1 else 0.0)
 		gem.target = player
@@ -394,6 +411,7 @@ func _on_elite_defeated(_at_position: Vector2, _drop_count: int = 1) -> void:
 func _on_special_enemy_defeated(at_position: Vector2, experience_value: int, rarity: String) -> void:
 	kills += 1
 	var gem := XP_GEM_SCENE.instantiate()
+	gem.set_environment_reference(config)
 	gem.position = at_position
 	gem.target = player
 	gem.configure(experience_value, rarity)
@@ -440,6 +458,7 @@ func _on_tentacle_heart_drop_requested(at_position: Vector2) -> void:
 	if phase == RunPhase.ENDING:
 		return
 	var heart := HEART_PICKUP_SCENE.instantiate()
+	heart.set_environment_reference(config)
 	heart.position = at_position + Vector2(10.0, 0.0)
 	heart.heal_amount = config.heart_pickup_heal_amount
 	heart.target = player
@@ -495,7 +514,8 @@ func _on_upgrade_jackpot(options: Array[Dictionary]) -> void:
 	# 三格分别尝试结算；每次重新检查当前等级，达到上限后停止，绝不越界。
 	for option in options:
 		if _can_apply_upgrade(option):
-			_apply_upgrade(option)
+			_apply_upgrade(option, false)
+	_commit_story_card_progress()
 	pending_upgrades -= 1
 	hud.set_progression(level, experience, get_experience_requirement(level), kills)
 
@@ -524,7 +544,7 @@ func _can_apply_upgrade(option: Dictionary) -> bool:
 	return current < int(option.get("max_level", 1))
 
 
-func _apply_upgrade(option: Dictionary) -> void:
+func _apply_upgrade(option: Dictionary, commit_story_progress: bool = true) -> void:
 	if str(option.get("reward_type", "upgrade")) == "weapon":
 		_equip_run_weapon(str(option.get("weapon_id", "")))
 		return
@@ -546,6 +566,47 @@ func _apply_upgrade(option: Dictionary) -> void:
 		"hypnic_jerk": player.add_dash_charge_capacity(config)
 		"consciousness_drift": player.configure_consciousness_drift(int(skill_levels[family]), config)
 		"dissociation": player.enable_dissociation(config)
+	if commit_story_progress:
+		_commit_story_card_progress()
+
+
+func configure_story_upgrade_levels(levels: Dictionary) -> void:
+	story_upgrade_levels = UpgradeCatalog.normalize_owned_levels(config, levels)
+
+
+func _commit_story_card_progress() -> void:
+	if is_endless_mode:
+		return
+	story_upgrade_levels = UpgradeCatalog.normalize_owned_levels(config, skill_levels)
+	story_card_progress_changed.emit(story_upgrade_levels.duplicate(true))
+
+
+## 只在新Dream初始化时调用一次；不会复用上一日Player数值，因此不会重复叠加。
+func _apply_restored_story_upgrades() -> void:
+	var damage_level := int(skill_levels.get("damage_boost", 0))
+	for _index in damage_level:
+		player.apply_damage_upgrade(config.damage_upgrade_multiplier)
+	var speed_level := int(skill_levels.get("attack_speed_boost", 0))
+	for _index in speed_level:
+		player.apply_attack_speed_upgrade(config.normal_attack_speed_upgrade_multiplier)
+	var range_level := int(skill_levels.get("range_boost", 0))
+	if range_level > 0:
+		player.apply_range_upgrade(config.normal_range_upgrade_pixels * range_level)
+	match int(skill_levels.get("sleep_paralysis", 0)):
+		1: player.configure_sleep_paralysis(config.sleep_paralysis_blue_still_seconds, config.sleep_paralysis_blue_heal_per_second)
+		2: player.configure_sleep_paralysis(config.sleep_paralysis_purple_still_seconds, config.sleep_paralysis_purple_heal_per_second)
+		3: player.configure_sleep_paralysis(config.sleep_paralysis_gold_still_seconds, config.sleep_paralysis_gold_heal_per_second)
+	match int(skill_levels.get("sleep_spindle", 0)):
+		1: player.configure_sleep_spindle(config.sleep_spindle_blue_interval, config.sleep_spindle_max_layers)
+		2: player.configure_sleep_spindle(config.sleep_spindle_purple_interval, config.sleep_spindle_max_layers)
+		3: player.configure_sleep_spindle(config.sleep_spindle_gold_interval, config.sleep_spindle_max_layers)
+	for _index in int(skill_levels.get("hypnic_jerk", 0)):
+		player.add_dash_charge_capacity(config)
+	var drift_level := int(skill_levels.get("consciousness_drift", 0))
+	if drift_level > 0:
+		player.configure_consciousness_drift(drift_level, config)
+	if int(skill_levels.get("dissociation", 0)) > 0:
+		player.enable_dissociation(config)
 
 
 func get_experience_requirement(for_level: int) -> int:
@@ -748,6 +809,18 @@ func _on_alarm_started() -> void:
 	queue_redraw()
 
 
+func _update_endless_day_state() -> void:
+	var day_duration := maxf(config.endless_day_duration, 0.001)
+	completed_endless_days = maxi(0, floori(run_elapsed_seconds / day_duration))
+	endless_day = completed_endless_days + 1
+	var day_progress := fmod(run_elapsed_seconds, day_duration) / day_duration
+	if difficulty_day != endless_day:
+		difficulty_day = endless_day
+		spawner.set_difficulty_day(difficulty_day)
+		tentacle_spawner.running = difficulty_day >= int(config.enemy_unlock_days.get("tentacle", 1))
+	hud.set_endless_day_progress(endless_day, day_progress)
+
+
 func _on_player_health_changed(current: float, maximum: float) -> void:
 	hud.set_health(current, maximum)
 	if holding_to_wake and current < maximum:
@@ -909,7 +982,10 @@ func _build_summary(reason: String) -> Dictionary:
 		"reason": reason,
 		"is_sunday": is_sunday,
 		"is_endless_mode": is_endless_mode,
-		"survival_seconds": run_elapsed_seconds
+		"survival_seconds": run_elapsed_seconds,
+		"endless_day": endless_day,
+		"completed_endless_days": completed_endless_days,
+		"difficulty_day": difficulty_day
 	}
 
 

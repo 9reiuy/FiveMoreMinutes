@@ -23,7 +23,15 @@ layout_mode = 0
 offset_left = 62.0
 offset_top = 94.0
 offset_right = 578.0
-offset_bottom = 294.0
+offset_bottom = 316.0
 mouse_filter = 2
 material = SubResource("ShaderMaterial_crt")
 color = Color(1, 1, 1, 1)
+
+[node name="RerollArea" type="Control" parent="."]
+layout_mode = 0
+offset_left = 246.0
+offset_top = 318.0
+offset_right = 394.0
+offset_bottom = 346.0
+mouse_filter = 2

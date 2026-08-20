@@ -93,7 +93,7 @@
 
 | 参数 | 默认值 | 推荐范围 | 作用 |
 |---|---:|---:|---|
-| `RunSettlement.calculate_run_ram(final_level)` | 等级−1，最低0 | 固定规则 | 本局RAM只按最终等级计算，不再读取累计经验 |
+| `ram_per_completed_day` | 1 RAM/日 | 0–100 | 剧情正式完成一天、无尽完成一个120秒虚拟日时使用的统一奖励；不再读取等级或经验 |
 | `initial_balance` | ¥1,325 | 0–2,000,000,000 | 新档局外余额 |
 | `daily_base_wage` | ¥500 | 0–1,000,000 | 完整日工资；迟到比例仍由现有倍率计算 |
 | `wage_ratio_on_time` | 1.0 | 0–2 | 正常上班工资比例 |
@@ -122,13 +122,14 @@
 
 敌人生成、敌人上限、基础生命/伤害、06:00后成长、梦境时钟、醒来长按、慢动作、升级公式、武器、闪避、逐字速度/音效和手机位置也继续集中在同一资源中。其中 `base_wake_hold_seconds` 默认5秒，`bullet_time_scale` 默认0.20，梦境默认04:00开始、剧情模式06:00响铃。
 
-## 本阶段：敌人解锁与大体型修正带
+## 本阶段：按天驱动的敌人解锁与难度
 
 | 参数 | 默认值 | 推荐范围 | 作用 |
 |---|---:|---:|---|
-| `correction_unlock_seconds` | 30 s | 0–600 s | 普通修正带加入随机池的单局经过时间 |
-| `stapler_unlock_seconds` | 90 s | 0–900 s | 订书机加入随机池的单局经过时间 |
-| `large_correction_unlock_seconds` | 180 s | 1–1800 s | 大体型修正带每局唯一一次强制生成时间 |
+| `enemy_unlock_days` | `{basic:1, correction:1, tentacle:1, stapler:2, alarm_clock:3, mailbox:4, large_correction:5}` | Day 1–999 | 剧情日/无尽虚拟日共用的敌人首次解锁表；不再按局内秒数解锁 |
+| `enemy_base_spawn_weights` | 常规类型均为1.0 | 0–20 | 已解锁普通生成池的相对抽取权重；触手与唯一精英使用独立入口 |
+| `difficulty_seconds_per_day` | 120 s | 10–600 s | Day N映射为既有线性难度曲线的`(N-1)×120秒`输入 |
+| `endless_day_duration` | 120 s | 10–600 s | 无尽模式每完成一个虚拟日所需时长 |
 | `correction_trigger_distance` | 150 px | 20–300 px | 普通修正带开始蓄力的距离 |
 | `correction_charge_seconds` | 0.75 s | 0.1–3 s | 普通修正带原地蓄力时间 |
 | `correction_dash_distance` | 200 px | 20–500 px | 普通修正带冲刺距离 |
@@ -154,7 +155,7 @@
 
 星期索引保存在局外状态：0为星期一、6为星期日。手机锁屏不维护独立计时器，而是直接显示卧室的 `current_minutes`。
 
-## 本阶段：眠网™永久强化
+## 本阶段：主菜单眠网™全局永久强化
 
 | 参数 | 默认值 | 推荐范围 | 作用 |
 |---|---:|---:|---|
@@ -165,7 +166,7 @@
 | `hippocampus_health_per_level` | 20 | 0–1000 | 海马体每级初始最大生命增量 |
 | `prefrontal_attack_speed_per_level` | 0.2 | 0–5 | 前额叶每级攻击速度倍率增量；最终间隔使用除法 |
 
-每项从0升至5级分别消耗1、3、5、8、10 RAM，即每项总计27 RAM。四项等级存放在局外 `permanent_upgrades` 字典中。
+每项从0升至5级分别消耗1、3、5、8、10 RAM，即每项总计27 RAM。四项等级继续存放在旧存档兼容字段`persistent_day_state.permanent_upgrades`中，RAM继续使用同一全局`ram`字段。手机入口已删除，购买入口迁移到主菜单`GlobalUpgradePanel`；剧情与无尽读取同一份等级，局内老虎机技能不写入该字段。
 
 ## 本阶段：三选一与局内技能
 
@@ -229,8 +230,15 @@
 | `slot_rerolls_per_run` | 1 | 0–3 | 每个Battle Run老虎机总重抽次数，仅三格锁定且非Jackpot时可用 |
 | `upgrade_reel_start_speeds` | `(84,92,78)` | 正数 | 三列起步速度；由上一版`(42,46,39)`翻倍 |
 | `upgrade_reel_max_speeds` | `(440,472,416)` | 正数 | 三列Ease-In后的速度上限；由上一版`(220,236,208)`翻倍 |
+| `player_hp_bar_width` | 30 px | 20–100 px | 玩家世界血条宽度；只改血条，不缩放玩家 |
+| `enemy_hp_bar_width` | 20 px | 8–20 px | 所有敌人非致死受伤后显示的世界血条宽度硬上限 |
+| `enemy_hp_bar_height` | 3 px | 2–6 px | 敌人血条高度 |
+| `enemy_hp_bar_bottom_margin` | 2 px | 0–12 px | 血条与敌人碰撞核心下缘的垂直间距 |
+| `enemy_hp_bar_visible_duration` | 2.5 s | 0.25–8 s | 非致死受伤后的显示时间；再次受伤刷新，死亡立即隐藏 |
 
-老虎机武器池使用本局`used_weapon_reward_ids`排除：初始武器进场即加入；新武器只有真正结算并装备后加入。Reel仅显示或Reroll不会消耗武器，下一局由新DreamWorld重新初始化。
+老虎机武器池使用本局`used_weapon_reward_ids`排除：初始武器进场即加入；新武器只有真正结算并装备后加入。Reel仅显示或Reroll不会消耗武器，下一局由新DreamWorld重新初始化。Hover描述完整位于`CRTOverlay`内部，只显示一份曲变结果。
+
+剧情卡片存档字段为`persistent_day_state.story_upgrade_levels`（`family -> level/rank`），卡片获得时同步当前存档与当天快照，换日、死亡和Continue均保留；New Game为空。无尽模式始终使用空的初始`skill_levels`，Restart不会读取剧情卡片。每个剧情Dream从基础属性开始，再依次应用眠网永久强化和剧情卡片等级，避免跨天重复叠加。
 
 ## 本次界面与饥饿参数
 
