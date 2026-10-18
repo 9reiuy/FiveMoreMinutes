@@ -808,6 +808,10 @@ var _furniture_shot_path_query: PhysicsRayQueryParameters2D
 var _employee_nav_ray: PhysicsRayQueryParameters2D
 var _debris_spray_ray: PhysicsRayQueryParameters2D
 var _door_proximity_ray: PhysicsRayQueryParameters2D
+var _throw_prediction_shape: RectangleShape2D
+var _throw_prediction_query: PhysicsShapeQueryParameters2D
+var _furniture_footprint_shape: RectangleShape2D
+var _furniture_footprint_query: PhysicsShapeQueryParameters2D
 var employee_path_cache: Dictionary = {}
 var _floor_path_cache_enabled := false
 var _floor_path_adjacency: Dictionary = {}
@@ -1582,15 +1586,16 @@ func get_throw_aim_prediction() -> Dictionary:
 	var gravity := maxf(float(profile.get("fake_height_gravity", 0.0)), 0.0)
 	var max_duration := maxf(float(profile.get("max_duration", 0.8)), 0.05)
 	var linear_damp := maxf(float(profile.get("linear_damp", 0.0)), 0.0)
-	var shape := RectangleShape2D.new()
+	if _throw_prediction_query == null:
+		_throw_prediction_shape = RectangleShape2D.new()
+		_throw_prediction_query = PhysicsShapeQueryParameters2D.new()
+		_throw_prediction_query.shape = _throw_prediction_shape
+		_throw_prediction_query.collide_with_bodies = true
+		_throw_prediction_query.collide_with_areas = true
 	var shape_size: Vector2 = profile.get("collision_shape_size", Vector2(26.0, 12.0))
-	shape.size = shape_size
-	var query := PhysicsShapeQueryParameters2D.new()
-	query.shape = shape
-	query.collision_mask = int(profile.get("collision_mask", 15))
-	query.collide_with_bodies = true
-	query.collide_with_areas = true
-	query.exclude = [player.get_rid()]
+	_throw_prediction_shape.size = shape_size
+	_throw_prediction_query.collision_mask = int(profile.get("collision_mask", 15))
+	_throw_prediction_query.exclude = [player.get_rid()]
 	var space: PhysicsDirectSpaceState2D = player.get_world_2d().direct_space_state
 	var dt := 1.0 / 60.0
 	var steps := maxi(1, ceili(max_duration / dt))
@@ -1605,8 +1610,8 @@ func get_throw_aim_prediction() -> Dictionary:
 		vertical_velocity -= gravity * dt
 		if step_index % 2 == 0:
 			points.append(_map_throw_prediction_point(position, fake_height))
-		query.transform = Transform2D(rotation, position)
-		var hits: Array[Dictionary] = space.intersect_shape(query, 16)
+		_throw_prediction_query.transform = Transform2D(rotation, position)
+		var hits: Array[Dictionary] = space.intersect_shape(_throw_prediction_query, 16)
 		var hit_result := _resolve_throw_prediction_hits(hits)
 		if not hit_result.is_empty():
 			result["target"] = hit_result.get("target")
@@ -9858,22 +9863,23 @@ func _furniture_placement_is_clear(furniture: Node2D, room_id: int) -> bool:
 	var space: PhysicsDirectSpaceState2D = player.get_world_2d().direct_space_state if player != null and player.is_inside_tree() else null
 	if space == null:
 		return true
-	var shape := RectangleShape2D.new()
-	shape.size = footprint_half * 2.0
-	var query := PhysicsShapeQueryParameters2D.new()
-	query.shape = shape
-	query.transform = Transform2D(0.0, footprint_center)
-	query.collision_mask = WORLD_WALL_LAYER | 8 | 2 | 4
-	query.collide_with_bodies = true
-	query.collide_with_areas = true
+	if _furniture_footprint_query == null:
+		_furniture_footprint_shape = RectangleShape2D.new()
+		_furniture_footprint_query = PhysicsShapeQueryParameters2D.new()
+		_furniture_footprint_query.shape = _furniture_footprint_shape
+		_furniture_footprint_query.collide_with_bodies = true
+		_furniture_footprint_query.collide_with_areas = true
+	_furniture_footprint_shape.size = footprint_half * 2.0
+	_furniture_footprint_query.transform = Transform2D(0.0, footprint_center)
+	_furniture_footprint_query.collision_mask = WORLD_WALL_LAYER | 8 | 2 | 4
 	var excluded: Array[RID] = []
 	if furniture is CollisionObject2D:
 		excluded.append((furniture as CollisionObject2D).get_rid())
 	var hurtbox := furniture.get_node_or_null("Hurtbox") as Area2D
 	if hurtbox != null:
 		excluded.append(hurtbox.get_rid())
-	query.exclude = excluded
-	return space.intersect_shape(query, 16).is_empty()
+	_furniture_footprint_query.exclude = excluded
+	return space.intersect_shape(_furniture_footprint_query, 16).is_empty()
 
 
 func _random_room_position(room_id: int, radius: float, extra_avoid: Array[Vector2] = [], reserve_passage: bool = false) -> Vector2:
