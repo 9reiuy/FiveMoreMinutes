@@ -808,8 +808,6 @@ func _process(delta: float) -> void:
 	_update_reload(delta)
 	_update_knockdown_state(delta)
 	_update_unarmed_counterattack(delta)
-	_update_emoji(delta)
-	_update_state_emoji()
 
 	hit_flash_left = maxf(
 		0.0,
@@ -836,8 +834,14 @@ func _process(delta: float) -> void:
 			)
 		)
 
+	# Crowd CPU: blink/emoji/aim presentation can share alternate frames when
+	# many employees are active; locomotion/AI stay on physics.
+	var visual_tick := ((Engine.get_process_frames() + get_instance_id()) & 1) == 0
 	_update_human_animation(delta)
-	_update_enemy_blink(delta)
+	if visual_tick:
+		_update_enemy_blink(delta)
+		_update_emoji(delta)
+		_update_state_emoji()
 	_update_weapon_aim()
 	_update_bleeding_trail(delta)
 
@@ -1499,7 +1503,7 @@ func _update_flee() -> void:
 				gunshot_threat_position
 			)
 			if not flee_route.is_empty():
-				decision_cooldown_left = _cfg("employee_decision_cooldown", 0.30)
+				decision_cooldown_left = _cfg("employee_decision_cooldown", 0.42)
 				_begin_route_to_room(
 					int(flee_route.get("room_id", -1)),
 					StringName(flee_route.get("direction", &""))
@@ -1550,7 +1554,7 @@ func _update_flee() -> void:
 		if not flee_route.is_empty():
 			decision_cooldown_left = _cfg(
 				"employee_decision_cooldown",
-				0.30
+				0.42
 			)
 
 			_begin_route_to_room(
@@ -2155,7 +2159,7 @@ func _begin_route_to_room(
 
 	decision_cooldown_left = _cfg(
 		"employee_decision_cooldown",
-		0.30
+		0.42
 	)
 
 	state = State.MOVE_TO_DOOR
@@ -3826,7 +3830,7 @@ func start_knockdown(
 
 	decision_cooldown_left = _cfg(
 		"employee_decision_cooldown",
-		0.30
+		0.42
 	)
 
 	_release_weapon_reservation()

@@ -10895,7 +10895,7 @@ func get_employee_navigation_target(employee: EmployeeEnemy, destination: Vector
 	var id := employee.get_instance_id()
 	var now := Time.get_ticks_msec()
 	var cached: Dictionary = employee_path_cache.get(id, {})
-	if cached.get("start") != start or cached.get("finish") != finish or now - int(cached.get("time", 0)) > 450:
+	if cached.get("start") != start or cached.get("finish") != finish or now - int(cached.get("time", 0)) > 700:
 		cached = {"start": start, "finish": finish, "time": now, "path": find_floor_path(start, finish, false)}
 		employee_path_cache[id] = cached
 	var path: Array = cached.path
