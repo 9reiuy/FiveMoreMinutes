@@ -1,4 +1,5 @@
 extends Control
+var _cached_dream_world: Node
 @export var config: DemoConfig
 var player: Node
 var current_color := Color.GRAY
@@ -7,6 +8,16 @@ var recoil_kick_rotation := 0.0
 var recoil_active := false
 var _last_draw_color := Color(-1, -1, -1, -1)
 var _last_draw_recoil := INF
+
+
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
 
 
 func configure(target: Node) -> void:
@@ -93,7 +104,7 @@ func _get_reload_progress(ammo: Dictionary) -> float:
 ## 世界坐标 → 屏幕坐标：以相机实际屏幕中心为基准，乘相机缩放后平移到视口中心。
 ## 手动模式下瞄准点即鼠标世界坐标，换算后准星精确贴合鼠标位置。
 func _world_to_ui(world_position: Vector2) -> Vector2:
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	if world != null and world.has_method("get_gameplay_aim_position"):
 		return player.get_presentation_hud_position(player.get_presentation_pointer_position())
 	var camera: Camera2D = player.get_node_or_null("DreamCamera")

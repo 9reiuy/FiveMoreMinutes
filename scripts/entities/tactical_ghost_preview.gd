@@ -1,5 +1,6 @@
 class_name TacticalGhostPreview
 extends CanvasLayer
+var _cached_dream_world: Node
 
 ## Tactical Planning Visual Preview Overlay
 ## Renders:
@@ -41,6 +42,16 @@ class TacticalDrawCanvas extends Control:
 	func _draw() -> void:
 		if overlay != null:
 			overlay._render_draw(self)
+
+
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
 
 
 func _ready() -> void:
@@ -139,7 +150,7 @@ func _world_to_screen(gameplay_pos: Vector2) -> Vector2:
 	var vp := get_viewport()
 	if vp != null:
 		# Check for 3D Camera (perspective dungeon presentation)
-		var world := get_tree().get_first_node_in_group(&"dream_world") if get_tree() != null else null
+		var world := _dream_world() if get_tree() != null else null
 		var cam3d := world.get("camera_3d") as Camera3D if world != null else vp.get_camera_3d()
 		if cam3d == null and get_tree() != null:
 			cam3d = get_tree().root.find_child("Camera3D", true, false) as Camera3D
@@ -168,7 +179,7 @@ func _gameplay_world_position(gameplay_pos: Vector2, height: float) -> Vector3:
 	# The 3D dungeon owns the rotated map transform. Never interpret gameplay
 	# X/Z as global coordinates: the preview must use the same mapping as the
 	# actual dash path, player depth bridge and final landing point.
-	var world := get_tree().get_first_node_in_group(&"dream_world") as Node3D if get_tree() != null else null
+	var world := _dream_world() as Node3D if get_tree() != null else null
 	if world != null and world.has_method("get_gameplay_world_position"):
 		return world.call("get_gameplay_world_position", gameplay_pos, height)
 	return Vector3(gameplay_pos.x / 32.0, height, gameplay_pos.y / 32.0)
@@ -181,7 +192,7 @@ func _update_ghost_transform() -> void:
 	ghost_container.position = dest_screen
 
 	var vp := get_viewport()
-	var world := get_tree().get_first_node_in_group(&"dream_world") if get_tree() != null else null
+	var world := _dream_world() if get_tree() != null else null
 	var cam3d: Camera3D = world.get("camera_3d") as Camera3D if world != null else (vp.get_camera_3d() if vp != null else null)
 	if cam3d == null and get_tree() != null:
 		cam3d = get_tree().root.find_child("Camera3D", true, false) as Camera3D

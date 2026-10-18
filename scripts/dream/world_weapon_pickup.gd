@@ -1,5 +1,6 @@
 class_name WorldWeaponPickup
 extends RigidBody2D
+var _cached_dream_world: Node
 ## Shared per-frame group list for thrown-weapon mutual exceptions.
 static var _pickup_group_cache: Array = []
 static var _pickup_group_cache_frame: int = -1
@@ -103,6 +104,16 @@ var previous_linear_velocity := Vector2.ZERO
 ## A melee weapon gets at most one break roll during one held -> thrown cycle.
 ## Firearms never enter this path.
 var throw_break_checked := false
+
+
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
 
 
 func _ready() -> void:
@@ -658,7 +669,7 @@ func _on_physics_body_entered(body: Node) -> void:
 	var speed := impact_velocity.length()
 	if speed < CONFIG.world_weapon_throw_minimum_speed:
 		return
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	# A thrown weapon is also an explicit impact source.  The DoorLeaf remains
 	# solid and terminal; only its accepted physical impulse is delegated to the
 	# shared Door API.  Firearms pass through this call with zero break chance.
