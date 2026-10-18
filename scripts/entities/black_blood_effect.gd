@@ -6,6 +6,8 @@ var wall_collision_mask: int = 1
 var _airborne_wall_query: PhysicsRayQueryParameters2D
 var _pool_circle_query: PhysicsShapeQueryParameters2D
 var _pool_circle_shape: CircleShape2D
+var _deposit_bounds_query: PhysicsShapeQueryParameters2D
+var _deposit_bounds_shape: ConvexPolygonShape2D
 var ground_bounds_local := Rect2()
 var ground_bounds_enabled := false
 ## The 3D office uses its complete floor footprint instead of a source-room
@@ -1336,14 +1338,15 @@ func _deposited_pool_bounds_are_clear(block_cache: Dictionary) -> bool:
 	for point in corners: bounds = bounds.expand(point)
 	if not bool(surface_world.call("_is_blood_ground_block_allowed", bounds)):
 		return false
-	var query := PhysicsShapeQueryParameters2D.new()
-	var shape := ConvexPolygonShape2D.new()
-	shape.points = corners
-	query.shape = shape
-	query.collision_mask = wall_collision_mask
-	query.collide_with_areas = false
-	query.margin = 0.0
-	return get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
+	if _deposit_bounds_query == null:
+		_deposit_bounds_query = PhysicsShapeQueryParameters2D.new()
+		_deposit_bounds_shape = ConvexPolygonShape2D.new()
+		_deposit_bounds_query.shape = _deposit_bounds_shape
+		_deposit_bounds_query.collide_with_areas = false
+		_deposit_bounds_query.margin = 0.0
+	_deposit_bounds_shape.points = corners
+	_deposit_bounds_query.collision_mask = wall_collision_mask
+	return get_world_2d().direct_space_state.intersect_shape(_deposit_bounds_query, 1).is_empty()
 
 
 func _rasterize_pool_deposit(patch: Dictionary, rng: RandomNumberGenerator, occupied: Dictionary, block_cache: Dictionary, entire_pool_safe: bool, land_immediately: bool=false) -> void:

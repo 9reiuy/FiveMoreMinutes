@@ -307,6 +307,7 @@ var kick_hit_applied := false
 var kick_direction := Vector2.RIGHT
 var _kick_shape: RectangleShape2D
 var _kick_query: PhysicsShapeQueryParameters2D
+var _dash_query: PhysicsShapeQueryParameters2D
 var kick_left_foot := true
 var next_kick_left_foot := true
 var kick_blocked_by_interaction := false
@@ -3105,23 +3106,24 @@ func _dash_floor_position_valid(position: Vector2) -> bool:
 func _dash_shape_collisions_at(position: Vector2, ignored_bodies: Array = []) -> Array:
 	if body_collision == null or body_collision.shape == null or not is_inside_tree():
 		return []
-	var query := PhysicsShapeQueryParameters2D.new()
-	query.shape = body_collision.shape
+	if _dash_query == null:
+		_dash_query = PhysicsShapeQueryParameters2D.new()
+		_dash_query.collide_with_bodies = true
+		_dash_query.collide_with_areas = false
+	_dash_query.shape = body_collision.shape
 	var local_offset := body_collision.global_position - global_position
-	query.transform = Transform2D(
+	_dash_query.transform = Transform2D(
 		body_collision.global_rotation,
 		position + local_offset
 	)
-	query.collision_mask = collision_mask
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
+	_dash_query.collision_mask = collision_mask
 	var exclusions: Array[RID] = [get_rid()]
 	for body_variant in ignored_bodies:
 		var body := body_variant as CollisionObject2D
 		if body != null and is_instance_valid(body):
 			exclusions.append(body.get_rid())
-	query.exclude = exclusions
-	return get_world_2d().direct_space_state.intersect_shape(query, 16)
+	_dash_query.exclude = exclusions
+	return get_world_2d().direct_space_state.intersect_shape(_dash_query, 16)
 
 
 func _dash_collision_owner(collider: Node) -> Node:

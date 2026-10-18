@@ -801,6 +801,8 @@ var enemy_population_breathing_left: Dictionary = {}
 var reserved_content_cells: Dictionary = {}
 var _employee_clear_shape: CircleShape2D
 var _employee_clear_query: PhysicsShapeQueryParameters2D
+var _placement_clear_shape: CircleShape2D
+var _placement_clear_query: PhysicsShapeQueryParameters2D
 var employee_path_cache: Dictionary = {}
 var _floor_path_cache_enabled := false
 var _floor_path_adjacency: Dictionary = {}
@@ -9753,15 +9755,16 @@ func _content_position_is_clear(at_position: Vector2, radius: float, avoid_doors
 	var space: PhysicsDirectSpaceState2D = player.get_world_2d().direct_space_state if player != null and player.is_inside_tree() else null
 	if space == null:
 		return true
-	var shape := CircleShape2D.new()
-	shape.radius = maxf(radius, 1.0)
-	var query := PhysicsShapeQueryParameters2D.new()
-	query.shape = shape
-	query.transform = Transform2D(0.0, at_position)
-	query.collision_mask = WORLD_WALL_LAYER | 8 | 2 | 4
-	query.collide_with_bodies = true
-	query.collide_with_areas = true
-	return space.intersect_shape(query, 16).is_empty()
+	if _placement_clear_query == null:
+		_placement_clear_shape = CircleShape2D.new()
+		_placement_clear_query = PhysicsShapeQueryParameters2D.new()
+		_placement_clear_query.shape = _placement_clear_shape
+		_placement_clear_query.collide_with_bodies = true
+		_placement_clear_query.collide_with_areas = true
+	_placement_clear_shape.radius = maxf(radius, 1.0)
+	_placement_clear_query.transform = Transform2D(0.0, at_position)
+	_placement_clear_query.collision_mask = WORLD_WALL_LAYER | 8 | 2 | 4
+	return space.intersect_shape(_placement_clear_query, 16).is_empty()
 
 
 ## Final furniture placement guard.  The first candidate pass intentionally
