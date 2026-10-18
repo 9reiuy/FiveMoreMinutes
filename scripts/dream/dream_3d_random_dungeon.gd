@@ -734,6 +734,8 @@ var _cutout_sort_indices: Array[int] = []
 var _furniture_near_indices: Array = []
 var _furniture_near_seen: Dictionary = {}
 var _cutout_slots_scratch: Array[Vector4] = []
+var _furniture_scan_roots: Array[Node] = []
+var _furniture_rebuild_seen: Dictionary = {}
 var _cached_projectile_cutout_nodes: Array = []
 var _cached_projectile_cutout_frame: int = -1
 
@@ -6581,26 +6583,26 @@ func _rebuild_furniture_mesh_cache() -> void:
 	# Scope the mesh scan to furniture art / known furniture bridges. A whole-tree
 	# find_children("*", MeshInstance3D) was ~10–18ms on crowded floors and ran
 	# whenever any depth bridge (projectile/shell) was added.
-	var scan_roots: Array[Node] = []
+	_furniture_scan_roots.clear()
 	if is_instance_valid(office_art_root):
-		scan_roots.append(office_art_root)
+		_furniture_scan_roots.append(office_art_root)
 	for bridge_variant in _cached_furniture_bridges:
 		if is_instance_valid(bridge_variant):
-			scan_roots.append(bridge_variant)
-	if scan_roots.is_empty() and is_instance_valid(furniture_root):
+			_furniture_scan_roots.append(bridge_variant)
+	if _furniture_scan_roots.is_empty() and is_instance_valid(furniture_root):
 		# Fallback: rare floors without office art still need a mesh list.
 		for node in find_children("*", "MeshInstance3D", true, false):
 			if _mesh_belongs_to_furniture(node):
 				_cutout_furniture_meshes.append(node)
 	else:
-		var seen: Dictionary = {}
-		for root_node in scan_roots:
+		_furniture_rebuild_seen.clear()
+		for root_node in _furniture_scan_roots:
 			for node in root_node.find_children("*", "MeshInstance3D", true, false):
 				var id := node.get_instance_id()
-				if seen.has(id):
+				if _furniture_rebuild_seen.has(id):
 					continue
 				if _mesh_belongs_to_furniture(node):
-					seen[id] = true
+					_furniture_rebuild_seen[id] = true
 					_cutout_furniture_meshes.append(node)
 	_cutout_furniture_meshes_dirty = false
 	_refresh_furniture_mesh_centers_and_bins()
