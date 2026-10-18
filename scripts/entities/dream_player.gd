@@ -310,6 +310,7 @@ var _kick_query: PhysicsShapeQueryParameters2D
 var _dash_query: PhysicsShapeQueryParameters2D
 var _muzzle_clamp_query: PhysicsRayQueryParameters2D
 var _self_exclude_rids: Array[RID] = []
+var _dash_exclude_rids: Array[RID] = []
 var kick_left_foot := true
 var next_kick_left_foot := true
 var kick_blocked_by_interaction := false
@@ -3128,13 +3129,13 @@ func _dash_shape_collisions_at(position: Vector2, ignored_bodies: Array = []) ->
 		position + local_offset
 	)
 	_dash_query.collision_mask = collision_mask
-	_self_exclude_rids.clear()
-	_self_exclude_rids.append(get_rid())
+	_dash_exclude_rids.clear()
+	_dash_exclude_rids.append(get_rid())
 	for body_variant in ignored_bodies:
 		var body := body_variant as CollisionObject2D
 		if body != null and is_instance_valid(body):
-			_self_exclude_rids.append(body.get_rid())
-	_dash_query.exclude = _self_exclude_rids
+			_dash_exclude_rids.append(body.get_rid())
+	_dash_query.exclude = _dash_exclude_rids
 	return get_world_2d().direct_space_state.intersect_shape(_dash_query, 16)
 
 
