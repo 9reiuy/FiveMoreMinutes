@@ -754,6 +754,8 @@ var _cached_dream_enemies_frame: int = -1
 var _cutout_candidate_scratch: Array[Dictionary] = []
 var _debris_point_query: PhysicsPointQueryParameters2D
 var _blood_batch_point_query: PhysicsPointQueryParameters2D
+var _player_exclude_rids: Array[RID] = []
+var _employee_exclude_rids: Array[RID] = []
 var _throw_aim_cleared := true
 var _dash_aim_cleared := true
 var _cutout_furniture_mesh_centers := PackedVector3Array()
@@ -1600,7 +1602,11 @@ func get_throw_aim_prediction() -> Dictionary:
 	var shape_size: Vector2 = profile.get("collision_shape_size", Vector2(26.0, 12.0))
 	_throw_prediction_shape.size = shape_size
 	_throw_prediction_query.collision_mask = int(profile.get("collision_mask", 15))
-	_throw_prediction_query.exclude = [player.get_rid()]
+	if _player_exclude_rids.is_empty():
+		_player_exclude_rids.append(player.get_rid())
+	else:
+		_player_exclude_rids[0] = player.get_rid()
+	_throw_prediction_query.exclude = _player_exclude_rids
 	var space: PhysicsDirectSpaceState2D = player.get_world_2d().direct_space_state
 	var dt := 1.0 / 60.0
 	var steps := maxi(1, ceili(max_duration / dt))
@@ -11059,7 +11065,11 @@ func is_employee_position_clear(candidate: Vector2, employee: EmployeeEnemy) -> 
 		_employee_clear_query.collide_with_areas = false
 	_employee_clear_query.transform = Transform2D(0.0, candidate)
 	_employee_clear_query.collision_mask = WORLD_WALL_LAYER | 8
-	_employee_clear_query.exclude = [employee.get_rid()]
+	if _employee_exclude_rids.is_empty():
+		_employee_exclude_rids.append(employee.get_rid())
+	else:
+		_employee_exclude_rids[0] = employee.get_rid()
+	_employee_clear_query.exclude = _employee_exclude_rids
 	var space := employee.get_world_2d().direct_space_state if employee.is_inside_tree() else (player.get_world_2d().direct_space_state if player != null and player.is_inside_tree() else null)
 	if space == null:
 		return true

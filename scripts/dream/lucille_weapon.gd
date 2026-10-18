@@ -25,6 +25,7 @@ var extra_attack_delay := 0.08
 var impact_delay := 0.12
 var _melee_shape: CircleShape2D
 var _melee_query: PhysicsShapeQueryParameters2D
+var _melee_exclude_rids: Array[RID] = []
 
 
 func configure_weapon(config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
@@ -155,7 +156,14 @@ func _resolve_swing_hits(owner: Node2D, origin: Vector2, direction: Vector2) -> 
 		_melee_query.collision_mask = 8
 	_melee_shape.radius = maxf(attack_range, 1.0)
 	_melee_query.transform = Transform2D(0.0, origin)
-	_melee_query.exclude = [owner.get_rid()] if owner is CollisionObject2D else []
+	if owner is CollisionObject2D:
+		if _melee_exclude_rids.is_empty():
+			_melee_exclude_rids.append((owner as CollisionObject2D).get_rid())
+		else:
+			_melee_exclude_rids[0] = (owner as CollisionObject2D).get_rid()
+		_melee_query.exclude = _melee_exclude_rids
+	else:
+		_melee_query.exclude = []
 	for hit in owner.get_world_2d().direct_space_state.intersect_shape(_melee_query, 16):
 		var prop := hit.get("collider") as Node
 		if prop == null or handled.has(prop.get_instance_id()) or not prop.is_in_group(&"damageable_props"):

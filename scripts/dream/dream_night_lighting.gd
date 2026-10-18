@@ -50,6 +50,7 @@ const WORLD_LIGHT_CULL_MASK := 1 | PLAYER_VISUAL_LAYER | PLAYER_SHADOW_LAYER | C
 var world: Node3D
 var flashlight: SpotLight3D
 var _emitter_clamp_query: PhysicsRayQueryParameters2D
+var _emitter_exclude_rids: Array[RID] = []
 ## Player flashlight state is owned here so both 3D Dream scenes use the same
 ## single SpotLight3D.  It starts disabled so the first L press is an
 ## unambiguous "turn on" action; death only hides the light temporarily and
@@ -374,7 +375,11 @@ func _keep_emitter_on_player_side(ground: Vector2, proposed: Vector3) -> Vector3
 	_emitter_clamp_query.from = ground
 	_emitter_clamp_query.to = emitter_ground
 	_emitter_clamp_query.collision_mask = collision_mask
-	_emitter_clamp_query.exclude = [world.player.get_rid()]
+	if _emitter_exclude_rids.is_empty():
+		_emitter_exclude_rids.append(world.player.get_rid())
+	else:
+		_emitter_exclude_rids[0] = world.player.get_rid()
+	_emitter_clamp_query.exclude = _emitter_exclude_rids
 	var space_state: PhysicsDirectSpaceState2D = world.player.get_world_2d().direct_space_state
 	var hit: Dictionary = space_state.intersect_ray(_emitter_clamp_query)
 	if hit.is_empty():
