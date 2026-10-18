@@ -741,6 +741,7 @@ var _furniture_scan_roots: Array[Node] = []
 var _furniture_rebuild_seen: Dictionary = {}
 var _cutout_slot_result: Dictionary = {}
 var _empty_bin_indices: Array = []
+var _empty_dict: Dictionary = {}
 var _cached_projectile_cutout_nodes: Array = []
 var _cached_projectile_cutout_frame: int = -1
 
@@ -6241,7 +6242,7 @@ func _get_actor_cutout_slot(actor: Node2D) -> Dictionary:
 	var instance_id := actor.get_instance_id()
 	if not _occlusion_bounds_cache.has(instance_id):
 		_cache_actor_occlusion_bounds(actor)
-	var cached: Dictionary = _occlusion_bounds_cache.get(instance_id, {})
+	var cached: Dictionary = _occlusion_bounds_cache.get(instance_id, _empty_dict)
 	if cached.is_empty():
 		_cutout_slot_result.clear()
 		return _cutout_slot_result
@@ -6253,7 +6254,7 @@ func _get_actor_cutout_slot(actor: Node2D) -> Dictionary:
 			# Facing/roll/configuration can mirror or resize the carrier. Rebuild
 			# only on that visual-structure change; normal frames stay O(1).
 			_cache_actor_occlusion_bounds(actor)
-			cached = _occlusion_bounds_cache.get(instance_id, {})
+			cached = _occlusion_bounds_cache.get(instance_id, _empty_dict)
 			visual_root_var = cached.get("visual_root", null)
 			visual_root = visual_root_var as Node2D if is_instance_valid(visual_root_var) else null
 	var local_center: Vector2 = cached.get("local_center", Vector2.ZERO)
