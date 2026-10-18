@@ -23,6 +23,9 @@ var dissociation_ready := false
 var endless_mode := false
 var endless_day_duration := 120.0
 var displayed_time_scale := 1.0
+var _last_drawn_time_scale := -1.0
+var _last_drawn_planning := false
+var _last_drawn_time_text := ""
 var vhs_preview_rect: ColorRect = null
 
 
@@ -56,11 +59,21 @@ func _process(_delta: float) -> void:
 	else:
 		displayed_time_scale = maxf(Engine.time_scale, 0.0)
 
+	var is_planning := false
 	if time_controller != null and time_controller.has_method("is_tactical_planning_active"):
-		var is_planning: bool = bool(time_controller.call("is_tactical_planning_active"))
+		is_planning = bool(time_controller.call("is_tactical_planning_active"))
 		if vhs_preview_rect != null and vhs_preview_rect.visible != is_planning:
 			vhs_preview_rect.visible = is_planning
 
+	if (
+		is_equal_approx(displayed_time_scale, _last_drawn_time_scale)
+		and is_planning == _last_drawn_planning
+		and time_text == _last_drawn_time_text
+	):
+		return
+	_last_drawn_time_scale = displayed_time_scale
+	_last_drawn_planning = is_planning
+	_last_drawn_time_text = time_text
 	queue_redraw()
 
 
