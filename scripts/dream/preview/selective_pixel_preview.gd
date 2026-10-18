@@ -284,12 +284,6 @@ func _retarget_canvas_layers() -> void:
 			# viewport (root Window). No need to set custom_viewport.
 
 
-func _on_canvas_exiting(layer_ref: WeakRef) -> void:
-	# No longer needed after reparenting; kept for backwards compat in case
-	# external code connects to tree_exiting on a layer we once managed.
-	pass
-
-
 func _on_node_added(node: Node) -> void:
 	if _initialized and is_instance_valid(world) and world.is_ancestor_of(node) and node is CanvasLayer:
 		_canvas_dirty = true
