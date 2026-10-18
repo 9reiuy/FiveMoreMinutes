@@ -1157,7 +1157,10 @@ func _process(_delta: float) -> void:
 	actor_sprite.visible = source_actor.visible
 	if character_projection and camera != null:
 		_sync_character_planes(camera, height)
-		_sync_volume_shadow(camera, height)
+		# Volume shadow follows the same stagger as capture sync for upright
+		# enemies — pose is shared with the prior synced frame.
+		if not skip_staggered_enemy_sync:
+			_sync_volume_shadow(camera, height)
 	if shadow_proxy != null:
 		# 代理与可见精灵逐帧同 transform：阴影剪影始终贴合真实像素。
 		if shadow_proxy.is_inside_tree() and actor_sprite.is_inside_tree():
