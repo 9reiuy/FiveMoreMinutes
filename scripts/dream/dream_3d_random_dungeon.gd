@@ -6012,17 +6012,24 @@ func _begin_cutout_query_snapshot() -> void:
 			var current_child_count := actor_depth_bridges_root.get_child_count()
 			if current_child_count != _last_bridges_child_count:
 				_last_bridges_child_count = current_child_count
-				# Bridge count changes for projectiles/shells/blood too. Only rebuild
-				# the furniture-bridge subset here — do NOT dirty the mesh cache
-				# (that used to force a whole-tree find_children spike every shot).
-				_cached_furniture_bridges.clear()
-				for bridge in actor_depth_bridges_root.get_children():
-					if bridge.is_queued_for_deletion(): continue
-					var source_value: Variant = bridge.get("source_actor")
-					if not is_instance_valid(source_value): continue
+				# Projectiles/shells/blood change this count constantly. Furniture
+				# bridges register themselves at spawn; here only prune freed
+				# entries — never rescan the whole bridge root per shot.
+				var write_index := 0
+				for bridge_variant in _cached_furniture_bridges:
+					if not is_instance_valid(bridge_variant) or bridge_variant.is_queued_for_deletion():
+						continue
+					var source_value: Variant = bridge_variant.get("source_actor")
+					if not is_instance_valid(source_value):
+						source_value = bridge_variant.get_meta(&"source_actor", null)
+					if not is_instance_valid(source_value):
+						continue
 					var source := source_value as Node2D
-					if is_instance_valid(source) and source.is_in_group(&"damageable_props") and not source.is_queued_for_deletion():
-						_cached_furniture_bridges.append(bridge)
+					if source == null or not source.is_in_group(&"damageable_props") or source.is_queued_for_deletion():
+						continue
+					_cached_furniture_bridges[write_index] = bridge_variant
+					write_index += 1
+				_cached_furniture_bridges.resize(write_index)
 			# Dirty mesh cache only when furniture art / 2D furniture population changes.
 			var art_count := office_art_root.get_child_count() if is_instance_valid(office_art_root) else 0
 			var furn2d_count := furniture_root.get_child_count() if is_instance_valid(furniture_root) else 0
@@ -9834,6 +9841,21 @@ func _random_room_position(room_id: int, radius: float, extra_avoid: Array[Vecto
 	return Vector2.ZERO
 
 
+
+func _register_furniture_cutout_bridge(bridge: Node) -> void:
+	if bridge == null or not is_instance_valid(bridge):
+		return
+	var source_value: Variant = bridge.get("source_actor")
+	if not is_instance_valid(source_value):
+		source_value = bridge.get_meta(&"source_actor", null)
+	if not is_instance_valid(source_value):
+		return
+	var source := source_value as Node2D
+	if source == null or not source.is_in_group(&"damageable_props") or source.is_queued_for_deletion():
+		return
+	_cached_furniture_bridges.append(bridge)
+
+
 func _spawn_furniture_presentation(furniture: Node2D) -> Node3D:
 	if furniture == null or not is_instance_valid(furniture) or actor_depth_bridges_root == null:
 		return null
@@ -9847,6 +9869,7 @@ func _spawn_furniture_presentation(furniture: Node2D) -> Node3D:
 			var dressing: Node3D = preload("res://scripts/dream/office_extra_dressing.gd").furniture(String(furniture.get_meta(&"office_furniture_kind")))
 			if dressing != null:
 				office_visual.visual_instance.add_child(dressing)
+		_register_furniture_cutout_bridge(office_visual)
 		return office_visual
 
 	var key := ""
@@ -9862,6 +9885,7 @@ func _spawn_furniture_presentation(furniture: Node2D) -> Node3D:
 		visual.set_meta(&"dream_room_id", furniture.get_meta(&"dream_room_id", -1))
 		visual.set_meta(&"source_actor", furniture)
 		visual.call("configure", furniture, data.get("scene"), data.get("texture"))
+		_register_furniture_cutout_bridge(visual)
 		return visual
 
 	for map_key in FURNITURE_3D_VISUAL_MAP:
@@ -9872,6 +9896,7 @@ func _spawn_furniture_presentation(furniture: Node2D) -> Node3D:
 			visual.set_meta(&"dream_room_id", furniture.get_meta(&"dream_room_id", -1))
 			visual.set_meta(&"source_actor", furniture)
 			visual.call("configure", furniture, data.get("scene"), data.get("texture"))
+			_register_furniture_cutout_bridge(visual)
 			return visual
 
 	var fallback_bridge := _spawn_depth_bridge(furniture, [NodePath("Shadow"), NodePath("Sprite2D")])
@@ -9978,6 +10003,8 @@ func _spawn_depth_bridge(
 	# 后生成的投影体也要登记，否则它不会投进 capture。
 	if requested_register_source_meta and not (capture_paths.size() == 1 and capture_paths[0] == ^"Shadow"):
 		source.set_meta(&"depth_visual_bridge", weakref(bridge))
+	if source.is_in_group(&"damageable_props"):
+		_register_furniture_cutout_bridge(bridge)
 	_startup_profile_record_time("spawn_depth_bridge_ms", bridge_started_usec)
 	_startup_profile_increment("spawn_depth_bridge_successes")
 	return bridge
