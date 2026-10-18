@@ -786,6 +786,8 @@ var native_damage_numbers_root: Node2D
 var enemy_population_refill_left := 0.0
 var enemy_population_breathing_left: Dictionary = {}
 var reserved_content_cells: Dictionary = {}
+var _employee_clear_shape: CircleShape2D
+var _employee_clear_query: PhysicsShapeQueryParameters2D
 var employee_path_cache: Dictionary = {}
 var _floor_path_cache_enabled := false
 var _floor_path_adjacency: Dictionary = {}
@@ -10893,7 +10895,7 @@ func get_employee_navigation_target(employee: EmployeeEnemy, destination: Vector
 	var id := employee.get_instance_id()
 	var now := Time.get_ticks_msec()
 	var cached: Dictionary = employee_path_cache.get(id, {})
-	if cached.get("start") != start or cached.get("finish") != finish or now - int(cached.get("time", 0)) > 250:
+	if cached.get("start") != start or cached.get("finish") != finish or now - int(cached.get("time", 0)) > 450:
 		cached = {"start": start, "finish": finish, "time": now, "path": find_floor_path(start, finish, false)}
 		employee_path_cache[id] = cached
 	var path: Array = cached.path
@@ -10920,19 +10922,20 @@ func is_employee_position_clear(candidate: Vector2, employee: EmployeeEnemy) -> 
 		return false
 	if candidate_room != room_id and not are_rooms_openly_connected(room_id, candidate_room):
 		return false
-	var shape := CircleShape2D.new()
-	shape.radius = 8.0
-	var query := PhysicsShapeQueryParameters2D.new()
-	query.shape = shape
-	query.transform = Transform2D(0.0, candidate)
-	query.collision_mask = WORLD_WALL_LAYER | 8
-	query.exclude = [employee.get_rid()]
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
+	if _employee_clear_shape == null:
+		_employee_clear_shape = CircleShape2D.new()
+		_employee_clear_shape.radius = 8.0
+		_employee_clear_query = PhysicsShapeQueryParameters2D.new()
+		_employee_clear_query.shape = _employee_clear_shape
+		_employee_clear_query.collide_with_bodies = true
+		_employee_clear_query.collide_with_areas = false
+	_employee_clear_query.transform = Transform2D(0.0, candidate)
+	_employee_clear_query.collision_mask = WORLD_WALL_LAYER | 8
+	_employee_clear_query.exclude = [employee.get_rid()]
 	var space := employee.get_world_2d().direct_space_state if employee.is_inside_tree() else (player.get_world_2d().direct_space_state if player != null and player.is_inside_tree() else null)
 	if space == null:
 		return true
-	return space.intersect_shape(query, 8).is_empty()
+	return space.intersect_shape(_employee_clear_query, 8).is_empty()
 
 
 func get_employee_roam_route(employee: EmployeeEnemy) -> Dictionary:

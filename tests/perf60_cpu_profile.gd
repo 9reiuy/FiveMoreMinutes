@@ -207,6 +207,15 @@ func _run() -> void:
 	if freeze_world_render and display.world_viewport != null:
 		display.world_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 		L("WORLD_RENDER frozen (UPDATE_DISABLED) — frame_ms ≈ CPU script+physics+root present")
+	var freeze_ai := false
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--freeze-ai="):
+			freeze_ai = a.substr(11) != "0"
+	if freeze_ai:
+		for e in _living():
+			e.set_physics_process(false)
+			e.set_process(false)
+		L("ENEMY_AI frozen")
 
 	# Clear warm rows / section noise
 	rows.clear()
