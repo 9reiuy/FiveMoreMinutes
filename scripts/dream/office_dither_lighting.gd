@@ -2,8 +2,10 @@ extends Node
 ## One component per 3D Dream world, sharing compiled variants but not materials.
 const GRID_STEP := 1.0 / 32.0
 const INCLUDE := "res://shaders/dream3d/office_dither_lighting.gdshaderinc"
-const CUTOUT_OCCLUDER_LAYER := 8
+const OUTLINE_SHADER_PATH := "res://shaders/dream3d/furniture_pixel_outline.gdshader"
 static var shader_cache: Dictionary = {}
+## Shared outline material -> its cutout-enabled copy (occluder furniture only).
+static var cutout_outline_cache: Dictionary = {}
 var materials: Dictionary = {}
 var meshes: Array[WeakRef] = []
 var cursor := 0
@@ -65,14 +67,10 @@ func _apply(mesh: MeshInstance3D) -> void:
 		return
 	var furniture := _is_furniture_occluder(mesh)
 	if furniture:
-		# Exclusive occluder layer so CutoutBehindCamera (cull ~8) omits furniture.
-		# Lights already include bit 8 via WORLD_LIGHT_CULL_MASK / | 8 patches.
-		mesh.layers = CUTOUT_OCCLUDER_LAYER
-	# Composite overlay fills holes from behind_tex (layer-8 exclusive furniture).
-	# Exclusive layer 8 is required so BehindCamera cull ~8 omits furniture;
-	# lights already include bit 8 (WORLD_LIGHT_CULL_MASK). |=8 kept bit0 and
-	# left furniture in behind_tex, so holes stayed clear-black.
-	#
+		# Furniture keeps its own render layers: the cutout is single-pass (the
+		# body discards its hole core in the transparent list) and needs no
+		# separate behind-camera layer.
+		_enable_outline_cutout(mesh)
 	# Write occlusion_cutout_enabled only AFTER dither material replacement so
 	# the live ShaderMaterial (not the discarded pre-dither source) gets the flag.
 	if mesh.material_override != null:
@@ -98,6 +96,23 @@ func _apply(mesh: MeshInstance3D) -> void:
 				var live_surface := mesh.get_active_material(index) as ShaderMaterial
 				if live_surface != null and live_surface.shader != null and live_surface.shader.code.contains("occlusion_cutout_enabled"):
 					live_surface.set_shader_parameter("occlusion_cutout_enabled", true)
+
+
+## The black inverted-hull outline (Furniture3DVisual) is drawn after the body.
+## Inside a cutout hole the body is discarded, so the hull must discard there
+## too or its back faces paint the hole black.  Swap the shared outline for a
+## shared cutout-enabled copy; other overlays (damage/interaction) are untouched.
+func _enable_outline_cutout(mesh: MeshInstance3D) -> void:
+	var overlay := mesh.material_overlay as ShaderMaterial
+	if overlay == null or overlay.shader == null or overlay.shader.resource_path != OUTLINE_SHADER_PATH:
+		return
+	if overlay.get_shader_parameter("occlusion_cutout_enabled") == true:
+		return
+	if not cutout_outline_cache.has(overlay):
+		var copy: ShaderMaterial = overlay.duplicate()
+		copy.set_shader_parameter("occlusion_cutout_enabled", true)
+		cutout_outline_cache[overlay] = copy
+	mesh.material_overlay = cutout_outline_cache[overlay]
 
 
 ## A mesh counts as furniture when one of its ancestors carries the marker set by

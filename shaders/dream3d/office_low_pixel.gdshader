@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode blend_mix, depth_draw_never, diffuse_lambert;
+render_mode blend_mix, depth_draw_always, diffuse_lambert;
 #include "res://shaders/dream3d/architecture_cutaway.gdshaderinc"
 #include "res://shaders/dream3d/light_noise_contour.gdshaderinc"
 uniform sampler2D atlas : source_color, filter_nearest_mipmap, repeat_disable;
@@ -17,8 +17,12 @@ global uniform vec4 occlusion_cutout_6;
 global uniform vec4 occlusion_cutout_7;
 global uniform vec2 occlusion_viewport_size;
 
-// Hard-open cutout: depth_draw_never + discard core (<0.35) + soft ALPHA rim. Transparent queue; no depth prepass seal.
-// Floor/actors stay opaque and draw first; furniture blends over them.
+// Hard-open cutout: discard core (<0.35) + soft ALPHA rim. Writing ALPHA keeps
+// this body in the transparent list, so the opaque floor/actors are already in
+// the buffer when it draws (no depth prepass seal).  depth_draw_always writes
+// depth only for the fragments that survive, so the black inverted-hull outline
+// (furniture_pixel_outline, drawn after the body) stays hidden behind the body
+// and only shows as the 1px rim; inside the hole the hull discards too.
 uniform bool occlusion_cutout_enabled = false;
 
 // Cutouts use a stylized gradient circular halftone effect.  Numerically

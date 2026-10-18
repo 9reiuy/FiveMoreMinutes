@@ -12,13 +12,7 @@ const DEFAULT_PIXEL_SIZE := Vector2i(640, 360)
 @export var pixel_size := DEFAULT_PIXEL_SIZE
 
 var world: Node3D
-const CUTOUT_OCCLUDER_LAYER := 8
-const CUTOUT_BEHIND_CAMERA_FLAG := 131072  # layer bit 17 (avoid floor_reflections EXCLUDED=1<<19); shaders skip cutout when set
 var world_viewport: SubViewport
-var behind_viewport: SubViewport
-var cutout_composite_material: ShaderMaterial
-var cutout_overlay: ColorRect
-var behind_camera: Camera3D
 var container: SubViewportContainer
 var palette_material: ShaderMaterial
 var status_label: Label
@@ -78,57 +72,10 @@ func _ready() -> void:
 		world.enable_game_start_cab_exit = false
 	world_viewport.add_child(world)
 
-	# Behind pass (floor_reflections pattern): SubViewport lives under the gameplay
-	# world node, shares world.get_world_3d(), camera culls occluder layer 8.
-	behind_viewport = SubViewport.new()
-	behind_viewport.name = "CutoutBehindViewport"
-	behind_viewport.size = world_viewport.size
-	behind_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	behind_viewport.msaa_3d = Viewport.MSAA_DISABLED
-	behind_viewport.transparent_bg = false
-	behind_viewport.positional_shadow_atlas_size = 0
-	behind_viewport.world_3d = world.get_world_3d()
-	world.add_child(behind_viewport)  # under gameplay world (floor_reflections pattern); Control parent left behind black
-	behind_camera = Camera3D.new()
-	behind_camera.name = "CutoutBehindCamera"
-	behind_viewport.add_child(behind_camera)
-	behind_camera.cull_mask = (0xFFFFF | CUTOUT_BEHIND_CAMERA_FLAG) & ~CUTOUT_OCCLUDER_LAYER
-	behind_camera.current = true
-	# Behind pass needs its own readable ambient: shared World3D lights do not
-	# illuminate this nested SubViewport reliably in Compat (probe: same cull
-	# stayed near-black; ambient env raised luma 0.06 -> 0.30). Soft ALPHA holes
-	# alone show clear-black; composite fills from this behind_tex.
-	var behind_env := Environment.new()
-	behind_env.background_mode = Environment.BG_COLOR
-	behind_env.background_color = Color(0.02, 0.03, 0.05)
-	behind_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	behind_env.ambient_light_color = Color(0.55, 0.6, 0.65)
-	behind_env.ambient_light_energy = 0.85
-	behind_env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
-	behind_camera.environment = behind_env
-	# Nested SubViewport does not receive gameplay Omni/Spot lights reliably;
-	# characters use custom light() so ambient alone stays black. A local key
-	# light makes behind_tex show actors/floor inside cutout holes.
-	var behind_key := DirectionalLight3D.new()
-	behind_key.name = "CutoutBehindKeyLight"
-	behind_key.light_energy = 1.35
-	behind_key.light_color = Color(0.95, 0.97, 1.0)
-	behind_key.shadow_enabled = false
-	behind_key.light_cull_mask = 1 | 2 | 4  # env + character + shadow proxy; not layer 8
-	behind_key.rotation_degrees = Vector3(-55, 35, 0)
-	behind_viewport.add_child(behind_key)
-
-	cutout_overlay = ColorRect.new()
-	cutout_overlay.name = "OcclusionCutoutComposite"
-	cutout_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	cutout_overlay.color = Color(1, 1, 1, 1)
-	add_child(cutout_overlay)
-	cutout_composite_material = ShaderMaterial.new()
-	cutout_composite_material.shader = load("res://shaders/dream3d/occlusion_cutout_composite.gdshader")
-	cutout_overlay.material = cutout_composite_material
-	# Dual-channel composite: behind_tex (no occluder layer 8) fills holes. Soft ALPHA
-	# alone leaves clear-black; this overlay is the production see-through path.
-	cutout_overlay.visible = true
+	# Occlusion Cutout is single-pass inside this WorldViewport: occluder
+	# furniture discards its hole core in the transparent list (see
+	# office_low_pixel*.gdshader / furniture_pixel_outline.gdshader).  No second
+	# behind-camera render or full-screen composite overlay is used.
 	if preview_mode:
 		world.regenerate(preview_seed)
 		for room in world.rooms:
@@ -188,48 +135,12 @@ func _process(_delta: float) -> void:
 	if not _initialized:
 		return
 	_update_layout()
-	_sync_cutout_behind()
 	if _canvas_dirty:
 		_canvas_dirty = false
 		_retarget_canvas_layers()
 	container.mouse_filter = Control.MOUSE_FILTER_STOP if _pointer_inside() else Control.MOUSE_FILTER_IGNORE
 
 
-
-func _sync_cutout_behind() -> void:
-	if not is_instance_valid(behind_viewport) or not is_instance_valid(world_viewport):
-		return
-	if behind_viewport.size != world_viewport.size:
-		behind_viewport.size = world_viewport.size
-	var cam: Camera3D = null
-	if is_instance_valid(world) and world.get("camera_3d") is Camera3D:
-		cam = world.get("camera_3d") as Camera3D
-	if cam == null:
-		cam = world_viewport.get_camera_3d()
-	if is_instance_valid(world):
-		var live_world: World3D = world.get_world_3d()
-		if live_world != null and behind_viewport.world_3d != live_world:
-			behind_viewport.world_3d = live_world
-	if is_instance_valid(behind_camera) and is_instance_valid(cam):
-		behind_camera.global_transform = cam.global_transform
-		for key in [&"projection", &"fov", &"size", &"near", &"far", &"keep_aspect", &"frustum_offset", &"h_offset", &"v_offset"]:
-			behind_camera.set(key, cam.get(key))
-		behind_camera.cull_mask = (cam.cull_mask | 1 | 2 | 4 | CUTOUT_BEHIND_CAMERA_FLAG) & ~CUTOUT_OCCLUDER_LAYER
-		if not behind_camera.current:
-			behind_camera.current = true
-	if is_instance_valid(cutout_overlay) and is_instance_valid(container):
-		cutout_overlay.position = container.position
-		cutout_overlay.size = container.size
-		cutout_overlay.scale = container.scale
-		cutout_overlay.z_index = 20
-	if is_instance_valid(world):
-		for light in world.find_children("*", "Light3D", true, false):
-			var lit := light as Light3D
-			if lit != null and (lit.light_cull_mask & CUTOUT_OCCLUDER_LAYER) == 0:
-				lit.light_cull_mask |= CUTOUT_OCCLUDER_LAYER
-	if cutout_composite_material != null:
-		cutout_composite_material.set_shader_parameter(&"behind_tex", behind_viewport.get_texture())
-		cutout_composite_material.set_shader_parameter(&"main_tex", world_viewport.get_texture())
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouse:

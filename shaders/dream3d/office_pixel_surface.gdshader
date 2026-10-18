@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode blend_mix, depth_draw_never, diffuse_lambert;
+render_mode blend_mix, depth_draw_always, diffuse_lambert;
 #include "res://shaders/dream3d/architecture_cutaway.gdshaderinc"
 #include "res://shaders/dream3d/light_noise_contour.gdshaderinc"
 uniform sampler2D pixel_texture : source_color, filter_nearest_mipmap, repeat_enable;
@@ -21,7 +21,7 @@ global uniform vec4 occlusion_cutout_6;
 global uniform vec4 occlusion_cutout_7;
 global uniform vec2 occlusion_viewport_size;
 
-// Same depth_draw_never + discard core path as office_low_pixel (furniture-only).
+// Same depth_draw_always + discard core path as office_low_pixel (furniture-only).
 uniform bool occlusion_cutout_enabled = false;
 
 float cutout_factor(vec2 screen_uv, vec4 slot) {

@@ -6143,6 +6143,9 @@ func _actor_screen_overlap(actor_world: Vector3, actor_world_radius: float) -> V
 	var best_area := 0.0
 	# Same reasoning as _screen_covered_by_furniture: use the real 3D meshes.
 	for node in _furniture_meshes():
+		# The cache refreshes every few frames; a floor swap can free entries first.
+		if not is_instance_valid(node):
+			continue
 		var mesh_instance := node as MeshInstance3D
 		if mesh_instance == null or not mesh_instance.is_visible_in_tree():
 			continue
@@ -6279,6 +6282,9 @@ func _screen_covered_by_furniture(actor_world: Vector3) -> bool:
 		return false
 	var actor_distance := camera_3d.global_position.distance_squared_to(actor_world)
 	for node in _furniture_meshes():
+		# The cache refreshes every few frames; a floor swap can free entries first.
+		if not is_instance_valid(node):
+			continue
 		var mesh_instance := node as MeshInstance3D
 		if mesh_instance == null or not mesh_instance.is_visible_in_tree():
 			continue
