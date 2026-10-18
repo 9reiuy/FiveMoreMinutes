@@ -124,6 +124,8 @@ func _ready() -> void:
 		if mass > 2.0:
 			mass = 1.25
 	set_physics_process(true)
+	if not sleeping_state_changed.is_connected(_on_chair_sleeping_state_changed):
+		sleeping_state_changed.connect(_on_chair_sleeping_state_changed)
 
 
 func get_gameplay_footprint_half_extents() -> Vector2:
@@ -245,6 +247,7 @@ func _contact_offset(contact_point: Variant) -> Vector2:
 
 
 func _apply_contact_force(force: Vector2, contact_point: Variant = null) -> void:
+	wake_furniture_physics()
 	var offset := _contact_offset(contact_point)
 	if offset.length_squared() > 0.01:
 		apply_force(force, offset)
@@ -253,6 +256,7 @@ func _apply_contact_force(force: Vector2, contact_point: Variant = null) -> void
 
 
 func _apply_contact_impulse(impulse: Vector2, contact_point: Variant = null) -> void:
+	wake_furniture_physics()
 	var offset := _contact_offset(contact_point)
 	if offset.length_squared() > 0.01:
 		apply_impulse(impulse, offset)
@@ -345,13 +349,29 @@ func notify_visual_dirty() -> void:
 			var bridge: Variant = bridge_ref.get_ref()
 			if bridge != null and is_instance_valid(bridge) and bridge.has_method("mark_visual_dirty"):
 				bridge.call("mark_visual_dirty")
+	if has_meta(&"furniture_3d_visual"):
+		var visual_ref: Variant = get_meta(&"furniture_3d_visual")
+		if visual_ref is WeakRef:
+			var visual: Variant = visual_ref.get_ref()
+			if visual != null and is_instance_valid(visual) and visual.has_method("wake_visual_process"):
+				visual.call("wake_visual_process")
 
 
 var _cached_sprite: Sprite2D
 
+func wake_furniture_physics() -> void:
+	if room_runtime_active and not destroyed:
+		set_physics_process(true)
+
+func _on_chair_sleeping_state_changed() -> void:
+	if not sleeping:
+		wake_furniture_physics()
+
 func _physics_process(_delta: float) -> void:
 	var delta := _delta
+	var needs_work := false
 	if sky_drop_delay > 0.0 or sky_drop_height > 0.0:
+		needs_work = true
 		if _cached_sprite == null:
 			_cached_sprite = get_node_or_null(^"Sprite2D") as Sprite2D
 		var sprite := _cached_sprite
@@ -366,6 +386,7 @@ func _physics_process(_delta: float) -> void:
 					sky_drop_vertical_velocity = 0.0
 					sprite.position = sky_drop_base_position
 	if not character_collision_exceptions.is_empty():
+		needs_work = true
 		var now_msec := Time.get_ticks_msec()
 		for id_variant in character_collision_exceptions.keys():
 			var collider_id := int(id_variant)
@@ -378,6 +399,7 @@ func _physics_process(_delta: float) -> void:
 					remove_collision_exception_with(body)
 	if is_swivel_chair and not destroyed:
 		if absf(seat_angular_velocity) > 0.001:
+			needs_work = true
 			seat_rotation += seat_angular_velocity * delta
 			seat_rotation = wrapf(seat_rotation, -PI, PI)
 			seat_angular_velocity = move_toward(seat_angular_velocity, 0.0, absf(seat_angular_velocity) * seat_angular_damp * delta)
@@ -387,14 +409,18 @@ func _physics_process(_delta: float) -> void:
 	if not destroyed:
 		var vel_sq := linear_velocity.length_squared()
 		if vel_sq >= 4.0:
+			needs_work = true
 			notify_visual_dirty()
 			if vel_sq >= 36.0:
 				var world := get_tree().get_first_node_in_group(&"dream_world")
 				if world != null and world.has_method("try_transfer_furniture_through_door"):
 					world.try_transfer_furniture_through_door(self)
+	if not needs_work and (sleeping or freeze) and character_collision_exceptions.is_empty():
+		set_physics_process(false)
 
 
 func start_sky_drop(height_pixels: float = 96.0, delay_seconds: float = 0.0) -> void:
+	wake_furniture_physics()
 	if _cached_sprite == null:
 		_cached_sprite = get_node_or_null(^"Sprite2D") as Sprite2D
 	var sprite := _cached_sprite
@@ -627,6 +653,7 @@ func apply_combat_impulse(hit_direction: Vector2, force: float, contact_point: V
 func _apply_swivel_hit_torque(hit_direction: Vector2, multiplier: float = 1.0, contact_point: Variant = null) -> void:
 	if not is_swivel_chair or destroyed:
 		return
+	wake_furniture_physics()
 	var norm_dir := hit_direction.normalized()
 	var offset := _contact_offset(contact_point) if contact_point != null else Vector2.ZERO
 	var torque_factor := 0.0
@@ -888,6 +915,7 @@ func destroy() -> void:
 		return
 
 	destroyed = true
+	notify_visual_dirty()
 	if hit_flash_tween != null and hit_flash_tween.is_valid():
 		hit_flash_tween.kill()
 

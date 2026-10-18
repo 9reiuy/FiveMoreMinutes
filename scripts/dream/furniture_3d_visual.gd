@@ -30,6 +30,8 @@ var _last_rot2d: float = INF
 var _last_fake_height: float = INF
 var _last_seat_rot: float = INF
 var _last_visible: int = -1
+var _idle_frames: int = 0
+const IDLE_SLEEP_FRAMES: int = 8
 
 var source_actor: Node2D:
 	get:
@@ -114,7 +116,12 @@ func configure(source: Node2D, visual_scene: PackedScene, debris_tex: Texture2D 
 
 	if target_furniture != null and is_instance_valid(target_furniture):
 		target_furniture.set_meta(&"has_3d_visual", true)
+		target_furniture.set_meta(&"furniture_3d_visual", weakref(self))
 		target_furniture.tree_exiting.connect(_on_source_tree_exiting)
+		if target_furniture is RigidBody2D:
+			var rb := target_furniture as RigidBody2D
+			if not rb.sleeping_state_changed.is_connected(_on_target_sleeping_state_changed):
+				rb.sleeping_state_changed.connect(_on_target_sleeping_state_changed)
 
 		# Hide 2D visuals so they don't render on top of 3D world
 		_cached_sprite = target_furniture.get_node_or_null("Sprite2D") as CanvasItem
@@ -144,16 +151,18 @@ func _apply_furniture_outline(root_visual: Node3D) -> void:
 		for child in node.get_children():
 			stack.append(child)
 
-func _sync_transform() -> void:
+func _sync_transform() -> bool:
 	if target_furniture == null or not is_instance_valid(target_furniture):
-		return
+		return false
+	var changed := false
 	var vis := target_furniture.visible
 	var vis_int := 1 if vis else 0
 	if _last_visible != vis_int:
 		_last_visible = vis_int
 		visible = vis
+		changed = true
 	if not vis and _last_pos2d.x != INF:
-		return
+		return changed
 
 	var pos2d := target_furniture.global_position
 	var rot2d := target_furniture.global_rotation
@@ -172,14 +181,17 @@ func _sync_transform() -> void:
 			fake_height / PIXELS_PER_WORLD_CELL,
 			pos2d.y / PIXELS_PER_WORLD_CELL
 		)
+		changed = true
 	if rot2d != _last_rot2d:
 		_last_rot2d = rot2d
 		rotation.y = -rot2d
+		changed = true
 	if fake_height != _last_fake_height:
 		_last_fake_height = fake_height
 		if _contact_shadow != null:
 			_contact_shadow.position.y = .015 - fake_height / PIXELS_PER_WORLD_CELL
 			_contact_shadow.visible = fake_height < 32.0
+		changed = true
 
 	# Swivel chair seat independent rotation sync
 	if not _cached_seat_root_resolved and visual_instance != null:
@@ -192,6 +204,20 @@ func _sync_transform() -> void:
 			if seat_rot != _last_seat_rot:
 				_last_seat_rot = seat_rot
 				_cached_seat_root.rotation.y = -seat_rot
+				changed = true
+	return changed
+
+func wake_visual_process() -> void:
+	_idle_frames = 0
+	if not is_processing():
+		set_process(true)
+
+func _on_target_sleeping_state_changed() -> void:
+	if target_furniture == null or not is_instance_valid(target_furniture):
+		return
+	var rb := target_furniture as RigidBody2D
+	if rb != null and not rb.sleeping:
+		wake_visual_process()
 
 func _process(_delta: float) -> void:
 	if target_furniture == null or not is_instance_valid(target_furniture) or target_furniture.is_queued_for_deletion():
@@ -210,10 +236,15 @@ func _process(_delta: float) -> void:
 		_handle_destruction_or_exit()
 		return
 
-	_sync_transform()
-
-func _physics_process(_delta: float) -> void:
-	_sync_transform()
+	var changed := _sync_transform()
+	var body := target_furniture as RigidBody2D
+	var body_idle := body == null or body.sleeping or body.freeze
+	if changed or not body_idle:
+		_idle_frames = 0
+	else:
+		_idle_frames += 1
+		if _idle_frames >= IDLE_SLEEP_FRAMES:
+			set_process(false)
 
 func _handle_destruction_or_exit() -> void:
 	if not _debris_spawned and is_inside_tree():
