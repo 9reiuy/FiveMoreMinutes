@@ -1388,7 +1388,7 @@ func _show_weapon_name_popup(weapon_id: String) -> void:
 
 func _hide_weapon_name_popup() -> void:
 	weapon_name_popup_time_left = 0.0
-	if weapon_name_popup != null and is_instance_valid(weapon_name_popup):
+	if weapon_name_popup != null and is_instance_valid(weapon_name_popup) and weapon_name_popup.visible:
 		weapon_name_popup.visible = false
 
 

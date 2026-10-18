@@ -24,6 +24,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	visible = false
+	set_process(false)
 	backdrop = Backdrop.new()
 	backdrop.show_behind_parent = true
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -37,6 +38,7 @@ func present(message: String, screen_anchor: Vector2, key: int) -> void:
 	wanted = true
 	text = message
 	visible = true
+	set_process(true)
 	_apply_animation()
 
 func dismiss(immediate := false) -> void:
@@ -45,6 +47,7 @@ func dismiss(immediate := false) -> void:
 		reveal = 0.0
 		visible = false
 		modulate.a = 0.0
+		set_process(false)
 
 func _process(delta: float) -> void:
 	if get_tree().paused:
@@ -54,6 +57,7 @@ func _process(delta: float) -> void:
 	_apply_animation()
 	if not wanted and reveal == 0.0:
 		visible = false
+		set_process(false)
 
 func _apply_animation() -> void:
 	position = (anchor + Vector2(0, SLIDE * (1.0 - reveal))).round()
