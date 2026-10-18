@@ -5,6 +5,8 @@ var current_color := Color.GRAY
 var recoil_rotation := 0.0
 var recoil_kick_rotation := 0.0
 var recoil_active := false
+var _last_draw_color := Color(-1, -1, -1, -1)
+var _last_draw_recoil := INF
 
 
 func configure(target: Node) -> void:
@@ -34,6 +36,10 @@ func _process(delta: float) -> void:
 			recoil_rotation = recoil_kick_rotation * (1.0 - progress)
 	else:
 		recoil_rotation = 0.0
+	if current_color.is_equal_approx(_last_draw_color) and is_equal_approx(recoil_rotation, _last_draw_recoil):
+		return
+	_last_draw_color = current_color
+	_last_draw_recoil = recoil_rotation
 	queue_redraw()
 
 
