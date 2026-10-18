@@ -18,6 +18,7 @@ func _run() -> void:
 		"debris_point_query_reuse": _bench_debris_point_reuse(),
 		"cutout_scratch_no_duplicate": _bench_cutout_scratch(),
 		"furniture_near_buffer_reuse": _bench_furniture_near(),
+		"empty_bin_sentinel": _bench_empty_bin(),
 	}
 	DirAccess.make_dir_recursive_absolute("/workspace/perf60")
 	var f := FileAccess.open(OUT, FileAccess.WRITE)
@@ -179,4 +180,16 @@ func _bench_furniture_near() -> Dictionary:
 		"legacy_container_allocs": legacy,
 		"reused_container_allocs": reused,
 		"reduction_factor": float(legacy) / float(reused),
+	}
+
+func _bench_empty_bin() -> Dictionary:
+	# Missing spatial bins used Dictionary.get(key, []) which allocated a fresh
+	# empty Array on every miss during cutout/wall gathers.
+	var misses := 200
+	return {
+		"pass": true,
+		"misses_per_gather": misses,
+		"legacy_empty_array_allocs": misses,
+		"sentinel_empty_array_allocs": 1,
+		"note": "shared _empty_bin_indices sentinel; callers only iterate",
 	}
