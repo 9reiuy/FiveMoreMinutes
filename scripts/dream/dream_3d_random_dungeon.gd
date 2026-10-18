@@ -740,6 +740,7 @@ var _cutout_slots_scratch: Array[Vector4] = []
 var _furniture_scan_roots: Array[Node] = []
 var _furniture_rebuild_seen: Dictionary = {}
 var _cutout_slot_result: Dictionary = {}
+var _empty_bin_indices: Array = []
 var _cached_projectile_cutout_nodes: Array = []
 var _cached_projectile_cutout_frame: int = -1
 
@@ -6668,7 +6669,7 @@ func _furniture_mesh_indices_near(camera_world: Vector3, actor_world: Vector3) -
 	var radius_sq := radius * radius
 	for bz in range(min_bz, max_bz + 1):
 		for bx in range(min_bx, max_bx + 1):
-			var bin_indices: Array = _cutout_furniture_mesh_bins.get(Vector2i(bx, bz), [])
+			var bin_indices: Array = _cutout_furniture_mesh_bins.get(Vector2i(bx, bz), _empty_bin_indices)
 			for index in bin_indices:
 				if _furniture_near_seen.has(index):
 					continue
@@ -6779,7 +6780,7 @@ func _segment_hits_wall_visual(camera_world: Vector3, actor_world: Vector3, ray:
 
 	for bz in range(min_bz, max_bz + 1):
 		for bx in range(min_bx, max_bx + 1):
-			var bin_indices: Array = _cutout_wall_bins.get(Vector2i(bx, bz), [])
+			var bin_indices: Array = _cutout_wall_bins.get(Vector2i(bx, bz), _empty_bin_indices)
 			for index in bin_indices:
 				var wall_center := _cutout_wall_positions[index]
 				if wall_center.x < min_x or wall_center.x > max_x or wall_center.z < min_z or wall_center.z > max_z:
@@ -12406,7 +12407,7 @@ func spawn_wall_blood_from_hit(
 		var max_bz := int(floor((hit_world.z + 1.0) / 4.0))
 		for bz in range(min_bz, max_bz + 1):
 			for bx in range(min_bx, max_bx + 1):
-				var bin_indices: Array = _static_cutout_wall_bins.get(Vector2i(bx, bz), [])
+				var bin_indices: Array = _static_cutout_wall_bins.get(Vector2i(bx, bz), _empty_bin_indices)
 				for idx in bin_indices:
 					var wall := _static_cutout_walls[idx] as Node3D
 					if wall == null or not is_instance_valid(wall):
