@@ -722,6 +722,7 @@ var _last_furniture_art_child_count: int = -1
 var _last_furniture_2d_child_count: int = -1
 var _last_cutout_viewport_size: Vector2 = Vector2.ZERO
 var _last_cutout_slots: Array[Vector4] = []
+var _cached_enemy_cutout_candidates: Array[Dictionary] = []
 
 ## World position of whatever broke the sightline during the last query, plus
 ## whether it is valid. Cutout slots project THIS point instead of the actor:
@@ -5861,7 +5862,8 @@ func _update_occlusion_cutouts() -> void:
 					slots.append(player_slot)
 					player_occluded = true
 	var candidates: Array[Dictionary] = []
-	if enemy_root != null:
+	var refresh_enemy_cutouts := (Engine.get_process_frames() & 1) == 0
+	if refresh_enemy_cutouts and enemy_root != null:
 		for enemy_variant in enemy_root.get_children():
 			var enemy := enemy_variant as EmployeeEnemy
 			if enemy == null or not is_instance_valid(enemy) or bool(enemy.get("dead")):
@@ -5891,6 +5893,9 @@ func _update_occlusion_cutouts() -> void:
 				"slot": enemy_slot,
 				"distance": camera_3d.global_position.distance_squared_to(enemy_world) if camera_3d != null else 0.0,
 			})
+		_cached_enemy_cutout_candidates = candidates.duplicate()
+	elif not refresh_enemy_cutouts:
+		candidates = _cached_enemy_cutout_candidates.duplicate()
 	var effective_config: DemoConfig = config if config != null else EMPLOYEE_CONFIG
 	var candidate_slot_limit: int = OCCLUSION_CUTOUT_SLOT_COUNT - (1 if player_occluded else 0)
 	var proj_cutout_enabled := bool(effective_config.get("projectile_occlusion_cutout_enabled")) if effective_config != null and effective_config.get("projectile_occlusion_cutout_enabled") != null else true
