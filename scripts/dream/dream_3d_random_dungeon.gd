@@ -736,6 +736,7 @@ var _furniture_near_seen: Dictionary = {}
 var _cutout_slots_scratch: Array[Vector4] = []
 var _furniture_scan_roots: Array[Node] = []
 var _furniture_rebuild_seen: Dictionary = {}
+var _cutout_slot_result: Dictionary = {}
 var _cached_projectile_cutout_nodes: Array = []
 var _cached_projectile_cutout_frame: int = -1
 
@@ -6194,7 +6195,8 @@ func _end_cutout_query_snapshot() -> void:
 
 func _get_projectile_cutout_slot(projectile: Node2D, default_radius: float = 0.20) -> Dictionary:
 	if projectile == null or not is_instance_valid(projectile) or not projectile.is_inside_tree() or projectile.is_queued_for_deletion():
-		return {}
+		_cutout_slot_result.clear()
+		return _cutout_slot_result
 	var world_pos := Vector3.ZERO
 	if projectile.has_meta(&"depth_visual_bridge"):
 		var bridge_ref: Variant = projectile.get_meta(&"depth_visual_bridge")
@@ -6209,10 +6211,10 @@ func _get_projectile_cutout_slot(projectile: Node2D, default_radius: float = 0.2
 			PROJECTILE_MUZZLE_VISUAL_HEIGHT,
 			projectile.global_position.y / CELL_PIXELS
 		))
-	return {
-		"world": world_pos,
-		"radius": default_radius,
-	}
+	_cutout_slot_result.clear()
+	_cutout_slot_result["world"] = world_pos
+	_cutout_slot_result["radius"] = default_radius
+	return _cutout_slot_result
 
 
 func _sort_occlusion_candidate_indices(a: int, b: int) -> bool:
@@ -6221,13 +6223,15 @@ func _sort_occlusion_candidate_indices(a: int, b: int) -> bool:
 
 func _get_actor_cutout_slot(actor: Node2D) -> Dictionary:
 	if actor == null or not is_instance_valid(actor):
-		return {}
+		_cutout_slot_result.clear()
+		return _cutout_slot_result
 	var instance_id := actor.get_instance_id()
 	if not _occlusion_bounds_cache.has(instance_id):
 		_cache_actor_occlusion_bounds(actor)
 	var cached: Dictionary = _occlusion_bounds_cache.get(instance_id, {})
 	if cached.is_empty():
-		return {}
+		_cutout_slot_result.clear()
+		return _cutout_slot_result
 	var visual_root_var: Variant = cached.get("visual_root", null)
 	var visual_root: Node2D = visual_root_var as Node2D if is_instance_valid(visual_root_var) else null
 	if visual_root != null and visual_root != actor:
@@ -6245,10 +6249,9 @@ func _get_actor_cutout_slot(actor: Node2D) -> Dictionary:
 	var center_global := actor.global_transform * local_center
 	# Align the hole with the on-screen visual carrier (center_height + depth_offset),
 	# not a hardcoded mid-torso Y. Projectiles already use actor_sprite.global_position.
-	var placed: Dictionary = _actor_cutout_world_from_visual(
+	return _actor_cutout_world_from_visual(
 		actor, center_global, float(cached.get("radius", 0.24))
 	)
-	return placed
 
 
 
@@ -6299,7 +6302,10 @@ func _actor_cutout_world_from_visual(actor: Node2D, center_global: Vector2, boun
 					height,
 					center_global.y / CELL_PIXELS + depth
 				))
-	return {"world": world, "radius": radius}
+	_cutout_slot_result.clear()
+	_cutout_slot_result["world"] = world
+	_cutout_slot_result["radius"] = radius
+	return _cutout_slot_result
 
 func _project_occlusion_cutout(world_center: Vector3, world_radius: float, screen_override: Variant = null) -> Vector4:
 	if camera_3d == null or not is_instance_valid(camera_3d):
