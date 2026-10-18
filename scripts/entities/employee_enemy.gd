@@ -238,6 +238,7 @@ var sky_drop_saved_hurtbox_disabled := false
 var sky_drop_saved_hurtbox_monitorable := true
 
 var decision_cooldown_left := 0.0
+var _last_hands_visible: int = -1
 var steering_commit_left := 0.0
 var steering_waypoint := Vector2.ZERO
 
@@ -625,6 +626,10 @@ func _update_enemy_blink(delta: float) -> void:
 
 func _sync_enemy_hands_visibility() -> void:
 	var hands_visible: bool = held_weapon_id.is_empty() or dead
+	var vis_i := 1 if hands_visible else 0
+	if vis_i == _last_hands_visible:
+		return
+	_last_hands_visible = vis_i
 	left_hand.visible = hands_visible
 	right_hand.visible = hands_visible
 
@@ -1021,7 +1026,7 @@ func _physics_process(delta: float) -> void:
 
 func _perception_update_interval() -> float:
 	return clampf(
-		_cfg("employee_vision_update_interval", 0.10),
+		_cfg("employee_vision_update_interval", 0.16),
 		0.05,
 		0.5
 	)
