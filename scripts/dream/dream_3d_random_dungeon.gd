@@ -803,6 +803,8 @@ var _employee_clear_shape: CircleShape2D
 var _employee_clear_query: PhysicsShapeQueryParameters2D
 var _placement_clear_shape: CircleShape2D
 var _placement_clear_query: PhysicsShapeQueryParameters2D
+var _room_path_clear_query: PhysicsRayQueryParameters2D
+var _furniture_shot_path_query: PhysicsRayQueryParameters2D
 var employee_path_cache: Dictionary = {}
 var _floor_path_cache_enabled := false
 var _floor_path_adjacency: Dictionary = {}
@@ -12932,11 +12934,16 @@ func is_furniture_shot_path_clear(from_position: Vector2, to_position: Vector2, 
 	if source_actor is CollisionObject2D:
 		excluded.append(source_actor.get_rid())
 	var space_state := source_actor.get_world_2d().direct_space_state
-	var query := PhysicsRayQueryParameters2D.create(from_position, to_position, WORLD_WALL_LAYER | 4 | 8, excluded)
-	query.hit_from_inside = true
+	if _furniture_shot_path_query == null:
+		_furniture_shot_path_query = PhysicsRayQueryParameters2D.new()
+		_furniture_shot_path_query.collision_mask = WORLD_WALL_LAYER | 4 | 8
+		_furniture_shot_path_query.hit_from_inside = true
+		_furniture_shot_path_query.collide_with_bodies = true
+	_furniture_shot_path_query.from = from_position
+	_furniture_shot_path_query.to = to_position
 	for _attempt in range(32):
-		query.exclude = excluded
-		var hit := space_state.intersect_ray(query)
+		_furniture_shot_path_query.exclude = excluded
+		var hit := space_state.intersect_ray(_furniture_shot_path_query)
 		if hit.is_empty():
 			return true
 		var collider := hit.get("collider") as Node2D
@@ -12958,11 +12965,16 @@ func is_room_projectile_path_clear(from_position: Vector2, to_position: Vector2)
 		return true
 	var space := player.get_world_2d().direct_space_state
 	var excluded: Array[RID] = []
+	if _room_path_clear_query == null:
+		_room_path_clear_query = PhysicsRayQueryParameters2D.new()
+		_room_path_clear_query.collision_mask = WORLD_WALL_LAYER | 4 | 8
+		_room_path_clear_query.collide_with_bodies = true
+		_room_path_clear_query.collide_with_areas = false
+	_room_path_clear_query.from = from_position
+	_room_path_clear_query.to = to_position
 	for _i in range(8):
-		var query := PhysicsRayQueryParameters2D.create(from_position, to_position, WORLD_WALL_LAYER | 4 | 8, excluded)
-		query.collide_with_bodies = true
-		query.collide_with_areas = false
-		var hit := space.intersect_ray(query)
+		_room_path_clear_query.exclude = excluded
+		var hit := space.intersect_ray(_room_path_clear_query)
 		if hit.is_empty():
 			return true
 		var collider: Node = hit.get("collider") as Node

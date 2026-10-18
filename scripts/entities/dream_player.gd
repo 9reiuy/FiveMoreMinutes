@@ -308,6 +308,7 @@ var kick_direction := Vector2.RIGHT
 var _kick_shape: RectangleShape2D
 var _kick_query: PhysicsShapeQueryParameters2D
 var _dash_query: PhysicsShapeQueryParameters2D
+var _muzzle_clamp_query: PhysicsRayQueryParameters2D
 var kick_left_foot := true
 var next_kick_left_foot := true
 var kick_blocked_by_interaction := false
@@ -6152,11 +6153,16 @@ func get_projectile_origin() -> Vector2:
 		return nominal_pos
 	# Check world geometry (1), walls/doors (4), and props (8)
 	var mask: int = 1 | 4 | 8
-	var query := PhysicsRayQueryParameters2D.create(start_pos, nominal_pos, mask, [get_rid()])
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
-	query.hit_from_inside = true
-	var hit: Dictionary = space_state.intersect_ray(query)
+	if _muzzle_clamp_query == null:
+		_muzzle_clamp_query = PhysicsRayQueryParameters2D.new()
+		_muzzle_clamp_query.collide_with_bodies = true
+		_muzzle_clamp_query.collide_with_areas = false
+		_muzzle_clamp_query.hit_from_inside = true
+	_muzzle_clamp_query.from = start_pos
+	_muzzle_clamp_query.to = nominal_pos
+	_muzzle_clamp_query.collision_mask = mask
+	_muzzle_clamp_query.exclude = [get_rid()]
+	var hit: Dictionary = space_state.intersect_ray(_muzzle_clamp_query)
 	if not hit.is_empty():
 		var hit_pos: Vector2 = hit.get("position", nominal_pos)
 		var dir := segment.normalized()

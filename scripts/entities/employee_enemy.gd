@@ -250,6 +250,7 @@ var cached_separation_velocity := Vector2.ZERO
 ## CircleShape2D + PhysicsShapeQueryParameters2D every 0.16s per enemy.
 var _separation_shape: CircleShape2D
 var _separation_query: PhysicsShapeQueryParameters2D
+var _los_query: PhysicsRayQueryParameters2D
 
 var strafe_sign := 1.0
 var strafe_time_left := 0.0
@@ -1179,26 +1180,26 @@ func _has_target_line_of_sight(candidate_position: Vector2) -> bool:
 		return false
 
 	var space_state := get_world_2d().direct_space_state
-	var query := PhysicsRayQueryParameters2D.create(
-		global_position,
-		candidate_position,
-		mask
-	)
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
+	if _los_query == null:
+		_los_query = PhysicsRayQueryParameters2D.new()
+		_los_query.collide_with_bodies = true
+		_los_query.collide_with_areas = false
+	_los_query.from = global_position
+	_los_query.to = candidate_position
+	_los_query.collision_mask = mask
 	var excludes: Array[RID] = []
 	if self is CollisionObject2D:
 		excludes.append(get_rid())
-	query.exclude = excludes
+	_los_query.exclude = excludes
 
 	for _i in range(5):
-		var hit := space_state.intersect_ray(query)
+		var hit := space_state.intersect_ray(_los_query)
 		if hit.is_empty():
 			return true
 		var collider: Object = hit.get("collider", null)
 		if collider is Node and (collider.is_in_group(&"glass_windows") or collider.is_in_group(&"breakable_glass_windows")):
 			excludes.append(hit.get("rid"))
-			query.exclude = excludes
+			_los_query.exclude = excludes
 			continue
 		return false
 	return false
