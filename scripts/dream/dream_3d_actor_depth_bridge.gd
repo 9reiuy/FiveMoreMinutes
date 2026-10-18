@@ -1091,7 +1091,8 @@ func _process(_delta: float) -> void:
 			if not optimize_capture_transform or copy.modulate != target_mod:
 				copy.modulate = target_mod
 	var position_2d := source_actor.global_position
-	_update_character_local_light(position_2d)
+	if not skip_staggered_enemy_sync:
+		_update_character_local_light(position_2d)
 	floor_contact_lift = 0.0
 	lowest_visible_pixel = 0.0
 	if camera != null and (camera_plane_visual or ((lit_material != null or projectile_material != null) and billboard_mode == BaseMaterial3D.BILLBOARD_ENABLED)):
