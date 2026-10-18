@@ -11,6 +11,7 @@ var candidate_groups: Array[StringName] = []
 var current_target: Node2D
 var _group_cache_frame: int = -1
 var _group_cache: Dictionary = {}  # StringName -> Array
+var _seen_ids: Dictionary = {}
 
 
 func configure(source_actor: Node2D, groups: Array) -> void:
@@ -27,7 +28,7 @@ func update_target() -> Node2D:
 		return null
 	var nearest: Node2D
 	var nearest_distance := INF
-	var seen: Dictionary = {}
+	_seen_ids.clear()
 	var frame := Engine.get_process_frames()
 	if frame - _group_cache_frame > 1 or _group_cache.is_empty():
 		_group_cache_frame = frame
@@ -41,9 +42,9 @@ func update_target() -> Node2D:
 			if candidate == null or not is_instance_valid(candidate):
 				continue
 			var candidate_id := candidate.get_instance_id()
-			if seen.has(candidate_id):
+			if _seen_ids.has(candidate_id):
 				continue
-			seen[candidate_id] = true
+			_seen_ids[candidate_id] = true
 			if not _is_available(candidate):
 				continue
 			var radius_variant: Variant = candidate.get("interaction_radius")
