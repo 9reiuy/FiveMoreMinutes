@@ -9,6 +9,8 @@ extends Node
 var actor: Node2D
 var candidate_groups: Array[StringName] = []
 var current_target: Node2D
+var _group_cache_frame: int = -1
+var _group_cache: Dictionary = {}  # StringName -> Array
 
 
 func configure(source_actor: Node2D, groups: Array) -> void:
@@ -26,8 +28,15 @@ func update_target() -> Node2D:
 	var nearest: Node2D
 	var nearest_distance := INF
 	var seen: Dictionary = {}
+	var frame := Engine.get_process_frames()
+	if frame - _group_cache_frame > 1 or _group_cache.is_empty():
+		_group_cache_frame = frame
+		_group_cache.clear()
+		for group_name in candidate_groups:
+			_group_cache[group_name] = get_tree().get_nodes_in_group(group_name)
 	for group_name in candidate_groups:
-		for candidate_variant in get_tree().get_nodes_in_group(group_name):
+		var members: Array = _group_cache.get(group_name, [])
+		for candidate_variant in members:
 			var candidate := candidate_variant as Node2D
 			if candidate == null or not is_instance_valid(candidate):
 				continue

@@ -1434,7 +1434,16 @@ func _update_world_weapon_interaction() -> void:
 		return
 	if not Input.is_action_pressed("pickup_weapon"):
 		weapon_interaction_consumed_until_release = false
-	var nearest: Node2D = interaction_resolver.update_target() if interaction_resolver != null else null
+	# Highlight can lag one frame when E is not held; keep snappy on press.
+	var refresh_target := (
+		interaction_resolver == null
+		or Input.is_action_pressed("pickup_weapon")
+		or Input.is_action_just_pressed("pickup_weapon")
+		or (Engine.get_process_frames() & 1) == 0
+	)
+	var nearest: Node2D = current_world_weapon_target
+	if refresh_target and interaction_resolver != null:
+		nearest = interaction_resolver.update_target()
 	current_world_weapon_target = nearest
 	if nearest == null:
 		return
