@@ -7,6 +7,7 @@ var vertical_velocity := 0.0
 var rotation_velocity := 0.0
 var fake_gravity := 180.0
 var lifetime := 2.2
+var _presentation_frozen := false
 
 @onready var shell_sprite: Sprite2D = $ShellSprite
 
@@ -28,6 +29,8 @@ func _process(delta: float) -> void:
 	if lifetime <= 0.0:
 		queue_free()
 		return
+	if _presentation_frozen:
+		return
 	global_position += ground_velocity * delta
 	ground_velocity = ground_velocity.move_toward(Vector2.ZERO, 54.0 * delta)
 	height = maxf(0.0, height + vertical_velocity * delta)
@@ -38,4 +41,14 @@ func _process(delta: float) -> void:
 		ground_velocity = ground_velocity.move_toward(Vector2.ZERO, 150.0 * delta)
 	shell_sprite.position.y = -height
 	shell_sprite.rotation += rotation_velocity * delta
+	if height <= 0.0 and ground_velocity.length_squared() < 0.25 and absf(rotation_velocity) < 0.35:
+		_presentation_frozen = true
+		ground_velocity = Vector2.ZERO
+		rotation_velocity = 0.0
+		if has_meta(&"depth_visual_bridge"):
+			var bridge_ref: Variant = get_meta(&"depth_visual_bridge")
+			if bridge_ref is WeakRef:
+				var bridge: Variant = bridge_ref.get_ref()
+				if bridge != null and is_instance_valid(bridge) and bridge.has_method("freeze_static_visual"):
+					bridge.call("freeze_static_visual")
 
