@@ -23,6 +23,8 @@ var cooldown_left := 0.25
 var extra_attack_chance := 0.0
 var extra_attack_delay := 0.08
 var impact_delay := 0.12
+var _melee_shape: CircleShape2D
+var _melee_query: PhysicsShapeQueryParameters2D
 
 
 func configure_weapon(config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
@@ -139,16 +141,17 @@ func _resolve_swing_hits(owner: Node2D, origin: Vector2, direction: Vector2) -> 
 			if not result.is_empty():
 				hit_something = true
 	# 家具使用同一个60°/20px瞬时扇形；一次Swing的handled表保证每个目标只结算一次。
-	var shape := CircleShape2D.new()
-	shape.radius = maxf(attack_range, 1.0)
-	var query := PhysicsShapeQueryParameters2D.new()
-	query.shape = shape
-	query.transform = Transform2D(0.0, origin)
-	query.collision_mask = 8
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
-	query.exclude = [owner.get_rid()] if owner is CollisionObject2D else []
-	for hit in owner.get_world_2d().direct_space_state.intersect_shape(query, 16):
+	if _melee_query == null:
+		_melee_shape = CircleShape2D.new()
+		_melee_query = PhysicsShapeQueryParameters2D.new()
+		_melee_query.shape = _melee_shape
+		_melee_query.collide_with_bodies = true
+		_melee_query.collide_with_areas = false
+		_melee_query.collision_mask = 8
+	_melee_shape.radius = maxf(attack_range, 1.0)
+	_melee_query.transform = Transform2D(0.0, origin)
+	_melee_query.exclude = [owner.get_rid()] if owner is CollisionObject2D else []
+	for hit in owner.get_world_2d().direct_space_state.intersect_shape(_melee_query, 16):
 		var prop := hit.get("collider") as Node
 		if prop == null or handled.has(prop.get_instance_id()) or not prop.is_in_group(&"damageable_props"):
 			continue

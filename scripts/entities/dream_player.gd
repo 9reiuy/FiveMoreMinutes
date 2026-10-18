@@ -305,6 +305,8 @@ var kick_active := false
 var kick_elapsed := 0.0
 var kick_hit_applied := false
 var kick_direction := Vector2.RIGHT
+var _kick_shape: RectangleShape2D
+var _kick_query: PhysicsShapeQueryParameters2D
 var kick_left_foot := true
 var next_kick_left_foot := true
 var kick_blocked_by_interaction := false
@@ -1972,32 +1974,32 @@ func _update_kick(delta: float) -> void:
 
 
 func _apply_kick_hits() -> void:
-	var shape := RectangleShape2D.new()
+	if _kick_query == null:
+		_kick_shape = RectangleShape2D.new()
+		_kick_query = PhysicsShapeQueryParameters2D.new()
+		_kick_query.shape = _kick_shape
+		_kick_query.collide_with_bodies = true
+		_kick_query.collide_with_areas = false
+		_kick_query.collision_mask = 2 | 8
 
-	shape.size = Vector2(
+	_kick_shape.size = Vector2(
 		runtime_config.kick_range,
 		runtime_config.kick_width
 	)
 
-	var query := PhysicsShapeQueryParameters2D.new()
-
-	query.shape = shape
-	query.collision_mask = 2 | 8
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
-	query.exclude = [get_rid()]
+	_kick_query.exclude = [get_rid()]
 
 	var center := global_position + kick_direction * (
 		runtime_config.kick_range * 0.5 + 6.0
 	)
 
-	query.transform = Transform2D(
+	_kick_query.transform = Transform2D(
 		kick_direction.angle(),
 		center
 	)
 
 	var hits := get_world_2d().direct_space_state.intersect_shape(
-		query,
+		_kick_query,
 		32
 	)
 	var world := get_tree().get_first_node_in_group(&"dream_world")
