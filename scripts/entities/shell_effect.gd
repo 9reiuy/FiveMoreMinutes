@@ -41,7 +41,7 @@ func _process(delta: float) -> void:
 		ground_velocity = ground_velocity.move_toward(Vector2.ZERO, 150.0 * delta)
 	shell_sprite.position.y = -height
 	shell_sprite.rotation += rotation_velocity * delta
-	if height <= 0.0 and ground_velocity.length_squared() < 0.25 and absf(rotation_velocity) < 0.35:
+	if height <= 0.0 and ground_velocity.length_squared() < 4.0 and absf(rotation_velocity) < 1.0:
 		_presentation_frozen = true
 		ground_velocity = Vector2.ZERO
 		rotation_velocity = 0.0
