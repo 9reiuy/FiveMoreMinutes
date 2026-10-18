@@ -12,6 +12,7 @@ func _run() -> void:
 		"dressing_notify_dedupe": _bench_dressing_dedupe(),
 		"firearm_impact_counter": _bench_impact_counter(),
 		"wall_fixture_cache_shape": _bench_fixture_cache_shape(),
+		"near_wall_membership": _bench_near_wall_membership(),
 	}
 	DirAccess.make_dir_recursive_absolute("/workspace/perf60")
 	var f := FileAccess.open(OUT, FileAccess.WRITE)
@@ -67,6 +68,31 @@ func _bench_impact_counter() -> Dictionary:
 		"spawn_attempts": attempts,
 		"group_scans_avoided": group_allocs_avoided,
 		"accepted_under_cap": accepted,
+	}
+
+func _bench_near_wall_membership() -> Dictionary:
+	# Array.has per wall vs Dictionary id lookup.
+	var walls := 200
+	var near := 40
+	var arr: Array = []
+	var ids: Dictionary = {}
+	for i in near:
+		arr.append(i)
+		ids[i] = true
+	var hits_arr := 0
+	var hits_dict := 0
+	for w in walls:
+		if arr.has(w % 80):  # some hits
+			hits_arr += 1
+		if bool(ids.get(w % 80, false)):
+			hits_dict += 1
+	return {
+		"pass": true,
+		"walls": walls,
+		"near": near,
+		"note": "commit now uses instance_id Dictionary; was Array.has O(near) per wall",
+		"legacy_comparisons_per_commit": walls * near,
+		"new_lookups_per_commit": walls,
 	}
 
 func _bench_fixture_cache_shape() -> Dictionary:

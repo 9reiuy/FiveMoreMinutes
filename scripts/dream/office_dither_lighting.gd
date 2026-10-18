@@ -83,9 +83,11 @@ func _apply(mesh: MeshInstance3D) -> void:
 		if replacement != mesh.material_override:
 			mesh.material_override = replacement
 		if furniture and mesh.material_override is ShaderMaterial:
-			var live_shader: Shader = (mesh.material_override as ShaderMaterial).shader
+			var live_mat := mesh.material_override as ShaderMaterial
+			var live_shader: Shader = live_mat.shader
 			if live_shader != null and _shader_supports_cutout(live_shader):
-				(mesh.material_override as ShaderMaterial).set_shader_parameter("occlusion_cutout_enabled", true)
+				if live_mat.get_shader_parameter("occlusion_cutout_enabled") != true:
+					live_mat.set_shader_parameter("occlusion_cutout_enabled", true)
 	elif mesh.mesh != null:
 		for index in mesh.mesh.get_surface_count():
 			var original := mesh.get_active_material(index)
@@ -100,7 +102,8 @@ func _apply(mesh: MeshInstance3D) -> void:
 			if furniture:
 				var live_surface := mesh.get_active_material(index) as ShaderMaterial
 				if live_surface != null and live_surface.shader != null and _shader_supports_cutout(live_surface.shader):
-					live_surface.set_shader_parameter("occlusion_cutout_enabled", true)
+					if live_surface.get_shader_parameter("occlusion_cutout_enabled") != true:
+						live_surface.set_shader_parameter("occlusion_cutout_enabled", true)
 
 
 ## The black inverted-hull outline (Furniture3DVisual) is drawn after the body.

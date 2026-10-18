@@ -9,6 +9,9 @@ extends Node
 var world: Node3D
 var near_walls: Dictionary = {}
 var near_corridor_walls: Dictionary = {}
+## instance_id sets for O(1) membership in _commit (Array.has was O(n) per wall).
+var _near_wall_ids: Dictionary = {}
+var _near_corridor_wall_ids: Dictionary = {}
 ## Cached once per layout; _commit used to find_children every room change.
 var _wall_fixtures: Array = []
 var room_covers: Dictionary = {}
@@ -131,13 +134,19 @@ func configure(owner_world: Node3D) -> void:
 				if room_id >= 0:
 					if not near_walls.has(room_id):
 						near_walls[room_id] = []
+						_near_wall_ids[room_id] = {}
+					var wall_id: int = wall.get_instance_id()
 					if not near_walls[room_id].has(wall):
 						near_walls[room_id].append(wall)
+						_near_wall_ids[room_id][wall_id] = true
 				if edge_corridor_id >= 0:
 					if not near_corridor_walls.has(edge_corridor_id):
 						near_corridor_walls[edge_corridor_id] = []
+						_near_corridor_wall_ids[edge_corridor_id] = {}
+					var wall_id2: int = wall.get_instance_id()
 					if not near_corridor_walls[edge_corridor_id].has(wall):
 						near_corridor_walls[edge_corridor_id].append(wall)
+						_near_corridor_wall_ids[edge_corridor_id][wall_id2] = true
 		if is_near:
 			if wall.has_method("set_cutaway_mode"):
 				wall.set_cutaway_mode(true)
@@ -185,6 +194,8 @@ func clear_layout() -> void:
 	revealed_corridors.clear()
 	near_walls.clear()
 	near_corridor_walls.clear()
+	_near_wall_ids.clear()
+	_near_corridor_wall_ids.clear()
 	_wall_fixtures.clear()
 	world = null
 	current_room_id = -1
@@ -329,8 +340,11 @@ func _commit(room_id: int, corridor_id: int = -1) -> void:
 	current_corridor_id = corridor_id
 	if not is_instance_valid(world):
 		return
+	var room_near: Dictionary = _near_wall_ids.get(room_id, {})
+	var corridor_near: Dictionary = _near_corridor_wall_ids.get(corridor_id, {})
 	for wall in world.wall_root.get_children():
-		var enabled: bool = near_walls.get(room_id, []).has(wall) or near_corridor_walls.get(corridor_id, []).has(wall)
+		var wid: int = wall.get_instance_id()
+		var enabled: bool = bool(room_near.get(wid, false)) or bool(corridor_near.get(wid, false))
 		if wall.has_method("set_cutaway_mode"):
 			wall.call("set_cutaway_mode", enabled)
 	# The office U-shaped wall cut retains full doors and their complete frames.
