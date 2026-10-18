@@ -730,11 +730,24 @@ var _has_occluder_hit: bool = false
 
 ## Cached furniture meshes for the screen-space occlusion test. Rebuilding this
 ## every query frame walked all ~1200 meshes three times per frame and made the
-## game stutter badly, so the list is refreshed only occasionally.
+## game stutter badly, so the list is refreshed only when floor content changes
+## (plus a slow safety refresh). Per-actor queries use XZ corridor bins so they
+## never scan the full mesh list.
 var _cutout_furniture_meshes: Array = []
 var _cutout_furniture_meshes_frame: int = -1
+var _cutout_furniture_meshes_dirty := true
+var _cutout_furniture_mesh_centers := PackedVector3Array()
+var _cutout_furniture_mesh_bins: Dictionary = {}
+## Per-frame screen-rect cache keyed by MeshInstance3D instance_id.
+var _cutout_furniture_screen_rect_frame: int = -1
+var _cutout_furniture_screen_rects: Dictionary = {}
 
-const FURNITURE_MESH_REFRESH_FRAMES := 30
+const FURNITURE_MESH_REFRESH_FRAMES := 120
+const FURNITURE_MESH_BIN_SIZE := 4.0
+## World-XZ radius around the actor used to gather candidate furniture meshes.
+## Covering pieces sit near the actor under the gameplay camera; a tight
+## camera->actor corridor alone missed side-adjacent cabinets.
+const FURNITURE_MESH_NEAR_RADIUS := 5.0
 var _cutout_query_furniture: Array = []
 var _cutout_furniture_visuals: Array[VisualInstance3D] = []
 var _cutout_furniture_positions := PackedVector3Array()
@@ -4399,6 +4412,13 @@ func _clear_generated_building() -> void:
 	_last_door_root_child_count = -1
 	_cached_furniture_bridges.clear()
 	_last_bridges_child_count = -1
+	_cutout_furniture_meshes.clear()
+	_cutout_furniture_mesh_centers = PackedVector3Array()
+	_cutout_furniture_mesh_bins.clear()
+	_cutout_furniture_meshes_dirty = true
+	_cutout_furniture_meshes_frame = -1
+	_cutout_furniture_screen_rects.clear()
+	_cutout_furniture_screen_rect_frame = -1
 	_last_cutout_viewport_size = Vector2.ZERO
 	_last_cutout_slots.clear()
 	transition_root = null
@@ -5822,11 +5842,13 @@ func _update_occlusion_cutouts() -> void:
 		if not player_cutout.is_empty():
 			var player_world: Vector3 = player_cutout.get("world", Vector3.ZERO)
 			var player_radius: float = float(player_cutout.get("radius", 0.24))
-			if _actor_is_occluded_by_occluder(player_world):
+			var player_wall_door := _actor_is_occluded_by_wall_or_door(player_world)
+			var player_furn_overlap: Variant = _furniture_screen_overlap(player_world, player_radius, false)
+			if player_wall_door or player_furn_overlap != null:
 				var player_slot: Vector4 = _project_occlusion_cutout(
 					player_world,
 					player_radius,
-					_actor_screen_overlap(player_world, player_radius)
+					player_furn_overlap
 				)
 				if player_slot.w > 0.5:
 					slots.append(player_slot)
@@ -5847,12 +5869,15 @@ func _update_occlusion_cutouts() -> void:
 				var screen_pos := camera_3d.unproject_position(enemy_world)
 				if has_cam_vp and not cam_vp_rect.has_point(screen_pos):
 					continue
-			if not _actor_is_occluded_by_occluder(enemy_world):
+			var enemy_radius: float = float(cutout.get("radius", 0.24))
+			var enemy_wall_door := _actor_is_occluded_by_wall_or_door(enemy_world)
+			var enemy_furn_overlap: Variant = _furniture_screen_overlap(enemy_world, enemy_radius, false)
+			if not enemy_wall_door and enemy_furn_overlap == null:
 				continue
 			var enemy_slot: Vector4 = _project_occlusion_cutout(
 				enemy_world,
-				float(cutout.get("radius", 0.24)),
-				_actor_screen_overlap(enemy_world, float(cutout.get("radius", 0.24)))
+				enemy_radius,
+				enemy_furn_overlap
 			)
 			if enemy_slot.w <= 0.5:
 				continue
@@ -5881,12 +5906,15 @@ func _update_occlusion_cutouts() -> void:
 				var screen_pos := camera_3d.unproject_position(proj_world)
 				if has_cam_vp and not cam_vp_rect.has_point(screen_pos):
 					continue
-			if not _actor_is_occluded_by_occluder(proj_world):
+			var proj_radius: float = float(proj_cutout.get("radius", default_proj_radius))
+			var proj_wall_door := _actor_is_occluded_by_wall_or_door(proj_world)
+			var proj_furn_overlap: Variant = _furniture_screen_overlap(proj_world, proj_radius, false)
+			if not proj_wall_door and proj_furn_overlap == null:
 				continue
 			var proj_slot: Vector4 = _project_occlusion_cutout(
 				proj_world,
-				float(proj_cutout.get("radius", default_proj_radius)),
-				_actor_screen_overlap(proj_world, float(proj_cutout.get("radius", default_proj_radius)))
+				proj_radius,
+				proj_furn_overlap
 			)
 			if proj_slot.w <= 0.5:
 				continue
@@ -5960,6 +5988,7 @@ func _begin_cutout_query_snapshot() -> void:
 			var current_child_count := actor_depth_bridges_root.get_child_count()
 			if current_child_count != _last_bridges_child_count:
 				_last_bridges_child_count = current_child_count
+				_cutout_furniture_meshes_dirty = true
 				_cached_furniture_bridges.clear()
 				for bridge in actor_depth_bridges_root.get_children():
 					if bridge.is_queued_for_deletion(): continue
@@ -6133,41 +6162,7 @@ func _project_occlusion_cutout(world_center: Vector3, world_radius: float, scree
 ## overlaps. A partially hidden actor keeps its own screen centre clear of the
 ## blocker, which is why aiming the hole at the actor missed the furniture.
 func _actor_screen_overlap(actor_world: Vector3, actor_world_radius: float) -> Variant:
-	if camera_3d == null or camera_3d.is_position_behind(actor_world):
-		return null
-	var actor_rect := _sphere_screen_rect(actor_world, actor_world_radius)
-	if actor_rect.size.x <= 0.0 or actor_rect.size.y <= 0.0:
-		return null
-	var actor_distance := camera_3d.global_position.distance_squared_to(actor_world)
-	var best: Variant = null
-	var best_area := 0.0
-	# Same reasoning as _screen_covered_by_furniture: use the real 3D meshes.
-	for node in _furniture_meshes():
-		# The cache refreshes every few frames; a floor swap can free entries first.
-		if not is_instance_valid(node):
-			continue
-		var mesh_instance := node as MeshInstance3D
-		if mesh_instance == null or not mesh_instance.is_visible_in_tree():
-			continue
-		if mesh_instance.mesh == null:
-			continue
-		var local_aabb: AABB = mesh_instance.get_aabb()
-		if local_aabb.size.length_squared() <= 0.000001:
-			continue
-		var world_aabb := _world_aabb_for_visual(local_aabb, mesh_instance.global_transform)
-		if camera_3d.global_position.distance_squared_to(world_aabb.get_center()) >= actor_distance:
-			continue
-		var rect_variant: Variant = _aabb_screen_rect(world_aabb)
-		if not (rect_variant is Rect2):
-			continue
-		var overlap: Rect2 = actor_rect.intersection(rect_variant as Rect2)
-		if overlap.size.x <= 1.0 or overlap.size.y <= 1.0:
-			continue
-		var area := overlap.size.x * overlap.size.y
-		if area > best_area:
-			best_area = area
-			best = overlap.get_center()
-	return best
+	return _furniture_screen_overlap(actor_world, actor_world_radius, false)
 
 
 func _sphere_screen_rect(world_center: Vector3, world_radius: float) -> Rect2:
@@ -6249,8 +6244,7 @@ func invalidate_actor_occlusion_bounds(actor: Node2D) -> void:
 		_occlusion_bounds_cache.erase(actor.get_instance_id())
 
 
-func _actor_is_occluded_by_occluder(actor_world: Vector3) -> bool:
-	_has_occluder_hit = false
+func _actor_is_occluded_by_wall_or_door(actor_world: Vector3) -> bool:
 	if camera_3d == null or not is_instance_valid(camera_3d):
 		return false
 	var camera_world := camera_3d.global_position
@@ -6258,10 +6252,17 @@ func _actor_is_occluded_by_occluder(actor_world: Vector3) -> bool:
 	if ray.length_squared() < 0.0001:
 		return false
 	if _segment_hits_wall_visual(camera_world, actor_world, ray):
-		# A wall stands behind the actor on screen, so the actor's own screen
-		# position already lands on the wall face.
 		return true
 	if door_root != null and _segment_hits_visual_tree(camera_world, actor_world, door_root):
+		return true
+	return false
+
+
+func _actor_is_occluded_by_occluder(actor_world: Vector3) -> bool:
+	_has_occluder_hit = false
+	if _actor_is_occluded_by_wall_or_door(actor_world):
+		# A wall stands behind the actor on screen, so the actor's own screen
+		# position already lands on the wall face.
 		return true
 	return _screen_covered_by_furniture(actor_world)
 
@@ -6275,14 +6276,37 @@ func _actor_is_occluded_by_occluder(actor_world: Vector3) -> bool:
 ## ~18x12 px on screen - far too small to cover an actor - while the 3D mesh is
 ## what the player actually sees blocking them.
 func _screen_covered_by_furniture(actor_world: Vector3) -> bool:
+	return _furniture_screen_overlap(actor_world, 0.24, true) != null
+
+
+## Shared furniture screen test. When early_exit is true, returns the first
+## overlapping centre (boolean covered). When false, returns the largest-area
+## overlap centre used to aim the cutout hole. null means no furniture covers
+## the actor. Corridor bins + per-frame screen-rect cache keep this far below
+## the previous O(actors x all furniture meshes) cost.
+func _furniture_screen_overlap(actor_world: Vector3, actor_world_radius: float, early_exit: bool) -> Variant:
 	if camera_3d == null or camera_3d.is_position_behind(actor_world):
-		return false
-	var actor_rect := _sphere_screen_rect(actor_world, 0.24)
+		return null
+	var actor_rect := _sphere_screen_rect(actor_world, actor_world_radius)
 	if actor_rect.size.x <= 0.0 or actor_rect.size.y <= 0.0:
-		return false
+		return null
 	var actor_distance := camera_3d.global_position.distance_squared_to(actor_world)
-	for node in _furniture_meshes():
-		# The cache refreshes every few frames; a floor swap can free entries first.
+	_ensure_furniture_mesh_cache()
+	var indices: Array
+	if bool(get_meta(&"test_legacy_furniture_screen_scan", false)):
+		indices = []
+		indices.resize(_cutout_furniture_meshes.size())
+		for i in _cutout_furniture_meshes.size():
+			indices[i] = i
+	else:
+		indices = _furniture_mesh_indices_near(camera_3d.global_position, actor_world)
+	var best: Variant = null
+	var best_area := 0.0
+	var min_overlap := 0.5 if early_exit else 1.0
+	for index in indices:
+		if index < 0 or index >= _cutout_furniture_meshes.size():
+			continue
+		var node: Variant = _cutout_furniture_meshes[index]
 		if not is_instance_valid(node):
 			continue
 		var mesh_instance := node as MeshInstance3D
@@ -6290,32 +6314,149 @@ func _screen_covered_by_furniture(actor_world: Vector3) -> bool:
 			continue
 		if mesh_instance.mesh == null:
 			continue
-		var local_aabb: AABB = mesh_instance.get_aabb()
-		if local_aabb.size.length_squared() <= 0.000001:
+		var centre: Vector3 = _cutout_furniture_mesh_centers[index] if index < _cutout_furniture_mesh_centers.size() else mesh_instance.global_position
+		if camera_3d.global_position.distance_squared_to(centre) >= actor_distance:
 			continue
-		var world_aabb := _world_aabb_for_visual(local_aabb, mesh_instance.global_transform)
-		if camera_3d.global_position.distance_squared_to(world_aabb.get_center()) >= actor_distance:
-			continue
-		var rect_variant: Variant = _aabb_screen_rect(world_aabb)
+		var rect_variant: Variant = _furniture_mesh_screen_rect(mesh_instance)
 		if not (rect_variant is Rect2):
 			continue
 		var overlap: Rect2 = actor_rect.intersection(rect_variant as Rect2)
-		if overlap.size.x > 0.5 and overlap.size.y > 0.5:
-			return true
-	return false
+		if overlap.size.x <= min_overlap or overlap.size.y <= min_overlap:
+			continue
+		if early_exit:
+			return overlap.get_center()
+		var area := overlap.size.x * overlap.size.y
+		if area > best_area:
+			best_area = area
+			best = overlap.get_center()
+	return best
+
+
+func _furniture_mesh_screen_rect(mesh_instance: MeshInstance3D) -> Variant:
+	var skip_cache := bool(get_meta(&"test_legacy_furniture_screen_scan", false))
+	var frame := Engine.get_process_frames()
+	if not skip_cache:
+		if frame != _cutout_furniture_screen_rect_frame:
+			_cutout_furniture_screen_rect_frame = frame
+			_cutout_furniture_screen_rects.clear()
+		var id := mesh_instance.get_instance_id()
+		if _cutout_furniture_screen_rects.has(id):
+			return _cutout_furniture_screen_rects[id]
+	var local_aabb: AABB = mesh_instance.get_aabb()
+	if local_aabb.size.length_squared() <= 0.000001:
+		if not skip_cache:
+			_cutout_furniture_screen_rects[mesh_instance.get_instance_id()] = null
+		return null
+	var world_aabb := _world_aabb_for_visual(local_aabb, mesh_instance.global_transform)
+	var rect_variant: Variant = _aabb_screen_rect(world_aabb)
+	if not skip_cache:
+		_cutout_furniture_screen_rects[mesh_instance.get_instance_id()] = rect_variant
+	return rect_variant
+
+
+func _ensure_furniture_mesh_cache() -> void:
+	var frame := Engine.get_process_frames()
+	if (
+		not _cutout_furniture_meshes_dirty
+		and not _cutout_furniture_meshes.is_empty()
+		and frame == _cutout_furniture_meshes_frame
+	):
+		return
+	_cutout_furniture_meshes_frame = frame
+	var need_rebuild := (
+		_cutout_furniture_meshes_dirty
+		or _cutout_furniture_meshes.is_empty()
+		or frame % FURNITURE_MESH_REFRESH_FRAMES == 0
+	)
+	if need_rebuild:
+		_rebuild_furniture_mesh_cache()
+	else:
+		_refresh_furniture_mesh_centers_and_bins()
 
 
 func _furniture_meshes() -> Array:
-	var frame := Engine.get_process_frames()
-	if frame == _cutout_furniture_meshes_frame:
-		return _cutout_furniture_meshes
-	_cutout_furniture_meshes_frame = frame
-	if _cutout_furniture_meshes.is_empty() or frame % FURNITURE_MESH_REFRESH_FRAMES == 0:
-		_cutout_furniture_meshes.clear()
-		for node in find_children("*", "MeshInstance3D", true, false):
-			if _mesh_belongs_to_furniture(node):
-				_cutout_furniture_meshes.append(node)
+	_ensure_furniture_mesh_cache()
 	return _cutout_furniture_meshes
+
+
+func _rebuild_furniture_mesh_cache() -> void:
+	_cutout_furniture_meshes.clear()
+	_cutout_furniture_mesh_centers = PackedVector3Array()
+	_cutout_furniture_mesh_bins.clear()
+	for node in find_children("*", "MeshInstance3D", true, false):
+		if _mesh_belongs_to_furniture(node):
+			_cutout_furniture_meshes.append(node)
+	_cutout_furniture_meshes_dirty = false
+	_refresh_furniture_mesh_centers_and_bins()
+
+
+func _refresh_furniture_mesh_centers_and_bins() -> void:
+	_cutout_furniture_mesh_centers.resize(_cutout_furniture_meshes.size())
+	_cutout_furniture_mesh_bins.clear()
+	for index in _cutout_furniture_meshes.size():
+		var node: Variant = _cutout_furniture_meshes[index]
+		var centre := Vector3(INF, INF, INF)
+		if is_instance_valid(node):
+			var mesh_instance := node as MeshInstance3D
+			if mesh_instance != null:
+				centre = mesh_instance.global_position
+		_cutout_furniture_mesh_centers[index] = centre
+		if centre.x == INF:
+			continue
+		var bin_key := Vector2i(
+			int(floor(centre.x / FURNITURE_MESH_BIN_SIZE)),
+			int(floor(centre.z / FURNITURE_MESH_BIN_SIZE))
+		)
+		if not _cutout_furniture_mesh_bins.has(bin_key):
+			_cutout_furniture_mesh_bins[bin_key] = []
+		_cutout_furniture_mesh_bins[bin_key].append(index)
+
+
+## Mesh indices near the actor in XZ, plus anything along the camera->actor
+## corridor. The near-radius catch covers side-adjacent furniture the corridor
+## alone would miss; bins keep the gather cheap vs scanning all meshes.
+func _furniture_mesh_indices_near(camera_world: Vector3, actor_world: Vector3) -> Array:
+	_ensure_furniture_mesh_cache()
+	var radius := FURNITURE_MESH_NEAR_RADIUS
+	# Union of actor disc and camera->actor corridor (expanded by radius).
+	var min_x := minf(camera_world.x, actor_world.x) - radius
+	var max_x := maxf(camera_world.x, actor_world.x) + radius
+	var min_z := minf(camera_world.z, actor_world.z) - radius
+	var max_z := maxf(camera_world.z, actor_world.z) + radius
+	var min_bx := int(floor(min_x / FURNITURE_MESH_BIN_SIZE))
+	var max_bx := int(floor(max_x / FURNITURE_MESH_BIN_SIZE))
+	var min_bz := int(floor(min_z / FURNITURE_MESH_BIN_SIZE))
+	var max_bz := int(floor(max_z / FURNITURE_MESH_BIN_SIZE))
+	var indices: Array = []
+	var seen: Dictionary = {}
+	var radius_sq := radius * radius
+	for bz in range(min_bz, max_bz + 1):
+		for bx in range(min_bx, max_bx + 1):
+			var bin_indices: Array = _cutout_furniture_mesh_bins.get(Vector2i(bx, bz), [])
+			for index in bin_indices:
+				if seen.has(index):
+					continue
+				if index < 0 or index >= _cutout_furniture_mesh_centers.size():
+					continue
+				var centre := _cutout_furniture_mesh_centers[index]
+				if centre.x < min_x or centre.x > max_x or centre.z < min_z or centre.z > max_z:
+					continue
+				# Keep meshes near the actor, or anywhere in the corridor strip
+				# between camera and actor (covering pieces that sit forward).
+				var dx := centre.x - actor_world.x
+				var dz := centre.z - actor_world.z
+				var near_actor := (dx * dx + dz * dz) <= radius_sq
+				var in_corridor := (
+					centre.x >= minf(camera_world.x, actor_world.x) - 1.5
+					and centre.x <= maxf(camera_world.x, actor_world.x) + 1.5
+					and centre.z >= minf(camera_world.z, actor_world.z) - 1.5
+					and centre.z <= maxf(camera_world.z, actor_world.z) + 1.5
+				)
+				if not near_actor and not in_corridor:
+					continue
+				seen[index] = true
+				indices.append(index)
+	return indices
 
 
 ## A mesh counts as furniture when one of its ancestors carries the marker set by
