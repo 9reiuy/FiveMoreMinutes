@@ -742,6 +742,7 @@ var _cutout_furniture_meshes: Array = []
 var _cutout_furniture_meshes_frame: int = -1
 var _cutout_furniture_meshes_dirty := true
 var _active_firearm_impact_count := 0
+var _cutout_furniture_query_frame: int = -1
 var _cutout_furniture_mesh_centers := PackedVector3Array()
 var _cutout_furniture_mesh_bins: Dictionary = {}
 ## Per-frame screen-rect cache keyed by MeshInstance3D instance_id.
@@ -6001,9 +6002,6 @@ func _begin_cutout_query_snapshot() -> void:
 		_cutout_wall_edges = _static_cutout_wall_edges
 		_cutout_wall_heights = _static_cutout_wall_heights
 		_cutout_wall_meshes = _static_cutout_wall_meshes
-	_cutout_query_furniture.clear()
-	_cutout_furniture_visuals.clear()
-	_cutout_furniture_positions.clear()
 	_cutout_query_doors.clear()
 	_cutout_query_aabbs.clear()
 	var numeric_furniture_scan := not bool(get_meta(&"test_legacy_furniture_scan", false))
@@ -6030,6 +6028,7 @@ func _begin_cutout_query_snapshot() -> void:
 					_cached_furniture_bridges[write_index] = bridge_variant
 					write_index += 1
 				_cached_furniture_bridges.resize(write_index)
+				_cutout_furniture_query_frame = -1  # force query rebuild after prune
 			# Dirty mesh cache only when furniture art / 2D furniture population changes.
 			var art_count := office_art_root.get_child_count() if is_instance_valid(office_art_root) else 0
 			var furn2d_count := furniture_root.get_child_count() if is_instance_valid(furniture_root) else 0
@@ -6037,20 +6036,43 @@ func _begin_cutout_query_snapshot() -> void:
 				_last_furniture_art_child_count = art_count
 				_last_furniture_2d_child_count = furn2d_count
 				_cutout_furniture_meshes_dirty = true
-			for bridge_variant in _cached_furniture_bridges:
-				if not is_instance_valid(bridge_variant): continue
-				var bridge := bridge_variant as Node
-				if bridge == null or bridge.is_queued_for_deletion(): continue
-				var source_value: Variant = bridge.get("source_actor")
-				if not is_instance_valid(source_value): continue
-				var source := source_value as Node2D
-				if not is_instance_valid(source) or source.is_queued_for_deletion() or not source.is_in_group(&"damageable_props"): continue
-				_cutout_query_furniture.append(bridge)
-				var visual_value: Variant = bridge.get("actor_sprite")
-				var visual := visual_value as VisualInstance3D if is_instance_valid(visual_value) else null
-				_cutout_furniture_visuals.append(visual)
-				_cutout_furniture_positions.append(visual.global_position if is_instance_valid(visual) else Vector3(INF, INF, INF))
+			var frame_now := Engine.get_process_frames()
+			var rebuild_furniture_query := (
+				_cutout_furniture_query_frame < 0
+				or frame_now - _cutout_furniture_query_frame >= 2
+				or _cutout_query_furniture.is_empty()
+				or bool(get_meta(&"test_legacy_furniture_query_every_frame", false))
+			)
+			if rebuild_furniture_query:
+				_cutout_furniture_query_frame = frame_now
+				_cutout_query_furniture.clear()
+				_cutout_furniture_visuals.clear()
+				_cutout_furniture_positions.clear()
+				for bridge_variant in _cached_furniture_bridges:
+					if not is_instance_valid(bridge_variant): continue
+					var bridge := bridge_variant as Node
+					if bridge == null or bridge.is_queued_for_deletion(): continue
+					var source_value2: Variant = bridge.get("source_actor")
+					if not is_instance_valid(source_value2):
+						source_value2 = bridge.get_meta(&"source_actor", null)
+					if not is_instance_valid(source_value2): continue
+					var source2 := source_value2 as Node2D
+					if not is_instance_valid(source2) or source2.is_queued_for_deletion() or not source2.is_in_group(&"damageable_props"): continue
+					_cutout_query_furniture.append(bridge)
+					var visual_value: Variant = bridge.get("actor_sprite")
+					var visual := visual_value as VisualInstance3D if is_instance_valid(visual_value) else null
+					_cutout_furniture_visuals.append(visual)
+					_cutout_furniture_positions.append(visual.global_position if is_instance_valid(visual) else Vector3(INF, INF, INF))
+			else:
+				# Off frames: keep membership, refresh poses for moving furniture.
+				for index in _cutout_furniture_visuals.size():
+					var visual2: Variant = _cutout_furniture_visuals[index]
+					if visual2 is VisualInstance3D and is_instance_valid(visual2):
+						_cutout_furniture_positions[index] = (visual2 as VisualInstance3D).global_position
 		else:
+			_cutout_query_furniture.clear()
+			_cutout_furniture_visuals.clear()
+			_cutout_furniture_positions.clear()
 			for bridge in actor_depth_bridges_root.get_children():
 				if bridge.is_queued_for_deletion(): continue
 				# Immediate source deletion can precede its passive carrier's deferred
