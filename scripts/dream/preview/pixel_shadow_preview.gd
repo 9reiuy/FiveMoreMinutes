@@ -112,7 +112,7 @@ func _copy(material: Material) -> Material:
 	if not material is ShaderMaterial or material.shader == null:
 		return material
 	var path: String = material.shader.resource_path
-	var supported: bool = path.get_file() in ["office_pixel_surface.gdshader", "office_surface.gdshader", "office_low_pixel.gdshader", "office_low_pixel_refined.gdshader", "office_detail_atlas.gdshader"] or path.get_file().begins_with("interiors_a_floor_")
+	var supported: bool = path.get_file() in ["office_pixel_surface.gdshader", "office_low_pixel.gdshader", "office_low_pixel_refined.gdshader", "office_detail_atlas.gdshader"] or path.get_file().begins_with("interiors_a_floor_")
 	if not supported:
 		return material
 	if not copies.has(material):
