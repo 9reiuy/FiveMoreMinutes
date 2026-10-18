@@ -1,4 +1,5 @@
 extends Node
+var _cached_dream_world: Node
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const PROJECTILE_SCENE := preload("res://scenes/entities/basic_projectile.tscn")
@@ -60,8 +61,18 @@ func _process(delta: float) -> void:
 	weapon_fired.emit(recoil_multiplier)
 
 
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
+
+
 func _fire(direction: Vector2, allow_extra: bool) -> void:
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	var origin: Vector2 = get_parent().get_projectile_origin()
 	var projectile := PROJECTILE_SCENE.instantiate()
 	var projectile_spawned := false

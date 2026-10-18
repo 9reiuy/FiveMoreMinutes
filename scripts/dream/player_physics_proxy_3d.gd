@@ -1,4 +1,5 @@
 extends AnimatableBody3D
+var _cached_dream_world: Node
 class_name PlayerPhysicsProxy3D
 
 ## Presentation/interaction proxy only. The formal actor remains the existing
@@ -18,6 +19,16 @@ var _cached_parent_3d: Node3D
 var _door_cache: Array = []
 var _door_cache_msec: int = 0
 const DOOR_CACHE_TTL_MSEC: int = 500
+
+
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
 
 
 func _ready() -> void:
@@ -67,7 +78,7 @@ func _physics_process(delta: float) -> void:
 		if now_msec - _door_cache_msec >= DOOR_CACHE_TTL_MSEC or _door_cache.is_empty():
 			_door_cache = get_tree().get_nodes_in_group(door_group)
 			_door_cache_msec = now_msec
-		var world := get_tree().get_first_node_in_group(&"dream_world")
+		var world := _dream_world()
 		var push_force := 260.0
 		if world != null and world.get("door_push_force") != null:
 			push_force = float(world.get("door_push_force"))
