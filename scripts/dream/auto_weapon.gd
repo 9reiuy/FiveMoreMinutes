@@ -83,18 +83,5 @@ func set_extra_attack(chance: float, delay: float) -> void:
 	extra_attack_delay = maxf(0.0, delay)
 
 
-func _find_nearest_target() -> Node2D:
-	var nearest: Node2D
-	var nearest_distance := attack_range
-	for candidate in get_tree().get_nodes_in_group("dream_enemies"):
-		if not is_instance_valid(candidate) or candidate.dead:
-			continue
-		var distance: float = get_parent().global_position.distance_to(candidate.global_position)
-		if distance < nearest_distance:
-			nearest = candidate
-			nearest_distance = distance
-	return nearest
-
-
 func get_cooldown_progress() -> float:
 	return clampf(1.0 - cooldown_left / maxf(attack_interval,0.001),0.0,1.0)

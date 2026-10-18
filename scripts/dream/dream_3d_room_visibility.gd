@@ -9,6 +9,8 @@ extends Node
 var world: Node3D
 var near_walls: Dictionary = {}
 var near_corridor_walls: Dictionary = {}
+## Cached once per layout; _commit used to find_children every room change.
+var _wall_fixtures: Array = []
 var room_covers: Dictionary = {}
 var corridor_covers: Dictionary = {}
 var corridor_stub_covers: Dictionary = {}
@@ -143,6 +145,11 @@ func configure(owner_world: Node3D) -> void:
 				wall.set_wall_opacity(0.30)
 		else:
 			wall.set_wall_opacity(1.0)
+	_wall_fixtures.clear()
+	if is_instance_valid(world.floor_root):
+		for fixture in world.floor_root.find_children("WallFixture_*", "Node3D", true, false):
+			if fixture.has_meta(&"wall_fixture_edge"):
+				_wall_fixtures.append(fixture)
 	# Everything with a world room id starts dormant in the normal encounter
 	# lifecycle.  The explicit population-refill switch is retained for legacy
 	# diagnostics; those tests intentionally pre-spawn a global population and
@@ -178,6 +185,7 @@ func clear_layout() -> void:
 	revealed_corridors.clear()
 	near_walls.clear()
 	near_corridor_walls.clear()
+	_wall_fixtures.clear()
 	world = null
 	current_room_id = -1
 	current_corridor_id = -1
@@ -336,9 +344,13 @@ func _commit(room_id: int, corridor_id: int = -1) -> void:
 		if fixture.has_method("set_architectural_cutaway") and fixture.has_meta(&"door_edge"):
 			fixture.call("set_architectural_cutaway", cut_doors and _edge_faces_camera(fixture.get_meta(&"door_edge"), room_id, corridor_id), world.wall_height)
 	# Wall-mounted details must disappear with the cut-away supporting wall.
-	for fixture in world.floor_root.find_children("WallFixture_*","Node3D",true,false):
-		if fixture.has_meta(&"wall_fixture_edge"):
-			fixture.visible = not _edge_faces_camera(fixture.get_meta(&"wall_fixture_edge"),room_id,corridor_id)
+	for fixture_variant in _wall_fixtures:
+		if not is_instance_valid(fixture_variant):
+			continue
+		var fixture := fixture_variant as Node3D
+		if fixture == null or not fixture.has_meta(&"wall_fixture_edge"):
+			continue
+		fixture.visible = not _edge_faces_camera(fixture.get_meta(&"wall_fixture_edge"), room_id, corridor_id)
 	if world.has_method("refresh_office_wall_cutaway"):
 		world.call("refresh_office_wall_cutaway")
 

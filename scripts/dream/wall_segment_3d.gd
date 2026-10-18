@@ -206,12 +206,21 @@ func _update_wall_materials() -> void:
 			wall_mesh.set_surface_override_material(2, office_section_material if office_section_material!=null else architecture_cap)
 
 
+## Only the first wall that flips cutaway in a given process frame walks the
+## office_wall_dressing group. Room commits flip dozens of walls at once; each
+## used to allocate a full group Array and re-mark every dressing.
+static var _dressing_notify_frame: int = -1
+
 func set_cutaway_mode(enabled: bool) -> void:
 	if cutaway_mode == enabled:
 		return
 	cutaway_mode = enabled
 	_update_active_mesh()
 	if is_inside_tree():
+		var frame := Engine.get_process_frames()
+		if frame == _dressing_notify_frame:
+			return
+		_dressing_notify_frame = frame
 		for dressing in get_tree().get_nodes_in_group(&"office_wall_dressing"):
 			if dressing.has_method("mark_cutaway_dirty"):
 				dressing.call("mark_cutaway_dirty")

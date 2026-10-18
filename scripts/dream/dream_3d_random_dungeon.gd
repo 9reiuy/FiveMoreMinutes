@@ -741,6 +741,7 @@ var _has_occluder_hit: bool = false
 var _cutout_furniture_meshes: Array = []
 var _cutout_furniture_meshes_frame: int = -1
 var _cutout_furniture_meshes_dirty := true
+var _active_firearm_impact_count := 0
 var _cutout_furniture_mesh_centers := PackedVector3Array()
 var _cutout_furniture_mesh_bins: Dictionary = {}
 ## Per-frame screen-rect cache keyed by MeshInstance3D instance_id.
@@ -4427,6 +4428,7 @@ func _clear_generated_building() -> void:
 	_cutout_furniture_mesh_bins.clear()
 	_cutout_furniture_meshes_dirty = true
 	_cutout_furniture_meshes_frame = -1
+	_active_firearm_impact_count = 0
 	_cutout_furniture_screen_rects.clear()
 	_cutout_furniture_screen_rect_frame = -1
 	_last_cutout_viewport_size = Vector2.ZERO
@@ -12546,7 +12548,7 @@ func spawn_firearm_impact_visual(hit_position: Vector2, hit_normal: Vector2, col
 	var target := collider.call("get_damage_owner") as Node if collider.has_method("get_damage_owner") else collider
 	if target == null or target.is_in_group(&"dream_enemies") or target.is_in_group(&"dream_player"):
 		return
-	if get_tree().get_nodes_in_group(&"firearm_impact_visuals").size() >= MAX_ACTIVE_FIREARM_IMPACT_VISUALS:
+	if _active_firearm_impact_count >= MAX_ACTIVE_FIREARM_IMPACT_VISUALS:
 		return
 	var surface_kind: StringName = &"solid"
 	if target.is_in_group(&"glass_windows") or collider.is_in_group(&"glass_windows"):
@@ -12567,10 +12569,16 @@ func spawn_firearm_impact_visual(hit_position: Vector2, hit_normal: Vector2, col
 		return
 	floor_root.add_child(effect)
 	effect.add_to_group(&"firearm_impact_visuals")
+	_active_firearm_impact_count += 1
+	effect.tree_exiting.connect(_on_firearm_impact_exiting, Object.CONNECT_ONE_SHOT)
 	effect.global_basis = Basis.IDENTITY
 	effect.global_position = get_gameplay_world_position(hit_position, height) + normal_world * 0.015
 	if effect.has_method("setup"):
 		effect.call("setup", normal_world, surface_kind)
+
+
+func _on_firearm_impact_exiting() -> void:
+	_active_firearm_impact_count = maxi(_active_firearm_impact_count - 1, 0)
 
 
 func spawn_combat_feedback(at_position: Vector2, direction: Vector2 = Vector2.ZERO, is_kill: bool = false, sample_gun_hit: bool = false, hit_actor: Node2D = null) -> void:
