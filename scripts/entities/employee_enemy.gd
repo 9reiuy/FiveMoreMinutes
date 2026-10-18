@@ -254,6 +254,7 @@ var _los_query: PhysicsRayQueryParameters2D
 var _muzzle_clamp_query: PhysicsRayQueryParameters2D
 var _self_exclude_rids: Array[RID] = []
 var _los_exclude_rids: Array[RID] = []
+var _cached_dream_world: Node
 
 var strafe_sign := 1.0
 var strafe_time_left := 0.0
@@ -6528,12 +6529,16 @@ func _is_otxo_mode() -> bool:
 
 
 func _get_world() -> Node:
-	return get_tree().get_first_node_in_group(
-		&"dream_world"
-	)
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
 
 
 func _exit_tree() -> void:
+	_cached_dream_world = null
 	# Release world-owned soft reservations before this Enemy leaves the tree.
 	# The World also has a lazy stale-entry sweep, but doing the handoff here
 	# prevents a freed holder/requester from occupying a doorway or pickup until
