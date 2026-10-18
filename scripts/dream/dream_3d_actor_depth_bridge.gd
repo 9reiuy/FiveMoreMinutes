@@ -1044,10 +1044,23 @@ func _process(_delta: float) -> void:
 		_cached_bullet_sprite = source_actor.get_node_or_null(^"BulletSprite") as Node2D
 		_cached_bullet_sprite_resolved = true
 	var optimize_capture_transform := bool(get_meta(&"test_capture_transform_optimization", true))
+	# Crowd CPU: upright enemy capture trees rarely need 60 Hz property copies.
+	# Alternate frames by instance id so a packed room does not sync every enemy
+	# every tick. Player stays every frame. Transforms / lights / shadows below
+	# still update. Legacy meta restores unconditional sync for A/B fixtures.
+	var skip_staggered_enemy_sync := false
+	if (
+		character_projection
+		and upright_contact
+		and not skip_capture_sync
+		and _cached_is_enemy
+		and not bool(get_meta(&"test_legacy_character_sync_every_frame", false))
+	):
+		skip_staggered_enemy_sync = ((Engine.get_process_frames() + get_instance_id()) & 1) == 1
 	for index in source_roots.size():
 		var source := source_roots[index]
 		var copy := clone_roots[index]
-		if not skip_capture_sync:
+		if not skip_capture_sync and not skip_staggered_enemy_sync:
 			_sync_node(source, copy, optimize_capture_transform, optimize_capture_transform)
 		# Preserve root rotation/scale (bullets, thrown weapons, body parts), but
 		# never copy world translation into the offscreen capture.

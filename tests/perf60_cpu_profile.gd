@@ -137,6 +137,19 @@ func _wait(sec: float) -> void:
 			e.set("current_health", 9999.0)
 		await process_frame
 
+
+func _tag_bridge_timing(node: Node) -> void:
+	if node.get_script() != preload("res://scripts/dream/dream_3d_actor_depth_bridge.gd"):
+		return
+	var saved: Dictionary = {}
+	for property in node.get_property_list():
+		if int(property.usage) & PROPERTY_USAGE_SCRIPT_VARIABLE:
+			saved[property.name] = node.get(property.name)
+	node.set_script(preload("res://tests/support/bridge_method_timing_probe.gd"))
+	for key in saved:
+		node.set(key, saved[key])
+
+
 func _run() -> void:
 	AudioServer.set_bus_mute(0, true)
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
@@ -157,6 +170,7 @@ func _run() -> void:
 	world.persist_profile = false
 	world.enable_game_start_cab_exit = false
 
+	node_added.connect(_tag_bridge_timing)
 	display = load("res://scenes/dream/preview/SelectivePixelPreview.tscn").instantiate()
 	display.world = world
 	display.preview_mode = false
@@ -187,6 +201,7 @@ func _run() -> void:
 	last_usec = Time.get_ticks_usec()
 	process_frame.connect(_on_frame)
 	world.timing_begin()
+	preload("res://tests/support/bridge_method_timing_probe.gd").timing_begin()
 	await _wait(warmup_sec)
 
 	if freeze_world_render and display.world_viewport != null:
@@ -197,6 +212,7 @@ func _run() -> void:
 	rows.clear()
 	section_totals.clear()
 	world.timing_rows.clear()
+	preload("res://tests/support/bridge_method_timing_probe.gd").timing_frames.clear()
 	phase = "crowd_cpu"
 	last_usec = Time.get_ticks_usec()
 	await _wait(sample_sec)
@@ -204,6 +220,8 @@ func _run() -> void:
 	recording = false
 	process_frame.disconnect(_on_frame)
 	var probe_summary: Dictionary = world.timing_finish()
+	var bridge_summary: Dictionary = preload("res://tests/support/bridge_method_timing_probe.gd").timing_finish()
+	L("BRIDGE_CPU %s" % JSON.stringify(bridge_summary))
 
 	var ft: Array = []
 	for r in rows:

@@ -245,6 +245,10 @@ var separation_strength := 24.0
 var separation_radius := 30.0
 var separation_query_left := 0.0
 var cached_separation_velocity := Vector2.ZERO
+## Reused across separation ticks so crowded rooms do not allocate a new
+## CircleShape2D + PhysicsShapeQueryParameters2D every 0.16s per enemy.
+var _separation_shape: CircleShape2D
+var _separation_query: PhysicsShapeQueryParameters2D
 
 var strafe_sign := 1.0
 var strafe_time_left := 0.0
@@ -5721,32 +5725,24 @@ func _update_local_separation(
 
 	separation_query_left = 0.16
 
-	var shape := CircleShape2D.new()
-	shape.radius = separation_radius
-
-	var query := PhysicsShapeQueryParameters2D.new()
-
-	query.shape = shape
-
-	query.transform = Transform2D(
-		0.0,
-		global_position
-	)
-
+	if _separation_shape == null:
+		_separation_shape = CircleShape2D.new()
+		_separation_query = PhysicsShapeQueryParameters2D.new()
+		_separation_query.shape = _separation_shape
+		_separation_query.collide_with_bodies = true
+		_separation_query.collide_with_areas = false
+	_separation_shape.radius = separation_radius
+	_separation_query.transform = Transform2D(0.0, global_position)
 	# Player layer 1 participates in separation even while its damage gate is
 	# invulnerable.  This is physical occupancy only; no damage or teleport is
 	# introduced here.
-	query.collision_mask = 1 | 2
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
-	query.exclude = [
-		get_rid()
-	]
+	_separation_query.collision_mask = 1 | 2
+	_separation_query.exclude = [get_rid()]
 
 	var separation := Vector2.ZERO
 
 	for result in get_world_2d().direct_space_state.intersect_shape(
-		query,
+		_separation_query,
 		8
 	):
 		var other_body := result.get("collider") as Node2D
