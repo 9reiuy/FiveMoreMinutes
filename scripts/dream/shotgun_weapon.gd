@@ -1,4 +1,5 @@
 extends Node
+var _cached_dream_world: Node
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const FIREARM_RULES := preload("res://scripts/dream/dream_firearm_rules.gd")
 
@@ -17,6 +18,16 @@ var cooldown_left := 0.0
 var recoil_multiplier := 1.8
 var extra_attack_chance := 0.0
 var extra_attack_delay := 0.08
+
+
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
 
 
 func configure_weapon(config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
@@ -55,7 +66,7 @@ func _fire_once() -> bool:
 
 
 func _fire_full_volley(direction: Vector2, allow_extra: bool) -> void:
-	var world := get_tree().get_first_node_in_group("dream_world")
+	var world := _dream_world()
 	var volley_spawned := false
 	if world != null:
 		for pellet_direction in FIREARM_RULES.directions(direction, pellet_count, spread_degrees):

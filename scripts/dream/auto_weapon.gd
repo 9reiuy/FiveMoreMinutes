@@ -1,4 +1,5 @@
 extends Node
+var _cached_dream_world: Node
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const FIREARM_RULES := preload("res://scripts/dream/dream_firearm_rules.gd")
 signal weapon_fired(recoil_multiplier: float)
@@ -15,6 +16,16 @@ var recoil_multiplier := 1.0
 var projectile_speed := 155.0
 var extra_attack_chance := 0.0
 var extra_attack_delay := 0.08
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
+
+
 func configure_weapon(config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
 	var parameters := FIREARM_RULES.parameters(config, &"basic")
 	damage = float(parameters.damage)
@@ -46,7 +57,7 @@ func _process(delta: float) -> void:
 
 
 func _fire(direction: Vector2, allow_extra: bool) -> void:
-	var world := get_tree().get_first_node_in_group("dream_world")
+	var world := _dream_world()
 	var origin: Vector2 = get_parent().get_projectile_origin()
 	var projectile := PROJECTILE_SCENE.instantiate()
 	var projectile_spawned := false
