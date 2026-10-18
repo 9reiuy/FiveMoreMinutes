@@ -8,6 +8,7 @@ const TARGET_NONE := 0
 const TARGET_WHITE := 1
 const TARGET_GRAY := 2
 var current_state := TARGET_NONE
+var _aim_ray_query: PhysicsRayQueryParameters2D
 
 func configure(owner_world: Node3D) -> void:
 	world = owner_world
@@ -46,20 +47,25 @@ func _physics_process(_delta: float) -> void:
 	_select(target, state)
 
 func find_target(origin: Vector2, direction: Vector2, attack_range: float, excluded: RID) -> Node:
-	var query := PhysicsRayQueryParameters2D.create(origin, origin + direction.normalized() * maxf(attack_range, 0.0), 1 | 2 | 4 | 8 | 16)
-	query.exclude = [excluded]
-	query.collide_with_areas = true
-	query.hit_from_inside = true
+	if _aim_ray_query == null:
+		_aim_ray_query = PhysicsRayQueryParameters2D.new()
+		_aim_ray_query.collision_mask = 1 | 2 | 4 | 8 | 16
+		_aim_ray_query.collide_with_areas = true
+		_aim_ray_query.collide_with_bodies = true
+		_aim_ray_query.hit_from_inside = true
+	_aim_ray_query.from = origin
+	_aim_ray_query.to = origin + direction.normalized() * maxf(attack_range, 0.0)
+	_aim_ray_query.exclude = [excluded]
 	for _attempt in 12:
-		var hit: Dictionary = world.player.get_world_2d().direct_space_state.intersect_ray(query)
+		var hit: Dictionary = world.player.get_world_2d().direct_space_state.intersect_ray(_aim_ray_query)
 		if hit.is_empty():
 			return null
 		var collider: Node = hit.collider
 		var owner: Node = collider.get_damage_owner() if collider.has_method("get_damage_owner") else collider
 		if owner.is_in_group(&"world_weapon_pickups") or owner.is_in_group(&"employee_badge_pickup") or owner == world.player:
-			var excluded_rids := query.exclude
+			var excluded_rids := _aim_ray_query.exclude
 			excluded_rids.append(collider.get_rid())
-			query.exclude = excluded_rids
+			_aim_ray_query.exclude = excluded_rids
 			continue
 		return _resolve(collider)
 	return null
