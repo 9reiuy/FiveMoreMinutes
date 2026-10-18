@@ -743,6 +743,8 @@ var _cutout_furniture_meshes_frame: int = -1
 var _cutout_furniture_meshes_dirty := true
 var _active_firearm_impact_count := 0
 var _cutout_furniture_query_frame: int = -1
+var _cached_damageable_props: Array = []
+var _cached_damageable_props_frame: int = -1
 var _cutout_furniture_mesh_centers := PackedVector3Array()
 var _cutout_furniture_mesh_bins: Dictionary = {}
 ## Per-frame screen-rect cache keyed by MeshInstance3D instance_id.
@@ -4430,6 +4432,8 @@ func _clear_generated_building() -> void:
 	_cutout_furniture_meshes_dirty = true
 	_cutout_furniture_meshes_frame = -1
 	_active_firearm_impact_count = 0
+	_cached_damageable_props.clear()
+	_cached_damageable_props_frame = -1
 	_cutout_furniture_screen_rects.clear()
 	_cutout_furniture_screen_rect_frame = -1
 	_last_cutout_viewport_size = Vector2.ZERO
@@ -5810,7 +5814,7 @@ func _process_pit_contacts() -> void:
 			_pit_enemy_handled[employee.get_instance_id()] = true
 			if employee.has_method("force_pit_death"):
 				employee.call("force_pit_death", employee.global_position)
-	for prop_variant in get_tree().get_nodes_in_group(&"damageable_props"):
+	for prop_variant in _damageable_props_snapshot():
 		var prop := prop_variant as Node2D
 		if prop == null or not is_instance_valid(prop) or prop.get("destroyed") == true or prop.get("is_destroyed") == true:
 			continue
@@ -12983,9 +12987,22 @@ func resolve_enemy_projectile_hit(enemy: Node, raw_damage: float, hit_origin: Ve
 	return {"damage": raw_damage, "weapon_id": weapon_id}
 
 
+
+func _damageable_props_snapshot() -> Array:
+	var frame := Engine.get_process_frames()
+	if frame == _cached_damageable_props_frame and not _cached_damageable_props.is_empty():
+		return _cached_damageable_props
+	# Reuse for a couple of frames — pit checks and melee sweeps share this list.
+	if frame - _cached_damageable_props_frame <= 2 and not _cached_damageable_props.is_empty():
+		return _cached_damageable_props
+	_cached_damageable_props_frame = frame
+	_cached_damageable_props = get_tree().get_nodes_in_group(&"damageable_props")
+	return _cached_damageable_props
+
+
 func damage_furniture_along_segment(origin: Vector2, endpoint: Vector2, width: float, amount: float, hit_direction: Vector2, source_actor: Node = null, hit_registry: Dictionary = {}) -> void:
 	var handled := hit_registry
-	for prop_variant in get_tree().get_nodes_in_group(&"damageable_props"):
+	for prop_variant in _damageable_props_snapshot():
 		var prop := prop_variant as Node2D
 		if prop == null or prop == source_actor or prop.get("destroyed") == true:
 			continue
@@ -13000,7 +13017,7 @@ func damage_furniture_along_segment(origin: Vector2, endpoint: Vector2, width: f
 
 
 func damage_furniture_in_radius(center: Vector2, radius: float, amount: float, source_actor: Node = null) -> void:
-	for prop_variant in get_tree().get_nodes_in_group(&"damageable_props"):
+	for prop_variant in _damageable_props_snapshot():
 		var prop := prop_variant as Node2D
 		if prop == null or prop == source_actor or prop.get("destroyed") == true:
 			continue
