@@ -1,6 +1,6 @@
 extends AnimatableBody3D
-var _cached_dream_world: Node
 class_name PlayerPhysicsProxy3D
+var _cached_dream_world: Node
 
 ## Presentation/interaction proxy only. The formal actor remains the existing
 ## CharacterBody2D. This body mirrors ground X/Z and only forwards an explicit
