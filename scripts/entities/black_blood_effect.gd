@@ -4,6 +4,8 @@ extends Node2D
 var wall_collision_mask: int = 1
 ## Sequential droplet rays share only their query object, never hit results.
 var _airborne_wall_query: PhysicsRayQueryParameters2D
+var _pool_circle_query: PhysicsShapeQueryParameters2D
+var _pool_circle_shape: CircleShape2D
 var ground_bounds_local := Rect2()
 var ground_bounds_enabled := false
 ## The 3D office uses its complete floor footprint instead of a source-room
@@ -1189,14 +1191,16 @@ func _setup_pixel_pool(phase: float, sub_phase: float, micro_phase: float, lobes
 		for p in p_corners:
 			pool_bounds = pool_bounds.expand(p)
 		if bool(surface_world.call("_is_blood_ground_block_allowed", pool_bounds)):
-			var circle_query := PhysicsShapeQueryParameters2D.new()
-			var circle_shape := CircleShape2D.new()
-			circle_shape.radius = pool_margin
-			circle_query.shape = circle_shape
-			circle_query.transform = Transform2D(0.0, global_position)
-			circle_query.collision_mask = wall_collision_mask
-			circle_query.collide_with_areas = false
-			if get_world_2d().direct_space_state.intersect_shape(circle_query, 1).is_empty():
+			if _pool_circle_query == null:
+				_pool_circle_query = PhysicsShapeQueryParameters2D.new()
+				_pool_circle_shape = CircleShape2D.new()
+				_pool_circle_query.shape = _pool_circle_shape
+				_pool_circle_query.collide_with_areas = false
+				_pool_circle_query.collide_with_bodies = true
+			_pool_circle_shape.radius = pool_margin
+			_pool_circle_query.transform = Transform2D(0.0, global_position)
+			_pool_circle_query.collision_mask = wall_collision_mask
+			if get_world_2d().direct_space_state.intersect_shape(_pool_circle_query, 1).is_empty():
 				entire_pool_safe = true
 	for y in range(-height_extent, height_extent + 1):
 		var ry := float(y) / 0.62
