@@ -85,6 +85,7 @@ var _collision_shapes: Array[CollisionShape2D] = []
 var _last_angles: Array[float] = [0.0, 0.0]
 var _swing_signs: Array[float] = [0.0, 0.0]
 var _target_hit_times: Dictionary = {}
+var _swing_hit_query: PhysicsShapeQueryParameters2D
 var _outline_material: ShaderMaterial
 var _gameplay_open: bool = false
 var _gameplay_collision_requested: bool = true
@@ -1055,13 +1056,15 @@ func _apply_swing_hits(leaf_index: int, previous_angle: float, angle: float, ome
 		if tangent.length_squared() < 0.001:
 			continue
 		var center := hinge_2d + tangent * leaf_width * world_scale * 0.5
-		var query := PhysicsShapeQueryParameters2D.new()
-		query.shape = shape_node.shape
-		query.transform = Transform2D(tangent.angle(), center)
-		query.collision_mask = 1 | 2 | 8 | 16
-		query.collide_with_areas = true
-		query.exclude = [body.get_rid()]
-		for hit in space_state.intersect_shape(query, 24):
+		if _swing_hit_query == null:
+			_swing_hit_query = PhysicsShapeQueryParameters2D.new()
+			_swing_hit_query.collide_with_areas = true
+			_swing_hit_query.collide_with_bodies = true
+		_swing_hit_query.shape = shape_node.shape
+		_swing_hit_query.transform = Transform2D(tangent.angle(), center)
+		_swing_hit_query.collision_mask = 1 | 2 | 8 | 16
+		_swing_hit_query.exclude = [body.get_rid()]
+		for hit in space_state.intersect_shape(_swing_hit_query, 24):
 			var target: Node = hit.get("collider") as Node
 			if target != null and target.has_method("get_damage_owner"):
 				target = target.get_damage_owner()
