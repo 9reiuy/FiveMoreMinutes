@@ -1,5 +1,8 @@
 class_name WorldWeaponPickup
 extends RigidBody2D
+## Shared per-frame group list for thrown-weapon mutual exceptions.
+static var _pickup_group_cache: Array = []
+static var _pickup_group_cache_frame: int = -1
 
 const DREAM_GUN_ATLAS := preload("res://scripts/data/dream_gun_atlas.gd")
 const CONFIG := preload("res://resources/demo_config.tres")
@@ -800,7 +803,11 @@ func _break_after_throw_impact() -> void:
 func _refresh_thrown_weapon_collision_policy() -> void:
 	if (not thrown_active and throw_fake_height <= 0.0) or not is_inside_tree():
 		return
-	for pickup_variant in get_tree().get_nodes_in_group(&"world_weapon_pickups"):
+	var frame := Engine.get_process_frames()
+	if frame != _pickup_group_cache_frame:
+		_pickup_group_cache_frame = frame
+		_pickup_group_cache = get_tree().get_nodes_in_group(&"world_weapon_pickups")
+	for pickup_variant in _pickup_group_cache:
 		var pickup := pickup_variant as CollisionObject2D
 		if pickup == null or pickup == self or not is_instance_valid(pickup):
 			continue
