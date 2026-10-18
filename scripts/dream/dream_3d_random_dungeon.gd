@@ -733,6 +733,7 @@ var _cutout_work_dists := PackedFloat32Array()
 var _cutout_sort_indices: Array[int] = []
 var _furniture_near_indices: Array = []
 var _furniture_near_seen: Dictionary = {}
+var _cutout_slots_scratch: Array[Vector4] = []
 var _cached_projectile_cutout_nodes: Array = []
 var _cached_projectile_cutout_frame: int = -1
 
@@ -5886,7 +5887,8 @@ func _update_occlusion_cutouts() -> void:
 	# visual-only; all 2D colliders, projectile blocking and LOS remain intact.
 	# Player is always considered first so an enemy cannot evict the Player's
 	# cutout when the fixed slot budget is exhausted.
-	var slots: Array[Vector4] = []
+	_cutout_slots_scratch.clear()
+	var slots: Array[Vector4] = _cutout_slots_scratch
 	if camera_3d != null and is_instance_valid(camera_3d):
 		var viewport := camera_3d.get_viewport()
 		if viewport != null:
