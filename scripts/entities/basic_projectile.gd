@@ -68,6 +68,7 @@ var _office_tracer_update_pending := false
 var _cached_bullet_sprite: Sprite2D
 var _ray_query: PhysicsRayQueryParameters2D
 var _cast_exclude_rids: Array[RID] = []
+var _cached_dream_world: Node
 static var _history_texture_pool: Dictionary = {}
 static var _history_image_pool: Dictionary = {}
 const MAX_POOLED_TEXTURES_PER_SIZE := 32
@@ -497,6 +498,16 @@ func _physics_process(delta: float) -> void:
 
 
 ## WorldWeapon和发射者不是伤害目标；命中它们时继续查询同一运动线段后方的第一个正式目标。
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
+
+
 func _cast_movement_segment(from_position: Vector2, to_position: Vector2) -> Dictionary:
 	_cast_exclude_rids.clear()
 	var furniture_hit: Dictionary = {}
@@ -560,7 +571,7 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 	if collider == null:
 		_despawn()
 		return
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	# The 3D office owns presentation mapping. Keep the authoritative 2D hit
 	# point and shot-height snapshot unchanged; a legacy 2D world has no visual
 	# callback and therefore retains its original collision/damage path.
