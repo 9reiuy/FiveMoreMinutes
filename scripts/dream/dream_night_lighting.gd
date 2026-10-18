@@ -181,12 +181,6 @@ func set_flashlight_enabled(enabled: bool) -> void:
 		flashlight.visible = flashlight_enabled and not player_dead
 
 
-## Explicit Player-scoped names for callers that want to make ownership clear.
-## They delegate to the same single light and state used by the short aliases.
-func set_player_flashlight_enabled(enabled: bool) -> void:
-	set_flashlight_enabled(enabled)
-
-
 func toggle_player_flashlight() -> bool:
 	set_flashlight_enabled(not flashlight_enabled)
 	return flashlight_enabled
@@ -202,8 +196,6 @@ func is_flashlight_enabled() -> bool:
 	return flashlight_enabled
 
 
-func is_player_flashlight_enabled() -> bool:
-	return flashlight_enabled
 
 func aim_flashlight(ground: Vector2, aim: Vector2) -> void:
 	if flashlight == null:

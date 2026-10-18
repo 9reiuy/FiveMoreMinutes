@@ -676,6 +676,8 @@ var _content_rng := RandomNumberGenerator.new()
 var _corpse_blood_emitter_serial: int = 0
 ## Owned emitters for this world; avoids get_nodes_in_group on each spawn.
 var _owned_corpse_blood_emitters: Array = []
+## All black blood stains (floor/wall/door) for budget without group alloc.
+var _owned_black_blood_stains: Array = []
 const BLOOD_MERGE_BUCKET_PIXELS := 128.0
 const BLOOD_MERGE_CAPTURE_EXTENT := 112.0
 var _settled_blood_buckets: Dictionary = {}
@@ -4394,6 +4396,7 @@ func _clear_generated_building() -> void:
 		interaction_prompt.dismiss(true)
 	_settled_blood_buckets.clear()
 	_owned_corpse_blood_emitters.clear()
+	_owned_black_blood_stains.clear()
 	if is_instance_valid(shadow_manager):
 		shadow_manager.clear_floor()
 	_layout_generation += 1
@@ -11788,6 +11791,14 @@ func _room_inward_vector(direction: StringName) -> Vector2:
 	return Vector2.ZERO
 
 
+
+func _register_black_blood_stain(blood: Node) -> void:
+	if blood == null or not is_instance_valid(blood):
+		return
+	blood.add_to_group(&"black_blood_stains")
+	_owned_black_blood_stains.append(blood)
+
+
 func _enforce_3d_blood_limit() -> bool:
 	# black_blood_max_stains <= 0：血迹在本场 Dream 内永久保留，不做数量驱逐。
 	# 正值时保留原有的全局预算语义（逐出最旧一株，纯性能保护）。
@@ -11795,16 +11806,21 @@ func _enforce_3d_blood_limit() -> bool:
 	if configured <= 0:
 		return true
 	var maximum := maxi(configured, 1)
-	# Count the whole stain group, not only world_effects_root children:
-	# door blood lives under the door's synced 2D body and must respect the
-	# same global budget.
-	var stains := get_tree().get_nodes_in_group(&"black_blood_stains")
-	if stains.size() < maximum:
+	# Compact owned list (floor/wall/door stains share one budget).
+	var write := 0
+	for i in range(_owned_black_blood_stains.size()):
+		var stain := _owned_black_blood_stains[i] as Node
+		if stain == null or not is_instance_valid(stain) or stain.is_queued_for_deletion():
+			continue
+		_owned_black_blood_stains[write] = stain
+		write += 1
+	_owned_black_blood_stains.resize(write)
+	if write < maximum:
 		return true
-	for stain in stains:
-		if is_instance_valid(stain):
-			stain.queue_free()
-			return true
+	var oldest := _owned_black_blood_stains[0] as Node
+	if is_instance_valid(oldest):
+		oldest.queue_free()
+		return true
 	return false
 
 
@@ -11813,7 +11829,7 @@ func _add_3d_blood_effect(blood: Node2D, room_id: int, floor_visual: bool = true
 		return null
 	if not _enforce_3d_blood_limit():
 		return null
-	blood.add_to_group(&"black_blood_stains")
+	_register_black_blood_stain(blood)
 	blood.set_meta(&"dream_room_id", room_id)
 	blood.set_meta(&"blood_floor_visual", floor_visual)
 	blood.set_meta(&"blood_floor_token", _layout_generation)
@@ -12338,7 +12354,7 @@ func spawn_wall_blood_from_hit(
 	if not _enforce_3d_blood_limit():
 		blood.free()
 		return null
-	blood.add_to_group(&"black_blood_stains")
+	_register_black_blood_stain(blood)
 	world_effects_root.add_child(blood)
 	blood.set_meta(&"blood_wall_edge_key", edge_key)
 	blood.set_meta(&"dream_room_id", room_id)
@@ -12407,7 +12423,7 @@ func spawn_door_blood_from_hit(
 		blood.call("setup_wall_stain", normal, _content_rng, impact_speed)
 	# Keep the 2D normal rotation so the stain rides the leaf; the bridge's
 	# follow-source-rotation mode derives the vertical plane yaw per frame.
-	blood.add_to_group(&"black_blood_stains")
+	_register_black_blood_stain(blood)
 	if source_effect != null:
 		source_effect.register_wall_stain(door_key, blood)
 	blood.set_meta(&"blood_surface_height", 0.9)
