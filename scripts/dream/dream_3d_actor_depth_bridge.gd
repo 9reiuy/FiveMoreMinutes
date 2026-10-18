@@ -112,6 +112,8 @@ var _cached_bullet_sprite_resolved := false
 var _cached_height_prop: StringName = &""
 var _cached_height_prop_resolved := false
 var _cached_is_enemy := false
+var _cached_static_capture_source := false
+var _cached_room_gated_prop := false
 var _cached_is_player := false
 var _last_source_actor_child_count: int = -1
 var _last_corpse_body_transform := Transform2D()
@@ -124,6 +126,24 @@ var _last_weapon_plane_height: float = INF
 var _last_shot_plane_origin := Vector3(INF, INF, INF)
 var _last_shot_plane_normal := Vector3(INF, INF, INF)
 var _cached_unversioned_draw_roots: Dictionary = {}
+
+
+func _refresh_static_source_flags() -> void:
+	if source_actor == null or not is_instance_valid(source_actor):
+		_cached_static_capture_source = ground_only
+		_cached_room_gated_prop = false
+		return
+	_cached_static_capture_source = (
+		ground_only
+		or source_actor.is_in_group(&"environment_debris")
+		or source_actor.is_in_group(&"damageable_props")
+		or source_actor.is_in_group(&"black_blood_stains")
+	)
+	_cached_room_gated_prop = (
+		source_actor.is_in_group(&"damageable_props")
+		and source_actor.has_method("set_room_runtime_active")
+	)
+
 
 func _reset_actor_node_caches() -> void:
 	_cached_character_visual = null
@@ -237,6 +257,7 @@ func _rebind_capture(source: Node2D, camera: Camera3D, height: float, depth: flo
 	static_visual_frozen = false
 	transform_only = false
 	freeze_pending = false
+	_refresh_static_source_flags()
 	set_meta(&"source_actor", source)
 	source.tree_exiting.connect(_on_source_tree_exiting, CONNECT_ONE_SHOT)
 	set_process(true)
@@ -281,6 +302,7 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 	plane_rotation = requested_plane_rotation
 	follow_source_rotation = requested_follow_source_rotation
 	ground_only = source_paths.size() == 1 and String(source_paths[0]) == "Shadow"
+	_refresh_static_source_flags()
 	if source_actor == null or render_viewport == null or render_root == null:
 		return
 	character_projection = source_paths.has(^"CharacterVisual") and (
@@ -981,13 +1003,12 @@ func _process(_delta: float) -> void:
 			shadow_proxy.global_transform = actor_sprite.global_transform
 			shadow_proxy.visible = actor_sprite.visible and shadow_proxy_enabled
 		return
-	var static_capture := ground_only or source_actor.is_in_group(&"environment_debris") or source_actor.is_in_group(&"damageable_props") or source_actor.is_in_group(&"black_blood_stains")
+	var static_capture := _cached_static_capture_source
 	# Furniture is room-gated gameplay content.  While a dormant room is hidden,
 	# its static bridge must remain dormant rather than accepting a transparent
 	# first capture and freezing it forever.  Room activation explicitly wakes
 	# this bridge through request_capture_refresh().
-	var room_gated_source := source_actor.is_in_group(&"damageable_props") and source_actor.has_method("set_room_runtime_active")
-	if room_gated_source:
+	if _cached_room_gated_prop:
 		var runtime_active_variant: Variant = source_actor.get("room_runtime_active")
 		var runtime_active := runtime_active_variant == null or bool(runtime_active_variant)
 		if not runtime_active or not source_actor.visible:
