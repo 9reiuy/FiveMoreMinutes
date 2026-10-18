@@ -5867,8 +5867,10 @@ func _update_occlusion_cutouts() -> void:
 	var refresh_enemy_cutouts := (Engine.get_process_frames() & 1) == 0
 	if refresh_enemy_cutouts and enemy_root != null:
 		for enemy_variant in enemy_root.get_children():
+			if enemy_variant == null or not is_instance_valid(enemy_variant):
+				continue
 			var enemy := enemy_variant as EmployeeEnemy
-			if enemy == null or not is_instance_valid(enemy) or bool(enemy.get("dead")):
+			if enemy == null or bool(enemy.get("dead")):
 				continue
 			var cutout: Dictionary = _get_actor_cutout_slot(enemy)
 			if cutout.is_empty():

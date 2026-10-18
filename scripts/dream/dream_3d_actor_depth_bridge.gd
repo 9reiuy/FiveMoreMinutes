@@ -1037,16 +1037,9 @@ func _process(_delta: float) -> void:
 			skip_capture_sync = not viewport.get_visible_rect().grow(160).has_point(camera.unproject_position(origin))
 	if has_meta(&"test_capture_sync_skipped"):
 		set_meta(&"test_capture_sync_skipped", skip_capture_sync)
-	weapon_capture_rotation_delta = _weapon_capture_delta(camera)
-	var has_shot_origin := source_actor.has_meta(&"shot_visual_origin")
-	var shot_heading := _shot_capture_heading(camera) if has_shot_origin else NAN
-	if not is_nan(shot_heading) and not _cached_bullet_sprite_resolved:
-		_cached_bullet_sprite = source_actor.get_node_or_null(^"BulletSprite") as Node2D
-		_cached_bullet_sprite_resolved = true
-	var optimize_capture_transform := bool(get_meta(&"test_capture_transform_optimization", true))
 	# Crowd CPU: upright enemy capture trees rarely need 60 Hz property copies.
 	# Alternate frames by instance id so a packed room does not sync every enemy
-	# every tick. Player stays every frame. Transforms / lights / shadows below
+	# every tick. Player stays every frame. World Sprite3D pose / lights below
 	# still update. Legacy meta restores unconditional sync for A/B fixtures.
 	var skip_staggered_enemy_sync := false
 	if (
@@ -1057,39 +1050,46 @@ func _process(_delta: float) -> void:
 		and not bool(get_meta(&"test_legacy_character_sync_every_frame", false))
 	):
 		skip_staggered_enemy_sync = ((Engine.get_process_frames() + get_instance_id()) & 1) == 1
-	for index in source_roots.size():
-		var source := source_roots[index]
-		var copy := clone_roots[index]
-		if not skip_capture_sync and not skip_staggered_enemy_sync:
+	if not skip_capture_sync and not skip_staggered_enemy_sync:
+		weapon_capture_rotation_delta = _weapon_capture_delta(camera)
+		var has_shot_origin := source_actor.has_meta(&"shot_visual_origin")
+		var shot_heading := _shot_capture_heading(camera) if has_shot_origin else NAN
+		if not is_nan(shot_heading) and not _cached_bullet_sprite_resolved:
+			_cached_bullet_sprite = source_actor.get_node_or_null(^"BulletSprite") as Node2D
+			_cached_bullet_sprite_resolved = true
+		var optimize_capture_transform := bool(get_meta(&"test_capture_transform_optimization", true))
+		for index in source_roots.size():
+			var source := source_roots[index]
+			var copy := clone_roots[index]
 			_sync_node(source, copy, optimize_capture_transform, optimize_capture_transform)
-		# Preserve root rotation/scale (bullets, thrown weapons, body parts), but
-		# never copy world translation into the offscreen capture.
-		var capture := source.global_transform
-		capture.origin -= source_actor.global_position
-		if source != source_actor and not ground_only:
-			capture.origin += source_actor.global_transform.basis_xform(Vector2(0, height))
-		if not is_nan(shot_heading) and (source == _cached_bullet_sprite or source == source_actor):
-			# Rotate the tracer about its head, or the muzzle effect about its
-			# origin. Both are the captured shot point in the viewport centre.
-			var delta_angle := shot_heading - capture.get_rotation()
-			capture.origin = capture.origin.rotated(delta_angle)
-			capture.x = capture.x.rotated(delta_angle)
-			capture.y = capture.y.rotated(delta_angle)
-		if character_projection and source == _cached_weapon_root:
-			# Rotate around the authored grip. Gameplay Aim/attack remains unchanged;
-			# only the captured weapon pixels follow the formal camera projection.
-			capture.x = capture.x.rotated(weapon_capture_rotation_delta)
-			capture.y = capture.y.rotated(weapon_capture_rotation_delta)
-		capture.origin += viewport_offset
-		if not optimize_capture_transform or copy.transform != capture:
-			copy.transform = capture
-		var target_vis := source_actor.visible and source.visible
-		if not optimize_capture_transform or copy.visible != target_vis:
-			copy.visible = target_vis
-		if source != source_actor:
-			var target_mod := source.modulate * source_actor.modulate
-			if not optimize_capture_transform or copy.modulate != target_mod:
-				copy.modulate = target_mod
+			# Preserve root rotation/scale (bullets, thrown weapons, body parts), but
+			# never copy world translation into the offscreen capture.
+			var capture := source.global_transform
+			capture.origin -= source_actor.global_position
+			if source != source_actor and not ground_only:
+				capture.origin += source_actor.global_transform.basis_xform(Vector2(0, height))
+			if not is_nan(shot_heading) and (source == _cached_bullet_sprite or source == source_actor):
+				# Rotate the tracer about its head, or the muzzle effect about its
+				# origin. Both are the captured shot point in the viewport centre.
+				var delta_angle := shot_heading - capture.get_rotation()
+				capture.origin = capture.origin.rotated(delta_angle)
+				capture.x = capture.x.rotated(delta_angle)
+				capture.y = capture.y.rotated(delta_angle)
+			if character_projection and source == _cached_weapon_root:
+				# Rotate around the authored grip. Gameplay Aim/attack remains unchanged;
+				# only the captured weapon pixels follow the formal camera projection.
+				capture.x = capture.x.rotated(weapon_capture_rotation_delta)
+				capture.y = capture.y.rotated(weapon_capture_rotation_delta)
+			capture.origin += viewport_offset
+			if not optimize_capture_transform or copy.transform != capture:
+				copy.transform = capture
+			var target_vis := source_actor.visible and source.visible
+			if not optimize_capture_transform or copy.visible != target_vis:
+				copy.visible = target_vis
+			if source != source_actor:
+				var target_mod := source.modulate * source_actor.modulate
+				if not optimize_capture_transform or copy.modulate != target_mod:
+					copy.modulate = target_mod
 	var position_2d := source_actor.global_position
 	if not skip_staggered_enemy_sync:
 		_update_character_local_light(position_2d)
@@ -1157,10 +1157,13 @@ func _process(_delta: float) -> void:
 		actor_sprite.position = target_pos
 	actor_sprite.visible = source_actor.visible
 	if character_projection and camera != null:
-		_sync_character_planes(camera, height)
-		# Volume shadow follows the same stagger as capture sync for upright
-		# enemies — pose is shared with the prior synced frame.
-		if not skip_staggered_enemy_sync:
+		if skip_staggered_enemy_sync:
+			# Pose uniforms stay from the last synced frame; only follow the
+			# already-updated world sprite transform so the billboard keeps pace.
+			weapon_sprite.global_transform = actor_sprite.global_transform
+			attachment_sprite.global_transform = actor_sprite.global_transform
+		else:
+			_sync_character_planes(camera, height)
 			_sync_volume_shadow(camera, height)
 	if shadow_proxy != null:
 		# 代理与可见精灵逐帧同 transform：阴影剪影始终贴合真实像素。
