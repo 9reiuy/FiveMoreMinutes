@@ -842,7 +842,7 @@ func _process(delta: float) -> void:
 		_update_enemy_blink(delta)
 		_update_emoji(delta)
 		_update_state_emoji()
-	_update_weapon_aim()
+		_update_weapon_aim()
 	_update_bleeding_trail(delta)
 
 
