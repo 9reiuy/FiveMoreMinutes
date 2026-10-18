@@ -6690,15 +6690,23 @@ func _mesh_belongs_to_furniture(mesh: Node) -> bool:
 func _aabb_covers_screen_point(world_aabb: AABB, screen_point: Vector2) -> bool:
 	var min_screen := Vector2(INF, INF)
 	var max_screen := Vector2(-INF, -INF)
-	for xi in [world_aabb.position.x, world_aabb.end.x]:
-		for yi in [world_aabb.position.y, world_aabb.end.y]:
-			for zi in [world_aabb.position.z, world_aabb.end.z]:
-				var corner := Vector3(float(xi), float(yi), float(zi))
-				if camera_3d.is_position_behind(corner):
-					return false
-				var projected := camera_3d.unproject_position(corner)
-				min_screen = Vector2(minf(min_screen.x, projected.x), minf(min_screen.y, projected.y))
-				max_screen = Vector2(maxf(max_screen.x, projected.x), maxf(max_screen.y, projected.y))
+	var x0 := world_aabb.position.x
+	var x1 := world_aabb.end.x
+	var y0 := world_aabb.position.y
+	var y1 := world_aabb.end.y
+	var z0 := world_aabb.position.z
+	var z1 := world_aabb.end.z
+	for corner_i in 8:
+		var corner := Vector3(
+			x1 if (corner_i & 1) != 0 else x0,
+			y1 if (corner_i & 2) != 0 else y0,
+			z1 if (corner_i & 4) != 0 else z0
+		)
+		if camera_3d.is_position_behind(corner):
+			return false
+		var projected := camera_3d.unproject_position(corner)
+		min_screen = Vector2(minf(min_screen.x, projected.x), minf(min_screen.y, projected.y))
+		max_screen = Vector2(maxf(max_screen.x, projected.x), maxf(max_screen.y, projected.y))
 	var rect := Rect2(min_screen, max_screen - min_screen)
 	return rect.grow(2.0).has_point(screen_point)
 
@@ -6867,15 +6875,23 @@ func _segment_intersects_visual_aabb(
 func _world_aabb_for_visual(local_aabb: AABB, transform: Transform3D) -> AABB:
 	var world_aabb := AABB()
 	var initialized := false
-	for x in [local_aabb.position.x, local_aabb.end.x]:
-		for y in [local_aabb.position.y, local_aabb.end.y]:
-			for z in [local_aabb.position.z, local_aabb.end.z]:
-				var point := transform * Vector3(float(x), float(y), float(z))
-				if not initialized:
-					world_aabb = AABB(point, Vector3.ZERO)
-					initialized = true
-				else:
-					world_aabb = world_aabb.expand(point)
+	var x0 := local_aabb.position.x
+	var x1 := local_aabb.end.x
+	var y0 := local_aabb.position.y
+	var y1 := local_aabb.end.y
+	var z0 := local_aabb.position.z
+	var z1 := local_aabb.end.z
+	for corner_i in 8:
+		var point := transform * Vector3(
+			x1 if (corner_i & 1) != 0 else x0,
+			y1 if (corner_i & 2) != 0 else y0,
+			z1 if (corner_i & 4) != 0 else z0
+		)
+		if not initialized:
+			world_aabb = AABB(point, Vector3.ZERO)
+			initialized = true
+		else:
+			world_aabb = world_aabb.expand(point)
 	return world_aabb
 
 
