@@ -26,6 +26,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not is_active and root_control != null and root_control.modulate.a <= 0.001:
 		visible = false
+		set_process(false)
 		return
 
 	# Smooth progress interpolation
@@ -43,6 +44,7 @@ func _process(delta: float) -> void:
 
 
 func show_loading(initial_text: String = "正在构建梦境宅邸...") -> void:
+	set_process(true)
 	animation_token+=1
 	if alpha_tween!=null and alpha_tween.is_valid(): alpha_tween.kill()
 	is_active = true
