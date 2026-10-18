@@ -5908,8 +5908,10 @@ func _update_occlusion_cutouts() -> void:
 			_cached_projectile_cutout_frame = proj_frame
 			_cached_projectile_cutout_nodes = get_tree().get_nodes_in_group(&"dream_projectiles")
 		for projectile_node in _cached_projectile_cutout_nodes:
+			if projectile_node == null or not is_instance_valid(projectile_node):
+				continue
 			var projectile := projectile_node as Node2D
-			if projectile == null or not is_instance_valid(projectile) or not projectile.is_inside_tree() or projectile.is_queued_for_deletion():
+			if projectile == null or not projectile.is_inside_tree() or projectile.is_queued_for_deletion():
 				continue
 			if bool(projectile.get("consumed")):
 				continue
