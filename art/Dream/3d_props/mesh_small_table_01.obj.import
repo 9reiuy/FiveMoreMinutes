@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://coe1scjfn8f7e"
+path="res://.godot/imported/mesh_small_table_01.obj-b8de64de94433a406f6f0c2ffadb5971.mesh"
+
+[deps]
+
+files=["res://.godot/imported/mesh_small_table_01.obj-b8de64de94433a406f6f0c2ffadb5971.mesh"]
+
+source_file="res://art/Dream/3d_props/mesh_small_table_01.obj"
+dest_files=["res://.godot/imported/mesh_small_table_01.obj-b8de64de94433a406f6f0c2ffadb5971.mesh", "res://.godot/imported/mesh_small_table_01.obj-b8de64de94433a406f6f0c2ffadb5971.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -1,0 +1,113 @@
+[gd_scene load_steps=18 format=3 uid="uid://0ransh0epqxp"]
+
+[ext_resource type="PackedScene" uid="uid://di258drncq56a" path="res://Assets/LoafbrrAssets/Interiors_A/glb/Interiors_A.glb" id="1_5xegt"]
+[ext_resource type="Material" uid="uid://canwefv74vsd6" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres" id="1_wvs6g"]
+[ext_resource type="Material" uid="uid://dguwgmqkbmt6h" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Door_B_Mat.tres" id="2_u2ej0"]
+[ext_resource type="Material" uid="uid://pp7b330155lk" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Door_C_Mat.tres" id="3_a17dy"]
+[ext_resource type="Material" uid="uid://dn04f3wubif1c" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Glass_Mat.tres" id="4_o23p8"]
+[ext_resource type="Material" uid="uid://cjg55dhp2epy1" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Misc_Trim_Mat.tres" id="6_hufvw"]
+[ext_resource type="Material" uid="uid://bi2pc3qbsqlq0" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/SurfaceCeiling_A_B_Mat.tres" id="7_bq2to"]
+[ext_resource type="Material" uid="uid://cthug73qqhpy8" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/SurfaceCeiling_A_A_Mat.tres" id="8_sp8sg"]
+[ext_resource type="Material" uid="uid://cms1ac5i3xlai" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Ceiling_B_A_Mat.tres" id="9_1njiq"]
+[ext_resource type="Material" uid="uid://c070e4r6f70oo" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Ceiling_B_B_Mat.tres" id="10_o23p8"]
+[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres" id="11_3b4m6"]
+[ext_resource type="Material" uid="uid://ckp17uxivi87k" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_B_Mat.tres" id="12_lg3dl"]
+[ext_resource type="Material" uid="uid://k107765ilw3v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_B_Mat.tres" id="13_1njiq"]
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="14_fadw3"]
+[ext_resource type="Material" uid="uid://b5b76esnjgmae" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_B_Mat.tres" id="15_3b4m6"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_1njiq"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fadw3"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.309804)
+roughness = 0.19
+refraction_enabled = true
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -15)
+material_override = ExtResource("1_wvs6g")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5, 0, -15)
+material_override = ExtResource("2_u2ej0")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -15)
+material_override = ExtResource("3_a17dy")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.5, -15)
+material_override = ExtResource("4_o23p8")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -12.5)
+material_override = ExtResource("6_hufvw")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5, 0, -12.5)
+material_override = ExtResource("7_bq2to")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -12.5)
+material_override = ExtResource("8_sp8sg")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+material_override = ExtResource("9_1njiq")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D10" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 5)
+material_override = ExtResource("10_o23p8")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D11" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5)
+material_override = ExtResource("11_3b4m6")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D13" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7.5)
+material_override = ExtResource("12_lg3dl")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D14" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 7.5)
+material_override = ExtResource("13_1njiq")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D15" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 7.5)
+material_override = ExtResource("14_fadw3")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D16" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+material_override = ExtResource("15_3b4m6")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D17" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 10)
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D18" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 10)
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="MeshInstance3D12" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 1, -16)
+material_override = SubResource("StandardMaterial3D_fadw3")
+mesh = SubResource("PlaneMesh_1njiq")
+
+[node name="Interiors_A" parent="." instance=ExtResource("1_5xegt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59, 0, -52)

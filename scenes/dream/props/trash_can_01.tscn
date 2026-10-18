@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://b1w43g0p7kxb4"]
+
+[ext_resource type="Script" uid="uid://cgfu5l2dw3fmj" path="res://scenes/dream/rooms/chair_01.gd" id="1_prop"]
+[ext_resource type="Script" uid="uid://c1hu82nwl5nkd" path="res://scenes/dream/rooms/hurtbox.gd" id="2_hurtbox"]
+[ext_resource type="PackedScene" uid="uid://wut2aqnodrrw" path="res://scenes/dream/effects/shatter_piece.tscn" id="3_shatter"]
+[ext_resource type="Texture2D" path="res://resources/dream_props/trash_can_01_texture.tres" id="4_texture"]
+[ext_resource type="Texture2D" uid="uid://db6lxcmlv1yh5" path="res://art/Dream/shadow.png" id="5_shadow"]
+
+[sub_resource type="RectangleShape2D" id="BodyShape"]
+size = Vector2(14, 10)
+
+[sub_resource type="RectangleShape2D" id="HurtShape"]
+size = Vector2(16, 26)
+
+[node name="TrashCan01" type="RigidBody2D" unique_id=817108375 groups=["damageable_props", "pushable_prop"]]
+editor_description = "可直接拖入Room/YSortRoot/PropsRoot的轻型垃圾桶。"
+collision_layer = 8
+collision_mask = 15
+gravity_scale = 0.0
+angular_damp = 9.0
+linear_damp = 7.0
+script = ExtResource("1_prop")
+max_hp = 25.0
+furniture_size_category = 1
+bullet_knockback = 110.0
+books_drop_category = "trash_can"
+shatter_piece_scene = ExtResource("3_shatter")
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=89829312]
+modulate = Color(1, 1, 1, 0.42)
+z_index = -1
+position = Vector2(0, -6)
+scale = Vector2(0.6, 0.4)
+texture = ExtResource("5_shadow")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1071361968]
+texture_filter = 1
+position = Vector2(0, -13)
+texture = ExtResource("4_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=817832950]
+position = Vector2(0, -5)
+shape = SubResource("BodyShape")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=308362497 groups=["damage_hurtboxes"]]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("2_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1785864147]
+position = Vector2(0, -13)
+shape = SubResource("HurtShape")
+
+[node name="HitParticles" type="CPUParticles2D" parent="." unique_id=2021052001]
+position = Vector2(0, -13)
+emitting = false
+amount = 5
+lifetime = 0.45
+one_shot = true
+explosiveness = 1.0
+lifetime_randomness = 0.8
+spread = 180.0
+initial_velocity_min = 70.0
+initial_velocity_max = 130.0
+scale_amount_max = 2.5

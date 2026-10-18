@@ -1,0 +1,22 @@
+{
+  "dialogues": [
+    {
+      "id": "dream_wake_prompt",
+      "lines": [
+        {"speaker": "system", "text": "无论身在何处，按住 F 让自己醒来", "typewriter_speed": 0.03, "text_color": "#C9D8E2", "blip": false}
+      ]
+    },
+    {
+      "id": "dream_alarm_title",
+      "lines": [
+        {"speaker": "system", "text": "{time}  闹钟正在响", "typewriter_speed": 0.0, "text_color": "#5B3338", "blip": false}
+      ]
+    },
+    {
+      "id": "dream_hold_wake_prompt",
+      "lines": [
+        {"speaker": "system", "text": "按住 F 醒来  {progress} / {required} 秒", "typewriter_speed": 0.0, "text_color": "#D4C9C9", "blip": false}
+      ]
+    }
+  ]
+}

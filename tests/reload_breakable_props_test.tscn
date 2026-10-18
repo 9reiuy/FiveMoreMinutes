@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://n7hp3ocfovgp"]
+
+[ext_resource type="Script" uid="uid://djwwu810x3byx" path="res://tests/reload_breakable_props_test.gd" id="1_test"]
+
+[node name="ReloadBreakablePropsTest" type="Node" unique_id=1244644423]
+script = ExtResource("1_test")

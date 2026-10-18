@@ -1,0 +1,3585 @@
+[
+  {
+    "name": "hit_feedback_depth_delivery",
+    "entry": "res://tests/hit_feedback_depth_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": ["--artifact-dir=res://.runtime/hit_feedback_depth_20261016/camera_regression"],
+    "reason": "Formal Main hit depth, three incoming directions, reused hit/melee slot and real foreground-wall occlusion.",
+    "missing_references": []
+  },
+  {
+    "name": "pixel_combat_vfx_rollout_test",
+    "entry": "res://tests/pixel_combat_vfx_rollout_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Automatic VFX ownership across four formal skeletons, staged regeneration, rollback and reception.",
+    "missing_references": []
+  },
+  {
+    "name": "nyangeon_vfx_sample_test",
+    "entry": "res://tests/nyangeon_vfx_sample_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Sample smoke contact, stop/air/death gates, bounded reuse and passive VFX copies.",
+    "missing_references": []
+  },
+  {
+    "name": "nyangeon_hit_routing_test",
+    "entry": "res://tests/nyangeon_hit_routing_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Real firearm/non-firearm hit routing, lethal path, pellet throttling and regeneration cleanup.",
+    "missing_references": []
+  },
+  {
+    "name": "nyangeon_vfx_sample_delivery",
+    "entry": "res://tests/nyangeon_vfx_sample_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": ["--artifact-dir=res://.runtime/nyangeon_vfx_sample_20261016/camera_final"],
+    "reason": "Background actual Main Camera, production walk/fire/hit clips and controlled smoke cost.",
+    "missing_references": []
+  },
+  {
+    "name": "pixel_transition_gpu_test",
+    "entry": "res://tests/pixel_transition_gpu_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "GPU readback of 4x4 blocks, monotonic coverage and opaque endpoints.",
+    "missing_references": []
+  },
+  {
+    "name": "pixel_transition_delivery",
+    "entry": "res://tests/pixel_transition_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Background actual Main scene changes, real elevator ride, Camera capture and input restoration.",
+    "missing_references": []
+  },
+  {
+    "name": "pixel_transition_lifecycle_test",
+    "entry": "res://tests/pixel_transition_lifecycle_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Reveal continuity, cancellation, input, loading races and mixed scene queue.",
+    "missing_references": []
+  },
+  {
+    "name": "door_material_outline_delivery",
+    "entry": "res://tests/door_material_outline_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Actual Main three door styles, identical Camera texture comparison and physical push.",
+    "missing_references": []
+  },
+  {
+    "name": "office_wall_cutaway_test",
+    "entry": "res://tests/office_wall_cutaway_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Production room face materials survive geometry, room mode and late art updates.",
+    "missing_references": []
+  },
+  {
+    "name": "office_wall_cutaway_delivery",
+    "entry": "res://tests/office_wall_cutaway_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 360,
+    "user_args": [],
+    "reason": "Actual Main, four skeletons, every room atlas, regeneration, rollback and Camera delivery.",
+    "missing_references": []
+  },
+  {
+    "name": "wall_root_cutaway_sample_test",
+    "entry": "res://tests/wall_root_cutaway_sample_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Vertical full wall, short sloped foot, low root, visible thickness and restoration without new renderers.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_wall_root_cutaway_delivery",
+    "entry": "res://tests/floor_wall_root_cutaway_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Actual Main Camera shows a complete vertical section, short foot and continuous wall root sample.",
+    "missing_references": []
+  },
+  {
+    "name": "wall_cut_face_texture_test",
+    "entry": "res://tests/wall_cut_face_texture_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Existing wall end-face texture, unchanged mesh resources and counts, cut state and material restoration.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_wall_cut_face_texture_delivery",
+    "entry": "res://tests/floor_wall_cut_face_texture_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Original wall vertical end-face texture in production Main Camera; no added top geometry.",
+    "missing_references": []
+  },
+  {
+    "name": "tarot_reception_revision_test",
+    "entry": "res://tests/tarot_reception_revision_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Night baseline, true furniture clearance and variable-width industrial door animation.",
+    "missing_references": []
+  },
+  {
+    "name": "tarot_reception_layout_test",
+    "entry": "res://tests/tarot_reception_layout_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Authored tarot lobby routes, shared floor, prop counts and single NPC.",
+    "missing_references": []
+  },
+  {
+    "name": "tarot_reception_delivery",
+    "entry": "res://tests/tarot_reception_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [
+      "--validate"
+    ],
+    "reason": "Formal entry, ordinary lobby movement, tarot selection and actual floor entry.",
+    "missing_references": []
+  },
+  {
+    "name": "corpse_death_impulse_test",
+    "entry": "res://tests/corpse_death_impulse_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Lethal impulse, fixed motion, existing weapon forces and real wall collision.",
+    "missing_references": []
+  },
+  {
+    "name": "corridor_glass_route_test",
+    "entry": "res://tests/corridor_glass_route_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Native corridor endpoint glass exclusion and legacy compilation.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_ballistic_ground_capture_test",
+    "entry": "res://tests/blood_ballistic_ground_capture_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 120,
+    "user_args": [
+      "--background-gpu"
+    ],
+    "reason": "Real GPU early-touchdown capture regression; reproduces old missing carrier wake.",
+    "missing_references": []
+  },
+  {
+    "name": "death_blood_ballistics_test",
+    "entry": "res://tests/death_blood_ballistics_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Death droplet touchdown, actual wall collision, budgets and caller RNG regression.",
+    "missing_references": []
+  },
+  {
+    "name": "3d_firearm_tuning_test",
+    "entry": "res://tests/3d_firearm_tuning_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "actor_capture_cost_profile",
+    "entry": "res://tests/actor_capture_cost_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "actor_volume_shadow_pose_parity_test",
+    "entry": "res://tests/actor_volume_shadow_pose_parity_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "New CPU/native parity regression; no GPU frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "actor_volume_shadow_test",
+    "entry": "res://tests/actor_volume_shadow_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "aim_preview_projection_test",
+    "entry": "res://tests/aim_preview_projection_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "approved_art_camera_cache_test",
+    "entry": "res://tests/approved_art_camera_cache_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "approved_art_texture_cache_test",
+    "entry": "res://tests/approved_art_texture_cache_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Texture byte readback explicitly refuses a headless renderer.",
+    "missing_references": []
+  },
+  {
+    "name": "approved_office_art_capture",
+    "entry": "res://tests/approved_office_art_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "approved_office_art_perf",
+    "entry": "res://tests/approved_office_art_perf.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "approved_office_art_test",
+    "entry": "res://tests/approved_office_art_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "audition_enemy_death_sfx",
+    "entry": "res://tests/audition_enemy_death_sfx.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "background_gpu_probe",
+    "entry": "res://tests/background_gpu_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "bedroom_art_test",
+    "entry": "res://tests/bedroom_art_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_airborne_ray_reuse_test",
+    "entry": "res://tests/blood_airborne_ray_reuse_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_airborne_upload_test",
+    "entry": "res://tests/blood_airborne_upload_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_color_probe_test",
+    "entry": "res://tests/blood_color_probe_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_effect_otxo_test",
+    "entry": "res://tests/blood_effect_otxo_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_ground_capture_profile",
+    "entry": "res://tests/blood_ground_capture_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_ground_redraw_test",
+    "entry": "res://tests/blood_ground_redraw_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_ground_replica_copy_test",
+    "entry": "res://tests/blood_ground_replica_copy_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_ground_transform_perf",
+    "entry": "res://tests/blood_ground_transform_perf.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_lifecycle_probe",
+    "entry": "res://tests/blood_lifecycle_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_merge_camera_test",
+    "entry": "res://tests/blood_merge_camera_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_merge_single_pass_test",
+    "entry": "res://tests/blood_merge_single_pass_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_pixel_draw_profile",
+    "entry": "res://tests/blood_pixel_draw_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_pool_merge_test",
+    "entry": "res://tests/blood_pool_merge_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_query_batch_test",
+    "entry": "res://tests/blood_query_batch_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_query_camera_test",
+    "entry": "res://tests/blood_query_camera_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_revision_integration_test",
+    "entry": "res://tests/blood_revision_integration_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "boutique_font_integration_test",
+    "entry": "res://tests/boutique_font_integration_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "bridge_transform_sync_test",
+    "entry": "res://tests/bridge_transform_sync_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "New CPU/native parity regression; no GPU frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "build_office_pixel_atlas",
+    "entry": "res://tests/build_office_pixel_atlas.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "camera_relative_movement_test",
+    "entry": "res://tests/camera_relative_movement_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_before_baseline",
+    "entry": "res://tests/capture_before_baseline.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_broken_door_jamb",
+    "entry": "res://tests/capture_broken_door_jamb.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_character_lighting",
+    "entry": "res://tests/capture_character_lighting.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_firearm_revision",
+    "entry": "res://tests/capture_firearm_revision.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_first_use_profile",
+    "entry": "res://tests/capture_first_use_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_formal_screenshots",
+    "entry": "res://tests/capture_formal_screenshots.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_hkm_camera",
+    "entry": "res://tests/capture_hkm_camera.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_light_noise_gameplay",
+    "entry": "res://tests/capture_light_noise_gameplay.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_map_rotation_review",
+    "entry": "res://tests/capture_map_rotation_review.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_movement_test",
+    "entry": "res://tests/capture_movement_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_office_firearm_main_entry",
+    "entry": "res://tests/capture_office_firearm_main_entry.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_office_overview",
+    "entry": "res://tests/capture_office_overview.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_open_office_nav",
+    "entry": "res://tests/capture_open_office_nav.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_ordered_room_lighting",
+    "entry": "res://tests/capture_ordered_room_lighting.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_reception_and_tarot_fix",
+    "entry": "res://tests/capture_reception_and_tarot_fix.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_reception_scene",
+    "entry": "res://tests/capture_reception_scene.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_settings_ui",
+    "entry": "res://tests/capture_settings_ui.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_sync_bench",
+    "entry": "res://tests/capture_sync_bench.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_tarot_overlay",
+    "entry": "res://tests/capture_tarot_overlay.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_task_45_office",
+    "entry": "res://tests/capture_task_45_office.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_tutorial_broken_door",
+    "entry": "res://tests/capture_tutorial_broken_door.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_window_closeup",
+    "entry": "res://tests/capture_window_closeup.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "capture_window_detail",
+    "entry": "res://tests/capture_window_detail.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "character_capture_cache_test",
+    "entry": "res://tests/character_capture_cache_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "character_contact_scan_perf",
+    "entry": "res://tests/character_contact_scan_perf.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "character_projection_world_test",
+    "entry": "res://tests/character_projection_world_test.gd",
+    "entry_kind": "script",
+    "classification": "headless+gpu",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Logic assertions plus actual Camera capture; both modes required.",
+    "missing_references": []
+  },
+  {
+    "name": "character_weapon_projection_test",
+    "entry": "res://tests/character_weapon_projection_test.gd",
+    "entry_kind": "script",
+    "classification": "headless+gpu",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Logic assertions plus actual Camera capture; both modes required.",
+    "missing_references": []
+  },
+  {
+    "name": "combat_fixes_regression_test",
+    "entry": "res://tests/combat_fixes_regression_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "compact_interaction_prompt_test",
+    "entry": "res://tests/compact_interaction_prompt_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "compact_office_layout_test",
+    "entry": "res://tests/compact_office_layout_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "compare_sprite_vs_hud_pos",
+    "entry": "res://tests/compare_sprite_vs_hud_pos.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "corpse_contact_world_test",
+    "entry": "res://tests/corpse_contact_world_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "corpse_drag_trail_test",
+    "entry": "res://tests/corpse_drag_trail_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "corpse_drag_world_test",
+    "entry": "res://tests/corpse_drag_world_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "corpse_floor_contact_test",
+    "entry": "res://tests/corpse_floor_contact_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "corpse_follow_bleed_test",
+    "entry": "res://tests/corpse_follow_bleed_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "corpse_follow_world_test",
+    "entry": "res://tests/corpse_follow_world_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "corpse_ragdoll_capture",
+    "entry": "res://tests/corpse_ragdoll_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "corpse_ragdoll_contact_test",
+    "entry": "res://tests/corpse_ragdoll_contact_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "current_ui_task_test",
+    "entry": "res://tests/current_ui_task_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "cutout_lifetime_test",
+    "entry": "res://tests/cutout_lifetime_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "debug_retreat",
+    "entry": "res://tests/debug_retreat.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "destruction_family_first_draw",
+    "entry": "res://tests/destruction_family_first_draw.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "destruction_material_lifetime_test",
+    "entry": "res://tests/destruction_material_lifetime_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "destruction_mesh_profile",
+    "entry": "res://tests/destruction_mesh_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "destruction_warm_transition_budget",
+    "entry": "res://tests/destruction_warm_transition_budget.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "dialogue_font_readability_test",
+    "entry": "res://tests/dialogue_font_readability_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dialogue_font_visual_capture",
+    "entry": "res://tests/dialogue_font_visual_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "door_shard_material_profile",
+    "entry": "res://tests/door_shard_material_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "door_topology_regression_test",
+    "entry": "res://tests/door_topology_regression_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "door_visual_20seed",
+    "entry": "res://tests/door_visual_20seed.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "dream_3d_dialogue_camera_test",
+    "entry": "res://tests/dream_3d_dialogue_camera_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream_3d_random_dungeon_runtime_walk_test",
+    "entry": "res://tests/dream_3d_random_dungeon_runtime_walk_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream_3d_random_dungeon_seed_test",
+    "entry": "res://tests/dream_3d_random_dungeon_seed_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream_display_settings_entry_test",
+    "entry": "res://tests/dream_display_settings_entry_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream_player_editor_preview_test",
+    "entry": "res://tests/dream_player_editor_preview_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream_shard_transition_test",
+    "entry": "res://tests/dream_shard_transition_test.tscn",
+    "entry_kind": "scene",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_boss_cycle_test",
+    "entry": "res://tests/dream3d_boss_cycle_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_ceiling_light_rule_test",
+    "entry": "res://tests/dream3d_ceiling_light_rule_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_ceiling_light_visual_test",
+    "entry": "res://tests/dream3d_ceiling_light_visual_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_combat_parity_test",
+    "entry": "res://tests/dream3d_combat_parity_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_corridor_enemy_transit_test",
+    "entry": "res://tests/dream3d_corridor_enemy_transit_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_damage_number_test",
+    "entry": "res://tests/dream3d_damage_number_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_door_ai_test",
+    "entry": "res://tests/dream3d_door_ai_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_door_leaf_regression_test",
+    "entry": "res://tests/dream3d_door_leaf_regression_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_door_outline_visual_test",
+    "entry": "res://tests/dream3d_door_outline_visual_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_effects_test",
+    "entry": "res://tests/dream3d_effects_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_hud_speed_door_feedback_test",
+    "entry": "res://tests/dream3d_hud_speed_door_feedback_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_integration_test",
+    "entry": "res://tests/dream3d_integration_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_knockdown_collision_test",
+    "entry": "res://tests/dream3d_knockdown_collision_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_macro_room_graph_test",
+    "entry": "res://tests/dream3d_macro_room_graph_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_night_layout_test",
+    "entry": "res://tests/dream3d_night_layout_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_night_runtime_test",
+    "entry": "res://tests/dream3d_night_runtime_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_night_visual_test",
+    "entry": "res://tests/dream3d_night_visual_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_parity_test",
+    "entry": "res://tests/dream3d_parity_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_population_refill_test",
+    "entry": "res://tests/dream3d_population_refill_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_room_encounter_test",
+    "entry": "res://tests/dream3d_room_encounter_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_seed_key_pickup_test",
+    "entry": "res://tests/dream3d_seed_key_pickup_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_shape_diagnostic",
+    "entry": "res://tests/dream3d_shape_diagnostic.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "dream3d_visual_fixes_test",
+    "entry": "res://tests/dream3d_visual_fixes_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "dynamic_architecture_shadow_test",
+    "entry": "res://tests/dynamic_architecture_shadow_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "elevator_audio_test",
+    "entry": "res://tests/elevator_audio_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "elevator_floor_door_screen_orientation_test",
+    "entry": "res://tests/elevator_floor_door_screen_orientation_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "elevator_loading_cover_test",
+    "entry": "res://tests/elevator_loading_cover_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "elevator_wall_alignment_test",
+    "entry": "res://tests/elevator_wall_alignment_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "elevator_wall_visual_probe",
+    "entry": "res://tests/elevator_wall_visual_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "employee_perception_test",
+    "entry": "res://tests/employee_perception_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "employee_ragdoll_death_test",
+    "entry": "res://tests/employee_ragdoll_death_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "enemy_steering_identity_test",
+    "entry": "res://tests/enemy_steering_identity_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "engine_profile_collector",
+    "entry": "res://tests/engine_profile_collector.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "environment_debris_atlas_candidate",
+    "entry": "res://tests/environment_debris_atlas_candidate.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "environment_debris_atlas_perf",
+    "entry": "res://tests/environment_debris_atlas_perf.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "environment_debris_shared_texture_candidate",
+    "entry": "res://tests/environment_debris_shared_texture_candidate.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "feedback_capture_reuse_profile",
+    "entry": "res://tests/feedback_capture_reuse_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "firearm_first_use_probe",
+    "entry": "res://tests/firearm_first_use_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "firearm_impact_visual_test",
+    "entry": "res://tests/firearm_impact_visual_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "firearm_loading_main_entry_test",
+    "entry": "res://tests/firearm_loading_main_entry_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [
+      "--output-1080",
+      "--cross-floor-shadow-trace",
+      "--force-loading-failure",
+      "--capture-floor-exit"
+    ],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "firearm_preparation_lifecycle_test",
+    "entry": "res://tests/firearm_preparation_lifecycle_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "firearm_shared_rules_test",
+    "entry": "res://tests/firearm_shared_rules_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_ab_probe",
+    "entry": "res://tests/floor_ab_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_capture_budget_test",
+    "entry": "res://tests/floor_capture_budget_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_exit_render_cover_test",
+    "entry": "res://tests/floor_exit_render_cover_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_object_capture_profile",
+    "entry": "res://tests/floor_object_capture_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_object_pool_lifecycle_test",
+    "entry": "res://tests/floor_object_pool_lifecycle_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_path_adjacency_test",
+    "entry": "res://tests/floor_path_adjacency_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "font_raster_probe",
+    "entry": "res://tests/font_raster_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "formal_performance_acceptance",
+    "entry": "res://tests/formal_performance_acceptance.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "formal_shader_identity_probe",
+    "entry": "res://tests/formal_shader_identity_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "frozen_render_comparison_test",
+    "entry": "res://tests/frozen_render_comparison_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "furniture_destruction_transition_profile",
+    "entry": "res://tests/furniture_destruction_transition_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "furniture_face_texture_test",
+    "entry": "res://tests/furniture_face_texture_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "furniture_rotation_test",
+    "entry": "res://tests/furniture_rotation_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "furniture_sleep_idle_perf",
+    "entry": "res://tests/furniture_sleep_idle_perf.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "furniture_sleep_probe",
+    "entry": "res://tests/furniture_sleep_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "impact_first_draw_probe",
+    "entry": "res://tests/impact_first_draw_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "impact_mesh_reuse_test",
+    "entry": "res://tests/impact_mesh_reuse_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "independent_elevator_orientation_test",
+    "entry": "res://tests/independent_elevator_orientation_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "inspect_render_counters",
+    "entry": "res://tests/inspect_render_counters.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "interaction_font_visual_capture",
+    "entry": "res://tests/interaction_font_visual_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "katana_zero_dash_trail_test",
+    "entry": "res://tests/katana_zero_dash_trail_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "legacy_2d_retirement_test",
+    "entry": "res://tests/legacy_2d_retirement_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "main_transition_integration_test",
+    "entry": "res://tests/main_transition_integration_test.tscn",
+    "entry_kind": "scene",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "managed_light_shadow_test",
+    "entry": "res://tests/managed_light_shadow_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "native_generator_candidate_parity_test",
+    "entry": "res://tests/native_generator_candidate_parity_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "New CPU/native parity regression; no GPU frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "occlusion_query_snapshot_test",
+    "entry": "res://tests/occlusion_query_snapshot_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "office_architecture_scale_test",
+    "entry": "res://tests/office_architecture_scale_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_art_review_test",
+    "entry": "res://tests/office_art_review_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_ballistics_test",
+    "entry": "res://tests/office_ballistics_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_blood_cross_room_test",
+    "entry": "res://tests/office_blood_cross_room_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_blood_impact_test",
+    "entry": "res://tests/office_blood_impact_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_blood_visual_capture",
+    "entry": "res://tests/office_blood_visual_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_combat_capture",
+    "entry": "res://tests/office_combat_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_combat_layout_smoke",
+    "entry": "res://tests/office_combat_layout_smoke.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_contour_footprint_smoke_test",
+    "entry": "res://tests/office_contour_footprint_smoke_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_dither_formal_capture",
+    "entry": "res://tests/office_dither_formal_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_dither_formal_test",
+    "entry": "res://tests/office_dither_formal_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_dressing_test",
+    "entry": "res://tests/office_dressing_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "office_dynamic_shadow_capture",
+    "entry": "res://tests/office_dynamic_shadow_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_firearm_integration_test",
+    "entry": "res://tests/office_firearm_integration_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_flank_capture",
+    "entry": "res://tests/office_flank_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_flank_generator_test",
+    "entry": "res://tests/office_flank_generator_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_flank_layout_test",
+    "entry": "res://tests/office_flank_layout_test.gd",
+    "entry_kind": "script",
+    "classification": "skip_missing",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Missing transitive literal load/preload/ext_resource dependencies; retired 2D references are not restored or counted as passed.",
+    "missing_references": [
+      "res://scenes/dream/preview/OfficeFlankPreview.tscn"
+    ]
+  },
+  {
+    "name": "office_flank_movie",
+    "entry": "res://tests/office_flank_movie.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_flank_runtime_test",
+    "entry": "res://tests/office_flank_runtime_test.gd",
+    "entry_kind": "script",
+    "classification": "skip_missing",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Missing transitive literal load/preload/ext_resource dependencies; retired 2D references are not restored or counted as passed.",
+    "missing_references": [
+      "res://scenes/dream/preview/OfficeFlankPreview.tscn"
+    ]
+  },
+  {
+    "name": "office_floor_full_runtime_test",
+    "entry": "res://tests/office_floor_full_runtime_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_floor_mask_visual_probe",
+    "entry": "res://tests/office_floor_mask_visual_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_furniture_height_test",
+    "entry": "res://tests/office_furniture_height_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_level_pack_capture",
+    "entry": "res://tests/office_level_pack_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_level_pack_test",
+    "entry": "res://tests/office_level_pack_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_low_pixel_validation",
+    "entry": "res://tests/office_low_pixel_validation.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_material_separation_test",
+    "entry": "res://tests/office_material_separation_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_muzzle_visual_test",
+    "entry": "res://tests/office_muzzle_visual_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_objective_guidance_test",
+    "entry": "res://tests/office_objective_guidance_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_room_low_pixel_test",
+    "entry": "res://tests/office_room_low_pixel_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_room_pixel_capture",
+    "entry": "res://tests/office_room_pixel_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_sample_art_capture",
+    "entry": "res://tests/office_sample_art_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_sample_input_smoke",
+    "entry": "res://tests/office_sample_input_smoke.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_sample_main_entry_smoke",
+    "entry": "res://tests/office_sample_main_entry_smoke.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "office_sample_metrics",
+    "entry": "res://tests/office_sample_metrics.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "office_sample_test",
+    "entry": "res://tests/office_sample_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_sample_window_input_smoke",
+    "entry": "res://tests/office_sample_window_input_smoke.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_shadow_integration_test",
+    "entry": "res://tests/office_shadow_integration_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_skeleton_formal_runtime_test",
+    "entry": "res://tests/office_skeleton_formal_runtime_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "office_skeleton_native_test",
+    "entry": "res://tests/office_skeleton_native_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_skeleton_playable_test",
+    "entry": "res://tests/office_skeleton_playable_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_skeleton_runtime_test",
+    "entry": "res://tests/office_skeleton_runtime_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "office_slice_cap_test",
+    "entry": "res://tests/office_slice_cap_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_weapon_swap_speed_test",
+    "entry": "res://tests/office_weapon_swap_speed_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "office_window_sill_test",
+    "entry": "res://tests/office_window_sill_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "offscreen_capture_sync_test",
+    "entry": "res://tests/offscreen_capture_sync_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_blood_camera_capture",
+    "entry": "res://tests/otxo_blood_camera_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_blood_morphology_test",
+    "entry": "res://tests/otxo_blood_morphology_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_breakable_doors_and_performance_test",
+    "entry": "res://tests/otxo_breakable_doors_and_performance_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_combat_feel_and_camera_test",
+    "entry": "res://tests/otxo_combat_feel_and_camera_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_enemy_ai_parity_test",
+    "entry": "res://tests/otxo_enemy_ai_parity_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_mansion_generation_test",
+    "entry": "res://tests/otxo_mansion_generation_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_performance_and_loading_test",
+    "entry": "res://tests/otxo_performance_and_loading_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_preload_and_cross_room_combat_test",
+    "entry": "res://tests/otxo_preload_and_cross_room_combat_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_room_firefight_layout_test",
+    "entry": "res://tests/otxo_room_firefight_layout_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "otxo_tactical_ai_and_visibility_test",
+    "entry": "res://tests/otxo_tactical_ai_and_visibility_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "perf_stutter_profiler",
+    "entry": "res://tests/perf_stutter_profiler.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "phase_c_knock_probe",
+    "entry": "res://tests/phase_c_knock_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "phase2_enemy_recovery_runner",
+    "entry": "res://tests/phase2_enemy_recovery_runner.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "phase2_enemy_recovery_test",
+    "entry": "res://tests/phase2_enemy_recovery_test.tscn",
+    "entry_kind": "scene",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "phase2_player_caster_probe",
+    "entry": "res://tests/phase2_player_caster_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "phase2_probe_runner",
+    "entry": "res://tests/phase2_probe_runner.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "phone_melatonin_currency_test",
+    "entry": "res://tests/phone_melatonin_currency_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "physical_door_hinge_cutaway_test",
+    "entry": "res://tests/physical_door_hinge_cutaway_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "pixel_environment_test",
+    "entry": "res://tests/pixel_environment_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "pixel_shadow_preview_capture",
+    "entry": "res://tests/pixel_shadow_preview_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "pixel_shadow_preview_test",
+    "entry": "res://tests/pixel_shadow_preview_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "player_combat_info_hud_test",
+    "entry": "res://tests/player_combat_info_hud_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "player_default_fists_capture",
+    "entry": "res://tests/player_default_fists_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "player_default_fists_test",
+    "entry": "res://tests/player_default_fists_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "player_rifle_spread_test",
+    "entry": "res://tests/player_rifle_spread_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "player_side_bangs_capture",
+    "entry": "res://tests/player_side_bangs_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "player_side_bangs_test",
+    "entry": "res://tests/player_side_bangs_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "point_blank_wall_door_shot_test",
+    "entry": "res://tests/point_blank_wall_door_shot_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "probe_vault",
+    "entry": "res://tests/probe_vault.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "projectile_capture_extent_test",
+    "entry": "res://tests/projectile_capture_extent_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "projectile_history_trail_test",
+    "entry": "res://tests/projectile_history_trail_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "quiet_room_art_test",
+    "entry": "res://tests/quiet_room_art_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "random_combat_perf",
+    "entry": "res://tests/random_combat_perf.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "random_floor_lifecycle_test",
+    "entry": "res://tests/random_floor_lifecycle_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "random_office_art_style_test",
+    "entry": "res://tests/random_office_art_style_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "random_office_capture",
+    "entry": "res://tests/random_office_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "random_office_entry_layout_test",
+    "entry": "res://tests/random_office_entry_layout_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "random_office_formal_test",
+    "entry": "res://tests/random_office_formal_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "random_office_functional_layout_test",
+    "entry": "res://tests/random_office_functional_layout_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "random_office_route_width_test",
+    "entry": "res://tests/random_office_route_width_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "random_progression_capture",
+    "entry": "res://tests/random_progression_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "random_progression_feedback_test",
+    "entry": "res://tests/random_progression_feedback_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "random_reception_boundaries_test",
+    "entry": "res://tests/random_reception_boundaries_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "release_050_entry_test",
+    "entry": "res://tests/release_050_entry_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "reload_breakable_props_test",
+    "entry": "res://tests/reload_breakable_props_test.tscn",
+    "entry_kind": "scene",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "render_category_cost_probe",
+    "entry": "res://tests/render_category_cost_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "render_monitor_inventory",
+    "entry": "res://tests/render_monitor_inventory.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "render_stall_control",
+    "entry": "res://tests/render_stall_control.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "review_refresh_index_test",
+    "entry": "res://tests/review_refresh_index_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "sample_neon_city_runtime_test",
+    "entry": "res://tests/sample_neon_city_runtime_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "scratch_btn_test",
+    "entry": "res://tests/scratch_btn_test.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "scratch_dialogue_anchor_test",
+    "entry": "res://tests/scratch_dialogue_anchor_test.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "scratch_tutorial_anchor_test",
+    "entry": "res://tests/scratch_tutorial_anchor_test.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "scratch_viewport_test",
+    "entry": "res://tests/scratch_viewport_test.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "selective_pixel_formal_wrapper_test",
+    "entry": "res://tests/selective_pixel_formal_wrapper_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "selective_pixel_occlusion_gpu_test",
+    "entry": "res://tests/selective_pixel_occlusion_gpu_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "selective_pixel_preview_capture",
+    "entry": "res://tests/selective_pixel_preview_capture.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "selective_pixel_preview_test",
+    "entry": "res://tests/selective_pixel_preview_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "sfx_integration_test",
+    "entry": "res://tests/sfx_integration_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "shadow_first_activation_probe",
+    "entry": "res://tests/shadow_first_activation_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "shadow_preparation_steady_probe",
+    "entry": "res://tests/shadow_preparation_steady_probe.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "shared_goal_search_test",
+    "entry": "res://tests/shared_goal_search_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "shell_capture_atlas_candidate",
+    "entry": "res://tests/shell_capture_atlas_candidate.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "shell_capture_atlas_perf",
+    "entry": "res://tests/shell_capture_atlas_perf.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "shell_creation_profile",
+    "entry": "res://tests/shell_creation_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "shotgun_direct_fire_test",
+    "entry": "res://tests/shotgun_direct_fire_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "skeleton_clearance_cache_test",
+    "entry": "res://tests/skeleton_clearance_cache_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "skeleton_generation_clear_parity_test",
+    "entry": "res://tests/skeleton_generation_clear_parity_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "tactical_planning_dash_test",
+    "entry": "res://tests/tactical_planning_dash_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "task_45_office_environment_test",
+    "entry": "res://tests/task_45_office_environment_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "task014_attack_recovery_test",
+    "entry": "res://tests/task014_attack_recovery_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "task014_update_validation",
+    "entry": "res://tests/task014_update_validation.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "test_always_visible_rooms",
+    "entry": "res://tests/test_always_visible_rooms.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_character_atlas_and_facing",
+    "entry": "res://tests/test_character_atlas_and_facing.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_character_lighting_authenticity",
+    "entry": "res://tests/test_character_lighting_authenticity.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_character_lighting_scale",
+    "entry": "res://tests/test_character_lighting_scale.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_dialogue_camera_focus",
+    "entry": "res://tests/test_dialogue_camera_focus.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_dream_dialogue_bubble",
+    "entry": "res://tests/test_dream_dialogue_bubble.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_dream_dialogue_controller",
+    "entry": "res://tests/test_dream_dialogue_controller.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_dream_dialogue_glyph_fall_fx",
+    "entry": "res://tests/test_dream_dialogue_glyph_fall_fx.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_elevator_and_weapon_parity",
+    "entry": "res://tests/test_elevator_and_weapon_parity.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_elevator_animation_flow",
+    "entry": "res://tests/test_elevator_animation_flow.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_elevator_components",
+    "entry": "res://tests/test_elevator_components.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "test_elevator_integration",
+    "entry": "res://tests/test_elevator_integration.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "test_enemy_corpse_presentation",
+    "entry": "res://tests/test_enemy_corpse_presentation.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_enemy_kill_sfx",
+    "entry": "res://tests/test_enemy_kill_sfx.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_formal_pixelation_main",
+    "entry": "res://tests/test_formal_pixelation_main.tscn",
+    "entry_kind": "scene",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "test_furniture_bullet_penetration",
+    "entry": "res://tests/test_furniture_bullet_penetration.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_glass_window_cutaway",
+    "entry": "res://tests/test_glass_window_cutaway.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_hkm_camera_aim",
+    "entry": "res://tests/test_hkm_camera_aim.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_light_noise_contour",
+    "entry": "res://tests/test_light_noise_contour.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_lighting_and_theme",
+    "entry": "res://tests/test_lighting_and_theme.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_office_chair_physics",
+    "entry": "res://tests/test_office_chair_physics.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_office_low_pixel_refined",
+    "entry": "res://tests/test_office_low_pixel_refined.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_office_shadow_manager_hysteresis",
+    "entry": "res://tests/test_office_shadow_manager_hysteresis.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_office_skeleton_layout",
+    "entry": "res://tests/test_office_skeleton_layout.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_office_v2_generator",
+    "entry": "res://tests/test_office_v2_generator.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_open_office_nav_fix",
+    "entry": "res://tests/test_open_office_nav_fix.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_ordered_room_lighting",
+    "entry": "res://tests/test_ordered_room_lighting.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_palette_black",
+    "entry": "res://tests/test_palette_black.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_palette_settings_full",
+    "entry": "res://tests/test_palette_settings_full.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_pixelation_setting",
+    "entry": "res://tests/test_pixelation_setting.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_player_dive_mechanics",
+    "entry": "res://tests/test_player_dive_mechanics.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_reception_interaction_range",
+    "entry": "res://tests/test_reception_interaction_range.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_reception_room_assets",
+    "entry": "res://tests/test_reception_room_assets.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_reception_scene",
+    "entry": "res://tests/test_reception_scene.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_shadow_quality_settings",
+    "entry": "res://tests/test_shadow_quality_settings.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "test_tarot_audio",
+    "entry": "res://tests/test_tarot_audio.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_tarot_draw_system",
+    "entry": "res://tests/test_tarot_draw_system.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_tarot_system",
+    "entry": "res://tests/test_tarot_system.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_tarot_ui_system",
+    "entry": "res://tests/test_tarot_ui_system.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_task015_furniture_parity",
+    "entry": "res://tests/test_task015_furniture_parity.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_tutorial_dialogue_integration",
+    "entry": "res://tests/test_tutorial_dialogue_integration.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_ui_alignment_integration",
+    "entry": "res://tests/test_ui_alignment_integration.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_vault_mechanics",
+    "entry": "res://tests/test_vault_mechanics.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "test_wall_door_verification",
+    "entry": "res://tests/test_wall_door_verification.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "text_content_test",
+    "entry": "res://tests/text_content_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "tmp_flash_dir",
+    "entry": "res://tests/tmp_flash_dir.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "tmp_lighting_state",
+    "entry": "res://tests/tmp_lighting_state.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "tmp_startup_profile_entry",
+    "entry": "res://tests/tmp_startup_profile_entry.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "tracer_step_coalescing_test",
+    "entry": "res://tests/tracer_step_coalescing_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "tutorial_room_direct_flow_test",
+    "entry": "res://tests/tutorial_room_direct_flow_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "tutorial_room_flow_test",
+    "entry": "res://tests/tutorial_room_flow_test.tscn",
+    "entry_kind": "scene",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "tutorial_room_layout_test",
+    "entry": "res://tests/tutorial_room_layout_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "verify_wall_segment_mesh",
+    "entry": "res://tests/verify_wall_segment_mesh.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "wall_shadow_batch_candidate",
+    "entry": "res://tests/wall_shadow_batch_candidate.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "wall_shadow_batch_perf",
+    "entry": "res://tests/wall_shadow_batch_perf.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "name": "weapon_snapshot_pose_test",
+    "entry": "res://tests/weapon_snapshot_pose_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Requires rendered frame/image or explicit headless refusal; GPU must run serially.",
+    "missing_references": []
+  },
+  {
+    "name": "window_sunlight_parity_test",
+    "entry": "res://tests/window_sunlight_parity_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "world_render_contribution_profile",
+    "entry": "res://tests/world_render_contribution_profile.gd",
+    "entry_kind": "script",
+    "classification": "diagnostic",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Capture, benchmark, profiler, preview, scratch or one-off diagnostic; outside assertion regression suite.",
+    "missing_references": []
+  },
+  {
+    "missing_references": [],
+    "user_args": [],
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "entry": "res://tests/passive_npc_dialogue_test.gd",
+    "name": "passive_npc_dialogue_test",
+    "reason": "Passive and active NPC triggers, growth, progression, cancellation and speaker tail bounds."
+  },
+  {
+    "missing_references": [],
+    "user_args": [],
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "entry": "res://tests/passive_npc_dialogue_delivery.gd",
+    "name": "passive_npc_dialogue_delivery",
+    "reason": "Actual Main GPU Camera delivery, rendered frames and normal input flow."
+  }
+]

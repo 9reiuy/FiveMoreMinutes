@@ -1,0 +1,67 @@
+{
+	"A1/1001": {
+		"rng_state": "-5953039411731452047",
+		"sha256": "a8f9d396eeb46ddffd94801baeb1f784993fd65116703168b001fc269d1d7c7e"
+	},
+	"A1/41001": {
+		"rng_state": "2216166279286896817",
+		"sha256": "7f24f2cdd3f2752e9fd554f74d1dee99ced5ccd5d827e83d2396dc946b5d26a7"
+	},
+	"A1/73013": {
+		"rng_state": "-3858057329386339027",
+		"sha256": "da5d83e9d0a3ceb9a3b02fa4229e47caac82182436687d87cc4ebf7b915eaea2"
+	},
+	"A1/98271": {
+		"rng_state": "-3764165981229760033",
+		"sha256": "e06fe77c1d7fa0cba63008bd816c313385c69ce7d93eb7c01e5eebf2f0d929d0"
+	},
+	"B2/1001": {
+		"rng_state": "-5953039411731452047",
+		"sha256": "2a58cb2cf2701c5cc85ae14fc2f696a0b91f27c5c8735c9f136bf1f060f30c12"
+	},
+	"B2/41001": {
+		"rng_state": "2216166279286896817",
+		"sha256": "810f0f78b0f5a147daac3a28deb1e7d1529ba28097072c32a329c543ac516417"
+	},
+	"B2/73013": {
+		"rng_state": "-3858057329386339027",
+		"sha256": "a8b1bd66c242a08bdab73ad3b78c599515f933c2096fe61632c0d282cb2a07af"
+	},
+	"B2/98271": {
+		"rng_state": "-3764165981229760033",
+		"sha256": "ed63ea41c4a66a5cc3f6d8eab157dfccf1a429d59861e1920cf2a89b45fbb29a"
+	},
+	"C3/1001": {
+		"rng_state": "-5953039411731452047",
+		"sha256": "03336a6e68e610604ce34c73e7f3babaa4f1655a1effce498e30f5d26ea24332"
+	},
+	"C3/41001": {
+		"rng_state": "2216166279286896817",
+		"sha256": "7166c39858ea1c5cef0732658868d67f3e3ad259dbe1d80cd852511462bf5443"
+	},
+	"C3/73013": {
+		"rng_state": "-3858057329386339027",
+		"sha256": "13dc5890a5c53ed4772e0b463b1882eff06be0701e0204a04f88060349884e3f"
+	},
+	"C3/98271": {
+		"rng_state": "-3764165981229760033",
+		"sha256": "7ee3960802bb2367dcff52b9003a60c902c9901c84ca73bd2d2c439f32a36474"
+	},
+	"V3/1001": {
+		"rng_state": "-5953039411731452047",
+		"sha256": "a2089cc0dffe1f5ac20107a73c28af1597c5d0e0ab5415c8c3f2fe5131e76f42"
+	},
+	"V3/41001": {
+		"rng_state": "2216166279286896817",
+		"sha256": "239e91ff1e80b6af871ce6cedd24948e6acd92d47074d961195ca74fb4afb421"
+	},
+	"V3/73013": {
+		"rng_state": "-3858057329386339027",
+		"sha256": "a6400ae221148b0cbcdb01be7acfece278d3cc598767a524d0ea8b281954ce7c"
+	},
+	"V3/98271": {
+		"rng_state": "-3764165981229760033",
+		"sha256": "399ccae1ddb467e17894bb75458e76df990531bf1dd221e27eb735d994feb4e8"
+	},
+	"_baseline_revision": "2026-10-14: V3 crosshall endpoint must be open; A1/B2/C3 snapshots and caller RNG retained. Prior fixture is preserved in the task before directory."
+}

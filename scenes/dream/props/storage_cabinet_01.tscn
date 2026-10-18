@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://bpwxoglyxlqpc"]
+
+[ext_resource type="Script" uid="uid://cgfu5l2dw3fmj" path="res://scenes/dream/rooms/chair_01.gd" id="1_prop"]
+[ext_resource type="Script" uid="uid://c1hu82nwl5nkd" path="res://scenes/dream/rooms/hurtbox.gd" id="2_hurtbox"]
+[ext_resource type="PackedScene" uid="uid://wut2aqnodrrw" path="res://scenes/dream/effects/shatter_piece.tscn" id="3_shatter"]
+[ext_resource type="Texture2D" path="res://resources/dream_props/storage_cabinet_01_texture.tres" id="4_texture"]
+[ext_resource type="Texture2D" uid="uid://db6lxcmlv1yh5" path="res://art/Dream/shadow.png" id="5_shadow"]
+
+[sub_resource type="RectangleShape2D" id="BodyShape"]
+size = Vector2(40, 16)
+
+[sub_resource type="RectangleShape2D" id="HurtShape"]
+size = Vector2(44, 64)
+
+[node name="StorageCabinet01" type="RigidBody2D" unique_id=1529738300 groups=["damageable_props", "pushable_prop"]]
+editor_description = "可直接拖入Room/YSortRoot/PropsRoot的重型储物书柜。"
+collision_layer = 8
+collision_mask = 15
+mass = 8.0
+gravity_scale = 0.0
+angular_damp = 9.0
+linear_damp = 9.0
+script = ExtResource("1_prop")
+max_hp = 100.0
+furniture_size_category = 3
+bullet_knockback = 45.0
+books_drop_category = "cabinet"
+shatter_piece_scene = ExtResource("3_shatter")
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=1566458805]
+modulate = Color(1, 1, 1, 0.45)
+z_index = -1
+position = Vector2(0, -7)
+scale = Vector2(1.45, 0.55)
+texture = ExtResource("5_shadow")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=928264923]
+texture_filter = 1
+position = Vector2(0, -32)
+texture = ExtResource("4_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=146607030]
+position = Vector2(0, -8)
+shape = SubResource("BodyShape")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1451590516 groups=["damage_hurtboxes"]]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("2_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1666545876]
+position = Vector2(0, -32)
+shape = SubResource("HurtShape")
+
+[node name="HitParticles" type="CPUParticles2D" parent="." unique_id=1691047706]
+position = Vector2(0, -32)
+emitting = false
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+lifetime_randomness = 0.8
+spread = 180.0
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+scale_amount_max = 3.0

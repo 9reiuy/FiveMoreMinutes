@@ -1,0 +1,41 @@
+{
+  "root": "E:\\Agent\\5MinuteMore\\5min more",
+  "files": [
+    {
+      "relative": "art/Dream/GUNS.png.import",
+      "bytes": 925,
+      "modified_ms": 1787306082069.6887,
+      "reason": "orphan_metadata_source_absent"
+    },
+    {
+      "relative": "tests/night_seed_41001.png.import",
+      "bytes": 958,
+      "modified_ms": 1787933681866.3052,
+      "reason": "orphan_metadata_source_absent"
+    },
+    {
+      "relative": "tests/night_seed_41002.png.import",
+      "bytes": 958,
+      "modified_ms": 1787933681850.2417,
+      "reason": "orphan_metadata_source_absent"
+    },
+    {
+      "relative": "tests/night_seed_41003.png.import",
+      "bytes": 958,
+      "modified_ms": 1787933681849.2417,
+      "reason": "orphan_metadata_source_absent"
+    },
+    {
+      "relative": "tests/night_seed_41004.png.import",
+      "bytes": 958,
+      "modified_ms": 1787933681851.2449,
+      "reason": "orphan_metadata_source_absent"
+    },
+    {
+      "relative": "tests/night_seed_41005.png.import",
+      "bytes": 957,
+      "modified_ms": 1787933681868.8357,
+      "reason": "orphan_metadata_source_absent"
+    }
+  ]
+}

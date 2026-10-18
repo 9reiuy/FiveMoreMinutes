@@ -1,0 +1,139 @@
+[gd_scene format=3 uid="uid://dtx3g77ld73p2"]
+
+[ext_resource type="Script" uid="uid://y3o3ahwkppkq" path="res://scripts/entities/employee_enemy.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://df3k48ifj3gue" path="res://art/Dream/enemy/Employee_men_32x32.png" id="2_employee_atlas"]
+[ext_resource type="Texture2D" uid="uid://2w16e5q2moka" path="res://art/Dream/weapons/Guns/Luger.png" id="6_guns"]
+[ext_resource type="Texture2D" uid="uid://db6lxcmlv1yh5" path="res://art/Dream/shadow.png" id="7_shadow"]
+[ext_resource type="Script" uid="uid://c1hu82nwl5nkd" path="res://scenes/dream/rooms/hurtbox.gd" id="8_hurtbox"]
+
+[sub_resource type="AtlasTexture" id="Atlas_employee_left_foot"]
+atlas = ExtResource("2_employee_atlas")
+region = Rect2(108, 12, 4, 9)
+
+[sub_resource type="AtlasTexture" id="Atlas_employee_right_foot"]
+atlas = ExtResource("2_employee_atlas")
+region = Rect2(113, 12, 4, 9)
+
+[sub_resource type="AtlasTexture" id="Atlas_employee_head_open"]
+atlas = ExtResource("2_employee_atlas")
+region = Rect2(32, 0, 28, 32)
+
+[sub_resource type="AtlasTexture" id="Atlas_employee_body"]
+atlas = ExtResource("2_employee_atlas")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="Atlas_employee_left_hand"]
+atlas = ExtResource("2_employee_atlas")
+region = Rect2(134, 15, 5, 4)
+
+[sub_resource type="AtlasTexture" id="Atlas_employee_right_hand"]
+atlas = ExtResource("2_employee_atlas")
+region = Rect2(149, 15, 5, 4)
+
+[sub_resource type="CircleShape2D" id="Circle_body"]
+radius = 7.0
+
+[sub_resource type="CapsuleShape2D" id="Capsule_hurt"]
+radius = 14.0
+height = 46.0
+
+[node name="EmployeeEnemy" type="CharacterBody2D" unique_id=2034524372 groups=["dream_enemies", "employee_enemies"]]
+collision_layer = 2
+collision_mask = 47
+script = ExtResource("1_script")
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=855868071]
+modulate = Color(0, 0, 0, 0.42)
+z_index = -4
+position = Vector2(0, 3)
+scale = Vector2(0.42, 0.18)
+texture = ExtResource("7_shadow")
+
+[node name="CharacterVisual" type="Node2D" parent="." unique_id=62684786]
+# Keep the complete actor in the room YSort band.  Internal part order is
+# defined by scene order so furniture/door foreground can still occlude it.
+z_index = 0
+scale = Vector2(1, 1)
+
+[node name="LeftFoot" type="Sprite2D" parent="CharacterVisual" unique_id=1736521119]
+texture_filter = 1
+position = Vector2(-5, -9)
+texture = SubResource("Atlas_employee_left_foot")
+centered = false
+
+[node name="RightFoot" type="Sprite2D" parent="CharacterVisual" unique_id=612057715]
+texture_filter = 1
+position = Vector2(0, -9)
+texture = SubResource("Atlas_employee_right_foot")
+centered = false
+
+[node name="BodyPivot" type="Node2D" parent="CharacterVisual" unique_id=924750652]
+position = Vector2(0, -16)
+
+[node name="Head" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=12791404]
+texture_filter = 1
+position = Vector2(-16, -20)
+texture = SubResource("Atlas_employee_head_open")
+centered = false
+
+[node name="Body" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=770622389]
+texture_filter = 1
+position = Vector2(-16, -8)
+texture = SubResource("Atlas_employee_body")
+centered = false
+
+[node name="LeftHand" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=1305427289]
+texture_filter = 1
+position = Vector2(-11, 7)
+texture = SubResource("Atlas_employee_left_hand")
+centered = false
+
+[node name="RightHand" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=2059038695]
+texture_filter = 1
+position = Vector2(4, 7)
+texture = SubResource("Atlas_employee_right_hand")
+centered = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=743213129]
+position = Vector2(0, -3)
+shape = SubResource("Circle_body")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1873951874 groups=["damage_hurtboxes"]]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("8_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1089307207]
+position = Vector2(0, -28)
+shape = SubResource("Capsule_hurt")
+
+[node name="WeaponRoot" type="Node2D" parent="." unique_id=1541243003]
+z_index = 0
+position = Vector2(0, -18)
+
+[node name="WeaponMotion" type="Node2D" parent="WeaponRoot" unique_id=579695573]
+
+[node name="ReloadVisualPivot" type="Node2D" parent="WeaponRoot/WeaponMotion" unique_id=16604454]
+
+[node name="HeldWeaponSprite" type="Sprite2D" parent="WeaponRoot/WeaponMotion/ReloadVisualPivot" unique_id=346715719]
+texture_filter = 1
+position = Vector2(11, 0)
+texture = ExtResource("6_guns")
+
+[node name="ProjectileOrigin" type="Marker2D" parent="WeaponRoot/WeaponMotion" unique_id=941523060]
+position = Vector2(15, 0)
+
+[node name="MeleeTrail" type="Line2D" parent="WeaponRoot" unique_id=938904380]
+visible = false
+texture_filter = 1
+joint_mode = 1
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="EmojiAnchor" type="Marker2D" parent="." unique_id=1006015498]
+position = Vector2(0, -62)
+
+[node name="EmojiSprite" type="Sprite2D" parent="EmojiAnchor" unique_id=1857743470]
+visible = false
+texture_filter = 1

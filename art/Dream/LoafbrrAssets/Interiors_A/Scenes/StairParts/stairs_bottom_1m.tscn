@@ -1,0 +1,70 @@
+[gd_scene load_steps=6 format=4 uid="uid://mv5r7k6i3vx0"]
+
+[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres" id="1_gdvuy"]
+[ext_resource type="Material" uid="uid://ckp17uxivi87k" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_B_Mat.tres" id="2_gn3kn"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_b2by7"]
+_surfaces = [{
+"aabb": AABB(-0.5, -0.2, -0.000498652, 1, 0.2, 1e-05),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"name": "Surface_Floor_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("//8AAAAAAAAAAP//AAAAAP///v8AAAAAAAAAAAAAAAA=")
+}, {
+"aabb": AABB(-0.5, -0.2, -0.199996, 1, 0.199998, 0.2),
+"format": 34896613377,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAAADAAEAAwAAAAQAAwAEAAUA"),
+"name": "Surface_Ceiling_B",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("/v8AAP7/AAAAAAAAWv8AAP7/AABa/wAAAAAAAP//AAD///7/AAAAAAAA//8AAAAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_livsj"]
+resource_name = "Interiors_A_Stairs_Bottom_1m"
+_surfaces = [{
+"aabb": AABB(-0.5, -0.2, -0.000498652, 1, 0.2, 1e-05),
+"attribute_data": PackedByteArray("AAD//1t1AIBbdf//AAAAgA=="),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"material": ExtResource("1_gdvuy"),
+"name": "Surface_Floor_A",
+"primitive": 3,
+"uv_scale": Vector4(0.399886, 1.99992, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("//8AAAAA/78AAP//AAD/v////v8AAP+/AAAAAAAA/7//////////////////////")
+}, {
+"aabb": AABB(-0.5, -0.2, -0.199996, 1, 0.199998, 0.2),
+"attribute_data": PackedByteArray("K5Dz9wGA+bsrkPP3AYD5uwGA/v///4j3AYCI9/////8="),
+"format": 34896613399,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUA"),
+"material": ExtResource("2_gn3kn"),
+"name": "Surface_Ceiling_B",
+"primitive": 3,
+"uv_scale": Vector4(1.97565, 2.13403, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("/v8AAP7//78AAAAAWv//v/7/AABa//+/AAAAAP///78AAAAA////H////v8AAP8fAAD//wAA/x/+/wAA/v//H////3////9/////f////38AAP9/AAD/fwAA/38AAP9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_b2by7")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_6jf2e"]
+data = PackedVector3Array(0.5, -0.2, 3.09944e-06, -0.5, -0.2, -0.000498652, 0.5, -0.2, -0.000498652, 0.5, -0.2, 3.09944e-06, -0.5, -0.2, 3.57628e-06, -0.5, -0.2, -0.000498652, -0.5, -0.2, 3.57628e-06, 0.5, -1.62423e-06, -0.199996, -0.5, -1.60933e-06, -0.199996, -0.5, -0.2, 3.57628e-06, 0.5, -0.2, 3.09944e-06, 0.5, -1.62423e-06, -0.199996, 0.5, -0.2, -0.000498652, -0.5, 0, -0.000498652, 0.5, -1.49012e-08, -0.000498652, 0.5, -0.2, -0.000498652, -0.5, -0.2, -0.000498652, -0.5, 0, -0.000498652)
+
+[node name="Stairs_Bottom_1m" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_livsj")
+skeleton = NodePath("")
+
+[node name="Stairs_Bottom_1m" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stairs_Bottom_1m"]
+shape = SubResource("ConcavePolygonShape3D_6jf2e")

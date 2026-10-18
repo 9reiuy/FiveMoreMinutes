@@ -1,0 +1,26 @@
+[gd_resource type="ShaderMaterial" load_steps=6 format=3 uid="uid://cjg55dhp2epy1"]
+
+[ext_resource type="Shader" uid="uid://h2l28y3y2r2v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/ORM_Shader_Cull_Back.gdshader" id="1_8ke6r"]
+[ext_resource type="Texture2D" uid="uid://brjymog5fib7f" path="res://Assets/LoafbrrAssets/Interiors_A/texture/MiscTrim/MiscTrim_Diffuse_2K.png" id="2_y8p67"]
+[ext_resource type="Texture2D" uid="uid://dirfjmynn8ujj" path="res://Assets/LoafbrrAssets/Interiors_A/texture/MiscTrim/MiscTrim_Emission_2K.png" id="3_gogwe"]
+[ext_resource type="Texture2D" uid="uid://bd0o0f2m3kn6w" path="res://Assets/LoafbrrAssets/Interiors_A/texture/MiscTrim/MiscTrim_Normal_2K.png" id="4_aw5gf"]
+[ext_resource type="Texture2D" uid="uid://odtfkaly8g7e" path="res://Assets/LoafbrrAssets/Interiors_A/texture/MiscTrim/MiscTrim_ORM_2K.png" id="5_t6s8k"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_8ke6r")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/texture_albedo = ExtResource("2_y8p67")
+shader_parameter/texture_orm = ExtResource("5_t6s8k")
+shader_parameter/alpha_scissor_threshold = 0.9
+shader_parameter/roughness = 1.0
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 1.0
+shader_parameter/texture_normal = ExtResource("4_aw5gf")
+shader_parameter/normal_scale = 1.0
+shader_parameter/ao_light_affect = 0.0
+shader_parameter/texture_emission = ExtResource("3_gogwe")
+shader_parameter/emission = Color(1, 1, 1, 1)
+shader_parameter/emission_energy = 10.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)

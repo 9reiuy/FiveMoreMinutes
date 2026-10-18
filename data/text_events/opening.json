@@ -1,0 +1,19 @@
+{
+  "events": [
+    {
+      "id": "opening_first_night",
+      "lines": [
+        {"text": "星期一。", "position": "bottom", "alignment": "center", "typewriter_speed": 0.05, "pre_delay": 0.25, "post_delay": 0.0, "fade_in": 0.0, "fade_out": 0.0, "wait_for_input": true, "auto_continue": false, "text_color": "#C4C0C3", "font_size": 20, "blip": true},
+        {"text": "你已经连续三天没有睡好。", "position": "bottom", "alignment": "center", "typewriter_speed": 0.05, "pre_delay": 0.0, "post_delay": 0.0, "fade_in": 0.0, "fade_out": 0.0, "wait_for_input": true, "auto_continue": false, "text_color": "#C4C0C3", "font_size": 20, "blip": true},
+        {"text": "明天早上必须准时上班。", "position": "bottom", "alignment": "center", "typewriter_speed": 0.05, "pre_delay": 0.0, "post_delay": 0.0, "fade_in": 0.0, "fade_out": 0.0, "wait_for_input": true, "auto_continue": false, "text_color": "#C4C0C3", "font_size": 20, "blip": true},
+        {"text": "你决定今晚早点睡。", "position": "bottom", "alignment": "center", "typewriter_speed": 0.05, "pre_delay": 0.0, "post_delay": 0.0, "fade_in": 0.0, "fade_out": 0.0, "wait_for_input": true, "auto_continue": false, "text_color": "#C4C0C3", "font_size": 20, "blip": true}
+      ]
+    },
+    {
+      "id": "common_missing_event",
+      "lines": [
+        {"text": "……", "position": "center", "alignment": "center", "typewriter_speed": 0.05, "pre_delay": 0.0, "post_delay": 0.0, "fade_in": 0.0, "fade_out": 0.0, "wait_for_input": true, "auto_continue": false, "text_color": "#C4C0C3", "font_size": 20, "blip": false}
+      ]
+    }
+  ]
+}

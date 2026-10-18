@@ -1,5 +1,11 @@
 extends Node2D
 
+## Passive presentation sync; only the real effect advances its lifetime.
+func copy_depth_visual_state_to(target: Node2D) -> void:
+	target.set("elapsed", elapsed)
+	target.set("frame_duration", frame_duration)
+	target.queue_redraw()
+
 ## 弹丸类武器的 SP402 序列帧子特效：在发射点完整播放 SP402_01..05 五帧。
 ## 弹丸实体本体飞行时保持首帧（SP402_01）常驻，本特效独立播放后续动画，
 ## 播放进度只由自身计时驱动，不阻塞武器下一发开火（射速仍由攻击间隔控制）。

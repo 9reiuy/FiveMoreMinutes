@@ -1,0 +1,447 @@
+{
+  "root": "E:\\Agent\\5MinuteMore\\5min more",
+  "total": {
+    "files": 23712,
+    "bytes": 2032886442
+  },
+  "metadata_entries": 24228,
+  "cache_findings": [],
+  "top_directories": [
+    {
+      "path": ".codex",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".godot",
+      "files": 11932,
+      "bytes": 682663619
+    },
+    {
+      "path": ".godot-test-user",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".godot_cli_user",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".godot_runtime_check",
+      "files": 120,
+      "bytes": 42892022
+    },
+    {
+      "path": ".godot_runtime_latest",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".godot_user_lighting",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".godot_user_lighting2",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".godot_user_ui_render",
+      "files": 6,
+      "bytes": 992555
+    },
+    {
+      "path": ".godot_user_ui_shape",
+      "files": 1,
+      "bytes": 97
+    },
+    {
+      "path": ".runtime/appdata",
+      "files": 115,
+      "bytes": 442692269
+    },
+    {
+      "path": ".runtime/approved_art_capture",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/ballistics_review",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/character_projection",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/compact_review",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/crash_diagnostics",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/dither_formal",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/elevator_loading_20261012",
+      "files": 6,
+      "bytes": 557338
+    },
+    {
+      "path": ".runtime/face_art",
+      "files": 43,
+      "bytes": 5327723
+    },
+    {
+      "path": ".runtime/firearm_revision_visual",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/firearm_vfx_review",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/flank_preview",
+      "files": 2,
+      "bytes": 353385
+    },
+    {
+      "path": ".runtime/furniture_face_review",
+      "files": 8,
+      "bytes": 1408852
+    },
+    {
+      "path": ".runtime/kenney_furniture_20260921",
+      "files": 1546,
+      "bytes": 17671416
+    },
+    {
+      "path": ".runtime/legacy_2d_cleanup_20261001",
+      "files": 1,
+      "bytes": 22312
+    },
+    {
+      "path": ".runtime/lighting_20260915_ab",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_final",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_lounge",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_wall_aim",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_wall_diag",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_wall_isolate",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_wall_measure",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_wall_probe",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_wall_single_map",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_wall_state",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_20260915_wall_sync",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_refinement_20260914",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_refinement_20260914_delivery",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_refinement_20260914_final",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/lighting_refinement_20260914_seed7777",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/localappdata",
+      "files": 1,
+      "bytes": 3269297
+    },
+    {
+      "path": ".runtime/low_pixel",
+      "files": 1,
+      "bytes": 849
+    },
+    {
+      "path": ".runtime/map_rotation_review",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/nyangeon_reference",
+      "files": 6,
+      "bytes": 7521
+    },
+    {
+      "path": ".runtime/pixel_shadow",
+      "files": 1,
+      "bytes": 461
+    },
+    {
+      "path": ".runtime/progression_fixes",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/projectile_trail_review",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/quiet_art",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/random_office",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/room_dressing",
+      "files": 1,
+      "bytes": 128638
+    },
+    {
+      "path": ".runtime/sample_size_review",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/skeleton_custom",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/task018_clip",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/task45",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/unified_pixel_clip",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": ".runtime/unused_asset_cleanup_20261002",
+      "files": 1,
+      "bytes": 25929
+    },
+    {
+      "path": ".runtime",
+      "files": 1751,
+      "bytes": 472893421
+    },
+    {
+      "path": "5min more",
+      "files": 4,
+      "bytes": 20694
+    },
+    {
+      "path": "art",
+      "files": 5511,
+      "bytes": 376873279
+    },
+    {
+      "path": "assets",
+      "files": 56,
+      "bytes": 14280252
+    },
+    {
+      "path": "build",
+      "files": 1,
+      "bytes": 345696736
+    },
+    {
+      "path": "data",
+      "files": 55,
+      "bytes": 2277363
+    },
+    {
+      "path": "docs",
+      "files": 81,
+      "bytes": 5133805
+    },
+    {
+      "path": "export_templates",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": "feature_profiles",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": "Godot",
+      "files": 2,
+      "bytes": 1054
+    },
+    {
+      "path": "materials",
+      "files": 23,
+      "bytes": 11622
+    },
+    {
+      "path": "resources",
+      "files": 11,
+      "bytes": 26848
+    },
+    {
+      "path": "runtime_user",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": "scenes",
+      "files": 102,
+      "bytes": 226958
+    },
+    {
+      "path": "scripts",
+      "files": 419,
+      "bytes": 3009402
+    },
+    {
+      "path": "script_templates",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": "sfx",
+      "files": 105,
+      "bytes": 54879597
+    },
+    {
+      "path": "shaders",
+      "files": 102,
+      "bytes": 92543
+    },
+    {
+      "path": "tests",
+      "files": 3390,
+      "bytes": 30545721
+    },
+    {
+      "path": "text_editor_themes",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": "tmp",
+      "files": 2,
+      "bytes": 1802
+    },
+    {
+      "path": "tools",
+      "files": 29,
+      "bytes": 341092
+    }
+  ],
+  "skipped": [
+    {
+      "path": ".codex-worktrees",
+      "reason": "version_control_or_worktree_not_traversed",
+      "children": [
+        "corridor",
+        "door",
+        "pillar"
+      ]
+    },
+    {
+      "path": ".codex-worktrees-real",
+      "reason": "version_control_or_worktree_not_traversed",
+      "children": [
+        "corridor",
+        "door",
+        "pillar",
+        "repo.git"
+      ]
+    },
+    {
+      "path": ".git",
+      "reason": "version_control_or_worktree_not_traversed",
+      "children": [
+        "COMMIT_EDITMSG",
+        "config",
+        "description",
+        "HEAD",
+        "hooks",
+        "index",
+        "info",
+        "logs",
+        "objects",
+        "refs"
+      ]
+    },
+    {
+      "path": "5min more/.codex-worktrees",
+      "reason": "version_control_or_worktree_not_traversed",
+      "children": [
+        "corridor",
+        "door"
+      ]
+    }
+  ],
+  "scope": "All non-worktree directories; names and sizes only. No source or saved-data content read."
+}

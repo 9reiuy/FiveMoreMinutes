@@ -50,14 +50,9 @@ static func apply_early_wake_stress(summary: Dictionary, meta: Dictionary, confi
 
 
 static func _apply_weapon_unlocks(meta: Dictionary, status: String) -> Array[String]:
-	var unlocked: Array[String] = []
-	if status in ["轻微迟到", "严重迟到"] and not bool(meta.get("beam_weapon_unlocked", false)):
-		meta.beam_weapon_unlocked = true
-		unlocked.append("光束武器")
-	elif status == "旷工" and not bool(meta.get("katana_unlocked", false)):
-		meta.katana_unlocked = true
-		unlocked.append("太刀")
-	return unlocked
+	# Deleted weapons are no longer granted by attendance; the remaining unlock
+	# flow is unchanged.
+	return []
 
 
 static func _check_high_stress_unemployment(meta: Dictionary, config: DemoConfig) -> bool:
@@ -114,7 +109,6 @@ static func settle(summary: Dictionary, meta: Dictionary, config: DemoConfig) ->
 	if ending_triggered:
 		meta.normal_life_ending_unlocked = true
 		meta.any_ending_completed = true
-		meta.grenade_weapon_unlocked = true
 	summary.normal_attendance_workday_streak = streak
 	summary.normal_life_ending_triggered = ending_triggered
 	summary.wage_ratio = 0.0 if unemployed_now or is_sunday else ratio
@@ -124,19 +118,6 @@ static func settle(summary: Dictionary, meta: Dictionary, config: DemoConfig) ->
 	summary.total_ram = meta.ram
 	summary.total_balance = meta.balance
 	summary.settled = true
-	return summary
-
-
-static func settle_endless(summary: Dictionary, meta: Dictionary, config: DemoConfig) -> Dictionary:
-	if bool(summary.get("ram_settlement_committed", false)):
-		return summary
-	var completed_days := maxi(0, int(summary.get("completed_endless_days", 0)))
-	var run_ram := calculate_completed_day_ram(completed_days, config)
-	meta.ram = int(meta.get("ram", 0)) + run_ram
-	summary.completed_endless_days = completed_days
-	summary.run_ram = run_ram
-	summary.total_ram = int(meta.ram)
-	summary.ram_settlement_committed = true
 	return summary
 
 

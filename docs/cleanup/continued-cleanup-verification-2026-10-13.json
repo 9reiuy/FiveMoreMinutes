@@ -1,0 +1,29 @@
+{
+  "removed_file_count": 7594,
+  "removed_bytes": 247220223,
+  "remaining_targets": [],
+  "remaining_empty_targets": [],
+  "protected_exists": [
+    {
+      "path": "project.godot",
+      "exists": true
+    },
+    {
+      "path": "scenes/app/main.tscn",
+      "exists": true
+    },
+    {
+      "path": "art/Dream/dream_chr_32x32.png",
+      "exists": true
+    },
+    {
+      "path": ".runtime/appdata/Godot/app_userdata/Five Minutes More改版/game_settings.cfg",
+      "exists": true
+    },
+    {
+      "path": ".runtime/appdata/Godot/app_userdata/Five Minutes More改版/shader_cache",
+      "exists": true
+    }
+  ],
+  "runtime_tested": false
+}

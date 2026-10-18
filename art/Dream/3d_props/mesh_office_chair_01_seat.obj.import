@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bojqxsm4k7gcn"
+path="res://.godot/imported/mesh_office_chair_01_seat.obj-7637466cc0696788fdd587b6682ee6bc.mesh"
+
+[deps]
+
+files=["res://.godot/imported/mesh_office_chair_01_seat.obj-7637466cc0696788fdd587b6682ee6bc.mesh"]
+
+source_file="res://art/Dream/3d_props/mesh_office_chair_01_seat.obj"
+dest_files=["res://.godot/imported/mesh_office_chair_01_seat.obj-7637466cc0696788fdd587b6682ee6bc.mesh", "res://.godot/imported/mesh_office_chair_01_seat.obj-7637466cc0696788fdd587b6682ee6bc.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

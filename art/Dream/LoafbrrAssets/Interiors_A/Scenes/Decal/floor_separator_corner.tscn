@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=4 uid="uid://cli0iy75wwhkc"]
+
+[ext_resource type="Material" uid="uid://canwefv74vsd6" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres" id="1_hwvuj"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_n7jwv"]
+_surfaces = [{
+"aabb": AABB(-1, 0, -1, 1.03092, 0.0100067, 1.03092),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAwABAAQAAwACAAEAAAAFAAEABgAFAAAABgAAAAcABwAAAAgACAAAAAIABwAIAAkACAACAAoACwAKAAIACwACAAwA"),
+"name": "Door",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 13,
+"vertex_data": PackedByteArray("6/v//+v7AAAAAP//Y/MAAGPz//9j8wAAUfgAAJHwAAAAAAAAkfAAAAAA///r+wAAAAAAAP//AAD//wAA//8AAOv7//8AAAAA//8AAAAAAABj8///AAAAAJHwAAAAAAAAkfAAAFH4AAA=")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_kcm05"]
+resource_name = "Interiors_A_Floor_Separator_corner"
+_surfaces = [{
+"aabb": AABB(-1, 0, -1, 1.03092, 0.0100067, 1.03092),
+"attribute_data": PackedByteArray("2gBb+316RP/aAET/fXpb+9oARP99elv7fXpE/9oAW/t9elv72gBE/9oAW/t9ekT/2gBb+316RP/aAET/fXpb+9oARP99elv7fXpE/9oAW/t9elv72gBE/9oAW/t9ekT/"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUA"),
+"material": ExtResource("1_hwvuj"),
+"name": "Door",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("6/v//+v7qPoAAP//Y/P//2Pz//9j8w/6AAD//+v7//9R+AAAkfD//wAA//9j8///AAAAAJHw//9j8///Y/MP+gAAAAD/////6/v//+v7qPr//wAA//8h+QAA///r+///6/v//wAACdxj8///Y/MZ1mPz//8AAGnN6/v//+v7e9aR8AAAAADvxmPz//9j8xnWkfAAAFH478Zj8///AABpzf//AAD//4/X6/v//wAACdz//wAAAAAv4+v7///r+3vW/zUGB/9/rcu+ekrD/38vt/9/K9j/f63L/38r2L56SsP/fwiu/zUGB1UytAn/fy+3aK4soxiqFrMipbi1GKrwoV+ePsMYqhazX54+wyKluLWjqdaeaK4so/exD5wYqvCh")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_n7jwv")
+
+[node name="Floor_Separator_corner" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_kcm05")
+skeleton = NodePath("")

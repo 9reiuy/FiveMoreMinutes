@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dxcue4c843rpm"]
+
+[ext_resource type="Texture2D" uid="uid://cur60w2onhyrs" path="res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32.png" id="1_furniture_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trash"]
+atlas = ExtResource("1_furniture_atlas")
+region = Rect2(168, 388, 16, 26)
+filter_clip = true
+
+[resource]
+resource_name = "Dream Trash Can Pixel Region"
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("AtlasTexture_trash")
+texture_filter = 0
+texture_repeat = false

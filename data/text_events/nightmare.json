@@ -1,0 +1,11 @@
+{
+  "events": [
+    {
+      "id": "nightmare_early_death",
+      "lines": [
+        {"text": "闹钟还没响", "position": "center", "alignment": "center", "typewriter_speed": 0.055, "pre_delay": 0.3, "post_delay": 0.2, "fade_in": 0.1, "fade_out": 0.1, "wait_for_input": true, "auto_continue": false, "text_color": "#C4C0C3", "font_size": 20, "blip": true},
+        {"text": "今天又是一场噩梦", "position": "center", "alignment": "center", "typewriter_speed": 0.07, "pre_delay": 0.25, "post_delay": 0.5, "fade_in": 0.1, "fade_out": 0.1, "wait_for_input": true, "auto_continue": false, "text_color": "#C4C0C3", "font_size": 20, "blip": true}
+      ]
+    }
+  ]
+}

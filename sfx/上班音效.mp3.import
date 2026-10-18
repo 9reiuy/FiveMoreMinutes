@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/上班音效.mp3-197b6b9a41feeefaa2e48c54cc27
 [params]
 
 loop=false
-loop_offset=0
-bpm=0
+loop_offset=0.0
+bpm=0.0
 beat_count=0
 bar_beats=4

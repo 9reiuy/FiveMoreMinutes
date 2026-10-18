@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://shaders/dream3d/interiors_a_door_pixel_light.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_B.png" id="2_door"]
+
+[resource]
+resource_name = "Interiors A Door B pixel lighting"
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/albedo_texture = ExtResource("2_door")

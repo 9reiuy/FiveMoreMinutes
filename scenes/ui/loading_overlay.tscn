@@ -1,0 +1,98 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/loading_overlay.gd" id="1_loading"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.04, 0.05, 0.08, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.35, 0.45, 0.8)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+bg_color = Color(0.25, 0.85, 0.65, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[node name="LoadingOverlay" type="CanvasLayer"]
+layer = 120
+script = ExtResource("1_loading")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Background" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.015, 0.018, 0.028, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="Root/CenterContainer"]
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="TitleContainer" type="HBoxContainer" parent="Root/CenterContainer/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Root/CenterContainer/VBox/TitleContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "梦 境 构 建 中 // ENTERING THE DREAM"
+horizontal_alignment = 1
+
+[node name="Dots" type="Label" parent="Root/CenterContainer/VBox/TitleContainer"]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "..."
+
+[node name="ProgressBar" type="ProgressBar" parent="Root/CenterContainer/VBox"]
+custom_minimum_size = Vector2(320, 10)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
+value = 15.0
+show_percentage = false
+
+[node name="StatusLabel" type="Label" parent="Root/CenterContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.75, 0.85, 0.9)
+theme_override_font_sizes/font_size = 11
+text = "正在构建宅邸空间拓扑..."
+horizontal_alignment = 1
+
+[node name="PercentLabel" type="Label" parent="Root/CenterContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.55, 0.65, 0.8)
+theme_override_font_sizes/font_size = 10
+text = "15%"
+horizontal_alignment = 1

@@ -1,0 +1,95 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/debug/transition_showcase.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/ui/transition_director.gd" id="2_director"]
+
+[node name="TransitionShowcase" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="SceneContainer" type="Node" parent="."]
+
+[node name="TransitionLayer" type="CanvasLayer" parent="."]
+layer = 40
+
+[node name="TransitionDirector" type="Control" parent="TransitionLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_director")
+
+[node name="DitherRect" type="ColorRect" parent="TransitionLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="BaselineFade" type="ColorRect" parent="TransitionLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 50
+
+[node name="Panel" type="PanelContainer" parent="UILayer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 60.0
+grow_horizontal = 2
+
+[node name="VBox" type="VBoxContainer" parent="UILayer/Panel"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="UILayer/Panel/VBox"]
+layout_mode = 2
+text = "当前场景: 卧室 | 状态: 待命"
+
+[node name="ButtonRow" type="HBoxContainer" parent="UILayer/Panel/VBox"]
+layout_mode = 2
+
+[node name="BtnMaskA" type="Button" parent="UILayer/Panel/VBox/ButtonRow"]
+layout_mode = 2
+text = "[1] 双向尖锐三角(参考图同款)"
+
+[node name="BtnMaskB" type="Button" parent="UILayer/Panel/VBox/ButtonRow"]
+layout_mode = 2
+text = "[2] 斜向尖锐三角推进"
+
+[node name="BtnMaskC" type="Button" parent="UILayer/Panel/VBox/ButtonRow"]
+layout_mode = 2
+text = "[3] 径向向心三角侵蚀"
+
+[node name="BtnDither" type="Button" parent="UILayer/Panel/VBox/ButtonRow"]
+layout_mode = 2
+text = "[4] Bayer消融"
+
+[node name="BtnCrt" type="Button" parent="UILayer/Panel/VBox/ButtonRow"]
+layout_mode = 2
+text = "[5] CRT关机"
+
+[node name="BtnBaseline" type="Button" parent="UILayer/Panel/VBox/ButtonRow"]
+layout_mode = 2
+text = "[6] 原生淡出"
+
+[node name="BtnSwap" type="Button" parent="UILayer/Panel/VBox/ButtonRow"]
+layout_mode = 2
+text = "[空格] 换景"

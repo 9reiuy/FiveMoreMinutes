@@ -1,0 +1,71 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/dream/rooms/chair_01.gd" id="1_prop"]
+[ext_resource type="Script" path="res://scenes/dream/rooms/hurtbox.gd" id="2_hurtbox"]
+[ext_resource type="PackedScene" path="res://scenes/dream/effects/shatter_piece.tscn" id="3_shatter"]
+[ext_resource type="Texture2D" path="res://art/Dream/things/jiaju.png" id="4_texture"]
+[ext_resource type="Texture2D" path="res://art/Dream/shadow.png" id="5_shadow"]
+
+[sub_resource type="RectangleShape2D" id="BodyShape"]
+size = Vector2(22, 14)
+
+[sub_resource type="RectangleShape2D" id="HurtShape"]
+size = Vector2(27, 48)
+
+[node name="SideTable01" type="RigidBody2D" groups=["damageable_props", "pushable_prop"]]
+editor_description = "jiaju.png 侧着的桌子；长边按实际横向视觉占地配置。"
+collision_layer = 8
+collision_mask = 15
+mass = 3.0
+gravity_scale = 0.0
+angular_damp = 9.0
+linear_damp = 8.0
+script = ExtResource("1_prop")
+max_hp = 50.0
+furniture_size_category = 2
+vaultable = true
+bullet_knockback = 70.0
+books_drop_category = "table"
+shatter_piece_scene = ExtResource("3_shatter")
+shatter_size = 12
+
+[node name="Shadow" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.45)
+z_index = -1
+position = Vector2(0, -7)
+scale = Vector2(0.9, 0.45)
+texture = ExtResource("5_shadow")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -24)
+texture = ExtResource("4_texture")
+region_enabled = true
+region_rect = Rect2(30, 140, 25, 48)
+region_filter_clip_enabled = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -7)
+shape = SubResource("BodyShape")
+
+[node name="Hurtbox" type="Area2D" parent="." groups=["damage_hurtboxes"]]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("2_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -24)
+shape = SubResource("HurtShape")
+
+[node name="HitParticles" type="CPUParticles2D" parent="."]
+position = Vector2(0, -24)
+emitting = false
+amount = 6
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+lifetime_randomness = 0.8
+spread = 180.0
+initial_velocity_min = 60.0
+initial_velocity_max = 120.0
+scale_amount_max = 3.0

@@ -1,0 +1,44 @@
+{
+  "events": [
+    {"id": "wake_normal", "lines": [
+      {"text": "闹钟停了。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "你及时坐了起来。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "今天还要去上班。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "去上班了。", "typewriter_speed": 0.05, "post_delay": 0.2, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true}
+    ]},
+    {"id": "wake_slightly_late", "lines": [
+      {"text": "闹钟响了一会儿。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "你匆忙坐了起来。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "还来得及赶过去。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "轻微迟到。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true}
+    ]},
+    {"id": "wake_severely_late", "lines": [
+      {"text": "闹钟已经响了很久。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "你看了一眼时间。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "今天又迟到了。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "严重迟到。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true}
+    ]},
+    {"id": "wake_absent", "lines": [
+      {"text": "房间里已经很亮。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "你终于睁开了眼睛。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "今天不用再赶了。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "旷工。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true}
+    ]},
+    {"id": "wake_sunday", "lines": [{"text": "今天是休息日，我需要找点有意义的事情做", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true}]},
+    {"id": "wake_unemployed", "lines": [
+      {"text": "手机没有再响。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "今天也没有工作。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true}
+    ]},
+    {"id": "weapon_unlock_notice", "lines": [{"text": "{weapon_name}已永久解锁。", "typewriter_speed": 0.05, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true}]},
+    {"id": "unemployment_notice", "lines": [
+      {"text": "项目组发来了终止合作通知。", "typewriter_speed": 0.055, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true},
+      {"text": "你失业了。", "typewriter_speed": 0.07, "post_delay": 0.4, "text_color": "#C4C0C3", "font_size": 20, "wait_for_input": true, "blip": true}
+    ]},
+    {"id": "shotgun_unlock_bedroom_notice", "lines": [{"text": "霰弹枪已永久解锁。", "typewriter_speed": 0.04, "text_color": "#D3E0E8", "font_size": 18, "wait_for_input": true, "blip": true}]},
+    {"id": "sunday_event_0", "lines": [{"text": "出去帮做义工了\n余额变化：{balance_delta}", "typewriter_speed": 0.04, "text_color": "#D3E0E8", "font_size": 18, "wait_for_input": true, "blip": true}]},
+    {"id": "sunday_event_1", "lines": [{"text": "吃了一顿大餐\n余额变化：{balance_delta}", "typewriter_speed": 0.04, "text_color": "#D3E0E8", "font_size": 18, "wait_for_input": true, "blip": true}]},
+    {"id": "sunday_event_2", "lines": [{"text": "做了其他公司的外包\n余额变化：{balance_delta}", "typewriter_speed": 0.04, "text_color": "#D3E0E8", "font_size": 18, "wait_for_input": true, "blip": true}]},
+    {"id": "sunday_event_3", "lines": [{"text": "感冒了...\n余额变化：{balance_delta}", "typewriter_speed": 0.04, "text_color": "#D3E0E8", "font_size": 18, "wait_for_input": true, "blip": true}]},
+    {"id": "sunday_event_4", "lines": [{"text": "今天什么也没做\n余额变化：{balance_delta}", "typewriter_speed": 0.04, "text_color": "#D3E0E8", "font_size": 18, "wait_for_input": true, "blip": true}]}
+  ]
+}

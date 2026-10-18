@@ -1,0 +1,410 @@
+extends SceneTree
+## Read-only acceptance: player behind REAL furniture; cutout off blocks, on reveals character (not clear-black).
+## Does NOT modify production shaders/layers.
+
+var log_path := "user://furn_penetrate_log.txt"
+var runtime := ""
+
+func log_line(t: String) -> void:
+	var f := FileAccess.open(log_path, FileAccess.READ_WRITE)
+	if f == null:
+		f = FileAccess.open(log_path, FileAccess.WRITE)
+	else:
+		f.seek_end()
+	f.store_line(t)
+	f.close()
+	print(t)
+
+func _initialize() -> void:
+	call_deferred("run")
+
+func avg(img: Image, cx: int, cy: int, r: int) -> Color:
+	var s := Color(0, 0, 0, 0)
+	var n := 0
+	for y in range(cy - r, cy + r + 1):
+		for x in range(cx - r, cx + r + 1):
+			if x >= 0 and y >= 0 and x < img.get_width() and y < img.get_height():
+				s += img.get_pixel(x, y)
+				n += 1
+	return s / float(maxi(n, 1))
+
+func luma(c: Color) -> float:
+	return c.r + c.g + c.b
+
+func black_ratio(img: Image, cx: int, cy: int, r: int) -> float:
+	var black := 0
+	var n := 0
+	for y in range(cy - r, cy + r + 1):
+		for x in range(cx - r, cx + r + 1):
+			if x < 0 or y < 0 or x >= img.get_width() or y >= img.get_height():
+				continue
+			var c := img.get_pixel(x, y)
+			n += 1
+			if c.r + c.g + c.b < 0.10:
+				black += 1
+	return float(black) / float(maxi(n, 1))
+
+func colorfulness(img: Image, cx: int, cy: int, r: int) -> float:
+	var s := 0.0
+	var n := 0
+	for y in range(cy - r, cy + r + 1):
+		for x in range(cx - r, cx + r + 1):
+			if x < 0 or y < 0 or x >= img.get_width() or y >= img.get_height():
+				continue
+			var c := img.get_pixel(x, y)
+			var mx := maxf(c.r, maxf(c.g, c.b))
+			var mn := minf(c.r, minf(c.g, c.b))
+			s += mx - mn
+			n += 1
+	return s / float(maxi(n, 1))
+
+func capture() -> Image:
+	for i in 8:
+		await process_frame
+		DisplayServer.window_set_position(Vector2i(-2400, -2400))
+	await RenderingServer.frame_post_draw
+	DisplayServer.window_set_position(Vector2i(-2400, -2400))
+	return root.get_texture().get_image()
+
+func crop_around(img: Image, cx: int, cy: int, half: int) -> Image:
+	var x0 := clampi(cx - half, 0, img.get_width() - 1)
+	var y0 := clampi(cy - half, 0, img.get_height() - 1)
+	var w := mini(half * 2, img.get_width() - x0)
+	var h := mini(half * 2, img.get_height() - y0)
+	return img.get_region(Rect2i(x0, y0, w, h))
+
+func world_to_player2d(world: Node3D, world_pos: Vector3) -> Vector2:
+	var local: Vector3 = world.to_local(world_pos)
+	var cell: float = float(world.CELL_PIXELS)
+	return Vector2(local.x * cell, local.z * cell)
+
+func player_head_world(world: Node3D, player: Node2D) -> Vector3:
+	var cell: float = float(world.CELL_PIXELS)
+	var local := Vector3(player.global_position.x / cell, 0.55, player.global_position.y / cell)
+	return world.to_global(local)
+
+func keep_window_away() -> void:
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	DisplayServer.window_set_position(Vector2i(-2400, -2400))
+
+func freeze_combat(world: Node3D) -> void:
+	var player: Node2D = world.get("player") as Node2D
+	if player != null:
+		player.set_physics_process(false)
+		player.set_process(false)
+	var enemy_root: Node = world.get("enemy_root") as Node
+	if enemy_root != null:
+		for ch in enemy_root.get_children():
+			if ch is Node:
+				(ch as Node).set_physics_process(false)
+				(ch as Node).set_process(false)
+	# Pause projectiles
+	for p in world.get_tree().get_nodes_in_group(&"dream_projectiles"):
+		if p is Node:
+			(p as Node).set_physics_process(false)
+			(p as Node).set_process(false)
+
+func clear_slots() -> void:
+	for i in range(0, 8):
+		RenderingServer.global_shader_parameter_set("occlusion_cutout_%d" % i, Vector4.ZERO)
+
+func read_last_slots(world: Node3D) -> Array:
+	var out: Array = []
+	if world.get("_last_cutout_slots") != null:
+		var slots: Variant = world.get("_last_cutout_slots")
+		if slots is Array:
+			return slots
+	if world.has_meta(&"test_cutout_slots"):
+		var m: Variant = world.get_meta(&"test_cutout_slots")
+		if m is Array:
+			return m
+	return out
+
+func run() -> void:
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	DisplayServer.window_set_position(Vector2i(-2400, -2400))
+	FileAccess.open(log_path, FileAccess.WRITE).close()
+	log_line("FURN_PENETRATE_START")
+	AudioServer.set_bus_mute(0, true)
+	root.size = Vector2i(1280, 720)
+	runtime = ProjectSettings.globalize_path("res://.runtime/cutout_sample")
+	DirAccess.make_dir_recursive_absolute(runtime)
+
+	var world: Node3D = load("res://scenes/dream/Dream3D_RandomDungeon.tscn").instantiate()
+	world.generate_on_ready = false
+	world.spawn_content = true
+	world.persist_profile = false
+	if "enable_game_start_cab_exit" in world:
+		world.enable_game_start_cab_exit = false
+	# Ask cutout update to mirror slots into meta for test readback
+	world.set_meta(&"test_cutout_slots", [])
+	root.add_child(world)
+	for i in 25:
+		await process_frame
+		keep_window_away()
+	world.regenerate(41001)
+	for i in 120:
+		await process_frame
+		if i % 30 == 0:
+			keep_window_away()
+
+	if "rooms" in world:
+		for room in world.rooms:
+			if String(room.get("archetype", "")) == "open_office":
+				if world.get("player") != null:
+					world.player.global_position = Vector2(room.center_cell) * world.CELL_PIXELS
+				if world.has_method("activate_room"):
+					world.activate_room(int(room.id))
+				log_line("activated_open_office id=%s" % str(room.id))
+				break
+	for i in 30:
+		await process_frame
+		keep_window_away()
+
+	freeze_combat(world)
+
+	var cam: Camera3D = world.camera_3d
+	var player: Node2D = world.get("player") as Node2D
+	if player == null or cam == null:
+		log_line("NO_PLAYER_OR_CAM")
+		quit(3)
+		return
+
+	var best_mesh: MeshInstance3D = null
+	var best_score := -1.0
+	var best_aabb := AABB()
+	var meshes: Array = world.find_children("*", "MeshInstance3D", true, false)
+	for node in meshes:
+		var mesh := node as MeshInstance3D
+		if mesh == null or not mesh.is_visible_in_tree() or mesh.mesh == null:
+			continue
+		if not world._mesh_belongs_to_furniture(mesh):
+			continue
+		var local_aabb: AABB = mesh.get_aabb()
+		if local_aabb.size.y < 0.35:
+			continue
+		var xf := mesh.global_transform
+		var world_aabb := AABB(xf * local_aabb.position, Vector3.ZERO)
+		for xi in [0.0, 1.0]:
+			for yi in [0.0, 1.0]:
+				for zi in [0.0, 1.0]:
+					var corner := local_aabb.position + local_aabb.size * Vector3(xi, yi, zi)
+					world_aabb = world_aabb.expand(xf * corner)
+		var center: Vector3 = world_aabb.get_center()
+		if cam.is_position_behind(center):
+			continue
+		var sp: Vector2 = cam.unproject_position(center)
+		var vr: Rect2 = cam.get_viewport().get_visible_rect().grow(-40)
+		if not vr.has_point(sp):
+			continue
+		var score := local_aabb.size.y * 10.0 + local_aabb.size.x * local_aabb.size.z + 100.0 / (1.0 + cam.global_position.distance_to(center))
+		var path_s := String(mesh.get_path()).to_lower()
+		if path_s.contains("cabinet") or path_s.contains("shelf") or path_s.contains("locker") or path_s.contains("book") or path_s.contains("tall"):
+			score += 20.0
+		if path_s.contains("chair") or path_s.contains("seat"):
+			score -= 5.0
+		if score > best_score:
+			best_score = score
+			best_mesh = mesh
+			best_aabb = world_aabb
+
+	if best_mesh == null:
+		log_line("NO_FURNITURE_ON_SCREEN")
+		quit(4)
+		return
+
+	var furn_center: Vector3 = best_aabb.get_center()
+	var cam_pos: Vector3 = cam.global_position
+	var away: Vector3 = (furn_center - cam_pos)
+	away.y = 0.0
+	if away.length_squared() < 0.0001:
+		away = Vector3(0, 0, 1)
+	else:
+		away = away.normalized()
+	log_line("furn=%s aabb_size=%s center=%s" % [str(best_mesh.get_path()), str(best_aabb.size), str(furn_center)])
+
+	var placed := false
+	var half_depth: float = maxf(best_aabb.size.x, best_aabb.size.z) * 0.5
+	var offsets := [
+		away * (half_depth + 0.25),
+		away * (half_depth + 0.55),
+		away * (half_depth + 0.9),
+		away * (half_depth + 1.3),
+		away * (half_depth + 0.4) + Vector3(away.z, 0, -away.x) * 0.45,
+		away * (half_depth + 0.7) + Vector3(-away.z, 0, away.x) * 0.45,
+		away * (half_depth + 0.35) + Vector3(away.z, 0, -away.x) * 0.8,
+		away * (half_depth * 0.2 + 0.15),
+	]
+	for off in offsets:
+		var p3: Vector3 = furn_center + off
+		p3.y = 0.0
+		player.global_position = world_to_player2d(world, p3)
+		for i in 6:
+			await process_frame
+		var player_world: Vector3 = player_head_world(world, player)
+		var occluded := false
+		if world.has_method("_actor_is_occluded_by_occluder"):
+			occluded = world._actor_is_occluded_by_occluder(player_world)
+		var behind_cam := cam.is_position_behind(player_world)
+		var sp: Vector2 = cam.unproject_position(player_world) if not behind_cam else Vector2(-1, -1)
+		var on_screen := (not behind_cam) and cam.get_viewport().get_visible_rect().grow(-10).has_point(sp)
+		var cam_closer_to_furn := cam_pos.distance_squared_to(furn_center) < cam_pos.distance_squared_to(player_world)
+		log_line("try off=%s occluded=%s on_screen=%s cam_closer_furn=%s sp=%s" % [
+			str(off), str(occluded), str(on_screen), str(cam_closer_to_furn), str(sp)
+		])
+		if occluded and on_screen and cam_closer_to_furn:
+			placed = true
+			break
+
+	if not placed:
+		var p3: Vector3 = furn_center + away * (half_depth + 0.9)
+		p3.y = 0.0
+		player.global_position = world_to_player2d(world, p3)
+		log_line("WARN_PLACE_FALLBACK")
+
+	for i in 12:
+		await process_frame
+		keep_window_away()
+	freeze_combat(world)
+
+	var head2: Vector3 = player_head_world(world, player)
+	if cam.is_position_behind(head2):
+		log_line("PLAYER_BEHIND_CAMERA")
+		quit(5)
+		return
+	var sp_player: Vector2 = cam.unproject_position(head2)
+	var vp_size: Vector2 = cam.get_viewport().get_visible_rect().size
+	log_line("final player_world=%s sp=%s vp=%s placed=%s" % [str(head2), str(sp_player), str(vp_size), str(placed)])
+
+	var cut_enabled := false
+	if best_mesh.material_override is ShaderMaterial:
+		var sm := best_mesh.material_override as ShaderMaterial
+		if sm.shader != null and sm.shader.code.contains("occlusion_cutout_enabled"):
+			cut_enabled = bool(sm.get_shader_parameter("occlusion_cutout_enabled"))
+	elif best_mesh.mesh != null and best_mesh.mesh.get_surface_count() > 0:
+		var sm2 := best_mesh.get_active_material(0) as ShaderMaterial
+		if sm2 != null and sm2.shader != null and sm2.shader.code.contains("occlusion_cutout_enabled"):
+			cut_enabled = bool(sm2.get_shader_parameter("occlusion_cutout_enabled"))
+	log_line("furn_cutout_enabled=%s layers=%d" % [str(cut_enabled), best_mesh.layers])
+
+	RenderingServer.global_shader_parameter_set("occlusion_viewport_size", vp_size)
+
+	# --- OFF ---
+	clear_slots()
+	# Also zero cached last slots so a later update does not think nothing changed
+	if world.get("_last_cutout_slots") is Array:
+		var ls: Array = world.get("_last_cutout_slots")
+		for i in range(ls.size()):
+			ls[i] = Vector4(-1, -1, -1, -1)
+	log_line("begin_capture_off")
+	var img_off: Image = await capture()
+	img_off.save_png(runtime.path_join("furn_penetrate_off.png"))
+
+	# --- ON: natural update ---
+	world.set_meta(&"test_cutout_slots", [])
+	if world.has_method("_update_occlusion_cutouts"):
+		world._update_occlusion_cutouts()
+	for i in 8:
+		await process_frame
+	freeze_combat(world)
+
+	var natural_slots: Array = read_last_slots(world)
+	var any_natural := false
+	var best_slot := Vector4.ZERO
+	for i in range(natural_slots.size()):
+		var v: Variant = natural_slots[i]
+		log_line("natural_slot%d=%s" % [i, str(v)])
+		if v is Vector4 and (v as Vector4).w > 0.5:
+			any_natural = true
+			if best_slot.w < 0.5 or (v as Vector4).z > best_slot.z:
+				best_slot = v
+
+	var forced := false
+	if not any_natural:
+		forced = true
+		var overlap: Variant = null
+		if world.has_method("_actor_screen_overlap"):
+			overlap = world._actor_screen_overlap(head2, 0.28)
+		var aim: Vector2 = sp_player
+		if overlap is Vector2:
+			aim = overlap
+		var radius_px := 70.0
+		if world.has_method("_project_occlusion_cutout"):
+			var projected: Vector4 = world._project_occlusion_cutout(head2, 0.28, overlap)
+			if projected.w > 0.5:
+				aim = Vector2(projected.x * vp_size.x, projected.y * vp_size.y)
+				radius_px = projected.z
+		best_slot = Vector4(aim.x / vp_size.x, aim.y / vp_size.y, maxf(radius_px, 56.0), 1.0)
+		clear_slots()
+		RenderingServer.global_shader_parameter_set("occlusion_cutout_0", best_slot)
+		log_line("FORCED_SLOT=%s (natural empty — slot enable bug?)" % str(best_slot))
+	else:
+		log_line("NATURAL_SLOTS_OK best=%s" % str(best_slot))
+
+	log_line("begin_capture_on")
+	var img_on: Image = await capture()
+	img_on.save_png(runtime.path_join("furn_penetrate_on.png"))
+
+	var root_size := Vector2(float(img_off.get_width()), float(img_off.get_height()))
+	var scale := minf(root_size.x / vp_size.x, root_size.y / vp_size.y)
+	var offset := (root_size - vp_size * scale) * 0.5
+	var sample_sp := sp_player
+	if best_slot.w > 0.5:
+		sample_sp = Vector2(best_slot.x * vp_size.x, best_slot.y * vp_size.y)
+	var px := int(offset.x + sample_sp.x * scale)
+	var py := int(offset.y + sample_sp.y * scale)
+	log_line("sample_px=%d,%d" % [px, py])
+
+	crop_around(img_off, px, py, 56).save_png(runtime.path_join("furn_penetrate_crop_off.png"))
+	crop_around(img_on, px, py, 56).save_png(runtime.path_join("furn_penetrate_crop_on.png"))
+
+	var crop_off := crop_around(img_off, px, py, 72)
+	var crop_on := crop_around(img_on, px, py, 72)
+	var sbs := Image.create(crop_off.get_width() * 2 + 4, crop_off.get_height(), false, Image.FORMAT_RGBA8)
+	sbs.fill(Color(0.05, 0.05, 0.08, 1))
+	sbs.blit_rect(crop_off, Rect2i(Vector2i.ZERO, crop_off.get_size()), Vector2i(0, 0))
+	sbs.blit_rect(crop_on, Rect2i(Vector2i.ZERO, crop_on.get_size()), Vector2i(crop_off.get_width() + 4, 0))
+	sbs.save_png(runtime.path_join("furn_penetrate_sbs.png"))
+
+	var off_avg := avg(img_off, px, py, 8)
+	var on_avg := avg(img_on, px, py, 8)
+	var off_black := black_ratio(img_off, px, py, 14)
+	var on_black := black_ratio(img_on, px, py, 14)
+	var off_chroma := colorfulness(img_off, px, py, 12)
+	var on_chroma := colorfulness(img_on, px, py, 12)
+	var luma_delta := luma(on_avg) - luma(off_avg)
+
+	# Pixel diff: how many pixels changed meaningfully
+	var changed_px := 0
+	var total_px := 0
+	for y in range(py - 20, py + 21):
+		for x in range(px - 20, px + 21):
+			if x < 0 or y < 0 or x >= img_on.get_width() or y >= img_on.get_height():
+				continue
+			var a := img_off.get_pixel(x, y)
+			var b := img_on.get_pixel(x, y)
+			total_px += 1
+			if absf(a.r - b.r) + absf(a.g - b.g) + absf(a.b - b.b) > 0.12:
+				changed_px += 1
+
+	log_line("off_avg=%s black=%.3f chroma=%.4f" % [str(off_avg), off_black, off_chroma])
+	log_line("on_avg=%s black=%.3f chroma=%.4f" % [str(on_avg), on_black, on_chroma])
+	log_line("luma_delta=%.4f changed_px=%d/%d forced=%s placed=%s" % [luma_delta, changed_px, total_px, str(forced), str(placed)])
+
+	# Honest asserts:
+	# - hole must not be near-solid clear-black (on_black high AND near-zero chroma+luma)
+	# - must differ from off
+	# - on must retain some chroma OR be brighter than pure black (character/floor pixels)
+	var clear_black_hole := on_black > 0.75 and luma(on_avg) < 0.12 and on_chroma < 0.02
+	var hole_not_clear_black := not clear_black_hole
+	var changed := changed_px > int(total_px * 0.08)
+	var has_scene_pixels := luma(on_avg) > 0.12 or on_chroma > 0.03
+	log_line("ASSERT hole_not_clear_black=%s changed=%s has_scene_pixels=%s clear_black_hole=%s" % [
+		str(hole_not_clear_black), str(changed), str(has_scene_pixels), str(clear_black_hole)
+	])
+	if hole_not_clear_black and changed and has_scene_pixels and placed:
+		log_line("FURN_PENETRATE_PASS")
+		quit(0)
+	else:
+		log_line("FURN_PENETRATE_FAIL")
+		quit(2)

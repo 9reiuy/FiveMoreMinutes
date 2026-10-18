@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c2ajk1c13bnrs"]
+
+[ext_resource type="Texture2D" uid="uid://c7ruclvdo0tau" path="res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Walls_32x32.png" id="1_wall_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wall"]
+atlas = ExtResource("1_wall_atlas")
+region = Rect2(192, 224, 16, 16)
+filter_clip = true
+
+[resource]
+resource_name = "Dream Wall Pixel Tile"
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("AtlasTexture_wall")
+texture_filter = 0

@@ -1,9 +1,9 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://6e2ja5ijydy6"]
 
-[ext_resource type="Script" path="res://scripts/ui/dream_hud.gd" id="1_hud"]
-[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
-[ext_resource type="Texture2D" path="res://art/icon/dash.png" id="3_dash_icon"]
-[ext_resource type="Shader" path="res://shaders/dash_cooldown_icon.gdshader" id="4_dash_shader"]
+[ext_resource type="Script" uid="uid://bwgoiaug0wse5" path="res://scripts/ui/dream_hud.gd" id="1_hud"]
+[ext_resource type="Resource" uid="uid://b1f2o7rqduk6v" path="res://resources/demo_config.tres" id="2_config"]
+[ext_resource type="Texture2D" uid="uid://utgamwchge0o" path="res://art/icon/dash.png" id="3_dash_icon"]
+[ext_resource type="Shader" uid="uid://du4ml7b22wg1o" path="res://shaders/dash_cooldown_icon.gdshader" id="4_dash_shader"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_track"]
 bg_color = Color(0.03, 0.04, 0.06, 0.72)
@@ -18,7 +18,7 @@ shader_parameter/cooldown_ratio = 0.0
 shader_parameter/cooldown_color = Color(0.29, 0.33, 0.37, 1)
 shader_parameter/cooldown_mix = 0.88
 
-[node name="DreamHUD" type="Control"]
+[node name="DreamHUD" type="Control" unique_id=906371250]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,44 +29,7 @@ mouse_filter = 2
 script = ExtResource("1_hud")
 config = ExtResource("2_config")
 
-[node name="ExperienceBarArea" type="Control" parent="."]
-z_index = 50
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 6.0
-grow_horizontal = 2
-mouse_filter = 2
-
-[node name="ExperienceProgressBar" type="ProgressBar" parent="ExperienceBarArea"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_styles/background = SubResource("StyleBox_track")
-theme_override_styles/fill = SubResource("StyleBox_fill")
-show_percentage = false
-
-[node name="ExperienceValueLabel" type="Label" parent="ExperienceBarArea"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.88, 0.95, 0.97, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.04, 0.06, 0.9)
-theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 9
-text = "0 / 20"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="EndlessDayArea" type="Control" parent="."]
+[node name="EndlessDayArea" type="Control" parent="." unique_id=1339147320]
 visible = false
 layout_mode = 1
 anchors_preset = 10
@@ -76,7 +39,7 @@ offset_bottom = 31.0
 grow_horizontal = 2
 mouse_filter = 2
 
-[node name="DayLabel" type="Label" parent="EndlessDayArea"]
+[node name="DayLabel" type="Label" parent="EndlessDayArea" unique_id=461140878]
 layout_mode = 0
 offset_left = 290.0
 offset_right = 350.0
@@ -87,7 +50,7 @@ text = "第1天"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DayProgress" type="ProgressBar" parent="EndlessDayArea"]
+[node name="DayProgress" type="ProgressBar" parent="EndlessDayArea" unique_id=1791676301]
 layout_mode = 0
 offset_left = 290.7
 offset_top = 15.0
@@ -98,17 +61,18 @@ theme_override_styles/background = SubResource("StyleBox_track")
 theme_override_styles/fill = SubResource("StyleBox_fill")
 show_percentage = false
 
-[node name="DashIndicator" type="Control" parent="."]
-layout_mode = 0
+[node name="DashIndicator" type="Control" parent="." unique_id=139499407]
+visible = false
+anchors_preset = 0
 offset_left = 16.0
 offset_top = 36.0
 offset_right = 48.0
 offset_bottom = 62.0
 mouse_filter = 2
 
-[node name="DashIcon" type="TextureRect" parent="DashIndicator"]
-material = SubResource("ShaderMaterial_dash_cooldown")
+[node name="DashIcon" type="TextureRect" parent="DashIndicator" unique_id=1062851685]
 texture_filter = 1
+material = SubResource("ShaderMaterial_dash_cooldown")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -119,3 +83,4 @@ mouse_filter = 2
 texture = ExtResource("3_dash_icon")
 expand_mode = 1
 stretch_mode = 5
+

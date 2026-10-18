@@ -1,0 +1,161 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/dialogue/dream_dialogue_bubble.gd" id="1_bubble"]
+[ext_resource type="Texture2D" path="res://art/Dream/talk.png" id="2_talk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bubble"]
+atlas = ExtResource("2_talk")
+region = Rect2(98, 12, 342, 90)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_progress"]
+atlas = ExtResource("2_talk")
+region = Rect2(100, 140, 338, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arrow_dark"]
+atlas = ExtResource("2_talk")
+region = Rect2(267, 102, 19, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arrow_slate"]
+atlas = ExtResource("2_talk")
+region = Rect2(266, 147, 20, 12)
+
+[node name="DreamDialogueBubble" type="Control"]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 0
+offset_right = 340.0
+offset_bottom = 48.0
+mouse_filter = 2
+script = ExtResource("1_bubble")
+
+[node name="Background" type="NinePatchRect" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("AtlasTexture_bubble")
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 18
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+texture_filter = 1
+layout_mode = 2
+
+[node name="DialogueLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+
+[node name="ProgressBarContainer" type="Control" parent="."]
+texture_filter = 1
+layout_mode = 0
+offset_left = 12.0
+offset_top = 37.0
+offset_right = 328.0
+offset_bottom = 44.0
+mouse_filter = 2
+
+[node name="Track" type="NinePatchRect" parent="ProgressBarContainer"]
+modulate = Color(0.2, 0.22, 0.3, 0.75)
+texture_filter = 1
+layout_mode = 0
+offset_right = 316.0
+offset_bottom = 7.0
+texture = SubResource("AtlasTexture_progress")
+patch_margin_left = 6
+patch_margin_right = 6
+
+[node name="FillClip" type="Control" parent="ProgressBarContainer"]
+texture_filter = 1
+clip_contents = true
+layout_mode = 0
+offset_right = 316.0
+offset_bottom = 7.0
+mouse_filter = 2
+
+[node name="FillBar" type="NinePatchRect" parent="ProgressBarContainer/FillClip"]
+texture_filter = 1
+layout_mode = 0
+offset_right = 316.0
+offset_bottom = 7.0
+texture = SubResource("AtlasTexture_progress")
+patch_margin_left = 6
+patch_margin_right = 6
+
+[node name="SpeakerArrow" type="TextureRect" parent="."]
+texture_filter = 1
+layout_mode = 0
+offset_left = 16.0
+offset_top = 47.0
+offset_right = 35.0
+offset_bottom = 59.0
+mouse_filter = 2
+texture = SubResource("AtlasTexture_arrow_dark")
+
+[node name="ArrowFillClip" type="Control" parent="SpeakerArrow"]
+texture_filter = 1
+clip_contents = true
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 17.0
+offset_bottom = 10.0
+mouse_filter = 2
+
+[node name="ArrowFillInset" type="TextureRect" parent="SpeakerArrow/ArrowFillClip"]
+texture_filter = 1
+layout_mode = 0
+offset_right = 15.0
+offset_bottom = 8.0
+mouse_filter = 2
+texture = SubResource("AtlasTexture_arrow_slate")
+expand_mode = 1
+
+[node name="OptionsContainer" type="Control" parent="."]
+top_level = true
+texture_filter = 1
+layout_mode = 0
+offset_top = 56.0
+offset_right = 167.0
+offset_bottom = 88.0
+
+[node name="InterruptContainer" type="Control" parent="OptionsContainer"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NormalOptionsContainer" type="VBoxContainer" parent="OptionsContainer"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+theme_override_constants/separation = 4

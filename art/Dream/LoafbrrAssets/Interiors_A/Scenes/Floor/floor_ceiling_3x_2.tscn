@@ -1,0 +1,74 @@
+[gd_scene load_steps=6 format=4 uid="uid://bfmfkuhymwadg"]
+
+[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres" id="1_0hmub"]
+[ext_resource type="Material" uid="uid://k107765ilw3v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_B_Mat.tres" id="2_uhyki"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ge4l5"]
+_surfaces = [{
+"aabb": AABB(-1, -7.74919e-08, -1.5, 2, 1e-05, 3),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAAKAAEABwABAAoAAwAKAAAABwAKAAYAAwALAAoABgAKAAsABQALAAMABgALAAgABQAEAAsACAALAAQACAAEAAkA"),
+"lods": [1e-10, PackedByteArray("AAABAAIAAwABAAAAAwAEAAEABQAEAAMABgABAAQABwABAAYABgAEAAgACAAEAAkA")],
+"name": "Surface_Floor_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("//95BFVVAAD/f7YGAAAAAP//tgYAAAAA//88AqqqAAD/fwAA//8AAP//AAD//wAAAAB5BFVVAAAAALYGAAAAAAAAPAKqqgAAAAAAAP//AAD/f3kEVVUAAP9/PAKqqgAA")
+}, {
+"aabb": AABB(-1, 2.8, -1.5, 2, 1e-05, 3),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAACAAoAAAABAAIAAwAKAAIABgAAAAoAAwAEAAoABgAKAAsABAALAAoABwAGAAsABAAFAAsABwALAAgABQAIAAsABQAJAAgA"),
+"lods": [1.23477e-10, PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAABAAFAAAABgAAAAUABwAGAAUABwAFAAgABQAJAAgA")],
+"name": "Surface_Ceiling_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("//8aBlVVAAD//xoGAAAAAP9/GgYAAAAAAAAaBgAAAAAAABoGVVUAAAAAAACqqgAA//8AAKqqAAD//wAA//8AAP9/AAD//wAAAAAAAP//AAD/fxoGVVUAAP9/AACqqgAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_m15ka"]
+resource_name = "Interiors_A_FloorCeiling_3x2"
+_surfaces = [{
+"aabb": AABB(-1, -7.74919e-08, -1.5, 2, 1e-05, 3),
+"attribute_data": PackedByteArray("qaqqqlVV//+qqv//qapVVVVVAACqqgAAAACqqgAA//8AAFVVAAAAAFRVqqpUVVVV"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAAKAAEABwABAAoAAwAKAAAABwAKAAYAAwALAAoABgAKAAsABQALAAMABgALAAgABQAEAAsACAALAAQACAAEAAkA"),
+"lods": [1e-10, PackedByteArray("AAABAAIAAwABAAAAAwAEAAEABQAEAAMABgABAAQABwABAAYABgAEAAgACAAEAAkA")],
+"material": ExtResource("1_0hmub"),
+"name": "Surface_Floor_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("//95BFVV/z//f7YGAAD/P///tgYAAP8///88Aqqq/z//fwAA////P///AAD///8/AAB5BFVV/z8AALYGAAD/PwAAPAKqqv8/AAAAAP///z//f3kEVVX/P/9/PAKqqv8/////f////3////9/////f////3////9/////f////3////9/////f////3////9/")
+}, {
+"aabb": AABB(-1, 2.8, -1.5, 2, 1e-05, 3),
+"attribute_data": PackedByteArray("qaqqqqqq//9VVf//AAD//wAAqqoAAFVVqapVVaqqAABVVQAAAAAAAFRVqqpUVVVV"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAACAAoAAAABAAIAAwAKAAIABgAAAAoAAwAEAAoABgAKAAsABAALAAoABwAGAAsABAAFAAsABwALAAgABQAIAAsABQAJAAgA"),
+"lods": [1.23477e-10, PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAABAAFAAAABgAAAAUABwAGAAUABwAFAAgABQAJAAgA")],
+"material": ExtResource("2_uhyki"),
+"name": "Surface_Ceiling_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("//8aBlVV/7///xoGAAD/v/9/GgYAAP+/AAAaBgAA/78AABoGVVX/vwAAAACqqv+///8AAKqq/7///wAA////v/9/AAD///+/AAAAAP///7//fxoGVVX/v/9/AACqqv+/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ge4l5")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_7ma42"]
+data = PackedVector3Array(1, 2.8, 1.5, 1, 2.8, -1.5, -1, 2.8, -1.5, 1, -7.74919e-08, 1.5, -1, -7.74919e-08, 1.5, -1, 1.84776e-07, -1.5, 1, 2.8, 1.5, -1, 2.8, -1.5, -1, 2.8, 1.5, 1, -7.74919e-08, 1.5, -1, 1.84776e-07, -1.5, 1, 1.84776e-07, -1.5)
+
+[node name="FloorCeiling_3x2" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_m15ka")
+skeleton = NodePath("")
+
+[node name="FloorCeiling_3x2" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorCeiling_3x2"]
+shape = SubResource("ConcavePolygonShape3D_7ma42")

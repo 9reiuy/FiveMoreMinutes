@@ -17,16 +17,16 @@ static func content_rect(window_rect: Rect2) -> Rect2:
 
 
 static func draw(canvas: CanvasItem, window_rect: Rect2, title_text: String, hovered_action: String = "", maximized: bool = false) -> void:
-	canvas.draw_rect(window_rect, Color("10131a"))
-	canvas.draw_rect(window_rect, Color("4d5875"), false, 1.0)
+	canvas.draw_rect(window_rect, Color("202942"))
+	canvas.draw_rect(window_rect, Color("849bc0"), false, 1.0)
 	var title_rect := Rect2(window_rect.position, Vector2(window_rect.size.x, TITLE_HEIGHT))
-	canvas.draw_rect(title_rect, Color("57628a"))
+	canvas.draw_rect(title_rect, Color("52638e"))
 	canvas.draw_string(PixelFont.get_font(), title_rect.position + Vector2(5, 11), title_text, HORIZONTAL_ALIGNMENT_LEFT, int(window_rect.size.x - 46), 8, Color("d8dde8"))
 	for action in ["minimize", "maximize", "close"]:
 		var rect := button_rect(window_rect, action)
 		var active: bool = hovered_action == str(action)
-		canvas.draw_rect(rect, Color("5d688e") if active else Color("39415c"))
-		canvas.draw_rect(rect, Color("aab6d1") if active else Color("7c88a8"), false, 1.0)
+		canvas.draw_rect(rect, Color("7186b2") if active else Color("465273"))
+		canvas.draw_rect(rect, Color("c2d0eb") if active else Color("8497bc"), false, 1.0)
 		match action:
 			"minimize":
 				canvas.draw_rect(Rect2(rect.position + Vector2(2, 6), Vector2(5, 1)), Color("c8d0e0"))

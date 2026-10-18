@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://pp7b330155lk"]
+
+[ext_resource type="Texture2D" uid="uid://dglg3l6dnw38n" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_C.png" id="1_m4txt"]
+[ext_resource type="Shader" uid="uid://h2l28y3y2r2v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/ORM_Shader_Cull_Back.gdshader" id="1_s2nt1"]
+[ext_resource type="Texture2D" uid="uid://bi3lgtdwmgppq" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Door/Door_Normal_2K.png" id="3_go78f"]
+[ext_resource type="Texture2D" uid="uid://witm4qxxx60l" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Door/Door_ORM_2K.png" id="4_mee6l"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_s2nt1")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/texture_albedo = ExtResource("1_m4txt")
+shader_parameter/texture_orm = ExtResource("4_mee6l")
+shader_parameter/alpha_scissor_threshold = 0.9
+shader_parameter/roughness = 1.5
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 1.0
+shader_parameter/texture_normal = ExtResource("3_go78f")
+shader_parameter/normal_scale = 1.0
+shader_parameter/ao_light_affect = 0.0
+shader_parameter/emission = Color(0, 0, 0, 1)
+shader_parameter/emission_energy = 0.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)

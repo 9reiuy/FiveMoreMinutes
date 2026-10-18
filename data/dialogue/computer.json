@@ -1,0 +1,17 @@
+{
+  "dialogues": [
+    {
+      "id": "computer_readme",
+      "lines": [
+        {"speaker": "system", "text": "今天是1999年", "typewriter_speed": 0.0, "text_color": "#8A93A8", "blip": false},
+        {"speaker": "system", "text": "", "typewriter_speed": 0.0, "text_color": "#8A93A8", "blip": false},
+        {"speaker": "system", "text": "备忘：", "typewriter_speed": 0.0, "text_color": "#8A93A8", "blip": false},
+        {"speaker": "system", "text": "1. 交房租。", "typewriter_speed": 0.0, "text_color": "#8A93A8", "blip": false},
+        {"speaker": "system", "text": "2. 不要盯着屏幕太久。", "typewriter_speed": 0.0, "text_color": "#8A93A8", "blip": false},
+        {"speaker": "system", "text": "3. 梦里的事情，醒来就该忘掉。", "typewriter_speed": 0.0, "text_color": "#8A93A8", "blip": false},
+        {"speaker": "system", "text": "", "typewriter_speed": 0.0, "text_color": "#8A93A8", "blip": false},
+        {"speaker": "system", "text": "—— 系统提示：该文档从未被保存。", "typewriter_speed": 0.0, "text_color": "#8A93A8", "blip": false}
+      ]
+    }
+  ]
+}

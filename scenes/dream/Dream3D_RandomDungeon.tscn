@@ -1,0 +1,128 @@
+[gd_scene format=3 uid="uid://be15w6f4ec0j8"]
+
+[ext_resource type="Script" path="res://scripts/dream/office_skeleton_world_base.gd" id="1_generator"]
+[ext_resource type="PackedScene" uid="uid://dhiavm5cgwwpx" path="res://scenes/entities/dream_player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://bw7p1n56utx5p" path="res://scripts/dream/dream_3d_actor_depth_bridge.gd" id="3_depth_bridge"]
+[ext_resource type="Script" uid="uid://7ogh0ssixl5m" path="res://scripts/dream/player_physics_proxy_3d.gd" id="4_player_proxy"]
+[ext_resource type="Script" uid="uid://d2wyhysi4k2hu" path="res://scripts/dream/dream_3d_ceiling_lighting.gd" id="5_ceiling_lighting"]
+[ext_resource type="Script" uid="uid://deftbm0plkkj" path="res://scripts/dream/dream_3d_pause_bridge.gd" id="6_pause_bridge"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_player_proxy"]
+size = Vector3(0.6, 1, 0.6)
+
+[sub_resource type="Environment" id="Environment_dungeon"]
+background_mode = 1
+ambient_light_source = 2
+ambient_light_color = Color(0.4, 0.44, 0.52, 1)
+ambient_light_energy = 0.38
+tonemap_mode = 1
+
+[node name="Dream3D_BuildingLayout" type="Node3D" unique_id=1834488450]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
+script = ExtResource("1_generator")
+disable_player_combat = false
+spawn_content = true
+approved_sample_art_enabled = true
+
+[node name="Dream3DPauseBridge" type="Node" parent="." unique_id=1952310562]
+process_mode = 3
+script = ExtResource("6_pause_bridge")
+
+[node name="GeneratedBuildingRoot" type="Node3D" parent="." unique_id=102989543]
+editor_description = "All generated floor, walls, doors and debug markers live here and are cleared on regenerate."
+
+[node name="FloorRoot" type="Node3D" parent="GeneratedBuildingRoot" unique_id=1695864150]
+
+[node name="OfficeArtRoot" type="Node3D" parent="GeneratedBuildingRoot"]
+editor_description = "Approved sample art, owned and rolled back with each formal floor."
+
+[node name="WallRoot" type="Node3D" parent="GeneratedBuildingRoot" unique_id=1594190875]
+
+[node name="DoorRoot" type="Node3D" parent="GeneratedBuildingRoot" unique_id=201347609]
+
+[node name="DebugRoot" type="Node3D" parent="GeneratedBuildingRoot" unique_id=1083006902]
+
+[node name="WakeExitRoot" type="Node3D" parent="GeneratedBuildingRoot" unique_id=699787075]
+editor_description = "Compatibility root for the generated floor Elevator visual. Kept out of DoorRoot: every DoorRoot child must be a PhysicalDoor3D."
+
+[node name="CeilingLightRoot" type="Node3D" parent="GeneratedBuildingRoot" unique_id=39990749]
+script = ExtResource("5_ceiling_lighting")
+
+[node name="GameplayCanvas" type="CanvasLayer" parent="." unique_id=908591064]
+editor_description = "Formal 2D gameplay layer. Its screen origin follows the fixed Camera3D projection without scaling actor pixels."
+
+[node name="GameplayWorld" type="Node2D" parent="GameplayCanvas" unique_id=1429170220]
+
+[node name="GeneratedCollisionRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld" unique_id=1815038607]
+editor_description = "Generated 2D wall collision source plus synchronized thin DoorLeaf blockers; no duplicate full wall is created at a Door edge."
+
+[node name="FurnitureRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld" unique_id=1791894628]
+editor_description = "Formal 2D Furniture gameplay instances for the random-building prototype; visuals are routed through depth bridges."
+
+[node name="EnemyRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld" unique_id=684818822]
+editor_description = "Formal 2D EmployeeEnemy gameplay instances for the random-building prototype; visuals are routed through depth bridges."
+
+[node name="KeyRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld" unique_id=211260587]
+editor_description = "Formal Employee Badge pickup gameplay instance for the random-building prototype."
+
+[node name="WorldWeaponRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld" unique_id=2022501192]
+editor_description = "Formal WorldWeaponPickup instances dropped by enemies, furniture and weapon throws."
+
+[node name="PickupRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld" unique_id=1882498058]
+editor_description = "Formal badge and other non-experience pickup instances for the random-building prototype."
+
+[node name="GroundDebrisRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld" unique_id=127089893]
+editor_description = "Shared 2D ground layer for environment debris; it never blocks movement."
+
+[node name="WorldEffectsRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld" unique_id=1832993602]
+editor_description = "2D source root for blood and other world effects; visuals are routed through depth bridges in the 3D prototype."
+
+[node name="DreamPlayer" parent="GameplayCanvas/GameplayWorld" unique_id=743369960 instance=ExtResource("2_player")]
+
+[node name="ActorDepthViewport" type="SubViewport" parent="." unique_id=1578874535]
+editor_description = "Transparent 2D visual capture used only by the depth bridge; gameplay remains in the formal CharacterBody2D."
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(128, 128)
+render_target_update_mode = 4
+
+[node name="ActorDepthRenderRoot" type="Node2D" parent="ActorDepthViewport" unique_id=1538514656]
+
+[node name="PlayerDepthVisual3D" type="Node3D" parent="." unique_id=1455104277]
+editor_description = "Presentation-only Sprite3D depth bridge for the real DreamPlayer."
+script = ExtResource("3_depth_bridge")
+
+[node name="PlayerPhysicsProxy3D" type="AnimatableBody3D" parent="." unique_id=473250576]
+editor_description = "Ground-position adapter only. Passive contact cannot push a door; explicit E/F/weapon impacts use the formal 2D interaction resolver."
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("4_player_proxy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerPhysicsProxy3D" unique_id=1279165082]
+shape = SubResource("BoxShape3D_player_proxy")
+
+[node name="ActorDepthBridges" type="Node3D" parent="." unique_id=513668353]
+editor_description = "One depth-tested bridge per formal 2D furniture, enemy, or pickup instance."
+
+[node name="ActorPhysicsProxies" type="Node3D" parent="." unique_id=387524969]
+editor_description = "Presentation-only 3D contact proxies that relay formal 2D actors into PhysicalDoor3D."
+
+[node name="CameraRig" type="Node3D" parent="." unique_id=38850027]
+editor_description = "Fixed low-FOV perspective camera copied from the accepted editable prototype. Only this rig's position follows the Player ground position."
+transform = Transform3D(0.5656854, 0, -0.5656854, 0, 0.8, 0, 0.5656854, 0, 0.5656854, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=1998454301]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 19.5, 11.25)
+current = true
+fov = 35.0
+size = 13.5
+far = 256.0
+
+[node name="Lighting" type="Node3D" parent="." unique_id=1410560414]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=1849182310]
+environment = SubResource("Environment_dungeon")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="Lighting" unique_id=1665044504]
+transform = Transform3D(0.88294756, 0.36994863, -0.2890356, 0, 0.6156615, 0.7880107, 0.46947157, -0.6957722, 0.5435968, 0, 0, 0)
+light_energy = 0.025

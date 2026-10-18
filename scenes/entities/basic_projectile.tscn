@@ -1,10 +1,13 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/entities/basic_projectile.gd" id="1_projectile"]
-[ext_resource type="Script" path="res://scripts/entities/soft_glow.gd" id="2_glow"]
+[ext_resource type="Script" path="res://scripts/entities/projectile_red_trail.gd" id="3_red_trail"]
 
-[node name="BasicProjectile" type="Node2D"]
+[node name="BasicProjectile" type="Node2D" groups=["active_basic_projectiles"]]
 script = ExtResource("1_projectile")
 
-[node name="SoftGlow" type="Node2D" parent="."]
-script = ExtResource("2_glow")
+[node name="BulletSprite" type="Sprite2D" parent="."]
+texture_filter = 1
+
+[node name="ProjectileTrail" type="Node2D" parent="."]
+script = ExtResource("3_red_trail")

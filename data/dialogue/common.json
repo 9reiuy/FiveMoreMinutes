@@ -1,0 +1,48 @@
+{
+  "dialogues": [
+    {
+      "id": "common_missing_dialogue",
+      "lines": [
+        {
+          "speaker": "system",
+          "text": "……",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "pre_delay": 0.0,
+          "post_delay": 0.0,
+          "text_color": "#C4C0C3",
+          "font_size": 18,
+          "alignment": "left",
+          "fade_in": 0.0,
+          "fade_out": 0.15,
+          "wait_for_input": true,
+          "auto_continue": false,
+          "position": "bottom",
+          "blip": false
+        }
+      ]
+    },
+    {
+      "id": "common_dynamic_notice",
+      "lines": [
+        {
+          "speaker": "system",
+          "text": "{notice}",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "pre_delay": 0.0,
+          "post_delay": 0.0,
+          "text_color": "#D3E0E8",
+          "font_size": 18,
+          "alignment": "left",
+          "fade_in": 0.1,
+          "fade_out": 0.15,
+          "wait_for_input": true,
+          "auto_continue": false,
+          "position": "bottom",
+          "blip": true
+        }
+      ]
+    }
+  ]
+}

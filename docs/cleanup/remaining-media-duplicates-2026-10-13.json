@@ -1,0 +1,78 @@
+{
+  "root": "E:\\Agent\\5MinuteMore\\5min more",
+  "read_bytes": 10428200,
+  "matches": [
+    {
+      "sha256": "a864369f04d30606aa345f7d732a077ddd97e20c37764af199f76c64b7c3314c",
+      "bytes_each": 52526,
+      "candidates": [
+        "art/Badroom/button.png"
+      ],
+      "other_copies": [
+        "art/Badroom/talk.png"
+      ],
+      "note": "Identical content does not prove ownership, unused status, or deletion authority."
+    },
+    {
+      "sha256": "b2eb77102338f8df2622484903a09a674693565794bfe18c5975a8f2624bd587",
+      "bytes_each": 175,
+      "candidates": [
+        "art/Effects/HolyShield/Frames/HolyShield_01.png",
+        "art/Effects/Smite/Frames/Smite_01.png"
+      ],
+      "other_copies": [],
+      "note": "Identical content does not prove ownership, unused status, or deletion authority."
+    },
+    {
+      "sha256": "17084b9e2956a9168e2ed387dc65673a7297f4101095b04022538b682fba941e",
+      "bytes_each": 206,
+      "candidates": [
+        "art/Effects/HolyShield/Frames/HolyShield_02.png",
+        "art/Effects/Smite/Frames/Smite_02.png"
+      ],
+      "other_copies": [],
+      "note": "Identical content does not prove ownership, unused status, or deletion authority."
+    },
+    {
+      "sha256": "75743fc78f60ed609e3449645d4554ff5a2c87f366faf7b2938e5572bd5acefd",
+      "bytes_each": 284,
+      "candidates": [
+        "art/Effects/HolyShield/Frames/HolyShield_03.png",
+        "art/Effects/Smite/Frames/Smite_03.png"
+      ],
+      "other_copies": [],
+      "note": "Identical content does not prove ownership, unused status, or deletion authority."
+    },
+    {
+      "sha256": "7aefdb50af0399e092adb2c47d7e1a42e217455ce0e7cb890fc7292651ef3516",
+      "bytes_each": 264,
+      "candidates": [
+        "art/Effects/HolyShield/Frames/HolyShield_04.png",
+        "art/Effects/Smite/Frames/Smite_04.png"
+      ],
+      "other_copies": [],
+      "note": "Identical content does not prove ownership, unused status, or deletion authority."
+    },
+    {
+      "sha256": "cface82b44288024e509e7b9344af6814fee98399f5e000078b9f7be8a170458",
+      "bytes_each": 286,
+      "candidates": [
+        "art/Effects/HolyShield/Frames/HolyShield_11.png",
+        "art/Effects/Smite/Frames/Smite_11.png"
+      ],
+      "other_copies": [],
+      "note": "Identical content does not prove ownership, unused status, or deletion authority."
+    },
+    {
+      "sha256": "a745b888fc7ab1d904b30e0e1d47bd62b71baa664d21c8d3f6bb6b7caca5a5a5",
+      "bytes_each": 13811,
+      "candidates": [
+        "art/ui_imported/button_panel.png"
+      ],
+      "other_copies": [
+        "art/ui_imported/talk_panel.png"
+      ],
+      "note": "Identical content does not prove ownership, unused status, or deletion authority."
+    }
+  ]
+}

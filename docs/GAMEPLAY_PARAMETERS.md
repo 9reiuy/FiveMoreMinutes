@@ -2,19 +2,41 @@
 
 主要玩法参数统一位于 `res://resources/demo_config.tres`，字段定义位于 `res://scripts/data/demo_config.gd`。除特别说明外，修改后需要重新启动游戏，或至少重新进入使用该参数的场景；已经生成的敌人、武器和结算结果不会被追溯修改。
 
+正式 3D Run 例外：`dream_3d_random_dungeon.gd` 使用本局独立配置，基础射速为手枪 4.2、步枪 9、霰弹枪 2.4 发/秒，玩家移速 290、敌人基础移速 150、弹速统一 1500。射速升级和全局射速乘数继续叠加；源资源中的基础间隔不代表 3D Run 最终值。详见 [射速接入记录](fire_rate_reference_2026-10-02.md)。
+
 推荐范围用于调试平衡，并非所有字段的强制钳制范围。过高的生成数量、移动速度或粒子数量可能影响低配置设备性能。
+
+## Dream Employee敌人（唯一正式敌人）
+
+- 正式场景：`res://scenes/entities/employee_enemy.tscn`。
+- 素材：`res://art/Dream/enemy/Employee_men_32x32.png`，160×96（5列×3行、每格32×32）分层图集；第一列为拼装校准参考，其余列由运行时拆分使用。
+- `employee_global_population_target`：默认`6`，剧情地牢全局Employee目标数量；推荐`3—12`。
+- `employee_population_refill_batch`：默认`1`，每次补充数量；推荐`1—2`。
+- `employee_population_refill_interval`：默认`3.0s`，人口检查周期；推荐`1—8s`。
+- `employee_xp_value`：默认`5`，统一蓝色经验奖励。
+- `employee_movement_speed`：默认`38px/s`，中立漫游、逃跑、找武器和追击共用基础速度。
+- `employee_weapon_search_interval`：默认`0.55s`；`employee_weapon_pickup_radius`默认`28px`。
+- `employee_boss_health_multiplier`：默认`8.0`；Boss只使用Employee美术和统一AI，不再生成Elite Eye。
+- 出生状态为`NEUTRAL_WANDER`。只有Player来源有效伤害会永久触发敌对；无武器时逃跑并持续搜索，有武器后按武器基础值攻击，不读取Player卡片或永久升级。
+- 当前房间、Start Room和可见活动房间均禁止补怪；系统只在缓存的其它不可见房间逐只补充。
+- WorldWeapon使用`reserved_by`避免多个Employee争抢；Employee死亡会把持有武器重新变回可踢、可交换的地面武器。
+
+## Dream画面暗色覆盖
+
+- `res://scenes/dream/dream_world.tscn`不再包含长期`CanvasModulate`/`DreamLighting`暗色覆盖。
+- `UILayer/RoomTransitionFade`、死亡CRT和返回主界面过渡继续保留，只在转场期间短暂显示。
 
 ## 时间与睡眠
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
 |---|---|---:|---|---|---|---|
 | 梦境开始时间 | `dream_start_minutes` | 240（04:00） | 游戏分钟 | 默认梦境起始时间 | 0—1439 | 每片褪黑素会进一步提前 |
-| 梦境闹钟时间 | `alarm_start_minutes` | 360（06:00） | 游戏分钟 | 当前剧情运行配置中的正式起床时间；到点后任意地点可长按F醒来 | 0—1439 | 无尽模式禁用闹钟 |
+| 梦境闹钟时间（旧字段） | `alarm_start_minutes` | 360（06:00） | 游戏分钟 | 仅保留兼容旧数据；当前房间制剧情不会据此唤醒 | 0—1439 | DreamClock的`alarm_enabled=false`，时间只用于UI/统计 |
 | 梦境时间倍率 | `real_seconds_per_game_minute` | 1.0 | 现实秒/游戏分钟 | 梦境时钟推进倍率 | 0.05—10 | 慢动作会同步影响推进 |
 | 卧室开始时间 | `bedroom_start_minutes` | 1260（21:00） | 游戏分钟 | 每天卧室阶段的起点 | 0—1439 | 应早于强制睡觉时间 |
 | 强制睡觉时间 | `bedroom_force_sleep_minutes` | 1440（00:00） | 游戏分钟 | 到点自动进入睡觉流程 | 1261—2880 | 与卧室时间倍率联动 |
 | 卧室时间倍率 | `bedroom_real_seconds_per_game_minute` | 1.0 | 现实秒/游戏分钟 | 卧室时钟推进倍率 | 0.05—10 | 对话暂停时不推进 |
-| 剧情正式起床时间 | `story_wake_minutes` | 360（06:00） | 游戏分钟 | 所有剧情日统一触发闹钟及任意地点长按F醒来 | 0—1439 | 覆盖旧工作日07:00/周日09:00；不改变考勤阈值 |
+| 剧情正式起床时间（旧字段） | `story_wake_minutes` | 360（06:00） | 游戏分钟 | 保留给旧结算数据兼容，当前Dream不以时间结束 | 0—1439 | 正常醒来唯一入口为击败Boss后的Final Wake Door |
 | 工作日起床兼容字段 | `weekday_alarm_minutes` | 360（06:00） | 游戏分钟 | 旧接口兼容值 | 0—1439 | 正式剧情运行读取`story_wake_minutes` |
 | 星期日起床兼容字段 | `sunday_alarm_minutes` | 360（06:00） | 游戏分钟 | 旧接口兼容值 | 0—1439 | 星期日仍不发工资、不改变出勤连续数 |
 | 每片褪黑素提前时间 | `melatonin_minutes_earlier_per_tablet` | 30 | 游戏分钟/片 | 每服一片提前梦境开始时间 | 0—240 | 乘以本晚完整服用片数 |
@@ -28,7 +50,7 @@
 |---|---|---:|---|---|---|---|
 | 基础最大生命 | `player_base_maximum_health` | 100 | HP | 未计算海马体强化前的生命 | 1—1000 | 与 `hippocampus_health_per_level` 相加 |
 | 基础移动速度 | `player_movement_speed` | 112 | px/s | 梦境玩家移动速度 | 20—500 | 慢动作由引擎时间倍率统一影响 |
-| 梦境出生无敌 | `player_spawn_invulnerability_duration` | 3.0 | 梦境秒 | 玩家控制启用后通过统一受伤入口免疫全部伤害 | 0—10 | 暂停时不计时；快速睡觉会按梦境模拟速度推进 |
+| 梦境出生无敌 | `player_spawn_invulnerability_duration` | 3.0 | 梦境秒 | 玩家控制启用后通过统一受伤入口免疫全部伤害 | 0—10 | 暂停时不计时 |
 | 受伤无敌时间 | `hurt_invulnerability_seconds` | 0.55 | 秒 | 有效受伤后的无敌时间 | 0.1—2 | 不影响受击视觉持续时间 |
 | 冲刺距离 | `dash_distance` | 100 | px | 单次冲刺目标距离 | 20—400 | 受场地边界限制 |
 | 冲刺持续时间 | `dash_duration` | 0.18 | 秒 | 完整冲刺所需时间 | 0.05—1 | 与距离共同决定速度 |
@@ -36,8 +58,8 @@
 | 冲刺无敌时间 | `dash_invulnerability_seconds` | 0.18 | 秒 | 冲刺伤害免疫时间 | 0—1 | 通常不应超过冲刺持续时间太多 |
 | Thunder 特效帧数 | `dash_thunder_frame_count` | 8 | 帧 | Thunder.png 实际切帧数（512×256 横向 8 列 64×256，从左到右播放） | 1—16 | 必须显式 play() 完整播放；最后一列近全透明作收尾帧 |
 | Thunder 特效帧率 | `dash_thunder_fps` | 24 | FPS | Thunder 序列播放速度 | 4—60 | 与 Dash 位移/冷却/无敌完全解耦，仅控制视觉；动画播完才回收 Effect |
-| 基础醒来长按 | `base_wake_hold_seconds` | 5.0 | 秒 | 06:00后任意地点醒来的基础长按时间 | 0.5—30 | 赖床增长会叠加 |
-| 醒来慢动作倍率 | `bullet_time_scale` | 0.20 | 比例 | 长按醒来时的全局时间倍率 | 0.05—1 | UI与输入使用非缩放时间 |
+| 基础醒来长按（旧字段） | `base_wake_hold_seconds` | 5.0 | 秒 | 仅用于兼容旧配置，当前Dream不再读取 | 0.5—30 | Hold F Wake已停用 |
+| 醒来慢动作倍率（旧字段） | `bullet_time_scale` | 0.20 | 比例 | 仅用于兼容旧配置，当前Dream不再读取 | 0.05—1 | 普通战斗慢动作/暂停逻辑不受影响 |
 
 ## 小手枪与光束武器
 
@@ -45,13 +67,8 @@
 |---|---|---:|---|---|---|---|
 | 小手枪伤害 | `basic_weapon_damage` | 10 | HP | 单颗子弹伤害 | 1—1000 | 增伤卡作用于运行时数值 |
 | 小手枪攻击间隔 | `basic_weapon_attack_interval` | 0.30 | 秒 | 两次实际发射的基础间隔 | 0.05—10 | 前额叶与攻速卡使用除法缩短 |
-| 小手枪子弹速度 | `basic_projectile_speed` | 310 | px/s | 小手枪子弹移动速度 | 20—2000 | 不影响最大射程 |
+| 小手枪子弹速度 | `basic_projectile_speed` | 155 | px/s | 原始310 px/s基线的50%；不影响最大射程 | 20—2000 | 不影响最大射程 |
 | 小手枪最大射程 | `basic_weapon_range` | 270 | px | 子弹累计飞行销毁距离 | 20—2000 | 枕叶强化增加该值 |
-| 光束伤害 | `beam_damage` | 20 | HP | 光束对路径内敌人的单次伤害 | 1—5000 | 同一光束不会多帧重复伤害 |
-| 光束攻击间隔 | `beam_attack_interval` | 2.0 | 秒 | 光束发射间隔 | 0.05—20 | 受攻速强化影响 |
-| 光束射程 | `beam_range` | 150 | px | 光束直线长度 | 10—1500 | 受枕叶强化影响 |
-| 光束宽度 | `beam_width` | 12 | px | 光束视觉和命中宽度 | 1—200 | 会加上敌人自身半径判定 |
-| 光束显示时间 | `beam_display_seconds` | 0.15 | 秒 | 光束占位特效持续时间 | 0.02—1 | 只影响显示，不重复结算伤害 |
 
 ## 霰弹枪
 
@@ -61,7 +78,7 @@
 | 弹丸数量 | `shotgun_pellet_count` | 9 | 颗 | 每轮完整齐射数量 | 1—32 | 数量过大会增加节点和碰撞检查 |
 | 攻击间隔 | `shotgun_attack_interval` | 0.8 | 秒 | 两轮齐射间隔 | 0.05—20 | 意识漂移额外生成完整一轮 |
 | 扩散角度 | `shotgun_spread_degrees` | 30 | 度 | 相对准星方向的总扇形角 | 0—180 | 每轮重新随机分布 |
-| 弹丸速度 | `shotgun_projectile_speed` | 310 | px/s | 每颗霰弹移动速度 | 20—2000 | 不影响散布角 |
+| 弹丸速度 | `shotgun_projectile_speed` | 155 | px/s | 原始310 px/s基线的50%；每颗霰弹移动速度 | 20—2000 | 不影响散布角 |
 | 最大射程 | `shotgun_max_distance` | 270 | px | 每颗霰弹累计飞行距离 | 20—2000 | 枕叶强化增加该值 |
 
 ## 太刀与剑气
@@ -82,64 +99,10 @@
 
 ## 敌人生成与敌人数值
 
-| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
-|---|---|---:|---|---|---|---|
-| 初始刷新间隔 | `enemy_initial_spawn_interval` | 2.0 | 秒 | Day 1 的生成计时器间隔 | 0.1—10 | 难度日提升后沿用既有曲线向最小值变化 |
-| 最小刷新间隔 | `enemy_minimum_spawn_interval` | 0.65 | 秒 | 刷新间隔下限 | 0.05—5 | 本次没有缩短 |
-| 每次生成数量 | `enemy_spawn_count_per_interval` | 2 | 只 | 每次计时器触发尝试生成数量 | 1—8 | 原值1的2倍；合法点不足时允许少生成 |
-| 场上怪物上限 | `maximum_enemies` | 110 | 只 | 同时存活怪物数量上限 | 10—300 | 原值55的2倍；过高会影响CPU |
-| 玩家最小生成距离 | `enemy_minimum_spawn_distance` | 150 | px | 候选点与玩家的安全距离 | 50—400 | 与场地尺寸共同决定成功率 |
-| 怪物间最小间距 | `enemy_spawn_minimum_spacing` | 30 | px | 新怪与现有/同批怪物距离 | 0—100 | 防止完全重叠 |
-| 生成最大重试 | `enemy_spawn_position_max_retries` | 12 | 次/只 | 单只怪寻找合法位置的次数上限 | 1—50 | 达到上限后放弃该只，防止死循环 |
-| 屏幕外生成安全边距 | `enemy_spawn_visibility_margin` | 64 | px | 常规/触手怪必须生成在相机可见矩形外扩该边距的禁区之外 | 0—200 | 可见矩形由 `dream_world.get_camera_visible_world_rect()`（viewport ÷ zoom）计算，不使用固定像素猜测值；宝箱怪死亡分裂等怪物技能不受限 |
-| 敌人解锁日表 | `enemy_unlock_days` | 见下表 | 剧情/虚拟日 | 决定敌人首次加入生成池的难度日 | 1—999 | 唯一的敌人类型解锁来源，不再读取局内经过时间 |
-| 敌人基础生成权重 | `enemy_base_spawn_weights` | 常规类型均为1.0 | 权重 | 已解锁普通生成池中的相对抽取权重 | 0—20 | `0`可临时停用类型；触手与唯一精英使用各自生成入口 |
-| 难度日等效曲线时间 | `difficulty_seconds_per_day` | 120 | 秒/阶段 | 将Day N映射为既有线性难度曲线的`(N-1)×120秒`输入 | 10—600 | 只复用既有HP/伤害曲线，不表示按秒解锁怪物 |
-| 无尽虚拟日长度 | `endless_day_duration` | 120 | 秒/日 | 无尽模式每满该时长完成一日并进入下一日 | 10—600 | Day 1从0%开始；暂停时不推进 |
-| 敌人基础生命 | `base_enemy_health` | 18 | HP | 基础怪、修正带、订书机共同基础生命 | 1—10000 | 大修正带再乘生命倍率 |
-| 敌人基础接触伤害 | `base_enemy_damage` | 8 | HP | 通用接触伤害 | 0—1000 | 修正带冲刺和订书钉有独立伤害 |
-| 敌人基础移动速度 | `base_enemy_movement_speed` | 42 | px/s | 继承基础敌人类的追踪速度 | 0—500 | 快速眼动会乘移动倍率 |
-| 怪物死亡层级偏移 | `enemy_death_z_bias` | -1 | 级 | 死亡时施加轻微负 z bias：死亡动画低于存活怪物、仍留在世界层排序内 | -4—0 | 禁止死亡时强制提升 z_index；EnemyContainer 保持 y_sort_enabled，死亡动画仍可见 |
-| 修正带蓄力时间 | `correction_charge_seconds` | 0.75 | 秒 | 冲刺前停止并预警的时间 | 0.1—3 | 不影响普通追踪速度 |
-| 修正带触发距离 | `correction_trigger_distance` | 150 | px | 开始蓄力的玩家距离 | 20—300 | 与冲刺距离联动 |
-| 修正带冲刺距离 | `correction_dash_distance` | 200 | px | 单次冲刺目标距离 | 20—500 | 受场地边界限制 |
-| 修正带冲刺伤害 | `correction_dash_damage` | 18 | HP | 冲刺接触伤害 | 0—500 | 每段冲刺最多命中玩家一次 |
-| 订书机发射间隔 | `stapler_fire_interval` | 2.0 | 秒 | 两枚订书钉之间的时间 | 0.2—10 | 与接触攻击相互独立 |
-| 订书钉伤害 | `staple_damage` | 10 | HP | 投射物命中伤害 | 0—500 | 命中后销毁 |
-| 订书钉速度 | `staple_speed` | 170 | px/s | 投射物移动速度 | 20—1500 | 不追踪玩家 |
-| 订书钉最大距离 | `staple_max_distance` | 300 | px | 飞行累计距离上限 | 20—1500 | 达到后销毁 |
-| 大修正带生命倍率 | `large_correction_health_multiplier` | 10 | 倍 | 相对基础敌人生命的倍率 | 1—50 | 不改变普通修正带生命 |
-| 触手怪生命 | `tentacle_max_hp` | 100 | HP | 触手怪固定生命 | 10—1000 | 不随难度成长 |
-| 触手怪接触伤害 | `tentacle_contact_damage` | 5 | HP | 靠近触手时按受击冷却结算 | 0—100 | 0.8s 冷却，不每帧扣血 |
-| 触手怪生成间隔 | `tentacle_spawn_interval` | 30 | 秒 | 梦境时间体系（跟随 Engine.time_scale，暂停即停） | 5—300 | 不使用真实时间 |
-| 触手怪每批最少 | `tentacle_spawn_batch_min` | 1 | 只 | 每次间隔到点随机下限 | 1—10 | 与上限取 min |
-| 触手怪每批最多 | `tentacle_spawn_batch_max` | 5 | 只 | 每次间隔到点随机上限 | 1—10 | 实际生成=min(随机, 剩余额度) |
-| 触手怪全图上限 | `tentacle_max_alive` | 10 | 只 | 同时存活触手数量上限 | 0—30 | 按 tentacle_enemies 组计数 |
-| 触手怪距玩家最小生成距离 | `tentacle_min_spawn_distance_from_player` | 120 | px | 生成点与玩家的安全距离 | 40—400 | 优先相机禁区外（屏幕外），找不到屏外点时退而只满足该距离 |
-| 触手怪紫色经验值 | `tentacle_purple_exp_value` | 25 | 经验 | 死亡掉落 1 个紫色经验球 | 1—1000 | 沿用宝箱怪紫色经验数值 |
-
-敌人解锁表由 `enemy_unlock_days` 集中维护，剧情模式使用 `calendar_day_id + 1`，无尽模式使用当前虚拟日：
-
-| 显示名 | 配置ID | 场景/实现 | 解锁日 |
-|---|---|---|---:|
-| 史莱姆 | `basic` | `res://scenes/entities/basic_enemy.tscn` | 1 |
-| 冲刺怪（魔眼） | `correction` | `res://scenes/entities/correction_tape_enemy.tscn` | 1 |
-| 触手怪 | `tentacle` | `res://scenes/entities/tentacle_enemy.tscn` | 1 |
-| 精灵射手 | `stapler` | `res://scenes/entities/stapler_enemy.tscn` | 2 |
-| 自爆蘑菇 | `alarm_clock` | `res://scenes/entities/alarm_clock_enemy.tscn` | 3 |
-| 宝箱怪 | `mailbox` | `res://scenes/entities/mailbox_enemy.tscn` | 4 |
-| 精英魔眼 | `large_correction` | `res://scenes/entities/large_correction_tape_enemy.tscn` | 5 |
-
-当前HP/伤害难度曲线保持原线性调参，只把输入改为难度日对应的阶段时间。Day 1—5实际倍率如下；Day 6以后继续沿同一曲线增长，不会重新锁怪：
-
-| Day | 等效阶段秒数 | HP倍率 | 伤害倍率 | 刷新间隔 |
-|---:|---:|---:|---:|---:|
-| 1 | 0 | 1.00 | 1.00 | 2.00s |
-| 2 | 120 | 3.16 | 2.44 | 0.65s |
-| 3 | 240 | 5.32 | 3.88 | 0.65s |
-| 4 | 360 | 7.48 | 5.32 | 0.65s |
-| 5 | 480 | 9.64 | 6.76 | 0.65s |
-
+- 当前唯一正式敌人场景为 `res://scenes/entities/employee_enemy.tscn`；所有正式生成入口统一实例化 `EmployeeEnemy`。
+- `enemy_unlock_days` 与 `enemy_base_spawn_weights` 当前只包含 `employee`，旧七怪场景、独立生成器和专属投射物已经删除。
+- 剧情房间使用 `story_enemy_health_multiplier`、房间人口上限与预警补充；Enemy AI、跨门、武器拾取、击倒、死亡身体部件与经验掉落继续由现行 Employee 系统处理。
+- `difficulty_seconds_per_day` 仅保留给非房间兼容生成曲线；不代表旧怪物按日解锁。
 ## 经验、升级与掉落
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
@@ -147,8 +110,6 @@
 | 1级升级需求 | `first_level_experience_requirement` | 20 | 经验 | 1级升2级所需经验 | 1—32767 | 后续等级使用增长底数 |
 | 经验增长底数 | `experience_growth_base` | 8 | 底数 | n级升n+1级使用 `8^n` | 2—16 | 最终受阈值上限限制 |
 | 单级经验上限 | `experience_requirement_cap` | 32767 | 经验 | 单级升级需求硬上限 | 1—2147483647 | 防止阈值溢出 |
-| 修正带掉落数量 | `correction_experience_drop_count` | 2 | 枚 | 正式死亡生成的经验物数量 | 1—16 | 每枚基础值1，击杀只计一次 |
-| 订书机掉落数量 | `stapler_experience_drop_count` | 3 | 枚 | 正式死亡生成的经验物数量 | 1—16 | 每枚独立使用拾取逻辑 |
 | 每局老虎机重抽 | `slot_rerolls_per_run` | 1 | 次/Run | 三格锁定、非Jackpot且尚未领取时可重新滚动 | 0—3 | 使用后立即扣除，本Run后续升级不恢复 |
 | 蓝卡概率 | `rarity_blue_probability` | 0.88 | 比例 | 蓝色候选抽取权重 | 0—1 | 三种权重共同归一化 |
 | 紫卡概率 | `rarity_purple_probability` | 0.10 | 比例 | 紫色候选抽取权重 | 0—1 | 达上限技能会被排除 |
@@ -166,7 +127,7 @@
 | 旷工工资比例 | `wage_ratio_absent` | 0.0 | 比例 | 09:00后工资比例 | 0—2 | 同时清零连续正常出勤数 |
 | 褪黑素价格 | `melatonin_price` | 100 | 元/片 | 速联跑腿购买价格 | 0—1,000,000 | 受库存上限限制 |
 | 褪黑素库存上限 | `melatonin_inventory_cap` | 99 | 片 | 跨天库存最大值 | 1—999 | 与每晚上限是不同概念 |
-| 每个完成日获得RAM | `ram_per_completed_day` | 1 | RAM/完成日 | 剧情正式完成一天、无尽每完成一个120秒虚拟日均按此奖励 | 0—100 | 不读取等级或经验；剧情按`last_ram_settled_story_day_id`、无尽按Run提交标记防重 |
+| 每个完成日获得RAM | `ram_per_completed_day` | 1 | RAM/完成日 | 剧情正式完成一天时奖励 | 0—100 | 不读取等级或经验；按`last_ram_settled_story_day_id`防重 |
 | 正常生活结局天数 | `normal_life_ending_required_workdays` | 14 | 工作日 | 连续正常上班达到该值触发结局 | 1—365 | 星期日保持计数，迟到/旷工/失业清零 |
 
 ## 手机外观相关参数
@@ -182,23 +143,29 @@
 | 主页收回热区高度 | `phone_upper_collapse_height` | 166 | px | 旧主页上半部收回点击范围（已被下方比例参数覆盖，仅保留兼容） | 100—169 | 最新规则以 `phone_retract_height_ratio` 为准 |
 | 手机收起触发区比例 | `phone_retract_height_ratio` | 0.333333 | 比例 | 收起触发区 = 手机整体高度的顶部 1/3；仅背景空白生效，内容层优先；**交互区视觉完全隐藏**（无 hover 高亮/边框/色块），交互仍有效 | 0.1—1 | 下方 2/3 完全不触发收起；APP 图标/顶栏/列表/滑杆点击绝不收起 |
 
-## 梦游模式与瞄准
+## 瞄准
 
-梦游模式开关由主菜单、手机设置应用和暂停菜单共同读取，保存字段为 `sleepwalk_mode`，设置文件为 `user://game_settings.cfg`。它与游戏进度存档分开保存，因此覆盖新游戏或回滚当天快照不会重置该偏好。默认关闭；修改开关后立即同步全部设置入口，并在下一次进入梦境时生效。
+所有武器统一调用 `res://scripts/entities/dream_player.gd` 中的 `get_aim_direction()`，当前正式实现读取鼠标世界坐标。准星、武器方向与实际攻击判定共用该方向；项目不再提供自动攻击模式。
+### 弹匣与世界手持武器
 
-所有武器统一调用 `res://scripts/entities/dream_player.gd` 中的 `get_aim_direction()`。开启时，该接口选择玩家中心到有效存活敌人中心距离最近的目标；目标死亡或离场后自动切换。没有目标时保留最近一次有效方向。升级、Tab和暂停期间场景树暂停，不刷新目标。关闭时仍使用鼠标坐标，准星颜色、冷却与后坐力表现不变。
+Pistol、Shotgun、Assault Rifle使用统一弹匣；近战武器不使用弹药。弹量仅保存在`DreamPlayer.ammo_states`当前Run字典中，每个武器ID独立，换武器不会免费补弹，也不会写入跨天存档。Shotgun一次九弹齐射只在攻击入口扣1发。世界武器图标位于`DreamPlayer/WeaponRoot/HandAnchor/WeaponMotion/HeldWeaponSprite`，复用现有Weapon Icon、Nearest过滤；HandAnchor和所有Projectile Origin读取同一个瞄准方向。左向使用`flip_v`防止图标倒置；射击动画只移动`WeaponMotion`，不会推动Player或Camera。
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
 |---|---|---:|---|---|---|---|
-| 首次默认梦游模式 | `sleepwalk_mode_default` | `false` | 布尔 | 没有设置文件时的初始状态 | `false` / `true` | 现有设置文件优先；修改配置后需删除旧设置或手动切换 |
-| 自动瞄准搜索半径 | `auto_aim_search_radius` | 900 | px | 最近目标搜索上限 | 300—1500 | `0`表示无限；应覆盖所需战斗视野 |
-| 自动瞄准刷新间隔 | `auto_aim_refresh_interval` | 0.08 | 秒 | 重新比较最近目标的频率 | 0.02—0.3 | 越低响应越快，但遍历敌人更频繁 |
+| 默认弹匣容量 | `default_weapon_magazine_size` | 12 | 发 | Pistol/Shotgun/Assault Rifle当前Run的独立弹匣容量 | 1—99 | 近战武器不读取 |
+| 主动/自动换弹时间 | `weapon_reload_duration` | 0.75 | 秒 | 按R主动换弹或弹量归零自动换弹时，禁止攻击、360°手持武器旋转与补满弹匣的统一时长 | 0.3—5 | 使用游戏时间；进度条、旋转、补弹和禁止射击窗口读取同一参数 |
+| 手持武器距离 | `held_weapon_distance` | 11 | px | 武器Icon中心及投射物挂点相对玩家的前向距离 | 4—24 | 不改变武器射程 |
+| 世界武器缩放 | `held_weapon_world_scale` | 1.0 | 倍率 | UI Weapon Icon作为世界Sprite时的统一显示倍率 | 0.5—3 | Nearest过滤，建议整数或清晰倍率 |
+| 武器后坐距离 | `weapon_recoil_distance` | 4 | px | 枪械图标沿瞄准反方向的局部位移 | 3—6 | 不移动Player Body |
+| 后坐退出时间 | `weapon_recoil_kick_seconds` | 0.04 | 秒 | 图标快速退后的时长 | 0.03—0.06 | 新攻击会终止旧Tween |
+| 后坐恢复时间 | `weapon_recoil_return_seconds` | 0.09 | 秒 | 图标回到HandAnchor的时长 | 0.06—0.12 | Katana复用作简短回摆 |
+| 太刀手持摆角 | `katana_held_swing_degrees` | 18 | 度 | 太刀攻击时的简化Swing视觉 | 5—35 | 不改变近战/剑气判定 |
 
 ## 经验掉落层级
 
 层级在 `res://scenes/dream/dream_world.tscn` 中使用容器 `z_index` 固定：背景为0、`PickupContainer`为1、`EnemyContainer`为2、玩家为3、投射物与战斗特效为4、UI使用CanvasLayer 20。经验节点和拾取脚本未改变，只移动其绘制容器，因此吸附、碰撞距离和经验结算规则保持不变。
 
-经验与红心视觉已换为 `res://art/icon/EXP/` 序列帧动画（循环、Nearest、按各帧自身尺寸居中绘制防抖）：蓝经验 = `Blue_EXP.png` 5帧（10×9 @ x=0/16/32/48/64），紫经验 = `Purple_EXP.png` 6帧（10×9 @ x=0/16/32/48/64/81，宝箱怪/触手怪等所有正式紫色 EXP 统一复用），红心 = `health.png` 6帧（高13，宽 14/12/10/4/12/14）。EXP 数值、磁吸半径、拾取判定与红心 15HP 回复（拾取后仍播 Heal 角色恢复动画）全部不变，碰撞/拾取半径不跟美术放大。脚本：`res://scripts/entities/xp_gem.gd`、`res://scripts/entities/heart_pickup.gd`。
+旧 XP 视觉资源仍保留在 `res://art/icon/EXP/` 与 `res://scripts/entities/xp_gem.gd` 供手动/兼容测试使用；正式 Dream 不再创建、拾取或累计 XP Gem。
 
 ## 打击感与集中音效
 
@@ -209,69 +176,36 @@
 | UI悬停音量 | `sfx_ui_hover_volume_db` | -27 | dB | 首次进入可交互选项时的低频电子提示 | -35—-16 | 离开后再次进入才会重播；与确认音分开 |
 | 冲刺音量 | `sfx_dash_volume_db` | -12 | dB | 成功开始冲刺时播放 | -30—0 | 冷却中或被边界阻止时不播放 |
 | 玩家受伤音量 | `sfx_player_hurt_volume_db` | -12 | dB | 非致命有效伤害或解离复活反馈 | -30—0 | 正式死亡仍使用独立`death`事件 |
-| 通用武器发射音量 | `sfx_weapon_fire_volume_db` | -17 | dB | 太刀的占位挥击声 | -35—0 | 手枪、霰弹枪和光束已使用各自事件 |
+| 通用武器发射音量 | `sfx_weapon_fire_volume_db` | -17 | dB | 太刀的占位挥击声 | -35—0 | 手枪和霰弹枪已使用各自事件 |
 | 敌人击杀音量 | `sfx_enemy_kill_volume_db` | -14 | dB | 敌人正式进入死亡流程时播放 | -30—0 | 同一事件复用单播放器，避免叠加爆音 |
 | 命中顿帧时长 | `hit_stop_duration` | 0.04 | 秒 | 有效命中产生的极短时间压缩 | 0.03—0.06 | 使用忽略时间倍率的恢复计时器；菜单和醒来长按时不触发 |
-| 顿帧最短间隔 | `hit_stop_minimum_interval` | 0.09 | 秒 | 限制高频命中连续顿帧 | 0.05—0.25 | 霰弹与光束多目标命中共享节流 |
+| 顿帧最短间隔 | `hit_stop_minimum_interval` | 0.09 | 秒 | 限制高频命中连续顿帧 | 0.05—0.25 | 霰弹多目标命中共享节流 |
 | 顿帧时间倍率 | `hit_stop_time_scale` | 0.05 | 比例 | 顿帧期间场景速度 | 0.01—0.2 | UI仍可处理；退出梦境会强制恢复1.0 |
 | 敌人受击挤压 | `enemy_hit_scale_amount` | 0.16 | 比例 | 视觉子节点的短促横向拉伸/纵向挤压 | 0.05—0.3 | 不缩放碰撞体，不改变实际移动 |
-| 敌人视觉击退 | `enemy_hit_visual_knockback_pixels` | 6 | px | 命中后仅移动精灵的反向反馈 | 0—14 | 不改变角色物理坐标 |
+| 敌人视觉击退 | `enemy_hit_visual_knockback_pixels` | 6 | px | 命中后精灵层的短促反馈 | 0—14 | 与真实物理击退并存，不改变碰撞体大小 |
+| 敌人物理击退速度 | `enemy_knockback_strength` | 96 | px/s | 非致死命中时从攻击源向外施加初始速度 | 0—240 | 统一入口`BaseEnemy.apply_knockback()`，墙和关闭门通过move_and_slide阻挡 |
+| 敌人物理击退时长 | `enemy_knockback_duration` | 0.14 | 秒 | 真实击退快速衰减后恢复AI的时间 | 0.08—0.2 | 特殊敌人状态机先处理击退再恢复；触手Resistance=1.0，仅保留视觉反馈 |
 | 击杀/掉落弹出时间 | `kill_pop_animation_seconds` | 0.24 | 秒 | 解体特效与经验弹出动画时长 | 0.12—0.5 | 只影响视觉，不延后掉落结算 |
 | 受伤屏幕闪光强度 | `player_hurt_screen_flash_alpha` | 0.24 | Alpha | 有效受伤时覆盖画面的红色闪光 | 0—0.5 | UI绘制在闪光之上 |
 | 受伤屏幕闪光时长 | `player_hurt_screen_flash_seconds` | 0.12 | 秒 | 红色闪光淡出时间 | 0.05—0.35 | 无敌帧闪烁仍由玩家脚本负责 |
 
 UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡片/刷新、手机应用、主菜单眠网升级按钮、速联跑腿购买按钮与武器选择卡。手机点击仍使用 `phone_operation`，购买成功/失败仍分别使用 `purchase` / `forbidden`，避免同一次点击重复播放确认音。
 
-## 敌人像素素材与动画
+## Employee像素素材与动画
 
-五种常规敌人已替换为 Monster 素材包的真实序列帧（AnimatedSprite2D + SpriteFrames，帧数为实测切分）；触手怪使用 Crawling Depths 的 tentacle_sheet.png；精英魔眼（internal_id 仍为 `large_correction_tape`）已换用 Flying Eye 完整动画模型（walk/charge/death 全部接入，共用描边/Hit Flash/死亡序列，HP/伤害/冲刺/EXP 数值不变）。素材目录/帧明细见 `docs/ASSET_INDEX.md`，署名与授权见 `docs/THIRD_PARTY_ASSETS.md`。全部敌人（含精英魔眼）统一接入 EnemyOutlineController 白描边（材质实例独立、宽度统一由 `enemy_outline_width_px`=2.0 集中配置，源纹理像素空间、基于 `TEXTURE_PIXEL_SIZE`，不随节点缩放放大，VisualRoot ×4 不会变成巨描边）、Hit Flash（visual.modulate，与描边材质兼容）与基类死亡序列（停 AI→播 death→动画结束后才掉落/回收）。内部 ID 保留：basic/correction_tape/stapler/alarm_clock/mailbox/tentacle/large_correction_tape，显示名称依次为史莱姆/魔眼/精灵射手/自爆蘑菇/宝箱怪/触手怪/精英魔眼。
-
-| 敌人 | 场景资源 | 移动动画 | 蓄力/攻击动画 | 死亡动画 | 状态同步位置 |
-|---|---|---|---|---|---|
-| 史莱姆（basic） | `res://scenes/entities/basic_enemy.tscn` | `walk`（6帧循环） | — | `death`（11帧非循环） | `res://scripts/entities/basic_enemy.gd` |
-| 魔眼（correction_tape） | `res://scenes/entities/correction_tape_enemy.tscn` | `walk`（8帧循环） | `charge`（8帧循环） | `death`（4帧非循环） | `res://scripts/entities/correction_tape_enemy.gd` |
-| 精英魔眼（large_correction_tape，Flying Eye） | `res://scenes/entities/large_correction_tape_enemy.tscn` | `walk`（Flight.png 8帧循环） | `charge`（Attack.png 8帧循环） | `death`（Death.png 4帧非循环） | `res://scripts/entities/large_correction_tape_enemy.gd` |
-| 精灵射手（stapler） | `res://scenes/entities/stapler_enemy.tscn` | `walk`（8帧循环） | `attack_prepare`（6帧非循环） | `death`（10帧非循环） | `res://scripts/entities/stapler_enemy.gd` |
-| 自爆蘑菇（alarm_clock） | `res://scenes/entities/alarm_clock_enemy.tscn` | `walk`（8帧循环） | `charge`（8帧循环） | `death_delay`（4帧非循环）+ `explode` 单帧 | `res://scripts/entities/alarm_clock_enemy.gd` |
-| 宝箱怪（mailbox） | `res://scenes/entities/mailbox_enemy.tscn` | `walk`（6帧循环） | `slam_charge`（5帧循环）/`slam`（9帧非循环） | `death`（6帧非循环） | `res://scripts/entities/mailbox_enemy.gd` |
-| 触手怪（tentacle） | `res://scenes/entities/tentacle_enemy.tscn` | `idle`（6帧循环，不移动） | — | 无帧：淡出0.5s | `res://scripts/entities/tentacle_enemy.gd` |
-
-魔眼的 `charge` 与实际蓄力时间同时开始并结束。精灵射手冷却到点后**立即停止移动（velocity=0，`huntress_attack_stop_before_shot` 门控）并原地完整播放 attack_prepare 序列**，动画帧号 ≥ `huntress_shoot_projectile_frame`（默认3，即弓弦释放帧）时生成箭矢；动画播完恢复 walk 移动，周期到点未触发则兜底发射，发射间隔与判定不变；进入攻击时锁定 `attack_target_position`，目标失效时用锁定位置兜底方向。精英魔眼移动/死亡帧率与普通魔眼共用 `flying_eye_move_fps`/`flying_eye_death_fps`。自爆蘑菇的死亡帧融入原“死亡→延迟→爆炸”流程，爆炸机制不变；宝箱怪分裂机制保持（仍分裂为修正带场景，现为魔眼视觉）。触手怪生成器位于 `res://scripts/dream/tentacle_spawner.gd`，由 `dream_world.tscn` 的 `TentacleSpawner` 节点承载。
-
-敌人体型放大（只改视觉与必要碰撞，不改任何战斗数值）：五种 Monster 敌人最终视觉尺寸为旧版的 **×4**（史莱姆/魔眼/精灵射手/自爆蘑菇/宝箱怪），触手怪单独 **×2**；放大只发生一次（配置保存绝对最终 scale，运行时不二次乘倍率），素材保持 Nearest 过滤、无 Mipmaps，不重采样。碰撞体按新视觉“身体核心”单独适配（不机械×4，弓/翅膀/触角/透明区不计入）：史莱姆 r18@(0,10)、魔眼 r13@原点（不含翅膀）、精灵射手 r14@(0,6)（不含弓）、自爆蘑菇 r11@(0,4)（爆炸半径仍用原配置）、宝箱怪 r46@(0,10)、触手怪 r13@(0,-6) 固定不随触须摆动。伤害数字锚点由基类 `get_damage_number_offset()` 按帧高×视觉缩放自动上移；EXP 仍从敌人锚点附近掉落；描边/Hit Flash/自动瞄准不受影响。
-
-| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
-|---|---|---:|---|---|---|---|
-| 史莱姆移动帧率 | `slime_move_fps` | 7 | FPS | 史莱姆 walk 速度 | 2—15 | 修改后重新进入梦境 |
-| 史莱姆死亡帧率 | `slime_death_fps` | 9 | FPS | 史莱姆 death 速度 | 2—15 | 死亡序列结束后才掉落 |
-| 魔眼移动帧率 | `flying_eye_move_fps` | 9 | FPS | 魔眼 walk 速度 | 2—15 | 与 AI 移动速度无关 |
-| 魔眼死亡帧率 | `flying_eye_death_fps` | 6 | FPS | 魔眼 death 速度 | 2—15 | 非循环播完回收 |
-| 精灵射手移动帧率 | `huntress_move_fps` | 10 | FPS | 精灵射手 walk 速度 | 2—20 | 与发射周期无关 |
-| 精灵射手射击帧率 | `huntress_shoot_fps` | 12 | FPS | attack_prepare 速度 | 2—24 | 与发射帧门槛联动 |
-| 精灵射手死亡帧率 | `huntress_death_fps` | 8 | FPS | 精灵射手 death 速度 | 2—20 | 非循环播完回收 |
-| 自爆蘑菇移动帧率 | `mushroom_move_fps` | 8 | FPS | walk 与 charge 速度 | 2—15 | 不影响自爆计时 |
-| 自爆蘑菇死亡帧率 | `mushroom_death_fps` | 4 | FPS | death_delay 速度 | 1—12 | 播完后仍按原延迟爆炸 |
-| 宝箱怪移动帧率 | `mimic_move_fps` | 6 | FPS | walk/slam_charge/slam 速度 | 2—15 | 与砸击判定无关 |
-| 宝箱怪死亡帧率 | `mimic_death_fps` | 7 | FPS | 宝箱怪 death 速度 | 2—15 | 动画结束后才掉落/分裂 |
-| 触手怪待机帧率 | `tentacle_idle_fps` | 3 | FPS | 触手 idle 速度 | 1—10 | 环境型缓慢摆动 |
-| 发射帧门槛 | `huntress_shoot_projectile_frame` | 3 | 帧号 | attack_prepare 达到该帧发射订书钉 | 0—5 | 不得超过动画末帧 |
-| 修正带蓄力帧率 | `correction_charge_animation_fps` | 8 | FPS | 魔眼 charge 速度 | 2—16 | 动画循环，实际结束由蓄力计时控制 |
-| 精英魔眼移动/死亡帧率 | `flying_eye_move_fps` / `flying_eye_death_fps` | 9 / 6 | FPS | 精英魔眼（换 Flying Eye 后）walk/death 速度，与普通魔眼共用 | 2—16 | `large_correction_enemy_walk_animation_fps` 已不再被精英读取 |
-| 精英魔眼蓄力帧率 | `large_correction_charge_animation_fps` | 7 | FPS | 精英 charge 速度 | 2—16 | 动画循环，实际结束由蓄力计时控制 |
-| 射手攻击前停步 | `huntress_attack_stop_before_shot` | `true` | 布尔 | 进入攻击序列立即 velocity=0 并暂停寻路，动画播完才恢复 | true/false | 关闭后退化为可移动射击（不推荐） |
-| 订书机前摇窗口 | `stapler_attack_windup_seconds` | 0.35 | 秒 | （已废弃，保留避免旧资源报错）旧预警窗口 | — | 新实现改为冷却到点直接进入完整攻击序列 |
-
+- 当前唯一正式敌人使用 `res://art/Dream/enemy/Employee_men_32x32.png`；Employee 场景运行时拆分为 `LeftFoot`、`RightFoot`、`Head`、`Body`、`LeftHand`、`RightHand`。头部使用第2列三帧（右侧透明边裁掉），身体使用第3列，脚/手使用第4/5列的实际非透明组件区域。
+- 角色内部顺序为 Feet → Head → Body → Hands，WeaponRoot 只在角色内部位于前景；CharacterVisual 与 WeaponRoot 保持同一 Actor YSort 带，家具和门前景仍可正确遮挡。
+- 旧 Slime、Flying Eye、Huntress、Mushroom、Mimic、Tentacle 场景及其专属动画配置已经退出正式运行链。
 ## 像素角色、武器特效与音频质感
 
 配置路径统一为 `res://resources/demo_config.tres`，字段声明位于 `res://scripts/data/demo_config.gd`。下列参数在重新进入梦境后生效；音频总线滤波参数需要重新启动游戏。
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
 |---|---|---:|---|---|---|---|
-| 玩家视觉缩放 | `player_visual_scale` | 0.75 | 倍 | 战斗角色视觉为上一版1.0的75% | 0.5—1.5 | 只对Visual/HealOverlay使用绝对值，不累乘；Camera和PlayerLight半径不随之缩放 |
+| 玩家视觉缩放 | `player_visual_scale` | 1.0 | 倍 | Player 与 EmployeeEnemy 共用的 32px→1 gameplay cell 基准视觉倍率 | 0.5—1.5 | 只对CharacterVisual/HealOverlay使用绝对值；3D Bridge 不再追加倍率，不放大碰撞 |
 | 玩家碰撞半径 | `player_collision_radius` | 7.5 | px | 配合缩小后的身体核心碰撞 | 5—12 | Collider与视觉同步缩小，不能按透明画布计算 |
 | 玩家碰撞偏移 | `player_collision_offset` | `(0,-13)` | px | 将圆形身体碰撞对齐缩小后的躯干 | — | 玩家世界原点仍为脚底附近 |
-| 玩家武器根偏移 | `player_weapon_root_offset` | `(0,-18.25)` | px | 统一控制子弹、榴弹、太刀及瞄准挂点 | — | 不改变任何武器数值 |
-| 玩家描边宽度 | `player_outline_width_px` | 1.0 | px | 玩家 1px Alpha 描边（sprite_alpha_outline shader，基于 TEXTURE_PIXEL_SIZE） | 0.5—8 | 1:1 显示时 1 源像素 ≈ 1 视觉像素；重建图集每帧四周预留至少1px透明边界防裁切 |
+| 玩家武器根偏移 | `player_weapon_root_offset` | `(0,-18.25)` | px | 统一控制子弹、太刀及瞄准挂点 | — | 不改变任何武器数值 |
 | 敌人视觉缩放组 | `slime/flying_eye/huntress/mushroom/mimic/tentacle_visual_scale` | 0.60/0.76/1.02/0.96/1.68/1.0 | 倍 | 各素材统一缩放入口（绝对最终值，运行时不二次乘倍率；自爆蘑菇已基于上一版 0.48 ×2 = 0.96） | 0.02—2 | 只改视觉；碰撞体按身体核心单独适配；精英魔眼使用独立 `large_correction_visual_scale`=1.0；运行时不二次乘倍率 |
 | 玩家待机帧率 | `player_idle_animation_fps` | 1 | FPS | 四方向待机动画速度 | 0.5—4 | 当前每个方向使用一帧，为后续增帧保留接口 |
 | 玩家行走帧率 | `player_walk_animation_fps` | 8 | FPS | 四方向四帧行走循环速度（每行第2帧起，首帧为该方向静止） | 4—12 | 不改变实际移动速度 |
@@ -280,8 +214,13 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 | 枪口闪光时长 | `weapon_muzzle_flash_seconds` | 0.07 | 秒 | 手枪和霰弹枪像素枪口反馈 | 0.03—0.15 | 仅视觉，受暂停与慢动作影响 |
 | 命中特效时长 | `weapon_hit_effect_seconds` | 0.14 | 秒 | 非致命命中的像素碎片与闪光 | 0.06—0.3 | 击杀仍使用 `kill_pop_animation_seconds` |
 | 子弹拖尾长度 | `projectile_trail_length` | 10 | px | 小手枪与霰弹丸的冷色像素轨迹 | 2—24 | 不改变射程或碰撞判定 |
-| 光束蓄力时间 | `beam_charge_seconds` | 0.18 | 秒 | 冷却结束前显示收束像素环 | 0.05—0.4 | 不改变光束攻击间隔和实际发射时刻 |
 | 太刀残影时间 | `katana_afterimage_seconds` | 0.20 | 秒 | 挥刀弧线多层残影持续时间 | 0.08—0.4 | 不改变近战范围和剑气规则 |
+| 模块化行走周期 | `player_walk_cycles_per_second` | 1.5 | 次/秒 | 控制腿部交替和CharacterVisual上下抖动频率 | 0.5—4 | 由3.0减半；不改变112px/s移动速度，Offset继续取整 |
+| 踢击最大后仰 | `kick_body_max_lean_degrees` | 45 | 度 | 踢击发力顶点BodyPivot与HeadPivot的最大反向倾斜 | 0—60 | 由动作进度渐入/渐出，结束恢复Scene保存的基础Rotation |
+| 地面武器交互半径 | `world_weapon_interaction_radius` | 34 | px | 靠近Weapon Room地面武器时显示F交换提示 | 16—64 | 交互优先于同键踢击 |
+| 旧武器落地点偏移 | `world_weapon_drop_offset` | 28 | px | 交换时尝试把旧武器放到玩家身后或侧后方 | 12—64 | 会检查墙、家具和其它武器碰撞 |
+| 旧武器轻推冲量 | `world_weapon_swap_drop_impulse` | 45 | impulse | 交换后旧武器轻微滑向玩家后方 | 0—160 | 低于正式Kick冲量，不造成家具撞击伤害 |
+| 地面武器质量 | `world_weapon_mass` | 0.65 | kg(物理相对值) | 世界武器RigidBody2D推动和踢击手感 | 0.1—4 | 属于Props物理层，不可破坏 |
 | UI悬停音量 | `sfx_ui_hover_volume_db` | -27 | dB | 老式电子菜单短促反馈音量 | -35—-16 | 音高由 `sfx_ui_hover_tone_hz` 控制 |
 | UI悬停音高 | `sfx_ui_hover_tone_hz` | 260 | Hz | 限制悬停提示的基础频率 | 160—480 | 越高越明亮，当前值主动避开刺耳高频 |
 | 手枪发射音量 | `sfx_pistol_fire_volume_db` | -20 | dB | 轻、快、机械式8-bit发射声 | -30—-10 | 进入Weapons总线低通 |
@@ -299,9 +238,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 | 总音量 | `master_volume` | 100 | % | 控制Master总线，影响全部声音 | 0—100 | 0会静音Master；玩家设置，不在`demo_config.tres`中 |
 | 音乐音量 | `music_volume` | 70 | % | 控制Music总线 | 0—100 | Music发送到Master；当前没有改变音乐播放逻辑 |
 | 音效音量 | `sfx_volume` | 80 | % | 控制SFX总线及其UI、Weapons、Characters、Environment子总线 | 0—100 | 0会静音全部音效，但不改各事件自身dB配置 |
-| 梦游模式 | `sleepwalk_mode` | `false` | 布尔 | 进入梦境时自动寻找最近敌人 | `false/true` | 与三条音量设置保存在同一ConfigFile中 |
 
-旧版 `user://game_settings.json` 只在首次迁移时读取梦游模式，之后不再作为活动设置存档。
 
 ## 像素UI参数
 
@@ -401,15 +338,12 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 | 高于70敌人移速 | `stress_enemy_speed_multiplier_over_70` | 1.5 | 倍 | 最高压力档移动倍率 | 1.0—4.0 | 与快速眼动倍率乘算 |
 | 绝对最小刷新间隔 | `stress_absolute_minimum_spawn_interval` | 0.25 | 秒 | 压力倍率计算后的硬下限 | 0.1—1.0 | 防止0秒或无限生成 |
 | 梦境环境色 | `dream_ambient_color` | `#26313F` | 颜色 | CanvasModulate对世界地图、敌人、弹丸和掉落物的基础暗化 | 深灰蓝、避免纯黑 | HUD位于独立CanvasLayer，不受影响 |
-| 玩家光照半径 | `player_light_radius` | 104 | 世界px | 玩家周围柔和可视亮区半径，约设计短边360px的29% | 72—144 | PlayerLight为玩家子节点，移动和Dash自动同步 |
-| 玩家光照能量 | `player_light_energy` | 1.15 | 倍率 | PointLight2D中心亮度 | 0.7—1.8 | 过高会冲淡冷色梦境美术 |
-| 玩家光照颜色 | `player_light_color` | `#E7F0F8` | 颜色 | 略偏冷的照明色，不作为强烈染色滤镜 | 接近白色 | 与环境色共同决定近处可读性 |
-| 玩家光照衰减 | `player_light_falloff` | 0.32 | 纹理比例 | 程序化径向渐变中较亮中心区结束位置 | 0.15—0.55 | 边缘始终平滑衰减至透明 |
-| 高压力光照半径倍率 | `stress_light_radius_multiplier` | 0.72 | 倍率 | 压力高于视野阈值时缩小同一PlayerLight | 0.5—1.0 | 旧黑色圆孔遮罩已停用，避免双重压暗 |
+| SoftGlow参考半径 | `player_light_radius` | 104 | 世界px | 历史字段名；只作为XP/Heart绘制光晕的尺寸参考 | 48—240 | 不创建或控制任何Light2D |
+| SoftGlow参考颜色 | `player_light_color` | `#E7F0F8` | 颜色 | 历史字段名；只作为非照明绘制光晕的冷色参考 | 接近白色 | 不会照亮墙、地面或其它Sprite |
 | 失业压力阈值 | `stress_unemployment_threshold` | 90 | 点 | 每日结算后达到该值计为一个高压力日 | 1—100 | 星期日也计数，同一天只检查一次 |
 | 失业连续天数 | `stress_unemployment_required_days` | 3 | 日历日 | 连续达到阈值后永久失业 | 1—14 | 失业后所有出勤工资为0并清除正常出勤连胜 |
 
-梦境基础照明由 `DreamWorld/DreamLighting/CanvasModulate` 和玩家子节点 `DreamWorld/Player/PlayerLight` 组成。PlayerLight使用运行时生成的256×256径向`GradientTexture2D`，全场只有这一盏主要动态光源；旧`StressVisionOverlay`圆孔遮罩不再实例化。高压力通过`stress_light_radius_multiplier`收缩同一光源，不与第二层黑幕叠加。
+梦境只保留 `DreamWorld/DreamLighting/CanvasModulate` 的全局冷色调，它不是局部光源。Player、Enemy、Projectile、XP、Heart和Weapon Drop均不含运行时`Light2D/PointLight2D`。`SoftGlow`仍可绘制不影响周围场景的低成本圆形光晕；高压力仅影响刷怪与敌人数值，不再改变视野灯半径。
 
 ## 对话立绘统一描边与冷蓝滤镜
 
@@ -417,7 +351,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 ## 战斗辨识与升级老虎机
 
-- `projectile_glow_alpha=0.16`、`projectile_glow_radius=9px`：弹丸共享低成本绘制光晕；不使用PointLight2D。
+- 普通弹丸、霰弹弹丸和剑气不再使用PointLight2D、SoftGlow、Emission或Halo；弹丸视觉为普通像素Sprite/单层贴图。
 - `pickup_glow_alpha=0.18`、`pickup_glow_radius=10px`：Heart等通用拾取物光晕，仍受梦境环境压暗。
 - `xp_glow_alpha=0.30`、`xp_glow_radius=5px`：EXP局部光晕的透明度与半径（直径约10px）；蓝色与紫色EXP使用各自的稀有度颜色，不使用`PointLight2D`。
 - `electric_shield_animation_fps=30`、`electric_shield_visual_scale=0.18`：意识固化电气护盾60帧循环的帧率与独立视觉节点缩放，不影响护盾挡伤机制。
@@ -428,8 +362,9 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 - 升级老虎机每次打开从`upgrade_reel_start_speeds=(84,92,78)px/s`开始，使用原有`upgrade_reel_acceleration_curve`的Quadratic Ease-In在`upgrade_reel_acceleration_duration=1.35秒`内加速到`upgrade_reel_max_speeds=(440,472,416)px/s`，之后保持上限。两组速度均为上一版实际值的2倍；锁定仍由`upgrade_slot_lock_deceleration=0.16秒`短暂Ease-Out并吸附完整Cell。
 - 每跨过一个完整Cell触发原创程序化`slot_tick`（45ms、`sfx_slot_tick_volume_db=-28dB`、`sfx_slot_tick_min_interval=0.025秒`），走UI/SFX总线，单播放器重触发避免三列叠音爆音。锁定格子的名称和描述直接读取同一个Upgrade/Weapon字典。
 - CRT覆盖`UpgradePanel/CRTOverlay`（Y=94—316），参数为Scanline `0.10`、Noise `0.025`、Vignette `0.14`；Reel高度调整为174px，Hover描述矩形Y=282—306完整包含在Overlay安全区，并与底边保留10px，因此屏幕上只保留参与Barrel Distortion的一份可读描述。Overlay忽略鼠标，Shader不改变Control输入坐标，暂停期间仍由GPU时间更新。
-- 剧情模式武器分离为解锁资格和当前装备：存档字段`current_weapon_id`默认`basic`并跨天/死亡保留。本局`used_weapon_reward_ids`在开始时加入初始武器，真正选择并装备新武器后再加入；这些武器随后从本局老虎机池排除。仅滚到、锁定或Reroll不会加入，下一局重新初始化。无尽模式通过强类型`configure_run_weapon_state()`接收本局选择与全武器池，不写剧情字段。
-- 剧情老虎机卡片权威字段为`persistent_day_state.story_upgrade_levels`，结构为`upgrade_family -> level/rank`。正式获得卡片后立即同步存档及当天快照；死亡、换日和Continue继续保留。新Dream总是先重建Base与眠网加成，再通过`_apply_restored_story_upgrades()`应用保存等级一次，避免重复叠加。New Game默认空字典；无尽模式不读取也不写入该字段，每个新Run从空`skill_levels`开始。目录Max过滤读取恢复后的等级，达到上限的卡片不再进入候选池。
+- 剧情模式武器分离为解锁资格和当前装备：存档字段`current_weapon_id`默认`basic`并跨天/死亡保留。本局`used_weapon_reward_ids`在开始时加入初始武器，真正选择并装备新武器后再加入；这些武器随后从本局老虎机池排除。仅滚到、锁定或Reroll不会加入，下一局重新初始化。
+- 原`chest`房间类型已由`weapon`正式替代，模板为`res://scenes/dream/rooms/room_weapon_01.tscn`。`WeaponSpawn_01=(272,180)`、`WeaponSpawn_02=(368,180)`各生成一件不同的`WorldWeaponPickup`；它们是Props层的不可破坏RigidBody2D，可推、可踢但不具备家具高速撞击伤害。靠近时F优先交换，当前武器写回同一地面节点，因此另一个武器不会消失；RoomManager缓存房间实例，武器ID、物理位置与交换结果在本局重入时保持。
+- 剧情老虎机/宝箱卡片只保存在当前`DreamWorld.skill_levels`，只在当前Dream内累计并参与Max过滤；Dream结束后随场景释放，下一次Story Dream从空字典开始。旧档的`story_upgrade_levels`仅用于安全迁移后删除，不再恢复或写回。眠网RAM升级仍由`persistent_day_state.permanent_upgrades`永久保存。
 - 升级面板Root以`y=390`为离屏位置，`upgrade_panel_enter_seconds=0.42秒`Ease-Out滑入；领取后保留`upgrade_reward_confirm_seconds=0.20秒`反馈，再以`upgrade_panel_exit_seconds=0.32秒`Ease-In滑出，完全离屏后才恢复战斗。面板底层使用程序化16束低透明度旋转放射光，普通状态为冷蓝，Passive三同Jackpot切换蓝/紫/青/粉/黄低频彩色状态；CRT仍只覆盖主体屏幕并位于放射光上层。
 
 ## 电脑21点
@@ -446,13 +381,12 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 - 小手枪默认解锁。
 - `shotgun_unlocked`：第2天永久解锁。
-- `beam_weapon_unlocked`：第一次轻微或严重迟到后永久解锁。
 - `katana_unlocked`：第一次旷工后永久解锁。
 - `high_stress_consecutive_days`、`high_stress_checked_day_id`和`is_unemployed`跨天保存；连续3个日历日压力达到90触发失业。
 
 ## 星期日事件与余额规则
 
-星期日事件由`sunday_event_probabilities`、`sunday_event_texts`和`sunday_event_balance_deltas`集中配置，当前依次为5%义工`+¥200`、5%大餐`-¥500`、5%外包`+¥1,000`、5%感冒`-¥300`、80%无事发生。每周只使用一次累计概率随机，并保存事件周ID、事件ID和实际余额变化。
+星期日事件概率与余额变化由`sunday_event_probabilities`和`sunday_event_balance_deltas`配置；玩家可见文字位于`res://data/text_events/story_events.json`的`sunday_event_0`至`sunday_event_4`。当前依次为5%义工`+¥200`、5%大餐`-¥500`、5%外包`+¥1,000`、5%感冒`-¥300`、80%无事发生。每周只使用一次累计概率随机，并保存事件周ID、事件ID和实际余额变化。
 
 所有现实货币变化使用 `GameStateRules.change_balance()`；余额最低为0。余额200遇到-500时实际变化为-200，结果为0；商品购买仍在扣款前检查余额，不允许透支购买。
 
@@ -462,13 +396,13 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 ## 在线消息与褪黑素动画
 
-在线消息数据位于 `res://resources/phone_messages.json`。“生活”迁移为“妈妈”，“工作”迁移为“项目组长-速联科技控股”，新频道“速联快讯”使用`quicklink_news_read`保存已读状态，旧存档迁移只追加缺失消息。
+在线消息模板位于 `res://data/dialogue/phone.json`。“生活”迁移为“妈妈”，“工作”迁移为“项目组长-速联科技控股”，新频道“速联快讯”使用`quicklink_news_read`保存已读状态，旧存档迁移只追加缺失消息。
 
 第一人称褪黑素脚本为 `res://scripts/ui/melatonin_interaction.gd`，原创可替换占位帧位于 `res://assets/art/first_person/melatonin/`。右手伸向药瓶、握瓶摇晃、瓶口甩药和吞服结束后，才一次性执行库存-1、本晚片数+1、压力-5；梦境开始时间仍由最终片数每片提前30分钟。ESC暂停会暂停手、Tween、非真实时间Timer和环境音频进度。
 
 ## 商品像素图标
 
-六个原创商品图标位于 `res://assets/ui/products/`：`melatonin_icon.png`、`cheap_meal_icon.png`、`visual_cortex_icon.png`、`brainstem_icon.png`、`hippocampus_icon.png`、`prefrontal_icon.png`。全部为32×32透明PNG，通过项目全局最近邻过滤显示，不包含第三方素材。
+商品图标位于 `res://assets/ui/products/`；`brainstem_icon.png` 作为旧存档/资源兼容素材保留，但不再出现在正式永久升级目录。全部为32×32透明PNG，通过项目全局最近邻过滤显示，不包含第三方素材。
 # V0.3 新增参数
 
 本节参数统一位于 `res://resources/demo_config.tres`，字段定义位于 `res://scripts/data/demo_config.gd`。修改 `.tres` 后重新进入相关场景即可生效；已经开始的梦境不会热重载配置。
@@ -485,15 +419,6 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 - `player_base_critical_chance`：默认 `0.10`，比例，推荐 `0—1`。每个有效玩家命中独立判定暴击。
 - `player_critical_damage_multiplier`：默认 `1.50`，倍率，推荐 `1—3`。在空腹倍率等修正之后乘算，统一四舍五入且最低伤害为 `1`。
-
-## 榴弹
-
-- `grenade_attack_interval`：默认 `3.0` 秒，推荐 `0.5—10`。投掷间隔。
-- `grenade_projectile_speed`：默认 `300.0 px/s`，推荐 `100—800`。投掷物飞行速度。
-- `grenade_explosion_radius`：默认 `150.0 px`，当前规则固定为150。敌人/玩家实际判定半径；视觉由 `grenade_explosion_visual_radius` 单独控制。
-- `grenade_enemy_damage`：默认 `30` 点，推荐 `1—300`。对每个敌人的基础伤害，各目标独立暴击。
-- `grenade_player_self_damage`：默认 `10` 点，推荐 `0—100`。对玩家固定自伤，不暴击并遵守无敌帧。
-- `grenade_spawn_offset_px`：默认 `14` px，推荐 `0—64`。榴弹出生点沿瞄准方向的偏移，保证出生在当前玩家碰撞体外侧；目标仍为攻击瞬间鼠标世界坐标快照，飞行不追踪鼠标。榴弹本体为纯 Node2D 无碰撞体，不会因触碰玩家提前爆炸，玩家自伤只来自爆炸 AoE（Dodge/出生无敌仍可阻挡）。飞行越界判定使用扩图后的 `ARENA_BOUNDS = Rect2(24, 24, 992, 432)`（旧小地图尺寸是脚底爆炸根因，已修正）。目标与出生点重合时方向回退最近一次有效瞄准方向（`last_aim_direction`），再兑底玩家默认面朝，绝不取消投掷；每次正式攻击必创建 1 枚投射物，链路断裂时 push_error 明确报错。
 
 ## 闹钟怪
 
@@ -529,7 +454,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 - `community_group_url`：默认 `https://qm.qq.com/q/Mq3wuCuZQ6`；点击群号后交由系统浏览器打开。
 - 公告不再进入主菜单自动弹出；点击版本号调用 `AnnouncementWindow.show_announcement()` 打开全屏公告（`#0E140D` 同主菜单背景、正文 ScrollContainer 滚动、底部中央关闭按钮），内容仍来自 `res://data/announcement.txt`。
 
-## V0.3 音频、天气、交互与无尽模式
+## V0.3 音频、天气与交互
 
 以下字段定义于 `res://scripts/data/demo_config.gd`，实际默认值保存在 `res://resources/demo_config.tres`。除音量滑轨即时生效外，修改后建议重新进入对应场景。
 
@@ -553,16 +478,6 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 - `melatonin_shake_direction_changes_required`：默认 `4` 次，推荐 `2—10`；达到水平有效行程后的左右反转次数。
 - 松开左键会暂停但保留本次进度；库存、服用次数、压力和梦境提前时间只在完整吞服动画结束后提交。
 
-### 榴弹视觉半径
-
-- `grenade_explosion_radius`：默认 `150 px`，实际敌人伤害与玩家自伤判定半径。
-- `grenade_explosion_visual_radius`：默认 `150 px`，推荐 `100—160`，仅控制圆环、闪光和烟雾最外缘。本版固定视觉节点缩放为 `1`，避免视觉被二次放大。
-
-### 自爆蘑菇与宝箱怪动画
-
-- 旧字段 `alarm_enemy_visual_scale`、`alarm_enemy_walk_fps`、`mailbox_enemy_walk_fps` 已删除，由 Monster 素材统一配置组接管：自爆蘑菇（原闹钟怪）用 `mushroom_move_fps`/`mushroom_death_fps`/`mushroom_visual_scale`，宝箱怪（原邮箱怪）用 `mimic_move_fps`/`mimic_death_fps`/`mimic_visual_scale`。
-- 新素材为 `res://art/Monster/Mushroom/` 与 `res://art/Monster/Mimic/` 的横条等分序列帧（帧明细见 `docs/ASSET_INDEX.md`），旧的 `assets/enemies/alarm_clock/`、`assets/enemies/mailbox/` 单帧贴图不再被敌人场景引用。
-
 ### 噩梦文字条件
 
 - `early_nightmare_death_cutoff_minutes`：默认 `360` 游戏分钟，即 `06:00`，推荐 `0—1439`。
@@ -578,28 +493,20 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 - 卧室电脑的记事本、21点与梦境浏览器共用`res://scripts/ui/computer_window_shell.gd`绘制的窗口壳。21点与浏览器支持最小化、电脑屏幕内最大化/还原及关闭；21点牌局数据仍保留在原`BlackjackApp`实例中，窗口状态变化不退款也不重复扣款。
 
-- 梦境浏览器位于`res://scenes/ui/dream_browser_app.tscn`，只展示剧情存档现有解锁标记允许的武器。选择后通过主流程既有`_on_story_weapon_equipped()`更新`current_weapon_id`、当天快照与存档；无尽模式的本局武器状态不读取该选择。
+- 梦境浏览器位于`res://scenes/ui/dream_browser_app.tscn`，只展示剧情存档现有解锁标记允许的武器。选择后通过主流程既有`_on_story_weapon_equipped()`更新`current_weapon_id`、当天快照与存档。
 
 - 卧室饱腹提示只绘制胃/碗像素图标，不再常驻显示“吃饱了”；鼠标悬停图标时显示同文案的小型蓝色Tooltip，权威状态仍为`food_eaten_today`。
 
-### 无尽模式
-
-主菜单“无尽模式”直接进入全武器临时可选的武器选择与梦境，不写入普通存档解锁。`is_endless_mode=true` 时关闭闹钟触发、工资、出勤、剧情日期推进和普通结算。虚拟日由同一个集中计算更新：`completed_endless_days=floor(run_elapsed_seconds/endless_day_duration)`、`endless_day=completed_endless_days+1`、日内进度为`fmod(run_elapsed_seconds,endless_day_duration)/endless_day_duration`。当前虚拟日同时驱动敌人解锁与既有线性难度曲线；Day 6以后难度仍继续增长。
-
-无尽HUD在XP条下方显示薄型`EndlessDayArea`（`DAY N`及日内进度），剧情模式隐藏。死亡后进入`res://scenes/ui/endless_results.tscn`，显示生存时间、完成日数、最终等级、本局RAM和总RAM；本局奖励为`completed_endless_days × ram_per_completed_day`，由Run提交标记保证只结算一次。无尽虚拟日仅存在于Run，不写入剧情日历、出勤或当天快照。
-
 ### 主菜单眠网与全局强化
 
-手机不再包含SOMNIA NET入口。主菜单节点`MenuContent/ButtonList/Somnia`打开独立页面`Overlay/Panel/Content/GlobalUpgradePanel`，场景为`res://scenes/ui/global_upgrade_panel.tscn`。升级目录与购买规则由`res://scripts/data/permanent_upgrade_catalog.gd`统一提供，继续读取旧存档的`persistent_day_state.permanent_upgrades`与全局`ram`字段；不迁移或重置旧等级。剧情和无尽创建DreamWorld时都把同一永久升级字典传入玩家战斗初始化。剧情老虎机卡片另存于`story_upgrade_levels`并跨天保留；无尽老虎机卡片仍只属于当前Run。
+手机不再包含SOMNIA NET入口。主菜单节点`MenuContent/ButtonList/Somnia`打开独立页面`Overlay/Panel/Content/GlobalUpgradePanel`，场景为`res://scenes/ui/global_upgrade_panel.tscn`。升级目录与购买规则由`res://scripts/data/permanent_upgrade_catalog.gd`统一提供，继续读取旧存档的`persistent_day_state.permanent_upgrades`与全局`ram`字段；不迁移或重置旧等级。剧情创建DreamWorld时把永久升级字典传入玩家战斗初始化；老虎机/宝箱卡片只属于当前Dream，不写跨天存档。
 
-## 快速睡觉、升级音乐与在线布局
+## 升级音乐与在线布局
 
 以下参数同样位于 `res://resources/demo_config.tres`；设置值保存到 `user://game_settings.cfg`，主菜单和手机设置读取同一字段。
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
 |---|---|---:|---|---|---|---|
-| 快速睡觉默认状态 | `fast_sleep_default_enabled` | `true` | 布尔 | 旧设置文件无字段时默认开启 | true/false | 设置字段为`fast_sleep_enabled`，修改后下次进入梦境生效 |
-| 快速睡觉梦境倍率 | `fast_sleep_game_speed_multiplier` | 1.5 | 倍 | 加速玩家、武器、敌人、投射物、刷怪、梦境时钟和状态计时 | 1.0—3.0 | 普通与无尽梦境均生效；暂停UI时临时恢复1.0，音频不变调，离场强制恢复1.0 |
 | 升级音乐降低值 | `upgrade_music_duck_db` | -6.0 | dB | 升级三选一显示期间平滑降低当前Music播放器 | -24—0 | 使用命名原因`UPGRADE_UI`，不会与ESC重复累计，也不覆盖Music Bus滑轨 |
 | 升级音乐过渡 | `upgrade_music_duck_fade_duration` | 0.15 | 秒 | 进入和退出升级界面的音量渐变时间 | 0—1 | 音乐保持原播放位置，天气与UI音效不受影响 |
 | 在线滚动条宽度 | `online_scrollbar_width` | 5 | UI px | 在线消息列表像素滚动条宽度 | 3—8 | 与右侧安全边距共同占用内容宽度 |
@@ -696,8 +603,8 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 - 地表构成：**可走内区 63×28=1764 格全部以 Cracks（源2，8种变体）为主体铺底，约占90%以上**；Tiles（源0）仅作为被裂纹吞噬后残存的人工地面碎片，总预算为内区格数的 10%（176格）且只以小片零星分布：Patch 形状为 2×2（35%）/3×2（25%）/单块（20%）/不规则3格（20%），任意两格 Tiles 之间保持 5×5 邻域隔离，禁止大面积连续/棋盘/对半分布。**Tentacle 地图装饰占比 = 0**：旧动画装饰列表中的 tentacle_sheet 条目已删除，TileMap 不随机摆放任何触手，地图更加空旷压抑，也不用 Tiles 填补；触手素材唯一允许的用途是触手怪敌人（`TentacleSpawner` 每30秒生成 1～5 只、全图上限10）。装饰含雕像/瓮/脉络柱/书坛与慢速动画（眼/嘴/脉络/浮石/小眼，2—4 FPS）；装饰纯视觉，不参与战斗碰撞、不造成伤害；场景树暂停（升级卡片/ESC等）时动画自动停止。
 - 可探索区域：`ARENA_BOUNDS = Rect2(24, 24, 992, 432)`（`dream_world.gd`），面积 992×432≈428,544 px²，约为旧地图 580×258=149,640 px² 的 **2.86 倍**；按墙内地板 1008×448=451,584 px² 计为 **3.02 倍**（目标 `dream_map_area_multiplier=3.0`，长宽各约√3≈1.73 倍保持长宽比）。
 - 玩家出生在地图中心 (520, 240)，附近半径约 140 px 内不放置装饰；玩家 `collision_mask=8` 与墙砖物理层碰撞，移动/冲刺另受 `arena_bounds` Clamp 双重约束。
-- 相机：`Player/DreamCamera`（Camera2D），`limit_left/top/right/bottom = 0/0/1040/480`，带位置平滑；不会拍到地图外空白。瞄准使用 `get_global_mouse_position()` 自动兼容相机；压力视野 Shader 的玩家屏幕坐标改用 `get_global_transform_with_canvas().origin`。手动准星（`scripts/ui/crosshair.gd`）位于 CanvasLayer 屏幕坐标系，每帧按 `(世界瞄准点 - 相机屏幕中心) × zoom + 视口/2` 换算，精确跟随鼠标世界位置，不随 WASD/玩家/相机漂移；后坐力仅是屏幕局部视觉偏移，不改变瞄准目标；梦游模式仍隐藏准星。
-- **06:00任意地点醒来**：剧情闹钟触发后不生成或寻找梦境床；玩家在当前位置长按F进入慢动作并累计醒来进度。05:59尚不可用，06:00起开放；无尽模式禁用该流程。
+- 相机：`Player/DreamCamera`（Camera2D）作为玩家子节点平滑跟随，`zoom=(1,1)`、`position_smoothing_speed=8`。剧情Room不再把Camera limits锁到单房矩形，切房只重置平滑位置并继续跟随同一个Player；UI仍在CanvasLayer中不受世界滚动影响。
+- **剧情醒来规则（已更新）**：06:00与梦境时间不再触发醒来，任意位置长按F和Wake Bed均停用；只有击败Boss并进入Final Wake Door才正常完成Dream。
 - 刷怪/经验/敌人边界全部由 `ARENA_BOUNDS` 传参驱动（刷怪用 `grow(-14)`），仍维持屏幕外围绕玩家生成原则；**地图扩大不改变敌人生成速度、数量、HP、移速等任何数值**。
 
 | 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
@@ -714,7 +621,7 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 
 - **Pix_chr 重建**：最新源 `res://art/Chr/Pix_chr.png` 实测 1429×1254、4 行×5 列；重建图集 `res://assets/characters/player/pix_chr_atlas.png` = 160×216、单元32×54；所有帧固定画布与脚底基准。运行时`player_visual_scale=0.75`，Nearest显示且不对动画帧逐帧缩放。
 - **动画结构**：`idle_<dir>` = 该行 frame0（停止时保留最后朝向首帧）；`walk_<dir>` = 该行 frame1—4 循环，`player_walk_animation_fps` 7→8（移动速度 112px/s 不变，一个 4 帧步态周期 0.5s ≈ 56px）。斜向仍用主轴稳定判定（abs(x)>abs(y)），motion=0 时回退 `last_move_direction`，不疯切方向。
-- **脚底锚点**：玩家世界位置保持不变；视觉中心`(0,-18.25)`、Collider圆`r7.5 @ (0,-13)`、WeaponRoot`(0,-18.25)`。PlayerLight仍直接挂在DreamPlayer根节点，中心位于玩家世界位置，光照半径保持原值。
+- **脚底锚点**：玩家世界位置保持不变；视觉中心`(0,-18.25)`、Collider圆`r7.5 @ (0,-13)`、WeaponRoot`(0,-18.25)`。DreamPlayer不再挂载局部Light2D。
 - **统一恢复反馈**：`dream_player.heal()` 与解离复活均调用 `_apply_heal_feedback()`：恢复 SFX（`&"heal"`，程序化升调 blip，Characters 总线，`sfx_heal_volume_db=-8`）+ 角色绿色 modulate 提示 `heal_feedback_seconds=0.3`（刷新式、不创建 Material/Tween，受伤闪红/复活闪金优先级更高）+ 现有 Heal/Frames 动画（700ms 节流）。满血不触发（heal() guard）。
 - **手机收起区**：顶部 1/3 交互区视觉完全隐藏（删除 hover 白色 0.05 矩形），`_phone_action_at`/`_retract_area_rect` 判定与内容优先规则不变。
 - **公告**：进入主菜单不再自动弹；底栏版本号 Label（Hover 变亮 `#8FB4B5`、点击）调用 `show_announcement()`；公告全屏（anchors full rect、z_index 5、`#0E140D` 背景阻止底层点击、正文 ScrollContainer 滚动、底部中央关闭按钮）；群号 Label 独立点击区保留 shell_open。
@@ -743,3 +650,56 @@ UI悬停入口已覆盖主菜单、设置开关、卧室对话选项、升级卡
 | 最短变化间隔 | `bedroom_chr_glow_interval_min` | 0.06 | 秒 | 两次硬切之间的最短间隔 | 0.05—0.20 | 不低于0.05秒，不逐帧随机 |
 | 最长变化间隔 | `bedroom_chr_glow_interval_max` | 0.18 | 秒 | 两次硬切之间的最长间隔 | 0.08—0.40 | 每次重新随机间隔 |
 | 大幅变化概率 | `bedroom_chr_glow_big_change_chance` | 0.15 | 比例 | 切到明显亮场或暗场的概率 | 0.05—0.30 | 普通变化维持相近亮度节奏 |
+
+## V0.4.7 梦境角色零件动画与可回溯地牢
+
+`res://art/Dream/dream_chr_32x32.png`为当前玩家正式角色图集（128×96，4列×3行，每格32×32）。第一格作为拼装校准参考，`dream_player.gd`运行时使用Head/Blink、Body、左右手脚的AtlasTexture切片；脚底为CharacterVisual局部原点，Idle只移动Body/Head，Walk两腿使用相差PI的正弦相位；左右只翻转CharacterVisual，不影响碰撞或HeldWeapon。旧角色零件资源已移出运行项目。
+
+| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 | 推荐范围 | 关联与注意事项 |
+|---|---|---:|---|---|---|---|
+| 地牢房间数 | `dungeon_room_count` | 8 | 间 | 每个Story Dream一次性生成的Graph节点数 | 5—20 | 同一Run内固定，不随回房重掷 |
+| Boss最小深度 | `dungeon_boss_min_depth` | 4 | 边 | Boss与Starting Room之间保证的最小主链长度 | 2—8 | 生成后用BFS验证可达 |
+| Loop连接概率 | `dungeon_loop_connection_chance` | 0.28 | 比例 | 邻接房间额外建立双向连接的概率 | 0—0.6 | 每房最多保留一个Final Door空位，禁止自连/单向门 |
+| 人口补充间隔 | `dungeon_population_refill_interval` | 3.0 | 秒 | 当前普通战斗房低于目标人口时尝试补怪的间隔 | 0.5—15 | Chest/Boss不使用 |
+| 单次补充数量 | `dungeon_population_refill_batch` | 3 | 只 | 每次预警批次最多补充数量 | 1—10 | 仍受Target、Cap和合法生成点限制 |
+| 敌人跟门距离（旧兼容） | `dungeon_enemy_follow_door_distance` | 240 | px | 仅保留资源兼容，新的房间级追击不按离门距离批量筛选 | 不建议修改 | 触手仍不跨房 |
+| 跨房追击上限（旧兼容） | `dungeon_enemy_follow_maximum` | 6 | 只 | 仅保留资源兼容；新逻辑保留原实例并自行走向BFS下一跳门 | 不建议修改 | 不再执行整批搬运 |
+| 同门转移间隔 | `dungeon_enemy_door_follow_delay` | 0.35 | 秒 | 同一连接门连续放行两只追击者的最短间隔 | 0.1—2 | Enemy逐只从对应门进入，HP与运行状态不重建 |
+| 大房初始/目标人口 | `large_room_initial_enemy_count` | 16 | 只 | 首次直接生成并持续维持的数量 | 10—20 | Cap=`large_room_enemy_cap`=20 |
+| 中房初始/目标人口 | `medium_room_initial_enemy_count` | 10 | 只 | 首次直接生成并持续维持的数量 | 10 | Cap=`medium_room_enemy_cap`=10 |
+| 小房初始/目标人口 | `small_room_initial_enemy_count` | 10 | 只 | 首次直接生成并持续维持的数量 | 10 | Cap=`small_room_enemy_cap`=10 |
+
+正常通关只由Boss死亡后开启的Final Wake Door触发。06:00 Alarm、任意位置Hold F、Wake Bed均不再接入剧情Dream流程；DreamClock与EXP/Level/Card/Weapon继续运行。玩家HP归零仍走“梦中倒下”噩梦结算，不会被视为正常醒来。
+
+## V0.4.7 梦境预制Room、远镜头、换弹UI与GUNS图集
+
+- `Player/DreamCamera`由`zoom=(2,2)`改为`zoom=(1,1)`并以速度8平滑跟随；640×360基础视口的可见世界尺寸由320×180扩大为640×360，两个轴的范围均为原来的2倍。HUD位于`UILayer` CanvasLayer，不随世界镜头缩放。
+- 剧情Camera limits使用足够大的世界边界，Room切换后仍保留同一个Player子Camera并调用`reset_smoothing()`；不会再固定在Room center。
+- Story弹丸不再读取`player.arena_bounds`做越界销毁。`DreamWorld.is_room_projectile_path_clear()`只Ray查询真实墙体Body：手工Office TileSet的Physics layer 1，以及旧模板Wall/DoorBlocker的layer 3；Entrance Area不参与查询，因此门触发器不会挡弹丸。
+- 手工Office模板的`DoorLayer`在运行时只保留视觉、关闭Tile物理；`DreamRoomTemplate.configure_connections()`仅对Graph实际连通方向临时挖开相应`WallLayer`入口格。该修改只作用运行时实例，不会保存覆盖Editor中手绘的原始墙图；未连接方向继续由原WallLayer阻挡。缓存Room离开后会关闭其Ground/Wall/TilePatch Tile物理，返回时再恢复，避免不可见旧房墙叠在当前房间形成空气墙。
+- `EnemyContainer`随当前Room进入同一个`YSortRoot`。Enemy先加入容器再调用`configure()`，保证`@onready Visual`已经就绪；Story Tentacle继续固定100HP、每房最多2只。
+- 所有可破坏家具复用`res://shaders/sprite_alpha_outline.gdshader`的`flash_amount`，每实例创建独立ShaderMaterial，只作用`Sprite2D`，默认0.08秒恢复；Shadow不使用该材质。
+- 家具材质碎片从击碎后0.8秒开始，按每块随机0.03—0.08秒的累计间隔逐块`queue_free()`；切换房间时会立即清理该Room尚未结束的临时碎片。
+- 正式房间链为`DreamWorld/RoomManager/RoomTemplateContainer/<room prefab>`；模板中的TileMap、Decorations与Collision全部序列化在各自`.tscn`中，RoomManager不会覆盖人工地图美术。
+- 玩家零件不再挂载`res://shaders/sprite_alpha_outline.gdshader`。绘制顺序为Legs → Head → Body → Hands（同一 Actor YSort 带，按节点顺序绘制，身体覆盖头部）；敌人及交互物描边系统不变。
+- Walk时`CharacterVisual`额外产生最多1px的整体上跳，Body/Head原有1px步态起伏继续保留；位移只作用视觉根节点，不作用Player世界坐标、Collider、WeaponRoot或Camera。
+- `UILayer/Crosshair`在弹药状态`reloading=true`时，读取`reload_left`与`weapon_reload_duration`绘制24×3px进度条；以当前鼠标瞄准点屏幕位置为锚，完成后自动隐藏，弹药数字继续保留。
+- `res://art/Dream/GUNS.png`实测192×288，透明投影确认4列×9行，每格48×32。第1/3列为Logo，第2/4列为世界手持图；统一切分接口为`res://scripts/data/dream_gun_atlas.gd`。
+
+| 武器 | UI Logo Rect2 | 手持 Rect2 |
+|---|---|---|
+| 小手枪 | `(0,0,48,32)` | `(48,0,48,32)` |
+| 霰弹枪 | `(0,256,48,32)` | `(48,256,48,32)` |
+| 光束武器 | `(96,192,48,32)` | `(144,192,48,32)` |
+
+太刀继续使用独立太刀素材。GUNS手持列基准方向已对应局部+X，世界手持Sprite使用`flip_h=false`；再由HandAnchor旋转和左半平面`flip_v`保持枪口与实际射击方向一致。
+
+| 显示名称 | 实际变量名 | 默认值 | 单位 | 作用 |
+|---|---|---:|---|---|
+| Walk整体蹦跳 | `player_walk_visual_bounce_pixels` | 1 | px | 移动时CharacterVisual的统一垂直起伏 |
+| 换弹条宽度 | `crosshair_reload_bar_width` | 24 | px | 准星旁换弹进度条宽度 |
+| 换弹条高度 | `crosshair_reload_bar_height` | 3 | px | 准星旁换弹进度条高度 |
+| 换弹条偏移 | `crosshair_reload_bar_offset` | `(-12,13)` | px | 避开准星中心的屏幕局部偏移 |
+| 家具受击闪白 | `hit_flash_duration` | 0.08 | 秒 | 通用Breakable Prop本体白闪恢复时间；每实例独立材质 |
+| 碎片开始消失延迟 | `debris_disappear_start_delay` | 0.8 | 秒 | 从家具击碎发生起，到第一块材质碎片消失的延迟 |
+| 碎片逐块间隔 | `debris_piece_interval_min/max` | 0.03 / 0.08 | 秒 | 后续碎片按随机累计间隔逐块回收，不永久堆积 |

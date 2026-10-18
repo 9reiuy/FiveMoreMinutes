@@ -1,0 +1,20 @@
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+   at: GDScript::reload (res://scripts/ui/settings_panel.gd:33)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scripts/ui/pause_menu.gd:0)
+ERROR: Failed to load script "res://scripts/ui/pause_menu.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Parse Error: Could not find type "Dream3DPauseBridge" in the current scope.
+   at: GDScript::reload (res://tests/tmp_task004_pause_test.gd:46)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "bridge" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/tmp_task004_pause_test.gd:46)
+SCRIPT ERROR: Parse Error: Function "get_tree()" not found in base self.
+   at: GDScript::reload (res://tests/tmp_task004_pause_test.gd:58)
+SCRIPT ERROR: Parse Error: Function "get_tree()" not found in base self.
+   at: GDScript::reload (res://tests/tmp_task004_pause_test.gd:59)
+SCRIPT ERROR: Parse Error: Function "get_tree()" not found in base self.
+   at: GDScript::reload (res://tests/tmp_task004_pause_test.gd:62)
+SCRIPT ERROR: Parse Error: Function "get_tree()" not found in base self.
+   at: GDScript::reload (res://tests/tmp_task004_pause_test.gd:63)
+ERROR: Failed to load script "res://tests/tmp_task004_pause_test.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

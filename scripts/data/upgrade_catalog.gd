@@ -4,6 +4,7 @@ extends RefCounted
 const RARITY_BLUE := "blue"
 const RARITY_PURPLE := "purple"
 const RARITY_GOLD := "gold"
+const DREAM_GUN_ATLAS := preload("res://scripts/data/dream_gun_atlas.gd")
 
 
 static func generate_options(config: DemoConfig, owned: Dictionary, random: RandomNumberGenerator, count: int = 3) -> Array[Dictionary]:
@@ -39,7 +40,9 @@ static func generate_slot_options(config: DemoConfig, owned: Dictionary, random:
 	var catalog := _build_catalog(config)
 	for weapon_id in unlocked_weapon_ids:
 		if not weapon_id in excluded_weapon_ids:
-			catalog.append(_weapon_entry(weapon_id, config))
+			var weapon_entry := _weapon_entry(weapon_id, config)
+			if not weapon_entry.is_empty():
+				catalog.append(weapon_entry)
 	var valid: Array[Dictionary] = []
 	for option in catalog:
 		if str(option.get("reward_type", "upgrade")) == "weapon":
@@ -176,9 +179,12 @@ static func _variant(id: String, family: String, rarity: String, name: String, d
 
 
 static func _weapon_entry(weapon_id: String, config: DemoConfig) -> Dictionary:
+	if not DREAM_GUN_ATLAS.has_weapon(weapon_id):
+		return {}
 	match weapon_id:
-		"beam": return {"id":"weapon_beam", "family":"weapon_beam", "rarity":RARITY_PURPLE, "name":"光束武器", "description":"发射贯穿直线光束。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"beam"}
 		"shotgun": return {"id":"weapon_shotgun", "family":"weapon_shotgun", "rarity":RARITY_BLUE, "name":"霰弹枪", "description":"一次发射%d枚散射弹丸。选择后替换当前武器" % config.shotgun_pellet_count, "max_level":1, "reward_type":"weapon", "weapon_id":"shotgun"}
-		"katana": return {"id":"weapon_katana", "family":"weapon_katana", "rarity":RARITY_PURPLE, "name":"太刀", "description":"近身斩击并发射直线剑气。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"katana"}
-		"grenade": return {"id":"weapon_grenade", "family":"weapon_grenade", "rarity":RARITY_GOLD, "name":"榴弹", "description":"投掷范围爆炸物并会造成自伤。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"grenade"}
-		_: return {"id":"weapon_basic", "family":"weapon_basic", "rarity":RARITY_BLUE, "name":"小手枪", "description":"快速发射单发子弹。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"basic"}
+		"lucille": return {"id":"weapon_lucille", "family":"weapon_lucille", "rarity":RARITY_PURPLE, "name":"露西尔", "description":"20px / 60°扇形近战，30伤害并必定击倒Employee。", "max_level":1, "reward_type":"weapon", "weapon_id":"lucille"}
+		"assault_rifle": return {"id":"weapon_assault_rifle", "family":"weapon_assault_rifle", "rarity":RARITY_PURPLE, "name":"突击枪", "description":"稳定连射的中距离火力。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"assault_rifle"}
+		"books": return {"id":"weapon_books", "family":"weapon_books", "rarity":RARITY_PURPLE, "name":"Books", "description":"近距离扇形近战。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"books"}
+		"basic": return {"id":"weapon_basic", "family":"weapon_basic", "rarity":RARITY_BLUE, "name":"小手枪", "description":"快速发射单发子弹。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"basic"}
+		_: return {}

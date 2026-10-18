@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://wut2aqnodrrw"]
+
+[ext_resource type="Script" uid="uid://b0rusgddrgdul" path="res://scenes/dream/effects/shatter_piece.gd" id="1_1row8"]
+
+[node name="ShatterPiece" type="Node2D" unique_id=2002786470]
+script = ExtResource("1_1row8")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=745711226]

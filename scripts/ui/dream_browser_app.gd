@@ -4,23 +4,24 @@ extends Control
 signal weapon_selected(weapon_id: String)
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
-const WEAPON_IDS := ["basic", "shotgun", "beam", "katana", "grenade"]
 const WEAPON_DATA := {
 	"basic": {"name":"小手枪", "description":"快速发射单发子弹。"},
 	"shotgun": {"name":"霰弹枪", "description":"一次发射多枚散射弹丸。"},
-	"beam": {"name":"光束武器", "description":"发射贯穿直线光束。"},
-	"katana": {"name":"太刀", "description":"近身斩击并发射剑气。"},
-	"grenade": {"name":"榴弹", "description":"投掷范围爆炸物。"},
+	"lucille": {"name":"露西尔", "description":"10px纯近战，命中Employee必定击倒。"},
+	"assault_rifle": {"name":"突击枪", "description":"高射速自动步枪。"},
+	"books": {"name":"Books", "description":"近距离扇形近战。"},
 }
-const UNLOCK_KEYS := {"shotgun":"shotgun_unlocked", "beam":"beam_weapon_unlocked", "katana":"katana_unlocked", "grenade":"grenade_weapon_unlocked"}
+const UNLOCK_KEYS := {"shotgun":"shotgun_unlocked"}
 
 var persistent_state: Dictionary = {}
 var hovered_weapon := ""
+var weapon_ids: Array[String] = []
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	mouse_exited.connect(_clear_hover)
+	weapon_ids = DreamGunAtlas.get_weapon_ids()
 
 
 func configure(state: Dictionary) -> void:
@@ -45,14 +46,19 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func _weapon_at(point: Vector2) -> String:
-	for index in WEAPON_IDS.size():
-		var weapon_id: String = WEAPON_IDS[index]
+	for index in weapon_ids.size():
+		var weapon_id: String = weapon_ids[index]
 		if _is_unlocked(weapon_id) and _item_rect(index).has_point(point): return weapon_id
 	return ""
 
 
 func _is_unlocked(weapon_id: String) -> bool:
-	return weapon_id == "basic" or bool(persistent_state.get(UNLOCK_KEYS.get(weapon_id, ""), false))
+	if not DreamGunAtlas.has_weapon(weapon_id):
+		return false
+	if weapon_id in ["basic", "lucille"]:
+		return true
+	var unlock_key := str(UNLOCK_KEYS.get(weapon_id, ""))
+	return not unlock_key.is_empty() and bool(persistent_state.get(unlock_key, false))
 
 
 func is_weapon_unlocked(weapon_id: String) -> bool:
@@ -74,33 +80,33 @@ func _draw() -> void:
 	var font := PixelFont.get_font()
 	draw_string(font, Vector2(12, 17), "DREAM BROWSER // 已解锁武器", HORIZONTAL_ALIGNMENT_LEFT, int(size.x - 24), 10, Color("9fc5d4"))
 	var current := str(persistent_state.get("current_weapon_id", "basic"))
-	for index in WEAPON_IDS.size():
-		var weapon_id: String = WEAPON_IDS[index]
+	for index in weapon_ids.size():
+		var weapon_id: String = weapon_ids[index]
 		if not _is_unlocked(weapon_id): continue
 		var rect := _item_rect(index)
 		var selected := weapon_id == current
 		var hovered := weapon_id == hovered_weapon
-		draw_rect(rect, Color("19364a") if hovered else Color("112838"))
-		draw_rect(rect, Color("7daec1") if selected else Color("315d76"), false, 1.0)
+		draw_rect(rect, Color("596d98") if hovered else Color("354464"))
+		draw_rect(rect, Color("a8bbe0") if selected else Color("6f84ad"), false, 1.0)
 		_draw_weapon_icon(weapon_id, rect.position + Vector2(7, 7))
 		var data: Dictionary = WEAPON_DATA[weapon_id]
-		draw_string(font, rect.position + Vector2(31, 13), str(data.name), HORIZONTAL_ALIGNMENT_LEFT, 112, 9, Color("d2e6ec"))
-		draw_string(font, rect.position + Vector2(31, 27), str(data.description), HORIZONTAL_ALIGNMENT_LEFT, int(rect.size.x - 92), 7, Color("7f9eaa"))
+		draw_string(font, rect.position + Vector2(62, 13), str(data.name), HORIZONTAL_ALIGNMENT_LEFT, 92, 9, Color("d2e6ec"))
+		draw_string(font, rect.position + Vector2(62, 27), str(data.description), HORIZONTAL_ALIGNMENT_LEFT, int(rect.size.x - 123), 7, Color("7f9eaa"))
 		if selected: draw_string(font, rect.position + Vector2(rect.size.x - 50, 20), "当前", HORIZONTAL_ALIGNMENT_CENTER, 42, 8, Color("e5c873"))
 
 
 func _draw_weapon_icon(weapon_id: String, origin: Vector2) -> void:
-	var accent: Color = {"basic":Color("7195ad"), "shotgun":Color("8aa0aa"), "beam":Color("5ab9ca"), "katana":Color("a0b5c0"), "grenade":Color("849b75")}.get(weapon_id, Color("7195ad"))
+	if DreamGunAtlas.has_weapon(weapon_id):
+		var icon := DreamGunAtlas.get_icon(weapon_id)
+		var source_size: Vector2 = icon.get_size()
+		var fit_scale := minf(1.0, minf(48.0 / maxf(source_size.x, 1.0), 32.0 / maxf(source_size.y, 1.0)))
+		var draw_size := source_size * fit_scale
+		draw_texture_rect(icon, Rect2(origin + Vector2(24, 10) - draw_size * 0.5, draw_size), false)
+		return
+	var accent: Color = {"basic":Color("7195ad"), "shotgun":Color("8aa0aa"), "lucille":Color("a0b5c0"), "assault_rifle":Color("9b8fd0"), "books":Color("d0a45c")}.get(weapon_id, Color("7195ad"))
 	draw_rect(Rect2(origin, Vector2(20, 20)), Color("09131c"))
 	draw_rect(Rect2(origin, Vector2(20, 20)), Color("294d62"), false, 1.0)
 	match weapon_id:
-		"katana": draw_line(origin + Vector2(4, 16), origin + Vector2(16, 4), accent, 2.0)
-		"grenade":
-			draw_circle(origin + Vector2(10, 12), 5, accent)
-			draw_rect(Rect2(origin + Vector2(9, 4), Vector2(5, 4)), accent)
-		"beam":
-			draw_rect(Rect2(origin + Vector2(3, 9), Vector2(14, 3)), accent)
-			draw_rect(Rect2(origin + Vector2(15, 6), Vector2(2, 9)), accent)
 		_:
 			draw_rect(Rect2(origin + Vector2(3, 7), Vector2(14, 5 if weapon_id == "shotgun" else 3)), accent)
 			draw_rect(Rect2(origin + Vector2(7, 11), Vector2(4, 5)), accent)

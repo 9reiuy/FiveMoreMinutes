@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://b4v8831k6iccp"
+path="res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav-fcf18bcb76c62dc7d1fe7342bfd3ce2c.sample"
+
+[deps]
+
+source_file="res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav"
+dest_files=["res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav-fcf18bcb76c62dc7d1fe7342bfd3ce2c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

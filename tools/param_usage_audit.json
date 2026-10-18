@@ -1,0 +1,9036 @@
+{
+ "dead_config_fields": [
+  {
+   "name": "vision_darkness_alpha",
+   "default": "0.52",
+   "line": 7
+  },
+  {
+   "name": "vision_edge_softness_px",
+   "default": "32.0",
+   "line": 9
+  },
+  {
+   "name": "enemy_initial_spawn_interval",
+   "default": "2.0",
+   "line": 17
+  },
+  {
+   "name": "enemy_minimum_spawn_interval",
+   "default": "0.65",
+   "line": 18
+  },
+  {
+   "name": "enemy_spawn_interval_reduction_mode",
+   "default": "",
+   "line": 19
+  },
+  {
+   "name": "enemy_spawn_count_per_interval",
+   "default": "2",
+   "line": 22
+  },
+  {
+   "name": "enemy_health_growth_per_second",
+   "default": "0.0",
+   "line": 26
+  },
+  {
+   "name": "enemy_damage_growth_per_second",
+   "default": "0.012",
+   "line": 27
+  },
+  {
+   "name": "enemy_spawn_minimum_spacing",
+   "default": "30.0",
+   "line": 29
+  },
+  {
+   "name": "enemy_spawn_position_max_retries",
+   "default": "12",
+   "line": 30
+  },
+  {
+   "name": "employee_xp_value",
+   "default": "5",
+   "line": 36
+  },
+  {
+   "name": "employee_knockdown_weapon_drop_force",
+   "default": "160.0",
+   "line": 89
+  },
+  {
+   "name": "employee_knockdown_launch_velocity",
+   "default": "90.0",
+   "line": 91
+  },
+  {
+   "name": "room_spawn_warning_duration",
+   "default": "0.9",
+   "line": 106
+  },
+  {
+   "name": "story_employee_health_multiplier",
+   "default": "1.0",
+   "line": 113
+  },
+  {
+   "name": "large_room_enemy_cap",
+   "default": "20",
+   "line": 116
+  },
+  {
+   "name": "medium_room_enemy_cap",
+   "default": "10",
+   "line": 117
+  },
+  {
+   "name": "small_room_enemy_cap",
+   "default": "10",
+   "line": 118
+  },
+  {
+   "name": "employee_room_density_per_10000_px",
+   "default": "1.15",
+   "line": 122
+  },
+  {
+   "name": "employee_room_furniture_capacity_penalty",
+   "default": "0.15",
+   "line": 123
+  },
+  {
+   "name": "employee_room_door_capacity_bonus",
+   "default": "0.5",
+   "line": 124
+  },
+  {
+   "name": "employee_room_minimum_capacity",
+   "default": "2",
+   "line": 125
+  },
+  {
+   "name": "employee_small_room_density_multiplier",
+   "default": "0.75",
+   "line": 127
+  },
+  {
+   "name": "employee_medium_room_density_multiplier",
+   "default": "0.9",
+   "line": 128
+  },
+  {
+   "name": "employee_large_room_density_multiplier",
+   "default": "1.0",
+   "line": 129
+  },
+  {
+   "name": "employee_ground_weapon_room_chance",
+   "default": "0.35",
+   "line": 130
+  },
+  {
+   "name": "employee_room_pacing_weights",
+   "default": "",
+   "line": 131
+  },
+  {
+   "name": "large_room_initial_enemy_count",
+   "default": "24",
+   "line": 140
+  },
+  {
+   "name": "medium_room_initial_enemy_count",
+   "default": "16",
+   "line": 141
+  },
+  {
+   "name": "small_room_initial_enemy_count",
+   "default": "12",
+   "line": 142
+  },
+  {
+   "name": "dungeon_room_count",
+   "default": "8",
+   "line": 143
+  },
+  {
+   "name": "dungeon_boss_min_depth",
+   "default": "4",
+   "line": 144
+  },
+  {
+   "name": "dungeon_loop_connection_chance",
+   "default": "0.28",
+   "line": 145
+  },
+  {
+   "name": "dungeon_population_refill_interval",
+   "default": "3.0",
+   "line": 146
+  },
+  {
+   "name": "dungeon_population_refill_batch",
+   "default": "3",
+   "line": 147
+  },
+  {
+   "name": "dungeon_enemy_follow_door_distance",
+   "default": "240.0",
+   "line": 148
+  },
+  {
+   "name": "dungeon_enemy_follow_maximum",
+   "default": "6",
+   "line": 149
+  },
+  {
+   "name": "dungeon_enemy_door_follow_delay",
+   "default": "0.35",
+   "line": 150
+  },
+  {
+   "name": "large_room_wave_count",
+   "default": "2",
+   "line": 151
+  },
+  {
+   "name": "medium_room_wave_count",
+   "default": "2",
+   "line": 152
+  },
+  {
+   "name": "small_room_wave_count",
+   "default": "2",
+   "line": 153
+  },
+  {
+   "name": "large_room_enemies_per_wave",
+   "default": "8",
+   "line": 154
+  },
+  {
+   "name": "medium_room_enemies_per_wave",
+   "default": "4",
+   "line": 155
+  },
+  {
+   "name": "small_room_enemies_per_wave",
+   "default": "3",
+   "line": 156
+  },
+  {
+   "name": "world_card_interaction_radius",
+   "default": "50.0",
+   "line": 158
+  },
+  {
+   "name": "world_card_linear_damp",
+   "default": "10.0",
+   "line": 159
+  },
+  {
+   "name": "world_card_max_push_speed",
+   "default": "90.0",
+   "line": 160
+  },
+  {
+   "name": "enemy_spawn_visibility_margin",
+   "default": "64.0",
+   "line": 162
+  },
+  {
+   "name": "stress_absolute_minimum_spawn_interval",
+   "default": "0.25",
+   "line": 166
+  },
+  {
+   "name": "enemy_unlock_days",
+   "default": "",
+   "line": 168
+  },
+  {
+   "name": "enemy_base_spawn_weights",
+   "default": "",
+   "line": 171
+  },
+  {
+   "name": "difficulty_seconds_per_day",
+   "default": "120.0",
+   "line": 175
+  },
+  {
+   "name": "interaction_outline_color",
+   "default": "",
+   "line": 181
+  },
+  {
+   "name": "interaction_outline_width",
+   "default": "2.0",
+   "line": 182
+  },
+  {
+   "name": "player_spawn_invulnerability_duration",
+   "default": "3.0",
+   "line": 186
+  },
+  {
+   "name": "dream_ambient_color",
+   "default": "",
+   "line": 208
+  },
+  {
+   "name": "enemy_environment_glow_alpha",
+   "default": "0.12",
+   "line": 212
+  },
+  {
+   "name": "alarm_screen_brightness_alpha",
+   "default": "0.30",
+   "line": 265
+  },
+  {
+   "name": "alarm_eyelid_max_height",
+   "default": "42.0",
+   "line": 266
+  },
+  {
+   "name": "alarm_visual_ramp_seconds",
+   "default": "45.0",
+   "line": 267
+  },
+  {
+   "name": "base_wake_hold_seconds",
+   "default": "5.0",
+   "line": 270
+  },
+  {
+   "name": "extra_hold_every_seconds",
+   "default": "10.0",
+   "line": 271
+  },
+  {
+   "name": "extra_hold_seconds",
+   "default": "2.0",
+   "line": 272
+  },
+  {
+   "name": "wake_progress_regress_per_second",
+   "default": "2.0",
+   "line": 273
+  },
+  {
+   "name": "superhot_movement_deadzone",
+   "default": "0.05",
+   "line": 288
+  },
+  {
+   "name": "character_card_speed_bonus_per_cell",
+   "default": "0.20",
+   "line": 330
+  },
+  {
+   "name": "character_card_default_speed_cells",
+   "default": "1",
+   "line": 332
+  },
+  {
+   "name": "player_visual_offset",
+   "default": "",
+   "line": 343
+  },
+  {
+   "name": "player_idle_animation_fps",
+   "default": "1.0",
+   "line": 360
+  },
+  {
+   "name": "player_walk_animation_fps",
+   "default": "8.0",
+   "line": 361
+  },
+  {
+   "name": "heart_glow_alpha",
+   "default": "0.30",
+   "line": 369
+  },
+  {
+   "name": "heart_glow_radius",
+   "default": "5.0",
+   "line": 370
+  },
+  {
+   "name": "enemy_hp_bar_bottom_margin",
+   "default": "2.0",
+   "line": 385
+  },
+  {
+   "name": "projectile_trail_length",
+   "default": "10.0",
+   "line": 389
+  },
+  {
+   "name": "player_base_maximum_health",
+   "default": "80.0",
+   "line": 396
+  },
+  {
+   "name": "basic_projectile_visual_scale",
+   "default": "0.75",
+   "line": 411
+  },
+  {
+   "name": "basic_magazine_size",
+   "default": "15",
+   "line": 412
+  },
+  {
+   "name": "basic_recoil_multiplier",
+   "default": "1.0",
+   "line": 413
+  },
+  {
+   "name": "kick_knockback_multiplier",
+   "default": "2.0",
+   "line": 506
+  },
+  {
+   "name": "lucille_knockback_multiplier",
+   "default": "2.0",
+   "line": 507
+  },
+  {
+   "name": "death_pool_growth_duration",
+   "default": "0.45",
+   "line": 542
+  },
+  {
+   "name": "death_pool_min_scale",
+   "default": "0.35",
+   "line": 543
+  },
+  {
+   "name": "death_pool_max_scale",
+   "default": "1.0",
+   "line": 544
+  },
+  {
+   "name": "world_weapon_drop_offset",
+   "default": "28.0",
+   "line": 568
+  },
+  {
+   "name": "world_weapon_mass",
+   "default": "0.65",
+   "line": 570
+  },
+  {
+   "name": "shell_effect_max_visible",
+   "default": "48",
+   "line": 587
+  },
+  {
+   "name": "furniture_pistol_force_multiplier",
+   "default": "0.35",
+   "line": 597
+  },
+  {
+   "name": "furniture_assault_rifle_force_multiplier",
+   "default": "0.20",
+   "line": 598
+  },
+  {
+   "name": "furniture_shotgun_pellet_force_multiplier",
+   "default": "0.20",
+   "line": 599
+  },
+  {
+   "name": "furniture_hitscan_force_multiplier",
+   "default": "0.75",
+   "line": 600
+  },
+  {
+   "name": "furniture_impact_velocity_retention",
+   "default": "0.72",
+   "line": 607
+  },
+  {
+   "name": "crosshair_recoil_pixels",
+   "default": "5.0",
+   "line": 696
+  },
+  {
+   "name": "crosshair_recoil_recovery_seconds",
+   "default": "0.12",
+   "line": 697
+  },
+  {
+   "name": "camera_dead_zone_x",
+   "default": "28.0",
+   "line": 704
+  },
+  {
+   "name": "camera_dead_zone_y",
+   "default": "18.0",
+   "line": 705
+  },
+  {
+   "name": "camera_follow_smoothing",
+   "default": "10.0",
+   "line": 715
+  },
+  {
+   "name": "enemy_hit_flash_color",
+   "default": "",
+   "line": 725
+  },
+  {
+   "name": "enemy_hit_scale_amount",
+   "default": "0.16",
+   "line": 728
+  },
+  {
+   "name": "camera_small_impulse",
+   "default": "2.0",
+   "line": 746
+  },
+  {
+   "name": "camera_medium_impulse",
+   "default": "4.5",
+   "line": 747
+  },
+  {
+   "name": "camera_heavy_impulse",
+   "default": "8.0",
+   "line": 748
+  },
+  {
+   "name": "phone_upper_collapse_height",
+   "default": "166.0",
+   "line": 772
+  },
+  {
+   "name": "phone_scrollbar_width",
+   "default": "5.0",
+   "line": 784
+  },
+  {
+   "name": "dialog_portrait_appearance_position",
+   "default": "",
+   "line": 790
+  },
+  {
+   "name": "main_menu_hover_offset",
+   "default": "4.0",
+   "line": 801
+  },
+  {
+   "name": "main_menu_hover_scale",
+   "default": "1.04",
+   "line": 802
+  },
+  {
+   "name": "main_menu_selection_padding",
+   "default": "",
+   "line": 803
+  },
+  {
+   "name": "main_menu_selection_tween_duration",
+   "default": "0.18",
+   "line": 804
+  },
+  {
+   "name": "main_menu_selection_fill_color",
+   "default": "",
+   "line": 805
+  },
+  {
+   "name": "main_menu_selection_border_color",
+   "default": "",
+   "line": 806
+  },
+  {
+   "name": "option_frame_fill_color",
+   "default": "",
+   "line": 822
+  },
+  {
+   "name": "ui_border_color",
+   "default": "",
+   "line": 826
+  },
+  {
+   "name": "ui_panel_background_color",
+   "default": "",
+   "line": 827
+  },
+  {
+   "name": "ui_card_size",
+   "default": "",
+   "line": 828
+  },
+  {
+   "name": "ui_hover_brightness",
+   "default": "0.10",
+   "line": 829
+  },
+  {
+   "name": "bedroom_show_click_regions",
+   "default": "",
+   "line": 835
+  },
+  {
+   "name": "phone_new_message_vibrate_amplitude",
+   "default": "3.0",
+   "line": 844
+  },
+  {
+   "name": "phone_new_message_vibrate_cycles",
+   "default": "3",
+   "line": 845
+  },
+  {
+   "name": "phone_new_message_vibrate_seconds",
+   "default": "0.75",
+   "line": 846
+  },
+  {
+   "name": "dream_map_area_multiplier",
+   "default": "3.0",
+   "line": 911
+  },
+  {
+   "name": "dream_tileset_base_tile_size",
+   "default": "16",
+   "line": 912
+  },
+  {
+   "name": "sunshade_alarm_brightness_multiplier",
+   "default": "0.0",
+   "line": 924
+  },
+  {
+   "name": "stress_threshold_spawn",
+   "default": "30",
+   "line": 944
+  },
+  {
+   "name": "stress_threshold_speed",
+   "default": "50",
+   "line": 945
+  },
+  {
+   "name": "stress_threshold_vision",
+   "default": "70",
+   "line": 946
+  },
+  {
+   "name": "stress_spawn_multiplier_over_30",
+   "default": "1.5",
+   "line": 951
+  },
+  {
+   "name": "stress_spawn_multiplier_over_50",
+   "default": "2.0",
+   "line": 952
+  },
+  {
+   "name": "stress_spawn_multiplier_over_70",
+   "default": "2.5",
+   "line": 953
+  },
+  {
+   "name": "stress_enemy_speed_multiplier_over_50",
+   "default": "1.5",
+   "line": 954
+  },
+  {
+   "name": "stress_enemy_speed_multiplier_over_70",
+   "default": "1.5",
+   "line": 955
+  },
+  {
+   "name": "upgrade_music_duck_db",
+   "default": "-6.0",
+   "line": 986
+  },
+  {
+   "name": "upgrade_music_duck_fade_duration",
+   "default": "0.15",
+   "line": 987
+  },
+  {
+   "name": "experience_bar_height",
+   "default": "24.0",
+   "line": 994
+  },
+  {
+   "name": "experience_bar_margin",
+   "default": "14.0",
+   "line": 995
+  },
+  {
+   "name": "experience_bar_fill_animation_speed",
+   "default": "9.0",
+   "line": 996
+  },
+  {
+   "name": "experience_bar_near_level_threshold",
+   "default": "0.8",
+   "line": 997
+  },
+  {
+   "name": "sfx_weapon_lowpass_cutoff_hz",
+   "default": "3400.0",
+   "line": 1026
+  },
+  {
+   "name": "sunday_alarm_minutes",
+   "default": "360.0",
+   "line": 1056
+  },
+  {
+   "name": "melatonin_required_shake_distance",
+   "default": "260.0",
+   "line": 1079
+  },
+  {
+   "name": "slot_rerolls_per_run",
+   "default": "1",
+   "line": 1126
+  }
+ ],
+ "inline_magic": [
+  {
+   "file": "scripts/dream/actor_volume_shadow.gd",
+   "line": 20,
+   "code": "limb_mesh.top_radius = 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/actor_volume_shadow.gd",
+   "line": 21,
+   "code": "limb_mesh.bottom_radius = 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/actor_volume_shadow.gd",
+   "line": 22,
+   "code": "limb_mesh.height = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/actor_volume_shadow.gd",
+   "line": 26,
+   "code": "head_mesh.radius = 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/actor_volume_shadow.gd",
+   "line": 27,
+   "code": "head_mesh.height = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/actor_volume_shadow.gd",
+   "line": 77,
+   "code": "parts.Head.scale = Vector3(0.34, 0.36, 0.32)",
+   "nums": [
+    "0.34",
+    "0.36",
+    "0.32"
+   ]
+  },
+  {
+   "file": "scripts/dream/actor_volume_shadow.gd",
+   "line": 79,
+   "code": "parts.Torso.scale = Vector3(0.37, 0.48, 0.25)",
+   "nums": [
+    "0.37",
+    "0.48",
+    "0.25"
+   ]
+  },
+  {
+   "file": "scripts/dream/actor_volume_shadow.gd",
+   "line": 101,
+   "code": "weapon.visible = axis.length_squared() > 0.001",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/dream/actor_volume_shadow.gd",
+   "line": 104,
+   "code": "weapon.global_basis = Basis.looking_at(axis.normalized(), Vector3.UP) * Basis.from_scale(Vector3(0.09, 0.10, a",
+   "nums": [
+    "0.09",
+    "0.10"
+   ]
+  },
+  {
+   "file": "scripts/dream/assault_rifle_weapon.gd",
+   "line": 34,
+   "code": "attack_interval = config.weapon_interval_for_rate(float(parameters.interval)) / maxf(attack_speed, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/assault_rifle_weapon.gd",
+   "line": 48,
+   "code": "current_spread_degrees = move_toward(current_spread_degrees, base_spread_degrees, recovery_rate * maxf(delta, ",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/assault_rifle_weapon.gd",
+   "line": 97,
+   "code": "extra_attack_chance = clampf(chance, 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/assault_rifle_weapon.gd",
+   "line": 98,
+   "code": "extra_attack_delay = maxf(delay, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/assault_rifle_weapon.gd",
+   "line": 110,
+   "code": "attack_interval /= maxf(multiplier, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/auto_weapon.gd",
+   "line": 22,
+   "code": "attack_interval = config.weapon_interval_for_rate(float(parameters.interval)) / maxf(attack_speed, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/auto_weapon.gd",
+   "line": 82,
+   "code": "extra_attack_chance = clampf(chance, 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/auto_weapon.gd",
+   "line": 83,
+   "code": "extra_attack_delay = maxf(0.0, delay)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/blood_airborne_carrier_3d.gd",
+   "line": 39,
+   "code": "pixels_per_world_cell = maxf(gameplay_to_world_scale, 0.001)",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/dream/boss_key_visual.gd",
+   "line": 26,
+   "code": "position.y = roundf(sin(bob_time * 2.2) * 1.0)",
+   "nums": [
+    "2.2",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/breakable_glass_window_3d.gd",
+   "line": 50,
+   "code": "glass_material.emission_energy_multiplier = 0.35",
+   "nums": [
+    "0.35"
+   ]
+  },
+  {
+   "file": "scripts/dream/breakable_glass_window_3d.gd",
+   "line": 98,
+   "code": "upper_mesh.size = Vector3(1.0, wall_height - top_h, window_depth)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/breakable_glass_window_3d.gd",
+   "line": 101,
+   "code": "upper_box.position = Vector3(0.0, top_h + (wall_height - top_h) * 0.5, 0.0)",
+   "nums": [
+    "0.0",
+    "0.5",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/breakable_glass_window_3d.gd",
+   "line": 144,
+   "code": "cap.name = \"ArchitecturalCutSurface\" if side < 0.0 else \"ArchitecturalCutSurface_R\"",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/breakable_glass_window_3d.gd",
+   "line": 145,
+   "code": "cap.position.x = side * 0.475",
+   "nums": [
+    "0.475"
+   ]
+  },
+  {
+   "file": "scripts/dream/breakable_glass_window_3d.gd",
+   "line": 255,
+   "code": "shard.position = Vector3(randf_range(-0.4, 0.4), randf_range(-0.5, 0.5), randf_range(-0.05, 0.05))",
+   "nums": [
+    "0.4",
+    "0.4",
+    "0.5",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/continuous_office_glass.gd",
+   "line": 10,
+   "code": "glass_pane.mesh.size.x = run_width - .04",
+   "nums": [
+    ".04"
+   ]
+  },
+  {
+   "file": "scripts/dream/continuous_office_glass.gd",
+   "line": 19,
+   "code": "child.position.x = signf(child.position.x)*(run_width*.5-.025)",
+   "nums": [
+    ".5",
+    ".025"
+   ]
+  },
+  {
+   "file": "scripts/dream/continuous_office_glass.gd",
+   "line": 29,
+   "code": "cap.position.x = signf(cap.position.x)*(run_width*.5-.025)",
+   "nums": [
+    ".5",
+    ".025"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 100,
+   "code": "requested_center_height: float = 0.70710678, requested_depth_offset: float = -0.70710678,",
+   "nums": [
+    "0.70710678",
+    "0.70710678"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 101,
+   "code": "requested_viewport_offset: Vector2 = Vector2(64, 96),",
+   "nums": [
+    "64",
+    "96"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 142,
+   "code": "actor_sprite.alpha_scissor_threshold = 0.05",
+   "nums": [
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 187,
+   "code": "projectile_emission_strength = clampf(float(projectile_emission_variant), 0.0, 2.0)",
+   "nums": [
+    "0.0",
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 233,
+   "code": "emission_strength = clampf(float(emission_variant), 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 241,
+   "code": "light_scale = clampf(float(scale_variant), 0.0, 2.0)",
+   "nums": [
+    "0.0",
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 421,
+   "code": "capture.position = Vector2(viewport.size - render_viewport.size) * 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 487,
+   "code": "contact_in_capture = viewport_offset + Vector2(0.0, lowest_visible_pixel) - Vector2(render_viewport.size) * 0.",
+   "nums": [
+    "0.0",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 490,
+   "code": "contact_in_capture = body_contact_local + viewport_offset - Vector2(render_viewport.size) * 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 513,
+   "code": "weapon_reference_height = maxf(grip_world.y, height / PIXELS_PER_WORLD_CELL + 0.05)",
+   "nums": [
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_actor_depth_bridge.gd",
+   "line": 969,
+   "code": "used.position += sprite.offset - (cell_size * 0.5 if sprite.centered else Vector2.ZERO)",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 446,
+   "code": "spot.spot_range = (sqrt(radius * radius + height * height) + 0.5) * ROOM_RANGE_SHOULDER",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 450,
+   "code": "spot.spot_range = minf(spot.spot_range, 8.0)",
+   "nums": [
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 451,
+   "code": "spot.spot_angle = clampf(rad_to_deg(atan2(radius, height)) + ROOM_ANGLE_SHOULDER_DEGREES, 20.0, 85.0)",
+   "nums": [
+    "20.0",
+    "85.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 477,
+   "code": "light.spot_range = 3.5",
+   "nums": [
+    "3.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 478,
+   "code": "light.spot_angle = 70.0",
+   "nums": [
+    "70.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 692,
+   "code": "light.spot_range = minf(light.spot_range, 8.0)",
+   "nums": [
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 718,
+   "code": "fill.omni_range = maxf(3.0, fill_slant_range + floor_fill_range_padding)",
+   "nums": [
+    "3.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 735,
+   "code": "fill.omni_range = maxf(2.0, minf(fill.omni_range, float(mini(bounds.size.x, bounds.size.y)) * 0.5))",
+   "nums": [
+    "2.0",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 845,
+   "code": "target_radius *= 0.92",
+   "nums": [
+    "0.92"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 850,
+   "code": "target_radius = minf(target_radius, maxf(short_axis * 0.9, 1.5))",
+   "nums": [
+    "0.9",
+    "1.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_ceiling_lighting.gd",
+   "line": 851,
+   "code": "target_radius += 0.75",
+   "nums": [
+    "0.75"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_dialogue_camera.gd",
+   "line": 87,
+   "code": "state = FocusState.ACTIVE if dialogue_weight >= 0.999 else FocusState.ENTERING",
+   "nums": [
+    "0.999"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_dialogue_camera.gd",
+   "line": 136,
+   "code": "dialogue_weight = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_dialogue_camera.gd",
+   "line": 157,
+   "code": "dialogue_weight = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_dialogue_camera.gd",
+   "line": 302,
+   "code": "dialogue_weight = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_dialogue_camera.gd",
+   "line": 311,
+   "code": "dialogue_weight = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 843,
+   "code": "config.basic_weapon_attack_interval = 1.0 / PISTOL_FIRE_RATE_3D",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 844,
+   "code": "config.assault_rifle_attack_interval = 1.0 / RIFLE_FIRE_RATE_3D",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 845,
+   "code": "config.shotgun_attack_interval = 1.0 / SHOTGUN_FIRE_RATE_3D",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 849,
+   "code": "config.player_movement_speed = 290.0",
+   "nums": [
+    "290.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 851,
+   "code": "config.employee_movement_speed = 150.0",
+   "nums": [
+    "150.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 991,
+   "code": "damage_numbers_root.z_index = 10",
+   "nums": [
+    "10"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 1254,
+   "code": "weapon_name_popup_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 1282,
+   "code": "weapon_name_popup_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 1302,
+   "code": "weapon_name_popup_time_left = maxf(0.0, weapon_name_popup_time_left - maxf(real_delta, 0.0))",
+   "nums": [
+    "0.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 1310,
+   "code": "weapon_name_popup.modulate = Color(1.0, 1.0, 1.0, clampf(alpha, 0.0, 1.0))",
+   "nums": [
+    "1.0",
+    "1.0",
+    "1.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 1474,
+   "code": "fake_height = maxf(0.0, fake_height + vertical_velocity * dt)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 2118,
+   "code": "\"otxo_mansion_room_count\": int(config.otxo_mansion_room_count) if config != null else 16,",
+   "nums": [
+    "16"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 2119,
+   "code": "\"otxo_mansion_glass_chance\": float(config.otxo_mansion_glass_chance) if config != null else 0.35,",
+   "nums": [
+    "0.35"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 4085,
+   "code": "camera_shake_duration = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 4649,
+   "code": "transition_guard_until_msec = Time.get_ticks_msec() + 120",
+   "nums": [
+    "120"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 4682,
+   "code": "camera_shake_duration = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 4912,
+   "code": "cap.position = Vector3(center_world.x, wall_height + 0.01, center_world.z)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5545,
+   "code": "\"distance\": camera_3d.global_position.distance_squared_to(enemy_world) if camera_3d != null else 0.0,",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5578,
+   "code": "\"distance\": camera_3d.global_position.distance_squared_to(proj_world) if camera_3d != null else 0.0,",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5674,
+   "code": "radius_px = maxf(radius_px, 2.0)",
+   "nums": [
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5895,
+   "code": "camera_impulse_offset = camera_impulse_offset.move_toward(Vector3.ZERO, delta * 5.5)",
+   "nums": [
+    "5.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5902,
+   "code": "shake_offset = Vector3(sin(phase), 0.0, cos(phase * 1.37)) * camera_shake_amplitude * envelope",
+   "nums": [
+    "0.0",
+    "1.37"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5905,
+   "code": "camera_shake_duration = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5915,
+   "code": "dialogue_weight = clampf(float(dialogue_camera.call(\"get_dialogue_weight\")), 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5930,
+   "code": "elevator_rumble_offset = Vector3(horiz, vert, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5933,
+   "code": "camera_3d.fov = authoritative_camera_fov * lerpf(1.0, dialogue_zoom, dialogue_weight)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 5935,
+   "code": "camera_3d.size = authoritative_camera_size * GAMEPLAY_CAMERA_SIZE_MULTIPLIER * lerpf(1.0, dialogue_zoom, dialo",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 6072,
+   "code": "&\"medium\": normalized_strength = 0.72",
+   "nums": [
+    "0.72"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 6073,
+   "code": "&\"heavy\": normalized_strength = 1.20",
+   "nums": [
+    "1.20"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 6087,
+   "code": "camera_impulse_offset += Vector3(offset_2d.x, 0.0, offset_2d.y)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 6088,
+   "code": "camera_impulse_offset.x = clampf(camera_impulse_offset.x, -0.75, 0.75)",
+   "nums": [
+    "0.75",
+    "0.75"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 6089,
+   "code": "camera_impulse_offset.z = clampf(camera_impulse_offset.z, -0.75, 0.75)",
+   "nums": [
+    "0.75",
+    "0.75"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 6092,
+   "code": "camera_shake_duration = maxf(camera_shake_duration, imp_dur * lerpf(0.65, 1.35, clamped / maxf(max_norm, 0.001",
+   "nums": [
+    "0.65",
+    "1.35",
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 6516,
+   "code": "bounds = _room_bounds_pixels(room_id, maxf(8.0, radius))",
+   "nums": [
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 7169,
+   "code": "shape.radius = 18.0",
+   "nums": [
+    "18.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 7463,
+   "code": "elevator_rumble_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 8504,
+   "code": "shape.radius = maxf(radius, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 8687,
+   "code": "requested_viewport_offset: Vector2 = Vector2(64.0, 96.0),",
+   "nums": [
+    "64.0",
+    "96.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 8689,
+   "code": "requested_center_height: float = 0.70710678,",
+   "nums": [
+    "0.70710678"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 8690,
+   "code": "requested_depth_offset: float = -0.70710678,",
+   "nums": [
+    "0.70710678"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 8740,
+   "code": "viewport.size = Vector2i(requested_viewport_offset * 2.0)",
+   "nums": [
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 9734,
+   "code": "shape.radius = 8.0",
+   "nums": [
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 10367,
+   "code": "distance = maxf(distance, (collider.to_global(corner) - origin).dot(direction) + 6.0)",
+   "nums": [
+    "6.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 10391,
+   "code": "velocity = direction * maxf(12.0, spray_strength + _content_rng.randf_range(-config.environment_debris_spray_s",
+   "nums": [
+    "12.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 10392,
+   "code": "up_velocity = _content_rng.randf_range(config.environment_debris_spray_up_velocity * 0.65, config.environment_",
+   "nums": [
+    "0.65"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 10720,
+   "code": "droplet_multiplier: float = 1.0,",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 10721,
+   "code": "speed_multiplier: float = 1.0,",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 10722,
+   "code": "spread_multiplier: float = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 10925,
+   "code": "impact_speed: float = -1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 11013,
+   "code": "impact_speed: float = -1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 11176,
+   "code": "capture_local += Vector2(0.0, 32.0)",
+   "nums": [
+    "0.0",
+    "32.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_random_dungeon.gd",
+   "line": 11266,
+   "code": "effect.global_position = get_gameplay_world_position(hit_position, height) + normal_world * 0.015",
+   "nums": [
+    "0.015"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_reception_room.gd",
+   "line": 347,
+   "code": "plane.size = Vector2(float(CORRIDOR_WIDTH), 4.0)",
+   "nums": [
+    "4.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_reception_room.gd",
+   "line": 350,
+   "code": "gradient_mesh.position = Vector3(corridor_center_x, 0.045, float(MAIN_HALL_HEIGHT + CORRIDOR_HEIGHT) - 2.0)",
+   "nums": [
+    "0.045",
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_reception_room.gd",
+   "line": 574,
+   "code": "desk_light.omni_range = 4.5",
+   "nums": [
+    "4.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_reception_room.gd",
+   "line": 586,
+   "code": "elevator_light.omni_range = 4.5",
+   "nums": [
+    "4.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_reception_room.gd",
+   "line": 627,
+   "code": "camera_aim_offset = camera_aim_offset.lerp(Vector3(target_pixels.x / CELL_PIXELS, 0.0, target_pixels.y / CELL_",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_room_visibility.gd",
+   "line": 41,
+   "code": "confirmation_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_room_visibility.gd",
+   "line": 186,
+   "code": "confirmation_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_room_visibility.gd",
+   "line": 296,
+   "code": "confirmation_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_room_visibility.gd",
+   "line": 301,
+   "code": "confirmation_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_room_visibility.gd",
+   "line": 483,
+   "code": "distance = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_run_interface.gd",
+   "line": 99,
+   "code": "damage_flash.color = Color(0.72,0.08,0.11,0)",
+   "nums": [
+    "0.72",
+    "0.08",
+    "0.11"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_run_interface.gd",
+   "line": 136,
+   "code": "damage_flash.color.a = CONFIG.player_hurt_screen_flash_alpha * damage_flash_left / maxf(CONFIG.player_hurt_scr",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_tutorial_room.gd",
+   "line": 456,
+   "code": "camera_aim_offset = camera_aim_offset.lerp(Vector3(target_pixels.x / CELL_PIXELS, 0.0, target_pixels.y / CELL_",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_tutorial_room.gd",
+   "line": 465,
+   "code": "dialogue_weight = clampf(float(dialogue_camera.call(\"get_dialogue_weight\")), 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_tutorial_room.gd",
+   "line": 472,
+   "code": "camera_3d.fov = authoritative_camera_fov * lerpf(1.0, dialogue_zoom, dialogue_weight)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_3d_tutorial_room.gd",
+   "line": 474,
+   "code": "camera_3d.size = authoritative_camera_size * GAMEPLAY_CAMERA_SIZE_MULTIPLIER * lerpf(1.0, dialogue_zoom, dialo",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_charge_visual.gd",
+   "line": 65,
+   "code": "sprite.speed_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_exit_arrow.gd",
+   "line": 18,
+   "code": "arrow_length_pixels = maxf(length_pixels, 8.0)",
+   "nums": [
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_exit_arrow.gd",
+   "line": 19,
+   "code": "arrow_width_pixels = maxf(width_pixels, 4.0)",
+   "nums": [
+    "4.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_firearm_rules.gd",
+   "line": 26,
+   "code": "\"pellets\": maxi(1, int(_value(config, \"shotgun_pellet_count\", 9.0))) if weapon_id == &\"shotgun\" else 1,",
+   "nums": [
+    "9.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_macro_room_graph.gd",
+   "line": 96,
+   "code": "score += rng.randi_range(0, 12)",
+   "nums": [
+    "12"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_macro_room_graph.gd",
+   "line": 530,
+   "code": "weights[2] = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_macro_room_graph.gd",
+   "line": 531,
+   "code": "weights[3] = 0.0",
+   "nums": [
+    "3",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_macro_room_graph.gd",
+   "line": 532,
+   "code": "weights[4] = 0.0",
+   "nums": [
+    "4",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_macro_room_graph.gd",
+   "line": 534,
+   "code": "weights[4] *= 0.35",
+   "nums": [
+    "4",
+    "0.35"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_macro_room_graph.gd",
+   "line": 539,
+   "code": "weights[1] = maxf(0.0, float(options.get(\"rectangle_large_weight\", weights[1])))",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_macro_room_graph.gd",
+   "line": 540,
+   "code": "weights[2] = maxf(0.0, float(options.get(\"irregular_large_weight\", weights[2])))",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_macro_room_graph.gd",
+   "line": 541,
+   "code": "weights[4] = maxf(0.0, float(options.get(\"courtyard_large_weight\", weights[4])))",
+   "nums": [
+    "4",
+    "0.0",
+    "4"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_night_lighting.gd",
+   "line": 103,
+   "code": "flashlight.spot_angle_attenuation = 0.6",
+   "nums": [
+    "0.6"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_night_lighting.gd",
+   "line": 122,
+   "code": "light.omni_range = 4.0",
+   "nums": [
+    "4.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_night_lighting.gd",
+   "line": 337,
+   "code": "rect = Rect2(animated.offset - (frame_size * 0.5 if animated.centered else Vector2.ZERO), frame_size)",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_night_lighting.gd",
+   "line": 407,
+   "code": "remaining[slot] = minf(muzzle_duration, 0.080) if managed_shadows else muzzle_duration",
+   "nums": [
+    "0.080"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_night_lighting.gd",
+   "line": 408,
+   "code": "_pulse_deadlines_usec[slot] = Time.get_ticks_usec() + int(remaining[slot] * 1000000.0)",
+   "nums": [
+    "1000000.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_room_door.gd",
+   "line": 28,
+   "code": "opening_width = maxf(32.0, wall_opening_width)",
+   "nums": [
+    "32.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_room_door.gd",
+   "line": 40,
+   "code": "shape.size = Vector2(maxf(8.0, opening_width - 8.0), 40.0)",
+   "nums": [
+    "8.0",
+    "8.0",
+    "40.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_room_door.gd",
+   "line": 58,
+   "code": "blocking_shape.size = Vector2(opening_width - 2.0, 24)",
+   "nums": [
+    "2.0",
+    "24"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_spawn_warning.gd",
+   "line": 14,
+   "code": "duration = maxf(warning_duration, 0.1)",
+   "nums": [
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_throw_trajectory.gd",
+   "line": 21,
+   "code": "_material.emission_energy_multiplier = 1.2",
+   "nums": [
+    "1.2"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_throw_trajectory.gd",
+   "line": 28,
+   "code": "sphere.radius = 0.025",
+   "nums": [
+    "0.025"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_throw_trajectory.gd",
+   "line": 29,
+   "code": "sphere.height = 0.05",
+   "nums": [
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 104,
+   "code": "min_scale = clampf(min_scale, 0.001, max_scale)",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 181,
+   "code": "dive_bullet_time_scale = clampf(scale, 0.001, 1.0)",
+   "nums": [
+    "0.001",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 365,
+   "code": "scale: float = 0.05,",
+   "nums": [
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 366,
+   "code": "duration: float = 0.02,",
+   "nums": [
+    "0.02"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 367,
+   "code": "minimum_interval: float = 0.06",
+   "nums": [
+    "0.06"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 379,
+   "code": "hitstop_scale = clampf(scale, 0.001, 1.0)",
+   "nums": [
+    "0.001",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 380,
+   "code": "hitstop_remaining_real = maxf(duration, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 510,
+   "code": "last_locomotion_speed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 517,
+   "code": "last_locomotion_speed = 1.0 if active else 0.0",
+   "nums": [
+    "1.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 521,
+   "code": "speed = maxf(float(bound_player.call(\"get_time_locomotion_speed\")), 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_time_controller.gd",
+   "line": 531,
+   "code": "reference = maxf(float(bound_player.get(\"movement_speed\")), 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_weapon_pose.gd",
+   "line": 9,
+   "code": "side_radius: float = 14.0,",
+   "nums": [
+    "14.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/dream_weapon_pose.gd",
+   "line": 11,
+   "code": "muzzle_distance: float = 11.0",
+   "nums": [
+    "11.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 125,
+   "code": "std_led_on.emission_energy_multiplier = 2.0",
+   "nums": [
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 132,
+   "code": "std_sensor_locked.emission_energy_multiplier = 1.2",
+   "nums": [
+    "1.2"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 139,
+   "code": "std_sensor_unlocked.emission_energy_multiplier = 1.2",
+   "nums": [
+    "1.2"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 154,
+   "code": "shaft_box.size = Vector3(DOOR_WIDTH + 0.02, DOOR_HEIGHT, 0.035)",
+   "nums": [
+    "0.02",
+    "0.035"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 156,
+   "code": "shaft_backing.position = Vector3(0.0, DOOR_HEIGHT * 0.5, -WALL_THICKNESS * 0.40)",
+   "nums": [
+    "0.0",
+    "0.5",
+    "0.40"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 175,
+   "code": "post_mesh.size = Vector3(0.24, DOOR_HEIGHT, WALL_THICKNESS)",
+   "nums": [
+    "0.24"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 177,
+   "code": "left_post.position = Vector3(-1.62, DOOR_HEIGHT * 0.5, 0.0)",
+   "nums": [
+    "1.62",
+    "0.5",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 186,
+   "code": "r_post_mesh.size = Vector3(0.34, DOOR_HEIGHT, WALL_THICKNESS)",
+   "nums": [
+    "0.34"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 188,
+   "code": "right_post.position = Vector3(1.67, DOOR_HEIGHT * 0.5, 0.0)",
+   "nums": [
+    "1.67",
+    "0.5",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 199,
+   "code": "top_lintel.position = Vector3(0.025, DOOR_HEIGHT + 0.19, 0.0)",
+   "nums": [
+    "0.025",
+    "0.19",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 211,
+   "code": "door_leaf_mesh.size = Vector3(door_leaf_width, DOOR_HEIGHT - 0.04, 0.06)",
+   "nums": [
+    "0.04",
+    "0.06"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 217,
+   "code": "left_door_mesh.position = Vector3(-0.75, DOOR_HEIGHT * 0.5, leaf_depth)",
+   "nums": [
+    "0.75",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 225,
+   "code": "right_door_mesh.position = Vector3(0.75, DOOR_HEIGHT * 0.5, leaf_depth)",
+   "nums": [
+    "0.75",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 234,
+   "code": "indicator_root.position = Vector3(0.0, DOOR_HEIGHT + 0.19, WALL_THICKNESS * 0.5 + 0.025)",
+   "nums": [
+    "0.0",
+    "0.19",
+    "0.5",
+    "0.025"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 306,
+   "code": "camera_root.position = Vector3(0.4, DOOR_HEIGHT + 0.38, WALL_THICKNESS * 0.5 + 0.05)",
+   "nums": [
+    "0.4",
+    "0.38",
+    "0.5",
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 343,
+   "code": "opening_width = maxf(width_world, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 349,
+   "code": "door_box.size = Vector2(opening_width * CELL_PIXELS + 8.0, wall_depth * CELL_PIXELS + 8.0)",
+   "nums": [
+    "8.0",
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 353,
+   "code": "approach_box.size = Vector2(opening_width * CELL_PIXELS + 16.0, approach_box.size.y)",
+   "nums": [
+    "16.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 366,
+   "code": "left_door_mesh.position = Vector3(-leaf_x, DOOR_HEIGHT * 0.5, leaf_z)",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 367,
+   "code": "right_door_mesh.position = Vector3(leaf_x, DOOR_HEIGHT * 0.5, leaf_z)",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 370,
+   "code": "(backing.mesh as BoxMesh).size.x = opening_width + 0.02",
+   "nums": [
+    "0.02"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 384,
+   "code": "left_post.position.x = -half_width + 0.06",
+   "nums": [
+    "0.06"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 385,
+   "code": "right_post.position.x = half_width - 0.06",
+   "nums": [
+    "0.06"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 387,
+   "code": "(lintel.mesh as BoxMesh).size = Vector3(opening_width + 0.17, 0.38, wall_depth)",
+   "nums": [
+    "0.17",
+    "0.38"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 398,
+   "code": "card_reader_root.position.x = half_width - 0.06",
+   "nums": [
+    "0.06"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 400,
+   "code": "camera_root.position.x = minf(0.4, opening_width * 0.15)",
+   "nums": [
+    "0.4",
+    "0.15"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 491,
+   "code": "col_box.size = Vector2(opening_width * CELL_PIXELS + 8.0, wall_depth * CELL_PIXELS + 8.0)",
+   "nums": [
+    "8.0",
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/elevator_floor_door_3d.gd",
+   "line": 508,
+   "code": "app_box.size = Vector2(opening_width * CELL_PIXELS + 16.0, 2.0 * CELL_PIXELS)",
+   "nums": [
+    "16.0",
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/employee_badge_marker.gd",
+   "line": 19,
+   "code": "bob_time += maxf(delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/employee_badge_marker.gd",
+   "line": 20,
+   "code": "fake_height = 52.0 + sin(bob_time * 4.2) * 7.0",
+   "nums": [
+    "52.0",
+    "4.2",
+    "7.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/firearm_impact_visual_3d.gd",
+   "line": 41,
+   "code": "_impact_normal = normal_world.normalized() if normal_world.length_squared() > 0.0001 else Vector3.UP",
+   "nums": [
+    "0.0001"
+   ]
+  },
+  {
+   "file": "scripts/dream/firearm_impact_visual_3d.gd",
+   "line": 58,
+   "code": "_emitter.amount = 5",
+   "nums": [
+    "5"
+   ]
+  },
+  {
+   "file": "scripts/dream/firearm_impact_visual_3d.gd",
+   "line": 68,
+   "code": "_emitter.amount = 4",
+   "nums": [
+    "4"
+   ]
+  },
+  {
+   "file": "scripts/dream/firearm_impact_visual_3d.gd",
+   "line": 72,
+   "code": "_emitter.lifetime = 0.19 if _surface_kind == &\"soft\" else 0.15",
+   "nums": [
+    "0.19",
+    "0.15"
+   ]
+  },
+  {
+   "file": "scripts/dream/furniture_3d_debris.gd",
+   "line": 104,
+   "code": "p[\"rot_speed\"] = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/furniture_3d_visual.gd",
+   "line": 134,
+   "code": "_contact_shadow.position.y = .015 - fake_height / PIXELS_PER_WORLD_CELL",
+   "nums": [
+    ".015"
+   ]
+  },
+  {
+   "file": "scripts/dream/furniture_3d_visual.gd",
+   "line": 135,
+   "code": "_contact_shadow.visible = fake_height < 32.0",
+   "nums": [
+    "32.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 146,
+   "code": "std_led_on.emission_energy_multiplier = 2.2",
+   "nums": [
+    "2.2"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 159,
+   "code": "floor_box.size = Vector3(CAB_WIDTH, 0.04, CAB_DEPTH)",
+   "nums": [
+    "0.04"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 172,
+   "code": "north_wall.position = Vector3(0.0, CAB_HEIGHT * 0.5, -CAB_DEPTH * 0.5)",
+   "nums": [
+    "0.0",
+    "0.5",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 181,
+   "code": "pil_box.size = Vector3(0.85, CAB_HEIGHT, 0.04)",
+   "nums": [
+    "0.85",
+    "0.04"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 183,
+   "code": "center_pilaster.position = Vector3(0.0, CAB_HEIGHT * 0.5, -CAB_DEPTH * 0.5 + WALL_THICKNESS * 0.5 + 0.02)",
+   "nums": [
+    "0.0",
+    "0.5",
+    "0.5",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 194,
+   "code": "west_wall.position = Vector3(-CAB_WIDTH * 0.5, CAB_HEIGHT * 0.5, 0.0)",
+   "nums": [
+    "0.5",
+    "0.5",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 205,
+   "code": "east_wall.position = Vector3(CAB_WIDTH * 0.5, CAB_HEIGHT * 0.5, 0.0)",
+   "nums": [
+    "0.5",
+    "0.5",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 214,
+   "code": "ret_box.size = Vector3(0.9, south_return_height, WALL_THICKNESS)",
+   "nums": [
+    "0.9"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 219,
+   "code": "south_return_left.position = Vector3(-1.35, south_return_height * 0.5, CAB_DEPTH * 0.5)",
+   "nums": [
+    "1.35",
+    "0.5",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 227,
+   "code": "south_return_right.position = Vector3(1.35, south_return_height * 0.5, CAB_DEPTH * 0.5)",
+   "nums": [
+    "1.35",
+    "0.5",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 237,
+   "code": "inner_leaf_box.size = Vector3(0.92, south_return_height, 0.05)",
+   "nums": [
+    "0.92",
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 242,
+   "code": "inner_left_door.position = Vector3(-0.46, south_return_height * 0.5, CAB_DEPTH * 0.5)",
+   "nums": [
+    "0.46",
+    "0.5",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 250,
+   "code": "inner_right_door.position = Vector3(0.46, south_return_height * 0.5, CAB_DEPTH * 0.5)",
+   "nums": [
+    "0.46",
+    "0.5",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 264,
+   "code": "indicator_root.position = Vector3(0.0, CAB_HEIGHT - 0.5, -CAB_DEPTH * 0.5 + 0.06)",
+   "nums": [
+    "0.0",
+    "0.5",
+    "0.5",
+    "0.06"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 307,
+   "code": "cab_camera_root.position = Vector3(0.08, CAB_HEIGHT - 0.18, -CAB_DEPTH * 0.5 + 0.15)",
+   "nums": [
+    "0.08",
+    "0.18",
+    "0.5",
+    "0.15"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 351,
+   "code": "std_yellow.emission_energy_multiplier = 1.5",
+   "nums": [
+    "1.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 359,
+   "code": "cab_light.position = Vector3(0.0, CAB_HEIGHT - 0.2, 0.0)",
+   "nums": [
+    "0.0",
+    "0.2",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 362,
+   "code": "cab_light.omni_range = 5.5",
+   "nums": [
+    "5.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 378,
+   "code": "n_box.size = Vector3(CAB_WIDTH - 0.4, rail_thickness, rail_thickness)",
+   "nums": [
+    "0.4"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 380,
+   "code": "north_rail.position = Vector3(0.0, rail_height, -CAB_DEPTH * 0.5 + 0.14)",
+   "nums": [
+    "0.0",
+    "0.5",
+    "0.14"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 389,
+   "code": "so.position = Vector3(sx, rail_height, -CAB_DEPTH * 0.5 + 0.08)",
+   "nums": [
+    "0.5",
+    "0.08"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 400,
+   "code": "west_rail.position = Vector3(-CAB_WIDTH * 0.5 + 0.08, rail_height, 0.0)",
+   "nums": [
+    "0.5",
+    "0.08",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 411,
+   "code": "so.position = Vector3(-CAB_WIDTH * 0.5 + 0.04, rail_height, sz)",
+   "nums": [
+    "0.5",
+    "0.04"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 420,
+   "code": "east_rail.position = Vector3(CAB_WIDTH * 0.5 - 0.08, rail_height, 0.0)",
+   "nums": [
+    "0.5",
+    "0.08",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/independent_elevator_cab_3d.gd",
+   "line": 429,
+   "code": "so.position = Vector3(CAB_WIDTH * 0.5 - 0.04, rail_height, sz)",
+   "nums": [
+    "0.5",
+    "0.04"
+   ]
+  },
+  {
+   "file": "scripts/dream/lucille_weapon.gd",
+   "line": 33,
+   "code": "knockback_multiplier = config.get_lucille_knockback_force() / maxf(config.gun_knockback_force, 0.001) * config",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/dream/lucille_weapon.gd",
+   "line": 38,
+   "code": "knockback_multiplier = config.get_lucille_knockback_force() / maxf(config.gun_knockback_force, 0.001)",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/dream/lucille_weapon.gd",
+   "line": 45,
+   "code": "attack_interval = config.weapon_interval_for_rate(base_interval) / maxf(attack_speed, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/lucille_weapon.gd",
+   "line": 46,
+   "code": "impact_delay = clampf(config.melee_swing_impact_delay, 0.0, maxf(attack_interval - 0.01, 0.0))",
+   "nums": [
+    "0.0",
+    "0.01",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/lucille_weapon.gd",
+   "line": 143,
+   "code": "shape.radius = maxf(attack_range, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/lucille_weapon.gd",
+   "line": 185,
+   "code": "extra_attack_chance = clampf(chance, 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/lucille_weapon.gd",
+   "line": 186,
+   "code": "extra_attack_delay = maxf(delay, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_furniture_catalog.gd",
+   "line": 120,
+   "code": "body_rect = Rect2(collision.position - collision.shape.get_rect().size * collision.scale * 0.5, collision.shap",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_low_pixel_frame.gd",
+   "line": 22,
+   "code": "cap.position.x = sign_x * (opening_width * .5 + .03125)",
+   "nums": [
+    ".5",
+    ".03125"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_metal_door_art.gd",
+   "line": 16,
+   "code": "parts = [[Vector3(width,low+height*.5,depth),Vector3(0,(low-height*.5)*.5,0)], [Vector3(width,height*.5-high,d",
+   "nums": [
+    ".5",
+    ".5",
+    ".5",
+    ".5"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_objective_guidance.gd",
+   "line": 117,
+   "code": "p.x = clampf(p.x, rect.position.x + 24.0 / _logical_pixel_scale(), rect.end.x - 24.0 / _logical_pixel_scale())",
+   "nums": [
+    "24.0",
+    "24.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_objective_guidance.gd",
+   "line": 118,
+   "code": "p.y = clampf(p.y, rect.position.y + 24.0 / _logical_pixel_scale(), rect.end.y - 24.0 / _logical_pixel_scale())",
+   "nums": [
+    "24.0",
+    "24.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_room_low_pixel_art.gd",
+   "line": 235,
+   "code": "_box(st, Vector3(width, .05, .74), Vector3(0, .855, 0), \"metal_top\", \"sink\" if kind == \"sink\" else \"kitchen\")",
+   "nums": [
+    ".05",
+    ".74",
+    ".855"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_sample_floor.gd",
+   "line": 63,
+   "code": "entry[\"patrol_route\"] = [position, origin + Vector2(6, 11) * CATALOG.SCALE, origin + Vector2(6, 14) * CATALOG.",
+   "nums": [
+    "6",
+    "11",
+    "6",
+    "14"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_shadow_manager.gd",
+   "line": 91,
+   "code": "sun.directional_shadow_max_distance = 28.0",
+   "nums": [
+    "28.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_shadow_manager.gd",
+   "line": 201,
+   "code": "center.y -= minf(radius * 0.5, 2.0)",
+   "nums": [
+    "0.5",
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 195,
+   "code": "widths[0] = 12 # Nested storage plus archive bank and its continuous aisle.",
+   "nums": [
+    "12"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 197,
+   "code": "heights[6] = random.randi_range(6,8)",
+   "nums": [
+    "6",
+    "6",
+    "8"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 201,
+   "code": "widths[2]=11; widths[3]=11; widths[9]=12; widths[5]=11",
+   "nums": [
+    "11",
+    "3",
+    "11",
+    "9"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 206,
+   "code": "widths[3]=7; widths[4]=7; heights[6]=5; heights[7]=5",
+   "nums": [
+    "3",
+    "7",
+    "4",
+    "7"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 207,
+   "code": "widths[1]=side; widths[6]=side; heights[2]=main",
+   "nums": [
+    "6"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 209,
+   "code": "widths[0]=side; widths[1]=14-side; heights[5]=10",
+   "nums": [
+    "14",
+    "5",
+    "10"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 210,
+   "code": "widths[4]=hub; heights[2]=hub; widths[8]=side",
+   "nums": [
+    "4",
+    "8"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 212,
+   "code": "widths[3]=4; widths[4]=5; widths[5]=5; heights[7]=10",
+   "nums": [
+    "3",
+    "4",
+    "4",
+    "5"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 213,
+   "code": "widths[1]=side; widths[8]=side; heights[3]=main",
+   "nums": [
+    "8",
+    "3"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 215,
+   "code": "widths[3]=7; widths[4]=7; heights[6]=10",
+   "nums": [
+    "3",
+    "7",
+    "4",
+    "7"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 216,
+   "code": "widths[1]=side; widths[9]=side",
+   "nums": [
+    "9"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 373,
+   "code": "distances[other]=mini(int(distances.get(other,999)),int(distances[link[side]])+1)",
+   "nums": [
+    "999"
+   ]
+  },
+  {
+   "file": "scripts/dream/office_skeleton_generator.gd",
+   "line": 375,
+   "code": "order.sort_custom(func(a: String,b: String) -> bool: return int(distances.get(a,999)) < int(distances.get(b,99",
+   "nums": [
+    "999",
+    "999"
+   ]
+  },
+  {
+   "file": "scripts/dream/otxo_room_layout_planner.gd",
+   "line": 256,
+   "code": "strips = [Rect2(Vector2(row.get_center().x - width * .5, row.position.y - width), Vector2(width, width)), Rect",
+   "nums": [
+    ".5",
+    ".5"
+   ]
+  },
+  {
+   "file": "scripts/dream/otxo_room_layout_planner.gd",
+   "line": 258,
+   "code": "strips = [Rect2(Vector2(row.position.x - width, row.get_center().y - width * .5), Vector2(width, width)), Rect",
+   "nums": [
+    ".5",
+    ".5"
+   ]
+  },
+  {
+   "file": "scripts/dream/otxo_room_layout_planner.gd",
+   "line": 289,
+   "code": "specs = [[\"fridge\", Vector2(-side - 35, -65), -PI * .5], [\"sink\", Vector2(-side - 35, -30), -PI * .5], [\"appli",
+   "nums": [
+    "35",
+    "65",
+    ".5",
+    "35"
+   ]
+  },
+  {
+   "file": "scripts/dream/otxo_room_layout_planner.gd",
+   "line": 302,
+   "code": "specs = [[\"copier\", Vector2(-side, 0), 0.0], [\"cabinet\", Vector2(0, top), 0.0], [\"counter\", Vector2(side, 0), ",
+   "nums": [
+    "0.0",
+    "0.0",
+    ".5"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 107,
+   "code": "door_width = maxf(width, 0.1)",
+   "nums": [
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 108,
+   "code": "door_height = maxf(height, 0.1)",
+   "nums": [
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 157,
+   "code": "leaf_width = maxf(door_width - maxf(center_clearance, 0.0), 0.05) if door_style == &\"single\" else maxf((door_w",
+   "nums": [
+    "0.0",
+    "0.05",
+    "0.0",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 186,
+   "code": "anchor.position = Vector3(hinge_x, door_height * 0.5, 0.0)",
+   "nums": [
+    "0.5",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 187,
+   "code": "leaf.position = Vector3(center_x, door_height * 0.5, 0.0)",
+   "nums": [
+    "0.5",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 195,
+   "code": "leaf.gravity_scale = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 219,
+   "code": "visual.position = -(bounds.position + bounds.size * 0.5) * visual.scale",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 232,
+   "code": "pane.size=Vector3(leaf_width*.28,door_height*.24,.025)",
+   "nums": [
+    ".28",
+    ".24",
+    ".025"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 234,
+   "code": "glass.position.y=door_height*.18",
+   "nums": [
+    ".18"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 448,
+   "code": "cap.position.y = height * 0.30 - door_height * 0.5",
+   "nums": [
+    "0.30",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 503,
+   "code": "world_scale = maxf(pixels_per_unit, 0.001)",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 554,
+   "code": "_impact_accumulated_impulse = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 585,
+   "code": "_quiet_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 796,
+   "code": "impact_damage = 50.0",
+   "nums": [
+    "50.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 798,
+   "code": "impact_damage = 25.0",
+   "nums": [
+    "25.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 800,
+   "code": "impact_damage = 20.0",
+   "nums": [
+    "20.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 802,
+   "code": "impact_damage = 50.0",
+   "nums": [
+    "50.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 804,
+   "code": "impact_damage = maxf(force * 0.1, 25.0)",
+   "nums": [
+    "0.1",
+    "25.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 806,
+   "code": "impact_damage = 35.0",
+   "nums": [
+    "35.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 832,
+   "code": "_impact_accumulated_impulse = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 961,
+   "code": "shard_root.position = Vector3(0.0, door_height * 0.5, 0.0)",
+   "nums": [
+    "0.0",
+    "0.5",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/physical_door_3d.gd",
+   "line": 978,
+   "code": "shard.position = Vector3(randf_range(-leaf_width, leaf_width), randf_range(-door_height * 0.3, door_height * 0",
+   "nums": [
+    "0.3",
+    "0.3",
+    "0.1",
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/dream/player_physics_proxy_3d.gd",
+   "line": 27,
+   "code": "push_cooldown_left = maxf(0.0, push_cooldown_left - delta)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/player_physics_proxy_3d.gd",
+   "line": 44,
+   "code": "motion = get_parent_node_3d().global_basis * Vector3(actor_velocity.x, 0.0, actor_velocity.y) / maxf(world_sca",
+   "nums": [
+    "0.0",
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/player_physics_proxy_3d.gd",
+   "line": 60,
+   "code": "push_cooldown_left = 0.45",
+   "nums": [
+    "0.45"
+   ]
+  },
+  {
+   "file": "scripts/dream/reception_waitress_npc.gd",
+   "line": 94,
+   "code": "shadow.scale = Vector2(0.42, 0.18)",
+   "nums": [
+    "0.42",
+    "0.18"
+   ]
+  },
+  {
+   "file": "scripts/dream/reception_waitress_npc.gd",
+   "line": 185,
+   "code": "body.position.y = body_base_pos.y + breath_offset * 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/reception_waitress_npc.gd",
+   "line": 216,
+   "code": "blink_timer = randf_range(2.5, 5.0)",
+   "nums": [
+    "2.5",
+    "5.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/shotgun_weapon.gd",
+   "line": 27,
+   "code": "projectile_speed = maxf(1.0, float(parameters.speed))",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/shotgun_weapon.gd",
+   "line": 29,
+   "code": "attack_interval = config.weapon_interval_for_rate(float(parameters.interval)) / maxf(attack_speed, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/shotgun_weapon.gd",
+   "line": 81,
+   "code": "extra_attack_chance = clampf(chance, 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/shotgun_weapon.gd",
+   "line": 82,
+   "code": "extra_attack_delay = maxf(0.0, delay)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/shotgun_weapon.gd",
+   "line": 94,
+   "code": "attack_interval /= maxf(multiplier, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/tutorial_smoke_burst.gd",
+   "line": 31,
+   "code": "puff.scale = Vector3.ONE * 0.55",
+   "nums": [
+    "0.55"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 73,
+   "code": "window_pane_offset = float(get_meta(&\"window_pane_offset\", 0.0))",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 98,
+   "code": "wall_height = maxf(height, 0.05)",
+   "nums": [
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 140,
+   "code": "light_range: float = 6.5,",
+   "nums": [
+    "6.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 141,
+   "code": "angle: float = 50.0,",
+   "nums": [
+    "50.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 146,
+   "code": "window_inward_normal = normal.normalized() if normal.length_squared() > 0.001 else Vector2.ZERO",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 149,
+   "code": "window_light_range = maxf(light_range, 0.1)",
+   "nums": [
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 150,
+   "code": "window_light_angle = clampf(angle, 1.0, 179.0)",
+   "nums": [
+    "1.0",
+    "179.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 539,
+   "code": "window_pane.position = Vector3(window_pane_offset, (window_bottom + window_top) * 0.5, 0.0)",
+   "nums": [
+    "0.5",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 571,
+   "code": "window_light.spot_range = maxf(window_light_range, 0.1)",
+   "nums": [
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 572,
+   "code": "window_light.spot_angle = clampf(window_light_angle, 1.0, 89.0)",
+   "nums": [
+    "1.0",
+    "89.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/wall_segment_3d.gd",
+   "line": 582,
+   "code": "window_radial_fill.global_position = global_position + Vector3.UP * (wall_height * 0.5)",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 200,
+   "code": "pickup_shine_phase_offset = fmod(float(get_instance_id()) * 0.61803398875, period)",
+   "nums": [
+    "0.61803398875"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 226,
+   "code": "and throw_fake_height <= 0.01",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 227,
+   "code": "and sky_drop_height <= 0.01",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 228,
+   "code": "and sky_drop_delay <= 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 285,
+   "code": "sky_drop_delay = maxf(0.0, sky_drop_delay - delta)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 289,
+   "code": "sky_drop_height = maxf(0.0, sky_drop_height + sky_drop_vertical_velocity * delta)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 298,
+   "code": "throw_fake_height = maxf(0.0, throw_fake_height + throw_fake_vertical_velocity * delta)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 310,
+   "code": "weapon_sprite.position = throw_fake_base_position + Vector2(0.0, -throw_fake_height)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 312,
+   "code": "weapon_sprite.position = sky_drop_base_position + Vector2(0.0, -sky_drop_height)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 351,
+   "code": "throw_fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 354,
+   "code": "sky_drop_height = maxf(height_pixels, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 356,
+   "code": "sky_drop_delay = maxf(delay_seconds, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 357,
+   "code": "weapon_sprite.position = sky_drop_base_position + Vector2(0.0, -sky_drop_height)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 373,
+   "code": "visual_scale_override = -1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 555,
+   "code": "throw_fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 557,
+   "code": "fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 558,
+   "code": "sky_drop_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 559,
+   "code": "sky_drop_delay = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 575,
+   "code": "angular_velocity = clampf(impulse.length() * 0.035, 2.0, 12.0) * (-1.0 if impulse.y < 0.0 else 1.0)",
+   "nums": [
+    "0.035",
+    "2.0",
+    "12.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 589,
+   "code": "sky_drop_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 590,
+   "code": "sky_drop_delay = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 593,
+   "code": "throw_fake_height = maxf(throw_fake_height_peak_pixels, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 594,
+   "code": "throw_fake_vertical_velocity = maxf(throw_fake_height_launch_velocity, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 597,
+   "code": "weapon_sprite.position = throw_fake_base_position + Vector2(0.0, -throw_fake_height)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 602,
+   "code": "throw_damage = maxf(damage, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 621,
+   "code": "angular_velocity = clampf(linear_velocity.length() * 0.035, 4.0, 18.0)",
+   "nums": [
+    "0.035",
+    "4.0",
+    "18.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 634,
+   "code": "throw_damage = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 776,
+   "code": "throw_damage = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 779,
+   "code": "throw_fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/world_weapon_pickup.gd",
+   "line": 781,
+   "code": "fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/face_room_art.gd",
+   "line": 12,
+   "code": "shader.code = \"shader_type spatial; uniform vec4 base_color : source_color = vec4(1.0); uniform sampler2D albe",
+   "nums": [
+    "1.0",
+    "1.0",
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/furniture_face_textures.gd",
+   "line": 22,
+   "code": "assert(count%6==0,\"Review expects the approved quad-based meshes\")",
+   "nums": [
+    "6"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/office_flank_controls.gd",
+   "line": 24,
+   "code": "value = int(Time.get_ticks_usec() % 2147483647)",
+   "nums": [
+    "2147483647"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/office_flank_generator.gd",
+   "line": 36,
+   "code": "1: omitted = [[0, 2, 6, 8][rng.randi_range(0, 3)]]",
+   "nums": [
+    "6",
+    "8",
+    "3"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/office_skeleton_glass.gd",
+   "line": 10,
+   "code": "glass_pane.mesh.size.x = run_width - .04",
+   "nums": [
+    ".04"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/office_skeleton_glass.gd",
+   "line": 13,
+   "code": "child.position.x = signf(child.position.x)*(run_width*.5-.025)",
+   "nums": [
+    ".5",
+    ".025"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/office_skeleton_glass.gd",
+   "line": 23,
+   "code": "cap.position.x = signf(cap.position.x)*(run_width*.5-.025)",
+   "nums": [
+    ".5",
+    ".025"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/pixel_shadow_preview.gd",
+   "line": 49,
+   "code": "float scaled = shade * 3.0;",
+   "nums": [
+    "3.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/pixel_shadow_preview.gd",
+   "line": 50,
+   "code": "float threshold = preview_mode == 2 ? preview_threshold(plane / preview_step) : 0.5;",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/pixel_shadow_preview.gd",
+   "line": 51,
+   "code": "float coverage = smoothstep(0.30, 0.70, fract(scaled));",
+   "nums": [
+    "0.30",
+    "0.70"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/pixel_shadow_preview.gd",
+   "line": 52,
+   "code": "shade = (floor(scaled) + step(threshold, coverage)) / 3.0;",
+   "nums": [
+    "3.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/pixel_shadow_preview.gd",
+   "line": 157,
+   "code": "float scaled = shade * 3.0;",
+   "nums": [
+    "3.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/pixel_shadow_preview.gd",
+   "line": 158,
+   "code": "float threshold = preview_mode == 2 ? preview_threshold(plane / preview_step) : 0.5;",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/pixel_shadow_preview.gd",
+   "line": 159,
+   "code": "float coverage = smoothstep(0.30, 0.70, fract(scaled));",
+   "nums": [
+    "0.30",
+    "0.70"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/pixel_shadow_preview.gd",
+   "line": 160,
+   "code": "shade = (floor(scaled) + step(threshold, coverage)) / 3.0;",
+   "nums": [
+    "3.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/quiet_room_preview.gd",
+   "line": 96,
+   "code": "main_light.spot_range = 30.0",
+   "nums": [
+    "30.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/quiet_room_preview.gd",
+   "line": 97,
+   "code": "main_light.spot_angle = 82.0",
+   "nums": [
+    "82.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/quiet_room_preview.gd",
+   "line": 99,
+   "code": "main_light.spot_angle_attenuation = .2",
+   "nums": [
+    ".2"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_floor_texture_review.gd",
+   "line": 176,
+   "code": "sx=64; sy=16; offset=(32 if (y/16)%2==1 else 0)+variant*8",
+   "nums": [
+    "64",
+    "16",
+    "32",
+    "16"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_neon_city.gd",
+   "line": 122,
+   "code": "light.omni_range=11.0; light.omni_attenuation=1.0; light.light_energy=2.2",
+   "nums": [
+    "11.0",
+    "1.0",
+    "2.2"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_neon_city.gd",
+   "line": 280,
+   "code": "code=code.replace(\"float alpha = 1.0;\",\"float alpha = 1.0;\\nvec3 background_color=vec3(0.0);\\nbool city_exteri",
+   "nums": [
+    "1.0",
+    "1.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_neon_city.gd",
+   "line": 281,
+   "code": "code=code.replace(\"vec2 uv = (map_cell\", \"vec2 city_uv=(map_cell-city_origin+vec2(.5))/city_grid_size;\\nif(all",
+   "nums": [
+    ".5",
+    "0.0",
+    "1.0",
+    ".5"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_neon_city.gd",
+   "line": 282,
+   "code": "code=code.replace(\"alpha = smoothstep(0.0, 1.0, distance_to_floor);\", \"alpha = smoothstep(0.0, 1.0, distance_t",
+   "nums": [
+    "0.0",
+    "1.0",
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_neon_city.gd",
+   "line": 284,
+   "code": "code=code.replace(\"COLOR = vec4(0.0, 0.0, 0.0, alpha);\", \"if(city_exterior){alpha=0.0;}\\nCOLOR = vec4(backgrou",
+   "nums": [
+    "0.0",
+    "0.0",
+    "0.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+   "line": 102,
+   "code": "code=code.replace(\"varying vec3 world_normal;\",\"varying vec3 world_normal;\\nvarying vec3 review_local;\\nunifor",
+   "nums": [
+    "0.0",
+    "3.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+   "line": 104,
+   "code": "code=code.replace(\"vec2 atlas_uv = UV;\",\"vec2 atlas_uv=vec2(fract((review_local.x+0.5+review_phase)/2.0),clamp",
+   "nums": [
+    "0.5",
+    "2.0",
+    "1.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+   "line": 254,
+   "code": "shader.code=\"shader_type spatial;\\nrender_mode diffuse_lambert,cull_disabled;\\n#include \\\"res://shaders/dream3",
+   "nums": [
+    "1.0",
+    "0.5",
+    "1.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+   "line": 289,
+   "code": "window=Rect2i(Vector2i((width-pane.x)/2,roundi(height*.33)-pane.y/2),pane)",
+   "nums": [
+    ".33"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+   "line": 362,
+   "code": "\"workstation\": height=.74; center=Vector2(.70,.26)",
+   "nums": [
+    ".74",
+    ".70",
+    ".26"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+   "line": 363,
+   "code": "\"table\": height=.76; center=Vector2(.30,-.12)",
+   "nums": [
+    ".76",
+    ".30",
+    ".12"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+   "line": 364,
+   "code": "\"coffee_table\": height=.42; center=Vector2(.20,-.12)",
+   "nums": [
+    ".42",
+    ".20",
+    ".12"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+   "line": 365,
+   "code": "\"sorting_table\": height=.76; center=Vector2(.32,.18)",
+   "nums": [
+    ".76",
+    ".32",
+    ".18"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+   "line": 366,
+   "code": "\"reception\": height=1.05; center=Vector2(.05,.25)",
+   "nums": [
+    "1.05",
+    ".05",
+    ".25"
+   ]
+  },
+  {
+   "file": "scripts/dream/preview/selective_visibility_mask.gd",
+   "line": 32,
+   "code": "_fallback_shader.code = \"shader_type spatial; render_mode unshaded,cull_disabled; uniform sampler2D mask_textu",
+   "nums": [
+    "0.0",
+    "1.0",
+    "0.0",
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/dream/props/reception_desk_3d.gd",
+   "line": 234,
+   "code": "comp_root.position = Vector3(-0.35, INNER_DESK_HEIGHT, -0.05)",
+   "nums": [
+    "0.35",
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/dream/props/reception_desk_3d.gd",
+   "line": 269,
+   "code": "clip_root.position = Vector3(0.85, DESK_HEIGHT, 0.35)",
+   "nums": [
+    "0.85",
+    "0.35"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_card_view.gd",
+   "line": 55,
+   "code": "pivot_offset = CARD_SIZE * 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_card_view.gd",
+   "line": 58,
+   "code": "card_flipper.pivot_offset = CARD_SIZE * 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_card_view.gd",
+   "line": 60,
+   "code": "card_art.pivot_offset = CARD_SIZE * 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_overlay.gd",
+   "line": 207,
+   "code": "_deck_stack.pivot_offset = CARD_SIZE * 0.5",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_overlay.gd",
+   "line": 219,
+   "code": "rect.offset_left = -CARD_WIDTH * 0.5 + (i * -1.0)",
+   "nums": [
+    "0.5",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_overlay.gd",
+   "line": 220,
+   "code": "rect.offset_top = -CARD_HEIGHT * 0.5 + (i * -2.0)",
+   "nums": [
+    "0.5",
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_overlay.gd",
+   "line": 221,
+   "code": "rect.offset_right = CARD_WIDTH * 0.5 + (i * -1.0)",
+   "nums": [
+    "0.5",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_overlay.gd",
+   "line": 222,
+   "code": "rect.offset_bottom = CARD_HEIGHT * 0.5 + (i * -2.0)",
+   "nums": [
+    "0.5",
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_overlay.gd",
+   "line": 236,
+   "code": "angle = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/dream/tarot/tarot_overlay.gd",
+   "line": 237,
+   "code": "offset_x = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/basic_projectile.gd",
+   "line": 248,
+   "code": "direction = new_direction.normalized() if new_direction.length_squared() > 0.0001 else Vector2.RIGHT",
+   "nums": [
+    "0.0001"
+   ]
+  },
+  {
+   "file": "scripts/entities/basic_projectile.gd",
+   "line": 250,
+   "code": "max_distance = maxf(new_max_distance, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/basic_projectile.gd",
+   "line": 259,
+   "code": "lifetime = maxf(lifetime, max_distance / maxf(speed, 0.001))",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/entities/basic_projectile.gd",
+   "line": 263,
+   "code": "penetration_chance = clampf(float(CONFIG.projectile_penetration_chance), 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 74,
+   "code": "_pool_capture_elapsed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 82,
+   "code": "pool_growth_duration = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 83,
+   "code": "pool_min_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 84,
+   "code": "pool_max_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 85,
+   "code": "ground_visual_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 371,
+   "code": "impact_speed: float = -1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 619,
+   "code": "droplet_multiplier: float = 1.0,",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 620,
+   "code": "speed_multiplier: float = 1.0,",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 621,
+   "code": "spread_multiplier: float = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 843,
+   "code": "offset.y *= 0.65",
+   "nums": [
+    "0.65"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 856,
+   "code": "offset += direction * rng.randf_range(0.0, 4.0 * trail_intensity)",
+   "nums": [
+    "0.0",
+    "4.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 892,
+   "code": "growth_duration: float = 0.45,",
+   "nums": [
+    "0.45"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 893,
+   "code": "min_scale: float = 0.35,",
+   "nums": [
+    "0.35"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 894,
+   "code": "max_scale: float = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 945,
+   "code": "distance_ratio = lerpf(0.60, 1.0, distance_ratio)",
+   "nums": [
+    "0.60",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 958,
+   "code": "offset.y *= 0.62",
+   "nums": [
+    "0.62"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 979,
+   "code": "pool_growth_duration = maxf(growth_duration, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 982,
+   "code": "pool_min_scale = clampf(min_scale, 0.1, scale_limit)",
+   "nums": [
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 983,
+   "code": "pool_max_scale = maxf(clampf(max_scale, 0.1, scale_limit), pool_min_scale)",
+   "nums": [
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 984,
+   "code": "ground_visual_scale = pool_min_scale if pool_growth_duration > 0.0 else pool_max_scale",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 985,
+   "code": "pool_growth_active = pool_growth_duration > 0.0 and pool_max_scale > pool_min_scale",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1004,
+   "code": "ground_visual_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1005,
+   "code": "ground_sampling_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1076,
+   "code": "query.margin = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1100,
+   "code": "impact_speed: float = -1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1132,
+   "code": "speed_scale = clampf(impact_speed / 150.0, 0.3, 1.5)",
+   "nums": [
+    "150.0",
+    "0.3",
+    "1.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1312,
+   "code": "ground_visual_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1313,
+   "code": "ground_sampling_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1375,
+   "code": "speed_scale = clampf(impact_speed / 150.0, 0.3, 1.5)",
+   "nums": [
+    "150.0",
+    "0.3",
+    "1.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1439,
+   "code": "_pool_capture_elapsed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/black_blood_effect.gd",
+   "line": 1451,
+   "code": "ground_visual_scale = 1.0 if office_pool_core else pool_max_scale",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/combat_feedback_effect.gd",
+   "line": 26,
+   "code": "direction = new_direction.normalized() if new_direction.length_squared() > 0.0001 else Vector2.RIGHT",
+   "nums": [
+    "0.0001"
+   ]
+  },
+  {
+   "file": "scripts/entities/combat_feedback_effect.gd",
+   "line": 28,
+   "code": "lifetime = maxf(0.05, requested_lifetime if kill_effect else minf(requested_lifetime, 0.16))",
+   "nums": [
+    "0.05",
+    "0.16"
+   ]
+  },
+  {
+   "file": "scripts/entities/combat_feedback_effect.gd",
+   "line": 35,
+   "code": "phase_offsets[index] = fmod(float(index * 97 + get_instance_id()), 360.0) * PI / 180.0",
+   "nums": [
+    "97",
+    "360.0",
+    "180.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/corpse_blood_emitter.gd",
+   "line": 63,
+   "code": "_initial_interval = maxf(interval, 0.05)",
+   "nums": [
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/entities/corpse_blood_emitter.gd",
+   "line": 65,
+   "code": "duration_left = maxf(duration, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/corpse_blood_emitter.gd",
+   "line": 66,
+   "code": "pulse_interval = maxf(interval, 0.05)",
+   "nums": [
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/entities/corpse_blood_emitter.gd",
+   "line": 70,
+   "code": "active = duration_left > 0.0 and is_instance_valid(blood_world)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/corpse_blood_emitter.gd",
+   "line": 100,
+   "code": "duration_left -= maxf(delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/corpse_blood_emitter.gd",
+   "line": 109,
+   "code": "pulse_interval = maxf(0.08, pulse_interval * 1.08)",
+   "nums": [
+    "0.08",
+    "1.08"
+   ]
+  },
+  {
+   "file": "scripts/entities/dash_effect.gd",
+   "line": 25,
+   "code": "rotation = (direction.normalized().angle() + PI * 0.5) if direction.length_squared() > 0.0001 else PI * 0.5",
+   "nums": [
+    "0.5",
+    "0.0001",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/dash_effect.gd",
+   "line": 54,
+   "code": "sprite.scale = Vector2.ONE * (clampf(streak_length, 40.0, MAX_STREAK_WIDTH) / MAX_FRAME_LENGTH)",
+   "nums": [
+    "40.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 389,
+   "code": "critical_chance = clampf(config.player_base_critical_chance, 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 390,
+   "code": "critical_damage_multiplier = maxf(config.player_critical_damage_multiplier, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 398,
+   "code": "dash_aim_hold_threshold = maxf(config.dash_aim_hold_threshold, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 401,
+   "code": "tactical_dash_distance_multiplier = maxf(float(mult), 1.0) if mult != null else 2.0",
+   "nums": [
+    "1.0",
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 403,
+   "code": "tactical_dash_cooldown_seconds = maxf(float(cd), 0.1) if cd != null else 5.0",
+   "nums": [
+    "0.1",
+    "5.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 405,
+   "code": "tactical_dash_time_scale = clampf(float(ts), 0.001, 1.0) if ts != null else 0.05",
+   "nums": [
+    "0.001",
+    "1.0",
+    "0.05"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 407,
+   "code": "tactical_dash_hold_threshold = maxf(float(ht), 0.01) if ht != null else 0.16",
+   "nums": [
+    "0.01",
+    "0.16"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 409,
+   "code": "dive_duration = maxf(float(dd), 0.05) if dd != null else 0.35",
+   "nums": [
+    "0.05",
+    "0.35"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 411,
+   "code": "dive_bullet_time_scale = clampf(float(dts), 0.001, 1.0) if dts != null else 0.2",
+   "nums": [
+    "0.001",
+    "1.0",
+    "0.2"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 415,
+   "code": "dive_takeoff_angle_degrees = maxf(float(dta), 0.0) if dta != null else 45.0",
+   "nums": [
+    "0.0",
+    "45.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 417,
+   "code": "dive_peak_height = maxf(float(dph), 0.0) if dph != null else 18.0",
+   "nums": [
+    "0.0",
+    "18.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 490,
+   "code": "current_health = clampf(old_current + maximum_health - old_maximum, 0.0, maximum_health)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 720,
+   "code": "held_visual_scale = maxf(absf(held_weapon_sprite.global_scale.x), 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 727,
+   "code": "base_damage = maxf(float(damage_value), 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 793,
+   "code": "held_visual_scale = maxf(absf(held_weapon_sprite.global_scale.x), 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 800,
+   "code": "base_damage = maxf(float(damage_value), 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 849,
+   "code": "punch_cooldown_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 851,
+   "code": "weapon_name_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 900,
+   "code": "weapon_name_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 908,
+   "code": "run_damage_multiplier = config.hungry_damage_multiplier if is_hungry_run else 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1200,
+   "code": "punch_cooldown_left = maxf(runtime_config.player_punch_interval, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1208,
+   "code": "punch_cooldown_left = maxf(punch_cooldown_left - delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1231,
+   "code": "and punch_cooldown_left <= 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1344,
+   "code": "active_hand_offset = -local_forward * reach * t * 0.45",
+   "nums": [
+    "0.45"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1348,
+   "code": "active_hand_offset = (-local_forward * reach * 0.45).lerp(local_forward * reach, t)",
+   "nums": [
+    "0.45"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1398,
+   "code": "player_blink_time_left = maxf(player_blink_time_left, 0.25)",
+   "nums": [
+    "0.25"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1406,
+   "code": "player_blink_phase_left = maxf(runtime_config.player_blink_frame_seconds, 0.02)",
+   "nums": [
+    "0.02"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1416,
+   "code": "player_blink_phase_left = maxf(runtime_config.player_blink_frame_seconds, 0.02)",
+   "nums": [
+    "0.02"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1477,
+   "code": "_time_locomotion_speed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1492,
+   "code": "secondary_collision_cooldown_left = maxf(0.0, secondary_collision_cooldown_left - delta)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1709,
+   "code": "visual.rotation = airborne_visual_rotation_target * clampf(knockback_height / max_height, 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1714,
+   "code": "knockback_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1724,
+   "code": "knockback_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1781,
+   "code": "movement_impulse_left = maxf(movement_impulse_left - delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1782,
+   "code": "movement_impulse_velocity = movement_impulse_velocity.move_toward(Vector2.ZERO, 620.0 * delta)",
+   "nums": [
+    "620.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1792,
+   "code": "velocity if velocity.length_squared() > 0.0001 else input_vector,",
+   "nums": [
+    "0.0001"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 1815,
+   "code": "_time_locomotion_velocity = (locomotion_step / delta).limit_length(maxf(movement_speed, 1.0))",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 2088,
+   "code": "idle_animation_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 2158,
+   "code": "walk_animation_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 2166,
+   "code": "walk_animation_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 2549,
+   "code": "tactical_dash_cooldown_left = maxf(0.0, tactical_dash_cooldown_left - delta)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 2552,
+   "code": "dash_cooldown_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 2587,
+   "code": "or dash_cooldown_left > 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 2709,
+   "code": "or tactical_dash_cooldown_left > 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 2788,
+   "code": "Engine.time_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 2876,
+   "code": "tactical_dash_cooldown_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3208,
+   "code": "player_radius = maxf(player_shape.radius, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3273,
+   "code": "remaining = maxf(0.0, dash_distance - travelled)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3345,
+   "code": "player_radius = maxf(player_shape.radius, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3422,
+   "code": "vault_duration = 0.28",
+   "nums": [
+    "0.28"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3423,
+   "code": "vault_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3561,
+   "code": "knockback_height = sin(progress * PI) * 16.0",
+   "nums": [
+    "16.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3599,
+   "code": "vault_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3600,
+   "code": "knockback_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3679,
+   "code": "_time_locomotion_speed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3692,
+   "code": "dash_path_total_distance = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3750,
+   "code": "roll_trail_distance_since_sample = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 3933,
+   "code": "roll_trail_distance_since_sample = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4092,
+   "code": "knockback_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4093,
+   "code": "vault_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4103,
+   "code": "dash_segment_duration = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4104,
+   "code": "dash_path_total_distance = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4148,
+   "code": "knockback_height = vault_arc * 16.0",
+   "nums": [
+    "16.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4188,
+   "code": "knockback_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4189,
+   "code": "vault_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4202,
+   "code": "knockback_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4203,
+   "code": "vault_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4207,
+   "code": "dash_segment_duration = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4215,
+   "code": "knockback_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4216,
+   "code": "vault_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4231,
+   "code": "_time_locomotion_speed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4303,
+   "code": "and incoming_direction.length_squared() > 0.001",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4515,
+   "code": "_time_locomotion_speed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4557,
+   "code": "knockback_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4585,
+   "code": "knockback_recovery_left = maxf(runtime_config.player_knockback_recovery_seconds, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4588,
+   "code": "knockback_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4592,
+   "code": "_time_locomotion_speed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4616,
+   "code": "launch_direction if launch_direction.length_squared() > 0.001 else Vector2.UP,",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4716,
+   "code": "or amount <= 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 4959,
+   "code": "scripted_locomotion_speed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5568,
+   "code": "total_duration /= maxf(acquired_attack_speed_multiplier, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5622,
+   "code": "melee_trail_width_curve.min_value = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5623,
+   "code": "melee_trail_width_curve.max_value = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5663,
+   "code": "0: angle_degrees = lerpf(-108.0, -96.0, eased_t)",
+   "nums": [
+    "108.0",
+    "96.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5664,
+   "code": "1: angle_degrees = lerpf(-96.0, -60.0, eased_t)",
+   "nums": [
+    "96.0",
+    "60.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5665,
+   "code": "2: angle_degrees = lerpf(-60.0, 20.0, eased_t)",
+   "nums": [
+    "60.0",
+    "20.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5666,
+   "code": "3: angle_degrees = lerpf(20.0, 104.0, eased_t)",
+   "nums": [
+    "3",
+    "20.0",
+    "104.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5667,
+   "code": "4: angle_degrees = lerpf(104.0, 72.0, eased_t)",
+   "nums": [
+    "4",
+    "104.0",
+    "72.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5668,
+   "code": "_: angle_degrees = lerpf(72.0, 0.0, eased_t)",
+   "nums": [
+    "72.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5716,
+   "code": "total_duration /= maxf(acquired_attack_speed_multiplier, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5968,
+   "code": "weapon_name_time_left = 1.1",
+   "nums": [
+    "1.1"
+   ]
+  },
+  {
+   "file": "scripts/entities/dream_player.gd",
+   "line": 5979,
+   "code": "weapon_name_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/electric_shield_visual.gd",
+   "line": 20,
+   "code": "scale = Vector2.ONE * maxf(visual_scale, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 582,
+   "code": "enemy_blink_time_left = maxf(enemy_blink_time_left, 0.25)",
+   "nums": [
+    "0.25"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 592,
+   "code": "enemy_blink_time_left = maxf(enemy_blink_time_left, 0.25)",
+   "nums": [
+    "0.25"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 596,
+   "code": "enemy_blink_time_left = maxf(enemy_blink_time_left - delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 659,
+   "code": "corpse_elapsed_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 842,
+   "code": "bleeding_trail_interval_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 975,
+   "code": "door_kick_cooldown_left = maxf(door_kick_cooldown_left - delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1000,
+   "code": "door_kick_cooldown_left = 0.6",
+   "nums": [
+    "0.6"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1022,
+   "code": "perception_update_left = interval * float(phase_slot) / 17.0",
+   "nums": [
+    "17.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1192,
+   "code": "direction = Vector2.LEFT if character_visual.scale.x < 0.0 else Vector2.RIGHT",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1384,
+   "code": "search_left = maxf(search_left, _cfg(\"employee_weapon_search_interval\", 0.30))",
+   "nums": [
+    "0.30"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1468,
+   "code": "search_left = maxf(search_left, _cfg(\"employee_weapon_search_interval\", 0.30))",
+   "nums": [
+    "0.30"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1477,
+   "code": "decision_cooldown_left <= 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1487,
+   "code": "decision_cooldown_left = _cfg(\"employee_decision_cooldown\", 0.30)",
+   "nums": [
+    "0.30"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1524,
+   "code": "decision_cooldown_left <= 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1680,
+   "code": "lkp_search_time_left = 2.0",
+   "nums": [
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1691,
+   "code": "character_visual.scale.x = absf(base_visual_scale.x) * (-1.0 if last_facing_direction.x < -0.2 else 1.0)",
+   "nums": [
+    "1.0",
+    "0.2",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1693,
+   "code": "lkp_search_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1801,
+   "code": "distance < desired_range * 0.55",
+   "nums": [
+    "0.55"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1827,
+   "code": "attack_movement_intent = attack_destination.distance_to(global_position) > 8.0",
+   "nums": [
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1831,
+   "code": "attack_cooldown_left <= 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1862,
+   "code": "or attack_cooldown_left > 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1869,
+   "code": "ranged_attack_windup_left = clampf(_cfg(\"employee_ranged_attack_windup\", default_windup), 0.0, 5.0)",
+   "nums": [
+    "0.0",
+    "5.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1894,
+   "code": "ranged_attack_windup_left = maxf(ranged_attack_windup_left - delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1907,
+   "code": "ranged_attack_windup_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1924,
+   "code": "ranged_charge_visual.position = Vector2(11.0, 0.0)",
+   "nums": [
+    "11.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 1976,
+   "code": "ranged_charge_visual.speed_scale = 1.0",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2135,
+   "code": "door_hold_time_left = random.randf_range(1.5, 2.8)",
+   "nums": [
+    "1.5",
+    "2.8"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2138,
+   "code": "door_hold_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2164,
+   "code": "door_hold_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2171,
+   "code": "door_hold_time_left = maxf(door_hold_time_left - p_delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2177,
+   "code": "character_visual.scale.x = absf(base_visual_scale.x) * (-1.0 if last_facing_direction.x < -0.2 else 1.0)",
+   "nums": [
+    "1.0",
+    "0.2",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2318,
+   "code": "door_hold_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2382,
+   "code": "gunshot_recovery_left = _cfg(\"employee_gunshot_recovery_duration\", 1.25)",
+   "nums": [
+    "1.25"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2415,
+   "code": "decision_cooldown_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2420,
+   "code": "gunshot_flee_left = maxf(gunshot_flee_left, _cfg(\"employee_gunshot_flee_duration\", 5.0))",
+   "nums": [
+    "5.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2427,
+   "code": "gunshot_investigate_left = maxf(gunshot_investigate_left, _cfg(\"employee_gunshot_investigate_duration\", 2.5))",
+   "nums": [
+    "2.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2434,
+   "code": "gunshot_investigate_left = _cfg(\"employee_gunshot_investigate_duration\", 2.5)",
+   "nums": [
+    "2.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2454,
+   "code": "gunshot_flee_left = _cfg(\"employee_gunshot_flee_duration\", 5.0)",
+   "nums": [
+    "5.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 2459,
+   "code": "search_left = maxf(search_left, _cfg(\"employee_weapon_search_interval\", 0.30))",
+   "nums": [
+    "0.30"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3137,
+   "code": "melee_visual_duration = 0.24",
+   "nums": [
+    "0.24"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3179,
+   "code": "angle_degrees = lerpf(-108.0, -96.0, eased)",
+   "nums": [
+    "108.0",
+    "96.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3181,
+   "code": "angle_degrees = lerpf(-96.0, -60.0, eased)",
+   "nums": [
+    "96.0",
+    "60.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3183,
+   "code": "angle_degrees = lerpf(-60.0, 20.0, eased)",
+   "nums": [
+    "60.0",
+    "20.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3185,
+   "code": "angle_degrees = lerpf(20.0, 104.0, eased)",
+   "nums": [
+    "20.0",
+    "104.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3187,
+   "code": "angle_degrees = lerpf(104.0, 72.0, eased)",
+   "nums": [
+    "104.0",
+    "72.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3189,
+   "code": "angle_degrees = lerpf(72.0, 0.0, eased)",
+   "nums": [
+    "72.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3310,
+   "code": "projectile_origin.position = pose.get(\"muzzle_local\", Vector2(_cfg(\"held_weapon_distance\", 11.0), 0.0))",
+   "nums": [
+    "11.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3464,
+   "code": "or amount <= 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3543,
+   "code": "current_health <= 0.0,",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3556,
+   "code": "and current_health > 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3566,
+   "code": "bleeding_trail_interval_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3877,
+   "code": "secondary_collision_cooldown_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3930,
+   "code": "knockdown_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3969,
+   "code": "knockdown_height <= 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 3976,
+   "code": "knockdown_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4002,
+   "code": "knockdown_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4024,
+   "code": "knockdown_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4069,
+   "code": "knockdown_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4123,
+   "code": "knockdown_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4182,
+   "code": "escape_direction = global_position.direction_to(pit_position + Vector2(1.0, -1.0))",
+   "nums": [
+    "1.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4187,
+   "code": "current_health = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4210,
+   "code": "corpse_elapsed_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4233,
+   "code": "bleeding_trail_interval_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4266,
+   "code": "final_drop_impulse = death_burst_direction * maxf(death_burst_force, 180.0)",
+   "nums": [
+    "180.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4284,
+   "code": "corpse_linger_duration = 1.05",
+   "nums": [
+    "1.05"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4286,
+   "code": "corpse_linger_duration = maxf(float(_cfg(&\"corpse_linger_duration\", 15.0)), 1.0)",
+   "nums": [
+    "15.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4287,
+   "code": "corpse_darken_duration = maxf(float(_cfg(&\"corpse_darken_duration\", 3.0)), 0.1)",
+   "nums": [
+    "3.0",
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4290,
+   "code": "corpse_elapsed_time = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4294,
+   "code": "death_vertical_speed = clampf(death_burst_force * 0.16, 40.0, 110.0)",
+   "nums": [
+    "0.16",
+    "40.0",
+    "110.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4336,
+   "code": "knockdown_height = maxf(0.0, knockdown_height + death_vertical_speed * delta)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4341,
+   "code": "death_vertical_speed = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4346,
+   "code": "ragdoll_head_vel += Vector2(random.randf_range(-15.0, 15.0), -32.0) * impact_bounce",
+   "nums": [
+    "15.0",
+    "15.0",
+    "32.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4347,
+   "code": "ragdoll_head_rot_vel += random.randf_range(-6.0, 6.0) * impact_bounce",
+   "nums": [
+    "6.0",
+    "6.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4349,
+   "code": "ragdoll_left_hand_rot_vel += random.randf_range(-10.0, 10.0) * impact_bounce",
+   "nums": [
+    "10.0",
+    "10.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4351,
+   "code": "ragdoll_right_hand_rot_vel += random.randf_range(-10.0, 10.0) * impact_bounce",
+   "nums": [
+    "10.0",
+    "10.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4360,
+   "code": "ragdoll_head_vel.length_squared() < 0.2",
+   "nums": [
+    "0.2"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4361,
+   "code": "and ragdoll_left_hand_vel.length_squared() < 0.2",
+   "nums": [
+    "0.2"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4362,
+   "code": "and ragdoll_right_hand_vel.length_squared() < 0.2",
+   "nums": [
+    "0.2"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4374,
+   "code": "current_alpha = maxf(0.0, death_presentation_left / fade_window)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4409,
+   "code": "ragdoll_head_vel = local_impulse * 0.85 + Vector2(0.0, -16.0 * force_ratio)",
+   "nums": [
+    "0.85",
+    "0.0",
+    "16.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4410,
+   "code": "ragdoll_head_rot_vel = -signf(local_impulse.x) * (14.0 * force_ratio) + random.randf_range(-2.5, 2.5)",
+   "nums": [
+    "14.0",
+    "2.5",
+    "2.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4413,
+   "code": "ragdoll_left_hand_vel = local_impulse * 1.25 + Vector2(-48.0, -28.0) * force_ratio",
+   "nums": [
+    "1.25",
+    "48.0",
+    "28.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4414,
+   "code": "ragdoll_left_hand_rot_vel = random.randf_range(-20.0, -10.0) * force_ratio",
+   "nums": [
+    "20.0",
+    "10.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4415,
+   "code": "ragdoll_right_hand_vel = local_impulse * 1.25 + Vector2(48.0, -28.0) * force_ratio",
+   "nums": [
+    "1.25",
+    "48.0",
+    "28.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4416,
+   "code": "ragdoll_right_hand_rot_vel = random.randf_range(10.0, 20.0) * force_ratio",
+   "nums": [
+    "10.0",
+    "20.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4419,
+   "code": "ragdoll_left_foot_vel = local_impulse * 0.5 + Vector2(-22.0, 14.0) * force_ratio",
+   "nums": [
+    "0.5",
+    "22.0",
+    "14.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4420,
+   "code": "ragdoll_left_foot_rot_vel = random.randf_range(-8.0, 8.0) * force_ratio",
+   "nums": [
+    "8.0",
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4421,
+   "code": "ragdoll_right_foot_vel = local_impulse * 0.5 + Vector2(22.0, 14.0) * force_ratio",
+   "nums": [
+    "0.5",
+    "22.0",
+    "14.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4422,
+   "code": "ragdoll_right_foot_rot_vel = random.randf_range(-8.0, 8.0) * force_ratio",
+   "nums": [
+    "8.0",
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4425,
+   "code": "ragdoll_body_pivot_vel = local_impulse * 0.3",
+   "nums": [
+    "0.3"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4426,
+   "code": "ragdoll_body_pivot_rot_vel = signf(local_impulse.x) * (5.5 * force_ratio)",
+   "nums": [
+    "5.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4579,
+   "code": "sky_drop_delay_left = maxf(delay, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4581,
+   "code": "height_pixels if height_pixels > 0.0 else _cfg(&\"employee_sky_drop_height\", 96.0),",
+   "nums": [
+    "0.0",
+    "96.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4595,
+   "code": "character_visual.position = character_visual_base_position + Vector2(0.0, -sky_drop_height)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4605,
+   "code": "sky_drop_delay_left = maxf(sky_drop_delay_left - delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4610,
+   "code": "character_visual.position = character_visual_base_position + Vector2(0.0, -sky_drop_height)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4612,
+   "code": "sky_drop_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4621,
+   "code": "decision_cooldown_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 4797,
+   "code": "initial_fake_height: float = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5241,
+   "code": "enemy_body_collision_cooldown_left > 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5242,
+   "code": "or other.enemy_body_collision_cooldown_left > 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5311,
+   "code": "and secondary_collision_cooldown_left <= 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5346,
+   "code": "and environment_normal_sum.length_squared() > 0.001",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5400,
+   "code": "burst_force if burst_force > 0.0 else knockback_velocity.length(),",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5498,
+   "code": "speed_multiplier = _cfg(\"employee_run_speed_multiplier\", 1.5)",
+   "nums": [
+    "1.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5603,
+   "code": "or (state == State.NEUTRAL_WANDER and is_instance_valid(target) and global_position.distance_squared_to(target",
+   "nums": [
+    "250000.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5667,
+   "code": "distance = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5771,
+   "code": "decision_cooldown_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5809,
+   "code": "decision_cooldown_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5825,
+   "code": "decision_cooldown_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5826,
+   "code": "strafe_time_left = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5847,
+   "code": "steering_commit_left = _cfg(\"employee_steering_commit_time\", 0.40)",
+   "nums": [
+    "0.40"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5862,
+   "code": "steering_commit_left = _cfg(\"employee_steering_commit_time\", 0.40)",
+   "nums": [
+    "0.40"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 5895,
+   "code": "velocity.length_squared() > 4.0",
+   "nums": [
+    "4.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/employee_enemy.gd",
+   "line": 6233,
+   "code": "health_bar.z_index = 20",
+   "nums": [
+    "20"
+   ]
+  },
+  {
+   "file": "scripts/entities/enemy_body_part.gd",
+   "line": 71,
+   "code": "_bleed_interval_left -= maxf(delta, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/enemy_body_part.gd",
+   "line": 82,
+   "code": "horizontal_velocity.normalized() if horizontal_velocity.length_squared() > 0.001 else Vector2.RIGHT, 0.35)",
+   "nums": [
+    "0.001",
+    "0.35"
+   ]
+  },
+  {
+   "file": "scripts/entities/enemy_body_part.gd",
+   "line": 102,
+   "code": "settle_speed = 14.0",
+   "nums": [
+    "14.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/enemy_body_part.gd",
+   "line": 111,
+   "code": "initial_fake_height: float = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/enemy_body_part.gd",
+   "line": 132,
+   "code": "global_position = source_sprite.global_position + Vector2(0.0, safe_fake_height).rotated(source_sprite.global_",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/enemy_body_part.gd",
+   "line": 144,
+   "code": "visual.position = Vector2(0.0, -fake_height)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/enemy_body_part.gd",
+   "line": 192,
+   "code": "fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/environment_debris.gd",
+   "line": 45,
+   "code": "sprite.rotation = [0.0, PI * 0.5, PI, PI * 1.5][randi_range(0, 3)]",
+   "nums": [
+    "0.0",
+    "0.5",
+    "1.5",
+    "3"
+   ]
+  },
+  {
+   "file": "scripts/entities/environment_debris.gd",
+   "line": 50,
+   "code": "fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/environment_debris.gd",
+   "line": 51,
+   "code": "settled = spray_velocity.length_squared() < 0.01 and vertical_velocity <= 0.01",
+   "nums": [
+    "0.01",
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/entities/environment_debris.gd",
+   "line": 80,
+   "code": "fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/environment_debris.gd",
+   "line": 89,
+   "code": "sprite.position.y = -maxf(fake_height, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/environment_debris.gd",
+   "line": 90,
+   "code": "sprite.rotation += spray_velocity.length() * delta * 0.02",
+   "nums": [
+    "0.02"
+   ]
+  },
+  {
+   "file": "scripts/entities/environment_debris.gd",
+   "line": 93,
+   "code": "fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/environment_debris.gd",
+   "line": 103,
+   "code": "fake_height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/katana_slash_effect.gd",
+   "line": 21,
+   "code": "lifetime = maxf(duration, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/entities/projectile_red_trail.gd",
+   "line": 24,
+   "code": "requested_length: float = 36.0,",
+   "nums": [
+    "36.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/projectile_red_trail.gd",
+   "line": 25,
+   "code": "requested_width: float = 2.0,",
+   "nums": [
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/projectile_red_trail.gd",
+   "line": 29,
+   "code": "trail_length = maxf(requested_length, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/projectile_red_trail.gd",
+   "line": 30,
+   "code": "trail_width = maxf(requested_width, 1.0)",
+   "nums": [
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/projectile_sequence_effect.gd",
+   "line": 29,
+   "code": "frame_duration = maxf(seconds_per_frame, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/entities/projectile_sequence_effect.gd",
+   "line": 33,
+   "code": "rotation = (direction.normalized().angle() + PI) if direction.length_squared() > 0.0001 else PI",
+   "nums": [
+    "0.0001"
+   ]
+  },
+  {
+   "file": "scripts/entities/roll_speed_trail.gd",
+   "line": 54,
+   "code": "stretch_amount: float = 0.12,",
+   "nums": [
+    "0.12"
+   ]
+  },
+  {
+   "file": "scripts/entities/roll_speed_trail.gd",
+   "line": 55,
+   "code": "start_alpha: float = 0.85,",
+   "nums": [
+    "0.85"
+   ]
+  },
+  {
+   "file": "scripts/entities/roll_speed_trail.gd",
+   "line": 56,
+   "code": "lifetime: float = 0.26,",
+   "nums": [
+    "0.26"
+   ]
+  },
+  {
+   "file": "scripts/entities/roll_speed_trail.gd",
+   "line": 68,
+   "code": "modulate = Color(1.0, 1.0, 1.0, clampf(start_alpha, 0.0, 1.0))",
+   "nums": [
+    "1.0",
+    "1.0",
+    "1.0",
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/roll_speed_trail.gd",
+   "line": 89,
+   "code": "motion_axis.scale = Vector2(1.0 + effective_stretch, 1.0)",
+   "nums": [
+    "1.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/roll_speed_trail.gd",
+   "line": 90,
+   "code": "motion_axis.position = -Vector2(effective_stretch * STRETCH_OFFSET_PIXELS, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/roll_speed_trail.gd",
+   "line": 142,
+   "code": "line.width = 1.6",
+   "nums": [
+    "1.6"
+   ]
+  },
+  {
+   "file": "scripts/entities/roll_speed_trail.gd",
+   "line": 195,
+   "code": "sprite.modulate = Color(1.0, 1.0, 1.0, source_alpha)",
+   "nums": [
+    "1.0",
+    "1.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/roll_speed_trail.gd",
+   "line": 260,
+   "code": "node_copy.modulate = Color(1.0, 1.0, 1.0, node_alpha)",
+   "nums": [
+    "1.0",
+    "1.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/shell_effect.gd",
+   "line": 19,
+   "code": "ground_velocity = eject_direction * random.randf_range(42.0, 72.0) - forward * random.randf_range(4.0, 14.0)",
+   "nums": [
+    "42.0",
+    "72.0",
+    "4.0",
+    "14.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/shell_effect.gd",
+   "line": 20,
+   "code": "vertical_velocity = random.randf_range(46.0, 72.0)",
+   "nums": [
+    "46.0",
+    "72.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/shell_effect.gd",
+   "line": 21,
+   "code": "rotation_velocity = random.randf_range(-12.0, 12.0)",
+   "nums": [
+    "12.0",
+    "12.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/shell_effect.gd",
+   "line": 22,
+   "code": "lifetime = maxf(duration, 0.1)",
+   "nums": [
+    "0.1"
+   ]
+  },
+  {
+   "file": "scripts/entities/shell_effect.gd",
+   "line": 33,
+   "code": "height = maxf(0.0, height + vertical_velocity * delta)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/shell_effect.gd",
+   "line": 36,
+   "code": "height = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/soft_glow.gd",
+   "line": 41,
+   "code": "environment_glow_alpha = clampf(alpha, 0.0, 0.5)",
+   "nums": [
+    "0.0",
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/soft_glow.gd",
+   "line": 42,
+   "code": "environment_glow_radius = maxf(radius, 0.0)",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/sword_wave.gd",
+   "line": 23,
+   "code": "direction = new_direction.normalized() if new_direction.length_squared() > 0.0001 else Vector2.RIGHT",
+   "nums": [
+    "0.0001"
+   ]
+  },
+  {
+   "file": "scripts/entities/sword_wave.gd",
+   "line": 28,
+   "code": "initial_speed_ratio = clampf(new_initial_speed_ratio, 0.0, 1.0)",
+   "nums": [
+    "0.0",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/sword_wave.gd",
+   "line": 29,
+   "code": "acceleration_duration = maxf(new_acceleration_duration, 0.001)",
+   "nums": [
+    "0.001"
+   ]
+  },
+  {
+   "file": "scripts/entities/sword_wave.gd",
+   "line": 38,
+   "code": "rectangle.size = Vector2(8.0, wave_width)",
+   "nums": [
+    "8.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/sword_wave.gd",
+   "line": 69,
+   "code": "shape.size = Vector2(segment_length + 4.0, maxf(wave_width, 2.0))",
+   "nums": [
+    "4.0",
+    "2.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/sword_wave.gd",
+   "line": 72,
+   "code": "query.transform = Transform2D(direction.angle(), origin.lerp(endpoint, 0.5))",
+   "nums": [
+    "0.5"
+   ]
+  },
+  {
+   "file": "scripts/entities/tactical_ghost_preview.gd",
+   "line": 89,
+   "code": "max_range = maxf(range_radius, 10.0)",
+   "nums": [
+    "10.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/tactical_ghost_preview.gd",
+   "line": 95,
+   "code": "_time_accum = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/tactical_ghost_preview.gd",
+   "line": 97,
+   "code": "_ant_phase_timer = 0.0",
+   "nums": [
+    "0.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/tactical_ghost_preview.gd",
+   "line": 196,
+   "code": "scale_val = clampf(h_px / 32.0, 0.3, 3.0)",
+   "nums": [
+    "32.0",
+    "0.3",
+    "3.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/weapon_muzzle_effect.gd",
+   "line": 30,
+   "code": "lifetime = maxf(duration, 0.01)",
+   "nums": [
+    "0.01"
+   ]
+  },
+  {
+   "file": "scripts/entities/weapon_muzzle_effect.gd",
+   "line": 42,
+   "code": "scale = Vector2.ONE * (2.0 if effect_kind == &\"pistol\" else 1.4)",
+   "nums": [
+    "2.0",
+    "1.4"
+   ]
+  },
+  {
+   "file": "scripts/entities/xp_gem.gd",
+   "line": 37,
+   "code": "scale = Vector2.ONE * 0.35",
+   "nums": [
+    "0.35"
+   ]
+  },
+  {
+   "file": "scripts/entities/xp_gem.gd",
+   "line": 73,
+   "code": "scale = Vector2.ONE * lerpf(0.35, 1.0, eased)",
+   "nums": [
+    "0.35",
+    "1.0"
+   ]
+  },
+  {
+   "file": "scripts/entities/xp_gem.gd",
+   "line": 74,
+   "code": "draw_offset.y = -sin(pop_progress * PI) * 9.0",
+   "nums": [
+    "9.0"
+   ]
+  }
+ ],
+ "scene_params": [
+  {
+   "file": "art/Dream/LoafbrrAssets/Interiors_A/Scenes/TestDemo.tscn",
+   "line": 387,
+   "name": "generate_probes_subdiv",
+   "value": "4"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 31,
+   "name": "shader_parameter/outline_width_source_pixels",
+   "value": "6.0"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 38,
+   "name": "shader_parameter/outline_width_source_pixels",
+   "value": "6.0"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 45,
+   "name": "shader_parameter/outline_width_source_pixels",
+   "value": "12.0"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 52,
+   "name": "shader_parameter/outline_width_source_pixels",
+   "value": "6.0"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 59,
+   "name": "shader_parameter/outline_width_source_pixels",
+   "value": "8.0"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 64,
+   "name": "shader_parameter/strength",
+   "value": "0.1"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 65,
+   "name": "shader_parameter/inner_radius",
+   "value": "0.42"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 79,
+   "name": "offset_right",
+   "value": "640.0"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 80,
+   "name": "offset_bottom",
+   "value": "360.0"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 163,
+   "name": "texture_scale",
+   "value": "3.2"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 168,
+   "name": "offset_right",
+   "value": "640.0"
+  },
+  {
+   "file": "scenes/bedroom/bedroom.tscn",
+   "line": 169,
+   "name": "offset_bottom",
+   "value": "360.0"
+  },
+  {
+   "file": "scenes/dream/Dream3D_ReceptionRoom.tscn",
+   "line": 21,
+   "name": "glow_strength",
+   "value": "0.75"
+  },
+  {
+   "file": "scenes/dream/Dream3D_ReceptionRoom.tscn",
+   "line": 86,
+   "name": "offset_right",
+   "value": "128.0"
+  },
+  {
+   "file": "scenes/dream/Dream3D_ReceptionRoom.tscn",
+   "line": 87,
+   "name": "offset_bottom",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/dream/Dream3D_TutorialRoom.tscn",
+   "line": 21,
+   "name": "glow_strength",
+   "value": "0.75"
+  },
+  {
+   "file": "scenes/dream/Dream3D_TutorialRoom.tscn",
+   "line": 122,
+   "name": "offset_right",
+   "value": "128.0"
+  },
+  {
+   "file": "scenes/dream/Dream3D_TutorialRoom.tscn",
+   "line": 123,
+   "name": "offset_bottom",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/dream/world_weapon_pickup.tscn",
+   "line": 11,
+   "name": "radius",
+   "value": "34.0"
+  },
+  {
+   "file": "scenes/dream/world_weapon_pickup.tscn",
+   "line": 17,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/3d/BossKeyPickup.tscn",
+   "line": 7,
+   "name": "radius",
+   "value": "12.0"
+  },
+  {
+   "file": "scenes/dream/3d/PhysicalDoor3D.tscn",
+   "line": 15,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/3d/PhysicalDoor3D.tscn",
+   "line": 33,
+   "name": "angular_limit/upper",
+   "value": "1.7453293"
+  },
+  {
+   "file": "scenes/dream/3d/PhysicalDoor3D.tscn",
+   "line": 34,
+   "name": "angular_limit/lower",
+   "value": "-1.7453293"
+  },
+  {
+   "file": "scenes/dream/3d/PhysicalDoor3D.tscn",
+   "line": 42,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/3d/PhysicalDoor3D.tscn",
+   "line": 60,
+   "name": "angular_limit/upper",
+   "value": "1.7453293"
+  },
+  {
+   "file": "scenes/dream/3d/PhysicalDoor3D.tscn",
+   "line": 61,
+   "name": "angular_limit/lower",
+   "value": "-1.7453293"
+  },
+  {
+   "file": "scenes/dream/props/bed_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/bed_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "100.0"
+  },
+  {
+   "file": "scenes/dream/props/bed_01.tscn",
+   "line": 62,
+   "name": "amount",
+   "value": "8"
+  },
+  {
+   "file": "scenes/dream/props/bed_01.tscn",
+   "line": 63,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/bed_01.tscn",
+   "line": 66,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/bed_01.tscn",
+   "line": 70,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/dream/props/chair.tscn",
+   "line": 15,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/chair.tscn",
+   "line": 19,
+   "name": "max_hp",
+   "value": "40.0"
+  },
+  {
+   "file": "scenes/dream/props/chair.tscn",
+   "line": 58,
+   "name": "amount",
+   "value": "6"
+  },
+  {
+   "file": "scenes/dream/props/chair.tscn",
+   "line": 59,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/chair.tscn",
+   "line": 62,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/chair.tscn",
+   "line": 66,
+   "name": "scale_amount_min",
+   "value": "1.5"
+  },
+  {
+   "file": "scenes/dream/props/chair.tscn",
+   "line": 67,
+   "name": "scale_amount_max",
+   "value": "5.0"
+  },
+  {
+   "file": "scenes/dream/props/chair_02.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/chair_02.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "30.0"
+  },
+  {
+   "file": "scenes/dream/props/chair_02.tscn",
+   "line": 62,
+   "name": "amount",
+   "value": "6"
+  },
+  {
+   "file": "scenes/dream/props/chair_02.tscn",
+   "line": 63,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/chair_02.tscn",
+   "line": 66,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/chair_02.tscn",
+   "line": 70,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/dream/props/desk.tscn",
+   "line": 16,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/desk.tscn",
+   "line": 20,
+   "name": "max_hp",
+   "value": "60.0"
+  },
+  {
+   "file": "scenes/dream/props/desk.tscn",
+   "line": 63,
+   "name": "amount",
+   "value": "6"
+  },
+  {
+   "file": "scenes/dream/props/desk.tscn",
+   "line": 64,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/desk.tscn",
+   "line": 67,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/desk.tscn",
+   "line": 71,
+   "name": "scale_amount_min",
+   "value": "1.5"
+  },
+  {
+   "file": "scenes/dream/props/desk.tscn",
+   "line": 72,
+   "name": "scale_amount_max",
+   "value": "5.0"
+  },
+  {
+   "file": "scenes/dream/props/filing_cabinet_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/filing_cabinet_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "80.0"
+  },
+  {
+   "file": "scenes/dream/props/filing_cabinet_01.tscn",
+   "line": 58,
+   "name": "amount",
+   "value": "7"
+  },
+  {
+   "file": "scenes/dream/props/filing_cabinet_01.tscn",
+   "line": 59,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/filing_cabinet_01.tscn",
+   "line": 62,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/filing_cabinet_01.tscn",
+   "line": 66,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/dream/props/floor_lamp_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/floor_lamp_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "30.0"
+  },
+  {
+   "file": "scenes/dream/props/floor_lamp_01.tscn",
+   "line": 60,
+   "name": "amount",
+   "value": "6"
+  },
+  {
+   "file": "scenes/dream/props/floor_lamp_01.tscn",
+   "line": 61,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/floor_lamp_01.tscn",
+   "line": 64,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/floor_lamp_01.tscn",
+   "line": 68,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/dream/props/fridge_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/fridge_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "110.0"
+  },
+  {
+   "file": "scenes/dream/props/fridge_01.tscn",
+   "line": 62,
+   "name": "amount",
+   "value": "7"
+  },
+  {
+   "file": "scenes/dream/props/fridge_01.tscn",
+   "line": 63,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/fridge_01.tscn",
+   "line": 66,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/fridge_01.tscn",
+   "line": 70,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/dream/props/office_chair_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/office_chair_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "30.0"
+  },
+  {
+   "file": "scenes/dream/props/office_chair_01.tscn",
+   "line": 58,
+   "name": "amount",
+   "value": "6"
+  },
+  {
+   "file": "scenes/dream/props/office_chair_01.tscn",
+   "line": 59,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/office_chair_01.tscn",
+   "line": 62,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/office_chair_01.tscn",
+   "line": 66,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/dream/props/parcel_box_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/parcel_box_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "20.0"
+  },
+  {
+   "file": "scenes/dream/props/parcel_box_01.tscn",
+   "line": 62,
+   "name": "amount",
+   "value": "4"
+  },
+  {
+   "file": "scenes/dream/props/parcel_box_01.tscn",
+   "line": 63,
+   "name": "lifetime",
+   "value": "0.45"
+  },
+  {
+   "file": "scenes/dream/props/parcel_box_01.tscn",
+   "line": 66,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/parcel_box_01.tscn",
+   "line": 70,
+   "name": "scale_amount_max",
+   "value": "2.5"
+  },
+  {
+   "file": "scenes/dream/props/side_table_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/side_table_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "50.0"
+  },
+  {
+   "file": "scenes/dream/props/side_table_01.tscn",
+   "line": 63,
+   "name": "amount",
+   "value": "6"
+  },
+  {
+   "file": "scenes/dream/props/side_table_01.tscn",
+   "line": 64,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/side_table_01.tscn",
+   "line": 67,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/side_table_01.tscn",
+   "line": 71,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/dream/props/small_table_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/small_table_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "50.0"
+  },
+  {
+   "file": "scenes/dream/props/small_table_01.tscn",
+   "line": 59,
+   "name": "amount",
+   "value": "6"
+  },
+  {
+   "file": "scenes/dream/props/small_table_01.tscn",
+   "line": 60,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/small_table_01.tscn",
+   "line": 63,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/small_table_01.tscn",
+   "line": 67,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/dream/props/sticker_parcel_box_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/sticker_parcel_box_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "20.0"
+  },
+  {
+   "file": "scenes/dream/props/sticker_parcel_box_01.tscn",
+   "line": 62,
+   "name": "amount",
+   "value": "4"
+  },
+  {
+   "file": "scenes/dream/props/sticker_parcel_box_01.tscn",
+   "line": 63,
+   "name": "lifetime",
+   "value": "0.45"
+  },
+  {
+   "file": "scenes/dream/props/sticker_parcel_box_01.tscn",
+   "line": 66,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/sticker_parcel_box_01.tscn",
+   "line": 70,
+   "name": "scale_amount_max",
+   "value": "2.5"
+  },
+  {
+   "file": "scenes/dream/props/storage_cabinet_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/storage_cabinet_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "100.0"
+  },
+  {
+   "file": "scenes/dream/props/storage_cabinet_01.tscn",
+   "line": 58,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/storage_cabinet_01.tscn",
+   "line": 61,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/storage_cabinet_01.tscn",
+   "line": 65,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/dream/props/trash_can_01.tscn",
+   "line": 19,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/trash_can_01.tscn",
+   "line": 23,
+   "name": "max_hp",
+   "value": "25.0"
+  },
+  {
+   "file": "scenes/dream/props/trash_can_01.tscn",
+   "line": 57,
+   "name": "amount",
+   "value": "5"
+  },
+  {
+   "file": "scenes/dream/props/trash_can_01.tscn",
+   "line": 58,
+   "name": "lifetime",
+   "value": "0.45"
+  },
+  {
+   "file": "scenes/dream/props/trash_can_01.tscn",
+   "line": 61,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/trash_can_01.tscn",
+   "line": 65,
+   "name": "scale_amount_max",
+   "value": "2.5"
+  },
+  {
+   "file": "scenes/dream/props/wardrobe_01.tscn",
+   "line": 20,
+   "name": "gravity_scale",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/dream/props/wardrobe_01.tscn",
+   "line": 24,
+   "name": "max_hp",
+   "value": "90.0"
+  },
+  {
+   "file": "scenes/dream/props/wardrobe_01.tscn",
+   "line": 62,
+   "name": "amount",
+   "value": "7"
+  },
+  {
+   "file": "scenes/dream/props/wardrobe_01.tscn",
+   "line": 63,
+   "name": "lifetime",
+   "value": "0.5"
+  },
+  {
+   "file": "scenes/dream/props/wardrobe_01.tscn",
+   "line": 66,
+   "name": "lifetime_randomness",
+   "value": "0.8"
+  },
+  {
+   "file": "scenes/dream/props/wardrobe_01.tscn",
+   "line": 70,
+   "name": "scale_amount_max",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 47,
+   "name": "radius",
+   "value": "7.071068"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 50,
+   "name": "radius",
+   "value": "9.0"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 51,
+   "name": "height",
+   "value": "32.0"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 167,
+   "name": "offset_left",
+   "value": "-48.0"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 168,
+   "name": "offset_top",
+   "value": "-60.0"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 169,
+   "name": "offset_right",
+   "value": "48.0"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 170,
+   "name": "offset_bottom",
+   "value": "-42.0"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 208,
+   "name": "width",
+   "value": "10.0"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 211,
+   "name": "begin_cap_mode",
+   "value": "2"
+  },
+  {
+   "file": "scenes/entities/dream_player.tscn",
+   "line": 212,
+   "name": "end_cap_mode",
+   "value": "2"
+  },
+  {
+   "file": "scenes/entities/employee_enemy.tscn",
+   "line": 34,
+   "name": "radius",
+   "value": "7.0"
+  },
+  {
+   "file": "scenes/entities/employee_enemy.tscn",
+   "line": 37,
+   "name": "radius",
+   "value": "14.0"
+  },
+  {
+   "file": "scenes/entities/employee_enemy.tscn",
+   "line": 38,
+   "name": "height",
+   "value": "46.0"
+  },
+  {
+   "file": "scenes/entities/employee_enemy.tscn",
+   "line": 131,
+   "name": "begin_cap_mode",
+   "value": "2"
+  },
+  {
+   "file": "scenes/entities/employee_enemy.tscn",
+   "line": 132,
+   "name": "end_cap_mode",
+   "value": "2"
+  },
+  {
+   "file": "scenes/entities/enemy_body_part.tscn",
+   "line": 6,
+   "name": "radius",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/entities/environment_debris.tscn",
+   "line": 7,
+   "name": "radius",
+   "value": "9.0"
+  },
+  {
+   "file": "scenes/hallway/hallway.tscn",
+   "line": 14,
+   "name": "shader_parameter/outline_width_source_pixels",
+   "value": "8.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 29,
+   "name": "offset_left",
+   "value": "40.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 30,
+   "name": "offset_top",
+   "value": "20.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 31,
+   "name": "offset_right",
+   "value": "600.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 32,
+   "name": "offset_bottom",
+   "value": "44.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 41,
+   "name": "offset_left",
+   "value": "60.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 42,
+   "name": "offset_top",
+   "value": "52.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 43,
+   "name": "offset_right",
+   "value": "580.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 44,
+   "name": "offset_bottom",
+   "value": "322.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 72,
+   "name": "offset_left",
+   "value": "-40.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 73,
+   "name": "offset_top",
+   "value": "-30.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 74,
+   "name": "offset_right",
+   "value": "40.0"
+  },
+  {
+   "file": "scenes/ui/announcement_window.tscn",
+   "line": 75,
+   "name": "offset_bottom",
+   "value": "-10.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 12,
+   "name": "offset_right",
+   "value": "160.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 13,
+   "name": "offset_bottom",
+   "value": "336.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 34,
+   "name": "offset_left",
+   "value": "6.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 35,
+   "name": "offset_top",
+   "value": "20.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 36,
+   "name": "offset_right",
+   "value": "154.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 37,
+   "name": "offset_bottom",
+   "value": "325.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 43,
+   "name": "offset_left",
+   "value": "8.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 44,
+   "name": "offset_top",
+   "value": "139.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 45,
+   "name": "offset_right",
+   "value": "140.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 46,
+   "name": "offset_bottom",
+   "value": "248.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 70,
+   "name": "offset_left",
+   "value": "6.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 71,
+   "name": "offset_top",
+   "value": "60.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 72,
+   "name": "offset_right",
+   "value": "132.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 73,
+   "name": "offset_bottom",
+   "value": "230.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 82,
+   "name": "theme_override_constants/margin_right",
+   "value": "10"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 92,
+   "name": "offset_left",
+   "value": "6.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 93,
+   "name": "offset_top",
+   "value": "60.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 94,
+   "name": "offset_right",
+   "value": "132.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 95,
+   "name": "offset_bottom",
+   "value": "230.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 109,
+   "name": "offset_left",
+   "value": "145.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 110,
+   "name": "offset_top",
+   "value": "60.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 111,
+   "name": "offset_right",
+   "value": "150.0"
+  },
+  {
+   "file": "scenes/ui/bedroom_phone.tscn",
+   "line": 112,
+   "name": "offset_bottom",
+   "value": "305.0"
+  },
+  {
+   "file": "scenes/ui/blackjack_app.tscn",
+   "line": 7,
+   "name": "offset_left",
+   "value": "70.0"
+  },
+  {
+   "file": "scenes/ui/blackjack_app.tscn",
+   "line": 8,
+   "name": "offset_top",
+   "value": "46.0"
+  },
+  {
+   "file": "scenes/ui/blackjack_app.tscn",
+   "line": 9,
+   "name": "offset_right",
+   "value": "570.0"
+  },
+  {
+   "file": "scenes/ui/blackjack_app.tscn",
+   "line": 10,
+   "name": "offset_bottom",
+   "value": "322.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 8,
+   "name": "border_width_left",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 9,
+   "name": "border_width_top",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 10,
+   "name": "border_width_right",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 11,
+   "name": "border_width_bottom",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 13,
+   "name": "corner_radius_top_left",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 14,
+   "name": "corner_radius_top_right",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 15,
+   "name": "corner_radius_bottom_right",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 16,
+   "name": "corner_radius_bottom_left",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 43,
+   "name": "offset_left",
+   "value": "40.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 44,
+   "name": "offset_top",
+   "value": "34.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 45,
+   "name": "offset_right",
+   "value": "600.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 46,
+   "name": "offset_bottom",
+   "value": "326.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 51,
+   "name": "offset_left",
+   "value": "214.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 52,
+   "name": "offset_top",
+   "value": "14.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 53,
+   "name": "offset_right",
+   "value": "216.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 54,
+   "name": "offset_bottom",
+   "value": "230.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 59,
+   "name": "offset_left",
+   "value": "16.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 60,
+   "name": "offset_top",
+   "value": "224.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 61,
+   "name": "offset_right",
+   "value": "208.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 62,
+   "name": "offset_bottom",
+   "value": "226.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 67,
+   "name": "offset_left",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 68,
+   "name": "offset_top",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 69,
+   "name": "offset_right",
+   "value": "208.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 70,
+   "name": "offset_bottom",
+   "value": "224.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 79,
+   "name": "offset_left",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 80,
+   "name": "offset_top",
+   "value": "232.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 81,
+   "name": "offset_right",
+   "value": "208.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 82,
+   "name": "offset_bottom",
+   "value": "256.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 89,
+   "name": "offset_left",
+   "value": "225.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 90,
+   "name": "offset_top",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 91,
+   "name": "offset_right",
+   "value": "310.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 92,
+   "name": "offset_bottom",
+   "value": "38.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 98,
+   "name": "offset_left",
+   "value": "259.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 99,
+   "name": "offset_top",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 100,
+   "name": "offset_right",
+   "value": "322.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 101,
+   "name": "offset_bottom",
+   "value": "38.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 106,
+   "name": "offset_left",
+   "value": "225.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 107,
+   "name": "offset_top",
+   "value": "47.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 108,
+   "name": "offset_right",
+   "value": "395.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 109,
+   "name": "offset_bottom",
+   "value": "61.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 113,
+   "name": "offset_left",
+   "value": "438.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 114,
+   "name": "offset_top",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 115,
+   "name": "offset_right",
+   "value": "535.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 116,
+   "name": "offset_bottom",
+   "value": "150.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 153,
+   "name": "offset_left",
+   "value": "294.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 154,
+   "name": "offset_top",
+   "value": "151.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 155,
+   "name": "offset_right",
+   "value": "348.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 156,
+   "name": "offset_bottom",
+   "value": "170.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 163,
+   "name": "offset_left",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 164,
+   "name": "offset_top",
+   "value": "254.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 165,
+   "name": "offset_right",
+   "value": "130.0"
+  },
+  {
+   "file": "scenes/ui/character_card.tscn",
+   "line": 166,
+   "name": "offset_bottom",
+   "value": "276.0"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 44,
+   "name": "offset_right",
+   "value": "640.0"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 45,
+   "name": "offset_bottom",
+   "value": "360.0"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 63,
+   "name": "offset_left",
+   "value": "235.0"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 64,
+   "name": "offset_top",
+   "value": "188.0"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 65,
+   "name": "offset_right",
+   "value": "620.0"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 66,
+   "name": "offset_bottom",
+   "value": "342.0"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 88,
+   "name": "theme_override_constants/margin_left",
+   "value": "18"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 89,
+   "name": "theme_override_constants/margin_top",
+   "value": "16"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 90,
+   "name": "theme_override_constants/margin_right",
+   "value": "18"
+  },
+  {
+   "file": "scenes/ui/confirmation_dialog.tscn",
+   "line": 91,
+   "name": "theme_override_constants/margin_bottom",
+   "value": "14"
+  },
+  {
+   "file": "scenes/ui/debug_console.tscn",
+   "line": 38,
+   "name": "offset_left",
+   "value": "-260.0"
+  },
+  {
+   "file": "scenes/ui/debug_console.tscn",
+   "line": 39,
+   "name": "offset_top",
+   "value": "-105.0"
+  },
+  {
+   "file": "scenes/ui/debug_console.tscn",
+   "line": 40,
+   "name": "offset_right",
+   "value": "260.0"
+  },
+  {
+   "file": "scenes/ui/debug_console.tscn",
+   "line": 41,
+   "name": "offset_bottom",
+   "value": "105.0"
+  },
+  {
+   "file": "scenes/ui/debug_console.tscn",
+   "line": 47,
+   "name": "theme_override_constants/margin_left",
+   "value": "16"
+  },
+  {
+   "file": "scenes/ui/debug_console.tscn",
+   "line": 48,
+   "name": "theme_override_constants/margin_top",
+   "value": "14"
+  },
+  {
+   "file": "scenes/ui/debug_console.tscn",
+   "line": 49,
+   "name": "theme_override_constants/margin_right",
+   "value": "16"
+  },
+  {
+   "file": "scenes/ui/debug_console.tscn",
+   "line": 50,
+   "name": "theme_override_constants/margin_bottom",
+   "value": "14"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 17,
+   "name": "shader_parameter/cooldown_ratio",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 19,
+   "name": "shader_parameter/cooldown_mix",
+   "value": "0.88"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 37,
+   "name": "offset_top",
+   "value": "8.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 38,
+   "name": "offset_bottom",
+   "value": "31.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 44,
+   "name": "offset_left",
+   "value": "290.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 45,
+   "name": "offset_right",
+   "value": "350.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 46,
+   "name": "offset_bottom",
+   "value": "12.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 55,
+   "name": "offset_left",
+   "value": "290.7"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 56,
+   "name": "offset_top",
+   "value": "15.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 57,
+   "name": "offset_right",
+   "value": "349.3"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 58,
+   "name": "offset_bottom",
+   "value": "20.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 67,
+   "name": "offset_left",
+   "value": "16.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 68,
+   "name": "offset_top",
+   "value": "36.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 69,
+   "name": "offset_right",
+   "value": "48.0"
+  },
+  {
+   "file": "scenes/ui/dream_hud.tscn",
+   "line": 70,
+   "name": "offset_bottom",
+   "value": "62.0"
+  },
+  {
+   "file": "scenes/ui/global_upgrade_panel.tscn",
+   "line": 32,
+   "name": "offset_right",
+   "value": "304.0"
+  },
+  {
+   "file": "scenes/ui/global_upgrade_panel.tscn",
+   "line": 33,
+   "name": "offset_bottom",
+   "value": "22.0"
+  },
+  {
+   "file": "scenes/ui/global_upgrade_panel.tscn",
+   "line": 41,
+   "name": "offset_top",
+   "value": "26.0"
+  },
+  {
+   "file": "scenes/ui/global_upgrade_panel.tscn",
+   "line": 42,
+   "name": "offset_right",
+   "value": "316.0"
+  },
+  {
+   "file": "scenes/ui/global_upgrade_panel.tscn",
+   "line": 43,
+   "name": "offset_bottom",
+   "value": "216.0"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 7,
+   "name": "border_width_left",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 8,
+   "name": "border_width_top",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 9,
+   "name": "border_width_right",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 10,
+   "name": "border_width_bottom",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 12,
+   "name": "corner_radius_top_left",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 13,
+   "name": "corner_radius_top_right",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 14,
+   "name": "corner_radius_bottom_right",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 15,
+   "name": "corner_radius_bottom_left",
+   "value": "2"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 19,
+   "name": "corner_radius_top_left",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 20,
+   "name": "corner_radius_top_right",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 21,
+   "name": "corner_radius_bottom_right",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/loading_overlay.tscn",
+   "line": 22,
+   "name": "corner_radius_bottom_left",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 118,
+   "name": "offset_left",
+   "value": "34.0"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 119,
+   "name": "offset_top",
+   "value": "39.0"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 120,
+   "name": "offset_right",
+   "value": "238.00008"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 121,
+   "name": "offset_bottom",
+   "value": "71.000046"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 137,
+   "name": "offset_left",
+   "value": "-210.0"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 138,
+   "name": "offset_top",
+   "value": "-31.0"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 139,
+   "name": "offset_right",
+   "value": "210.0"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 140,
+   "name": "offset_bottom",
+   "value": "-7.0"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 249,
+   "name": "offset_left",
+   "value": "150.0"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 250,
+   "name": "offset_top",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 251,
+   "name": "offset_right",
+   "value": "490.0"
+  },
+  {
+   "file": "scenes/ui/main_menu.tscn",
+   "line": 252,
+   "name": "offset_bottom",
+   "value": "342.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 32,
+   "name": "offset_left",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 33,
+   "name": "offset_top",
+   "value": "-237.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 34,
+   "name": "offset_right",
+   "value": "640.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 35,
+   "name": "offset_bottom",
+   "value": "403.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 43,
+   "name": "offset_left",
+   "value": "0.888916"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 44,
+   "name": "offset_top",
+   "value": "-1.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 45,
+   "name": "offset_right",
+   "value": "644.44446"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 46,
+   "name": "offset_bottom",
+   "value": "361.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 63,
+   "name": "offset_left",
+   "value": "39.111084"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 64,
+   "name": "offset_top",
+   "value": "245.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 65,
+   "name": "offset_right",
+   "value": "609.1555"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 66,
+   "name": "offset_bottom",
+   "value": "300.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 108,
+   "name": "offset_left",
+   "value": "245.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 109,
+   "name": "offset_top",
+   "value": "310.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 110,
+   "name": "offset_right",
+   "value": "395.0"
+  },
+  {
+   "file": "scenes/ui/opening.tscn",
+   "line": 111,
+   "name": "offset_bottom",
+   "value": "344.0"
+  },
+  {
+   "file": "scenes/ui/pause_menu.tscn",
+   "line": 44,
+   "name": "offset_left",
+   "value": "140.0"
+  },
+  {
+   "file": "scenes/ui/pause_menu.tscn",
+   "line": 45,
+   "name": "offset_top",
+   "value": "30.0"
+  },
+  {
+   "file": "scenes/ui/pause_menu.tscn",
+   "line": 46,
+   "name": "offset_right",
+   "value": "500.0"
+  },
+  {
+   "file": "scenes/ui/pause_menu.tscn",
+   "line": 47,
+   "name": "offset_bottom",
+   "value": "330.0"
+  },
+  {
+   "file": "scenes/ui/results.tscn",
+   "line": 30,
+   "name": "offset_left",
+   "value": "228.0"
+  },
+  {
+   "file": "scenes/ui/results.tscn",
+   "line": 31,
+   "name": "offset_top",
+   "value": "278.0"
+  },
+  {
+   "file": "scenes/ui/results.tscn",
+   "line": 32,
+   "name": "offset_right",
+   "value": "412.0"
+  },
+  {
+   "file": "scenes/ui/results.tscn",
+   "line": 33,
+   "name": "offset_bottom",
+   "value": "324.0"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 30,
+   "name": "offset_left",
+   "value": "18.0"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 31,
+   "name": "offset_top",
+   "value": "22.0"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 32,
+   "name": "offset_right",
+   "value": "-18.0"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 33,
+   "name": "offset_bottom",
+   "value": "-22.0"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 48,
+   "name": "theme_override_constants/margin_left",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 49,
+   "name": "theme_override_constants/margin_top",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 50,
+   "name": "theme_override_constants/margin_right",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 51,
+   "name": "theme_override_constants/margin_bottom",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 80,
+   "name": "theme_override_constants/margin_left",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 81,
+   "name": "theme_override_constants/margin_top",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 82,
+   "name": "theme_override_constants/margin_right",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 83,
+   "name": "theme_override_constants/margin_bottom",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 112,
+   "name": "offset_left",
+   "value": "-50.0"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 113,
+   "name": "offset_top",
+   "value": "-19.0"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 114,
+   "name": "offset_right",
+   "value": "50.0"
+  },
+  {
+   "file": "scenes/ui/skills_menu.tscn",
+   "line": 115,
+   "name": "offset_bottom",
+   "value": "-3.0"
+  },
+  {
+   "file": "scenes/ui/upgrade_panel.tscn",
+   "line": 23,
+   "name": "offset_left",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/ui/upgrade_panel.tscn",
+   "line": 24,
+   "name": "offset_top",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/ui/upgrade_panel.tscn",
+   "line": 25,
+   "name": "offset_right",
+   "value": "640.0"
+  },
+  {
+   "file": "scenes/ui/upgrade_panel.tscn",
+   "line": 26,
+   "name": "offset_bottom",
+   "value": "360.0"
+  },
+  {
+   "file": "scenes/ui/upgrade_panel.tscn",
+   "line": 33,
+   "name": "offset_left",
+   "value": "246.0"
+  },
+  {
+   "file": "scenes/ui/upgrade_panel.tscn",
+   "line": 34,
+   "name": "offset_top",
+   "value": "318.0"
+  },
+  {
+   "file": "scenes/ui/upgrade_panel.tscn",
+   "line": 35,
+   "name": "offset_right",
+   "value": "394.0"
+  },
+  {
+   "file": "scenes/ui/upgrade_panel.tscn",
+   "line": 36,
+   "name": "offset_bottom",
+   "value": "346.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 26,
+   "name": "offset_right",
+   "value": "340.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 27,
+   "name": "offset_bottom",
+   "value": "48.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 40,
+   "name": "patch_margin_left",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 41,
+   "name": "patch_margin_top",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 42,
+   "name": "patch_margin_right",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 43,
+   "name": "patch_margin_bottom",
+   "value": "12"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 53,
+   "name": "theme_override_constants/margin_left",
+   "value": "16"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 54,
+   "name": "theme_override_constants/margin_top",
+   "value": "14"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 55,
+   "name": "theme_override_constants/margin_right",
+   "value": "16"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 56,
+   "name": "theme_override_constants/margin_bottom",
+   "value": "18"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 74,
+   "name": "offset_left",
+   "value": "12.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 75,
+   "name": "offset_top",
+   "value": "37.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 76,
+   "name": "offset_right",
+   "value": "328.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 77,
+   "name": "offset_bottom",
+   "value": "44.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 84,
+   "name": "offset_right",
+   "value": "316.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 85,
+   "name": "offset_bottom",
+   "value": "7.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 87,
+   "name": "patch_margin_left",
+   "value": "6"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 88,
+   "name": "patch_margin_right",
+   "value": "6"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 94,
+   "name": "offset_right",
+   "value": "316.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 95,
+   "name": "offset_bottom",
+   "value": "7.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 101,
+   "name": "offset_right",
+   "value": "316.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 102,
+   "name": "offset_bottom",
+   "value": "7.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 104,
+   "name": "patch_margin_left",
+   "value": "6"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 105,
+   "name": "patch_margin_right",
+   "value": "6"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 110,
+   "name": "offset_left",
+   "value": "16.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 111,
+   "name": "offset_top",
+   "value": "47.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 112,
+   "name": "offset_right",
+   "value": "35.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 113,
+   "name": "offset_bottom",
+   "value": "59.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 121,
+   "name": "offset_left",
+   "value": "2.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 122,
+   "name": "offset_top",
+   "value": "2.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 123,
+   "name": "offset_right",
+   "value": "17.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 124,
+   "name": "offset_bottom",
+   "value": "10.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 130,
+   "name": "offset_right",
+   "value": "15.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 131,
+   "name": "offset_bottom",
+   "value": "8.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 140,
+   "name": "offset_top",
+   "value": "56.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 141,
+   "name": "offset_right",
+   "value": "167.0"
+  },
+  {
+   "file": "scenes/ui/dialogue/dream_dialogue_bubble.tscn",
+   "line": 142,
+   "name": "offset_bottom",
+   "value": "88.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 9,
+   "name": "corner_radius_top_left",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 10,
+   "name": "corner_radius_top_right",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 11,
+   "name": "corner_radius_bottom_right",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 12,
+   "name": "corner_radius_bottom_left",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 19,
+   "name": "border_width_left",
+   "value": "3"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 20,
+   "name": "border_width_top",
+   "value": "3"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 21,
+   "name": "border_width_right",
+   "value": "3"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 22,
+   "name": "border_width_bottom",
+   "value": "3"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 24,
+   "name": "corner_radius_top_left",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 25,
+   "name": "corner_radius_top_right",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 26,
+   "name": "corner_radius_bottom_right",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 27,
+   "name": "corner_radius_bottom_left",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 33,
+   "name": "border_width_left",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 34,
+   "name": "border_width_top",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 35,
+   "name": "border_width_right",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 36,
+   "name": "border_width_bottom",
+   "value": "1"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 38,
+   "name": "corner_radius_top_left",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 39,
+   "name": "corner_radius_top_right",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 40,
+   "name": "corner_radius_bottom_right",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 41,
+   "name": "corner_radius_bottom_left",
+   "value": "4"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 50,
+   "name": "offset_right",
+   "value": "153.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 51,
+   "name": "offset_bottom",
+   "value": "237.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 61,
+   "name": "offset_left",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 62,
+   "name": "offset_top",
+   "value": "6.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 63,
+   "name": "offset_right",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 64,
+   "name": "offset_bottom",
+   "value": "6.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 125,
+   "name": "offset_left",
+   "value": "-58.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 126,
+   "name": "offset_top",
+   "value": "-25.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 127,
+   "name": "offset_right",
+   "value": "58.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 128,
+   "name": "offset_bottom",
+   "value": "-5.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 173,
+   "name": "offset_left",
+   "value": "-3.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 174,
+   "name": "offset_top",
+   "value": "-3.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 175,
+   "name": "offset_right",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_card_view.tscn",
+   "line": 176,
+   "name": "offset_bottom",
+   "value": "3.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 34,
+   "name": "offset_left",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 35,
+   "name": "offset_top",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 36,
+   "name": "offset_right",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 37,
+   "name": "offset_bottom",
+   "value": "0.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 53,
+   "name": "offset_left",
+   "value": "-160.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 54,
+   "name": "offset_top",
+   "value": "10.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 55,
+   "name": "offset_right",
+   "value": "160.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 56,
+   "name": "offset_bottom",
+   "value": "54.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 88,
+   "name": "offset_left",
+   "value": "-220.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 89,
+   "name": "offset_top",
+   "value": "-30.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 90,
+   "name": "offset_right",
+   "value": "220.0"
+  },
+  {
+   "file": "scenes/ui/tarot/tarot_overlay.tscn",
+   "line": 91,
+   "name": "offset_bottom",
+   "value": "-10.0"
+  }
+ ]
+}

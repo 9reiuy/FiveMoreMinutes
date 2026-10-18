@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://cthug73qqhpy8"]
+
+[ext_resource type="Shader" uid="uid://h2l28y3y2r2v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/ORM_Shader_Cull_Back.gdshader" id="1_ng8lq"]
+[ext_resource type="Texture2D" uid="uid://doubmu37q3j6b" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Surface_Ceiling_A/Surface_Ceiling_A_Diffuse_2K_A.png" id="2_ng8lq"]
+[ext_resource type="Texture2D" uid="uid://g07xhr5hnmlv" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Surface_Ceiling_A/Surface_Ceiling_A_Normal_2K.png" id="3_qo6sm"]
+[ext_resource type="Texture2D" uid="uid://bvg2rxhpsn5mv" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Surface_Ceiling_A/Surface_Ceiling_A_ORM_2K.png" id="4_8pneq"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ng8lq")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/texture_albedo = ExtResource("2_ng8lq")
+shader_parameter/texture_orm = ExtResource("4_8pneq")
+shader_parameter/alpha_scissor_threshold = 0.9
+shader_parameter/roughness = 1.25
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 0.0
+shader_parameter/texture_normal = ExtResource("3_qo6sm")
+shader_parameter/normal_scale = 1.0
+shader_parameter/ao_light_affect = 0.0
+shader_parameter/emission = Color(0, 0, 0, 1)
+shader_parameter/emission_energy = 0.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)

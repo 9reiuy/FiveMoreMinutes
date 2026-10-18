@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/enemy_body_part.gd" id="1_body_part"]
+
+[sub_resource type="CircleShape2D" id="CircleBodyPart"]
+radius = 3.0
+
+[node name="EnemyBodyPart" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 5
+script = ExtResource("1_body_part")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleBodyPart")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1

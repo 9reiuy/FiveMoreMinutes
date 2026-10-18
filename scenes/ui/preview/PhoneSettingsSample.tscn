@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/preview/phone_settings_sample_launcher.gd" id="1"]
+
+[node name="PhoneSettingsSample" type="Node"]
+script = ExtResource("1")

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cr8s0wbld1hs7"
+path="res://.godot/imported/Future Hologram Turn Off_02.wav-f8a663c5f07a5030b156a1b378fc45b2.sample"
+
+[deps]
+
+source_file="res://art/wallpaper/Glitch and Noise Preview/Future Hologram Turn Off_02.wav"
+dest_files=["res://.godot/imported/Future Hologram Turn Off_02.wav-f8a663c5f07a5030b156a1b378fc45b2.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

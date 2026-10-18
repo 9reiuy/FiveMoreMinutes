@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=4 uid="uid://d0s45newsihit"]
+
+[ext_resource type="Material" uid="uid://cjg55dhp2epy1" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Misc_Trim_Mat.tres" id="1_r3mul"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_e448w"]
+_surfaces = [{
+"aabb": AABB(-1.49999, -0.0416658, 0, 2.99998, 0.0833316, 1e-05),
+"format": 34359742465,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAwAAAAIAAwACAAQAAAAFAAEABQAGAAEABQAHAAYA"),
+"name": "MiscTrim",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("nf7/PsOpKr0AAACAnf7/vr6pKj0AAACAnf7/Pr6pKj0AAACAp/+/P8OpKr0AAACAp/+/P76pKj0AAACAsgAAv8OpKr0AAACAp/+/v76pKj0AAACAp/+/v8OpKr0AAACA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_g56aa"]
+resource_name = "Interiors_A_Decal_Tape_Danger_3m"
+_surfaces = [{
+"aabb": AABB(-1.49999, -0.0416658, 0, 2.99998, 0.0833316, 1e-05),
+"attribute_data": PackedByteArray("AACAP8CqKj4AAAAA0KqqPQAAgD/Qqqo9AAAAAMCqKj4AAIA/wKoqPgAAAADQqqo9AACAP9Cqqj0AAAAAwKoqPgAAgD/Aqio+AAAAANCqqj0AAIA/0KqqPQAAAADAqio+"),
+"format": 34359742487,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkA"),
+"material": ExtResource("1_r3mul"),
+"name": "MiscTrim",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("nf7/PsOpKr0AAACAnf7/vr6pKj0AAACAnf7/Pr6pKj0AAACAsgAAv8OpKr0AAACAp/+/P8OpKr0AAACAnf7/Pr6pKj0AAACAp/+/P76pKj0AAACAnf7/PsOpKr0AAACAsgAAv8OpKr0AAACAp/+/v76pKj0AAACAnf7/vr6pKj0AAACAp/+/v8OpKr0AAACA/3//f////7//f/9/////v/9//3////+//3//f////7//f/9/////v/9//3////+//3//f////7//f/9/////v/9//3////+//3//f////7//f/9/////v/9//3////+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_e448w")
+
+[node name="Decal_Tape_Danger_3m" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_g56aa")
+skeleton = NodePath("")

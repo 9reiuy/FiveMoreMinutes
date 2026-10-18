@@ -1,0 +1,174 @@
+{
+  "dialogues": [
+    {
+      "id": "bedroom_self",
+      "random": true,
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "这是我",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "pre_delay": 0.0,
+          "post_delay": 0.0,
+          "text_color": "#D3E0E8",
+          "font_size": 18,
+          "alignment": "left",
+          "fade_in": 0.1,
+          "fade_out": 0.15,
+          "wait_for_input": true,
+          "auto_continue": false,
+          "position": "bottom",
+          "blip": true
+        },
+        {
+          "speaker": "player",
+          "text": "你好，{computer_name}",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "pre_delay": 0.0,
+          "post_delay": 0.0,
+          "text_color": "#D3E0E8",
+          "font_size": 18,
+          "alignment": "left",
+          "fade_in": 0.1,
+          "fade_out": 0.15,
+          "wait_for_input": true,
+          "auto_continue": false,
+          "position": "bottom",
+          "blip": true
+        }
+      ]
+    },
+    {
+      "id": "bed_ready_sleep",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "要睡觉了吗？",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "text_color": "#D3E0E8",
+          "blip": true,
+          "choices": [
+            {"text": "睡觉", "action_id": "begin_sleep", "next": "close"},
+            {"text": "再等等", "action_id": "close", "next": "close"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bed_hungry_force",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "那就这样睡吧",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "text_color": "#D3E0E8",
+          "blip": true,
+          "choices": [
+            {"text": "确认", "action_id": "begin_hungry_sleep", "next": "close"},
+            {"text": "算了", "action_id": "close", "next": "close"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bed_hungry_food_prompt",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "吃点什么再睡吧",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "text_color": "#D3E0E8",
+          "blip": true,
+          "choices": [
+            {"text": "买点什么吃吧", "action_id": "open_quicklink", "next": "close"},
+            {"text": "算了", "action_id": "defer_food_purchase", "next": "close"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "melatonin_first_prompt",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "要吃药吗？",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "text_color": "#D3E0E8",
+          "blip": true,
+          "choices": [
+            {"text": "吃", "action_id": "take_melatonin", "next": "close"},
+            {"text": "不吃", "action_id": "close", "next": "close"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "melatonin_repeat_prompt",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "还要再吃吗？",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "text_color": "#D3E0E8",
+          "blip": true,
+          "choices": [
+            {"text": "吃", "action_id": "take_melatonin", "next": "close"},
+            {"text": "不吃", "action_id": "close", "next": "close"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "melatonin_nightly_limit",
+      "lines": [
+        {"speaker": "player", "text": "已经够多了。", "portrait": "normal", "typewriter_speed": 0.04, "text_color": "#D3E0E8", "blip": true}
+      ]
+    },
+    {
+      "id": "melatonin_empty",
+      "lines": [
+        {"speaker": "player", "text": "已经没有药了。", "portrait": "normal", "typewriter_speed": 0.04, "text_color": "#D3E0E8", "blip": true}
+      ]
+    },
+    {
+      "id": "delivery_received",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "你拿到了廉价便当。\n……勉强能吃。",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "post_delay": 0.15,
+          "text_color": "#D3E0E8",
+          "blip": true,
+          "completion_action_id": "finish_delivery_meal"
+        }
+      ]
+    },
+    {
+      "id": "melatonin_interaction_instruction",
+      "lines": [
+        {"speaker": "system", "text": "按住药瓶，左右摇晃", "typewriter_speed": 0.0, "text_color": "#696C76", "blip": false}
+      ]
+    },
+    {
+      "id": "melatonin_interaction_empty",
+      "lines": [
+        {"speaker": "system", "text": "空瓶", "typewriter_speed": 0.0, "text_color": "#696C76", "blip": false}
+      ]
+    },
+    {
+      "id": "melatonin_interaction_swallowed",
+      "lines": [
+        {"speaker": "system", "text": "咽下去了", "typewriter_speed": 0.0, "text_color": "#696C76", "blip": false}
+      ]
+    }
+  ]
+}

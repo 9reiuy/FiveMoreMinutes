@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=4 uid="uid://d4jeho4gbk8cn"]
+
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="1_fbwg0"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_g7nbb"]
+_surfaces = [{
+"aabb": AABB(-0.100879, -4.37114e-09, -1, 1e-05, 2.75, 2),
+"format": 34896613377,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAAADAAEAAwAEAAEAAwAFAAQA"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("wwAAAP//AAAkAeii/38AAAAA0UX//wAA6AEWXf9/AABJAv//AAAAAA0DLboAAAAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_p1b8o"]
+resource_name = "Interiors_A_Wall_Stair_2m_Trim"
+_surfaces = [{
+"aabb": AABB(-0.100879, -4.37114e-09, -1, 1e-05, 2.75, 2),
+"attribute_data": PackedByteArray("AAD//1RV/78AAP+/VVX//6mq/7+qqv//"),
+"format": 34896613399,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAAADAAEAAwAEAAEAAwAFAAQA"),
+"material": ExtResource("1_fbwg0"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("wwAAAP//VBYkAeii/39UFgAA0UX//1QW6AEWXf9/VBZJAv//AABUFg0DLboAAFQWCOr6ygjq+soI6vrKCOr6ygjq+soI6vrK")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_g7nbb")
+
+[node name="Wall_Stair_2m_Trim" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_p1b8o")
+skeleton = NodePath("")

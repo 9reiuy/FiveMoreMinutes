@@ -1,0 +1,17 @@
+{
+  "events": [
+    {
+      "id": "ending_normal_life",
+      "lines": [
+        {"text": "你的生活还在继续，但这一切如你愿吗？", "position": "center", "alignment": "center", "typewriter_speed": 0.055, "pre_delay": 0.4, "post_delay": 0.5, "fade_in": 0.2, "fade_out": 0.25, "wait_for_input": true, "auto_continue": false, "text_color": "#C2C0B9", "font_size": 20, "blip": true}
+      ]
+    },
+    {
+      "id": "ending_starvation",
+      "lines": [
+        {"text": "你饿死了", "style": "dramatic", "position": "center", "alignment": "center", "typewriter_speed": 0.09, "pre_delay": 0.6, "post_delay": 1.0, "fade_in": 0.15, "fade_out": 0.25, "wait_for_input": true, "auto_continue": false, "text_color": "#D84B56", "font_size": 40, "blip": true},
+        {"text": "永远不会醒来了。", "position": "center", "alignment": "center", "typewriter_speed": 0.075, "pre_delay": 0.5, "post_delay": 0.8, "fade_in": 0.2, "fade_out": 0.25, "wait_for_input": true, "auto_continue": false, "text_color": "#C2C0B9", "font_size": 20, "blip": true}
+      ]
+    }
+  ]
+}

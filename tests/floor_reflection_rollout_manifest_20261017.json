@@ -1,0 +1,188 @@
+[
+  {
+    "name": "floor_reflection_sample_test",
+    "entry": "res://tests/floor_reflection_sample_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Opt-in profiles, live actor uniforms, camera layers, RNG and transition cleanup.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_reflection_sample_delivery",
+    "entry": "res://tests/floor_reflection_sample_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [
+      "--artifact-dir=res://.runtime/floor_reflection_sample_20261017/camera_regression"
+    ],
+    "reason": "Five actual Camera material comparisons, real reflection depth, blood, pause and measured cost.",
+    "missing_references": []
+  },
+  {
+    "name": "approved_office_art_test",
+    "entry": "res://tests/approved_office_art_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "character_projection_world_test",
+    "entry": "res://tests/character_projection_world_test.gd",
+    "entry_kind": "script",
+    "classification": "headless+gpu",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Logic assertions plus actual Camera capture; both modes required.",
+    "missing_references": []
+  },
+  {
+    "name": "office_dither_formal_test",
+    "entry": "res://tests/office_dither_formal_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_reflection_rollout_test",
+    "entry": "res://tests/floor_reflection_rollout_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Production four skeletons, actual room textures, dynamic actors/lights, rollback and hall.",
+    "missing_references": []
+  },
+  {
+    "name": "tarot_reception_revision_test",
+    "entry": "res://tests/tarot_reception_revision_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Hall lighting, desk clearances and elevator regression.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_reflection_rollout_delivery",
+    "entry": "res://tests/floor_reflection_rollout_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [
+      "--artifact-dir=res://.runtime/floor_reflection_rollout_20261017/camera_regression"
+    ],
+    "reason": "Actual Main hall and four production layouts, original textures/lights, movement, pause and short off/on measurements.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_reflection_combat_A1",
+    "entry": "res://tests/floor_reflection_combat_acceptance.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [
+      "--background-gpu",
+      "--output-1080",
+      "--acceptance",
+      "--bounded-route",
+      "--aim-wall",
+      "--controlled-start",
+      "--canonical-identities",
+      "--prepare-firearm-rendering",
+      "--seed=41001",
+      "--skeleton=A1",
+      "--artifact-dir=res://.runtime/floor_reflection_rollout_20261017/combat_regression_A1"
+    ],
+    "reason": "Ten-second warmup then sixty-second live combat; budget failures remain failures.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_reflection_combat_B2",
+    "entry": "res://tests/floor_reflection_combat_acceptance.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [
+      "--background-gpu",
+      "--output-1080",
+      "--acceptance",
+      "--bounded-route",
+      "--aim-wall",
+      "--controlled-start",
+      "--canonical-identities",
+      "--prepare-firearm-rendering",
+      "--seed=41001",
+      "--skeleton=B2",
+      "--artifact-dir=res://.runtime/floor_reflection_rollout_20261017/combat_regression_B2"
+    ],
+    "reason": "Ten-second warmup then sixty-second live combat; budget failures remain failures.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_reflection_combat_C3",
+    "entry": "res://tests/floor_reflection_combat_acceptance.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [
+      "--background-gpu",
+      "--output-1080",
+      "--acceptance",
+      "--bounded-route",
+      "--aim-wall",
+      "--controlled-start",
+      "--canonical-identities",
+      "--prepare-firearm-rendering",
+      "--seed=41001",
+      "--skeleton=C3",
+      "--artifact-dir=res://.runtime/floor_reflection_rollout_20261017/combat_regression_C3"
+    ],
+    "reason": "Ten-second warmup then sixty-second live combat; budget failures remain failures.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_reflection_combat_V3",
+    "entry": "res://tests/floor_reflection_combat_acceptance.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [
+      "--background-gpu",
+      "--output-1080",
+      "--acceptance",
+      "--bounded-route",
+      "--aim-wall",
+      "--controlled-start",
+      "--canonical-identities",
+      "--prepare-firearm-rendering",
+      "--seed=42001",
+      "--skeleton=V3",
+      "--artifact-dir=res://.runtime/floor_reflection_rollout_20261017/combat_regression_V3"
+    ],
+    "reason": "Ten-second warmup then sixty-second live combat; budget failures remain failures.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_reflection_soak_acceptance",
+    "entry": "res://tests/floor_reflection_soak_acceptance.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 900,
+    "user_args": [
+      "--background-gpu",
+      "--duration=600",
+      "--artifact-dir=res://.runtime/floor_reflection_rollout_20261017/soak_regression"
+    ],
+    "reason": "Main ten-minute soak, three real transitions, movable cab, covered reflection preparation, pause and exit.",
+    "missing_references": []
+  }
+]

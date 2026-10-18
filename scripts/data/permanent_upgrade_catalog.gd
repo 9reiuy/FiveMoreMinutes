@@ -1,22 +1,19 @@
 class_name PermanentUpgradeCatalog
 extends RefCounted
 
-const IDS: Array[String] = ["visual_cortex", "brainstem", "hippocampus", "prefrontal"]
+const IDS: Array[String] = ["visual_cortex", "hippocampus", "prefrontal"]
 const NAMES := {
 	"visual_cortex": "枕叶视觉皮层",
-	"brainstem": "脑干",
 	"hippocampus": "海马体",
 	"prefrontal": "前额叶皮层",
 }
 const DESCRIPTIONS := {
 	"visual_cortex": "扩大所有武器的有效攻击范围。",
-	"brainstem": "提高战斗中的经验获取倍率。",
 	"hippocampus": "提高进入梦境时的最大生命值。",
 	"prefrontal": "缩短所有武器的攻击间隔。",
 }
 const ICONS := {
 	"visual_cortex": preload("res://assets/ui/products/visual_cortex_icon.png"),
-	"brainstem": preload("res://assets/ui/products/brainstem_icon.png"),
 	"hippocampus": preload("res://assets/ui/products/hippocampus_icon.png"),
 	"prefrontal": preload("res://assets/ui/products/prefrontal_icon.png"),
 }
@@ -57,7 +54,6 @@ static func get_price(level: int, config: DemoConfig) -> int:
 static func get_effect_value(id: String, level: int, config: DemoConfig) -> String:
 	match id:
 		"visual_cortex": return "范围 +%dpx" % int(level * config.visual_cortex_range_per_level)
-		"brainstem": return "经验 ×%.1f" % (1.0 + level * config.brainstem_experience_per_level)
 		"hippocampus": return "生命 +%d" % int(level * config.hippocampus_health_per_level)
 		"prefrontal": return "攻速 ×%.1f" % (1.0 + level * config.prefrontal_attack_speed_per_level)
 	return "--"

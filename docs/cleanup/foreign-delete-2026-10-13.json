@@ -1,0 +1,142 @@
+{
+  "root": "E:\\Agent\\5MinuteMore\\5min more",
+  "targets": [
+    ".workbuddy",
+    ".runtime/media_tools",
+    "scripts/audio/__pycache__"
+  ],
+  "files": [
+    {
+      "relative": ".workbuddy/memory/2026-08-04.md",
+      "bytes": 25674,
+      "modified_ms": 1785826595968.9326
+    },
+    {
+      "relative": ".workbuddy/overview.md",
+      "bytes": 5474,
+      "modified_ms": 1785815762097.9282
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/binaries/ffmpeg-win-x86_64-v7.1.exe",
+      "bytes": 87638016,
+      "modified_ms": 1790181864766.7278
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/binaries/README.md",
+      "bytes": 45,
+      "modified_ms": 1790181864455.3435
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/binaries/__init__.py",
+      "bytes": 45,
+      "modified_ms": 1790181864456.3464
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/binaries/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 205,
+      "modified_ms": 1790181864812.7485
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/_definitions.py",
+      "bytes": 2041,
+      "modified_ms": 1790181864451.0205
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/_io.py",
+      "bytes": 27048,
+      "modified_ms": 1790181864451.0205
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/_parsing.py",
+      "bytes": 6840,
+      "modified_ms": 1790181864452.0366
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/_utils.py",
+      "bytes": 3833,
+      "modified_ms": 1790181864454.333
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/__init__.py",
+      "bytes": 227,
+      "modified_ms": 1790181864450.0156
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/__pycache__/_definitions.cpython-312.pyc",
+      "bytes": 2065,
+      "modified_ms": 1790181864784.1753
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/__pycache__/_io.cpython-312.pyc",
+      "bytes": 27172,
+      "modified_ms": 1790181864795.1646
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/__pycache__/_parsing.cpython-312.pyc",
+      "bytes": 9342,
+      "modified_ms": 1790181864802.8801
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/__pycache__/_utils.cpython-312.pyc",
+      "bytes": 5408,
+      "modified_ms": 1790181864808.0342
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 489,
+      "modified_ms": 1790181864778.1326
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg-0.6.0.dist-info/INSTALLER",
+      "bytes": 4,
+      "modified_ms": 1790181864814.7598
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg-0.6.0.dist-info/LICENSE",
+      "bytes": 1317,
+      "modified_ms": 1790181864770.243
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg-0.6.0.dist-info/METADATA",
+      "bytes": 1528,
+      "modified_ms": 1790181864770.243
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg-0.6.0.dist-info/RECORD",
+      "bytes": 1661,
+      "modified_ms": 1790181864819.9133
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg-0.6.0.dist-info/REQUESTED",
+      "bytes": 0,
+      "modified_ms": 1790181864817.8843
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg-0.6.0.dist-info/top_level.txt",
+      "bytes": 15,
+      "modified_ms": 1790181864772.7495
+    },
+    {
+      "relative": ".runtime/media_tools/imageio_ffmpeg-0.6.0.dist-info/WHEEL",
+      "bytes": 96,
+      "modified_ms": 1790181864771.2466
+    },
+    {
+      "relative": "scripts/audio/__pycache__/generate_elevator_sfx.cpython-313.pyc",
+      "bytes": 63147,
+      "modified_ms": 1790776768596.4985
+    }
+  ],
+  "dirs": [
+    ".workbuddy/memory",
+    ".workbuddy",
+    ".runtime/media_tools/imageio_ffmpeg/binaries/__pycache__",
+    ".runtime/media_tools/imageio_ffmpeg/binaries",
+    ".runtime/media_tools/imageio_ffmpeg/__pycache__",
+    ".runtime/media_tools/imageio_ffmpeg",
+    ".runtime/media_tools/imageio_ffmpeg-0.6.0.dist-info",
+    ".runtime/media_tools",
+    "scripts/audio/__pycache__"
+  ],
+  "bytes": 87821692
+}

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://bocndnby84nr3"]
+
+[ext_resource type="Script" path="res://scripts/dream/wall_segment_3d.gd" id="1_wall_script"]
+[ext_resource type="Material" path="res://materials/dream3d/interiors_a_wall_pixel_light_material.tres" id="2_wall_pixel_material"]
+[ext_resource type="Material" path="res://materials/dream3d/interiors_a_wall_vertical_fade_material.tres" id="3_wall_fade_material"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_wvhbo"]
+size = Vector3(1, 1, 0.1)
+
+[node name="WallStraight3D" type="Node3D" unique_id=1009904050]
+script = ExtResource("1_wall_script")
+; Keep the fade ShaderMaterial in the scene dependency graph so its sampler survives export.
+metadata/_pixel_light_fade_material = ExtResource("3_wall_fade_material")
+
+[node name="WallMesh" type="MeshInstance3D" parent="." unique_id=165521513]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+material_override = ExtResource("2_wall_pixel_material")
+mesh = SubResource("BoxMesh_wvhbo")

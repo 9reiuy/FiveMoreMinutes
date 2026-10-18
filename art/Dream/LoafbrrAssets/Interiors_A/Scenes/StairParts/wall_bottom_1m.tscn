@@ -1,0 +1,70 @@
+[gd_scene load_steps=6 format=3 uid="uid://cniqqn3oe8had"]
+
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="1_lx4ov"]
+[ext_resource type="Material" uid="uid://ckp17uxivi87k" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_B_Mat.tres" id="2_wjajr"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_q1yjl"]
+_surfaces = [{
+"aabb": AABB(-0.5, -0.2, 0.099999, 1, 0.2, 1e-05),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 151, 16, 0, 0, 0, 0, 255, 255, 151, 16, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0)
+}, {
+"aabb": AABB(-0.5, -0.2, -1.42456e-06, 1, 1e-05, 0.100001),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface_Ceiling_B",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 0, 0, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 254, 255, 0, 0, 0, 0, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ago0e"]
+resource_name = "Interiors_A_Wall_Bottom_1m"
+_surfaces = [{
+"aabb": AABB(-0.5, -0.2, 0.099999, 1, 0.2, 1e-05),
+"attribute_data": PackedByteArray(4, 0, 173, 35, 87, 85, 156, 18, 87, 85, 173, 35, 4, 0, 156, 18),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"material": ExtResource("1_lx4ov"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 255, 255, 0, 0, 255, 255, 0, 0, 0, 0, 151, 16, 255, 255, 0, 0, 255, 255, 151, 16, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 255, 127, 255, 127, 255, 127, 255, 127, 255, 127, 255, 127, 255, 127, 255, 127)
+}, {
+"aabb": AABB(-0.5, -0.2, -1.42456e-06, 1, 1e-05, 0.100001),
+"attribute_data": PackedByteArray(5, 128, 251, 255, 255, 255, 247, 127, 254, 255, 255, 255, 5, 128, 243, 127),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"material": ExtResource("2_wjajr"),
+"name": "Surface_Ceiling_B",
+"primitive": 3,
+"uv_scale": Vector4(0.666751, 0.019783, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 0, 0, 254, 255, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 254, 255, 0, 0, 0, 0, 255, 255, 255, 127, 255, 63, 255, 127, 255, 63, 255, 127, 255, 63, 255, 127, 255, 63)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_q1yjl")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_l8nrc"]
+data = PackedVector3Array(-0.5, -4.37114e-09, 0.0999996, 0.5, -4.37114e-09, 0.099999, 0.5, -0.2, 0.099999, -0.5, -0.2, 0.0999996, 0.5, -0.2, 0.099999, 0.5, -0.2, -1.42456e-06, -0.5, -4.37114e-09, 0.0999996, 0.5, -0.2, 0.099999, -0.5, -0.2, 0.0999996, -0.5, -0.2, 0.0999996, 0.5, -0.2, -1.42456e-06, -0.5, -0.2, -7.72876e-07)
+
+[node name="Wall_Bottom_1m" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_ago0e")
+skeleton = NodePath("")
+
+[node name="Wall_Bottom_1m" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Bottom_1m"]
+shape = SubResource("ConcavePolygonShape3D_l8nrc")

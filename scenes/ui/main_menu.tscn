@@ -1,15 +1,25 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://0c1w3fx0cnqt"]
 
-[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
-[ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
+[ext_resource type="Script" uid="uid://d2ir51df42u5j" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="Resource" uid="uid://b1f2o7rqduk6v" path="res://resources/demo_config.tres" id="2_config"]
 [ext_resource type="PackedScene" path="res://scenes/ui/settings_panel.tscn" id="3_settings"]
 [ext_resource type="PackedScene" path="res://scenes/ui/announcement_window.tscn" id="4_announcement"]
 [ext_resource type="PackedScene" path="res://scenes/ui/global_upgrade_panel.tscn" id="5_global_upgrades"]
-[ext_resource type="Script" path="res://scripts/ui/pixel_option_group.gd" id="6_option"]
+[ext_resource type="Script" uid="uid://vs8nyn8qbxo4" path="res://scripts/ui/pixel_option_group.gd" id="6_option"]
+[ext_resource type="Texture2D" uid="uid://droqxsco687b8" path="res://art/Home Screen/Home_Screen_background.png" id="7_home_background"]
+[ext_resource type="Texture2D" uid="uid://dkcogify0xh2b" path="res://art/Home Screen/Home_Screen_chr.png" id="8_home_character"]
+[ext_resource type="Texture2D" uid="uid://ccbtmal3g7vtq" path="res://art/Home Screen/Home_Screen_chr_eye.png" id="9_home_eye"]
+[ext_resource type="Texture2D" uid="uid://8l4mydb7admy" path="res://art/Home Screen/Home_Screen_chr_eye_mask.png" id="10_home_eye_mask"]
+[ext_resource type="Shader" uid="uid://copqxsmsnlde7" path="res://shaders/home_screen_eye_mask.gdshader" id="11_eye_mask_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_home_eye_mask"]
+shader = ExtResource("11_eye_mask_shader")
+shader_parameter/mask_texture = ExtResource("10_home_eye_mask")
+shader_parameter/mask_offset_uv = Vector2(0, 0)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_overlay"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=1067530081]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,7 +29,7 @@ grow_vertical = 2
 script = ExtResource("1_menu")
 config = ExtResource("2_config")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1745428191]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,49 +39,97 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.055, 0.078, 0.051, 1)
 
-[node name="GridA" type="ColorRect" parent="."]
-layout_mode = 0
-offset_left = 38.0
-offset_top = 35.0
-offset_right = 602.0
-offset_bottom = 37.0
+[node name="HomeScreenVisual" type="AspectRatioContainer" parent="." unique_id=125505659]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-color = Color(0.25, 0.33, 0.37, 0.35)
+ratio = 1.77465
 
-[node name="GridB" type="ColorRect" parent="."]
-layout_mode = 0
-offset_left = 38.0
-offset_top = 321.0
-offset_right = 602.0
-offset_bottom = 323.0
+[node name="Canvas" type="Control" parent="HomeScreenVisual" unique_id=1546374972]
+layout_mode = 2
 mouse_filter = 2
-color = Color(0.25, 0.33, 0.37, 0.2)
 
-[node name="Title" type="Label" parent="."]
+[node name="Home_Screen_background" type="TextureRect" parent="HomeScreenVisual/Canvas" unique_id=552936656]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("7_home_background")
+expand_mode = 1
+
+[node name="CharacterLayer" type="Control" parent="HomeScreenVisual/Canvas" unique_id=471056540]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Home_Screen_chr" type="TextureRect" parent="HomeScreenVisual/Canvas/CharacterLayer" unique_id=2082364080]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("8_home_character")
+expand_mode = 1
+
+[node name="Home_Screen_chr_eye_mask" type="TextureRect" parent="HomeScreenVisual/Canvas/CharacterLayer" unique_id=429061002]
+visible = false
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("10_home_eye_mask")
+expand_mode = 1
+
+[node name="Home_Screen_chr_eye" type="TextureRect" parent="HomeScreenVisual/Canvas/CharacterLayer" unique_id=845208884]
+texture_filter = 1
+material = SubResource("ShaderMaterial_home_eye_mask")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("9_home_eye")
+expand_mode = 1
+
+[node name="GameTitle" type="Label" parent="." unique_id=391452783]
+z_index = 3
 layout_mode = 0
-offset_left = 58.0
-offset_top = 50.0
-offset_right = 350.0
-offset_bottom = 112.0
-theme_override_colors/font_color = Color(0.196, 0.357, 0.698, 1)
-theme_override_colors/font_outline_color = Color(0.196, 0.357, 0.698, 1)
+offset_left = 34.0
+offset_top = 39.0
+offset_right = 238.00008
+offset_bottom = 71.000046
+theme_override_colors/font_color = Color(0.223529, 0.435294, 0.886275, 1)
+theme_override_colors/font_outline_color = Color(0.025, 0.047, 0.094, 1)
 theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 20
 text = "FIVE MINUTES MORE"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="."]
-layout_mode = 0
-offset_left = 61.0
-offset_top = 94.0
-offset_right = 350.0
-offset_bottom = 120.0
-theme_override_colors/font_color = Color(0.216, 0.298, 0.302, 1)
-theme_override_font_sizes/font_size = 10
-text = "SLEEP PROTOCOL // MONDAY"
-
-[node name="FooterLink" type="Control" parent="."]
-z_index = 2
-layout_mode = 0
+[node name="FooterLink" type="Control" parent="." unique_id=870369971]
+z_index = 4
+anchors_preset = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -82,17 +140,18 @@ offset_right = 210.0
 offset_bottom = -7.0
 mouse_filter = 2
 
-[node name="VersionText" type="Label" parent="FooterLink"]
+[node name="VersionText" type="Label" parent="FooterLink" unique_id=978752769]
 layout_mode = 0
 mouse_filter = 0
-text = "版本号V0.4.7"
+text = "版本号V0.5.0"
 
-[node name="GroupText" type="Label" parent="FooterLink"]
+[node name="GroupText" type="Label" parent="FooterLink" unique_id=1010590160]
 layout_mode = 0
 mouse_filter = 0
 text = "游戏存活进度群:833796070"
 
-[node name="MenuContent" type="Control" parent="."]
+[node name="MenuContent" type="Control" parent="." unique_id=1667871206]
+z_index = 3
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -101,7 +160,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="MenuSelectionFrame" type="Control" parent="MenuContent"]
+[node name="MenuTriangle" type="Control" parent="MenuContent" unique_id=1145875126]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -110,46 +169,55 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("6_option")
+show_selection_frame = false
+enable_hover_scale = false
 
-[node name="ButtonList" type="VBoxContainer" parent="MenuContent"]
+[node name="ButtonList" type="HBoxContainer" parent="MenuContent" unique_id=1113936074]
 z_index = 1
-layout_mode = 0
-offset_left = 365.0
-offset_top = 52.0
-offset_right = 575.0
-offset_bottom = 314.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.035
+anchor_top = 0.54
+anchor_right = 0.965
+anchor_bottom = 0.68
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+alignment = 1
 
-[node name="Continue" type="Button" parent="MenuContent/ButtonList"]
-custom_minimum_size = Vector2(210, 36)
+[node name="Continue" type="Button" parent="MenuContent/ButtonList" unique_id=1915106477]
+custom_minimum_size = Vector2(96, 40)
 layout_mode = 2
-text = "继续游戏"
+text = "继续"
 
-[node name="Start" type="Button" parent="MenuContent/ButtonList"]
-custom_minimum_size = Vector2(210, 36)
+[node name="Start" type="Button" parent="MenuContent/ButtonList" unique_id=1454883747]
+custom_minimum_size = Vector2(108, 40)
 layout_mode = 2
 text = "剧情模式"
 
-[node name="Endless" type="Button" parent="MenuContent/ButtonList"]
-custom_minimum_size = Vector2(210, 36)
+[node name="CharacterGap" type="Control" parent="MenuContent/ButtonList" unique_id=564507989]
+custom_minimum_size = Vector2(112, 1)
 layout_mode = 2
-text = "无尽模式"
+size_flags_horizontal = 3
+mouse_filter = 2
 
-[node name="Somnia" type="Button" parent="MenuContent/ButtonList"]
-custom_minimum_size = Vector2(210, 36)
+[node name="Settings" type="Button" parent="MenuContent/ButtonList" unique_id=1045891754]
+custom_minimum_size = Vector2(108, 40)
 layout_mode = 2
-text = "眠网"
+text = "设置"
 
-[node name="Quit" type="Button" parent="MenuContent/ButtonList"]
-custom_minimum_size = Vector2(210, 36)
+[node name="Quit" type="Button" parent="MenuContent/ButtonList" unique_id=797342241]
+custom_minimum_size = Vector2(108, 40)
 layout_mode = 2
 text = "退出游戏"
 
-[node name="AnnouncementWindow" parent="." instance=ExtResource("4_announcement")]
+[node name="AnnouncementWindow" parent="." unique_id=1523197813 instance=ExtResource("4_announcement")]
 z_index = 5
+layout_mode = 1
 
-[node name="Overlay" type="Control" parent="."]
-z_index = 10
+[node name="Overlay" type="Control" parent="." unique_id=1987058936]
 visible = false
+z_index = 10
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -157,17 +225,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Shade" type="ColorRect" parent="Overlay"]
+[node name="Shade" type="ColorRect" parent="Overlay" unique_id=1521473095]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 color = Color(0.01, 0.012, 0.018, 0.84)
 
-[node name="OverlayOptionGroup" type="Control" parent="Overlay"]
+[node name="OverlayOptionGroup" type="Control" parent="Overlay" unique_id=699184762]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -177,7 +244,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("6_option")
 
-[node name="Panel" type="PanelContainer" parent="Overlay"]
+[node name="Panel" type="PanelContainer" parent="Overlay" unique_id=640075542]
 layout_mode = 0
 offset_left = 150.0
 offset_top = 18.0
@@ -185,18 +252,18 @@ offset_right = 490.0
 offset_bottom = 342.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_overlay")
 
-[node name="Content" type="VBoxContainer" parent="Overlay/Panel"]
+[node name="Content" type="VBoxContainer" parent="Overlay/Panel" unique_id=1360670059]
 layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="Title" type="Label" parent="Overlay/Panel/Content"]
+[node name="Title" type="Label" parent="Overlay/Panel/Content" unique_id=512936498]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "标题"
 horizontal_alignment = 1
 
-[node name="Message" type="Label" parent="Overlay/Panel/Content"]
+[node name="Message" type="Label" parent="Overlay/Panel/Content" unique_id=920524890]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.62, 0.62, 0.66, 1)
@@ -205,25 +272,25 @@ text = "说明"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SettingsPanel" parent="Overlay/Panel/Content" instance=ExtResource("3_settings")]
+[node name="SettingsPanel" parent="Overlay/Panel/Content" unique_id=1813441976 instance=ExtResource("3_settings")]
 visible = false
 layout_mode = 2
 
-[node name="GlobalUpgradePanel" parent="Overlay/Panel/Content" instance=ExtResource("5_global_upgrades")]
+[node name="GlobalUpgradePanel" parent="Overlay/Panel/Content" unique_id=1552854184 instance=ExtResource("5_global_upgrades")]
 visible = false
 layout_mode = 2
 
-[node name="Buttons" type="HBoxContainer" parent="Overlay/Panel/Content"]
+[node name="Buttons" type="HBoxContainer" parent="Overlay/Panel/Content" unique_id=858635329]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 12
+alignment = 1
 
-[node name="Primary" type="Button" parent="Overlay/Panel/Content/Buttons"]
+[node name="Primary" type="Button" parent="Overlay/Panel/Content/Buttons" unique_id=203084803]
 custom_minimum_size = Vector2(128, 36)
 layout_mode = 2
 text = "确认"
 
-[node name="Back" type="Button" parent="Overlay/Panel/Content/Buttons"]
+[node name="Back" type="Button" parent="Overlay/Panel/Content/Buttons" unique_id=531227166]
 custom_minimum_size = Vector2(128, 36)
 layout_mode = 2
 text = "返回"

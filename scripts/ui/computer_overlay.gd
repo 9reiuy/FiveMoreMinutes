@@ -68,6 +68,7 @@ var app_window_rect := APP_WINDOW_NORMAL_RECT
 var _anim_tween: Tween
 var bedroom_time_minutes := 1260.0
 var persistent_state: Dictionary = {}
+var notepad_lines: Array = []
 @onready var blackjack_app: BlackjackApp = $BlackjackApp
 @onready var dream_browser_app: DreamBrowserApp = $DreamBrowserApp
 
@@ -77,6 +78,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	blackjack_app.balance_changed.connect(_on_blackjack_balance_changed)
 	dream_browser_app.weapon_selected.connect(_on_browser_weapon_selected)
+	notepad_lines = TextContent.get_dialogue(&"computer_readme").get("lines", []).duplicate(true)
 	_layout_active_app()
 
 
@@ -226,8 +228,8 @@ func _draw() -> void:
 # ---- 以下为纯视觉绘制，全部为原创像素风内容 ----
 
 func _draw_monitor_bezel() -> void:
-	draw_rect(BEZEL_RECT, Color("23262e"))
-	draw_rect(BEZEL_RECT, Color("3c414d"), false, 1.0)
+	draw_rect(BEZEL_RECT, Color("252d47"))
+	draw_rect(BEZEL_RECT, Color("7184aa"), false, 1.0)
 	# 屏幕底色（保证任何情况下不会出现空白黑屏）。
 	draw_rect(SCREEN_RECT, Color("141a26"))
 
@@ -264,8 +266,8 @@ func _draw_pixel_circle(center: Vector2, radius: float, color: Color) -> void:
 
 func _draw_top_bar() -> void:
 	var bar := Rect2(SCREEN_RECT.position, Vector2(SCREEN_RECT.size.x, TOP_BAR_HEIGHT))
-	draw_rect(bar, Color("2c3140"))
-	draw_rect(Rect2(bar.position.x, bar.end.y - 1.0, bar.size.x, 1.0), Color("3f4757"))
+	draw_rect(bar, Color("4a587d"))
+	draw_rect(Rect2(bar.position.x, bar.end.y - 1.0, bar.size.x, 1.0), Color("91a8cf"))
 	var font := get_theme_default_font()
 	draw_string(font, bar.position + Vector2(6, 10), "旧梦OS 98 · 未激活", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("9aa4b2"))
 	# 右侧状态小图标（音量/信号占位，仅视觉）。
@@ -330,30 +332,29 @@ func _draw_back_window() -> void:
 func _draw_main_window() -> void:
 	var content := WINDOW_SHELL.content_rect(app_window_rect)
 	var font := get_theme_default_font()
-	# 窗口正文：轻微压抑风格的静态文字（无交互）。
-	var lines := [
-		"今天是1999年",
-		"",
-		"备忘：",
-		"1. 交房租。",
-		"2. 不要盯着屏幕太久。",
-		"3. 梦里的事情，醒来就该忘掉。",
-		"",
-		"—— 系统提示：该文档从未被保存。"
-	]
-	for index in lines.size():
-		draw_string(font, content.position + Vector2(8, 15 + index * 13), lines[index], HORIZONTAL_ALIGNMENT_LEFT, int(content.size.x - 16), 8, Color("8a93a8"))
+	# 剧情正文来自可编辑数据；桌面外壳和普通系统标签仍由本UI脚本绘制。
+	for index in notepad_lines.size():
+		var line: Dictionary = notepad_lines[index] if notepad_lines[index] is Dictionary else {}
+		draw_string(
+			font,
+			content.position + Vector2(8, 15 + index * 13),
+			str(line.get("text", "")),
+			HORIZONTAL_ALIGNMENT_LEFT,
+			int(content.size.x - 16),
+			8,
+			Color.from_string(str(line.get("text_color", "#8A93A8")), Color("8a93a8"))
+		)
 
 
 func _draw_taskbar() -> void:
 	var bar := Rect2(SCREEN_RECT.position.x, SCREEN_RECT.end.y - TASKBAR_HEIGHT, SCREEN_RECT.size.x, TASKBAR_HEIGHT)
-	draw_rect(bar, Color("333a4a"))
-	draw_rect(Rect2(bar.position.x, bar.position.y, bar.size.x, 1.0), Color("4a5366"))
+	draw_rect(bar, Color("455274"))
+	draw_rect(Rect2(bar.position.x, bar.position.y, bar.size.x, 1.0), Color("91a8cf"))
 	var font := get_theme_default_font()
 	# "开始"按钮（仅视觉）。
 	var start := START_BUTTON_RECT
-	draw_rect(start, Color("414a5e"))
-	draw_rect(start, Color("6f7989"), false, 1.0)
+	draw_rect(start, Color("53648d"))
+	draw_rect(start, Color("a8bbe0"), false, 1.0)
 	draw_rect(Rect2(start.position + Vector2(3, 3), Vector2(4, 4)), Color("5c8a72"))
 	draw_rect(Rect2(start.position + Vector2(8, 3), Vector2(4, 4)), Color("8a5c6e"))
 	draw_rect(Rect2(start.position + Vector2(3, 8), Vector2(4, 4)), Color("5c6e8a"))
@@ -363,19 +364,19 @@ func _draw_taskbar() -> void:
 		var app_id := running_apps[index]
 		var task := _task_rect(index)
 		var minimized := bool(minimized_apps.get(app_id, false))
-		var task_fill := Color("222936") if minimized else Color("374153")
+		var task_fill := Color("2a3249") if minimized else Color("4b587d")
 		if hovered_task == app_id: task_fill = task_fill.lightened(0.12)
 		draw_rect(task, task_fill)
-		draw_rect(task, Color("57628a"), false, 1.0)
+		draw_rect(task, Color("8298bf"), false, 1.0)
 		draw_string(font, task.position + Vector2(5, 11), _app_task_name(app_id), HORIZONTAL_ALIGNMENT_LEFT, int(task.size.x - 10), 7, Color("aab3c5"))
 	# 右下角时钟（静态，仅视觉）。
 	draw_string(font, Vector2(bar.end.x - 34, bar.position.y + 12), RunSettlement.format_time(bedroom_time_minutes), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("9aa4b2"))
 
 
 func _draw_start_menu() -> void:
-	draw_rect(START_MENU_RECT, Color("141a24"))
-	draw_rect(START_MENU_RECT, Color("596577"), false, 1.0)
-	draw_rect(Rect2(START_MENU_RECT.position, Vector2(20, START_MENU_RECT.size.y)), Color("2d5269"))
+	draw_rect(START_MENU_RECT, Color("202942"))
+	draw_rect(START_MENU_RECT, Color("91a8cf"), false, 1.0)
+	draw_rect(Rect2(START_MENU_RECT.position, Vector2(20, START_MENU_RECT.size.y)), Color("4b587d"))
 	var fill := Color("6c3542") if hovered_shutdown else Color("3b303a")
 	draw_rect(SHUTDOWN_RECT, fill)
 	draw_rect(SHUTDOWN_RECT, Color("687484"), false, 1.0)
@@ -385,7 +386,7 @@ func _draw_start_menu() -> void:
 
 func _draw_close_button() -> void:
 	# 唯一功能按钮：关闭整个电脑界面（悬停提亮）。
-	var base := Color("8a3b47") if not hovered_close else Color("a84a58")
+	var base := Color("5c668d") if not hovered_close else Color("7d91bb")
 	draw_rect(CLOSE_RECT, base)
 	draw_rect(CLOSE_RECT, Color("d8dde8"), false, 1.0)
 	draw_line(CLOSE_RECT.position + Vector2(5, 3), CLOSE_RECT.end - Vector2(5, 3), Color.WHITE, 2.0)
@@ -494,9 +495,15 @@ func _layout_active_app() -> void:
 
 func _validate_story_weapon() -> void:
 	var current := str(persistent_state.get("current_weapon_id", "basic"))
-	if not dream_browser_app.is_weapon_unlocked(current):
-		persistent_state.current_weapon_id = "basic"
-		story_weapon_changed.emit("basic")
+	var sanitized := DreamGunAtlas.sanitize_weapon_id(current)
+	if sanitized.is_empty() or not dream_browser_app.is_weapon_unlocked(sanitized):
+		# Deleted/unknown IDs from old saves become empty-handed; never grant a
+		# replacement weapon during validation.
+		persistent_state.current_weapon_id = ""
+		story_weapon_changed.emit("")
+		return
+	if sanitized != current:
+		persistent_state.current_weapon_id = sanitized
 
 
 func _on_browser_weapon_selected(weapon_id: String) -> void:

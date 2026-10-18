@@ -1,0 +1,317 @@
+{
+  "root": "E:\\Agent\\5MinuteMore\\5min more",
+  "files": [
+    {
+      "relative": ".runtime/face_art/face_room_motion.gif",
+      "bytes": 2733490,
+      "modified_ms": 1790927378111.4165,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_000.png",
+      "bytes": 58536,
+      "modified_ms": 1790927286114.9429,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_001.png",
+      "bytes": 60111,
+      "modified_ms": 1790927286188.0679,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_002.png",
+      "bytes": 59329,
+      "modified_ms": 1790927286259.6975,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_003.png",
+      "bytes": 60129,
+      "modified_ms": 1790927286330.7957,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_004.png",
+      "bytes": 58763,
+      "modified_ms": 1790927286401.6929,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_005.png",
+      "bytes": 60177,
+      "modified_ms": 1790927286469.151,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_006.png",
+      "bytes": 59241,
+      "modified_ms": 1790927286539.0952,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_007.png",
+      "bytes": 59430,
+      "modified_ms": 1790927286604.9683,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_008.png",
+      "bytes": 60912,
+      "modified_ms": 1790927286674.1643,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_009.png",
+      "bytes": 59352,
+      "modified_ms": 1790927286745.1577,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_010.png",
+      "bytes": 61792,
+      "modified_ms": 1790927286818.3037,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_011.png",
+      "bytes": 59695,
+      "modified_ms": 1790927286890.2307,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_012.png",
+      "bytes": 61601,
+      "modified_ms": 1790927286959.328,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_013.png",
+      "bytes": 61454,
+      "modified_ms": 1790927287032.9453,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_014.png",
+      "bytes": 60451,
+      "modified_ms": 1790927287121.9019,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_015.png",
+      "bytes": 60650,
+      "modified_ms": 1790927287204.862,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_016.png",
+      "bytes": 60459,
+      "modified_ms": 1790927287277.6672,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_017.png",
+      "bytes": 62654,
+      "modified_ms": 1790927287349.4678,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_018.png",
+      "bytes": 60912,
+      "modified_ms": 1790927287417.6377,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_019.png",
+      "bytes": 62264,
+      "modified_ms": 1790927287491.384,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_020.png",
+      "bytes": 61020,
+      "modified_ms": 1790927287560.3677,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_021.png",
+      "bytes": 62314,
+      "modified_ms": 1790927287629.2378,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_022.png",
+      "bytes": 60912,
+      "modified_ms": 1790927287699.5713,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_023.png",
+      "bytes": 60713,
+      "modified_ms": 1790927287769.4563,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_024.png",
+      "bytes": 62803,
+      "modified_ms": 1790927287841.856,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_025.png",
+      "bytes": 62117,
+      "modified_ms": 1790927287915.2163,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_026.png",
+      "bytes": 62367,
+      "modified_ms": 1790927287985.2637,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_027.png",
+      "bytes": 60608,
+      "modified_ms": 1790927288056.5908,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_028.png",
+      "bytes": 63713,
+      "modified_ms": 1790927288125.9124,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_029.png",
+      "bytes": 64261,
+      "modified_ms": 1790927288193.5203,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_030.png",
+      "bytes": 63232,
+      "modified_ms": 1790927288265.2263,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_031.png",
+      "bytes": 64361,
+      "modified_ms": 1790927288338.0022,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_032.png",
+      "bytes": 62704,
+      "modified_ms": 1790927288410.4597,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_033.png",
+      "bytes": 64473,
+      "modified_ms": 1790927288482.267,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_034.png",
+      "bytes": 61863,
+      "modified_ms": 1790927288553.989,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/frame_035.png",
+      "bytes": 64060,
+      "modified_ms": 1790927288624.4597,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/light_0.png",
+      "bytes": 60204,
+      "modified_ms": 1790927285979.362,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/light_1.png",
+      "bytes": 58793,
+      "modified_ms": 1790927286045.9307,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/style_0_palette_0.png",
+      "bytes": 108748,
+      "modified_ms": 1790927285069.091,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/style_0_palette_1.png",
+      "bytes": 50767,
+      "modified_ms": 1790927285656.743,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/style_1_palette_0.png",
+      "bytes": 60435,
+      "modified_ms": 1790927285327.9019,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/face_art/style_1_palette_1.png",
+      "bytes": 45853,
+      "modified_ms": 1790927285913.6543,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/nyangeon_reference/capture.gd",
+      "bytes": 2726,
+      "modified_ms": 1791742850245.1052,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/nyangeon_reference/capture.log",
+      "bytes": 218,
+      "modified_ms": 1791742855725.1304,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/nyangeon_reference/font_capture.gd",
+      "bytes": 600,
+      "modified_ms": 1791742915115.8203,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/nyangeon_reference/font_capture.log",
+      "bytes": 172,
+      "modified_ms": 1791742921588.8545,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/nyangeon_reference/package.ps1",
+      "bytes": 1515,
+      "modified_ms": 1791742917582.4668,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/nyangeon_reference/yuzu_hair.gd",
+      "bytes": 2290,
+      "modified_ms": 1791725368000,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": ".runtime/localappdata/Godot/editor_doc_cache-4.7.res",
+      "bytes": 3269297,
+      "modified_ms": 1791224924771.8352,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": "out.txt",
+      "bytes": 75,
+      "modified_ms": 1789105639619.2122,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    },
+    {
+      "relative": "test_results.txt",
+      "bytes": 92,
+      "modified_ms": 1790663310262.1724,
+      "reason": "authorized_non_game_reference_output_or_cache"
+    }
+  ]
+}

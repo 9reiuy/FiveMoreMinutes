@@ -20,10 +20,10 @@ script = ExtResource("1_panel")
 
 [node name="CRTOverlay" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 62.0
-offset_top = 94.0
-offset_right = 578.0
-offset_bottom = 316.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 640.0
+offset_bottom = 360.0
 mouse_filter = 2
 material = SubResource("ShaderMaterial_crt")
 color = Color(1, 1, 1, 1)

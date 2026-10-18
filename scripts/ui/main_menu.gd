@@ -4,20 +4,20 @@ const SFX := preload("res://scripts/audio/sfx_manager.gd")
 
 signal continue_requested
 signal new_game_requested
-signal endless_requested
 signal global_progress_changed
 signal quit_requested
 
 @export var config: DemoConfig
 
 @onready var menu_content: Control = $MenuContent
-@onready var menu_option_group: PixelOptionGroup = $MenuContent/MenuSelectionFrame
-@onready var button_list: VBoxContainer = $MenuContent/ButtonList
+@onready var menu_option_group: PixelOptionGroup = $MenuContent/MenuTriangle
+@onready var button_list: HBoxContainer = $MenuContent/ButtonList
 @onready var continue_button: Button = $MenuContent/ButtonList/Continue
 @onready var start_button: Button = $MenuContent/ButtonList/Start
-@onready var endless_button: Button = $MenuContent/ButtonList/Endless
-@onready var somnia_button: Button = $MenuContent/ButtonList/Somnia
+@onready var settings_button: Button = $MenuContent/ButtonList/Settings
 @onready var quit_button: Button = $MenuContent/ButtonList/Quit
+@onready var home_screen_eye: TextureRect = $HomeScreenVisual/Canvas/CharacterLayer/Home_Screen_chr_eye
+@onready var home_screen_eye_mask: TextureRect = $HomeScreenVisual/Canvas/CharacterLayer/Home_Screen_chr_eye_mask
 @onready var overlay: Control = $Overlay
 @onready var overlay_option_group: PixelOptionGroup = $Overlay/OverlayOptionGroup
 @onready var overlay_title: Label = $Overlay/Panel/Content/Title
@@ -35,27 +35,47 @@ var has_save := false
 var overlay_mode := ""
 var progression_state: Dictionary = {}
 
-# 主菜单选项纯文字配色：默认 #374C4D，悬停变亮。
-const MENU_ENTRY_COLOR := Color("374c4d")
-const MENU_ENTRY_HOVER_COLOR := Color("8fb4b5")
-const MENU_ENTRY_DISABLED_COLOR := Color("233031")
+# 主菜单选项使用 Home Screen 美术指定的蓝色：默认 #264586，悬停 #396FE2。
+const MENU_ENTRY_COLOR := Color("264586")
+const MENU_ENTRY_HOVER_COLOR := Color("396fe2")
+const MENU_ENTRY_DISABLED_COLOR := MENU_ENTRY_COLOR
+
+# Four Home Screen textures share one 1260x710 source canvas.  The center is
+# derived from the mask's actual non-transparent bounds (x625..672/y207..226).
+const HOME_SCREEN_CANVAS_SIZE := Vector2(1260.0, 710.0)
+const EYE_FOLLOW_SOURCE_CENTER := Vector2(648.5, 216.5)
+# Latest art alignment: compared with the old symmetric 5px range, top,
+# bottom and left are reduced by 1px, while right is extended by 1px.
+const EYE_OFFSET_LEFT := 4.0
+const EYE_OFFSET_RIGHT := 6.0
+const EYE_OFFSET_UP := 4.0
+const EYE_OFFSET_DOWN := 4.0
+const EYE_FOLLOW_DISTANCE := 200.0
+const EYE_FOLLOW_RESPONSE_SECONDS := 0.08
+const EYE_IDLE_RETURN_DELAY_SECONDS := 3.0
+const EYE_IDLE_RETURN_RESPONSE_SECONDS := 0.28
+
+var eye_offset := Vector2.ZERO
+var eye_origin_position := Vector2.ZERO
+var eye_material: ShaderMaterial
+var last_mouse_position := Vector2.ZERO
+var eye_mouse_idle_seconds := 0.0
 
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	button_list.add_theme_constant_override("separation", config.main_menu_button_spacing)
-	for entry in [continue_button, start_button, endless_button, somnia_button, quit_button]:
+	for entry in [continue_button, start_button, settings_button, quit_button]:
 		_style_menu_entry(entry)
 	for overlay_button in [primary_button, back_button]:
 		_style_button(overlay_button)
 	continue_button.disabled = not has_save
-	menu_option_group.register_options([continue_button, start_button, endless_button, somnia_button, quit_button])
+	menu_option_group.register_options([continue_button, start_button, settings_button, quit_button])
 	overlay_option_group.register_options([primary_button, back_button])
 	continue_button.gui_input.connect(_on_continue_gui_input)
 	continue_button.pressed.connect(_on_continue)
 	start_button.pressed.connect(_on_start)
-	endless_button.pressed.connect(_on_endless)
-	somnia_button.pressed.connect(_show_somnia)
+	settings_button.pressed.connect(_show_settings)
 	quit_button.pressed.connect(_show_confirmation.bind("quit"))
 	primary_button.pressed.connect(_on_primary)
 	back_button.pressed.connect(_return_to_menu)
@@ -70,10 +90,81 @@ func _ready() -> void:
 	# 公告不再进入主菜单自动弹出；打开入口为版本号点击 show_announcement()。
 	if is_instance_valid(announcement_window):
 		announcement_window.closed.connect(_on_announcement_closed)
+	eye_origin_position = home_screen_eye.position
+	eye_material = home_screen_eye.material as ShaderMaterial
+	if eye_material != null:
+		# 真实的不规则 Alpha 遮罩来自固定的 Mask 节点；Eye 自身只移动 position。
+		eye_material.set_shader_parameter(&"mask_texture", home_screen_eye_mask.texture)
+	last_mouse_position = get_viewport().get_mouse_position()
+	_set_eye_position(Vector2.ZERO)
+
+
+func _process(delta: float) -> void:
+	_update_eye_follow(delta)
+
+
+func _update_eye_follow(delta: float) -> void:
+	if not is_instance_valid(home_screen_eye) or not home_screen_eye.is_visible_in_tree():
+		return
+	var eye_rect := home_screen_eye_mask.get_global_rect()
+	if eye_rect.size.x <= 0.0 or eye_rect.size.y <= 0.0:
+		return
+	# Both values are in Control/global canvas coordinates.  This deliberately
+	# avoids Node2D.to_local(), which does not exist for Control nodes.
+	var eye_center_ratio := EYE_FOLLOW_SOURCE_CENTER / HOME_SCREEN_CANVAS_SIZE
+	var eye_screen_center := eye_rect.position + eye_rect.size * eye_center_ratio
+	var mouse_position := get_viewport().get_mouse_position()
+	if mouse_position.distance_squared_to(last_mouse_position) > 0.01:
+		last_mouse_position = mouse_position
+		eye_mouse_idle_seconds = 0.0
+	else:
+		eye_mouse_idle_seconds += delta
+	var mouse_delta := mouse_position - eye_screen_center
+	var target_offset := Vector2.ZERO
+	if eye_mouse_idle_seconds < EYE_IDLE_RETURN_DELAY_SECONDS and mouse_delta.length_squared() > 0.0001:
+		var strength := clampf(mouse_delta.length() / EYE_FOLLOW_DISTANCE, 0.0, 1.0)
+		var direction := mouse_delta.normalized()
+		var horizontal_limit := EYE_OFFSET_RIGHT if direction.x >= 0.0 else EYE_OFFSET_LEFT
+		var vertical_limit := EYE_OFFSET_DOWN if direction.y >= 0.0 else EYE_OFFSET_UP
+		# Intersect the mouse direction with the asymmetric movement rectangle.
+		# This preserves direction while reaching the exact -4/+6/-4/+4 borders.
+		var x_distance := horizontal_limit / absf(direction.x) if absf(direction.x) > 0.0001 else INF
+		var y_distance := vertical_limit / absf(direction.y) if absf(direction.y) > 0.0001 else INF
+		target_offset = direction * minf(x_distance, y_distance) * strength
+	# Exponential smoothing gives the requested short response without spring,
+	# overshoot, or accumulated position drift.
+	var response_seconds := EYE_IDLE_RETURN_RESPONSE_SECONDS if eye_mouse_idle_seconds >= EYE_IDLE_RETURN_DELAY_SECONDS else EYE_FOLLOW_RESPONSE_SECONDS
+	var response := 1.0 - exp(-delta / maxf(response_seconds, 0.001))
+	eye_offset = _clamp_eye_offset(eye_offset.lerp(target_offset, response))
+	_set_eye_position(eye_offset)
+
+
+func _set_eye_position(offset_pixels: Vector2) -> void:
+	if not is_instance_valid(home_screen_eye):
+		return
+	# 不累加、不缩放、不旋转：每帧只写入相对于原始布局的二维位置。
+	eye_offset = _clamp_eye_offset(offset_pixels)
+	home_screen_eye.position = eye_origin_position + eye_offset
+	if eye_material == null:
+		return
+	var safe_size := Vector2(maxf(home_screen_eye.size.x, 1.0), maxf(home_screen_eye.size.y, 1.0))
+	# Eye 节点移动后反向补偿遮罩采样坐标，使 Mask 始终固定在原始 Canvas。
+	eye_material.set_shader_parameter(&"mask_offset_uv", eye_offset / safe_size)
+
+
+func _clamp_eye_offset(value: Vector2) -> Vector2:
+	return Vector2(
+		clampf(value.x, -EYE_OFFSET_LEFT, EYE_OFFSET_RIGHT),
+		clampf(value.y, -EYE_OFFSET_UP, EYE_OFFSET_DOWN)
+	)
+
+
+func _exit_tree() -> void:
+	_set_eye_position(Vector2.ZERO)
 
 
 func _style_menu_entry(button: Button) -> void:
-	# 纯文字选项：无按钮底框，悬停时颜色变亮并轻微放大。
+	# 纯文字选项：无按钮底框，悬停只改变文字颜色；Triangle 由独立层绘制。
 	button.focus_mode = Control.FOCUS_NONE
 	button.flat = true
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -128,30 +219,10 @@ func _on_start() -> void:
 		new_game_requested.emit()
 
 
-func _on_endless() -> void:
-	_play_confirm()
-	endless_requested.emit()
-
-
 func configure_progression(state: Dictionary) -> void:
 	progression_state = state
 	if is_node_ready():
 		global_upgrade_panel.configure(progression_state)
-
-
-func _show_somnia() -> void:
-	_play_confirm()
-	overlay_mode = "somnia"
-	overlay_title.text = "眠网 // GLOBAL UPGRADES"
-	overlay_message.visible = false
-	primary_button.visible = false
-	settings_panel.visible = false
-	global_upgrade_panel.visible = true
-	global_upgrade_panel.configure(progression_state)
-	back_button.text = "返回"
-	menu_content.visible = false
-	menu_option_group.clear_highlight()
-	overlay.visible = true
 
 
 func _on_global_progress_changed() -> void:

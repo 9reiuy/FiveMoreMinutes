@@ -1,0 +1,49 @@
+[gd_scene load_steps=5 format=4 uid="uid://b3jit61728enl"]
+
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="1_wwv8t"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_52d8k"]
+_surfaces = [{
+"aabb": AABB(-1.5, -4.37114e-09, 0.0999999, 3, 3, 1e-05),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAAKAAEACgAEAAEAAwAKAAAACgAFAAQAAwALAAoACwAFAAoABgALAAMACwAHAAUABgAIAAsACAAHAAsACAAJAAcA"),
+"lods": [1e-10, PackedByteArray("AAABAAIAAAADAAEAAwAEAAEAAwAFAAQABgAFAAMABgAHAAUACAAHAAYACAAJAAcA")],
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("qqoAAAAAAAD///9/twEAAP//AAAAAAAAVVUAAAAAAAD/////bgMAAKqq//9uAwAAAAAAAAAAAABVVf//bgMAAAAA/3+3AQAAAAD//24DAACqqv9/twEAAFVV/3+3AQAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vq60c"]
+resource_name = "Interiors_A_Wall_3m_1Side"
+_surfaces = [{
+"aabb": AABB(-1.5, -4.37114e-09, 0.0999999, 3, 3, 1e-05),
+"attribute_data": PackedByteArray("qqr//////3//////VVX/////AACqqgAAAAD//1VVAAAAAP9/AAAAAKqq/39VVf9/"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAAKAAEACgAEAAEAAwAKAAAACgAFAAQAAwALAAoACwAFAAoABgALAAMACwAHAAUABgAIAAsACAAHAAsACAAJAAcA"),
+"lods": [1e-10, PackedByteArray("AAABAAIAAAADAAEAAwAEAAEAAwAFAAQABgAFAAMABgAHAAUACAAHAAYACAAJAAcA")],
+"material": ExtResource("1_wwv8t"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("qqoAAAAAAID///9/twEAgP//AAAAAACAVVUAAAAAAID/////bgMAgKqq//9uAwCAAAAAAAAAAIBVVf//bgMAgAAA/3+3AQCAAAD//24DAICqqv9/twEAgFVV/3+3AQCA/3////9/////f////3////9/////f////3////9/////f////3////9/////f///")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_52d8k")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_owtq2"]
+data = PackedVector3Array(-1.5, 3, 0.1, 1.5, -4.37114e-09, 0.0999999, -1.5, -4.37114e-09, 0.0999999, -1.5, 3, 0.1, 1.5, 3, 0.1, 1.5, -4.37114e-09, 0.0999999)
+
+[node name="Wall_3m_1Side" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_vq60c")
+skeleton = NodePath("")
+
+[node name="Wall_3m_1Side" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_3m_1Side"]
+shape = SubResource("ConcavePolygonShape3D_owtq2")

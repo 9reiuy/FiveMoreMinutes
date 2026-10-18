@@ -1,189 +1,258 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene format=3 uid="uid://dhiavm5cgwwpx"]
 
-[ext_resource type="Script" path="res://scripts/entities/dream_player.gd" id="1_player"]
-[ext_resource type="Script" path="res://scripts/dream/auto_weapon.gd" id="2_weapon"]
-[ext_resource type="Script" path="res://scripts/dream/beam_weapon.gd" id="3_beam"]
-[ext_resource type="Script" path="res://scripts/dream/shotgun_weapon.gd" id="4_shotgun"]
-[ext_resource type="Script" path="res://scripts/dream/katana_weapon.gd" id="5_katana"]
-[ext_resource type="Script" path="res://scripts/dream/grenade_weapon.gd" id="7_grenade"]
-[ext_resource type="Texture2D" path="res://assets/characters/player/pix_chr_atlas.png" id="6_player_atlas"]
-[ext_resource type="Script" path="res://scripts/ui/player_world_health_bar.gd" id="8_hp_bar"]
-[ext_resource type="Script" path="res://scripts/entities/electric_shield_visual.gd" id="9_shield_visual"]
+[ext_resource type="Script" uid="uid://cawp23h0j1sfb" path="res://scripts/entities/dream_player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://dgp3kl78r30i0" path="res://scripts/dream/auto_weapon.gd" id="2_weapon"]
+[ext_resource type="Script" uid="uid://bkki2nnkb2s7n" path="res://scripts/dream/shotgun_weapon.gd" id="4_shotgun"]
+[ext_resource type="Script" path="res://scripts/dream/lucille_weapon.gd" id="7_lucille"]
+[ext_resource type="Script" path="res://scripts/dream/assault_rifle_weapon.gd" id="7_assault"]
+[ext_resource type="Script" uid="uid://c6xraitk8apna" path="res://scripts/ui/player_world_health_bar.gd" id="8_hp_bar"]
+[ext_resource type="Script" uid="uid://ei8xkbo3iawh" path="res://scripts/entities/electric_shield_visual.gd" id="9_shield_visual"]
+[ext_resource type="Script" uid="uid://c1hu82nwl5nkd" path="res://scenes/dream/rooms/hurtbox.gd" id="9_player_hurtbox"]
+[ext_resource type="Texture2D" path="res://art/Dream/dream_chr_32x32.png" id="10_player_atlas"]
+[ext_resource type="Texture2D" path="res://art/Dream/weapons/Guns/Luger.png" id="14_guns"]
+[ext_resource type="Texture2D" path="res://art/Dream/shadow.png" id="15_shadow"]
+[ext_resource type="Script" path="res://scripts/entities/player_side_bangs.gd" id="16_bangs"]
+[sub_resource type="AtlasTexture" id="Atlas_player_side_bangs"]
+atlas = ExtResource("10_player_atlas")
+region = Rect2(142, 43, 4, 11)
+[sub_resource type="AtlasTexture" id="Atlas_player_head_open"]
+atlas = ExtResource("10_player_atlas")
+region = Rect2(64, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="D0"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(0, 0, 32, 54)
-[sub_resource type="AtlasTexture" id="D1"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(32, 0, 32, 54)
-[sub_resource type="AtlasTexture" id="D2"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(64, 0, 32, 54)
-[sub_resource type="AtlasTexture" id="D3"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(96, 0, 32, 54)
-[sub_resource type="AtlasTexture" id="D4"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(128, 0, 32, 54)
-[sub_resource type="AtlasTexture" id="L0"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(0, 54, 32, 54)
-[sub_resource type="AtlasTexture" id="L1"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(32, 54, 32, 54)
-[sub_resource type="AtlasTexture" id="L2"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(64, 54, 32, 54)
-[sub_resource type="AtlasTexture" id="L3"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(96, 54, 32, 54)
-[sub_resource type="AtlasTexture" id="L4"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(128, 54, 32, 54)
-[sub_resource type="AtlasTexture" id="U0"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(0, 108, 32, 54)
-[sub_resource type="AtlasTexture" id="U1"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(32, 108, 32, 54)
-[sub_resource type="AtlasTexture" id="U2"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(64, 108, 32, 54)
-[sub_resource type="AtlasTexture" id="U3"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(96, 108, 32, 54)
-[sub_resource type="AtlasTexture" id="U4"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(128, 108, 32, 54)
-[sub_resource type="AtlasTexture" id="R0"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(0, 162, 32, 54)
-[sub_resource type="AtlasTexture" id="R1"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(32, 162, 32, 54)
-[sub_resource type="AtlasTexture" id="R2"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(64, 162, 32, 54)
-[sub_resource type="AtlasTexture" id="R3"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(96, 162, 32, 54)
-[sub_resource type="AtlasTexture" id="R4"]
-atlas = ExtResource("6_player_atlas")
-region = Rect2(128, 162, 32, 54)
+[sub_resource type="AtlasTexture" id="Atlas_player_head_blink"]
+atlas = ExtResource("10_player_atlas")
+region = Rect2(64, 32, 32, 32)
 
-[sub_resource type="SpriteFrames" id="PlayerFrames"]
-animations = [{
-"frames": [{"duration": 1.0, "texture": SubResource("D0")}],
-"loop": true,
-"name": &"idle_down",
-"speed": 1.0
-}, {
-"frames": [{"duration": 1.0, "texture": SubResource("L0")}],
-"loop": true,
-"name": &"idle_left",
-"speed": 1.0
-}, {
-"frames": [{"duration": 1.0, "texture": SubResource("R0")}],
-"loop": true,
-"name": &"idle_right",
-"speed": 1.0
-}, {
-"frames": [{"duration": 1.0, "texture": SubResource("U0")}],
-"loop": true,
-"name": &"idle_up",
-"speed": 1.0
-}, {
-"frames": [{"duration": 1.0, "texture": SubResource("D1")}, {"duration": 1.0, "texture": SubResource("D2")}, {"duration": 1.0, "texture": SubResource("D3")}, {"duration": 1.0, "texture": SubResource("D4")}],
-"loop": true,
-"name": &"walk_down",
-"speed": 8.0
-}, {
-"frames": [{"duration": 1.0, "texture": SubResource("L1")}, {"duration": 1.0, "texture": SubResource("L2")}, {"duration": 1.0, "texture": SubResource("L3")}, {"duration": 1.0, "texture": SubResource("L4")}],
-"loop": true,
-"name": &"walk_left",
-"speed": 8.0
-}, {
-"frames": [{"duration": 1.0, "texture": SubResource("R1")}, {"duration": 1.0, "texture": SubResource("R2")}, {"duration": 1.0, "texture": SubResource("R3")}, {"duration": 1.0, "texture": SubResource("R4")}],
-"loop": true,
-"name": &"walk_right",
-"speed": 8.0
-}, {
-"frames": [{"duration": 1.0, "texture": SubResource("U1")}, {"duration": 1.0, "texture": SubResource("U2")}, {"duration": 1.0, "texture": SubResource("U3")}, {"duration": 1.0, "texture": SubResource("U4")}],
-"loop": true,
-"name": &"walk_up",
-"speed": 8.0
-}]
+[sub_resource type="AtlasTexture" id="Atlas_player_head_closed"]
+atlas = ExtResource("10_player_atlas")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="Atlas_player_body"]
+atlas = ExtResource("10_player_atlas")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="Atlas_player_left_foot"]
+atlas = ExtResource("10_player_atlas")
+region = Rect2(171, 12, 4, 9)
+
+[sub_resource type="AtlasTexture" id="Atlas_player_right_foot"]
+atlas = ExtResource("10_player_atlas")
+region = Rect2(176, 12, 4, 9)
+
+[sub_resource type="AtlasTexture" id="Atlas_player_left_hand"]
+atlas = ExtResource("10_player_atlas")
+region = Rect2(37, 16, 5, 4)
+
+[sub_resource type="AtlasTexture" id="Atlas_player_right_hand"]
+atlas = ExtResource("10_player_atlas")
+region = Rect2(52, 16, 5, 4)
 
 [sub_resource type="CircleShape2D" id="Circle_player"]
-radius = 7.5
+radius = 7.071068
 
-[node name="DreamPlayer" type="CharacterBody2D"]
-collision_layer = 1
-collision_mask = 0
+[sub_resource type="CapsuleShape2D" id="Capsule_projectile_hurtbox"]
+radius = 9.0
+height = 32.0
+
+[node name="DreamPlayer" type="CharacterBody2D" unique_id=1577539240]
+collision_mask = 46
 script = ExtResource("1_player")
 
-[node name="Visual" type="AnimatedSprite2D" parent="."]
-texture_filter = 1
-position = Vector2(0, -18.25)
-scale = Vector2(0.75, 0.75)
-sprite_frames = SubResource("PlayerFrames")
-animation = &"idle_down"
-autoplay = "idle_down"
+[node name="Shadow" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 0.42)
+z_index = -4
+position = Vector2(0, 3)
+scale = Vector2(0.42, 0.18)
+texture = ExtResource("15_shadow")
 
-[node name="HealOverlay" type="AnimatedSprite2D" parent="."]
+[node name="CharacterVisual" type="Node2D" parent="." unique_id=478241425]
+# Keep the complete actor in the room YSort band.  Internal part order is
+# defined by scene order so furniture/door foreground can still occlude it.
+z_index = 0
+scale = Vector2(1, 1)
+
+[node name="LeftFoot" type="Sprite2D" parent="CharacterVisual" unique_id=1825569060]
 texture_filter = 1
-position = Vector2(0, -18.25)
-scale = Vector2(0.75, 0.75)
+position = Vector2(-5, -9)
+texture = SubResource("Atlas_player_left_foot")
+centered = false
+
+[node name="RightFoot" type="Sprite2D" parent="CharacterVisual" unique_id=1478208617]
+texture_filter = 1
+position = Vector2(0, -9)
+texture = SubResource("Atlas_player_right_foot")
+centered = false
+
+[node name="BodyPivot" type="Node2D" parent="CharacterVisual"]
+position = Vector2(0, -16)
+
+[node name="Head" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=432219514]
+texture_filter = 1
+position = Vector2(-16, -20)
+texture = SubResource("Atlas_player_head_open")
+centered = false
+
+[node name="Body" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=1004416002]
+texture_filter = 1
+position = Vector2(-16, -8)
+texture = SubResource("Atlas_player_body")
+centered = false
+
+[node name="SideBangs" type="Node2D" parent="CharacterVisual/BodyPivot/Head"]
+position = Vector2(22, 17)
+script = ExtResource("16_bangs")
+
+[node name="Strand" type="Sprite2D" parent="CharacterVisual/BodyPivot/Head/SideBangs"]
+texture_filter = 1
+position = Vector2(-1, 0)
+texture = SubResource("Atlas_player_side_bangs")
+centered = false
+
+[node name="LeftHand" type="Sprite2D" parent="CharacterVisual/BodyPivot"]
+texture_filter = 1
+position = Vector2(-11, 8)
+texture = SubResource("Atlas_player_left_hand")
+centered = false
+
+[node name="RightHand" type="Sprite2D" parent="CharacterVisual/BodyPivot"]
+texture_filter = 1
+position = Vector2(4, 8)
+texture = SubResource("Atlas_player_right_hand")
+centered = false
+
+[node name="HealOverlay" type="Node2D" parent="." unique_id=1352536633]
 modulate = Color(0.36, 1, 0.45, 0)
-sprite_frames = SubResource("PlayerFrames")
-animation = &"idle_down"
-show_behind_parent = false
+scale = Vector2(1, 1)
+z_index = 0
 
-[node name="ElectricShieldVisual" type="AnimatedSprite2D" parent="."]
+[node name="LeftFoot" type="Sprite2D" parent="HealOverlay" unique_id=1702659772]
+texture_filter = 1
+position = Vector2(-5, -9)
+texture = SubResource("Atlas_player_left_foot")
+centered = false
+
+[node name="RightFoot" type="Sprite2D" parent="HealOverlay" unique_id=1733309308]
+texture_filter = 1
+position = Vector2(0, -9)
+texture = SubResource("Atlas_player_right_foot")
+centered = false
+
+[node name="BodyPivot" type="Node2D" parent="HealOverlay"]
+position = Vector2(0, -16)
+
+[node name="Head" type="Sprite2D" parent="HealOverlay/BodyPivot" unique_id=59218014]
+texture_filter = 1
+position = Vector2(-16, -20)
+texture = SubResource("Atlas_player_head_open")
+centered = false
+
+[node name="Body" type="Sprite2D" parent="HealOverlay/BodyPivot" unique_id=118044328]
+texture_filter = 1
+position = Vector2(-16, -8)
+texture = SubResource("Atlas_player_body")
+centered = false
+
+[node name="SideBangs" type="Node2D" parent="HealOverlay/BodyPivot/Head"]
+position = Vector2(22, 17)
+
+[node name="Strand" type="Sprite2D" parent="HealOverlay/BodyPivot/Head/SideBangs"]
+texture_filter = 1
+position = Vector2(-1, 0)
+texture = SubResource("Atlas_player_side_bangs")
+centered = false
+
+[node name="LeftHand" type="Sprite2D" parent="HealOverlay/BodyPivot"]
+texture_filter = 1
+position = Vector2(-11, 8)
+texture = SubResource("Atlas_player_left_hand")
+centered = false
+
+[node name="RightHand" type="Sprite2D" parent="HealOverlay/BodyPivot"]
+texture_filter = 1
+position = Vector2(4, 8)
+texture = SubResource("Atlas_player_right_hand")
+centered = false
+
+[node name="ElectricShieldVisual" type="AnimatedSprite2D" parent="." unique_id=2057809259]
 visible = false
 z_index = 3
+texture_filter = 1
 position = Vector2(0, -18.25)
 scale = Vector2(0.18, 0.18)
-texture_filter = 1
 script = ExtResource("9_shield_visual")
 
-[node name="PlayerLight" type="PointLight2D" parent="."]
-position = Vector2(0, 0)
-energy = 1.15
-shadow_enabled = false
-
-[node name="PlayerHPBar" type="Node2D" parent="."]
+[node name="PlayerHPBar" type="Node2D" parent="." unique_id=1214698748]
 z_index = 20
 script = ExtResource("8_hp_bar")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="WeaponNameLabel" type="Label" parent="."]
+visible = false
+offset_left = -48.0
+offset_top = -60.0
+offset_right = 48.0
+offset_bottom = -42.0
+text = "小手枪"
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=954312170]
 position = Vector2(0, -13)
 shape = SubResource("Circle_player")
 
-[node name="WeaponRoot" type="Node2D" parent="."]
+[node name="ProjectileHurtbox" type="Area2D" parent="." groups=["damage_hurtboxes"]]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+monitorable = false
+script = ExtResource("9_player_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ProjectileHurtbox"]
+position = Vector2(0, -16)
+shape = SubResource("Capsule_projectile_hurtbox")
+
+[node name="WeaponRoot" type="Node2D" parent="." unique_id=749561413]
 position = Vector2(0, -18.25)
+z_index = 0
 
-[node name="WeaponOrigin" type="Marker2D" parent="WeaponRoot"]
+[node name="WeaponOrigin" type="Marker2D" parent="WeaponRoot" unique_id=1522780504]
 
-[node name="ProjectileOrigin" type="Marker2D" parent="WeaponRoot"]
+[node name="ProjectileOrigin" type="Marker2D" parent="WeaponRoot" unique_id=1962935184]
 
-[node name="AimOrigin" type="Marker2D" parent="WeaponRoot"]
+[node name="AimOrigin" type="Marker2D" parent="WeaponRoot" unique_id=962936203]
 
-[node name="GrenadeOrigin" type="Marker2D" parent="WeaponRoot"]
+[node name="HandAnchor" type="Node2D" parent="WeaponRoot" unique_id=684391633]
 
-[node name="KatanaOrigin" type="Marker2D" parent="WeaponRoot"]
+[node name="WeaponMotion" type="Node2D" parent="WeaponRoot/HandAnchor" unique_id=1884686155]
 
-[node name="AutoWeapon" type="Node" parent="."]
+[node name="LucilleTrail" type="Line2D" parent="WeaponRoot/HandAnchor" unique_id=1924100477]
+visible = false
+texture_filter = 1
+width = 10.0
+default_color = Color(1, 1, 1, 1)
+joint_mode = 1
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="ReloadVisualPivot" type="Node2D" parent="WeaponRoot/HandAnchor/WeaponMotion" unique_id=652196815]
+
+[node name="HeldWeaponSprite" type="Sprite2D" parent="WeaponRoot/HandAnchor/WeaponMotion/ReloadVisualPivot" unique_id=569915827]
+texture_filter = 1
+position = Vector2(11, 0)
+texture = ExtResource("14_guns")
+
+[node name="AutoWeapon" type="Node" parent="." unique_id=1234331376]
 script = ExtResource("2_weapon")
 
-[node name="BeamWeapon" type="Node" parent="."]
-script = ExtResource("3_beam")
-
-[node name="ShotgunWeapon" type="Node" parent="."]
+[node name="ShotgunWeapon" type="Node" parent="." unique_id=874946431]
 script = ExtResource("4_shotgun")
 
-[node name="KatanaWeapon" type="Node" parent="."]
-script = ExtResource("5_katana")
+[node name="LucilleWeapon" type="Node" parent="."]
+script = ExtResource("7_lucille")
 
-[node name="GrenadeWeapon" type="Node" parent="."]
-script = ExtResource("7_grenade")
+[node name="BooksWeapon" type="Node" parent="."]
+script = ExtResource("7_lucille")
+weapon_id = "books"
+
+[node name="AssaultRifleWeapon" type="Node" parent="."]
+script = ExtResource("7_assault")

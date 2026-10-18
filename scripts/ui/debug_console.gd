@@ -75,9 +75,6 @@ func _execute_command(raw_command: String) -> void:
 	elif command == "UNLOCK":
 		persistent_state.basic_weapon_unlocked = true
 		persistent_state.shotgun_unlocked = true
-		persistent_state.beam_weapon_unlocked = true
-		persistent_state.katana_unlocked = true
-		persistent_state.grenade_weapon_unlocked = true
 		output_label.text = "ALL WEAPONS UNLOCKED"
 	elif command == "MONEY":
 		STATE_RULES.change_balance(persistent_state, 10000)

@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://nyaewr53quox"]
+
+[ext_resource type="Texture2D" uid="uid://djvx4ub5jh4d7" path="res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Exterior_32x32.png" id="1_door_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_door"]
+atlas = ExtResource("1_door_atlas")
+region = Rect2(128, 208, 16, 16)
+filter_clip = true
+
+[resource]
+resource_name = "Dream Door Pixel Region"
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("AtlasTexture_door")
+texture_filter = 0
+texture_repeat = false

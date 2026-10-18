@@ -16,11 +16,12 @@ void fragment() {
 	float radius_squared = dot(centered, centered);
 	vec2 warped_uv = centered * (1.0 + barrel_distortion * radius_squared) * 0.5 + 0.5;
 	// Barrel distortion pushes the four edges outside the local CRT rectangle.
-	// Keep those pixels transparent: the old opaque overscan color formed an
-	// unwanted large rectangular bezel around the entire slot machine.
+	// The overlay now spans the whole horizontal viewport, so an opaque backdrop
+	// at these outer overscan pixels hides the unwarped source layer without
+	// creating a second bezel around the three slots.
 	bool outside_crt = any(lessThan(warped_uv, vec2(0.0))) || any(greaterThan(warped_uv, vec2(1.0)));
 	if (outside_crt) {
-		COLOR = vec4(0.0);
+		COLOR = vec4(0.01, 0.015, 0.025, 1.0);
 	} else {
 		vec2 screen_sample_uv = SCREEN_UV + (warped_uv - UV) * overlay_screen_scale;
 		vec4 screen_color = texture(screen_texture, screen_sample_uv);

@@ -1,0 +1,54 @@
+{
+  "dialogues": [
+    {
+      "id": "tutorial_guide_intro",
+      "lines": [
+        {
+          "speaker": "guide",
+          "text": "你能听见我吗？这里是梦的入口。",
+          "expression": "normal",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        },
+        {
+          "speaker": "guide",
+          "text": "先用 WASD 走动。靠近可以交互的东西时，按 E。",
+          "expression": "normal",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        },
+        {
+          "speaker": "guide",
+          "text": "前面的门会带你进入真正的 Dream。故事文本以后还会继续补充。",
+          "expression": "normal",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        }
+      ]
+    },
+    {
+      "id": "tutorial_exit_sequence",
+      "lines": [
+        {
+          "speaker": "guide",
+          "text": "真没有什么问题吗？",
+          "expression": "panic",
+          "typewriter_speed": 0.045,
+          "text_color": "#FFD5DD",
+          "wait_for_input": true
+        },
+        {
+          "speaker": "guide",
+          "text": "那祝你有个好梦",
+          "expression": "panic",
+          "typewriter_speed": 0.05,
+          "text_color": "#E7ECF2",
+          "wait_for_input": true
+        }
+      ]
+    }
+  ]
+}

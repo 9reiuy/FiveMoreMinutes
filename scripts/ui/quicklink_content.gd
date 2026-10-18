@@ -19,19 +19,11 @@ const BUY_BUTTON_SIZE := Vector2(48, 24)
 
 var phone: Control  # bedroom_phone，提供数据与购买服务
 var hovered_action := ""
-var option_triangle_elapsed := 0.0
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_PASS
 	mouse_exited.connect(_clear_hover)
-
-
-func _process(delta: float) -> void:
-	if hovered_action.is_empty():
-		return
-	option_triangle_elapsed += delta
-	queue_redraw()
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -42,7 +34,6 @@ func _gui_input(event: InputEvent) -> void:
 			SFX.play_event(&"ui_hover")
 		if action != hovered_action:
 			hovered_action = action
-			option_triangle_elapsed = 0.0
 			queue_redraw()
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		# 与在线！™一致：松开时先检查拖动防误触，避免拖动列表时误购。
@@ -106,7 +97,6 @@ func _has_phone() -> bool:
 
 func _clear_hover() -> void:
 	hovered_action = ""
-	option_triangle_elapsed = 0.0
 	mouse_default_cursor_shape = Control.CURSOR_ARROW
 	queue_redraw()
 
@@ -134,7 +124,7 @@ func _draw() -> void:
 	draw_string(font, Vector2(8, 95), "%s  %d/%d" % [FORMAT.format_currency(config.melatonin_price), int(persistent_state.get("melatonin_inventory", 0)), config.melatonin_inventory_cap], HORIZONTAL_ALIGNMENT_LEFT, 64, 8, Color("d9a441"))
 	var mel_capped: bool = int(persistent_state.get("melatonin_inventory", 0)) >= config.melatonin_inventory_cap
 	var mel_insufficient: bool = int(persistent_state.get("balance", 0)) < config.melatonin_price
-	PhoneShopUI.draw_pixel_shop_button(self, _buy_button_rect(0), "已满" if mel_capped else ("不足" if mel_insufficient else "购买"), mel_capped or mel_insufficient, hovered_action == "buy_melatonin", font, option_triangle_elapsed)
+	PhoneShopUI.draw_pixel_shop_button(self, _buy_button_rect(0), "已满" if mel_capped else ("不足" if mel_insufficient else "购买"), mel_capped or mel_insufficient, hovered_action == "buy_melatonin", font)
 
 	var meal: Dictionary = quicklink_items[1] if quicklink_items.size() > 1 else {"name":"廉价便当", "description":"简单的能量摄入"}
 	var meal_card := _card_rect(1)
@@ -142,7 +132,7 @@ func _draw() -> void:
 	draw_string(font, Vector2(8, 181), "%s  每日%d份" % [FORMAT.format_currency(config.cheap_meal_price), config.cheap_meal_daily_purchase_limit], HORIZONTAL_ALIGNMENT_LEFT, 64, 8, Color("d9a441"))
 	var meal_sold: bool = int(persistent_state.get("cheap_meal_purchases_today", 0)) >= config.cheap_meal_daily_purchase_limit
 	var meal_insufficient: bool = int(persistent_state.get("balance", 0)) < config.cheap_meal_price
-	PhoneShopUI.draw_pixel_shop_button(self, _buy_button_rect(1), "今日已购" if meal_sold else ("不足" if meal_insufficient else "购买"), meal_sold or meal_insufficient, hovered_action == "buy_cheap_meal", font, option_triangle_elapsed)
+	PhoneShopUI.draw_pixel_shop_button(self, _buy_button_rect(1), "今日已购" if meal_sold else ("不足" if meal_insufficient else "购买"), meal_sold or meal_insufficient, hovered_action == "buy_cheap_meal", font)
 
 	var sunshade: Dictionary = quicklink_items[2] if quicklink_items.size() > 2 else {"name":"遮阳帘", "description":"放下后可屏蔽闹钟白曝光"}
 	var sunshade_card := _card_rect(2)
@@ -150,4 +140,4 @@ func _draw() -> void:
 	draw_string(font, Vector2(8, 267), "%s  限买一次" % FORMAT.format_currency(config.sunshade_price), HORIZONTAL_ALIGNMENT_LEFT, 64, 8, Color("d9a441"))
 	var sunshade_owned: bool = bool(persistent_state.get("sunshade_purchased", false))
 	var sunshade_insufficient: bool = int(persistent_state.get("balance", 0)) < config.sunshade_price
-	PhoneShopUI.draw_pixel_shop_button(self, _buy_button_rect(2), "已购" if sunshade_owned else ("不足" if sunshade_insufficient else "购买"), sunshade_owned or sunshade_insufficient, hovered_action == "buy_sunshade", font, option_triangle_elapsed)
+	PhoneShopUI.draw_pixel_shop_button(self, _buy_button_rect(2), "已购" if sunshade_owned else ("不足" if sunshade_insufficient else "购买"), sunshade_owned or sunshade_insufficient, hovered_action == "buy_sunshade", font)

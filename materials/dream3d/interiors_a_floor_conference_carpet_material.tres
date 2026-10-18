@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://shaders/dream3d/interiors_a_floor_conference_carpet.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Floor_A/Surface_Floor_A_Diffuse_2K.png" id="2_floor"]
+
+[resource]
+resource_name = "Interiors A Conference Carpet"
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/albedo_texture = ExtResource("2_floor")
+shader_parameter/surface_tint = Color(0.48, 0.50, 0.58, 1)
+shader_parameter/border_color = Color(0.22, 0.24, 0.30, 1)
+shader_parameter/border_width = 0.055

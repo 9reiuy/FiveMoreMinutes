@@ -1,113 +1,155 @@
 [gd_resource type="Theme" format=3 uid="uid://cma8i20toy0p2"]
 
-[ext_resource type="FontFile" uid="uid://buocnx7mgifcp" path="res://assets/fonts/fusion_pixel/fusion-pixel-12px-proportional-zh_hans.ttf" id="1_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/boutique_bitmap/BoutiqueBitmap9x9_Bold_1.9.ttf" id="1_font"]
+[ext_resource type="Texture2D" uid="uid://bnf4a0raxkqen" path="res://art/icon/space-worm-theme/general/Blue.png" id="2_button"]
+[ext_resource type="Texture2D" uid="uid://ba7mvawrmi0qt" path="res://art/icon/space-worm-theme/button/Blue_Hover.png" id="3_button_hover"]
+[ext_resource type="Texture2D" uid="uid://dvx3hvav2n7b7" path="res://art/icon/space-worm-theme/panel/Panel.png" id="4_panel"]
+[ext_resource type="Texture2D" uid="uid://1d8q46t3elp8" path="res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Checked.png" id="5_checked"]
+[ext_resource type="Texture2D" uid="uid://bk7etkvyd8tlh" path="res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Unchecked.png" id="6_unchecked"]
+[ext_resource type="Texture2D" uid="uid://dpy10unqk34u2" path="res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Background.png" id="7_slider_track"]
+[ext_resource type="Texture2D" uid="uid://bkxvfdx82p2lq" path="res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Grabber_Horizontal.png" id="8_slider_grabber"]
+[ext_resource type="Texture2D" uid="uid://cjqmfulw5rg55" path="res://art/icon/space-worm-theme/scrollbar/Scrollbar_Background_Blue.png" id="9_scroll_track"]
+[ext_resource type="Texture2D" uid="uid://buxgs4nie6hyo" path="res://art/icon/space-worm-theme/scrollbar/Scrollbar_Grabber_Blue.png" id="10_scroll_grabber"]
+[ext_resource type="Texture2D" uid="uid://cwpjdqbvip2vt" path="res://art/icon/space-worm-theme/textedit/TextEditWhite.png" id="11_text_edit"]
+[ext_resource type="Texture2D" uid="uid://c1nih1844agfm" path="res://art/icon/space-worm-theme/textedit/TextEditDisabled.png" id="12_text_disabled"]
+[ext_resource type="Texture2D" uid="uid://3sicn687nna" path="res://art/icon/space-worm-theme/panel/Tab.png" id="13_tab"]
+[ext_resource type="Texture2D" uid="uid://golvyea2nyg3" path="res://art/icon/space-worm-theme/panel/TabHover.png" id="14_tab_hover"]
+[ext_resource type="Texture2D" uid="uid://w58p2fbmrwo0" path="res://art/icon/space-worm-theme/general/LighterBlue.png" id="15_fill"]
 
-[sub_resource type="StyleBoxFlat" id="ButtonDisabled"]
+[sub_resource type="StyleBoxTexture" id="WormButtonDisabled"]
 content_margin_left = 10.0
 content_margin_top = 6.0
 content_margin_right = 10.0
 content_margin_bottom = 6.0
-bg_color = Color(0.035, 0.04, 0.055, 0.8)
-border_width_left = 2
-border_width_top = 1
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.13, 0.16, 1)
+texture = ExtResource("2_button")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+modulate_color = Color(0.42, 0.45, 0.55, 0.72)
 
 [sub_resource type="StyleBoxEmpty" id="NoFocus"]
 
-[sub_resource type="StyleBoxFlat" id="ButtonHover"]
+[sub_resource type="StyleBoxTexture" id="WormButtonHover"]
 content_margin_left = 10.0
 content_margin_top = 6.0
 content_margin_right = 10.0
 content_margin_bottom = 6.0
-bg_color = Color(0.09, 0.13, 0.17, 1)
-border_width_left = 3
-border_width_top = 1
-border_width_right = 2
-border_width_bottom = 3
-border_color = Color(0.317647, 0.482353, 0.596078, 1)
-shadow_size = 3
-shadow_offset = Vector2(3, 3)
+texture = ExtResource("3_button_hover")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
-[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
+[sub_resource type="StyleBoxTexture" id="WormButtonNormal"]
 content_margin_left = 10.0
 content_margin_top = 6.0
 content_margin_right = 10.0
 content_margin_bottom = 6.0
-bg_color = Color(0.055, 0.067, 0.096, 0.96)
-border_width_left = 2
-border_width_top = 1
-border_width_right = 3
-border_width_bottom = 2
-border_color = Color(0.2, 0.27, 0.32, 1)
-shadow_color = Color(0, 0, 0, 0.55)
-shadow_size = 3
-shadow_offset = Vector2(3, 3)
+texture = ExtResource("2_button")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
-[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
-bg_color = Color(0.12, 0.18, 0.22, 1)
-border_width_left = 3
-border_width_top = 2
-border_width_right = 1
-border_width_bottom = 2
-border_color = Color(0.603922, 0.713726, 0.784314, 1)
+[sub_resource type="StyleBoxTexture" id="WormButtonPressed"]
+content_margin_left = 11.0
+content_margin_top = 7.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+texture = ExtResource("3_button_hover")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+modulate_color = Color(0.72, 0.78, 0.92, 1)
 
-[sub_resource type="Gradient" id="GrabberGradient"]
-colors = PackedColorArray(0.603922, 0.713726, 0.784314, 1, 0.603922, 0.713726, 0.784314, 1)
+[sub_resource type="StyleBoxTexture" id="WormScrollGrabber"]
+texture = ExtResource("10_scroll_grabber")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="GradientTexture2D" id="GrabberTexture"]
-gradient = SubResource("GrabberGradient")
-width = 8
-height = 12
-
-[sub_resource type="Gradient" id="UncheckedGradient"]
-colors = PackedColorArray(0.08, 0.1, 0.14, 1, 0.08, 0.1, 0.14, 1)
-
-[sub_resource type="GradientTexture2D" id="UncheckedTexture"]
-gradient = SubResource("UncheckedGradient")
-width = 12
-height = 12
+[sub_resource type="StyleBoxTexture" id="WormScrollTrack"]
+texture = ExtResource("9_scroll_track")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 5.0
 
 [sub_resource type="StyleBoxLine" id="Separator"]
 color = Color(0.317647, 0.482353, 0.596078, 0.55)
 
-[sub_resource type="StyleBoxFlat" id="SliderFill"]
-bg_color = Color(0.317647, 0.482353, 0.596078, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.603922, 0.713726, 0.784314, 1)
+[sub_resource type="StyleBoxTexture" id="WormSliderTrack"]
+texture = ExtResource("7_slider_track")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 5.0
+expand_margin_top = 4.0
+expand_margin_bottom = 4.0
 
-[sub_resource type="StyleBoxFlat" id="SliderTrack"]
-content_margin_top = 3.0
-content_margin_bottom = 3.0
-bg_color = Color(0.035, 0.047, 0.065, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.2, 0.27, 0.32, 1)
+[sub_resource type="StyleBoxTexture" id="WormLineEdit"]
+content_margin_left = 7.0
+content_margin_top = 5.0
+content_margin_right = 7.0
+content_margin_bottom = 5.0
+texture = ExtResource("11_text_edit")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
-[sub_resource type="StyleBoxFlat" id="Panel"]
-content_margin_left = 18.0
-content_margin_top = 14.0
-content_margin_right = 18.0
-content_margin_bottom = 14.0
-bg_color = Color(0.035, 0.047, 0.07, 0.98)
-border_width_left = 3
-border_width_top = 1
-border_width_right = 2
-border_width_bottom = 3
-border_color = Color(0.317647, 0.482353, 0.596078, 0.85)
-shadow_color = Color(0, 0, 0, 0.72)
-shadow_size = 6
-shadow_offset = Vector2(5, 5)
+[sub_resource type="StyleBoxTexture" id="WormLineEditDisabled"]
+content_margin_left = 7.0
+content_margin_top = 5.0
+content_margin_right = 7.0
+content_margin_bottom = 5.0
+texture = ExtResource("12_text_disabled")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="WormPanel"]
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+texture = ExtResource("4_panel")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="WormProgressBackground"]
+texture = ExtResource("2_button")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="WormProgressFill"]
+texture = ExtResource("15_fill")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="WormTabHover"]
+texture = ExtResource("14_tab_hover")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="WormTab"]
+texture = ExtResource("13_tab")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
 [resource]
 default_font = ExtResource("1_font")
@@ -117,21 +159,52 @@ Button/colors/font_disabled_color = Color(0.3, 0.32, 0.36, 1)
 Button/colors/font_hover_color = Color(0.84, 0.89, 0.91, 1)
 Button/colors/font_pressed_color = Color(0.9, 0.94, 0.95, 1)
 Button/font_sizes/font_size = 14
-Button/styles/disabled = SubResource("ButtonDisabled")
+Button/styles/disabled = SubResource("WormButtonDisabled")
 Button/styles/focus = SubResource("NoFocus")
-Button/styles/hover = SubResource("ButtonHover")
-Button/styles/normal = SubResource("ButtonNormal")
-Button/styles/pressed = SubResource("ButtonPressed")
+Button/styles/hover = SubResource("WormButtonHover")
+Button/styles/normal = SubResource("WormButtonNormal")
+Button/styles/pressed = SubResource("WormButtonPressed")
 CheckButton/colors/font_color = Color(0.72, 0.77, 0.8, 1)
 CheckButton/colors/font_hover_color = Color(0.84, 0.89, 0.91, 1)
-CheckButton/icons/checked = SubResource("GrabberTexture")
-CheckButton/icons/unchecked = SubResource("UncheckedTexture")
+CheckButton/icons/checked = ExtResource("5_checked")
+CheckButton/icons/checked_disabled = ExtResource("5_checked")
+CheckButton/icons/checked_mirrored = ExtResource("5_checked")
+CheckButton/icons/unchecked = ExtResource("6_unchecked")
+CheckButton/icons/unchecked_disabled = ExtResource("6_unchecked")
+CheckButton/icons/unchecked_mirrored = ExtResource("6_unchecked")
 CheckButton/styles/focus = SubResource("NoFocus")
+HScrollBar/styles/grabber = SubResource("WormScrollGrabber")
+HScrollBar/styles/grabber_highlight = SubResource("WormScrollGrabber")
+HScrollBar/styles/grabber_pressed = SubResource("WormScrollGrabber")
+HScrollBar/styles/scroll = SubResource("WormScrollTrack")
 HSeparator/styles/separator = SubResource("Separator")
-HSlider/icons/grabber = SubResource("GrabberTexture")
-HSlider/icons/grabber_highlight = SubResource("GrabberTexture")
-HSlider/styles/grabber_area = SubResource("SliderFill")
-HSlider/styles/grabber_area_highlight = SubResource("SliderFill")
-HSlider/styles/slider = SubResource("SliderTrack")
-Panel/styles/panel = SubResource("Panel")
-PanelContainer/styles/panel = SubResource("Panel")
+HSlider/icons/grabber = ExtResource("8_slider_grabber")
+HSlider/icons/grabber_highlight = ExtResource("8_slider_grabber")
+HSlider/styles/grabber_area = SubResource("WormSliderTrack")
+HSlider/styles/grabber_area_highlight = SubResource("WormSliderTrack")
+HSlider/styles/slider = SubResource("WormSliderTrack")
+LineEdit/colors/caret_color = Color(0.08, 0.1, 0.16, 1)
+LineEdit/colors/font_color = Color(0.08, 0.1, 0.16, 1)
+LineEdit/styles/focus = SubResource("WormLineEdit")
+LineEdit/styles/normal = SubResource("WormLineEdit")
+LineEdit/styles/read_only = SubResource("WormLineEditDisabled")
+Panel/styles/panel = SubResource("WormPanel")
+PanelContainer/styles/panel = SubResource("WormPanel")
+ProgressBar/styles/background = SubResource("WormProgressBackground")
+ProgressBar/styles/fill = SubResource("WormProgressFill")
+TabBar/styles/tab_hovered = SubResource("WormTabHover")
+TabBar/styles/tab_selected = SubResource("WormTabHover")
+TabBar/styles/tab_unselected = SubResource("WormTab")
+TabContainer/styles/panel = SubResource("WormPanel")
+TabContainer/styles/tab_hovered = SubResource("WormTabHover")
+TabContainer/styles/tab_selected = SubResource("WormTabHover")
+TabContainer/styles/tab_unselected = SubResource("WormTab")
+TextEdit/colors/caret_color = Color(0.08, 0.1, 0.16, 1)
+TextEdit/colors/font_color = Color(0.08, 0.1, 0.16, 1)
+TextEdit/styles/focus = SubResource("WormLineEdit")
+TextEdit/styles/normal = SubResource("WormLineEdit")
+TextEdit/styles/read_only = SubResource("WormLineEditDisabled")
+VScrollBar/styles/grabber = SubResource("WormScrollGrabber")
+VScrollBar/styles/grabber_highlight = SubResource("WormScrollGrabber")
+VScrollBar/styles/grabber_pressed = SubResource("WormScrollGrabber")
+VScrollBar/styles/scroll = SubResource("WormScrollTrack")

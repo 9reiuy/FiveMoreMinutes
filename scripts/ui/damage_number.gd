@@ -29,6 +29,11 @@ var idle_left := 0.0
 var fade_left := 0.0
 var drift := Vector2.ZERO
 
+func copy_depth_visual_state_to(target: Node2D) -> void:
+	target.set("mode", mode)
+	target.set("total", total)
+	target.queue_redraw()
+
 
 func _ready() -> void:
 	visible = false

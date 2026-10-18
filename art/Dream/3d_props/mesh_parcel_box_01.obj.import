@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://banufuk2xixfw"
+path="res://.godot/imported/mesh_parcel_box_01.obj-7fb1d6d27883c3f6925b8c445504aefa.mesh"
+
+[deps]
+
+files=["res://.godot/imported/mesh_parcel_box_01.obj-7fb1d6d27883c3f6925b8c445504aefa.mesh"]
+
+source_file="res://art/Dream/3d_props/mesh_parcel_box_01.obj"
+dest_files=["res://.godot/imported/mesh_parcel_box_01.obj-7fb1d6d27883c3f6925b8c445504aefa.mesh", "res://.godot/imported/mesh_parcel_box_01.obj-7fb1d6d27883c3f6925b8c445504aefa.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

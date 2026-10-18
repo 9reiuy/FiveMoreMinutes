@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/dream/dream_3d_actor_depth_bridge.gd" id="1_bridge"]
+
+[node name="ActorDepthBridge3D" type="Node3D"]
+script = ExtResource("1_bridge")
+
+[node name="ActorDepthViewport" type="SubViewport" parent="."]
+size = Vector2i(128, 128)
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+canvas_item_default_texture_filter = 1
+
+[node name="ActorDepthRenderRoot" type="Node2D" parent="ActorDepthViewport"]

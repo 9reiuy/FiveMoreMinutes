@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://b255vxpub5x6f"]
+
+[ext_resource type="Script" uid="uid://cgfu5l2dw3fmj" path="res://scenes/dream/rooms/chair_01.gd" id="1_prop"]
+[ext_resource type="Script" uid="uid://c1hu82nwl5nkd" path="res://scenes/dream/rooms/hurtbox.gd" id="2_hurtbox"]
+[ext_resource type="PackedScene" uid="uid://wut2aqnodrrw" path="res://scenes/dream/effects/shatter_piece.tscn" id="3_shatter"]
+[ext_resource type="Texture2D" path="res://resources/dream_props/office_chair_01_texture.tres" id="4_texture"]
+[ext_resource type="Texture2D" uid="uid://db6lxcmlv1yh5" path="res://art/Dream/shadow.png" id="5_shadow"]
+
+[sub_resource type="RectangleShape2D" id="BodyShape"]
+size = Vector2(18, 12)
+
+[sub_resource type="RectangleShape2D" id="HurtShape"]
+size = Vector2(22, 42)
+
+[node name="OfficeChair01" type="RigidBody2D" unique_id=1539472671 groups=["damageable_props", "pushable_prop"]]
+editor_description = "可直接拖入Room/YSortRoot/PropsRoot的办公转椅。视觉原点位于家具脚底。"
+collision_layer = 8
+collision_mask = 15
+mass = 1.25
+gravity_scale = 0.0
+angular_damp = 9.0
+linear_damp = 1.2
+script = ExtResource("1_prop")
+max_hp = 30.0
+is_swivel_chair = true
+furniture_size_category = 1
+bullet_knockback = 120.0
+shatter_piece_scene = ExtResource("3_shatter")
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=276516951]
+modulate = Color(1, 1, 1, 0.45)
+z_index = -1
+position = Vector2(0, -7)
+scale = Vector2(0.8, 0.5)
+texture = ExtResource("5_shadow")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=701494246]
+texture_filter = 1
+position = Vector2(0, -21)
+texture = ExtResource("4_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2115101781]
+position = Vector2(0, -6)
+shape = SubResource("BodyShape")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=668037487 groups=["damage_hurtboxes"]]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("2_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1212839931]
+position = Vector2(0, -21)
+shape = SubResource("HurtShape")
+
+[node name="HitParticles" type="CPUParticles2D" parent="." unique_id=1980567288]
+position = Vector2(0, -21)
+emitting = false
+amount = 6
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+lifetime_randomness = 0.8
+spread = 180.0
+initial_velocity_min = 60.0
+initial_velocity_max = 120.0
+scale_amount_max = 3.0

@@ -97,11 +97,14 @@ theme_override_constants/separation = 6
 
 [node name="Prompt" type="Label" parent="DialoguePanel/Margin/Content"]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.827451, 0.878431, 0.909804, 1)
-text = "要继续吗？"
+text = ""
+autowrap_mode = 3
+clip_text = false
 vertical_alignment = 1
 
 [node name="ChoiceContainer" type="VBoxContainer" parent="DialoguePanel/Margin/Content"]
@@ -124,7 +127,7 @@ theme_override_styles/hover = SubResource("StyleBoxEmpty_choice")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_choice")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_choice")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_choice")
-text = "确认"
+text = ""
 alignment = 0
 flat = true
 
@@ -143,6 +146,6 @@ theme_override_styles/hover = SubResource("StyleBoxEmpty_choice")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_choice")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_choice")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_choice")
-text = "取消"
+text = ""
 alignment = 0
 flat = true

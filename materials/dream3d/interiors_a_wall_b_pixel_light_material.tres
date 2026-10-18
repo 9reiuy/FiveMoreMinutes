@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://shaders/dream3d/interiors_a_wall_pixel_light.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Diffuse_2K_B.png" id="2_wall_b"]
+
+[resource]
+resource_name = "Interiors A Wall B pixel lighting"
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/albedo_texture = ExtResource("2_wall_b")
+shader_parameter/surface_tint = Color(1.12, 1.14, 1.20, 1)
+shader_parameter/texture_contrast = 0.50
+shader_parameter/baseboard_height = 0.22
+shader_parameter/baseboard_color = Color(0.14, 0.15, 0.19, 1)
+shader_parameter/wainscot_height = 0.88
+shader_parameter/wainscot_color = Color(0.38, 0.39, 0.44, 1)

@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=4 uid="uid://b0472ujkfltdd"]
+
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="1_0acut"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_yeb8l"]
+_surfaces = [{
+"aabb": AABB(-1.5, -1.2358e-07, -0.100001, 3, 1, 0.200002),
+"format": 34896613377,
+"index_count": 54,
+"index_data": PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAAAAAFAAEABQAGAAEABQAHAAYACAAJAAoACwAKAAwACwAIAAoADQAIAAsADQAOAAgACAAPAAkADgAPAAgAEAAJAA8ADgARAA8AEAAPABIAEwAPABEAEwASAA8A"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("qqr//wAAAABUVQAAAAAAAKqqAAAAAAAA//8AAAAAAAD/////AAAAAFRV//8AAAAAAAAAAAAAAAAAAP//AAAAAFVV/v/+/wAAqqoAAP7/AABVVQAA/v8AAAAA/v///wAAAAAAAP7/AAAAAP///38AAFRV////fwAAqqr+//7/AAD//wAA/v8AAKqq////fwAA///+//7/AAD//////38AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_igfjc"]
+resource_name = "Interiors_A_Wall_Stair_1m_Edge_A_Flipped"
+_surfaces = [{
+"aabb": AABB(-1.5, -1.2358e-07, -0.100001, 3, 1, 0.200002),
+"attribute_data": PackedByteArray("VFWqqqmq//9UVf//AAD//wAAqqqpqqqq/v////7/qqqpqqoqVFX/f6mq/3/+/6oq/v//f1RVqioAAP9/AACqKgAAmZlUVSGiVFWZmQAAIaKpqpmZqaohov7/mZn+/yGi"),
+"format": 34896613399,
+"index_count": 54,
+"index_data": PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAAAAAFAAEABQAGAAEABQAHAAYACAAJAAoACwAIAAoACwAKAAwACAANAAkADgAJAA0ADgANAA8AEAARABIAEAATABEAFAASABEAFAARABUAFgAUABUAFgAVABcA"),
+"material": ExtResource("1_0acut"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("qqr//wAA//9UVQAAAAD//6qqAAAAAP////8AAAAA////////AAD//1RV//8AAP//AAAAAAAA//8AAP//AAD//1VV/v/+/wAAqqoAAP7/AABVVQAA/v8AAAAA/v///wAAAAAAAP7/AACqqv7//v8AAP//AAD+/wAA///+//7/AAD//////38AAKqq/v/+/wAAqqr///9/AAD///7//v8AAFRV////fwAAVVX+//7/AAAAAP///38AAAAA/v///wAA/3////9/////f////3////9/////f////3////9/////f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//7//f/+//3//v/9//7//f/+//3//v/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_yeb8l")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_wcy2u"]
+data = PackedVector3Array(1.5, 1, 0.0999991, 1.5, -1.2358e-07, 0.0999991, -1.5, -1.2358e-07, 0.100001, -1.5, 1, 1.20699e-06, 1.5, 1, -4.91738e-07, 1.5, 1, 0.0999991, -1.5, 4.37114e-09, -0.0999992, 1.5, 4.37114e-09, -0.100001, 1.5, 1, -0.100001, 1.5, 1, 0.0999991, -1.5, -1.2358e-07, 0.100001, -1.5, 1, 0.100001, -1.5, 1, 1.20699e-06, 1.5, 1, 0.0999991, -1.5, 1, 0.100001, -1.5, 4.37114e-09, -0.0999992, 1.5, 1, -0.100001, -1.5, 1, -0.0999992)
+
+[node name="Wall_Stair_1m_Edge_A_Flipped" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_igfjc")
+skeleton = NodePath("")
+
+[node name="Wall_Stair_1m_Edge_A_Flipped" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Stair_1m_Edge_A_Flipped"]
+shape = SubResource("ConcavePolygonShape3D_wcy2u")

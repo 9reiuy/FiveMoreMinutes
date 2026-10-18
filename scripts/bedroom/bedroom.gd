@@ -6,6 +6,9 @@ const STATE_RULES := preload("res://scripts/app/game_state_rules.gd")
 signal sleep_requested(melatonin_count: int, is_hungry_run: bool)
 signal save_requested
 signal story_weapon_changed(weapon_id: String)
+signal phone_open_requested(page: StringName)
+signal phone_close_requested
+signal phone_story_effect_requested(effect: StringName)
 
 # The art shares a 2560×1440 transparent canvas and is uniformly scaled to 640×360.
 # These bounds are the scaled non-transparent extents; the final hit test also checks alpha.
@@ -57,7 +60,6 @@ var current_minutes := 1260.0
 var highlighted := ""
 var melatonin_used_count := 0
 var weekday_name := "星期一"
-var pending_confirmation := ""
 var bed_image: Image
 var bottle_image: Image
 var sunshade_image: Image
@@ -130,13 +132,19 @@ func _ready() -> void:
 	phone.balance_changed.connect(_on_balance_changed)
 	phone.state_changed.connect(_on_persistent_state_changed)
 	phone.configure_state(persistent_state)
+	# Only Main opts into the shared phone. Direct bedroom previews and the
+	# data/purchase backend retain their existing standalone contract.
+	if phone_open_requested.get_connections().size() > 0:
+		phone.open_requested.connect(_on_shared_phone_open_requested)
+		phone.external_close_requested.connect(_on_shared_phone_close_requested)
+		phone.external_story_effect_requested.connect(_on_shared_phone_story_effect_requested)
+		phone.set_external_ui_enabled(true)
 	status_hud.bind_state(persistent_state)
 	status_hud.set_stress(int(persistent_state.get("stress_value", config.stress_default)))
 	weather.configure(str(persistent_state.get("daily_weather_type", "overcast")))
 	melatonin_ui.completed.connect(_on_melatonin_completed)
 	melatonin_ui.cancelled.connect(_on_melatonin_cancelled)
-	confirmation_dialog.confirmed.connect(_on_confirmation_confirmed)
-	confirmation_dialog.cancelled.connect(_on_confirmation_cancelled)
+	confirmation_dialog.action_requested.connect(_on_dialogue_action_requested)
 	confirmation_dialog.session_started.connect(_on_dialogue_session_started)
 	confirmation_dialog.session_ended.connect(_on_dialogue_session_ended)
 	hallway.door_clicked.connect(_on_hallway_door_clicked)
@@ -153,6 +161,24 @@ func _exit_tree() -> void:
 	bedroom_chr_glow_timer.stop()
 	SFX.stop_music(config.music_fade_duration, get_instance_id())
 	SFX.stop_weather_ambience(config.ambience_fade_duration)
+
+
+func _on_shared_phone_open_requested(page: StringName) -> void:
+	phone_open_requested.emit(page)
+
+
+func _on_shared_phone_close_requested() -> void:
+	phone_close_requested.emit()
+
+
+func _on_shared_phone_story_effect_requested(effect: StringName) -> void:
+	phone_story_effect_requested.emit(effect)
+
+
+func set_game_phone_active(active: bool) -> void:
+	phone.set_external_ui_active(active)
+	_update_mouse_highlight()
+	_update_door_and_status()
 
 
 func _process(delta: float) -> void:
@@ -494,7 +520,6 @@ func _begin_sleep(is_hungry: bool = false) -> void:
 		persistent_state.is_hungry_run = false
 	input_locked = true
 	_close_hallway()
-	pending_confirmation = ""
 	confirmation_dialog.close_without_signal()
 	melatonin_ui.force_cancel()
 	phone.force_collapse()
@@ -503,58 +528,51 @@ func _begin_sleep(is_hungry: bool = false) -> void:
 
 
 func _request_confirmation(kind: String) -> void:
-	pending_confirmation = kind
 	_set_highlighted("")
 	phone.force_collapse()
 	if kind == "bedroom_chr":
-		confirmation_dialog.open_message("这是我")
+		confirmation_dialog.open_dialogue(&"bedroom_self", {"computer_name": _get_computer_name()})
 	elif kind == "bed":
 		if bool(persistent_state.get("food_eaten_today", false)):
-			confirmation_dialog.open("要睡觉了吗？", "睡觉", "再等等")
+			confirmation_dialog.open_dialogue(&"bed_ready_sleep")
 		elif int(persistent_state.get("balance", 0)) < config.hungry_bed_direct_sleep_balance_threshold:
 			# 余额不足一份便当时不先闪现购买劝告，直接进入现有饥饿入睡确认。
-			pending_confirmation = "hungry_force"
-			confirmation_dialog.open("那就这样睡吧", "确认", "算了")
+			confirmation_dialog.open_dialogue(&"bed_hungry_force")
 		else:
 			var attempts := int(persistent_state.get("hungry_bed_attempts_today", 0))
 			if attempts < config.hungry_bed_attempts_before_force:
-				pending_confirmation = "hungry_block"
-				confirmation_dialog.open("吃点什么再睡吧", "买点什么吃吧", "算了")
+				confirmation_dialog.open_dialogue(&"bed_hungry_food_prompt")
 			else:
-				pending_confirmation = "hungry_force"
-				confirmation_dialog.open("那就这样睡吧", "确认", "算了")
+				confirmation_dialog.open_dialogue(&"bed_hungry_force")
 	else:
 		var stock := int(persistent_state.get("melatonin_inventory", 0))
 		if melatonin_used_count >= config.melatonin_nightly_use_limit:
-			confirmation_dialog.open_message("已经够多了。")
+			confirmation_dialog.open_dialogue(&"melatonin_nightly_limit")
 		elif stock <= 0:
-			confirmation_dialog.open_message("已经没有药了。")
+			confirmation_dialog.open_dialogue(&"melatonin_empty")
 		else:
-			var prompt := "要吃药吗？" if melatonin_used_count == 0 else "还要再吃吗？"
-			confirmation_dialog.open(prompt, "吃", "不吃")
+			confirmation_dialog.open_dialogue(&"melatonin_first_prompt" if melatonin_used_count == 0 else &"melatonin_repeat_prompt")
 
 
-func _on_confirmation_confirmed() -> void:
-	var choice := pending_confirmation
-	pending_confirmation = ""
-	if choice == "bed":
-		_begin_sleep(false)
-	elif choice == "hungry_block":
-		_increment_hungry_bed_attempt()
-		phone.open_quicklink_from_bedroom()
-	elif choice == "hungry_force":
-		_begin_sleep(true)
-	elif choice == "bottle":
-		_open_melatonin()
-
-
-func _on_confirmation_cancelled() -> void:
-	var choice := pending_confirmation
-	pending_confirmation = ""
-	if choice == "hungry_block":
-		_increment_hungry_bed_attempt()
-	elif choice == "door_received":
-		_finish_eating_delivery()
+func _on_dialogue_action_requested(action_id: StringName) -> void:
+	# Safe action whitelist: JSON provides only a symbolic action; this match is
+	# the sole place where Bedroom turns it into gameplay behavior.
+	match action_id:
+		&"begin_sleep":
+			_begin_sleep(false)
+		&"begin_hungry_sleep":
+			_begin_sleep(true)
+		&"open_quicklink":
+			_increment_hungry_bed_attempt()
+			phone.open_quicklink_from_bedroom()
+		&"defer_food_purchase":
+			_increment_hungry_bed_attempt()
+		&"take_melatonin":
+			_open_melatonin()
+		&"finish_delivery_meal":
+			_finish_eating_delivery()
+		_:
+			push_error("[DIALOGUE DATA ERROR]\nfile: res://data/dialogue/bedroom.json\nid: action\nline: -\nreason: unsupported Bedroom action '%s'" % action_id)
 
 
 func _open_melatonin() -> void:
@@ -593,6 +611,20 @@ func _increment_hungry_bed_attempt() -> void:
 	if bool(persistent_state.get("food_eaten_today", false)):
 		return
 	persistent_state.hungry_bed_attempts_today = int(persistent_state.get("hungry_bed_attempts_today", 0)) + 1
+
+
+## 仅用于 bedroom_self 对话的一句问候文本：运行时读取本机电脑名。
+## 优先 Windows 环境变量 COMPUTERNAME，其次其它平台的 HOSTNAME，
+## 读取失败时回退到"玩家"。结果只做本地显示，不写入存档、不外发。
+func _get_computer_name() -> String:
+	var computer_name := OS.get_environment("COMPUTERNAME").strip_edges()
+	if computer_name.is_empty():
+		computer_name = OS.get_environment("HOSTNAME").strip_edges()
+	# 清理内部换行，避免破坏对话框布局；再次去空白兜底。
+	computer_name = computer_name.replace("\r", "").replace("\n", "").strip_edges()
+	if computer_name.is_empty():
+		computer_name = "玩家"
+	return computer_name
 
 
 func _change_stress(change: int, reason: StringName) -> void:
@@ -672,8 +704,7 @@ func _on_hallway_door_clicked() -> void:
 	if str(persistent_state.get("delivery_state", "NONE")) == "WAITING_AT_DOOR":
 		_claim_delivery()
 		return
-	pending_confirmation = "hallway_door"
-	confirmation_dialog.open_message("门外没有人")
+	confirmation_dialog.open_dialogue(&"hallway_no_one")
 
 
 func _claim_delivery() -> void:
@@ -681,13 +712,12 @@ func _claim_delivery() -> void:
 		return
 	persistent_state.delivery_state = "RECEIVED"
 	persistent_state.delivery_seconds_remaining = 0.0
-	pending_confirmation = "door_received"
 	input_locked = true
 	hallway.set_interaction_enabled(false)
 	SFX.play_event(&"home_door")
 	await get_tree().create_timer(config.door_open_close_gap_seconds, false).timeout
 	SFX.play_event(&"home_door")
-	confirmation_dialog.open_message("你拿到了廉价便当。\n……勉强能吃。")
+	confirmation_dialog.open_dialogue(&"delivery_received")
 	input_locked = false
 
 
@@ -747,6 +777,5 @@ func _show_pending_entry_notice() -> void:
 		persistent_state.erase("pending_sunday_notice")
 	if notices.is_empty():
 		return
-	pending_confirmation = "entry_notice"
-	confirmation_dialog.open_message("\n\n".join(notices))
+	confirmation_dialog.open_dialogue(&"common_dynamic_notice", {"notice": "\n\n".join(notices)})
 	save_requested.emit()

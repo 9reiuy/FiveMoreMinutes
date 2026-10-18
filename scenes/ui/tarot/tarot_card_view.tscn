@@ -1,0 +1,180 @@
+[gd_scene load_steps=7 format=3 uid="uid://c6r2j8w9y2x1a"]
+
+[ext_resource type="Script" path="res://scripts/dream/tarot/tarot_card_view.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://art/ui/tarot/card_back.png" id="2_card_back"]
+[ext_resource type="Texture2D" path="res://art/ui/tarot/the_fool.png" id="3_fool_art"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shadow"]
+bg_color = Color(0, 0, 0, 0.45)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glow"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.85098, 0.352941, 0.95)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(1, 0.8, 0.2, 0.55)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pill"]
+bg_color = Color(0.04, 0.05, 0.09, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.38, 0.46, 0.58, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 3
+shadow_offset = Vector2(0, 1)
+
+[node name="TarotCardView" type="Control"]
+custom_minimum_size = Vector2(153, 237)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 153.0
+offset_bottom = 237.0
+pivot_offset = Vector2(76.5, 118.5)
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="CardShadow" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 6.0
+offset_right = 3.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_shadow")
+
+[node name="CardFlipper" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(76.5, 118.5)
+mouse_filter = 2
+
+[node name="CardBack" type="TextureRect" parent="CardFlipper"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_card_back")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CardFront" type="Control" parent="CardFlipper"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CardArt" type="TextureRect" parent="CardFlipper/CardFront"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(76.5, 118.5)
+mouse_filter = 2
+texture = ExtResource("3_fool_art")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LabelContainer" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -58.0
+offset_top = -25.0
+offset_right = 58.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pill")
+
+[node name="BadgeContent" type="HBoxContainer" parent="LabelContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="CardNameLabel" type="Label" parent="LabelContainer/BadgeContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 11
+text = "愚者"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SeparatorLabel" type="Label" parent="LabelContainer/BadgeContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.62, 0.72, 0.9)
+theme_override_font_sizes/font_size = 10
+text = "·"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OrientationLabel" type="Label" parent="LabelContainer/BadgeContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85098, 0.352941, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 11
+text = "正位"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SelectionGlow" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_glow")

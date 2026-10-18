@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=4 uid="uid://o4gekduccrwy"]
+
+[ext_resource type="Material" uid="uid://canwefv74vsd6" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres" id="1_15pnp"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_yxt56"]
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.031208, 1, 0.0100067, 0.0621296),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAwACAAEAAwABAAQAAAAFAAEABgAFAAAABgAAAAcA"),
+"name": "Door",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("/////1m8AAAAAP//yy4AAP/////LLgAA//8AAAAAAAAAAAAAAAAAAAAA//9ZvAAAAAAAAP//AAD//wAA//8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_n82ay"]
+resource_name = "Interiors_A_Floor_Separator_1m"
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.031208, 1, 0.0100067, 0.0621296),
+"attribute_data": PackedByteArray("2gBb+316RP/aAET/fXpb+9oARP99elv7fXpE/9oAW/t9elv72gBE/9oAW/t9ekT/"),
+"format": 34896613399,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkA"),
+"material": ExtResource("1_15pnp"),
+"name": "Door",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("/////1m8//8AAP//yy7////////LLv//AAD//1m8/////wAAAAD//wAA///LLv//AAAAAAAA////////yy7//wAAAAD//////////1m8/////wAA/////wAA//9ZvP///38vt/9/rcv/f63L/38vt/9/K9j/f63L/38r2P9/rcv/fwiu/38vt/9/CK7/fy+3")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_yxt56")
+
+[node name="Floor_Separator_1m" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_n82ay")
+skeleton = NodePath("")

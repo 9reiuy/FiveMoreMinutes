@@ -1,0 +1,22 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://dn04f3wubif1c"]
+
+[ext_resource type="Shader" uid="uid://dqmbo0wc1k42" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/BasicGlass.gdshader" id="1_lmjwk"]
+[ext_resource type="Texture2D" uid="uid://bi3lgtdwmgppq" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Door/Door_Normal_2K.png" id="1_toxvk"]
+[ext_resource type="Texture2D" uid="uid://witm4qxxx60l" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Door/Door_ORM_2K.png" id="2_lmjwk"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_lmjwk")
+shader_parameter/albedo = Color(1, 1, 1, 0.776471)
+shader_parameter/albedo_texture_size = Vector2i(2048, 2048)
+shader_parameter/point_size = 0.0
+shader_parameter/roughness = 1.0
+shader_parameter/texture_roughness = ExtResource("2_lmjwk")
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 1.0
+shader_parameter/refraction = 0.0
+shader_parameter/refraction_rough = 0.0
+shader_parameter/texture_normal = ExtResource("1_toxvk")
+shader_parameter/normal_scale = 1.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)

@@ -6,8 +6,8 @@ const CONFIG := preload("res://resources/demo_config.tres")
 const MUSIC_STREAMS := {
 	&"bedroom": preload("res://sfx/卧室背景音乐.mp3"),
 	&"bedroom_short": preload("res://sfx/卧室背景音乐短.mp3"),
-	&"battle": preload("res://sfx/游戏中战斗音乐.mp3"),
-	&"battle_short": preload("res://sfx/游戏中战斗音乐短.mp3")
+	&"battle": preload("res://art/Dream/BGM/Track01.ogg"),
+	&"battle_short": preload("res://art/Dream/BGM/Track01.ogg")
 }
 const WEATHER_STREAMS := {
 	&"rain": preload("res://sfx/雨天.mp3"),
@@ -21,7 +21,6 @@ const STREAMS := {
 	&"death": preload("res://sfx/角色死亡音.mp3"),
 	&"new_message": preload("res://sfx/手机新讯息.mp3"),
 	&"purchase": preload("res://sfx/购买音效.mp3"),
-	&"laser": preload("res://sfx/激光武器音效.mp3"),
 	&"home_door": preload("res://sfx/回家开门音效.mp3"),
 	&"work": preload("res://sfx/上班音效.mp3"),
 	&"confirm": preload("res://sfx/确定按钮音效.mp3"),
@@ -29,7 +28,116 @@ const STREAMS := {
 	&"phone_unlock": preload("res://sfx/手机解锁音效.mp3"),
 	&"phone_operation": preload("res://sfx/手机操作按键.mp3"),
 	&"bottle_shake": preload("res://sfx/摇晃药瓶.mp3"),
-	&"door_knock": preload("res://sfx/敲门.mp3")
+	&"door_knock": preload("res://sfx/敲门.mp3"),
+	&"dash": preload("res://sfx/dash.wav"),
+	&"phone_buzz": preload("res://sfx/phone_buzz.wav"),
+	&"heal": preload("res://sfx/heal.wav"),
+	&"glass_shatter": preload("res://sfx/glass_shatter.wav"),
+	&"wood_shatter": preload("res://sfx/wood_shatter.wav"),
+	## Footstep is deliberately absent from this table.  It is a multi-clip
+	## random group rather than a single authored stream, registered separately
+	## in _ready() from FOOTSTEP_STREAMS.  Bus and volume stay in EVENT_BUSES /
+	## _volume_for so the generic world-event path keeps treating it normally.
+	## Official firearm pack events.  Keep these as normal registered players so
+	## Player-owned weapon sounds use the existing WorldSFX/time-scale path.
+	&"weapon_fire": preload("res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav"),
+	&"weapon_reload": preload("res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav"),
+	&"weapon_pickup": preload("res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Equip - 1.wav"),
+	&"weapon_dry_fire": preload("res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire (Dry) - 1.wav"),
+	&"gunshot": preload("res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav"),
+	## Legacy aliases remain registered for older scene/script references, but
+	## use the same official Dream firearm sample as the unified gunshot event.
+	&"pistol_fire": preload("res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav"),
+	&"shotgun_fire": preload("res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav"),
+	&"melee_hit_1": preload("res://art/Dream/hit/Impact 1.wav"),
+	&"melee_hit_2": preload("res://art/Dream/hit/Impact 2.wav"),
+	&"melee_hit_3": preload("res://art/Dream/hit/Impact 3.wav"),
+	&"melee_hit_4": preload("res://art/Dream/hit/Impact 4.wav"),
+	&"enemy_kill": preload("res://sfx/enemy_kill.mp3"),
+	&"tarot_shuffle": preload("res://sfx/tarot/tarot_shuffle.wav"),
+	&"tarot_deal": preload("res://sfx/tarot/tarot_deal.wav"),
+	&"tarot_flip": preload("res://sfx/tarot/tarot_flip.wav"),
+	&"tarot_select": preload("res://sfx/tarot/tarot_select.wav"),
+	## Elevator cues.  Both deliberately route around the WorldSFX treatment:
+	## a floor-arrival prompt must not be pitched or low-passed by the gameplay
+	## time-scale path, exactly like the weather bed.
+	&"elevator_ding": preload("res://sfx/elevator_candidates/ding_classic_dingdong.wav"),
+	&"elevator_badge": preload("res://sfx/elevator_candidates/ding_airy_gong.wav")
+}
+
+## Player footstep group: five Kenney concrete single-step recordings (CC0).
+## These are separate OGG files, one footfall each, so they cannot be expressed
+## as AUTHORED_SOUND_SET_CONFIG time slices over a single WAV.  They are
+## instead handed to an AudioStreamRandomizer, which picks a clip per playback
+## in random order without repeating the previous one, and applies the pitch
+## jitter that keeps a 4.4-steps-per-second walk from sounding mechanical.
+const FOOTSTEP_STREAMS := [
+	preload("res://sfx/footsteps/concrete/footstep_concrete_000.ogg"),
+	preload("res://sfx/footsteps/concrete/footstep_concrete_001.ogg"),
+	preload("res://sfx/footsteps/concrete/footstep_concrete_002.ogg"),
+	preload("res://sfx/footsteps/concrete/footstep_concrete_003.ogg"),
+	preload("res://sfx/footsteps/concrete/footstep_concrete_004.ogg")
+]
+
+## The supplied Dream impact recordings are authored multi-clip WAVs.  Their
+## quiet gaps were measured from the actual PCM data rather than assuming an
+## equal five-way split.  The first five complete regions are the five clips
+## used by gameplay; the source WAVs remain untouched in the art folder.
+## Each Vector2 stores [start_seconds, end_seconds].
+const MELEE_ENEMY_HIT_SOURCE = preload("res://art/wallpaper/近战击打敌人.wav")
+const MELEE_FURNITURE_HIT_SOURCE = preload("res://art/wallpaper/近战击打家具.wav")
+const BULLET_ENEMY_HIT_SOURCE = preload("res://art/wallpaper/射击被击中.wav")
+const MELEE_SWING_SOURCE = preload("res://art/wallpaper/挥动.wav")
+const MELEE_ENEMY_HIT_REGIONS := [
+	# The first impact begins around 0.66s; retain ~20ms of pre-roll.
+	Vector2(0.64, 4.0),
+	Vector2(4.90, 8.0),
+	Vector2(8.90, 12.0),
+	Vector2(12.90, 16.0),
+	Vector2(16.90, 20.0),
+]
+const MELEE_FURNITURE_HIT_REGIONS := [
+	# The first impact begins around 0.66s; subsequent clips begin around 0.42s.
+	Vector2(0.64, 4.0),
+	Vector2(4.90, 8.0),
+	Vector2(8.90, 12.0),
+	Vector2(12.90, 16.0),
+	Vector2(16.90, 20.0),
+]
+const BULLET_ENEMY_HIT_REGIONS := [
+	# The first impact begins around 0.50s; subsequent clips begin around 0.25s.
+	Vector2(0.48, 4.0),
+	Vector2(4.73, 8.0),
+	Vector2(8.73, 12.0),
+	Vector2(12.73, 16.0),
+	Vector2(16.73, 20.0),
+]
+const MELEE_SWING_REGIONS := [Vector2(0.0, 0.1068)]
+const AUTHORED_SOUND_SET_CONFIG := {
+	&"melee_hit_enemy": {
+		"source": MELEE_ENEMY_HIT_SOURCE,
+		"regions": MELEE_ENEMY_HIT_REGIONS,
+		"bus": &"Characters",
+		"voices": 8,
+	},
+	&"melee_hit_furniture": {
+		"source": MELEE_FURNITURE_HIT_SOURCE,
+		"regions": MELEE_FURNITURE_HIT_REGIONS,
+		"bus": &"Environment",
+		"voices": 8,
+	},
+	&"bullet_hit_enemy": {
+		"source": BULLET_ENEMY_HIT_SOURCE,
+		"regions": BULLET_ENEMY_HIT_REGIONS,
+		"bus": &"Characters",
+		"voices": 8,
+	},
+	&"melee_swing": {
+		"source": MELEE_SWING_SOURCE,
+		"regions": MELEE_SWING_REGIONS,
+		"bus": &"Weapons",
+		"voices": 6,
+	},
 }
 const EVENT_BUSES := {
 	&"forbidden": &"UI",
@@ -37,7 +145,6 @@ const EVENT_BUSES := {
 	&"purchase": &"UI",
 	&"confirm": &"UI",
 	&"experience": &"UI",
-	&"laser": &"Weapons",
 	&"death": &"Characters",
 	&"home_door": &"Environment",
 	&"work": &"Environment",
@@ -48,25 +155,89 @@ const EVENT_BUSES := {
 	&"dash": &"Characters",
 	&"player_hurt": &"Characters",
 	&"weapon_fire": &"Weapons",
+	&"weapon_reload": &"Weapons",
+	&"weapon_pickup": &"Weapons",
+	&"weapon_throw": &"Weapons",
+	&"weapon_dry_fire": &"Weapons",
+	&"gunshot": &"Weapons",
 	&"pistol_fire": &"Weapons",
 	&"shotgun_fire": &"Weapons",
+	&"melee_hit_1": &"Characters",
+	&"melee_hit_2": &"Characters",
+	&"melee_hit_3": &"Characters",
+	&"melee_hit_4": &"Characters",
+	&"melee_hit_enemy": &"Characters",
+	&"melee_hit_furniture": &"Environment",
+	&"glass_shatter": &"Environment",
+	&"wood_shatter": &"Environment",
+	&"bullet_hit_enemy": &"Characters",
 	&"enemy_kill": &"Characters",
+	&"enemy_hit": &"Characters",
+	&"body_impact": &"Characters",
+	&"wall_impact": &"Environment",
+	&"furniture_impact": &"Environment",
+	&"melee_swing": &"Weapons",
 	&"door_knock": &"Environment",
+	&"footstep": &"Characters",
 	&"thunder": &"Environment",
 	&"crt_off": &"UI",
 	&"phone_buzz": &"UI",
 	&"heal": &"Characters",
 	&"text_blip": &"UI",
-	&"slot_tick": &"UI"
+	&"slot_tick": &"UI",
+	&"tarot_shuffle": &"UI",
+	&"tarot_deal": &"UI",
+	&"tarot_flip": &"UI",
+	&"tarot_select": &"UI",
+	## The arrival prompt rides the raw SFX bus: it fires mid-transition, and
+	## the Environment -> WorldSFX chain would modulate it.  The badge cue is an
+	## acquisition confirmation, so it follows the purchase/experience
+	## convention and goes to UI (also a direct child of SFX).
+	&"elevator_ding": &"SFX",
+	&"elevator_badge": &"UI"
 }
-const GENERATED_EVENTS := [&"ui_hover", &"dash", &"player_hurt", &"weapon_fire", &"pistol_fire", &"shotgun_fire", &"enemy_kill", &"thunder", &"crt_off", &"phone_buzz", &"heal", &"text_blip", &"slot_tick"]
+const GENERATED_EVENTS := [&"ui_hover", &"player_hurt", &"enemy_hit", &"body_impact", &"wall_impact", &"furniture_impact", &"thunder", &"crt_off", &"text_blip", &"slot_tick"]
+const EVENT_MIN_INTERVALS := {
+	&"enemy_kill": 0.04,
+	&"enemy_hit": 0.025,
+	&"melee_hit_enemy": 0.025,
+	&"melee_hit_furniture": 0.04,
+	&"bullet_hit_enemy": 0.025,
+	&"body_impact": 0.08,
+	&"wall_impact": 0.10,
+	&"furniture_impact": 0.08,
+	&"melee_swing": 0.06,
+	&"weapon_dry_fire": 0.10,
+	&"tarot_shuffle": 0.2,
+	&"tarot_deal": 0.05,
+	&"tarot_flip": 0.05,
+	&"tarot_select": 0.2,
+	## Footsteps fire off the walk gait phase, and that phase snaps back to zero
+	## the moment the player releases input.  Tapping the stick would otherwise
+	## machine-gun the clip; this floor sits below the natural 0.227s step gap,
+	## so it only ever trims that pathological case.
+	&"footstep": 0.10
+}
 
 var players: Dictionary = {}
+var sound_sets: Dictionary = {}
+var sound_set_players: Dictionary = {}
+var sound_set_last_indices: Dictionary = {}
+var sound_set_next_voice: Dictionary = {}
+var sound_set_buses: Dictionary = {}
+var sound_set_stop_times: Dictionary = {}
+## Source playback end positions for segmented WAV voices.  Unlike a wall-clock
+## timeout, this remains correct when pitch_scale changes during a clip.
+var sound_set_stop_positions: Dictionary = {}
+var last_event_play_msec: Dictionary = {}
 var last_experience_play_msec := -1000000
 var last_bottle_shake_play_msec := -1000000
 var last_slot_tick_play_msec := -1000000
+var enemy_kill_pitch_random := 1.0
 var music_player: AudioStreamPlayer
 var weather_player: AudioStreamPlayer
+var elevator_rumble_player: AudioStreamPlayer
+var elevator_rumble_tween: Tween
 var current_music_id: StringName = &""
 var current_music_owner_id: int = 0
 var current_weather_id: StringName = &""
@@ -79,6 +250,39 @@ var music_lowpass: AudioEffectLowPassFilter
 var music_muffle_tween: Tween
 var last_muffle_paused := false
 
+const WORLD_SFX_BUS: StringName = &"WorldSFX"
+const DEFAULT_AUDIO_WORLD_MIN_SCALE := 0.005
+const DEFAULT_AUDIO_WORLD_MAX_SCALE := 1.0
+const DEFAULT_AUDIO_MIN_PITCH := 0.35
+const DEFAULT_AUDIO_MAX_PITCH := 1.0
+const DEFAULT_AUDIO_CURVE_EXPONENT := 0.5
+const DEFAULT_AUDIO_RESUME_TAU := 0.045
+const DEFAULT_AUDIO_SLOWDOWN_TAU := 0.09
+const DEFAULT_AUDIO_LOWPASS_MIN_HZ := 2500.0
+const DEFAULT_AUDIO_LOWPASS_MAX_HZ := 20000.0
+const DEFAULT_AUDIO_3D_MAX_DISTANCE := 64.0
+const DEFAULT_AUDIO_3D_UNIT_SIZE := 10.0
+const DEFAULT_AUDIO_3D_VOICE_COUNT := 12
+
+## Elevator ride ambience.  A sustained loop is not a one-shot event, so it owns
+## a dedicated player (mirroring the weather bed) rather than a registry entry:
+## one voice, explicit start/stop, explicit fade in and out.  The clip is
+## authored ring-crossfaded so repeats butt up without a gap or a click -- see
+## scripts/audio/generate_elevator_sfx.py.
+const ELEVATOR_RUMBLE_STREAM := preload("res://sfx/elevator_candidates/rumble_power_station_reuse.wav")
+const ELEVATOR_RUMBLE_DB := -4.0
+const ELEVATOR_RUMBLE_FADE_IN := 0.55
+const ELEVATOR_RUMBLE_FADE_OUT := 0.40
+
+var world_sfx_lowpass: AudioEffectLowPassFilter
+var world_3d_voices: Array[AudioStreamPlayer3D] = []
+var world_3d_next_voice := 0
+var current_gameplay_audio_pitch := 1.0
+var current_gameplay_audio_activity := 1.0
+var target_gameplay_audio_pitch := 1.0
+var target_gameplay_audio_activity := 1.0
+var _last_audio_real_usec := 0
+
 
 static func play_event(event_id: StringName) -> bool:
 	var main_loop := Engine.get_main_loop() as SceneTree
@@ -86,6 +290,86 @@ static func play_event(event_id: StringName) -> bool:
 		return false
 	var manager := main_loop.root.get_node_or_null("SFXManager")
 	return manager.play(event_id) if manager != null else false
+
+
+## Unified formal weapon-event entry points.  Keeping these wrappers here
+## prevents individual weapon scripts from owning sound resources or bypassing
+## the shared WorldSFX time-scale processing.
+static func play_weapon_fire() -> bool:
+	# `gunshot` is the long-standing event observed by existing Dream hooks and
+	# tests; it is an alias of the same official Fire recording.  Keeping the
+	# compatibility event here avoids a second playback while exposing the
+	# explicit weapon API to new callers.
+	return play_event(&"gunshot")
+
+
+static func play_weapon_reload() -> bool:
+	return play_event(&"weapon_reload")
+
+
+static func play_weapon_pickup() -> bool:
+	return play_event(&"weapon_pickup")
+
+
+static func play_weapon_dry_fire() -> bool:
+	return play_event(&"weapon_dry_fire")
+
+
+static func play_weapon_throw() -> bool:
+	# No dedicated throw recording in the supplied folder.  The
+	# optional API below intentionally remains silent until an appropriate
+	# resource is added; Equip/Reload must not be misused as a throw cue.
+	return play_event(&"weapon_throw")
+
+
+static func play_glass_shatter() -> bool:
+	return play_event(&"glass_shatter")
+
+
+static func play_wood_shatter() -> bool:
+	return play_event(&"wood_shatter")
+
+
+static func play_enemy_kill() -> bool:
+	return play_event(&"enemy_kill")
+
+
+static func play_tarot_shuffle() -> bool:
+	return play_event(&"tarot_shuffle")
+
+
+static func play_tarot_deal() -> bool:
+	return play_event(&"tarot_deal")
+
+
+static func play_tarot_flip() -> bool:
+	return play_event(&"tarot_flip")
+
+
+static func play_tarot_select() -> bool:
+	return play_event(&"tarot_select")
+
+
+## Plays a WorldSFX event from a real 3D world position.  The pool is owned by
+## this autoload so high-rate enemy fire does not allocate one node per shot.
+## UI, dialogue and menu events are deliberately rejected here; callers must
+## use play_event() for those non-world sounds.
+static func play_world_sfx_3d(
+	event_id: StringName,
+	world_position: Vector3,
+	volume_offset_db: float = 0.0,
+	max_distance: float = -1.0
+) -> bool:
+	var manager := _manager()
+	if manager == null or not manager.has_method("_play_world_sfx_3d"):
+		return false
+	return bool(manager.call(
+		"_play_world_sfx_3d",
+		event_id,
+		world_position,
+		volume_offset_db,
+		max_distance
+	))
 
 
 static func stop_event(event_id: StringName) -> void:
@@ -127,6 +411,21 @@ static func stop_weather_ambience(fade_duration: float = -1.0) -> void:
 		manager.fade_out_weather(CONFIG.ambience_fade_duration if fade_duration < 0.0 else fade_duration)
 
 
+## Elevator ride bed entry points.  The dungeon calls these in lockstep with its
+## camera rumble so the shake and the rumble can never disagree about whether a
+## ride is in progress.
+static func play_elevator_rumble(fade_in: float = ELEVATOR_RUMBLE_FADE_IN) -> void:
+	var manager := _manager()
+	if manager != null:
+		manager.call("_start_elevator_rumble", fade_in)
+
+
+static func stop_elevator_rumble(fade_out: float = ELEVATOR_RUMBLE_FADE_OUT) -> void:
+	var manager := _manager()
+	if manager != null:
+		manager.call("_stop_elevator_rumble", fade_out)
+
+
 static func set_weather_volume_multiplier(multiplier: float) -> void:
 	var manager := _manager()
 	if manager != null:
@@ -141,6 +440,27 @@ static func set_music_muffled(muffled: bool) -> void:
 
 static func play_door_knock() -> bool:
 	return play_event(&"door_knock")
+
+
+## Compatibility alias used by older callers.  New code should use the
+## explicit enemy/furniture helpers below so the hit target remains clear.
+static func play_random_melee_hit() -> bool:
+	return play_melee_enemy_hit()
+
+
+static func play_melee_enemy_hit() -> bool:
+	var manager := _manager()
+	return manager._play_random_sound_set(&"melee_hit_enemy") if manager != null else false
+
+
+static func play_melee_furniture_hit() -> bool:
+	var manager := _manager()
+	return manager._play_random_sound_set(&"melee_hit_furniture") if manager != null else false
+
+
+static func play_bullet_enemy_hit() -> bool:
+	var manager := _manager()
+	return manager._play_random_sound_set(&"bullet_hit_enemy") if manager != null else false
 
 
 static func set_music_duck(reason: StringName, duck_db: float, fade_duration: float) -> void:
@@ -162,28 +482,86 @@ static func _manager() -> Node:
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_last_audio_real_usec = Time.get_ticks_usec()
 	_ensure_bus(&"SFX")
 	_ensure_bus(&"Music")
+	_ensure_bus(WORLD_SFX_BUS)
+	AudioServer.set_bus_send(AudioServer.get_bus_index(WORLD_SFX_BUS), &"SFX")
 	for bus_name in [&"UI", &"Weapons", &"Characters", &"Environment"]:
 		_ensure_bus(bus_name)
-		AudioServer.set_bus_send(AudioServer.get_bus_index(bus_name), &"SFX")
-	_ensure_weapon_lowpass()
+		AudioServer.set_bus_send(
+			AudioServer.get_bus_index(bus_name),
+			&"SFX" if bus_name == &"UI" else WORLD_SFX_BUS
+		)
+	_ensure_world_sfx_lowpass()
 	_ensure_music_lowpass()
 	for event_id in STREAMS:
 		_register_player(event_id, STREAMS[event_id])
+	# Footstep rides the ordinary player path so it inherits the Characters bus,
+	# the -18 dB trim and the WorldSFX time-scale pitch, but its stream is a
+	# randomizer group instead of a single clip.
+	_register_player(&"footstep", _build_footstep_randomizer())
 	for event_id in GENERATED_EVENTS:
-		_register_player(event_id, _create_placeholder_stream(event_id))
+		if not AUTHORED_SOUND_SET_CONFIG.has(event_id):
+			_register_player(event_id, _create_placeholder_stream(event_id))
+	for event_id_variant in AUTHORED_SOUND_SET_CONFIG.keys():
+		var event_id: StringName = StringName(event_id_variant)
+		var set_config: Dictionary = AUTHORED_SOUND_SET_CONFIG[event_id]
+		_register_sound_set(
+			event_id,
+			set_config.get("source") as AudioStreamWAV,
+			set_config.get("regions", []) as Array,
+			StringName(set_config.get("bus", &"Characters")),
+			int(set_config.get("voices", 6))
+		)
 	music_player = _create_unique_player("MusicPlayer", &"Music")
-	weather_player = _create_unique_player("WeatherPlayer", &"Environment")
+	# Weather ambience is not a gameplay voice: keep it on the unprocessed SFX
+	# bus so SUPERHOT WorldSFX pitch/low-pass presentation does not slow or
+	# muffle the background bed.  Imported gameplay environment events still use
+	# the Environment→WorldSFX route above.
+	weather_player = _create_unique_player("WeatherPlayer", &"SFX")
+	# Elevator ride bed: same unprocessed-bus rationale as the weather bed, and
+	# the loop flag is asserted here so the clip can never start one-shot.
+	elevator_rumble_player = _create_unique_player("ElevatorRumblePlayer", &"SFX")
+	elevator_rumble_player.stream = ELEVATOR_RUMBLE_STREAM
+	_create_world_3d_voice_pool()
 	for stream in MUSIC_STREAMS.values():
 		_set_loop(stream, true)
 	for stream in WEATHER_STREAMS.values():
 		_set_loop(stream, true)
+	_set_loop(ELEVATOR_RUMBLE_STREAM, true)
 
 
 func _process(_delta: float) -> void:
+	var real_delta := _consume_audio_real_delta()
+	_update_gameplay_audio_time(real_delta)
 	# 战斗、角色和环境声音随场景树暂停；暂停菜单的UI反馈仍可播放。
 	var paused := get_tree().paused
+	var now_seconds: float = Time.get_ticks_msec() / 1000.0
+	for event_id_variant in sound_set_stop_positions.keys():
+		var event_id: StringName = StringName(event_id_variant)
+		var stop_positions_variant: Variant = sound_set_stop_positions.get(event_id, {})
+		if not stop_positions_variant is Dictionary:
+			continue
+		var stop_positions: Dictionary = stop_positions_variant
+		var stop_times_variant: Variant = sound_set_stop_times.get(event_id, {})
+		var stop_times: Dictionary = stop_times_variant if stop_times_variant is Dictionary else {}
+		for voice_id_variant in stop_positions.keys():
+			var voice_id: int = int(voice_id_variant)
+			var voice: AudioStreamPlayer = null
+			if is_instance_id_valid(voice_id):
+				voice = instance_from_id(voice_id) as AudioStreamPlayer
+			var source_end: float = float(stop_positions.get(voice_id_variant, 0.0))
+			var fallback_stop_at: float = float(stop_times.get(voice_id_variant, 0.0))
+			var playback_position := voice.get_playback_position() if voice != null and voice.playing else -1.0
+			var reached_source_end := playback_position >= source_end - 0.005
+			var reached_fallback_end := fallback_stop_at > 0.0 and now_seconds >= fallback_stop_at
+			if voice == null or not voice.playing or reached_source_end or reached_fallback_end:
+				if voice != null and voice.playing and (reached_source_end or reached_fallback_end):
+					voice.stop()
+				stop_positions.erase(voice_id_variant)
+				stop_times.erase(voice_id_variant)
+	_update_gameplay_audio_voices(paused)
 	# 暂停时背景音乐变朦胧（低通滤波），恢复时平滑还原。
 	if paused != last_muffle_paused:
 		last_muffle_paused = paused
@@ -192,6 +570,138 @@ func _process(_delta: float) -> void:
 		var player: AudioStreamPlayer = players[event_id]
 		if EVENT_BUSES[event_id] != &"UI":
 			player.stream_paused = paused
+	for event_id_variant in sound_set_players.keys():
+		var event_id: StringName = StringName(event_id_variant)
+		var voices_variant: Variant = sound_set_players.get(event_id, [])
+		if not voices_variant is Array:
+			continue
+		var bus_name: StringName = StringName(sound_set_buses.get(event_id, &"Characters"))
+		if bus_name == &"UI":
+			continue
+		var voices: Array = voices_variant
+		for voice_variant in voices:
+			var voice: AudioStreamPlayer = voice_variant as AudioStreamPlayer
+			if voice != null:
+				voice.stream_paused = paused
+
+
+func _consume_audio_real_delta() -> float:
+	var now_usec: int = Time.get_ticks_usec()
+	if _last_audio_real_usec <= 0:
+		_last_audio_real_usec = now_usec
+		return 1.0 / 60.0
+	var real_delta: float = clampf(
+		float(now_usec - _last_audio_real_usec) / 1000000.0,
+		0.0,
+		0.1
+	)
+	_last_audio_real_usec = now_usec
+	return real_delta if real_delta > 0.0 else 1.0 / 60.0
+
+
+func _config_float(property_name: StringName, fallback: float) -> float:
+	var value: Variant = CONFIG.get(property_name)
+	if value is float or value is int:
+		return float(value)
+	return fallback
+
+
+func _resolved_world_time_scale() -> float:
+	# Pause is a lifecycle state, not the slowest point of Dream time.  Keeping
+	# the audio presentation at unity here prevents paused voices from becoming
+	# long, low-pitched tails when the menu opens.
+	if get_tree().paused:
+		return _config_float(&"superhot_max_time_scale", DEFAULT_AUDIO_WORLD_MAX_SCALE)
+	var resolved: float = _config_float(&"superhot_max_time_scale", DEFAULT_AUDIO_WORLD_MAX_SCALE)
+	var tree := get_tree()
+	if tree != null and tree.root != null:
+		var controller: Node = tree.root.get_node_or_null("DreamTimeController") as Node
+		if controller != null and controller.has_method("get_resolved_time_scale"):
+			resolved = float(controller.call("get_resolved_time_scale"))
+	var min_scale: float = _config_float(&"superhot_min_time_scale", DEFAULT_AUDIO_WORLD_MIN_SCALE)
+	var max_scale: float = _config_float(&"superhot_max_time_scale", DEFAULT_AUDIO_WORLD_MAX_SCALE)
+	max_scale = maxf(max_scale, min_scale)
+	return clampf(resolved, min_scale, max_scale)
+
+
+func _update_gameplay_audio_time(real_delta: float) -> void:
+	var min_scale: float = _config_float(&"superhot_min_time_scale", DEFAULT_AUDIO_WORLD_MIN_SCALE)
+	var max_scale: float = _config_float(&"superhot_max_time_scale", DEFAULT_AUDIO_WORLD_MAX_SCALE)
+	max_scale = maxf(max_scale, min_scale + 0.0001)
+	var world_scale: float = _resolved_world_time_scale()
+	var normalized: float = clampf(
+		(world_scale - min_scale) / maxf(max_scale - min_scale, 0.0001),
+		0.0,
+		1.0
+	)
+	var exponent: float = maxf(
+		_config_float(&"gameplay_sfx_curve_exponent", DEFAULT_AUDIO_CURVE_EXPONENT),
+		0.01
+	)
+	target_gameplay_audio_activity = pow(normalized, exponent)
+	var min_pitch: float = _config_float(&"gameplay_sfx_min_pitch", DEFAULT_AUDIO_MIN_PITCH)
+	var max_pitch: float = _config_float(&"gameplay_sfx_max_pitch", DEFAULT_AUDIO_MAX_PITCH)
+	max_pitch = maxf(max_pitch, min_pitch)
+	target_gameplay_audio_pitch = lerpf(min_pitch, max_pitch, target_gameplay_audio_activity)
+	var tau: float = (
+		_config_float(&"gameplay_sfx_resume_tau", DEFAULT_AUDIO_RESUME_TAU)
+		if target_gameplay_audio_pitch > current_gameplay_audio_pitch
+		else _config_float(&"gameplay_sfx_slowdown_tau", DEFAULT_AUDIO_SLOWDOWN_TAU)
+	)
+	tau = maxf(tau, 0.001)
+	var alpha: float = clampf(1.0 - exp(-real_delta / tau), 0.0, 1.0)
+	current_gameplay_audio_pitch = lerpf(
+		current_gameplay_audio_pitch,
+		target_gameplay_audio_pitch,
+		alpha
+	)
+	current_gameplay_audio_activity = lerpf(
+		current_gameplay_audio_activity,
+		target_gameplay_audio_activity,
+		alpha
+	)
+	if world_sfx_lowpass != null:
+		var lowpass_min: float = _config_float(&"gameplay_sfx_lowpass_min_hz", DEFAULT_AUDIO_LOWPASS_MIN_HZ)
+		var lowpass_max: float = _config_float(&"gameplay_sfx_lowpass_max_hz", DEFAULT_AUDIO_LOWPASS_MAX_HZ)
+		world_sfx_lowpass.cutoff_hz = lerpf(lowpass_min, maxf(lowpass_max, lowpass_min), current_gameplay_audio_activity)
+
+
+func _update_gameplay_audio_voices(paused: bool) -> void:
+	var pitch: float = 1.0 if paused else current_gameplay_audio_pitch
+	for event_id_variant in players.keys():
+		var event_id: StringName = StringName(event_id_variant)
+		if not _is_world_event(event_id):
+			continue
+		var player: AudioStreamPlayer = players[event_id] as AudioStreamPlayer
+		if player != null:
+			if event_id == &"enemy_kill":
+				player.pitch_scale = pitch * enemy_kill_pitch_random
+			else:
+				player.pitch_scale = pitch
+	for event_id_variant in sound_set_players.keys():
+		var event_id: StringName = StringName(event_id_variant)
+		var bus_name: StringName = StringName(sound_set_buses.get(event_id, &"Characters"))
+		if not _is_world_bus(bus_name):
+			continue
+		var voices_variant: Variant = sound_set_players.get(event_id, [])
+		if not voices_variant is Array:
+			continue
+		for voice_variant in (voices_variant as Array):
+			var voice: AudioStreamPlayer = voice_variant as AudioStreamPlayer
+			if voice != null:
+				voice.pitch_scale = pitch
+	for voice in world_3d_voices:
+		if voice != null and is_instance_valid(voice):
+			voice.pitch_scale = pitch
+			voice.stream_paused = paused
+
+
+func _is_world_bus(bus_name: StringName) -> bool:
+	return bus_name != &"UI" and bus_name != &"Music"
+
+
+func _is_world_event(event_id: StringName) -> bool:
+	return EVENT_BUSES.has(event_id) and _is_world_bus(StringName(EVENT_BUSES[event_id]))
 
 
 func _register_player(event_id: StringName, stream: AudioStream) -> void:
@@ -200,11 +710,76 @@ func _register_player(event_id: StringName, stream: AudioStream) -> void:
 	player.stream = stream
 	player.bus = EVENT_BUSES[event_id]
 	player.volume_db = _volume_for(event_id)
+	if event_id in [&"gunshot", &"weapon_fire", &"pistol_fire", &"shotgun_fire", &"enemy_kill"]:
+		player.max_polyphony = 8
+	elif event_id in [&"tarot_deal", &"tarot_flip"]:
+		player.max_polyphony = 4
+	elif event_id == &"footstep":
+		# At 4.4 steps per second the tail of one footfall can still be ringing
+		# when the next begins; overlapping voices keep the gait continuous
+		# instead of truncating every step.
+		player.max_polyphony = 4
 	add_child(player)
 	players[event_id] = player
 
 
+func _build_footstep_randomizer() -> AudioStreamRandomizer:
+	var randomizer := AudioStreamRandomizer.new()
+	# PLAYBACK_RANDOM_NO_REPEATS supplies the "random order" the gait calls for
+	# while never letting the same clip land twice in a row.
+	randomizer.playback_mode = AudioStreamRandomizer.PLAYBACK_RANDOM_NO_REPEATS
+	# ±5% pitch jitter.  AudioStreamPlayer.pitch_scale still carries the WorldSFX
+	# time-scale on top and the two multiply, so slow motion stays coherent.
+	randomizer.random_pitch = 1.05
+	var slot := 0
+	for stream_variant in FOOTSTEP_STREAMS:
+		var footstep: AudioStream = stream_variant as AudioStream
+		if footstep != null:
+			randomizer.add_stream(slot, footstep)
+			slot += 1
+	return randomizer
+
+
+func _register_sound_set(
+	event_id: StringName,
+	source: AudioStreamWAV,
+	regions: Array,
+	bus_name: StringName,
+	voice_count: int
+) -> void:
+	if source == null:
+		return
+	var valid_regions: Array = []
+	for region_variant in regions:
+		var region: Vector2 = Vector2(region_variant)
+		if region.y > region.x and region.x >= 0.0:
+			valid_regions.append(region)
+	if valid_regions.is_empty():
+		valid_regions.append(Vector2(0.0, maxf(source.get_length(), 0.001)))
+	# A sound-set stores measured playback windows over the original imported
+	# stream.  This is important for the project's QOA-imported WAVs: slicing
+	# compressed bytes would make an invalid AudioStreamWAV.  Each voice starts
+	# at its selected region and is stopped at that region's measured end.
+	sound_sets[event_id] = {"source": source, "regions": valid_regions}
+	sound_set_players[event_id] = []
+	sound_set_last_indices[event_id] = -1
+	sound_set_next_voice[event_id] = 0
+	sound_set_buses[event_id] = bus_name
+	sound_set_stop_times[event_id] = {}
+	sound_set_stop_positions[event_id] = {}
+	var safe_voice_count: int = clampi(voice_count, 2, 12)
+	var voices: Array = sound_set_players[event_id]
+	for voice_index in range(safe_voice_count):
+		var player := AudioStreamPlayer.new()
+		player.name = "SFX_%s_Voice_%02d" % [String(event_id), voice_index]
+		player.bus = bus_name
+		player.volume_db = _volume_for(event_id)
+		add_child(player)
+		voices.append(player)
+
 func play(event_id: StringName) -> bool:
+	if sound_sets.has(event_id):
+		return _play_random_sound_set(event_id)
 	if not players.has(event_id):
 		return false
 	if event_id == &"experience":
@@ -223,8 +798,94 @@ func play(event_id: StringName) -> bool:
 			return false
 		last_slot_tick_play_msec = tick_now
 	var player: AudioStreamPlayer = players[event_id]
-	player.stop()
+	if EVENT_MIN_INTERVALS.has(event_id):
+		var now_msec := Time.get_ticks_msec()
+		var last_msec := int(last_event_play_msec.get(event_id, -1000000))
+		if now_msec - last_msec < int(float(EVENT_MIN_INTERVALS[event_id]) * 1000.0):
+			return false
+		last_event_play_msec[event_id] = now_msec
+	if event_id == &"enemy_kill":
+		enemy_kill_pitch_random = randf_range(0.97, 1.03)
+		var base_pitch: float = 1.0 if get_tree().paused else current_gameplay_audio_pitch
+		player.pitch_scale = base_pitch * enemy_kill_pitch_random
+	elif event_id == &"tarot_flip":
+		player.pitch_scale = randf_range(0.96, 1.04)
+	if player.max_polyphony <= 1:
+		player.stop()
 	player.play()
+	sfx_played.emit(event_id)
+	return true
+
+
+func _play_random_melee_hit() -> bool:
+	return _play_random_sound_set(&"melee_hit_enemy")
+
+
+func _play_random_sound_set(event_id: StringName) -> bool:
+	var sound_set_variant: Variant = sound_sets.get(event_id, {})
+	if not sound_set_variant is Dictionary:
+		return false
+	var sound_set: Dictionary = sound_set_variant
+	var regions_variant: Variant = sound_set.get("regions", [])
+	if not regions_variant is Array:
+		return false
+	var regions: Array = regions_variant
+	if regions.is_empty():
+		return false
+	var source: AudioStreamWAV = sound_set.get("source") as AudioStreamWAV
+	if source == null:
+		return false
+	if EVENT_MIN_INTERVALS.has(event_id):
+		var now_msec: int = Time.get_ticks_msec()
+		var last_msec: int = int(last_event_play_msec.get(event_id, -1000000))
+		if now_msec - last_msec < int(float(EVENT_MIN_INTERVALS[event_id]) * 1000.0):
+			return false
+		last_event_play_msec[event_id] = now_msec
+	var last_index: int = int(sound_set_last_indices.get(event_id, -1))
+	var clip_index: int = randi_range(0, regions.size() - 1)
+	if regions.size() > 1 and clip_index == last_index:
+		clip_index = (clip_index + 1) % regions.size()
+	sound_set_last_indices[event_id] = clip_index
+	var voices_variant: Variant = sound_set_players.get(event_id, [])
+	if not voices_variant is Array:
+		return false
+	var voices: Array = voices_variant
+	if voices.is_empty():
+		return false
+	var selected_voice: AudioStreamPlayer = null
+	for voice_variant in voices:
+		var voice: AudioStreamPlayer = voice_variant as AudioStreamPlayer
+		if voice != null and not voice.playing:
+			selected_voice = voice
+			break
+	if selected_voice == null:
+		var next_voice: int = int(sound_set_next_voice.get(event_id, 0)) % voices.size()
+		sound_set_next_voice[event_id] = (next_voice + 1) % voices.size()
+		selected_voice = voices[next_voice] as AudioStreamPlayer
+	if selected_voice == null:
+		return false
+	var region: Vector2 = Vector2(regions[clip_index])
+	if region.y <= region.x:
+		return false
+	selected_voice.stream = source
+	selected_voice.volume_db = _volume_for(event_id)
+	selected_voice.pitch_scale = current_gameplay_audio_pitch
+	selected_voice.play(region.x)
+	var stop_times_variant: Variant = sound_set_stop_times.get(event_id, {})
+	if not stop_times_variant is Dictionary:
+		stop_times_variant = {}
+	var stop_times: Dictionary = stop_times_variant
+	var voice_id := selected_voice.get_instance_id()
+	# Keep a generous wall-clock fallback for audio backends that report no
+	# playback position in headless mode.  The normal path below uses the source
+	# position and therefore remains correct when pitch changes mid-clip.
+	var minimum_pitch := _config_float(&"gameplay_sfx_min_pitch", DEFAULT_AUDIO_MIN_PITCH)
+	stop_times[voice_id] = Time.get_ticks_msec() / 1000.0 + (region.y - region.x) / maxf(minimum_pitch, 0.05) + 0.5
+	var stop_positions_variant: Variant = sound_set_stop_positions.get(event_id, {})
+	if not stop_positions_variant is Dictionary:
+		stop_positions_variant = {}
+	var stop_positions: Dictionary = stop_positions_variant
+	stop_positions[voice_id] = region.y
 	sfx_played.emit(event_id)
 	return true
 
@@ -232,6 +893,18 @@ func play(event_id: StringName) -> bool:
 func stop(event_id: StringName) -> void:
 	if players.has(event_id):
 		(players[event_id] as AudioStreamPlayer).stop()
+	var voices_variant: Variant = sound_set_players.get(event_id, [])
+	if voices_variant is Array:
+		for voice_variant in (voices_variant as Array):
+			var voice: AudioStreamPlayer = voice_variant as AudioStreamPlayer
+			if voice != null:
+				voice.stop()
+	var stop_times_variant: Variant = sound_set_stop_times.get(event_id, {})
+	if stop_times_variant is Dictionary:
+		(stop_times_variant as Dictionary).clear()
+	var stop_positions_variant: Variant = sound_set_stop_positions.get(event_id, {})
+	if stop_positions_variant is Dictionary:
+		(stop_positions_variant as Dictionary).clear()
 
 
 func play_music(track_id: StringName, owner_id: int = 0) -> void:
@@ -278,6 +951,47 @@ func fade_out_weather(duration: float) -> void:
 	weather_tween = _fade_out_player(weather_player, duration, weather_tween)
 
 
+## Starts the elevator ride bed with a fade in.
+##
+## Idempotent by design: if the bed is already audible this only re-asserts the
+## target level instead of restarting the clip, because restarting a loop is an
+## audible click and a repeated call is a legitimate case (a transition can be
+## superseded while the ride is still under way).
+func _start_elevator_rumble(fade_in: float = ELEVATOR_RUMBLE_FADE_IN) -> void:
+	if not is_instance_valid(elevator_rumble_player):
+		return
+	if elevator_rumble_tween != null and elevator_rumble_tween.is_valid():
+		elevator_rumble_tween.kill()
+	var duration := maxf(fade_in, 0.01)
+	if elevator_rumble_player.playing:
+		var resume := create_tween()
+		resume.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		resume.tween_property(elevator_rumble_player, "volume_db", ELEVATOR_RUMBLE_DB, duration)
+		elevator_rumble_tween = resume
+		return
+	elevator_rumble_player.volume_db = -60.0
+	elevator_rumble_player.play()
+	var tween := create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.tween_property(elevator_rumble_player, "volume_db", ELEVATOR_RUMBLE_DB, duration)
+	elevator_rumble_tween = tween
+
+
+## Fades the elevator ride bed out.  Safe to call when it is not playing, so the
+## abort/rollback paths can call it unconditionally.
+func _stop_elevator_rumble(fade_out: float = ELEVATOR_RUMBLE_FADE_OUT) -> void:
+	if not is_instance_valid(elevator_rumble_player):
+		return
+	if elevator_rumble_tween != null and elevator_rumble_tween.is_valid():
+		elevator_rumble_tween.kill()
+	elevator_rumble_tween = _fade_out_player(elevator_rumble_player, maxf(fade_out, 0.0), null)
+
+
+## True while the ride bed is (still) producing sound, including fades.
+func is_elevator_rumble_active() -> bool:
+	return is_instance_valid(elevator_rumble_player) and elevator_rumble_player.playing
+
+
 func request_music_duck(reason: StringName, duck_db: float, fade_duration: float) -> void:
 	if reason == &"":
 		return
@@ -314,6 +1028,88 @@ func _create_unique_player(player_name: String, bus_name: StringName) -> AudioSt
 	player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(player)
 	return player
+
+
+func _create_world_3d_voice_pool() -> void:
+	world_3d_voices.clear()
+	var configured_count: int = int(_config_float(
+		&"gameplay_sfx_3d_voice_count",
+		DEFAULT_AUDIO_3D_VOICE_COUNT
+	))
+	var voice_count: int = clampi(configured_count, 4, 32)
+	var max_distance: float = maxf(
+		_config_float(&"gameplay_sfx_3d_max_distance", DEFAULT_AUDIO_3D_MAX_DISTANCE),
+		4.0
+	)
+	var unit_size: float = maxf(
+		_config_float(&"gameplay_sfx_3d_unit_size", DEFAULT_AUDIO_3D_UNIT_SIZE),
+		0.01
+	)
+	for voice_index in range(voice_count):
+		var voice := AudioStreamPlayer3D.new()
+		voice.name = "WorldSFX3D_%02d" % voice_index
+		voice.bus = WORLD_SFX_BUS
+		voice.process_mode = Node.PROCESS_MODE_ALWAYS
+		voice.max_distance = max_distance
+		voice.unit_size = unit_size
+		voice.panning_strength = 1.0
+		# Godot's first attenuation enum is inverse distance.  Assigning the
+		# numeric enum keeps this pool compatible with minor 4.x enum renames.
+		voice.attenuation_model = 0
+		voice.max_polyphony = 1
+		add_child(voice)
+		world_3d_voices.append(voice)
+
+
+func _play_world_sfx_3d(
+	event_id: StringName,
+	world_position: Vector3,
+	volume_offset_db: float = 0.0,
+	max_distance: float = -1.0
+) -> bool:
+	if not _is_world_event(event_id) or world_3d_voices.is_empty():
+		return false
+	var stream: AudioStream = null
+	if players.has(event_id):
+		var registered: AudioStreamPlayer = players[event_id] as AudioStreamPlayer
+		if registered != null:
+			stream = registered.stream
+	if stream == null and STREAMS.has(event_id):
+		stream = STREAMS[event_id] as AudioStream
+	if stream == null or not world_position.is_finite():
+		return false
+	var selected: AudioStreamPlayer3D = null
+	for voice in world_3d_voices:
+		if voice != null and is_instance_valid(voice) and not voice.playing:
+			selected = voice
+			break
+	if selected == null:
+		var next_index: int = world_3d_next_voice % world_3d_voices.size()
+		world_3d_next_voice = (next_index + 1) % world_3d_voices.size()
+		selected = world_3d_voices[next_index]
+	if selected == null or not is_instance_valid(selected):
+		return false
+	selected.stop()
+	selected.stream = stream
+	selected.global_position = world_position
+	selected.volume_db = _volume_for(event_id) + volume_offset_db
+	if EVENT_BUSES.has(event_id):
+		selected.bus = EVENT_BUSES[event_id]
+	else:
+		selected.bus = WORLD_SFX_BUS
+	selected.unit_size = maxf(
+		_config_float(&"gameplay_sfx_3d_unit_size", DEFAULT_AUDIO_3D_UNIT_SIZE),
+		0.01
+	)
+	selected.max_distance = max_distance if max_distance > 0.0 else maxf(
+		_config_float(&"gameplay_sfx_3d_max_distance", DEFAULT_AUDIO_3D_MAX_DISTANCE),
+		4.0
+	)
+	selected.pitch_scale = current_gameplay_audio_pitch
+	selected.stream_paused = get_tree().paused
+	selected.play()
+	sfx_played.emit(event_id)
+	return true
 
 
 func _crossfade_unique(player: AudioStreamPlayer, stream: AudioStream, duration: float, is_music: bool) -> void:
@@ -381,6 +1177,22 @@ func _fade_out_player(player: AudioStreamPlayer, duration: float, active_tween: 
 func _set_loop(stream: AudioStream, enabled: bool) -> void:
 	if stream is AudioStreamMP3:
 		stream.loop = enabled
+	elif stream is AudioStreamOggVorbis:
+		stream.loop = enabled
+	elif stream is AudioStreamWAV:
+		# AudioStreamWAV was previously unsupported here, so every imported WAV
+		# was silently stuck one-shot: MP3/OGG were the only formats that could
+		# ever loop.  loop_end == 0 means "loop to the end of the sample", and it
+		# is used as the fallback because a frame count cannot be read straight
+		# off QOA-compressed data.
+		var wav := stream as AudioStreamWAV
+		if not enabled:
+			wav.loop_mode = AudioStreamWAV.LOOP_DISABLED
+			return
+		var frames := int(round(wav.get_length() * float(wav.mix_rate)))
+		wav.loop_begin = 0
+		wav.loop_end = frames if frames > 0 else 0
+		wav.loop_mode = AudioStreamWAV.LOOP_FORWARD
 
 
 func _ensure_bus(bus_name: StringName) -> void:
@@ -390,18 +1202,20 @@ func _ensure_bus(bus_name: StringName) -> void:
 	AudioServer.set_bus_name(AudioServer.bus_count - 1, bus_name)
 
 
-func _ensure_weapon_lowpass() -> void:
-	var bus_index := AudioServer.get_bus_index(&"Weapons")
+func _ensure_world_sfx_lowpass() -> void:
+	var bus_index: int = AudioServer.get_bus_index(WORLD_SFX_BUS)
 	if bus_index < 0:
 		return
 	for effect_index in AudioServer.get_bus_effect_count(bus_index):
-		var existing := AudioServer.get_bus_effect(bus_index, effect_index)
+		var existing: AudioEffect = AudioServer.get_bus_effect(bus_index, effect_index)
 		if existing is AudioEffectLowPassFilter:
-			existing.cutoff_hz = CONFIG.sfx_weapon_lowpass_cutoff_hz
+			world_sfx_lowpass = existing as AudioEffectLowPassFilter
+			world_sfx_lowpass.cutoff_hz = _config_float(&"gameplay_sfx_lowpass_max_hz", DEFAULT_AUDIO_LOWPASS_MAX_HZ)
 			return
 	var lowpass := AudioEffectLowPassFilter.new()
-	lowpass.cutoff_hz = CONFIG.sfx_weapon_lowpass_cutoff_hz
+	lowpass.cutoff_hz = _config_float(&"gameplay_sfx_lowpass_max_hz", DEFAULT_AUDIO_LOWPASS_MAX_HZ)
 	AudioServer.add_bus_effect(bus_index, lowpass)
+	world_sfx_lowpass = lowpass
 
 
 func _ensure_music_lowpass() -> void:
@@ -443,7 +1257,6 @@ func _volume_for(event_id: StringName) -> float:
 		&"death": return CONFIG.sfx_death_volume_db
 		&"new_message": return CONFIG.sfx_new_message_volume_db
 		&"purchase": return CONFIG.sfx_purchase_volume_db
-		&"laser": return CONFIG.sfx_laser_volume_db
 		&"home_door": return CONFIG.sfx_home_door_volume_db
 		&"work": return CONFIG.sfx_work_volume_db
 		&"confirm": return CONFIG.sfx_confirm_volume_db
@@ -455,15 +1268,36 @@ func _volume_for(event_id: StringName) -> float:
 		&"dash": return CONFIG.sfx_dash_volume_db
 		&"player_hurt": return CONFIG.sfx_player_hurt_volume_db
 		&"weapon_fire": return CONFIG.sfx_weapon_fire_volume_db
+		&"weapon_reload": return CONFIG.sfx_weapon_reload_volume_db
+		&"weapon_pickup": return CONFIG.sfx_weapon_pickup_volume_db
+		&"weapon_throw": return CONFIG.sfx_weapon_throw_volume_db
+		&"weapon_dry_fire": return CONFIG.sfx_weapon_dry_fire_volume_db
+		&"gunshot": return CONFIG.sfx_weapon_fire_volume_db
 		&"pistol_fire": return CONFIG.sfx_pistol_fire_volume_db
 		&"shotgun_fire": return CONFIG.sfx_shotgun_fire_volume_db
+		&"glass_shatter", &"wood_shatter": return CONFIG.sfx_melee_hit_furniture_volume_db
+		&"footstep": return -18.0
+		&"melee_hit_1", &"melee_hit_2", &"melee_hit_3", &"melee_hit_4", &"melee_hit_enemy": return CONFIG.sfx_melee_hit_enemy_volume_db
+		&"bullet_hit_enemy": return CONFIG.sfx_bullet_hit_enemy_volume_db
+		&"melee_hit_furniture": return CONFIG.sfx_melee_hit_furniture_volume_db
 		&"enemy_kill": return CONFIG.sfx_enemy_kill_volume_db
+		&"enemy_hit": return CONFIG.sfx_enemy_hit_volume_db
+		&"body_impact": return CONFIG.sfx_body_impact_volume_db
+		&"wall_impact": return CONFIG.sfx_wall_impact_volume_db
+		&"furniture_impact": return CONFIG.sfx_furniture_impact_volume_db
+		&"melee_swing": return CONFIG.sfx_melee_swing_volume_db
 		&"door_knock": return CONFIG.sfx_door_knock_volume_db
 		&"thunder": return CONFIG.sfx_thunder_volume_db
 		&"phone_buzz": return CONFIG.sfx_phone_buzz_volume_db
 		&"heal": return CONFIG.sfx_heal_volume_db
 		&"text_blip": return CONFIG.dialogue_text_blip_volume_db
 		&"slot_tick": return CONFIG.sfx_slot_tick_volume_db
+		&"tarot_shuffle", &"tarot_deal", &"tarot_flip", &"tarot_select": return 0.0
+		# Both elevator cues are peak-normalised at authoring time, so these are
+		# modest trims that keep them level with home_door (-10) without the
+		# long airy tail becoming intrusive.
+		&"elevator_ding": return -11.0
+		&"elevator_badge": return -13.0
 		_: return 0.0
 
 
@@ -504,6 +1338,26 @@ func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
 			duration = 0.12
 			start_frequency = 360.0
 			end_frequency = 70.0
+		&"enemy_hit":
+			duration = 0.045
+			start_frequency = 520.0
+			end_frequency = 260.0
+		&"body_impact":
+			duration = 0.10
+			start_frequency = 110.0
+			end_frequency = 58.0
+		&"wall_impact":
+			duration = 0.075
+			start_frequency = 150.0
+			end_frequency = 72.0
+		&"furniture_impact":
+			duration = 0.095
+			start_frequency = 185.0
+			end_frequency = 78.0
+		&"melee_swing":
+			duration = 0.085
+			start_frequency = 720.0
+			end_frequency = 220.0
 		&"door_knock":
 			duration = 0.19
 			start_frequency = 92.0

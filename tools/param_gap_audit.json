@@ -1,0 +1,1439 @@
+[
+ {
+  "name": "ANT_FLASH_RATE",
+  "values": [
+   "0.06"
+  ],
+  "files": [
+   "scripts\\entities\\tactical_ghost_preview.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   20
+  ]
+ },
+ {
+  "name": "ANT_WIDTH",
+  "values": [
+   "2.0"
+  ],
+  "files": [
+   "scripts\\entities\\tactical_ghost_preview.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   19
+  ]
+ },
+ {
+  "name": "CARD_HEIGHT",
+  "values": [
+   "237.0"
+  ],
+  "files": [
+   "scripts\\dream\\tarot\\tarot_card_view.gd",
+   "scripts\\dream\\tarot\\tarot_overlay.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   8,
+   24
+  ]
+ },
+ {
+  "name": "CARD_WIDTH",
+  "values": [
+   "153.0"
+  ],
+  "files": [
+   "scripts\\dream\\tarot\\tarot_card_view.gd",
+   "scripts\\dream\\tarot\\tarot_overlay.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   7,
+   23
+  ]
+ },
+ {
+  "name": "DEFAULT_COUNTDOWN_EXTRA",
+  "values": [
+   "4.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_controller.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   30
+  ]
+ },
+ {
+  "name": "DEFAULT_INTERRUPT_THRESHOLD",
+  "values": [
+   "0.20"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_controller.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   29
+  ]
+ },
+ {
+  "name": "DEFAULT_TYPEWRITER_SPEED",
+  "values": [
+   "0.035"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_controller.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   28
+  ]
+ },
+ {
+  "name": "DEFAULT_WORLD_SCALE",
+  "values": [
+   "32.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   15
+  ]
+ },
+ {
+  "name": "DESK_DEPTH",
+  "values": [
+   "1.1"
+  ],
+  "files": [
+   "scripts\\dream\\props\\reception_desk_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   17
+  ]
+ },
+ {
+  "name": "DESK_HEIGHT",
+  "values": [
+   "1.05"
+  ],
+  "files": [
+   "scripts\\dream\\props\\reception_desk_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   18
+  ]
+ },
+ {
+  "name": "DESK_WIDTH",
+  "values": [
+   "3.4"
+  ],
+  "files": [
+   "scripts\\dream\\props\\reception_desk_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   16
+  ]
+ },
+ {
+  "name": "DOOR_RESERVATION_DEPTH_CELLS",
+  "values": [
+   "2"
+  ],
+  "files": [
+   "scripts\\dream\\otxo_room_layout_planner.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   11
+  ]
+ },
+ {
+  "name": "DOOR_RESERVATION_MARGIN_PIXELS",
+  "values": [
+   "14.0"
+  ],
+  "files": [
+   "scripts\\dream\\otxo_room_layout_planner.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   12
+  ]
+ },
+ {
+  "name": "FADE_DURATION",
+  "values": [
+   "0.15"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_glyph_fall_fx.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   12
+  ]
+ },
+ {
+  "name": "FADE_TIME",
+  "values": [
+   "0.4"
+  ],
+  "files": [
+   "scripts\\dream\\furniture_3d_debris.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   9
+  ]
+ },
+ {
+  "name": "FLOOR_TRACK_HEIGHT",
+  "values": [
+   "0.06"
+  ],
+  "files": [
+   "scripts\\dream\\breakable_glass_window_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   23
+  ]
+ },
+ {
+  "name": "INNER_DESK_HEIGHT",
+  "values": [
+   "0.75"
+  ],
+  "files": [
+   "scripts\\dream\\props\\reception_desk_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   19
+  ]
+ },
+ {
+  "name": "LIFETIME",
+  "values": [
+   "0.5",
+   "1.6"
+  ],
+  "files": [
+   "scripts\\dream\\furniture_3d_debris.gd",
+   "scripts\\ui\\dialogue\\dream_dialogue_glyph_fall_fx.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   8,
+   10
+  ]
+ },
+ {
+  "name": "MARGIN_BOTTOM",
+  "values": [
+   "18.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_bubble.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   34
+  ]
+ },
+ {
+  "name": "MARGIN_LEFT",
+  "values": [
+   "16.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_bubble.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   31
+  ]
+ },
+ {
+  "name": "MARGIN_RIGHT",
+  "values": [
+   "16.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_bubble.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   32
+  ]
+ },
+ {
+  "name": "MARGIN_TOP",
+  "values": [
+   "14.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_bubble.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   33
+  ]
+ },
+ {
+  "name": "MAX_BUBBLE_WIDTH",
+  "values": [
+   "340.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_bubble.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   27
+  ]
+ },
+ {
+  "name": "OPTION_HEIGHT",
+  "values": [
+   "32.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_bubble.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   41
+  ]
+ },
+ {
+  "name": "PLINTH_HEIGHT",
+  "values": [
+   "0.10"
+  ],
+  "files": [
+   "scripts\\dream\\props\\reception_desk_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   23
+  ]
+ },
+ {
+  "name": "SCREEN_MARGIN",
+  "values": [
+   "10.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_bubble.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   29
+  ]
+ },
+ {
+  "name": "TAROT_REVERSED_PROBABILITY",
+  "values": [
+   "0.5"
+  ],
+  "files": [
+   "scripts\\dream\\tarot\\tarot_draw_controller.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   4
+  ]
+ },
+ {
+  "name": "TOP_CAP_DEPTH",
+  "values": [
+   "0.40"
+  ],
+  "files": [
+   "scripts\\dream\\props\\reception_desk_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   21
+  ]
+ },
+ {
+  "name": "TOP_CAP_HEIGHT",
+  "values": [
+   "0.05"
+  ],
+  "files": [
+   "scripts\\dream\\props\\reception_desk_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   22
+  ]
+ },
+ {
+  "name": "TOP_CAP_WIDTH",
+  "values": [
+   "3.4"
+  ],
+  "files": [
+   "scripts\\dream\\props\\reception_desk_3d.gd"
+  ],
+  "kind": "const",
+  "lines": [
+   20
+  ]
+ },
+ {
+  "name": "_ant_phase_timer",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\tactical_ghost_preview.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   35
+  ]
+ },
+ {
+  "name": "_impact_accumulated_impulse",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   92
+  ]
+ },
+ {
+  "name": "_quiet_time",
+  "values": [
+   "1.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   93
+  ]
+ },
+ {
+  "name": "_time_accum",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\tactical_ghost_preview.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   32
+  ]
+ },
+ {
+  "name": "authored_max_hp",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scenes\\dream\\rooms\\chair_01.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   55
+  ]
+ },
+ {
+  "name": "bleeding_trail_interval_left",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   444
+  ]
+ },
+ {
+  "name": "blink_timer",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\dream\\reception_waitress_npc.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   50
+  ]
+ },
+ {
+  "name": "bob_time",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\dream\\employee_badge_marker.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   8
+  ]
+ },
+ {
+  "name": "breath_time",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\dream\\reception_waitress_npc.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   56
+  ]
+ },
+ {
+  "name": "bullet_knockback",
+  "values": [
+   "90.0"
+  ],
+  "files": [
+   "scenes\\dream\\rooms\\chair_01.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   33
+  ]
+ },
+ {
+  "name": "cap_thickness",
+  "values": [
+   "0.05"
+  ],
+  "files": [
+   "scripts\\dream\\props\\reception_desk_3d.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   136
+  ]
+ },
+ {
+  "name": "choice_count",
+  "values": [
+   "0"
+  ],
+  "files": [
+   "scripts\\ui\\confirmation_dialog.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   431
+  ]
+ },
+ {
+  "name": "count",
+  "values": [
+   "0",
+   "1"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd",
+   "scripts\\ui\\dialogue\\dream_dialogue_bubble.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   766,
+   668
+  ]
+ },
+ {
+  "name": "current_health",
+  "values": [
+   "1.0",
+   "100.0"
+  ],
+  "files": [
+   "scripts\\dream\\breakable_glass_window_3d.gd",
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   15,
+   49
+  ]
+ },
+ {
+  "name": "damage_received",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "tests\\test_office_chair_physics.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   167
+  ]
+ },
+ {
+  "name": "dialogue_camera_weight",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\dream\\dream_3d_reception_room.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   102
+  ]
+ },
+ {
+  "name": "door_force_to_impulse",
+  "values": [
+   "0.05"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   33
+  ]
+ },
+ {
+  "name": "door_height",
+  "values": [
+   "3.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   26
+  ]
+ },
+ {
+  "name": "door_hold_time_left",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   204
+  ]
+ },
+ {
+  "name": "door_kick_cooldown_left",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   106
+  ]
+ },
+ {
+  "name": "door_mass",
+  "values": [
+   "1.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   29
+  ]
+ },
+ {
+  "name": "door_max_accumulated_impulse",
+  "values": [
+   "32.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   42
+  ]
+ },
+ {
+  "name": "door_max_angle_degrees",
+  "values": [
+   "100.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   31
+  ]
+ },
+ {
+  "name": "door_max_impact_impulse",
+  "values": [
+   "24.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   35
+  ]
+ },
+ {
+  "name": "door_min_impact_impulse",
+  "values": [
+   "0.01"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   34
+  ]
+ },
+ {
+  "name": "door_open_collision_angle_degrees",
+  "values": [
+   "35.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   32
+  ]
+ },
+ {
+  "name": "door_width",
+  "values": [
+   "4.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   25
+  ]
+ },
+ {
+  "name": "dot_timer",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\ui\\loading_overlay.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   13
+  ]
+ },
+ {
+  "name": "duration_left",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\corpse_blood_emitter.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   13
+  ]
+ },
+ {
+  "name": "effective_global_enemy_cap",
+  "values": [
+   "32"
+  ],
+  "files": [
+   "scripts\\dream\\dream_3d_random_dungeon.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   428
+  ]
+ },
+ {
+  "name": "expected",
+  "values": [
+   "4.7925"
+  ],
+  "files": [
+   "tests\\random_office_art_style_test.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   59
+  ]
+ },
+ {
+  "name": "expected_hp",
+  "values": [
+   "80.0"
+  ],
+  "files": [
+   "tests\\test_elevator_and_weapon_parity.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   116
+  ]
+ },
+ {
+  "name": "fake_height",
+  "values": [
+   "0.0",
+   "52.0"
+  ],
+  "files": [
+   "scripts\\dream\\employee_badge_marker.gd",
+   "scripts\\dream\\furniture_3d_visual.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   9,
+   119
+  ]
+ },
+ {
+  "name": "glitch_amount",
+  "values": [
+   "2.2"
+  ],
+  "files": [
+   "scripts\\entities\\roll_speed_trail.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   82
+  ]
+ },
+ {
+  "name": "ground_visual_scale",
+  "values": [
+   "1.0"
+  ],
+  "files": [
+   "scripts\\entities\\black_blood_effect.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   34
+  ]
+ },
+ {
+  "name": "height",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scenes\\dream\\effects\\shatter_piece.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   7
+  ]
+ },
+ {
+  "name": "hop_height",
+  "values": [
+   "4.0"
+  ],
+  "files": [
+   "scripts\\entities\\dream_player.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   3899
+  ]
+ },
+ {
+  "name": "hp",
+  "values": [
+   "100.0"
+  ],
+  "files": [
+   "tests\\test_furniture_bullet_penetration.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   27
+  ]
+ },
+ {
+  "name": "knockdown_height",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   334
+  ]
+ },
+ {
+  "name": "latch_closed_angle_degrees",
+  "values": [
+   "2.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   43
+  ]
+ },
+ {
+  "name": "latch_velocity_threshold",
+  "values": [
+   "0.12"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   44
+  ]
+ },
+ {
+  "name": "leaf_width",
+  "values": [
+   "0.98"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   71
+  ]
+ },
+ {
+  "name": "lifetime_seconds",
+  "values": [
+   "15.0"
+  ],
+  "files": [
+   "scripts\\entities\\black_blood_effect.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   26
+  ]
+ },
+ {
+  "name": "line_total_duration",
+  "values": [
+   "4.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_controller.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   53
+  ]
+ },
+ {
+  "name": "lkp_search_time_left",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   105
+  ]
+ },
+ {
+  "name": "max_angle",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   555,
+   607
+  ]
+ },
+ {
+  "name": "max_health",
+  "values": [
+   "1.0",
+   "100.0"
+  ],
+  "files": [
+   "scripts\\dream\\breakable_glass_window_3d.gd",
+   "scripts\\dream\\physical_door_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   14,
+   48
+  ]
+ },
+ {
+  "name": "max_hp",
+  "values": [
+   "20.0"
+  ],
+  "files": [
+   "scenes\\dream\\rooms\\chair_01.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   27
+  ]
+ },
+ {
+  "name": "max_range",
+  "values": [
+   "200.0"
+  ],
+  "files": [
+   "scripts\\entities\\tactical_ghost_preview.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   22
+  ]
+ },
+ {
+  "name": "melee_visual_duration",
+  "values": [
+   "0.24"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   277
+  ]
+ },
+ {
+  "name": "minimum_damage_speed",
+  "values": [
+   "80.0"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   5307
+  ]
+ },
+ {
+  "name": "neutral_room_travel_cooldown_left",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   158
+  ]
+ },
+ {
+  "name": "next_blink_interval",
+  "values": [
+   "3.5"
+  ],
+  "files": [
+   "scripts\\dream\\reception_waitress_npc.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   51
+  ]
+ },
+ {
+  "name": "player_radius",
+  "values": [
+   "10.0"
+  ],
+  "files": [
+   "scripts\\entities\\dream_player.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   3342
+  ]
+ },
+ {
+  "name": "pool_growth_duration",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\black_blood_effect.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   31
+  ]
+ },
+ {
+  "name": "pool_max_scale",
+  "values": [
+   "1.0"
+  ],
+  "files": [
+   "scripts\\entities\\black_blood_effect.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   33
+  ]
+ },
+ {
+  "name": "pool_min_scale",
+  "values": [
+   "1.0"
+  ],
+  "files": [
+   "scripts\\entities\\black_blood_effect.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   32
+  ]
+ },
+ {
+  "name": "projectile_emission_strength",
+  "values": [
+   "0.85"
+  ],
+  "files": [
+   "scripts\\dream\\dream_3d_actor_depth_bridge.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   185
+  ]
+ },
+ {
+  "name": "proxy_height",
+  "values": [
+   "0.5"
+  ],
+  "files": [
+   "scripts\\dream\\player_physics_proxy_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   11
+  ]
+ },
+ {
+  "name": "pulse_interval",
+  "values": [
+   "0.22"
+  ],
+  "files": [
+   "scripts\\entities\\corpse_blood_emitter.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   14
+  ]
+ },
+ {
+  "name": "ranged_attack_windup_left",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   182
+  ]
+ },
+ {
+  "name": "ranged_charge_visual_frame_count",
+  "values": [
+   "1"
+  ],
+  "files": [
+   "scripts\\entities\\employee_enemy.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   99
+  ]
+ },
+ {
+  "name": "settle_seconds",
+  "values": [
+   "0.22"
+  ],
+  "files": [
+   "scripts\\entities\\black_blood_effect.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   25
+  ]
+ },
+ {
+  "name": "shatter_speed_max",
+  "values": [
+   "100.0"
+  ],
+  "files": [
+   "scenes\\dream\\rooms\\chair_01.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   40
+  ]
+ },
+ {
+  "name": "shatter_speed_min",
+  "values": [
+   "45.0"
+  ],
+  "files": [
+   "scenes\\dream\\rooms\\chair_01.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   39
+  ]
+ },
+ {
+  "name": "spray_angle_limit",
+  "values": [
+   "0.22"
+  ],
+  "files": [
+   "scripts\\entities\\black_blood_effect.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   701
+  ]
+ },
+ {
+  "name": "structural_height",
+  "values": [
+   "2.6"
+  ],
+  "files": [
+   "scripts\\dream\\breakable_glass_window_3d.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   19
+  ]
+ },
+ {
+  "name": "tactical_dash_cooldown_left",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\entities\\dream_player.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   184
+  ]
+ },
+ {
+  "name": "target_ratio",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\ui\\loading_overlay.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   11
+  ]
+ },
+ {
+  "name": "target_rot",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\dream\\tarot\\tarot_overlay.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   137
+  ]
+ },
+ {
+  "name": "trail_length",
+  "values": [
+   "12.0"
+  ],
+  "files": [
+   "scripts\\entities\\projectile_red_trail.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   10
+  ]
+ },
+ {
+  "name": "trail_width",
+  "values": [
+   "3.0"
+  ],
+  "files": [
+   "scripts\\entities\\projectile_red_trail.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   11
+  ]
+ },
+ {
+  "name": "typewriter_duration",
+  "values": [
+   "0.0"
+  ],
+  "files": [
+   "scripts\\ui\\dialogue\\dream_dialogue_controller.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   52
+  ]
+ },
+ {
+  "name": "upgrade_speed",
+  "values": [
+   "1.0"
+  ],
+  "files": [
+   "tests\\3d_firearm_tuning_test.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   64
+  ]
+ },
+ {
+  "name": "valid_count",
+  "values": [
+   "0"
+  ],
+  "files": [
+   "scripts\\dream\\dream_3d_random_dungeon.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   6165
+  ]
+ },
+ {
+  "name": "visual_scale_override",
+  "values": [
+   "-1.0"
+  ],
+  "files": [
+   "scripts\\dream\\world_weapon_pickup.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   57
+  ]
+ },
+ {
+  "name": "wall_height",
+  "values": [
+   "3.0"
+  ],
+  "files": [
+   "scripts\\dream\\wall_segment_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   23
+  ]
+ },
+ {
+  "name": "weather_volume_multiplier",
+  "values": [
+   "1.0"
+  ],
+  "files": [
+   "scripts\\audio\\sfx_manager.gd"
+  ],
+  "kind": "var",
+  "lines": [
+   226
+  ]
+ },
+ {
+  "name": "world_scale",
+  "values": [
+   "32.0"
+  ],
+  "files": [
+   "scripts\\dream\\player_physics_proxy_3d.gd"
+  ],
+  "kind": "export",
+  "lines": [
+   10
+  ]
+ }
+]

@@ -2,6 +2,18 @@ extends Control
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const CONFIG := preload("res://resources/demo_config.tres")
+const DEFAULT_CARD_ICON := preload("res://art/icon/Sprites_Cropped/Boardgames_Card_Star.png")
+const UPGRADE_ICONS := {
+	"damage_boost": preload("res://art/icon/Sprites_Cropped/Boardgames_Card_Attack_Sword.png"),
+	"attack_speed_boost": preload("res://art/icon/Sprites_Cropped/Alchemy_Potion_Vial_Bottle_Lightning_Bolt_Zap_Speed_Full.png"),
+	"range_boost": preload("res://art/icon/Sprites_Cropped/Arrows_Double_Horizontal_Left_Right.png"),
+	"sleep_paralysis": preload("res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Closed_Sleeping.png"),
+	"sleep_spindle": preload("res://art/icon/Sprites_Cropped/Boardgames_Card_Defense_Shield.png"),
+	"hypnic_jerk": preload("res://art/icon/Sprites_Cropped/RPG_Skill_Dash_Dodge_Movement_Speed_Run_Sprint.png"),
+	"consciousness_drift": preload("res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Shown.png"),
+	"rapid_eye": preload("res://art/icon/Sprites_Cropped/Misc_Egypt_Eye_Of_Horus.png"),
+	"dissociation": preload("res://art/icon/Sprites_Cropped/RPG_Stat_HP_Health_Heart.png"),
+}
 
 signal upgrade_chosen(option: Dictionary)
 signal jackpot_chosen(options: Array[Dictionary])
@@ -41,6 +53,9 @@ var panel_tween: Tween
 
 
 func _ready() -> void:
+	# Keep the panel's keyboard path consistent even when it is opened from a
+	# direct test scene instead of through Main's input-map bootstrap.
+	preload("res://scripts/app/game_input_actions.gd").configure()
 	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	var crt_material := crt_overlay.material as ShaderMaterial
 	if crt_material != null:
@@ -132,7 +147,14 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible or state != State.SPINNING or options.is_empty():
 		return
-	if event is InputEventKey and event.keycode == KEY_SPACE and event.pressed and not event.echo:
+	# The slot machine is a modal, paused UI.  Space is still the Player's Dash
+	# action during gameplay, but while this panel owns the input it also serves
+	# as the reel-lock confirmation shown by the on-screen prompt.  Keep Enter as
+	# a confirmation alias and handle the shared `dash` action locally instead of
+	# rebinding Space globally (which would make Dash and UI confirmation fight).
+	var confirm_pressed := InputMap.has_action(&"confirm") and event.is_action_pressed(&"confirm")
+	var space_pressed := InputMap.has_action(&"dash") and event.is_action_pressed(&"dash")
+	if (confirm_pressed or space_pressed) and not event.is_echo():
 		_lock_next_reel()
 		get_viewport().set_input_as_handled()
 
@@ -291,7 +313,9 @@ func _draw_radial_rays() -> void:
 
 func _draw_reel(index: int, font: Font) -> void:
 	var rect := _slot_rect(index)
-	var hovered: bool = hovered_index == index and bool(reel_locked[index])
+	# `reel_locked` is an internal boolean array; compare directly so this
+	# presentation path never relies on a runtime `bool` conversion of a Variant.
+	var hovered: bool = hovered_index == index and reel_locked[index] == true
 	var jackpot_pulse := state == State.JACKPOT and sin(jackpot_left * 24.0) > 0.0
 	draw_rect(rect, Color("07101a"))
 	draw_rect(rect.grow(-3), Color("173247") if hovered or jackpot_pulse else Color("0f2232"))
@@ -316,18 +340,21 @@ func _draw_reel(index: int, font: Font) -> void:
 
 
 func _draw_upgrade_symbol(family: String, center: Vector2, color: Color) -> void:
-	match family:
-		"damage_boost":
-			draw_line(center + Vector2(-8, 7), center + Vector2(8, -9), color, 3.0)
-			draw_line(center + Vector2(-7, 3), center + Vector2(-2, 8), color, 2.0)
-		"attack_speed_boost":
-			for x in [-8.0, -2.0, 4.0]: draw_line(center + Vector2(x, 7), center + Vector2(x + 7, -7), color, 2.0)
-		"range_boost":
-			draw_circle(center, 11, color, false, 2.0)
-			draw_circle(center, 4, color, false, 1.0)
-		_:
-			draw_rect(Rect2(center - Vector2(8, 8), Vector2(16, 16)), color, false, 2.0)
-			draw_circle(center, 3, color)
+	if family.begins_with("weapon_"):
+		var weapon_id := family.trim_prefix("weapon_")
+		if DreamGunAtlas.has_weapon(weapon_id):
+			var gun_icon := DreamGunAtlas.get_icon(weapon_id)
+			var source_size: Vector2 = gun_icon.get_size()
+			var fit_scale := minf(1.0, minf(48.0 / maxf(source_size.x, 1.0), 32.0 / maxf(source_size.y, 1.0)))
+			var gun_size: Vector2 = source_size * fit_scale
+			draw_texture_rect(gun_icon, Rect2((center - gun_size * 0.5).round(), gun_size), false, Color(1.0, 1.0, 1.0, color.a))
+			return
+	var icon: Texture2D = UPGRADE_ICONS.get(family, DEFAULT_CARD_ICON)
+	var source_size := icon.get_size()
+	# 小图标只使用1x或2x整数倍率，避免卡槽滚动时出现采样模糊。
+	var integer_scale := 2.0 if maxf(source_size.x, source_size.y) <= 16.0 else 1.0
+	var draw_size := source_size * integer_scale
+	draw_texture_rect(icon, Rect2((center - draw_size * 0.5).round(), draw_size), false, color)
 
 
 func _draw_hover_description(font: Font) -> void:

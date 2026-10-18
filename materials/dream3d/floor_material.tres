@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c0xekbud1ns84"]
+
+[ext_resource type="Texture2D" uid="uid://ubwshwjv6ls2" path="res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Terrain_32x32.png" id="1_floor_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_floor"]
+atlas = ExtResource("1_floor_atlas")
+region = Rect2(112, 16, 16, 16)
+filter_clip = true
+
+[resource]
+resource_name = "Dream Floor Pixel Tile"
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("AtlasTexture_floor")
+uv1_scale = Vector3(22.6, 11.2, 1)
+texture_filter = 0

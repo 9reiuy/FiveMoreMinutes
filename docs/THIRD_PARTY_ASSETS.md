@@ -2,6 +2,33 @@
 
 本项目引入的第三方素材按许可要求在此统一登记。使用时必须保留作者署名与来源链接；禁止将素材包本身作为资源包再次销售或重新分发。
 
+## Pixel Art Top Down - Basic
+
+| 项目 | 内容 |
+|---|---|
+| 素材名称 | Pixel Art Top Down - Basic v1.2.3 |
+| 作者 | Cainos |
+| 正式来源 | https://cainos.itch.io/pixel-art-top-down-basic |
+| 素材类型 | 32×32 Top-down 像素地面、墙体、结构与场景道具 |
+| 项目内用途 | 剧情梦境大/中/小房间的地面、墙体、门洞与装饰 |
+| 正式剧情房间路径 | `res://art/Dream/Texture/` |
+| 旧导入副本（保留兼容） | `res://art/Dream/Cainos Pixel Art Top Down Basic/Texture/` |
+
+### 许可摘要
+
+- 允许用于免费及商业项目，也允许按项目需要修改。
+- 作者署名不是强制要求，但作者表示欢迎署名；本项目仍保留本条记录。
+- 禁止将素材包本身重新分发或转售。
+- 剧情房间运行时只从 `res://art/Dream/Texture/` 读取地面、墙、结构和带阴影道具图集；旧导入副本不删除，以免历史场景丢失引用。
+
+### 署名文本（Credits 使用）
+
+```text
+Pixel Art Top Down - Basic v1.2.3
+Graphics by Cainos
+https://cainos.itch.io/pixel-art-top-down-basic
+```
+
 ## Crawling Depths
 
 | 项目 | 内容 |
@@ -11,7 +38,7 @@
 | 来源页面 | https://pingupollas.itch.io/crawling-depths |
 | 作者主页 | https://pingupollas.itch.io/ |
 | 素材类型 | 16×16 Top-down 像素恐怖 / 克苏鲁风 Tilemap / Tileset |
-| 项目内用途 | 梦境战斗地图的地面、裂纹、墙体与环境装饰（雕像、瓮、脉络柱、书坛及眼/嘴等动画装饰，Tentacle 装饰已移除）；tentacle_sheet.png 仅由触手怪敌人使用 |
+| 项目内用途 | Dream 连续地牢的地面、裂纹、墙体与环境装饰；正式场景直接使用本目录的 `crawling_depths_tileset.tres` |
 | 项目内资源路径 | `res://assets/art/dream/crawling_depths/`（tiles.png、cliff.png、cracks.png、eye_sheet.png、mouth_sheet.png、tentacle_sheet.png、vein_sheet.png、floating_rock_sheet.png、little_eyes_sheet.png、statue_a/b/c.png、urn_1/2.png、vein_column_short/tall.png、book_altar.png） |
 | TileSet 资源 | `res://assets/art/dream/crawling_depths/crawling_depths_tileset.tres`（16×16 切分，无 Margin/Separation，Nearest 过滤、无 Mipmaps） |
 
@@ -34,8 +61,8 @@ https://pingupollas.itch.io/crawling-depths
 
 ### 使用位置
 
-- 梦境地图：`res://scenes/dream/dream_world.tscn` 的 `DreamMap` 节点组（填充脚本 `res://scripts/dream/dream_map_builder.gd`）。
-- 触手怪：`res://scenes/entities/tentacle_enemy.tscn`（脚本 `res://scripts/entities/tentacle_enemy.gd`）。
+- 旧程序化大地图：`res://scenes/dream/dream_world.tscn` 的 `DreamMap` 节点组（填充脚本 `res://scripts/dream/dream_map_builder.gd`；正式剧情Room模式隐藏该节点）。
+- `tentacle_sheet.png` 当前没有正式敌人场景引用，作为第三方素材包内容保留。
 - 运行时代码只引用 `res://` 项目内路径，不引用任何网络 URL 或本机下载目录。
 
 ## Monster 怪物素材包（Slime / Flying eye / Mushroom / Mimic）

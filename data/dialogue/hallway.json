@@ -1,0 +1,32 @@
+{
+  "dialogues": [
+    {
+      "id": "hallway_no_one",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "门外没有人",
+          "portrait": "normal",
+          "typewriter_speed": 0.04,
+          "pre_delay": 0.0,
+          "post_delay": 0.0,
+          "text_color": "#D3E0E8",
+          "font_size": 18,
+          "alignment": "left",
+          "fade_in": 0.1,
+          "fade_out": 0.15,
+          "wait_for_input": true,
+          "auto_continue": false,
+          "position": "bottom",
+          "blip": true
+        }
+      ]
+    },
+    {
+      "id": "hallway_knock_prompt",
+      "lines": [
+        {"speaker": "system", "text": "有人敲门", "typewriter_speed": 0.0, "text_color": "#D3E0E8", "blip": false}
+      ]
+    }
+  ]
+}

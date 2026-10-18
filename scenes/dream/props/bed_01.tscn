@@ -1,0 +1,70 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/dream/rooms/chair_01.gd" id="1_prop"]
+[ext_resource type="Script" path="res://scenes/dream/rooms/hurtbox.gd" id="2_hurtbox"]
+[ext_resource type="PackedScene" path="res://scenes/dream/effects/shatter_piece.tscn" id="3_shatter"]
+[ext_resource type="Texture2D" path="res://art/Dream/things/jiaju.png" id="4_texture"]
+[ext_resource type="Texture2D" path="res://art/Dream/shadow.png" id="5_shadow"]
+
+[sub_resource type="RectangleShape2D" id="BodyShape"]
+size = Vector2(58, 26)
+
+[sub_resource type="RectangleShape2D" id="HurtShape"]
+size = Vector2(66, 48)
+
+[node name="Bed01" type="RigidBody2D" groups=["damageable_props", "pushable_prop"]]
+editor_description = "jiaju.png 床；长矩形地面占地与床体方向一致。"
+collision_layer = 8
+collision_mask = 15
+mass = 8.0
+gravity_scale = 0.0
+angular_damp = 9.0
+linear_damp = 9.0
+script = ExtResource("1_prop")
+max_hp = 100.0
+furniture_size_category = 3
+bullet_knockback = 45.0
+books_drop_category = "table"
+shatter_piece_scene = ExtResource("3_shatter")
+shatter_size = 18
+
+[node name="Shadow" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.45)
+z_index = -1
+position = Vector2(0, -9)
+scale = Vector2(1.7, 0.65)
+texture = ExtResource("5_shadow")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -24)
+texture = ExtResource("4_texture")
+region_enabled = true
+region_rect = Rect2(106, 71, 64, 48)
+region_filter_clip_enabled = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -13)
+shape = SubResource("BodyShape")
+
+[node name="Hurtbox" type="Area2D" parent="." groups=["damage_hurtboxes"]]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("2_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -24)
+shape = SubResource("HurtShape")
+
+[node name="HitParticles" type="CPUParticles2D" parent="."]
+position = Vector2(0, -24)
+emitting = false
+amount = 8
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+lifetime_randomness = 0.8
+spread = 180.0
+initial_velocity_min = 50.0
+initial_velocity_max = 105.0
+scale_amount_max = 3.0

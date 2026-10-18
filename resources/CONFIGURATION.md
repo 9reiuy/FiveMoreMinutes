@@ -12,7 +12,6 @@
 | `sfx_death_volume_db` | -8 dB | 正式致命死亡 |
 | `sfx_new_message_volume_db` | -12 dB | 新未读消息批次 |
 | `sfx_purchase_volume_db` | -10 dB | 速联跑腿和眠网购买成功 |
-| `sfx_laser_volume_db` | -12 dB | 光束实际发射 |
 | `sfx_home_door_volume_db` | -10 dB | 开始新一天的回家开门过渡 |
 | `sfx_work_volume_db` | -10 dB | 正常上班结算 |
 | `sfx_confirm_volume_db` | -14 dB | 普通确认按钮和对话选择 |
@@ -46,6 +45,22 @@
 | `hurt_flash_seconds` | 0.18 s | 0.05–0.5 s | 受伤红色反馈持续时间 |
 | `hurt_shake_pixels` | 2 px | 0–6 px | 角色受伤抖动幅度 |
 
+## 梦境踢击与家具撞击
+
+| 参数 | 默认值 | 推荐范围 | 作用 |
+|---|---:|---:|---|
+| `kick_damage` | 10 | 固定 | F键近战踢击伤害；不读取武器、卡片或暴击倍率 |
+| `kick_force` | 600 | 40–1,200 | 踢中`pushable_prop`时施加的物理冲量 |
+| `kick_range` | 34 px | 12–72 px | 角色面朝方向上的矩形近战长度 |
+| `kick_width` | 28 px | 12–64 px | 踢击判定的横向宽度 |
+| `kick_animation_duration` | 0.36 s | 0.15–0.8 s | 模块腿伸出、Body/Head后仰并复位的总时间 |
+| `furniture_impact_damage` | 20 | 固定 | 高速家具撞到Enemy或Player时的独立伤害 |
+| `furniture_impact_minimum_speed` | 100 px/s | 20–500 px/s | 家具获得撞击伤害资格的最低线速度 |
+| `furniture_impact_target_cooldown` | 0.45 s | 0.05–2 s | 同一家具对同一目标再次结算的最短间隔 |
+| `furniture_impact_velocity_retention` | 0.55 | 0.1–1 | 命中后保留的线速度比例 |
+
+`kick`在`project.godot`中绑定物理F键；靠近世界卡片时，卡片交互优先且同帧不会踢击。家具撞击复用共享家具脚本和Player/Enemy正式受伤入口，不把Hurtbox当实体碰撞体。
+
 ## 死亡与卧室时间
 
 | 参数 | 默认值 | 推荐范围 | 作用 |
@@ -66,34 +81,12 @@
 | `crosshair_recoil_pixels` | 5 px | 0–12 px | 基础视觉后坐力距离 |
 | `crosshair_recoil_recovery_seconds` | 0.12 s | 0.03–0.5 s | 准星回到鼠标真实位置的时间 |
 | `basic_weapon_recoil_multiplier` | 1.0 | 0–3 | 小手枪后坐力倍率 |
-| `beam_weapon_recoil_multiplier` | 1.5 | 0–3 | 光束武器后坐力倍率 |
-
-## 修正带怪物
-
-| 参数 | 默认值 | 推荐范围 | 作用 |
-|---|---:|---:|---|
-| `correction_trigger_distance` | 50 px | 20–160 px | 停止追踪并开始蓄力的距离 |
-| `correction_charge_seconds` | 0.75 s | 0.2–2 s | 冲刺前蓄力时间 |
-| `correction_dash_distance` | 150 px | 40–400 px | 单次冲刺目标距离 |
-| `correction_dash_speed` | 360 px/s | 100–900 px/s | 冲刺速度 |
-| `correction_dash_damage` | 18 | 0–200 | 冲刺接触伤害 |
-| `correction_recovery_seconds` | 0.5 s | 0–3 s | 冲刺结束后的恢复时间 |
-
-## 订书机怪物与订书钉
-
-| 参数 | 默认值 | 推荐范围 | 作用 |
-|---|---:|---:|---|
-| `stapler_fire_interval` | 2 s | 0.2–10 s | 两次发射之间的时间 |
-| `staple_damage` | 10 | 0–200 | 订书钉命中伤害 |
-| `staple_speed` | 170 px/s | 20–1000 px/s | 订书钉飞行速度 |
-| `staple_max_distance` | 300 px | 20–1500 px | 飞行后自动销毁的最大距离 |
-| `staple_collision_radius` | 5 px | 1–30 px | 订书钉碰撞半径 |
 
 ## 经济与结算
 
 | 参数 | 默认值 | 推荐范围 | 作用 |
 |---|---:|---:|---|
-| `ram_per_completed_day` | 1 RAM/日 | 0–100 | 剧情正式完成一天、无尽完成一个120秒虚拟日时使用的统一奖励；不再读取等级或经验 |
+| `ram_per_completed_day` | 1 RAM/日 | 0–100 | 剧情正式完成一天时使用的奖励；不再读取等级或经验 |
 | `initial_balance` | ¥1,325 | 0–2,000,000,000 | 新档局外余额 |
 | `daily_base_wage` | ¥500 | 0–1,000,000 | 完整日工资；迟到比例仍由现有倍率计算 |
 | `wage_ratio_on_time` | 1.0 | 0–2 | 正常上班工资比例 |
@@ -122,29 +115,14 @@
 
 敌人生成、敌人上限、基础生命/伤害、06:00后成长、梦境时钟、醒来长按、慢动作、升级公式、武器、闪避、逐字速度/音效和手机位置也继续集中在同一资源中。其中 `base_wake_hold_seconds` 默认5秒，`bullet_time_scale` 默认0.20，梦境默认04:00开始、剧情模式06:00响铃。
 
-## 本阶段：按天驱动的敌人解锁与难度
+## 本阶段：剧情房间参数
 
 | 参数 | 默认值 | 推荐范围 | 作用 |
 |---|---:|---:|---|
-| `enemy_unlock_days` | `{basic:1, correction:1, tentacle:1, stapler:2, alarm_clock:3, mailbox:4, large_correction:5}` | Day 1–999 | 剧情日/无尽虚拟日共用的敌人首次解锁表；不再按局内秒数解锁 |
-| `enemy_base_spawn_weights` | 常规类型均为1.0 | 0–20 | 已解锁普通生成池的相对抽取权重；触手与唯一精英使用独立入口 |
-| `difficulty_seconds_per_day` | 120 s | 10–600 s | Day N映射为既有线性难度曲线的`(N-1)×120秒`输入 |
-| `endless_day_duration` | 120 s | 10–600 s | 无尽模式每完成一个虚拟日所需时长 |
-| `correction_trigger_distance` | 150 px | 20–300 px | 普通修正带开始蓄力的距离 |
-| `correction_charge_seconds` | 0.75 s | 0.1–3 s | 普通修正带原地蓄力时间 |
-| `correction_dash_distance` | 200 px | 20–500 px | 普通修正带冲刺距离 |
-| `large_correction_health_multiplier` | 10 | 1–50 | 精英相对普通修正带的生命倍率 |
-| `large_correction_size_multiplier` | 1.8 | 1–4 | 精英视觉与碰撞体尺寸倍率 |
-| `large_correction_trigger_distance` | 150 px | 20–400 px | 精英开始攻击序列的距离 |
-| `large_correction_charge_seconds` | 0.75 s | 0.1–3 s | 三连冲刺前唯一一次完整蓄力 |
-| `large_correction_dash_distance` | 200 px | 20–600 px | 精英每段冲刺距离 |
-| `large_correction_dash_speed` | 360 px/s | 50–1200 px/s | 精英冲刺速度 |
-| `large_correction_dash_damage` | 24 | 0–500 | 精英每段冲刺接触伤害 |
-| `large_correction_dash_count` | 3 | 1–8 | 每轮连续冲刺次数 |
-| `large_correction_dash_interval` | 0.2 s | 0.05–2 s | 连续冲刺之间的方向预告停顿 |
-| `large_correction_recovery_seconds` | 0.5 s | 0–5 s | 三连冲刺后的恢复时间 |
-| `large_correction_experience_ratio` | 0.5 | 0–5 | 击败奖励相对当前升级需求的比例 |
-
+| `enemy_unlock_days` | `{employee:1}` | Day 1–999 | 当前唯一正式敌人 Employee 的解锁日 |
+| `enemy_base_spawn_weights` | `{employee:1.0}` | 0–20 | Employee 生成权重 |
+| `story_enemy_health_multiplier` | 3.0 | 1–10 | 剧情房间 Employee 生命倍率 |
+| `large_room_enemy_cap` / `medium_room_enemy_cap` / `small_room_enemy_cap` | 20 / 10 / 10 | 1–40 | 各房间同时存活上限 |
 ## 本阶段：星期与闹钟
 
 | 参数 | 默认值 | 推荐范围 | 作用 |
@@ -162,11 +140,10 @@
 | `permanent_upgrade_prices` | `[1,3,5,8,10]` | 每项0–32767 | 每项强化从1级到5级的RAM价格 |
 | `permanent_upgrade_max_level` | 5 | 1–20 | 每项永久强化等级上限 |
 | `visual_cortex_range_per_level` | 50 px | 0–500 px | 枕叶视觉皮层每级攻击范围增量 |
-| `brainstem_experience_per_level` | 0.2 | 0–2 | 脑干每级经验倍率增量 |
 | `hippocampus_health_per_level` | 20 | 0–1000 | 海马体每级初始最大生命增量 |
 | `prefrontal_attack_speed_per_level` | 0.2 | 0–5 | 前额叶每级攻击速度倍率增量；最终间隔使用除法 |
 
-每项从0升至5级分别消耗1、3、5、8、10 RAM，即每项总计27 RAM。四项等级继续存放在旧存档兼容字段`persistent_day_state.permanent_upgrades`中，RAM继续使用同一全局`ram`字段。手机入口已删除，购买入口迁移到主菜单`GlobalUpgradePanel`；剧情与无尽读取同一份等级，局内老虎机技能不写入该字段。
+每项从0升至5级分别消耗1、3、5、8、10 RAM，即每项总计27 RAM。三项正式等级继续存放在旧存档兼容字段`persistent_day_state.permanent_upgrades`中，旧档中的Brainstem键仅保留但不再读取。RAM继续使用同一全局`ram`字段。手机入口已删除，购买入口迁移到主菜单`GlobalUpgradePanel`；剧情读取该等级，局内老虎机技能不写入该字段。
 
 ## 本阶段：三选一与局内技能
 
@@ -212,21 +189,9 @@
 | `shotgun_pellet_damage` | 3 | 0–1000 | 每颗霰弹的基础伤害 |
 | `shotgun_attack_interval` | 0.8 s | 0.05–20 s | 霰弹枪基础攻击间隔 |
 | `shotgun_spread_degrees` | 30° | 0–180° | 一轮霰弹相对准星方向的总扩散角 |
-| `shotgun_projectile_speed` | 310 px/s | 20–2000 px/s | 霰弹弹丸飞行速度 |
+| `shotgun_projectile_speed` | 155 px/s | 20–2000 px/s | 原始310 px/s基线的50%；霰弹弹丸飞行速度 |
 | `shotgun_max_distance` | 270 px | 20–2000 px | 霰弹弹丸最大飞行距离 |
 | `shotgun_recoil_multiplier` | 1.8 | 0–5 | 霰弹枪相对基础准星后坐力的倍率 |
-| `katana_attack_interval` | 2.0 s | 0.05–20 s | 太刀完整攻击（斩击与剑气共用）的间隔 |
-| `katana_melee_damage` | 30 | 0–5000 | 太刀近身范围斩击伤害 |
-| `katana_melee_radius` | 50 px | 1–500 px | 太刀以玩家为圆心的近身斩击半径 |
-| `katana_wave_damage` | 10 | 0–5000 | 每道剑气对每名敌人的单次伤害 |
-| `katana_wave_speed` | 450 px/s | 20–3000 px/s | 剑气移动速度 |
-| `katana_wave_max_distance` | 300 px | 200–1000 px | 剑气最大飞行距离；本次保持原值 |
-| `katana_wave_width` | 32 px | 4–200 px | 剑气视觉与碰撞宽度，为原16px的2倍 |
-| `katana_wave_initial_speed_ratio` | 0.35 | 0.1–1 | 剑气初始速度相对450px/s最终速度的比例 |
-| `katana_wave_acceleration_duration` | 0.25 s | 0.05–0.8 s | Ease-In加速持续时间 |
-| `katana_wave_acceleration_curve` | Ease-In | Curve输出0–1 | 只控制直线剑气的速度变化形状 |
-| `correction_experience_drop_count` | 2 | 1–16 | 普通修正带正式死亡后生成的经验物数量 |
-| `stapler_experience_drop_count` | 3 | 1–16 | 订书机正式死亡后生成的经验物数量 |
 | `slot_rerolls_per_run` | 1 | 0–3 | 每个Battle Run老虎机总重抽次数，仅三格锁定且非Jackpot时可用 |
 | `upgrade_reel_start_speeds` | `(84,92,78)` | 正数 | 三列起步速度；由上一版`(42,46,39)`翻倍 |
 | `upgrade_reel_max_speeds` | `(440,472,416)` | 正数 | 三列Ease-In后的速度上限；由上一版`(220,236,208)`翻倍 |
@@ -238,7 +203,7 @@
 
 老虎机武器池使用本局`used_weapon_reward_ids`排除：初始武器进场即加入；新武器只有真正结算并装备后加入。Reel仅显示或Reroll不会消耗武器，下一局由新DreamWorld重新初始化。Hover描述完整位于`CRTOverlay`内部，只显示一份曲变结果。
 
-剧情卡片存档字段为`persistent_day_state.story_upgrade_levels`（`family -> level/rank`），卡片获得时同步当前存档与当天快照，换日、死亡和Continue均保留；New Game为空。无尽模式始终使用空的初始`skill_levels`，Restart不会读取剧情卡片。每个剧情Dream从基础属性开始，再依次应用眠网永久强化和剧情卡片等级，避免跨天重复叠加。
+剧情卡片只存在于当前`DreamWorld.skill_levels`；下一次Dream重新为空。加载旧档时会移除历史`story_upgrade_levels`字段。眠网永久升级与武器解锁仍独立保存。
 
 ## 本次界面与饥饿参数
 
@@ -306,9 +271,9 @@ Tab菜单内容由当前单局技能状态和角色/武器运行时数值即时�
 | `console_panel_size` | `(520, 210)` | 320×140–620×340 | Debug控制台面板尺寸 |
 | `console_font_size` | 14 px | 8–28 px | Debug控制台输出与输入字号 |
 
-ONLINE消息的 `is_read` 位于 `res://resources/phone_messages.json`，运行后复制到局外状态；手机主页和锁屏仍直接使用卧室唯一时间源。Debug控制台只在调试构建启用。
+ONLINE消息模板位于 `res://data/dialogue/phone.json`，运行后复制到局外状态并在存档中维护 `is_read`；手机主页和锁屏仍直接使用卧室唯一时间源。Debug控制台只在调试构建启用。
 
-## 对话立绘描边与梦境动态照明
+## 对话立绘描边与梦境视觉色调
 
 | 参数 | 默认值 | 推荐范围 | 作用 |
 |---|---:|---:|---|
@@ -317,10 +282,7 @@ ONLINE消息的 `is_read` 位于 `res://resources/phone_messages.json`，运行�
 | `dialogue_portrait_filter_color` | `#8DB9D8` | 低饱和冷色 | 对话立绘主体的统一冷蓝调和颜色，不影响描边 |
 | `dialogue_portrait_filter_strength` | 0.18 | 0.0–0.35 | 冷蓝滤镜混合强度；过高会降低五官和衣服辨识度 |
 | `dream_ambient_color` | `#26313F` | 深灰蓝、避免纯黑 | 仅压暗梦境世界画布，不影响独立CanvasLayer中的HUD |
-| `player_light_radius` | 104 世界px | 72–144 | 玩家周围柔和可视亮区半径，约设计视口短边的29% |
-| `player_light_energy` | 1.15 | 0.7–1.8 | 玩家PointLight2D的照明能量 |
-| `player_light_color` | `#E7F0F8` | 接近白色 | 略偏冷但不过度染色的玩家照明颜色 |
-| `player_light_falloff` | 0.32 | 0.15–0.55 | 256×256程序化径向渐变的明亮中心结束位置 |
-| `stress_light_radius_multiplier` | 0.72 | 0.5–1.0 | 压力高于视野阈值后，同一PlayerLight的半径倍率 |
+| `player_light_radius` | 104 世界px | 48–240 | 历史字段名；只供XP/Heart的SoftGlow绘制尺寸参考，不创建Light2D |
+| `player_light_color` | `#E7F0F8` | 接近白色 | 历史字段名；只供非照明绘制光晕取色 |
 
-梦境只创建一盏主要动态光源：`DreamWorld/Player/PlayerLight`。旧压力圆孔遮罩不再实例化，避免环境暗化、玩家灯光和黑幕三层叠加。XP条、准星、升级卡片、暂停菜单和伤害闪光位于`DreamWorld/UILayer`，不受世界CanvasModulate影响；世界坐标中的伤害数字单独使用Unshaded材质保持可读。
+梦境不再创建任何Player/Enemy/Projectile/Pickup局部`Light2D`。`DreamWorld/DreamLighting/CanvasModulate`仅保留全局冷色调；XP、Heart与弹丸可继续使用不会照亮周围场景的SoftGlow绘制。HUD位于独立CanvasLayer，不受世界CanvasModulate影响。

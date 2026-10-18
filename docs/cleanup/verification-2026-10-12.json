@@ -1,0 +1,11 @@
+{
+  "approved_files": 5185,
+  "remaining_targets": [],
+  "new_missing_references": [],
+  "missing_required": [],
+  "removed_live_imports": [],
+  "baseline_missing_references": 315,
+  "current_missing_references": 315,
+  "live_import_paths": 5678,
+  "game_runtime_tested": false
+}

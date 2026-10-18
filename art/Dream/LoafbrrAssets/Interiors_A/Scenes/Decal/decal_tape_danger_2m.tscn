@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=4 uid="uid://dtv83knrgj8x4"]
+
+[ext_resource type="Material" uid="uid://cjg55dhp2epy1" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Misc_Trim_Mat.tres" id="1_jadty"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_d8mpe"]
+_surfaces = [{
+"aabb": AABB(-0.999989, -0.0416658, 0, 1.99998, 0.0833316, 1e-05),
+"format": 34359742465,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAAADAAEAAwAEAAEAAwAFAAQA"),
+"name": "MiscTrim",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("Tv9/P8OpKr0AAACAAAAyt76pKj0AAACATv9/P76pKj0AAACAAAAyt8OpKr0AAACATv9/v76pKj0AAACATv9/v8OpKr0AAACA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_hjqlj"]
+resource_name = "Interiors_A_Decal_Tape_Danger_2m"
+_surfaces = [{
+"aabb": AABB(-0.999989, -0.0416658, 0, 1.99998, 0.0833316, 1e-05),
+"attribute_data": PackedByteArray("AACAP8CqKj4AAAAA0KqqPQAAgD/Qqqo9AAAAAMCqKj4AAIA/wKoqPgAAAADQqqo9AACAP9Cqqj0AAAAAwKoqPg=="),
+"format": 34359742487,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUA"),
+"material": ExtResource("1_jadty"),
+"name": "MiscTrim",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("Tv9/P8OpKr0AAACAAAAyt76pKj0AAACATv9/P76pKj0AAACAAAAyt8OpKr0AAACAAAAyt8OpKr0AAACATv9/v76pKj0AAACAAAAyt76pKj0AAACATv9/v8OpKr0AAACA/3//f////7//f/9/////v/9//3////+//3//f////7//f/9/////v/9//3////+//3//f////7//f/9/////vw==")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_d8mpe")
+
+[node name="Decal_Tape_Danger_2m" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_hjqlj")
+skeleton = NodePath("")

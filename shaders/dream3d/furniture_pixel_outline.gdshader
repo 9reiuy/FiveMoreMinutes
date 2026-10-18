@@ -1,0 +1,19 @@
+shader_type spatial;
+// Shared one-screen-pixel inverted hull. Original textured surfaces and
+// collision meshes stay untouched; all furniture reuse this single material.
+render_mode unshaded, cull_front, depth_draw_never, shadows_disabled;
+uniform float outline_pixels = 1.0;
+
+void vertex() {
+	vec4 clip = PROJECTION_MATRIX * MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
+	vec2 projected_normal = (PROJECTION_MATRIX * MODELVIEW_MATRIX * vec4(NORMAL, 0.0)).xy;
+	float length_px = length(projected_normal);
+	if (length_px > 0.00001) {
+		clip.xy += projected_normal / length_px * (2.0 * outline_pixels * clip.w / VIEWPORT_SIZE);
+	}
+	POSITION = clip;
+}
+
+void fragment() {
+	ALBEDO = vec3(0.0);
+}

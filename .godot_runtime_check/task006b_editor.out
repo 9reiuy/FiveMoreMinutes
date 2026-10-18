@@ -1,0 +1,922 @@
+WorkerThreadPool: 32 threads, 24 max low-priority.
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+Loading resource: res://assets/fonts/pixel_theme.tres remapped: res://assets/fonts/pixel_theme.tres
+Loading resource: res://assets/fonts/fusion_pixel/fusion-pixel-12px-proportional-zh_hans.ttf remapped: res://assets/fonts/fusion_pixel/fusion-pixel-12px-proportional-zh_hans.ttf
+Loading resource: res://.godot/imported/fusion-pixel-12px-proportional-zh_hans.ttf-4e8889b30d3f54870f328b2a28d7ce4a.fontdata remapped: res://.godot/imported/fusion-pixel-12px-proportional-zh_hans.ttf-4e8889b30d3f54870f328b2a28d7ce4a.fontdata
+Completed load for: 'res://assets/fonts/fusion_pixel/fusion-pixel-12px-proportional-zh_hans.ttf' remapped 'res://assets/fonts/fusion_pixel/fusion-pixel-12px-proportional-zh_hans.ttf' at thread -1
+Loading resource: res://art/icon/space-worm-theme/general/Blue.png remapped: res://art/icon/space-worm-theme/general/Blue.png
+Loading resource: res://.godot/imported/Blue.png-b4a7dbb715eeb18c82e3d6420c5554bc.ctex remapped: res://.godot/imported/Blue.png-b4a7dbb715eeb18c82e3d6420c5554bc.ctex
+Completed load for: 'res://art/icon/space-worm-theme/general/Blue.png' remapped 'res://art/icon/space-worm-theme/general/Blue.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/button/Blue_Hover.png remapped: res://art/icon/space-worm-theme/button/Blue_Hover.png
+Loading resource: res://.godot/imported/Blue_Hover.png-0b0017f1f7a588f64609e8c555089ccd.ctex remapped: res://.godot/imported/Blue_Hover.png-0b0017f1f7a588f64609e8c555089ccd.ctex
+Completed load for: 'res://art/icon/space-worm-theme/button/Blue_Hover.png' remapped 'res://art/icon/space-worm-theme/button/Blue_Hover.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/panel/Panel.png remapped: res://art/icon/space-worm-theme/panel/Panel.png
+Loading resource: res://.godot/imported/Panel.png-2f695b711288f68d31b18dbabfde3ef9.ctex remapped: res://.godot/imported/Panel.png-2f695b711288f68d31b18dbabfde3ef9.ctex
+Completed load for: 'res://art/icon/space-worm-theme/panel/Panel.png' remapped 'res://art/icon/space-worm-theme/panel/Panel.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Checked.png remapped: res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Checked.png
+Loading resource: res://.godot/imported/Checkbox_Blue_Checked.png-cb78d40149c9fe7beb08da53994919fa.ctex remapped: res://.godot/imported/Checkbox_Blue_Checked.png-cb78d40149c9fe7beb08da53994919fa.ctex
+Completed load for: 'res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Checked.png' remapped 'res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Checked.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Unchecked.png remapped: res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Unchecked.png
+Loading resource: res://.godot/imported/Checkbox_Blue_Unchecked.png-efb0391bbef8622754bca2c7c95fcc35.ctex remapped: res://.godot/imported/Checkbox_Blue_Unchecked.png-efb0391bbef8622754bca2c7c95fcc35.ctex
+Completed load for: 'res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Unchecked.png' remapped 'res://art/icon/space-worm-theme/checkbox/Checkbox_Blue_Unchecked.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Background.png remapped: res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Background.png
+Loading resource: res://.godot/imported/Slider_Blue_Background.png-e86f72247c50362ce89a1d7bbdffae31.ctex remapped: res://.godot/imported/Slider_Blue_Background.png-e86f72247c50362ce89a1d7bbdffae31.ctex
+Completed load for: 'res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Background.png' remapped 'res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Background.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Grabber_Horizontal.png remapped: res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Grabber_Horizontal.png
+Loading resource: res://.godot/imported/Slider_Blue_Grabber_Horizontal.png-4e246e8c0b8cb3a95ff9eaa039908503.ctex remapped: res://.godot/imported/Slider_Blue_Grabber_Horizontal.png-4e246e8c0b8cb3a95ff9eaa039908503.ctex
+Completed load for: 'res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Grabber_Horizontal.png' remapped 'res://art/icon/space-worm-theme/scrollbar/Slider_Blue_Grabber_Horizontal.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/scrollbar/Scrollbar_Background_Blue.png remapped: res://art/icon/space-worm-theme/scrollbar/Scrollbar_Background_Blue.png
+Loading resource: res://.godot/imported/Scrollbar_Background_Blue.png-715f596f8d778791efd552b9effff9e1.ctex remapped: res://.godot/imported/Scrollbar_Background_Blue.png-715f596f8d778791efd552b9effff9e1.ctex
+Completed load for: 'res://art/icon/space-worm-theme/scrollbar/Scrollbar_Background_Blue.png' remapped 'res://art/icon/space-worm-theme/scrollbar/Scrollbar_Background_Blue.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/scrollbar/Scrollbar_Grabber_Blue.png remapped: res://art/icon/space-worm-theme/scrollbar/Scrollbar_Grabber_Blue.png
+Loading resource: res://.godot/imported/Scrollbar_Grabber_Blue.png-cc8e1b41e3e3c43c1601f4bd99be51a0.ctex remapped: res://.godot/imported/Scrollbar_Grabber_Blue.png-cc8e1b41e3e3c43c1601f4bd99be51a0.ctex
+Completed load for: 'res://art/icon/space-worm-theme/scrollbar/Scrollbar_Grabber_Blue.png' remapped 'res://art/icon/space-worm-theme/scrollbar/Scrollbar_Grabber_Blue.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/textedit/TextEditWhite.png remapped: res://art/icon/space-worm-theme/textedit/TextEditWhite.png
+Loading resource: res://.godot/imported/TextEditWhite.png-df0b78e19b12da30b60a9573c7b0a587.ctex remapped: res://.godot/imported/TextEditWhite.png-df0b78e19b12da30b60a9573c7b0a587.ctex
+Completed load for: 'res://art/icon/space-worm-theme/textedit/TextEditWhite.png' remapped 'res://art/icon/space-worm-theme/textedit/TextEditWhite.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/textedit/TextEditDisabled.png remapped: res://art/icon/space-worm-theme/textedit/TextEditDisabled.png
+Loading resource: res://.godot/imported/TextEditDisabled.png-e48bc9d51892f66caf97bf8b5f571c60.ctex remapped: res://.godot/imported/TextEditDisabled.png-e48bc9d51892f66caf97bf8b5f571c60.ctex
+Completed load for: 'res://art/icon/space-worm-theme/textedit/TextEditDisabled.png' remapped 'res://art/icon/space-worm-theme/textedit/TextEditDisabled.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/panel/Tab.png remapped: res://art/icon/space-worm-theme/panel/Tab.png
+Loading resource: res://.godot/imported/Tab.png-cad7ccd9f468c150cb1b16fc13db0bd2.ctex remapped: res://.godot/imported/Tab.png-cad7ccd9f468c150cb1b16fc13db0bd2.ctex
+Completed load for: 'res://art/icon/space-worm-theme/panel/Tab.png' remapped 'res://art/icon/space-worm-theme/panel/Tab.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/panel/TabHover.png remapped: res://art/icon/space-worm-theme/panel/TabHover.png
+Loading resource: res://.godot/imported/TabHover.png-477efe4cff8e77e33894ea75f8b43f35.ctex remapped: res://.godot/imported/TabHover.png-477efe4cff8e77e33894ea75f8b43f35.ctex
+Completed load for: 'res://art/icon/space-worm-theme/panel/TabHover.png' remapped 'res://art/icon/space-worm-theme/panel/TabHover.png' at thread -1
+Loading resource: res://art/icon/space-worm-theme/general/LighterBlue.png remapped: res://art/icon/space-worm-theme/general/LighterBlue.png
+Loading resource: res://.godot/imported/LighterBlue.png-42e98189ecbc02b06de77c5e6ebb8193.ctex remapped: res://.godot/imported/LighterBlue.png-42e98189ecbc02b06de77c5e6ebb8193.ctex
+Completed load for: 'res://art/icon/space-worm-theme/general/LighterBlue.png' remapped 'res://art/icon/space-worm-theme/general/LighterBlue.png' at thread -1
+Completed load for: 'res://assets/fonts/pixel_theme.tres' remapped 'res://assets/fonts/pixel_theme.tres' at thread -1
+CORE API HASH: 3769296884
+EDITOR API HASH: 3146738256
+SceneTreeFTI: traversal method DEFAULT
+Loading resource: C:/Users/Administrator/AppData/Roaming/Godot/editor_settings-4.7.tres remapped: C:/Users/Administrator/AppData/Roaming/Godot/editor_settings-4.7.tres
+Completed load for: 'C:/Users/Administrator/AppData/Roaming/Godot/editor_settings-4.7.tres' remapped 'C:/Users/Administrator/AppData/Roaming/Godot/editor_settings-4.7.tres' at thread -1
+EditorSettings: Load OK!
+EditorTheme: Generating new theme for the config '3810048042'.
+EditorTheme: Generating new icons.
+EditorTheme: Generating new fonts.
+EditorTheme: Generating new styles.
+Loading resource: C:/Users/Administrator/AppData/Local/Godot/editor_doc_cache-4.7.res remapped: C:/Users/Administrator/AppData/Local/Godot/editor_doc_cache-4.7.res
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+Loaded builtin CA certificates
+Completed load for: 'C:/Users/Administrator/AppData/Local/Godot/editor_doc_cache-4.7.res' remapped 'C:/Users/Administrator/AppData/Local/Godot/editor_doc_cache-4.7.res' at thread -1
+Failed to bind socket. Error: 3.
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started 项目初始化 (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | 正在扫描文件结构……[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | 正在加载全局类名……[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | 正在校验 GDExtension……[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | 正在创建自动加载脚本……[39m[0m
+Loading resource: res://scripts/app/settings_manager.gd remapped: res://scripts/app/settings_manager.gd
+Loading resource: res://resources/demo_config.tres remapped: res://resources/demo_config.tres
+Loading resource: res://scripts/data/demo_config.gd remapped: res://scripts/data/demo_config.gd
+Completed load for: 'res://scripts/data/demo_config.gd' remapped 'res://scripts/data/demo_config.gd' at thread -1
+Completed load for: 'res://resources/demo_config.tres' remapped 'res://resources/demo_config.tres' at thread -1
+Completed load for: 'res://scripts/app/settings_manager.gd' remapped 'res://scripts/app/settings_manager.gd' at thread -1
+Loading resource: res://scripts/audio/sfx_manager.gd remapped: res://scripts/audio/sfx_manager.gd
+Loading resource: res://sfx/卧室背景音乐.mp3 remapped: res://sfx/卧室背景音乐.mp3
+Loading resource: res://.godot/imported/卧室背景音乐.mp3-ad0f47ab9fda008bf722751f9003ec2d.mp3str remapped: res://.godot/imported/卧室背景音乐.mp3-ad0f47ab9fda008bf722751f9003ec2d.mp3str
+Completed load for: 'res://sfx/卧室背景音乐.mp3' remapped 'res://sfx/卧室背景音乐.mp3' at thread -1
+Loading resource: res://sfx/卧室背景音乐短.mp3 remapped: res://sfx/卧室背景音乐短.mp3
+Loading resource: res://.godot/imported/卧室背景音乐短.mp3-38b373a7c65990d912c19948a38b2c5f.mp3str remapped: res://.godot/imported/卧室背景音乐短.mp3-38b373a7c65990d912c19948a38b2c5f.mp3str
+Completed load for: 'res://sfx/卧室背景音乐短.mp3' remapped 'res://sfx/卧室背景音乐短.mp3' at thread -1
+Loading resource: res://art/Dream/BGM/Track01.ogg remapped: res://art/Dream/BGM/Track01.ogg
+Loading resource: res://.godot/imported/Track01.ogg-597035d57281211dc8dcc41ccbbcedc7.oggvorbisstr remapped: res://.godot/imported/Track01.ogg-597035d57281211dc8dcc41ccbbcedc7.oggvorbisstr
+Completed load for: 'res://art/Dream/BGM/Track01.ogg' remapped 'res://art/Dream/BGM/Track01.ogg' at thread -1
+Loading resource: res://sfx/雨天.mp3 remapped: res://sfx/雨天.mp3
+Loading resource: res://.godot/imported/雨天.mp3-0c90f5b0fe606b3a9bcd12cd7fcf59de.mp3str remapped: res://.godot/imported/雨天.mp3-0c90f5b0fe606b3a9bcd12cd7fcf59de.mp3str
+Completed load for: 'res://sfx/雨天.mp3' remapped 'res://sfx/雨天.mp3' at thread -1
+Loading resource: res://sfx/雨天打雷.mp3 remapped: res://sfx/雨天打雷.mp3
+Loading resource: res://.godot/imported/雨天打雷.mp3-c91976a3c7c70224f56d6791c8c424e2.mp3str remapped: res://.godot/imported/雨天打雷.mp3-c91976a3c7c70224f56d6791c8c424e2.mp3str
+Completed load for: 'res://sfx/雨天打雷.mp3' remapped 'res://sfx/雨天打雷.mp3' at thread -1
+Loading resource: res://sfx/大风.mp3 remapped: res://sfx/大风.mp3
+Loading resource: res://.godot/imported/大风.mp3-251ab836a5a45522e0797ec4f38343fe.mp3str remapped: res://.godot/imported/大风.mp3-251ab836a5a45522e0797ec4f38343fe.mp3str
+Completed load for: 'res://sfx/大风.mp3' remapped 'res://sfx/大风.mp3' at thread -1
+Loading resource: res://sfx/普通晚上.mp3 remapped: res://sfx/普通晚上.mp3
+Loading resource: res://.godot/imported/普通晚上.mp3-cd5ba3aeeb7797fd52619cd899c70cf1.mp3str remapped: res://.godot/imported/普通晚上.mp3-cd5ba3aeeb7797fd52619cd899c70cf1.mp3str
+Completed load for: 'res://sfx/普通晚上.mp3' remapped 'res://sfx/普通晚上.mp3' at thread -1
+Loading resource: res://sfx/禁止选择音效.mp3 remapped: res://sfx/禁止选择音效.mp3
+Loading resource: res://.godot/imported/禁止选择音效.mp3-e1336fb87dd1a786712566fc6b34d10e.mp3str remapped: res://.godot/imported/禁止选择音效.mp3-e1336fb87dd1a786712566fc6b34d10e.mp3str
+Completed load for: 'res://sfx/禁止选择音效.mp3' remapped 'res://sfx/禁止选择音效.mp3' at thread -1
+Loading resource: res://sfx/角色死亡音.mp3 remapped: res://sfx/角色死亡音.mp3
+Loading resource: res://.godot/imported/角色死亡音.mp3-7c964b9bfdc9d92aab13d502ccfdeddc.mp3str remapped: res://.godot/imported/角色死亡音.mp3-7c964b9bfdc9d92aab13d502ccfdeddc.mp3str
+Completed load for: 'res://sfx/角色死亡音.mp3' remapped 'res://sfx/角色死亡音.mp3' at thread -1
+Loading resource: res://sfx/手机新讯息.mp3 remapped: res://sfx/手机新讯息.mp3
+Loading resource: res://.godot/imported/手机新讯息.mp3-bdbde1f8ca8779663fecf3f49a749ffc.mp3str remapped: res://.godot/imported/手机新讯息.mp3-bdbde1f8ca8779663fecf3f49a749ffc.mp3str
+Completed load for: 'res://sfx/手机新讯息.mp3' remapped 'res://sfx/手机新讯息.mp3' at thread -1
+Loading resource: res://sfx/购买音效.mp3 remapped: res://sfx/购买音效.mp3
+Loading resource: res://.godot/imported/购买音效.mp3-514c74acc5f4caede4cddb9053055023.mp3str remapped: res://.godot/imported/购买音效.mp3-514c74acc5f4caede4cddb9053055023.mp3str
+Completed load for: 'res://sfx/购买音效.mp3' remapped 'res://sfx/购买音效.mp3' at thread -1
+Loading resource: res://sfx/回家开门音效.mp3 remapped: res://sfx/回家开门音效.mp3
+Loading resource: res://.godot/imported/回家开门音效.mp3-7b86de84c80794847416856f68dca849.mp3str remapped: res://.godot/imported/回家开门音效.mp3-7b86de84c80794847416856f68dca849.mp3str
+Completed load for: 'res://sfx/回家开门音效.mp3' remapped 'res://sfx/回家开门音效.mp3' at thread -1
+Loading resource: res://sfx/上班音效.mp3 remapped: res://sfx/上班音效.mp3
+Loading resource: res://.godot/imported/上班音效.mp3-197b6b9a41feeefaa2e48c54cc275b88.mp3str remapped: res://.godot/imported/上班音效.mp3-197b6b9a41feeefaa2e48c54cc275b88.mp3str
+Completed load for: 'res://sfx/上班音效.mp3' remapped 'res://sfx/上班音效.mp3' at thread -1
+Loading resource: res://sfx/确定按钮音效.mp3 remapped: res://sfx/确定按钮音效.mp3
+Loading resource: res://.godot/imported/确定按钮音效.mp3-d396a5cd41eb099aa1eb012980bdfddf.mp3str remapped: res://.godot/imported/确定按钮音效.mp3-d396a5cd41eb099aa1eb012980bdfddf.mp3str
+Completed load for: 'res://sfx/确定按钮音效.mp3' remapped 'res://sfx/确定按钮音效.mp3' at thread -1
+Loading resource: res://sfx/获取经验值的音效.mp3 remapped: res://sfx/获取经验值的音效.mp3
+Loading resource: res://.godot/imported/获取经验值的音效.mp3-c9200239a434bd79a92c8cae3a68dbdc.mp3str remapped: res://.godot/imported/获取经验值的音效.mp3-c9200239a434bd79a92c8cae3a68dbdc.mp3str
+Completed load for: 'res://sfx/获取经验值的音效.mp3' remapped 'res://sfx/获取经验值的音效.mp3' at thread -1
+Loading resource: res://sfx/手机解锁音效.mp3 remapped: res://sfx/手机解锁音效.mp3
+Loading resource: res://.godot/imported/手机解锁音效.mp3-85b29a69fe7fe0e37d18d422ad6bffb9.mp3str remapped: res://.godot/imported/手机解锁音效.mp3-85b29a69fe7fe0e37d18d422ad6bffb9.mp3str
+Completed load for: 'res://sfx/手机解锁音效.mp3' remapped 'res://sfx/手机解锁音效.mp3' at thread -1
+Loading resource: res://sfx/手机操作按键.mp3 remapped: res://sfx/手机操作按键.mp3
+Loading resource: res://.godot/imported/手机操作按键.mp3-2923e7f4d3047b66d6fcae6e1cd23155.mp3str remapped: res://.godot/imported/手机操作按键.mp3-2923e7f4d3047b66d6fcae6e1cd23155.mp3str
+Completed load for: 'res://sfx/手机操作按键.mp3' remapped 'res://sfx/手机操作按键.mp3' at thread -1
+Loading resource: res://sfx/摇晃药瓶.mp3 remapped: res://sfx/摇晃药瓶.mp3
+Loading resource: res://.godot/imported/摇晃药瓶.mp3-9df32181077d59f7bf518d7eb945a6c8.mp3str remapped: res://.godot/imported/摇晃药瓶.mp3-9df32181077d59f7bf518d7eb945a6c8.mp3str
+Completed load for: 'res://sfx/摇晃药瓶.mp3' remapped 'res://sfx/摇晃药瓶.mp3' at thread -1
+Loading resource: res://sfx/敲门.mp3 remapped: res://sfx/敲门.mp3
+Loading resource: res://.godot/imported/敲门.mp3-4308aa1d56ce7f9bbcd57eecf1f8ba80.mp3str remapped: res://.godot/imported/敲门.mp3-4308aa1d56ce7f9bbcd57eecf1f8ba80.mp3str
+Completed load for: 'res://sfx/敲门.mp3' remapped 'res://sfx/敲门.mp3' at thread -1
+Loading resource: res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav remapped: res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav
+Loading resource: res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav-089ee64e744357ea384da66019af04dc.sample remapped: res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav-089ee64e744357ea384da66019af04dc.sample
+Completed load for: 'res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav' remapped 'res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire - 1.wav' at thread -1
+Loading resource: res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav remapped: res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav
+Loading resource: res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav-fcf18bcb76c62dc7d1fe7342bfd3ce2c.sample remapped: res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav-fcf18bcb76c62dc7d1fe7342bfd3ce2c.sample
+Completed load for: 'res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav' remapped 'res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Reload - 1.wav' at thread -1
+Loading resource: res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Equip - 1.wav remapped: res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Equip - 1.wav
+Loading resource: res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Equip - 1.wav-8c916bf8ea55bbbf02f34398f0832e50.sample remapped: res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Equip - 1.wav-8c916bf8ea55bbbf02f34398f0832e50.sample
+Completed load for: 'res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Equip - 1.wav' remapped 'res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Equip - 1.wav' at thread -1
+Loading resource: res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire (Dry) - 1.wav remapped: res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire (Dry) - 1.wav
+Loading resource: res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire (Dry) - 1.wav-20e530ad3fac742567f8cb4e279e2838.sample remapped: res://.godot/imported/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire (Dry) - 1.wav-20e530ad3fac742567f8cb4e279e2838.sample
+Completed load for: 'res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire (Dry) - 1.wav' remapped 'res://art/Dream/gunshot/JDSherbert - Firearm FX - Weapon SFX Pack - Walther P38 - Fire (Dry) - 1.wav' at thread -1
+Loading resource: res://art/Dream/hit/Impact 1.wav remapped: res://art/Dream/hit/Impact 1.wav
+Loading resource: res://.godot/imported/Impact 1.wav-cf0d05441025e601e2eda524f1b71654.sample remapped: res://.godot/imported/Impact 1.wav-cf0d05441025e601e2eda524f1b71654.sample
+Completed load for: 'res://art/Dream/hit/Impact 1.wav' remapped 'res://art/Dream/hit/Impact 1.wav' at thread -1
+Loading resource: res://art/Dream/hit/Impact 2.wav remapped: res://art/Dream/hit/Impact 2.wav
+Loading resource: res://.godot/imported/Impact 2.wav-6638fbbdb810ed20ea239846a882052b.sample remapped: res://.godot/imported/Impact 2.wav-6638fbbdb810ed20ea239846a882052b.sample
+Completed load for: 'res://art/Dream/hit/Impact 2.wav' remapped 'res://art/Dream/hit/Impact 2.wav' at thread -1
+Loading resource: res://art/Dream/hit/Impact 3.wav remapped: res://art/Dream/hit/Impact 3.wav
+Loading resource: res://.godot/imported/Impact 3.wav-708d7c05c6053562239db56a74fcbe40.sample remapped: res://.godot/imported/Impact 3.wav-708d7c05c6053562239db56a74fcbe40.sample
+Completed load for: 'res://art/Dream/hit/Impact 3.wav' remapped 'res://art/Dream/hit/Impact 3.wav' at thread -1
+Loading resource: res://art/Dream/hit/Impact 4.wav remapped: res://art/Dream/hit/Impact 4.wav
+Loading resource: res://.godot/imported/Impact 4.wav-6a05c470184c98e16af39bb4b4b3dabb.sample remapped: res://.godot/imported/Impact 4.wav-6a05c470184c98e16af39bb4b4b3dabb.sample
+Completed load for: 'res://art/Dream/hit/Impact 4.wav' remapped 'res://art/Dream/hit/Impact 4.wav' at thread -1
+Loading resource: res://art/wallpaper/近战击打敌人.wav remapped: res://art/wallpaper/近战击打敌人.wav
+Loading resource: res://.godot/imported/近战击打敌人.wav-d84500cad0586e447e0f9f7f223e57c1.sample remapped: res://.godot/imported/近战击打敌人.wav-d84500cad0586e447e0f9f7f223e57c1.sample
+Completed load for: 'res://art/wallpaper/近战击打敌人.wav' remapped 'res://art/wallpaper/近战击打敌人.wav' at thread -1
+Loading resource: res://art/wallpaper/近战击打家具.wav remapped: res://art/wallpaper/近战击打家具.wav
+Loading resource: res://.godot/imported/近战击打家具.wav-d8d146abc641aa45fe3cd5d14fd7c31d.sample remapped: res://.godot/imported/近战击打家具.wav-d8d146abc641aa45fe3cd5d14fd7c31d.sample
+Completed load for: 'res://art/wallpaper/近战击打家具.wav' remapped 'res://art/wallpaper/近战击打家具.wav' at thread -1
+Loading resource: res://art/wallpaper/射击被击中.wav remapped: res://art/wallpaper/射击被击中.wav
+Loading resource: res://.godot/imported/射击被击中.wav-3d19b8bd8af58664c9b77381f850631c.sample remapped: res://.godot/imported/射击被击中.wav-3d19b8bd8af58664c9b77381f850631c.sample
+Completed load for: 'res://art/wallpaper/射击被击中.wav' remapped 'res://art/wallpaper/射击被击中.wav' at thread -1
+Loading resource: res://art/wallpaper/挥动.wav remapped: res://art/wallpaper/挥动.wav
+Loading resource: res://.godot/imported/挥动.wav-f74f18826bd820a144205c4fcbfd5604.sample remapped: res://.godot/imported/挥动.wav-f74f18826bd820a144205c4fcbfd5604.sample
+Completed load for: 'res://art/wallpaper/挥动.wav' remapped 'res://art/wallpaper/挥动.wav' at thread -1
+Completed load for: 'res://scripts/audio/sfx_manager.gd' remapped 'res://scripts/audio/sfx_manager.gd' at thread -1
+Loading resource: res://scripts/app/pause_manager.gd remapped: res://scripts/app/pause_manager.gd
+Completed load for: 'res://scripts/app/pause_manager.gd' remapped 'res://scripts/app/pause_manager.gd' at thread -1
+Loading resource: res://scripts/dream/dream_time_controller.gd remapped: res://scripts/dream/dream_time_controller.gd
+Completed load for: 'res://scripts/dream/dream_time_controller.gd' remapped 'res://scripts/dream/dream_time_controller.gd' at thread -1
+[  66% ] [90m[1mfirst_scan_filesystem[22m | 正在初始化插件……[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | 正在启动文件扫描……[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started 正在加载编辑器 (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | 正在加载编辑器布局……[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | 正在加载停靠面板……[39m[0m
+[  33% ] [90m[1mloading_editor_layout[22m | 正在重新打开场景……[39m[0m
+Loading resource: res://scenes/dream/rooms/room_test_01.tscn remapped: res://scenes/dream/rooms/room_test_01.tscn
+Loading resource: res://scripts/dream/dream_room_template.gd remapped: res://scripts/dream/dream_room_template.gd
+Loading resource: res://scenes/dream/props/chair.tscn remapped: res://scenes/dream/props/chair.tscn
+Loading resource: res://scenes/dream/rooms/chair_01.gd remapped: res://scenes/dream/rooms/chair_01.gd
+Loading resource: res://shaders/sprite_alpha_outline.gdshader remapped: res://shaders/sprite_alpha_outline.gdshader
+Completed load for: 'res://shaders/sprite_alpha_outline.gdshader' remapped 'res://shaders/sprite_alpha_outline.gdshader' at thread -1
+Completed load for: 'res://scenes/dream/rooms/chair_01.gd' remapped 'res://scenes/dream/rooms/chair_01.gd' at thread -1
+Loading resource: res://scenes/dream/effects/shatter_piece.tscn remapped: res://scenes/dream/effects/shatter_piece.tscn
+Loading resource: res://scenes/dream/effects/shatter_piece.gd remapped: res://scenes/dream/effects/shatter_piece.gd
+Completed load for: 'res://scenes/dream/effects/shatter_piece.gd' remapped 'res://scenes/dream/effects/shatter_piece.gd' at thread -1
+Completed load for: 'res://scenes/dream/effects/shatter_piece.tscn' remapped 'res://scenes/dream/effects/shatter_piece.tscn' at thread -1
+Loading resource: res://art/Dream/shadow.png remapped: res://art/Dream/shadow.png
+Loading resource: res://.godot/imported/shadow.png-356bb02c9db02fe1ab9f3411fbb84e9d.ctex remapped: res://.godot/imported/shadow.png-356bb02c9db02fe1ab9f3411fbb84e9d.ctex
+Completed load for: 'res://art/Dream/shadow.png' remapped 'res://art/Dream/shadow.png' at thread -1
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32.png
+Loading resource: res://.godot/imported/Office_Furniture_32x32.png-a25cf5f623ff660cb05f1beb4de15905.s3tc.ctex remapped: res://.godot/imported/Office_Furniture_32x32.png-a25cf5f623ff660cb05f1beb4de15905.s3tc.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32.png' at thread -1
+Loading resource: res://scenes/dream/rooms/hurtbox.gd remapped: res://scenes/dream/rooms/hurtbox.gd
+Completed load for: 'res://scenes/dream/rooms/hurtbox.gd' remapped 'res://scenes/dream/rooms/hurtbox.gd' at thread -1
+Completed load for: 'res://scenes/dream/props/chair.tscn' remapped 'res://scenes/dream/props/chair.tscn' at thread -1
+Loading resource: res://scenes/dream/props/desk.tscn remapped: res://scenes/dream/props/desk.tscn
+Completed load for: 'res://scenes/dream/props/desk.tscn' remapped 'res://scenes/dream/props/desk.tscn' at thread -1
+Loading resource: res://scenes/dream/props/office_chair_01.tscn remapped: res://scenes/dream/props/office_chair_01.tscn
+Loading resource: res://resources/dream_props/office_chair_01_texture.tres remapped: res://resources/dream_props/office_chair_01_texture.tres
+Completed load for: 'res://resources/dream_props/office_chair_01_texture.tres' remapped 'res://resources/dream_props/office_chair_01_texture.tres' at thread -1
+Completed load for: 'res://scenes/dream/props/office_chair_01.tscn' remapped 'res://scenes/dream/props/office_chair_01.tscn' at thread -1
+Loading resource: res://scenes/dream/props/small_table_01.tscn remapped: res://scenes/dream/props/small_table_01.tscn
+Loading resource: res://resources/dream_props/small_table_01_texture.tres remapped: res://resources/dream_props/small_table_01_texture.tres
+Completed load for: 'res://resources/dream_props/small_table_01_texture.tres' remapped 'res://resources/dream_props/small_table_01_texture.tres' at thread -1
+Completed load for: 'res://scenes/dream/props/small_table_01.tscn' remapped 'res://scenes/dream/props/small_table_01.tscn' at thread -1
+Loading resource: res://scenes/dream/props/filing_cabinet_01.tscn remapped: res://scenes/dream/props/filing_cabinet_01.tscn
+Loading resource: res://resources/dream_props/filing_cabinet_01_texture.tres remapped: res://resources/dream_props/filing_cabinet_01_texture.tres
+Completed load for: 'res://resources/dream_props/filing_cabinet_01_texture.tres' remapped 'res://resources/dream_props/filing_cabinet_01_texture.tres' at thread -1
+Completed load for: 'res://scenes/dream/props/filing_cabinet_01.tscn' remapped 'res://scenes/dream/props/filing_cabinet_01.tscn' at thread -1
+Loading resource: res://scenes/dream/props/storage_cabinet_01.tscn remapped: res://scenes/dream/props/storage_cabinet_01.tscn
+Loading resource: res://resources/dream_props/storage_cabinet_01_texture.tres remapped: res://resources/dream_props/storage_cabinet_01_texture.tres
+Completed load for: 'res://resources/dream_props/storage_cabinet_01_texture.tres' remapped 'res://resources/dream_props/storage_cabinet_01_texture.tres' at thread -1
+Completed load for: 'res://scenes/dream/props/storage_cabinet_01.tscn' remapped 'res://scenes/dream/props/storage_cabinet_01.tscn' at thread -1
+Loading resource: res://scenes/dream/props/trash_can_01.tscn remapped: res://scenes/dream/props/trash_can_01.tscn
+Loading resource: res://resources/dream_props/trash_can_01_texture.tres remapped: res://resources/dream_props/trash_can_01_texture.tres
+Completed load for: 'res://resources/dream_props/trash_can_01_texture.tres' remapped 'res://resources/dream_props/trash_can_01_texture.tres' at thread -1
+Completed load for: 'res://scenes/dream/props/trash_can_01.tscn' remapped 'res://scenes/dream/props/trash_can_01.tscn' at thread -1
+Completed load for: 'res://scripts/dream/dream_room_template.gd' remapped 'res://scripts/dream/dream_room_template.gd' at thread -1
+Loading resource: res://assets/Tilesets/tileset_dream.tres remapped: res://assets/Tilesets/tileset_dream.tres
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Terrain_32x32.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Terrain_32x32.png
+Loading resource: res://.godot/imported/Office_Terrain_32x32.png-2a74a7f63568d006da4d611479edb43a.s3tc.ctex remapped: res://.godot/imported/Office_Terrain_32x32.png-2a74a7f63568d006da4d611479edb43a.s3tc.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Terrain_32x32.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Terrain_32x32.png' at thread -1
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Walls_32x32.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Walls_32x32.png
+Loading resource: res://.godot/imported/Office_Walls_32x32.png-30726489bab3b10b5506945e2e3cad39.s3tc.ctex remapped: res://.godot/imported/Office_Walls_32x32.png-30726489bab3b10b5506945e2e3cad39.s3tc.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Walls_32x32.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Walls_32x32.png' at thread -1
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Buildings_Premade_32x32.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Buildings_Premade_32x32.png
+Loading resource: res://.godot/imported/Office_Buildings_Premade_32x32.png-a54d146b47141f5b97334f0123fce35f.ctex remapped: res://.godot/imported/Office_Buildings_Premade_32x32.png-a54d146b47141f5b97334f0123fce35f.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Buildings_Premade_32x32.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Buildings_Premade_32x32.png' at thread -1
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_BuildingTiles_32x32.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_BuildingTiles_32x32.png
+Loading resource: res://.godot/imported/Office_BuildingTiles_32x32.png-a829003fc190bfec44d398e455af860b.ctex remapped: res://.godot/imported/Office_BuildingTiles_32x32.png-a829003fc190bfec44d398e455af860b.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_BuildingTiles_32x32.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_BuildingTiles_32x32.png' at thread -1
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Exterior_32x32.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Exterior_32x32.png
+Loading resource: res://.godot/imported/Office_Exterior_32x32.png-760b455216b946c0115f8275d7eb4637.s3tc.ctex remapped: res://.godot/imported/Office_Exterior_32x32.png-760b455216b946c0115f8275d7eb4637.s3tc.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Exterior_32x32.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Exterior_32x32.png' at thread -1
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Exterior_32x32_Shadow.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Exterior_32x32_Shadow.png
+Loading resource: res://.godot/imported/Office_Exterior_32x32_Shadow.png-40015e9f1ac921066c2d33405d8a871d.ctex remapped: res://.godot/imported/Office_Exterior_32x32_Shadow.png-40015e9f1ac921066c2d33405d8a871d.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Exterior_32x32_Shadow.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Exterior_32x32_Shadow.png' at thread -1
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32_Shadow.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32_Shadow.png
+Loading resource: res://.godot/imported/Office_Furniture_32x32_Shadow.png-52c69574a3a66b970a0d625f6682becd.ctex remapped: res://.godot/imported/Office_Furniture_32x32_Shadow.png-52c69574a3a66b970a0d625f6682becd.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32_Shadow.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32_Shadow.png' at thread -1
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Icons_32x32.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Icons_32x32.png
+Loading resource: res://.godot/imported/Office_Icons_32x32.png-6b0486e2056805dfaa8ec2df982c32b6.ctex remapped: res://.godot/imported/Office_Icons_32x32.png-6b0486e2056805dfaa8ec2df982c32b6.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Icons_32x32.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Icons_32x32.png' at thread -1
+Loading resource: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Icons_32x32_WhiteOL.png remapped: res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Icons_32x32_WhiteOL.png
+Loading resource: res://.godot/imported/Office_Icons_32x32_WhiteOL.png-64d9f2b03af9c87d602ac170f28c7f4a.ctex remapped: res://.godot/imported/Office_Icons_32x32_WhiteOL.png-64d9f2b03af9c87d602ac170f28c7f4a.ctex
+Completed load for: 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Icons_32x32_WhiteOL.png' remapped 'res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Icons_32x32_WhiteOL.png' at thread -1
+Completed load for: 'res://assets/Tilesets/tileset_dream.tres' remapped 'res://assets/Tilesets/tileset_dream.tres' at thread -1
+Loading resource: res://scenes/entities/dream_player.tscn remapped: res://scenes/entities/dream_player.tscn
+Loading resource: res://scripts/entities/dream_player.gd remapped: res://scripts/entities/dream_player.gd
+Loading resource: res://scenes/entities/heal_effect.tscn remapped: res://scenes/entities/heal_effect.tscn
+Loading resource: res://scripts/entities/heal_effect.gd remapped: res://scripts/entities/heal_effect.gd
+Loading resource: res://art/Effects/Heal/Frames/Heal_01.png remapped: res://art/Effects/Heal/Frames/Heal_01.png
+Loading resource: res://.godot/imported/Heal_01.png-581fd2bd1621052ae904e1d77fe98909.ctex remapped: res://.godot/imported/Heal_01.png-581fd2bd1621052ae904e1d77fe98909.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_01.png' remapped 'res://art/Effects/Heal/Frames/Heal_01.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_02.png remapped: res://art/Effects/Heal/Frames/Heal_02.png
+Loading resource: res://.godot/imported/Heal_02.png-80457fdf1570c01bc7baf42142fa9e77.ctex remapped: res://.godot/imported/Heal_02.png-80457fdf1570c01bc7baf42142fa9e77.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_02.png' remapped 'res://art/Effects/Heal/Frames/Heal_02.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_03.png remapped: res://art/Effects/Heal/Frames/Heal_03.png
+Loading resource: res://.godot/imported/Heal_03.png-b82f43477276871cae71fbfe5d3a2ee9.ctex remapped: res://.godot/imported/Heal_03.png-b82f43477276871cae71fbfe5d3a2ee9.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_03.png' remapped 'res://art/Effects/Heal/Frames/Heal_03.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_04.png remapped: res://art/Effects/Heal/Frames/Heal_04.png
+Loading resource: res://.godot/imported/Heal_04.png-0eb53b76aa348d5e13786b56786a73c8.ctex remapped: res://.godot/imported/Heal_04.png-0eb53b76aa348d5e13786b56786a73c8.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_04.png' remapped 'res://art/Effects/Heal/Frames/Heal_04.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_05.png remapped: res://art/Effects/Heal/Frames/Heal_05.png
+Loading resource: res://.godot/imported/Heal_05.png-bffb1e315472c0688a035988a0f156a9.ctex remapped: res://.godot/imported/Heal_05.png-bffb1e315472c0688a035988a0f156a9.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_05.png' remapped 'res://art/Effects/Heal/Frames/Heal_05.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_06.png remapped: res://art/Effects/Heal/Frames/Heal_06.png
+Loading resource: res://.godot/imported/Heal_06.png-0b46a4f13c86aa9c404a3e60a790f7a6.ctex remapped: res://.godot/imported/Heal_06.png-0b46a4f13c86aa9c404a3e60a790f7a6.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_06.png' remapped 'res://art/Effects/Heal/Frames/Heal_06.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_07.png remapped: res://art/Effects/Heal/Frames/Heal_07.png
+Loading resource: res://.godot/imported/Heal_07.png-20862ae0512948e83a8a27ec9801a902.ctex remapped: res://.godot/imported/Heal_07.png-20862ae0512948e83a8a27ec9801a902.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_07.png' remapped 'res://art/Effects/Heal/Frames/Heal_07.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_08.png remapped: res://art/Effects/Heal/Frames/Heal_08.png
+Loading resource: res://.godot/imported/Heal_08.png-204c6caed975e576da63f43832af00c4.ctex remapped: res://.godot/imported/Heal_08.png-204c6caed975e576da63f43832af00c4.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_08.png' remapped 'res://art/Effects/Heal/Frames/Heal_08.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_09.png remapped: res://art/Effects/Heal/Frames/Heal_09.png
+Loading resource: res://.godot/imported/Heal_09.png-568742719f519ee34c71b2563daa6192.ctex remapped: res://.godot/imported/Heal_09.png-568742719f519ee34c71b2563daa6192.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_09.png' remapped 'res://art/Effects/Heal/Frames/Heal_09.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_10.png remapped: res://art/Effects/Heal/Frames/Heal_10.png
+Loading resource: res://.godot/imported/Heal_10.png-bc2a8c1b72e0007e1c20bd4ed22ff3fc.ctex remapped: res://.godot/imported/Heal_10.png-bc2a8c1b72e0007e1c20bd4ed22ff3fc.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_10.png' remapped 'res://art/Effects/Heal/Frames/Heal_10.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_11.png remapped: res://art/Effects/Heal/Frames/Heal_11.png
+Loading resource: res://.godot/imported/Heal_11.png-de2dc46746f666a2a3a0025787026897.ctex remapped: res://.godot/imported/Heal_11.png-de2dc46746f666a2a3a0025787026897.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_11.png' remapped 'res://art/Effects/Heal/Frames/Heal_11.png' at thread -1
+Loading resource: res://art/Effects/Heal/Frames/Heal_12.png remapped: res://art/Effects/Heal/Frames/Heal_12.png
+Loading resource: res://.godot/imported/Heal_12.png-4755ab8f208218e41dbf551927a2c348.ctex remapped: res://.godot/imported/Heal_12.png-4755ab8f208218e41dbf551927a2c348.ctex
+Completed load for: 'res://art/Effects/Heal/Frames/Heal_12.png' remapped 'res://art/Effects/Heal/Frames/Heal_12.png' at thread -1
+Completed load for: 'res://scripts/entities/heal_effect.gd' remapped 'res://scripts/entities/heal_effect.gd' at thread -1
+Completed load for: 'res://scenes/entities/heal_effect.tscn' remapped 'res://scenes/entities/heal_effect.tscn' at thread -1
+Loading resource: res://art/Dream/dream_chr_32x32.png remapped: res://art/Dream/dream_chr_32x32.png
+Loading resource: res://.godot/imported/dream_chr_32x32.png-e6495acdf4d0be4394745a36288f83af.ctex remapped: res://.godot/imported/dream_chr_32x32.png-e6495acdf4d0be4394745a36288f83af.ctex
+Completed load for: 'res://art/Dream/dream_chr_32x32.png' remapped 'res://art/Dream/dream_chr_32x32.png' at thread -1
+Loading resource: res://shaders/world_weapon_pickup_shine.gdshader remapped: res://shaders/world_weapon_pickup_shine.gdshader
+Completed load for: 'res://shaders/world_weapon_pickup_shine.gdshader' remapped 'res://shaders/world_weapon_pickup_shine.gdshader' at thread -1
+Loading resource: res://art/Dream/weapons/Guns/Luger.png remapped: res://art/Dream/weapons/Guns/Luger.png
+Loading resource: res://.godot/imported/Luger.png-4b75c0b1559daaff014ba0421935ab44.ctex remapped: res://.godot/imported/Luger.png-4b75c0b1559daaff014ba0421935ab44.ctex
+Completed load for: 'res://art/Dream/weapons/Guns/Luger.png' remapped 'res://art/Dream/weapons/Guns/Luger.png' at thread -1
+Loading resource: res://art/Dream/weapons/Guns/SawedOffShotgun.png remapped: res://art/Dream/weapons/Guns/SawedOffShotgun.png
+Loading resource: res://.godot/imported/SawedOffShotgun.png-a42d7610fe41d2cb1e12336ef8837c07.ctex remapped: res://.godot/imported/SawedOffShotgun.png-a42d7610fe41d2cb1e12336ef8837c07.ctex
+Completed load for: 'res://art/Dream/weapons/Guns/SawedOffShotgun.png' remapped 'res://art/Dream/weapons/Guns/SawedOffShotgun.png' at thread -1
+Loading resource: res://art/Dream/weapons/Guns/M15.png remapped: res://art/Dream/weapons/Guns/M15.png
+Loading resource: res://.godot/imported/M15.png-71893332477a13e8332eb1aac9eb465c.ctex remapped: res://.godot/imported/M15.png-71893332477a13e8332eb1aac9eb465c.ctex
+Completed load for: 'res://art/Dream/weapons/Guns/M15.png' remapped 'res://art/Dream/weapons/Guns/M15.png' at thread -1
+Loading resource: res://art/Dream/weapons/Weapons/3.png remapped: res://art/Dream/weapons/Weapons/3.png
+Loading resource: res://.godot/imported/3.png-fdd259dc0f1fb9364e05371bec64a364.ctex remapped: res://.godot/imported/3.png-fdd259dc0f1fb9364e05371bec64a364.ctex
+Completed load for: 'res://art/Dream/weapons/Weapons/3.png' remapped 'res://art/Dream/weapons/Weapons/3.png' at thread -1
+Loading resource: res://art/Dream/weapons/Weapons/books.png remapped: res://art/Dream/weapons/Weapons/books.png
+Loading resource: res://.godot/imported/books.png-05353a5c446a988882e79c8aa5e67192.ctex remapped: res://.godot/imported/books.png-05353a5c446a988882e79c8aa5e67192.ctex
+Completed load for: 'res://art/Dream/weapons/Weapons/books.png' remapped 'res://art/Dream/weapons/Weapons/books.png' at thread -1
+Loading resource: res://art/Dream/weapons/Bullets/PistolAmmoSmall.png remapped: res://art/Dream/weapons/Bullets/PistolAmmoSmall.png
+Loading resource: res://.godot/imported/PistolAmmoSmall.png-74156d12ce4c9be472b29f54d785f929.ctex remapped: res://.godot/imported/PistolAmmoSmall.png-74156d12ce4c9be472b29f54d785f929.ctex
+Completed load for: 'res://art/Dream/weapons/Bullets/PistolAmmoSmall.png' remapped 'res://art/Dream/weapons/Bullets/PistolAmmoSmall.png' at thread -1
+Loading resource: res://art/Dream/weapons/Bullets/RifleAmmoSmall.png remapped: res://art/Dream/weapons/Bullets/RifleAmmoSmall.png
+Loading resource: res://.godot/imported/RifleAmmoSmall.png-a77b61af9a5f476188f5fe334bc6ccfe.ctex remapped: res://.godot/imported/RifleAmmoSmall.png-a77b61af9a5f476188f5fe334bc6ccfe.ctex
+Completed load for: 'res://art/Dream/weapons/Bullets/RifleAmmoSmall.png' remapped 'res://art/Dream/weapons/Bullets/RifleAmmoSmall.png' at thread -1
+Loading resource: res://art/Dream/weapons/Bullets/RifleAmmoBig.png remapped: res://art/Dream/weapons/Bullets/RifleAmmoBig.png
+Loading resource: res://.godot/imported/RifleAmmoBig.png-0751f5d7ae9264ca8e8ef1a08d9857ad.ctex remapped: res://.godot/imported/RifleAmmoBig.png-0751f5d7ae9264ca8e8ef1a08d9857ad.ctex
+Completed load for: 'res://art/Dream/weapons/Bullets/RifleAmmoBig.png' remapped 'res://art/Dream/weapons/Bullets/RifleAmmoBig.png' at thread -1
+Loading resource: res://art/Dream/weapons/Bullets/ShotgunShellSmall.png remapped: res://art/Dream/weapons/Bullets/ShotgunShellSmall.png
+Loading resource: res://.godot/imported/ShotgunShellSmall.png-67b2bebe80f79f79e7dea12c45a81e22.ctex remapped: res://.godot/imported/ShotgunShellSmall.png-67b2bebe80f79f79e7dea12c45a81e22.ctex
+Completed load for: 'res://art/Dream/weapons/Bullets/ShotgunShellSmall.png' remapped 'res://art/Dream/weapons/Bullets/ShotgunShellSmall.png' at thread -1
+Completed load for: 'res://scripts/entities/dream_player.gd' remapped 'res://scripts/entities/dream_player.gd' at thread -1
+Loading resource: res://scripts/dream/auto_weapon.gd remapped: res://scripts/dream/auto_weapon.gd
+Loading resource: res://scenes/entities/basic_projectile.tscn remapped: res://scenes/entities/basic_projectile.tscn
+Loading resource: res://scripts/entities/basic_projectile.gd remapped: res://scripts/entities/basic_projectile.gd
+Loading resource: res://shaders/projectile_visual_glow.gdshader remapped: res://shaders/projectile_visual_glow.gdshader
+Completed load for: 'res://shaders/projectile_visual_glow.gdshader' remapped 'res://shaders/projectile_visual_glow.gdshader' at thread -1
+Completed load for: 'res://scripts/entities/basic_projectile.gd' remapped 'res://scripts/entities/basic_projectile.gd' at thread -1
+Loading resource: res://scripts/entities/projectile_red_trail.gd remapped: res://scripts/entities/projectile_red_trail.gd
+Completed load for: 'res://scripts/entities/projectile_red_trail.gd' remapped 'res://scripts/entities/projectile_red_trail.gd' at thread -1
+Completed load for: 'res://scenes/entities/basic_projectile.tscn' remapped 'res://scenes/entities/basic_projectile.tscn' at thread -1
+Completed load for: 'res://scripts/dream/auto_weapon.gd' remapped 'res://scripts/dream/auto_weapon.gd' at thread -1
+Loading resource: res://scripts/dream/shotgun_weapon.gd remapped: res://scripts/dream/shotgun_weapon.gd
+Loading resource: res://art/Effects/shot.png remapped: res://art/Effects/shot.png
+Loading resource: res://.godot/imported/shot.png-878fa3b62604364a1a131510ada834bd.ctex remapped: res://.godot/imported/shot.png-878fa3b62604364a1a131510ada834bd.ctex
+Completed load for: 'res://art/Effects/shot.png' remapped 'res://art/Effects/shot.png' at thread -1
+Completed load for: 'res://scripts/dream/shotgun_weapon.gd' remapped 'res://scripts/dream/shotgun_weapon.gd' at thread -1
+Loading resource: res://scripts/dream/lucille_weapon.gd remapped: res://scripts/dream/lucille_weapon.gd
+Completed load for: 'res://scripts/dream/lucille_weapon.gd' remapped 'res://scripts/dream/lucille_weapon.gd' at thread -1
+Loading resource: res://scripts/dream/assault_rifle_weapon.gd remapped: res://scripts/dream/assault_rifle_weapon.gd
+Completed load for: 'res://scripts/dream/assault_rifle_weapon.gd' remapped 'res://scripts/dream/assault_rifle_weapon.gd' at thread -1
+Completed load for: 'res://scenes/entities/dream_player.tscn' remapped 'res://scenes/entities/dream_player.tscn' at thread -1
+Loading resource: res://scenes/dream/dream_card_reward.tscn remapped: res://scenes/dream/dream_card_reward.tscn
+Loading resource: res://scripts/dream/dream_card_reward.gd remapped: res://scripts/dream/dream_card_reward.gd
+Loading resource: res://art/icon/Sprites_Cropped/Boardgames_Card_Star.png remapped: res://art/icon/Sprites_Cropped/Boardgames_Card_Star.png
+Loading resource: res://.godot/imported/Boardgames_Card_Star.png-7a2d61a22825fa497bc6ce0e0e1b1ff5.ctex remapped: res://.godot/imported/Boardgames_Card_Star.png-7a2d61a22825fa497bc6ce0e0e1b1ff5.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Boardgames_Card_Star.png' remapped 'res://art/icon/Sprites_Cropped/Boardgames_Card_Star.png' at thread -1
+Completed load for: 'res://scripts/dream/dream_card_reward.gd' remapped 'res://scripts/dream/dream_card_reward.gd' at thread -1
+Completed load for: 'res://scenes/dream/dream_card_reward.tscn' remapped 'res://scenes/dream/dream_card_reward.tscn' at thread -1
+Completed load for: 'res://scenes/dream/rooms/room_test_01.tscn' remapped 'res://scenes/dream/rooms/room_test_01.tscn' at thread -1
+Loading resource: res://scenes/app/main.tscn remapped: res://scenes/app/main.tscn
+Loading resource: res://scripts/app/main.gd remapped: res://scripts/app/main.gd
+Loading resource: res://scenes/ui/opening.tscn remapped: res://scenes/ui/opening.tscn
+Loading resource: res://scripts/ui/opening.gd remapped: res://scripts/ui/opening.gd
+Loading resource: res://art/Background/citynight_1.png remapped: res://art/Background/citynight_1.png
+Loading resource: res://.godot/imported/citynight_1.png-7dc165636b33fa11405f43fab4bf70d8.ctex remapped: res://.godot/imported/citynight_1.png-7dc165636b33fa11405f43fab4bf70d8.ctex
+Completed load for: 'res://art/Background/citynight_1.png' remapped 'res://art/Background/citynight_1.png' at thread -1
+Loading resource: res://art/Background/citynight_2.png remapped: res://art/Background/citynight_2.png
+Loading resource: res://.godot/imported/citynight_2.png-5f83d0154e9da57798efbc42ead33f0c.ctex remapped: res://.godot/imported/citynight_2.png-5f83d0154e9da57798efbc42ead33f0c.ctex
+Completed load for: 'res://art/Background/citynight_2.png' remapped 'res://art/Background/citynight_2.png' at thread -1
+Completed load for: 'res://scripts/ui/opening.gd' remapped 'res://scripts/ui/opening.gd' at thread -1
+Loading resource: res://art/Background/textbackground.png remapped: res://art/Background/textbackground.png
+Loading resource: res://.godot/imported/textbackground.png-e1feac3ca822b5234218475ab71d474d.ctex remapped: res://.godot/imported/textbackground.png-e1feac3ca822b5234218475ab71d474d.ctex
+Completed load for: 'res://art/Background/textbackground.png' remapped 'res://art/Background/textbackground.png' at thread -1
+Completed load for: 'res://scenes/ui/opening.tscn' remapped 'res://scenes/ui/opening.tscn' at thread -1
+Loading resource: res://scenes/ui/main_menu.tscn remapped: res://scenes/ui/main_menu.tscn
+Loading resource: res://scripts/ui/main_menu.gd remapped: res://scripts/ui/main_menu.gd
+Completed load for: 'res://scripts/ui/main_menu.gd' remapped 'res://scripts/ui/main_menu.gd' at thread -1
+Loading resource: res://scenes/ui/settings_panel.tscn remapped: res://scenes/ui/settings_panel.tscn
+Completed load for: 'res://scenes/ui/settings_panel.tscn' remapped 'res://scenes/ui/settings_panel.tscn' at thread -1
+Loading resource: res://scenes/ui/announcement_window.tscn remapped: res://scenes/ui/announcement_window.tscn
+Loading resource: res://scripts/ui/phone_drag_scroll.gd remapped: res://scripts/ui/phone_drag_scroll.gd
+Completed load for: 'res://scripts/ui/phone_drag_scroll.gd' remapped 'res://scripts/ui/phone_drag_scroll.gd' at thread -1
+Completed load for: 'res://scenes/ui/announcement_window.tscn' remapped 'res://scenes/ui/announcement_window.tscn' at thread -1
+Loading resource: res://scenes/ui/global_upgrade_panel.tscn remapped: res://scenes/ui/global_upgrade_panel.tscn
+Loading resource: res://scripts/ui/global_upgrade_panel.gd remapped: res://scripts/ui/global_upgrade_panel.gd
+Loading resource: res://assets/ui/products/visual_cortex_icon.png remapped: res://assets/ui/products/visual_cortex_icon.png
+Loading resource: res://.godot/imported/visual_cortex_icon.png-fe96f5695a9861aef0ceb7acf827cee6.ctex remapped: res://.godot/imported/visual_cortex_icon.png-fe96f5695a9861aef0ceb7acf827cee6.ctex
+Completed load for: 'res://assets/ui/products/visual_cortex_icon.png' remapped 'res://assets/ui/products/visual_cortex_icon.png' at thread -1
+Loading resource: res://assets/ui/products/brainstem_icon.png remapped: res://assets/ui/products/brainstem_icon.png
+Loading resource: res://.godot/imported/brainstem_icon.png-e5f97c71dca650cd366e9cd23c1a5f0a.ctex remapped: res://.godot/imported/brainstem_icon.png-e5f97c71dca650cd366e9cd23c1a5f0a.ctex
+Completed load for: 'res://assets/ui/products/brainstem_icon.png' remapped 'res://assets/ui/products/brainstem_icon.png' at thread -1
+Loading resource: res://assets/ui/products/hippocampus_icon.png remapped: res://assets/ui/products/hippocampus_icon.png
+Loading resource: res://.godot/imported/hippocampus_icon.png-3bf1ad132b10a015486b90b449365318.ctex remapped: res://.godot/imported/hippocampus_icon.png-3bf1ad132b10a015486b90b449365318.ctex
+Completed load for: 'res://assets/ui/products/hippocampus_icon.png' remapped 'res://assets/ui/products/hippocampus_icon.png' at thread -1
+Loading resource: res://assets/ui/products/prefrontal_icon.png remapped: res://assets/ui/products/prefrontal_icon.png
+Loading resource: res://.godot/imported/prefrontal_icon.png-2f455383b911803af9b7bdb477f1acd0.ctex remapped: res://.godot/imported/prefrontal_icon.png-2f455383b911803af9b7bdb477f1acd0.ctex
+Completed load for: 'res://assets/ui/products/prefrontal_icon.png' remapped 'res://assets/ui/products/prefrontal_icon.png' at thread -1
+Completed load for: 'res://scripts/ui/global_upgrade_panel.gd' remapped 'res://scripts/ui/global_upgrade_panel.gd' at thread -1
+Loading resource: res://resources/themes/phone_pixel_scrollbar.tres remapped: res://resources/themes/phone_pixel_scrollbar.tres
+Completed load for: 'res://resources/themes/phone_pixel_scrollbar.tres' remapped 'res://resources/themes/phone_pixel_scrollbar.tres' at thread -1
+Completed load for: 'res://scenes/ui/global_upgrade_panel.tscn' remapped 'res://scenes/ui/global_upgrade_panel.tscn' at thread -1
+Loading resource: res://art/Home Screen/Home_Screen_background.png remapped: res://art/Home Screen/Home_Screen_background.png
+Loading resource: res://.godot/imported/Home_Screen_background.png-5ca98182c3ca961a5781c91f7e0725b7.ctex remapped: res://.godot/imported/Home_Screen_background.png-5ca98182c3ca961a5781c91f7e0725b7.ctex
+Completed load for: 'res://art/Home Screen/Home_Screen_background.png' remapped 'res://art/Home Screen/Home_Screen_background.png' at thread -1
+Loading resource: res://art/Home Screen/Home_Screen_chr.png remapped: res://art/Home Screen/Home_Screen_chr.png
+Loading resource: res://.godot/imported/Home_Screen_chr.png-d90c49de784eb40d50fa4103ba725fdc.ctex remapped: res://.godot/imported/Home_Screen_chr.png-d90c49de784eb40d50fa4103ba725fdc.ctex
+Completed load for: 'res://art/Home Screen/Home_Screen_chr.png' remapped 'res://art/Home Screen/Home_Screen_chr.png' at thread -1
+Loading resource: res://art/Home Screen/Home_Screen_chr_eye.png remapped: res://art/Home Screen/Home_Screen_chr_eye.png
+Loading resource: res://.godot/imported/Home_Screen_chr_eye.png-a281c60ef81dfa887ba0f27ed8e5a138.ctex remapped: res://.godot/imported/Home_Screen_chr_eye.png-a281c60ef81dfa887ba0f27ed8e5a138.ctex
+Completed load for: 'res://art/Home Screen/Home_Screen_chr_eye.png' remapped 'res://art/Home Screen/Home_Screen_chr_eye.png' at thread -1
+Loading resource: res://art/Home Screen/Home_Screen_chr_eye_mask.png remapped: res://art/Home Screen/Home_Screen_chr_eye_mask.png
+Loading resource: res://.godot/imported/Home_Screen_chr_eye_mask.png-72d86c48180a1e377a32f122199908a6.ctex remapped: res://.godot/imported/Home_Screen_chr_eye_mask.png-72d86c48180a1e377a32f122199908a6.ctex
+Completed load for: 'res://art/Home Screen/Home_Screen_chr_eye_mask.png' remapped 'res://art/Home Screen/Home_Screen_chr_eye_mask.png' at thread -1
+Loading resource: res://shaders/home_screen_eye_mask.gdshader remapped: res://shaders/home_screen_eye_mask.gdshader
+Completed load for: 'res://shaders/home_screen_eye_mask.gdshader' remapped 'res://shaders/home_screen_eye_mask.gdshader' at thread -1
+Completed load for: 'res://scenes/ui/main_menu.tscn' remapped 'res://scenes/ui/main_menu.tscn' at thread -1
+Loading resource: res://scenes/bedroom/bedroom.tscn remapped: res://scenes/bedroom/bedroom.tscn
+Loading resource: res://scripts/bedroom/bedroom.gd remapped: res://scripts/bedroom/bedroom.gd
+Loading resource: res://art/Badroom/bedroom_computer_light.png remapped: res://art/Badroom/bedroom_computer_light.png
+Loading resource: res://.godot/imported/bedroom_computer_light.png-216f30d11c32e2651766fc47247bfe1f.ctex remapped: res://.godot/imported/bedroom_computer_light.png-216f30d11c32e2651766fc47247bfe1f.ctex
+Completed load for: 'res://art/Badroom/bedroom_computer_light.png' remapped 'res://art/Badroom/bedroom_computer_light.png' at thread -1
+Loading resource: res://art/Badroom/bedroom_computer_dark.png remapped: res://art/Badroom/bedroom_computer_dark.png
+Loading resource: res://.godot/imported/bedroom_computer_dark.png-3e9f74bcfb45c84f28ed9693c6326116.ctex remapped: res://.godot/imported/bedroom_computer_dark.png-3e9f74bcfb45c84f28ed9693c6326116.ctex
+Completed load for: 'res://art/Badroom/bedroom_computer_dark.png' remapped 'res://art/Badroom/bedroom_computer_dark.png' at thread -1
+Loading resource: res://art/Chr/chr.png remapped: res://art/Chr/chr.png
+Loading resource: res://.godot/imported/chr.png-3afe9d0992b5af944ebf5fb84d44d5a5.ctex remapped: res://.godot/imported/chr.png-3afe9d0992b5af944ebf5fb84d44d5a5.ctex
+Completed load for: 'res://art/Chr/chr.png' remapped 'res://art/Chr/chr.png' at thread -1
+Loading resource: res://art/Chr/chr__normal_talk.png remapped: res://art/Chr/chr__normal_talk.png
+Loading resource: res://.godot/imported/chr__normal_talk.png-e9b8c9b05e5e49f24d0602b313b388c2.ctex remapped: res://.godot/imported/chr__normal_talk.png-e9b8c9b05e5e49f24d0602b313b388c2.ctex
+Completed load for: 'res://art/Chr/chr__normal_talk.png' remapped 'res://art/Chr/chr__normal_talk.png' at thread -1
+Loading resource: res://art/Chr/chr__normal_talk2.png remapped: res://art/Chr/chr__normal_talk2.png
+Loading resource: res://.godot/imported/chr__normal_talk2.png-90e56ca25a0f50fc1e0b7840146c75d7.ctex remapped: res://.godot/imported/chr__normal_talk2.png-90e56ca25a0f50fc1e0b7840146c75d7.ctex
+Completed load for: 'res://art/Chr/chr__normal_talk2.png' remapped 'res://art/Chr/chr__normal_talk2.png' at thread -1
+Loading resource: res://shaders/door_glow_semicircle.gdshader remapped: res://shaders/door_glow_semicircle.gdshader
+Completed load for: 'res://shaders/door_glow_semicircle.gdshader' remapped 'res://shaders/door_glow_semicircle.gdshader' at thread -1
+Loading resource: res://art/icon/emoji/Emoji_Face_Happy.png remapped: res://art/icon/emoji/Emoji_Face_Happy.png
+Loading resource: res://.godot/imported/Emoji_Face_Happy.png-9a8726ee84edb8f0725927acc1e2a4a8.ctex remapped: res://.godot/imported/Emoji_Face_Happy.png-9a8726ee84edb8f0725927acc1e2a4a8.ctex
+Completed load for: 'res://art/icon/emoji/Emoji_Face_Happy.png' remapped 'res://art/icon/emoji/Emoji_Face_Happy.png' at thread -1
+Loading resource: res://art/icon/emoji/Emoji_Face_Neutral.png remapped: res://art/icon/emoji/Emoji_Face_Neutral.png
+Loading resource: res://.godot/imported/Emoji_Face_Neutral.png-4de509218fc86b279adffda532f66b14.ctex remapped: res://.godot/imported/Emoji_Face_Neutral.png-4de509218fc86b279adffda532f66b14.ctex
+Completed load for: 'res://art/icon/emoji/Emoji_Face_Neutral.png' remapped 'res://art/icon/emoji/Emoji_Face_Neutral.png' at thread -1
+Loading resource: res://art/icon/emoji/Emoji_Face_Unhappy_Grossed_Out.png remapped: res://art/icon/emoji/Emoji_Face_Unhappy_Grossed_Out.png
+Loading resource: res://.godot/imported/Emoji_Face_Unhappy_Grossed_Out.png-696a6f51c30e67e779d62c9aa111b8e3.ctex remapped: res://.godot/imported/Emoji_Face_Unhappy_Grossed_Out.png-696a6f51c30e67e779d62c9aa111b8e3.ctex
+Completed load for: 'res://art/icon/emoji/Emoji_Face_Unhappy_Grossed_Out.png' remapped 'res://art/icon/emoji/Emoji_Face_Unhappy_Grossed_Out.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/Food_Restaurant_Eating_Utensils_Plate_Fork_Knife.png remapped: res://art/icon/Sprites_Cropped/Food_Restaurant_Eating_Utensils_Plate_Fork_Knife.png
+Loading resource: res://.godot/imported/Food_Restaurant_Eating_Utensils_Plate_Fork_Knife.png-984972701130f9b55a053cef0c1cf8f4.ctex remapped: res://.godot/imported/Food_Restaurant_Eating_Utensils_Plate_Fork_Knife.png-984972701130f9b55a053cef0c1cf8f4.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Food_Restaurant_Eating_Utensils_Plate_Fork_Knife.png' remapped 'res://art/icon/Sprites_Cropped/Food_Restaurant_Eating_Utensils_Plate_Fork_Knife.png' at thread -1
+Completed load for: 'res://scripts/bedroom/bedroom.gd' remapped 'res://scripts/bedroom/bedroom.gd' at thread -1
+Loading resource: res://scenes/ui/bedroom_phone.tscn remapped: res://scenes/ui/bedroom_phone.tscn
+Loading resource: res://scripts/ui/bedroom_phone.gd remapped: res://scripts/ui/bedroom_phone.gd
+Loading resource: res://shaders/glitch_overlay.gdshader remapped: res://shaders/glitch_overlay.gdshader
+Completed load for: 'res://shaders/glitch_overlay.gdshader' remapped 'res://shaders/glitch_overlay.gdshader' at thread -1
+Loading resource: res://assets/ui/icons/online_icon.png remapped: res://assets/ui/icons/online_icon.png
+Loading resource: res://.godot/imported/online_icon.png-d8083fc92d21f06f90f4a16ddf7e3f64.ctex remapped: res://.godot/imported/online_icon.png-d8083fc92d21f06f90f4a16ddf7e3f64.ctex
+Completed load for: 'res://assets/ui/icons/online_icon.png' remapped 'res://assets/ui/icons/online_icon.png' at thread -1
+Loading resource: res://assets/ui/icons/delivery_icon.png remapped: res://assets/ui/icons/delivery_icon.png
+Loading resource: res://.godot/imported/delivery_icon.png-5c1295953d8724f33226bec52800e66e.ctex remapped: res://.godot/imported/delivery_icon.png-5c1295953d8724f33226bec52800e66e.ctex
+Completed load for: 'res://assets/ui/icons/delivery_icon.png' remapped 'res://assets/ui/icons/delivery_icon.png' at thread -1
+Loading resource: res://assets/ui/icons/settings_icon.png remapped: res://assets/ui/icons/settings_icon.png
+Loading resource: res://.godot/imported/settings_icon.png-a9a863ad6ff34af9dff29aeba0f9c8e9.ctex remapped: res://.godot/imported/settings_icon.png-a9a863ad6ff34af9dff29aeba0f9c8e9.ctex
+Completed load for: 'res://assets/ui/icons/settings_icon.png' remapped 'res://assets/ui/icons/settings_icon.png' at thread -1
+Completed load for: 'res://scripts/ui/bedroom_phone.gd' remapped 'res://scripts/ui/bedroom_phone.gd' at thread -1
+Loading resource: res://art/Badroom/Phone.png remapped: res://art/Badroom/Phone.png
+Loading resource: res://.godot/imported/Phone.png-283bfb22d3944c804033ec9152a825c1.ctex remapped: res://.godot/imported/Phone.png-283bfb22d3944c804033ec9152a825c1.ctex
+Completed load for: 'res://art/Badroom/Phone.png' remapped 'res://art/Badroom/Phone.png' at thread -1
+Loading resource: res://scripts/ui/quicklink_content.gd remapped: res://scripts/ui/quicklink_content.gd
+Loading resource: res://assets/ui/products/melatonin_icon.png remapped: res://assets/ui/products/melatonin_icon.png
+Loading resource: res://.godot/imported/melatonin_icon.png-f3cacc7849485ed6317902358ee35fde.ctex remapped: res://.godot/imported/melatonin_icon.png-f3cacc7849485ed6317902358ee35fde.ctex
+Completed load for: 'res://assets/ui/products/melatonin_icon.png' remapped 'res://assets/ui/products/melatonin_icon.png' at thread -1
+Loading resource: res://assets/ui/products/cheap_meal_icon.png remapped: res://assets/ui/products/cheap_meal_icon.png
+Loading resource: res://.godot/imported/cheap_meal_icon.png-800f936c214c327206d1c475ef2c8e96.ctex remapped: res://.godot/imported/cheap_meal_icon.png-800f936c214c327206d1c475ef2c8e96.ctex
+Completed load for: 'res://assets/ui/products/cheap_meal_icon.png' remapped 'res://assets/ui/products/cheap_meal_icon.png' at thread -1
+Loading resource: res://art/Badroom/sunshade.png remapped: res://art/Badroom/sunshade.png
+Loading resource: res://.godot/imported/sunshade.png-80021aef8de0d7820ed8e4084a55b507.ctex remapped: res://.godot/imported/sunshade.png-80021aef8de0d7820ed8e4084a55b507.ctex
+Completed load for: 'res://art/Badroom/sunshade.png' remapped 'res://art/Badroom/sunshade.png' at thread -1
+Completed load for: 'res://scripts/ui/quicklink_content.gd' remapped 'res://scripts/ui/quicklink_content.gd' at thread -1
+Loading resource: res://scripts/ui/screen_clip.gd remapped: res://scripts/ui/screen_clip.gd
+Completed load for: 'res://scripts/ui/screen_clip.gd' remapped 'res://scripts/ui/screen_clip.gd' at thread -1
+Completed load for: 'res://scenes/ui/bedroom_phone.tscn' remapped 'res://scenes/ui/bedroom_phone.tscn' at thread -1
+Loading resource: res://scenes/ui/melatonin_interaction.tscn remapped: res://scenes/ui/melatonin_interaction.tscn
+Loading resource: res://scripts/ui/melatonin_interaction.gd remapped: res://scripts/ui/melatonin_interaction.gd
+Loading resource: res://assets/art/first_person/melatonin/female_right_hand_open.png remapped: res://assets/art/first_person/melatonin/female_right_hand_open.png
+Loading resource: res://.godot/imported/female_right_hand_open.png-8ef7e5a11f915f0b27af3d3fdff4269d.ctex remapped: res://.godot/imported/female_right_hand_open.png-8ef7e5a11f915f0b27af3d3fdff4269d.ctex
+Completed load for: 'res://assets/art/first_person/melatonin/female_right_hand_open.png' remapped 'res://assets/art/first_person/melatonin/female_right_hand_open.png' at thread -1
+Loading resource: res://assets/art/first_person/melatonin/female_right_hand_grab.png remapped: res://assets/art/first_person/melatonin/female_right_hand_grab.png
+Loading resource: res://.godot/imported/female_right_hand_grab.png-4ca078a079623590e7406dbd60d421ab.ctex remapped: res://.godot/imported/female_right_hand_grab.png-4ca078a079623590e7406dbd60d421ab.ctex
+Completed load for: 'res://assets/art/first_person/melatonin/female_right_hand_grab.png' remapped 'res://assets/art/first_person/melatonin/female_right_hand_grab.png' at thread -1
+Loading resource: res://assets/art/first_person/melatonin/female_right_hand_shake.png remapped: res://assets/art/first_person/melatonin/female_right_hand_shake.png
+Loading resource: res://.godot/imported/female_right_hand_shake.png-7c3812d517354c03bdaed4fd0343bbdf.ctex remapped: res://.godot/imported/female_right_hand_shake.png-7c3812d517354c03bdaed4fd0343bbdf.ctex
+Completed load for: 'res://assets/art/first_person/melatonin/female_right_hand_shake.png' remapped 'res://assets/art/first_person/melatonin/female_right_hand_shake.png' at thread -1
+Loading resource: res://assets/art/first_person/melatonin/female_right_hand_throw.png remapped: res://assets/art/first_person/melatonin/female_right_hand_throw.png
+Loading resource: res://.godot/imported/female_right_hand_throw.png-8f54d3a284cf3cfc70b869145989d3af.ctex remapped: res://.godot/imported/female_right_hand_throw.png-8f54d3a284cf3cfc70b869145989d3af.ctex
+Completed load for: 'res://assets/art/first_person/melatonin/female_right_hand_throw.png' remapped 'res://assets/art/first_person/melatonin/female_right_hand_throw.png' at thread -1
+Loading resource: res://assets/art/first_person/melatonin/female_left_palm_open.png remapped: res://assets/art/first_person/melatonin/female_left_palm_open.png
+Loading resource: res://.godot/imported/female_left_palm_open.png-2aaae758327adf18352944edd0dd9b54.ctex remapped: res://.godot/imported/female_left_palm_open.png-2aaae758327adf18352944edd0dd9b54.ctex
+Completed load for: 'res://assets/art/first_person/melatonin/female_left_palm_open.png' remapped 'res://assets/art/first_person/melatonin/female_left_palm_open.png' at thread -1
+Completed load for: 'res://scripts/ui/melatonin_interaction.gd' remapped 'res://scripts/ui/melatonin_interaction.gd' at thread -1
+Loading resource: res://assets/art/first_person/melatonin/melatonin_bottle_table.png remapped: res://assets/art/first_person/melatonin/melatonin_bottle_table.png
+Loading resource: res://.godot/imported/melatonin_bottle_table.png-a3d34ba308143758fc6779847fef912c.ctex remapped: res://.godot/imported/melatonin_bottle_table.png-a3d34ba308143758fc6779847fef912c.ctex
+Completed load for: 'res://assets/art/first_person/melatonin/melatonin_bottle_table.png' remapped 'res://assets/art/first_person/melatonin/melatonin_bottle_table.png' at thread -1
+Completed load for: 'res://scenes/ui/melatonin_interaction.tscn' remapped 'res://scenes/ui/melatonin_interaction.tscn' at thread -1
+Loading resource: res://scenes/ui/confirmation_dialog.tscn remapped: res://scenes/ui/confirmation_dialog.tscn
+Loading resource: res://scripts/ui/dialogue_frame.gd remapped: res://scripts/ui/dialogue_frame.gd
+Loading resource: res://art/ui_imported/talk_panel.png remapped: res://art/ui_imported/talk_panel.png
+Loading resource: res://.godot/imported/talk_panel.png-a4af26ec261a24afb711f1e3333f5b55.ctex remapped: res://.godot/imported/talk_panel.png-a4af26ec261a24afb711f1e3333f5b55.ctex
+Completed load for: 'res://art/ui_imported/talk_panel.png' remapped 'res://art/ui_imported/talk_panel.png' at thread -1
+Completed load for: 'res://scripts/ui/dialogue_frame.gd' remapped 'res://scripts/ui/dialogue_frame.gd' at thread -1
+Completed load for: 'res://scenes/ui/confirmation_dialog.tscn' remapped 'res://scenes/ui/confirmation_dialog.tscn' at thread -1
+Loading resource: res://art/Badroom/bedroom_background.png remapped: res://art/Badroom/bedroom_background.png
+Loading resource: res://.godot/imported/bedroom_background.png-2ad28c1dc37647147f62d142d19153ae.ctex remapped: res://.godot/imported/bedroom_background.png-2ad28c1dc37647147f62d142d19153ae.ctex
+Completed load for: 'res://art/Badroom/bedroom_background.png' remapped 'res://art/Badroom/bedroom_background.png' at thread -1
+Loading resource: res://art/Badroom/bedroom_bed.png remapped: res://art/Badroom/bedroom_bed.png
+Loading resource: res://.godot/imported/bedroom_bed.png-26191715c51b15d2f2a9e3794ec3d0d4.ctex remapped: res://.godot/imported/bedroom_bed.png-26191715c51b15d2f2a9e3794ec3d0d4.ctex
+Completed load for: 'res://art/Badroom/bedroom_bed.png' remapped 'res://art/Badroom/bedroom_bed.png' at thread -1
+Loading resource: res://art/Badroom/bedroom_desk.png remapped: res://art/Badroom/bedroom_desk.png
+Loading resource: res://.godot/imported/bedroom_desk.png-0241c2b661b939120ee53909ab170a00.ctex remapped: res://.godot/imported/bedroom_desk.png-0241c2b661b939120ee53909ab170a00.ctex
+Completed load for: 'res://art/Badroom/bedroom_desk.png' remapped 'res://art/Badroom/bedroom_desk.png' at thread -1
+Loading resource: res://art/Badroom/melatonin_bottle.png remapped: res://art/Badroom/melatonin_bottle.png
+Loading resource: res://.godot/imported/melatonin_bottle.png-18472aae4f090bba9b0b05f010f2b809.ctex remapped: res://.godot/imported/melatonin_bottle.png-18472aae4f090bba9b0b05f010f2b809.ctex
+Completed load for: 'res://art/Badroom/melatonin_bottle.png' remapped 'res://art/Badroom/melatonin_bottle.png' at thread -1
+Loading resource: res://scenes/ui/computer_overlay.tscn remapped: res://scenes/ui/computer_overlay.tscn
+Loading resource: res://scenes/ui/blackjack_app.tscn remapped: res://scenes/ui/blackjack_app.tscn
+Completed load for: 'res://scenes/ui/blackjack_app.tscn' remapped 'res://scenes/ui/blackjack_app.tscn' at thread -1
+Loading resource: res://scenes/ui/dream_browser_app.tscn remapped: res://scenes/ui/dream_browser_app.tscn
+Completed load for: 'res://scenes/ui/dream_browser_app.tscn' remapped 'res://scenes/ui/dream_browser_app.tscn' at thread -1
+Completed load for: 'res://scenes/ui/computer_overlay.tscn' remapped 'res://scenes/ui/computer_overlay.tscn' at thread -1
+Loading resource: res://art/lighting/screen_light.png remapped: res://art/lighting/screen_light.png
+Loading resource: res://.godot/imported/screen_light.png-0af6263729863f5f18af4d27b3b1b8eb.ctex remapped: res://.godot/imported/screen_light.png-0af6263729863f5f18af4d27b3b1b8eb.ctex
+Completed load for: 'res://art/lighting/screen_light.png' remapped 'res://art/lighting/screen_light.png' at thread -1
+Loading resource: res://shaders/bedroom_vignette.gdshader remapped: res://shaders/bedroom_vignette.gdshader
+Completed load for: 'res://shaders/bedroom_vignette.gdshader' remapped 'res://shaders/bedroom_vignette.gdshader' at thread -1
+Loading resource: res://scenes/hallway/hallway.tscn remapped: res://scenes/hallway/hallway.tscn
+Loading resource: res://art/hallway/hallway.png remapped: res://art/hallway/hallway.png
+Loading resource: res://.godot/imported/hallway.png-2a30f53c962b984b7e75b22c8b641fae.ctex remapped: res://.godot/imported/hallway.png-2a30f53c962b984b7e75b22c8b641fae.ctex
+Completed load for: 'res://art/hallway/hallway.png' remapped 'res://art/hallway/hallway.png' at thread -1
+Loading resource: res://art/hallway/door.png remapped: res://art/hallway/door.png
+Loading resource: res://.godot/imported/door.png-1b71aaf11b5b0f08f178081ba56c6680.ctex remapped: res://.godot/imported/door.png-1b71aaf11b5b0f08f178081ba56c6680.ctex
+Completed load for: 'res://art/hallway/door.png' remapped 'res://art/hallway/door.png' at thread -1
+Completed load for: 'res://scenes/hallway/hallway.tscn' remapped 'res://scenes/hallway/hallway.tscn' at thread -1
+Loading resource: res://art/Badroom/bedroom_Chr_on_bed.png remapped: res://art/Badroom/bedroom_Chr_on_bed.png
+Loading resource: res://.godot/imported/bedroom_Chr_on_bed.png-b856df700981bf6fa904de6bc49fafc3.ctex remapped: res://.godot/imported/bedroom_Chr_on_bed.png-b856df700981bf6fa904de6bc49fafc3.ctex
+Completed load for: 'res://art/Badroom/bedroom_Chr_on_bed.png' remapped 'res://art/Badroom/bedroom_Chr_on_bed.png' at thread -1
+Loading resource: res://art/Badroom/bedroom_Chr_on_bed_light.png remapped: res://art/Badroom/bedroom_Chr_on_bed_light.png
+Loading resource: res://.godot/imported/bedroom_Chr_on_bed_light.png-4cd049e2b2164a11acdff40b6b5bddf1.ctex remapped: res://.godot/imported/bedroom_Chr_on_bed_light.png-4cd049e2b2164a11acdff40b6b5bddf1.ctex
+Completed load for: 'res://art/Badroom/bedroom_Chr_on_bed_light.png' remapped 'res://art/Badroom/bedroom_Chr_on_bed_light.png' at thread -1
+Loading resource: res://resources/materials/bedroom_chr_glow_material.tres remapped: res://resources/materials/bedroom_chr_glow_material.tres
+Completed load for: 'res://resources/materials/bedroom_chr_glow_material.tres' remapped 'res://resources/materials/bedroom_chr_glow_material.tres' at thread -1
+Completed load for: 'res://scenes/bedroom/bedroom.tscn' remapped 'res://scenes/bedroom/bedroom.tscn' at thread -1
+Loading resource: res://scenes/dream/Dream3D_TutorialRoom.tscn remapped: res://scenes/dream/Dream3D_TutorialRoom.tscn
+Loading resource: res://scripts/dream/dream_3d_tutorial_room.gd remapped: res://scripts/dream/dream_3d_tutorial_room.gd
+Loading resource: res://scenes/dream/3d/WallStraight3D.tscn remapped: res://scenes/dream/3d/WallStraight3D.tscn
+Loading resource: res://scripts/dream/wall_segment_3d.gd remapped: res://scripts/dream/wall_segment_3d.gd
+Loading resource: res://materials/dream3d/interiors_a_wall_pixel_light_material.tres remapped: res://materials/dream3d/interiors_a_wall_pixel_light_material.tres
+Loading resource: res://shaders/dream3d/interiors_a_wall_pixel_light.gdshader remapped: res://shaders/dream3d/interiors_a_wall_pixel_light.gdshader
+Completed load for: 'res://shaders/dream3d/interiors_a_wall_pixel_light.gdshader' remapped 'res://shaders/dream3d/interiors_a_wall_pixel_light.gdshader' at thread -1
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Diffuse_2K_A.png remapped: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Diffuse_2K_A.png
+Loading resource: res://.godot/imported/Surface_Wall_A_Diffuse_2K_A.png-5a049cf383280128f6c16cf7df1d41dc.s3tc.ctex remapped: res://.godot/imported/Surface_Wall_A_Diffuse_2K_A.png-5a049cf383280128f6c16cf7df1d41dc.s3tc.ctex
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Diffuse_2K_A.png' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Diffuse_2K_A.png' at thread -1
+Completed load for: 'res://materials/dream3d/interiors_a_wall_pixel_light_material.tres' remapped 'res://materials/dream3d/interiors_a_wall_pixel_light_material.tres' at thread -1
+Loading resource: res://materials/dream3d/interiors_a_wall_vertical_fade_material.tres remapped: res://materials/dream3d/interiors_a_wall_vertical_fade_material.tres
+Loading resource: res://shaders/dream3d/interiors_a_wall_vertical_fade.gdshader remapped: res://shaders/dream3d/interiors_a_wall_vertical_fade.gdshader
+Completed load for: 'res://shaders/dream3d/interiors_a_wall_vertical_fade.gdshader' remapped 'res://shaders/dream3d/interiors_a_wall_vertical_fade.gdshader' at thread -1
+Completed load for: 'res://materials/dream3d/interiors_a_wall_vertical_fade_material.tres' remapped 'res://materials/dream3d/interiors_a_wall_vertical_fade_material.tres' at thread -1
+Completed load for: 'res://scripts/dream/wall_segment_3d.gd' remapped 'res://scripts/dream/wall_segment_3d.gd' at thread -1
+Completed load for: 'res://scenes/dream/3d/WallStraight3D.tscn' remapped 'res://scenes/dream/3d/WallStraight3D.tscn' at thread -1
+Loading resource: res://scenes/dream/3d/PhysicalDoor3D.tscn remapped: res://scenes/dream/3d/PhysicalDoor3D.tscn
+Loading resource: res://scripts/dream/physical_door_3d.gd remapped: res://scripts/dream/physical_door_3d.gd
+Loading resource: res://materials/dream3d/interiors_a_door_pixel_light_material.tres remapped: res://materials/dream3d/interiors_a_door_pixel_light_material.tres
+Loading resource: res://shaders/dream3d/interiors_a_door_pixel_light.gdshader remapped: res://shaders/dream3d/interiors_a_door_pixel_light.gdshader
+Completed load for: 'res://shaders/dream3d/interiors_a_door_pixel_light.gdshader' remapped 'res://shaders/dream3d/interiors_a_door_pixel_light.gdshader' at thread -1
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_B.png remapped: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_B.png
+Loading resource: res://.godot/imported/Door_Diffuse_2K_B.png-5c2f2b955cb397d62bdf337ad659bc08.s3tc.ctex remapped: res://.godot/imported/Door_Diffuse_2K_B.png-5c2f2b955cb397d62bdf337ad659bc08.s3tc.ctex
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_B.png' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_B.png' at thread -1
+Completed load for: 'res://materials/dream3d/interiors_a_door_pixel_light_material.tres' remapped 'res://materials/dream3d/interiors_a_door_pixel_light_material.tres' at thread -1
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/Scenes/Doors/door_b_grp.tscn remapped: res://art/Dream/LoafbrrAssets/Interiors_A/Scenes/Doors/door_b_grp.tscn
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres remapped: res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/Materials/ORM_Shader_Cull_Back.gdshader remapped: res://art/Dream/LoafbrrAssets/Interiors_A/Materials/ORM_Shader_Cull_Back.gdshader
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/Materials/ORM_Shader_Cull_Back.gdshader' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/Materials/ORM_Shader_Cull_Back.gdshader' at thread -1
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_A.png remapped: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_A.png
+Loading resource: res://.godot/imported/Door_Diffuse_2K_A.png-705911f5f0e95a8c8fd78799aeebd950.s3tc.ctex remapped: res://.godot/imported/Door_Diffuse_2K_A.png-705911f5f0e95a8c8fd78799aeebd950.s3tc.ctex
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_A.png' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Diffuse_2K_A.png' at thread -1
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Normal_2K.png remapped: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Normal_2K.png
+Loading resource: res://.godot/imported/Door_Normal_2K.png-07de0510e3cbda66f8562fe6de339108.s3tc.ctex remapped: res://.godot/imported/Door_Normal_2K.png-07de0510e3cbda66f8562fe6de339108.s3tc.ctex
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Normal_2K.png' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_Normal_2K.png' at thread -1
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_ORM_2K.png remapped: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_ORM_2K.png
+Loading resource: res://.godot/imported/Door_ORM_2K.png-dddf1467ed53e7a0bb55a4dd9e377627.s3tc.ctex remapped: res://.godot/imported/Door_ORM_2K.png-dddf1467ed53e7a0bb55a4dd9e377627.s3tc.ctex
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_ORM_2K.png' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Door/Door_ORM_2K.png' at thread -1
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres' at thread -1
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/Scenes/Doors/door_b_grp.tscn' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/Scenes/Doors/door_b_grp.tscn' at thread -1
+Completed load for: 'res://scripts/dream/physical_door_3d.gd' remapped 'res://scripts/dream/physical_door_3d.gd' at thread -1
+Completed load for: 'res://scenes/dream/3d/PhysicalDoor3D.tscn' remapped 'res://scenes/dream/3d/PhysicalDoor3D.tscn' at thread -1
+Loading resource: res://scenes/dream/3d/ActorDepthBridge3D.tscn remapped: res://scenes/dream/3d/ActorDepthBridge3D.tscn
+Loading resource: res://scripts/dream/dream_3d_actor_depth_bridge.gd remapped: res://scripts/dream/dream_3d_actor_depth_bridge.gd
+Loading resource: res://shaders/dream3d/projectile_emissive_carrier.gdshader remapped: res://shaders/dream3d/projectile_emissive_carrier.gdshader
+Completed load for: 'res://shaders/dream3d/projectile_emissive_carrier.gdshader' remapped 'res://shaders/dream3d/projectile_emissive_carrier.gdshader' at thread -1
+Loading resource: res://shaders/dream3d/blood_semantic_carrier.gdshader remapped: res://shaders/dream3d/blood_semantic_carrier.gdshader
+Completed load for: 'res://shaders/dream3d/blood_semantic_carrier.gdshader' remapped 'res://shaders/dream3d/blood_semantic_carrier.gdshader' at thread -1
+Loading resource: res://shaders/dream3d/lit_pixel_carrier.gdshader remapped: res://shaders/dream3d/lit_pixel_carrier.gdshader
+Completed load for: 'res://shaders/dream3d/lit_pixel_carrier.gdshader' remapped 'res://shaders/dream3d/lit_pixel_carrier.gdshader' at thread -1
+Completed load for: 'res://scripts/dream/dream_3d_actor_depth_bridge.gd' remapped 'res://scripts/dream/dream_3d_actor_depth_bridge.gd' at thread -1
+Completed load for: 'res://scenes/dream/3d/ActorDepthBridge3D.tscn' remapped 'res://scenes/dream/3d/ActorDepthBridge3D.tscn' at thread -1
+Loading resource: res://materials/dream3d/interiors_a_floor_pixel_light_material.tres remapped: res://materials/dream3d/interiors_a_floor_pixel_light_material.tres
+Loading resource: res://shaders/dream3d/interiors_a_floor_pixel_light.gdshader remapped: res://shaders/dream3d/interiors_a_floor_pixel_light.gdshader
+Completed load for: 'res://shaders/dream3d/interiors_a_floor_pixel_light.gdshader' remapped 'res://shaders/dream3d/interiors_a_floor_pixel_light.gdshader' at thread -1
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Floor_B/Surface_Floor_B_Diffuse_2K.png remapped: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Floor_B/Surface_Floor_B_Diffuse_2K.png
+Loading resource: res://.godot/imported/Surface_Floor_B_Diffuse_2K.png-b90e26a2d9d9b77de0f0a88db2ab434d.s3tc.ctex remapped: res://.godot/imported/Surface_Floor_B_Diffuse_2K.png-b90e26a2d9d9b77de0f0a88db2ab434d.s3tc.ctex
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Floor_B/Surface_Floor_B_Diffuse_2K.png' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Floor_B/Surface_Floor_B_Diffuse_2K.png' at thread -1
+Completed load for: 'res://materials/dream3d/interiors_a_floor_pixel_light_material.tres' remapped 'res://materials/dream3d/interiors_a_floor_pixel_light_material.tres' at thread -1
+Completed load for: 'res://scripts/dream/dream_3d_tutorial_room.gd' remapped 'res://scripts/dream/dream_3d_tutorial_room.gd' at thread -1
+Loading resource: res://scenes/entities/dream_player.tscn remapped: res://scenes/entities/dream_player.tscn
+Completed load for: 'res://scenes/entities/dream_player.tscn' remapped 'res://scenes/entities/dream_player.tscn' at thread -1
+Loading resource: res://scenes/dream/TutorialGuide.tscn remapped: res://scenes/dream/TutorialGuide.tscn
+Loading resource: res://art/icon/emoji/Emoji_Face_Surprised_Shocked.png remapped: res://art/icon/emoji/Emoji_Face_Surprised_Shocked.png
+Loading resource: res://.godot/imported/Emoji_Face_Surprised_Shocked.png-a6a4f289ccc0a2e6e14c1ebb64ee308c.ctex remapped: res://.godot/imported/Emoji_Face_Surprised_Shocked.png-a6a4f289ccc0a2e6e14c1ebb64ee308c.ctex
+Completed load for: 'res://art/icon/emoji/Emoji_Face_Surprised_Shocked.png' remapped 'res://art/icon/emoji/Emoji_Face_Surprised_Shocked.png' at thread -1
+Completed load for: 'res://scenes/dream/TutorialGuide.tscn' remapped 'res://scenes/dream/TutorialGuide.tscn' at thread -1
+Completed load for: 'res://scenes/dream/Dream3D_TutorialRoom.tscn' remapped 'res://scenes/dream/Dream3D_TutorialRoom.tscn' at thread -1
+Loading resource: res://scenes/dream/Dream3D_RandomDungeon.tscn remapped: res://scenes/dream/Dream3D_RandomDungeon.tscn
+Loading resource: res://scripts/dream/dream_3d_random_dungeon.gd remapped: res://scripts/dream/dream_3d_random_dungeon.gd
+Loading resource: res://scenes/dream/3d/Floortile3D.tscn remapped: res://scenes/dream/3d/Floortile3D.tscn
+Completed load for: 'res://scenes/dream/3d/Floortile3D.tscn' remapped 'res://scenes/dream/3d/Floortile3D.tscn' at thread -1
+Loading resource: res://materials/dream3d/interiors_a_floor_material.tres remapped: res://materials/dream3d/interiors_a_floor_material.tres
+Completed load for: 'res://materials/dream3d/interiors_a_floor_material.tres' remapped 'res://materials/dream3d/interiors_a_floor_material.tres' at thread -1
+Loading resource: res://scenes/entities/employee_enemy.tscn remapped: res://scenes/entities/employee_enemy.tscn
+Loading resource: res://scripts/entities/employee_enemy.gd remapped: res://scripts/entities/employee_enemy.gd
+Loading resource: res://scenes/entities/enemy_body_part.tscn remapped: res://scenes/entities/enemy_body_part.tscn
+Loading resource: res://scripts/entities/enemy_body_part.gd remapped: res://scripts/entities/enemy_body_part.gd
+Completed load for: 'res://scripts/entities/enemy_body_part.gd' remapped 'res://scripts/entities/enemy_body_part.gd' at thread -1
+Completed load for: 'res://scenes/entities/enemy_body_part.tscn' remapped 'res://scenes/entities/enemy_body_part.tscn' at thread -1
+Loading resource: res://art/Dream/enemy/Employee_men_32x32.png remapped: res://art/Dream/enemy/Employee_men_32x32.png
+Loading resource: res://.godot/imported/Employee_men_32x32.png-70c69fa3406079a6aeebb1feaffaf473.ctex remapped: res://.godot/imported/Employee_men_32x32.png-70c69fa3406079a6aeebb1feaffaf473.ctex
+Completed load for: 'res://art/Dream/enemy/Employee_men_32x32.png' remapped 'res://art/Dream/enemy/Employee_men_32x32.png' at thread -1
+Loading resource: res://art/Dream/enemy/waitress.png remapped: res://art/Dream/enemy/waitress.png
+Loading resource: res://.godot/imported/waitress.png-99ee6d61211eff758f4ab5e4e38c57c1.ctex remapped: res://.godot/imported/waitress.png-99ee6d61211eff758f4ab5e4e38c57c1.ctex
+Completed load for: 'res://art/Dream/enemy/waitress.png' remapped 'res://art/Dream/enemy/waitress.png' at thread -1
+Loading resource: res://art/icon/emoji/Emoji_Face_Sad_Frown.png remapped: res://art/icon/emoji/Emoji_Face_Sad_Frown.png
+Loading resource: res://.godot/imported/Emoji_Face_Sad_Frown.png-6156dfd4ef7a01411e91ec7f4eeed378.ctex remapped: res://.godot/imported/Emoji_Face_Sad_Frown.png-6156dfd4ef7a01411e91ec7f4eeed378.ctex
+Completed load for: 'res://art/icon/emoji/Emoji_Face_Sad_Frown.png' remapped 'res://art/icon/emoji/Emoji_Face_Sad_Frown.png' at thread -1
+Loading resource: res://art/icon/emoji/Emoji_Face_Angry_Anger.png remapped: res://art/icon/emoji/Emoji_Face_Angry_Anger.png
+Loading resource: res://.godot/imported/Emoji_Face_Angry_Anger.png-e136ed388c478b470cd1d1e98db5e113.ctex remapped: res://.godot/imported/Emoji_Face_Angry_Anger.png-e136ed388c478b470cd1d1e98db5e113.ctex
+Completed load for: 'res://art/icon/emoji/Emoji_Face_Angry_Anger.png' remapped 'res://art/icon/emoji/Emoji_Face_Angry_Anger.png' at thread -1
+Loading resource: res://art/icon/emoji/Emoji_Face_Sleeping_Tired.png remapped: res://art/icon/emoji/Emoji_Face_Sleeping_Tired.png
+Loading resource: res://.godot/imported/Emoji_Face_Sleeping_Tired.png-19d2b7e175bd34281065ea354888f344.ctex remapped: res://.godot/imported/Emoji_Face_Sleeping_Tired.png-19d2b7e175bd34281065ea354888f344.ctex
+Completed load for: 'res://art/icon/emoji/Emoji_Face_Sleeping_Tired.png' remapped 'res://art/icon/emoji/Emoji_Face_Sleeping_Tired.png' at thread -1
+Completed load for: 'res://scripts/entities/employee_enemy.gd' remapped 'res://scripts/entities/employee_enemy.gd' at thread -1
+Completed load for: 'res://scenes/entities/employee_enemy.tscn' remapped 'res://scenes/entities/employee_enemy.tscn' at thread -1
+Loading resource: res://scenes/dream/3d/BossKeyPickup.tscn remapped: res://scenes/dream/3d/BossKeyPickup.tscn
+Loading resource: res://scripts/dream/boss_key_pickup.gd remapped: res://scripts/dream/boss_key_pickup.gd
+Completed load for: 'res://scripts/dream/boss_key_pickup.gd' remapped 'res://scripts/dream/boss_key_pickup.gd' at thread -1
+Loading resource: res://scripts/dream/boss_key_visual.gd remapped: res://scripts/dream/boss_key_visual.gd
+Completed load for: 'res://scripts/dream/boss_key_visual.gd' remapped 'res://scripts/dream/boss_key_visual.gd' at thread -1
+Completed load for: 'res://scenes/dream/3d/BossKeyPickup.tscn' remapped 'res://scenes/dream/3d/BossKeyPickup.tscn' at thread -1
+Loading resource: res://scenes/entities/environment_debris.tscn remapped: res://scenes/entities/environment_debris.tscn
+Loading resource: res://scripts/entities/environment_debris.gd remapped: res://scripts/entities/environment_debris.gd
+Completed load for: 'res://scripts/entities/environment_debris.gd' remapped 'res://scripts/entities/environment_debris.gd' at thread -1
+Completed load for: 'res://scenes/entities/environment_debris.tscn' remapped 'res://scenes/entities/environment_debris.tscn' at thread -1
+Loading resource: res://scenes/dream/world_weapon_pickup.tscn remapped: res://scenes/dream/world_weapon_pickup.tscn
+Completed load for: 'res://scenes/dream/world_weapon_pickup.tscn' remapped 'res://scenes/dream/world_weapon_pickup.tscn' at thread -1
+Loading resource: res://scenes/entities/shell_effect.tscn remapped: res://scenes/entities/shell_effect.tscn
+Loading resource: res://scripts/entities/shell_effect.gd remapped: res://scripts/entities/shell_effect.gd
+Completed load for: 'res://scripts/entities/shell_effect.gd' remapped 'res://scripts/entities/shell_effect.gd' at thread -1
+Completed load for: 'res://scenes/entities/shell_effect.tscn' remapped 'res://scenes/entities/shell_effect.tscn' at thread -1
+Loading resource: res://scenes/entities/weapon_muzzle_effect.tscn remapped: res://scenes/entities/weapon_muzzle_effect.tscn
+Loading resource: res://scripts/entities/weapon_muzzle_effect.gd remapped: res://scripts/entities/weapon_muzzle_effect.gd
+Completed load for: 'res://scripts/entities/weapon_muzzle_effect.gd' remapped 'res://scripts/entities/weapon_muzzle_effect.gd' at thread -1
+Completed load for: 'res://scenes/entities/weapon_muzzle_effect.tscn' remapped 'res://scenes/entities/weapon_muzzle_effect.tscn' at thread -1
+Loading resource: res://scenes/entities/combat_feedback_effect.tscn remapped: res://scenes/entities/combat_feedback_effect.tscn
+Loading resource: res://scripts/entities/combat_feedback_effect.gd remapped: res://scripts/entities/combat_feedback_effect.gd
+Completed load for: 'res://scripts/entities/combat_feedback_effect.gd' remapped 'res://scripts/entities/combat_feedback_effect.gd' at thread -1
+Completed load for: 'res://scenes/entities/combat_feedback_effect.tscn' remapped 'res://scenes/entities/combat_feedback_effect.tscn' at thread -1
+Loading resource: res://scenes/entities/projectile_sequence_effect.tscn remapped: res://scenes/entities/projectile_sequence_effect.tscn
+Loading resource: res://scripts/entities/projectile_sequence_effect.gd remapped: res://scripts/entities/projectile_sequence_effect.gd
+Loading resource: res://art/Effects/SP402_nyknck/SP402_01.png remapped: res://art/Effects/SP402_nyknck/SP402_01.png
+Loading resource: res://.godot/imported/SP402_01.png-37c9a11ea9ddefd4338b4e14257b6b0a.ctex remapped: res://.godot/imported/SP402_01.png-37c9a11ea9ddefd4338b4e14257b6b0a.ctex
+Completed load for: 'res://art/Effects/SP402_nyknck/SP402_01.png' remapped 'res://art/Effects/SP402_nyknck/SP402_01.png' at thread -1
+Loading resource: res://art/Effects/SP402_nyknck/SP402_02.png remapped: res://art/Effects/SP402_nyknck/SP402_02.png
+Loading resource: res://.godot/imported/SP402_02.png-1336bde1aa1a45350b07c2b0ea40b956.ctex remapped: res://.godot/imported/SP402_02.png-1336bde1aa1a45350b07c2b0ea40b956.ctex
+Completed load for: 'res://art/Effects/SP402_nyknck/SP402_02.png' remapped 'res://art/Effects/SP402_nyknck/SP402_02.png' at thread -1
+Loading resource: res://art/Effects/SP402_nyknck/SP402_03.png remapped: res://art/Effects/SP402_nyknck/SP402_03.png
+Loading resource: res://.godot/imported/SP402_03.png-788abce7502a28023fa068d20150f9bc.ctex remapped: res://.godot/imported/SP402_03.png-788abce7502a28023fa068d20150f9bc.ctex
+Completed load for: 'res://art/Effects/SP402_nyknck/SP402_03.png' remapped 'res://art/Effects/SP402_nyknck/SP402_03.png' at thread -1
+Loading resource: res://art/Effects/SP402_nyknck/SP402_04.png remapped: res://art/Effects/SP402_nyknck/SP402_04.png
+Loading resource: res://.godot/imported/SP402_04.png-28249809fa6f64ed5bd1645b086f69b0.ctex remapped: res://.godot/imported/SP402_04.png-28249809fa6f64ed5bd1645b086f69b0.ctex
+Completed load for: 'res://art/Effects/SP402_nyknck/SP402_04.png' remapped 'res://art/Effects/SP402_nyknck/SP402_04.png' at thread -1
+Loading resource: res://art/Effects/SP402_nyknck/SP402_05.png remapped: res://art/Effects/SP402_nyknck/SP402_05.png
+Loading resource: res://.godot/imported/SP402_05.png-b8a58d7af4f89f13652f6628fee157e8.ctex remapped: res://.godot/imported/SP402_05.png-b8a58d7af4f89f13652f6628fee157e8.ctex
+Completed load for: 'res://art/Effects/SP402_nyknck/SP402_05.png' remapped 'res://art/Effects/SP402_nyknck/SP402_05.png' at thread -1
+Completed load for: 'res://scripts/entities/projectile_sequence_effect.gd' remapped 'res://scripts/entities/projectile_sequence_effect.gd' at thread -1
+Completed load for: 'res://scenes/entities/projectile_sequence_effect.tscn' remapped 'res://scenes/entities/projectile_sequence_effect.tscn' at thread -1
+Loading resource: res://scenes/entities/xp_gem.tscn remapped: res://scenes/entities/xp_gem.tscn
+Loading resource: res://scripts/entities/xp_gem.gd remapped: res://scripts/entities/xp_gem.gd
+Loading resource: res://art/icon/EXP/Blue_EXP.png remapped: res://art/icon/EXP/Blue_EXP.png
+Loading resource: res://.godot/imported/Blue_EXP.png-ef401160a40233b797ac59e23e9c2812.ctex remapped: res://.godot/imported/Blue_EXP.png-ef401160a40233b797ac59e23e9c2812.ctex
+Completed load for: 'res://art/icon/EXP/Blue_EXP.png' remapped 'res://art/icon/EXP/Blue_EXP.png' at thread -1
+Loading resource: res://art/icon/EXP/Purple_EXP.png remapped: res://art/icon/EXP/Purple_EXP.png
+Loading resource: res://.godot/imported/Purple_EXP.png-5fabfcad2583c78af7762fa852a4f624.ctex remapped: res://.godot/imported/Purple_EXP.png-5fabfcad2583c78af7762fa852a4f624.ctex
+Completed load for: 'res://art/icon/EXP/Purple_EXP.png' remapped 'res://art/icon/EXP/Purple_EXP.png' at thread -1
+Completed load for: 'res://scripts/entities/xp_gem.gd' remapped 'res://scripts/entities/xp_gem.gd' at thread -1
+Completed load for: 'res://scenes/entities/xp_gem.tscn' remapped 'res://scenes/entities/xp_gem.tscn' at thread -1
+Loading resource: res://shaders/dream3d/transition_corridor_gradient.gdshader remapped: res://shaders/dream3d/transition_corridor_gradient.gdshader
+Completed load for: 'res://shaders/dream3d/transition_corridor_gradient.gdshader' remapped 'res://shaders/dream3d/transition_corridor_gradient.gdshader' at thread -1
+Loading resource: res://scenes/ui/crosshair.tscn remapped: res://scenes/ui/crosshair.tscn
+Loading resource: res://scripts/ui/crosshair.gd remapped: res://scripts/ui/crosshair.gd
+Completed load for: 'res://scripts/ui/crosshair.gd' remapped 'res://scripts/ui/crosshair.gd' at thread -1
+Completed load for: 'res://scenes/ui/crosshair.tscn' remapped 'res://scenes/ui/crosshair.tscn' at thread -1
+Loading resource: res://scenes/ui/damage_number.tscn remapped: res://scenes/ui/damage_number.tscn
+Loading resource: res://scripts/ui/damage_number.gd remapped: res://scripts/ui/damage_number.gd
+Completed load for: 'res://scripts/ui/damage_number.gd' remapped 'res://scripts/ui/damage_number.gd' at thread -1
+Loading resource: res://shaders/world_ui_unshaded.gdshader remapped: res://shaders/world_ui_unshaded.gdshader
+Completed load for: 'res://shaders/world_ui_unshaded.gdshader' remapped 'res://shaders/world_ui_unshaded.gdshader' at thread -1
+Completed load for: 'res://scenes/ui/damage_number.tscn' remapped 'res://scenes/ui/damage_number.tscn' at thread -1
+Loading resource: res://scenes/ui/dream_hud.tscn remapped: res://scenes/ui/dream_hud.tscn
+Loading resource: res://scripts/ui/dream_hud.gd remapped: res://scripts/ui/dream_hud.gd
+Completed load for: 'res://scripts/ui/dream_hud.gd' remapped 'res://scripts/ui/dream_hud.gd' at thread -1
+Loading resource: res://art/icon/dash.png remapped: res://art/icon/dash.png
+Loading resource: res://.godot/imported/dash.png-7c69a6e050c3dc69aad83bcb458c78f1.ctex remapped: res://.godot/imported/dash.png-7c69a6e050c3dc69aad83bcb458c78f1.ctex
+Completed load for: 'res://art/icon/dash.png' remapped 'res://art/icon/dash.png' at thread -1
+Loading resource: res://shaders/dash_cooldown_icon.gdshader remapped: res://shaders/dash_cooldown_icon.gdshader
+Completed load for: 'res://shaders/dash_cooldown_icon.gdshader' remapped 'res://shaders/dash_cooldown_icon.gdshader' at thread -1
+Loading resource: res://scripts/ui/dream_minimap.gd remapped: res://scripts/ui/dream_minimap.gd
+Completed load for: 'res://scripts/ui/dream_minimap.gd' remapped 'res://scripts/ui/dream_minimap.gd' at thread -1
+Completed load for: 'res://scenes/ui/dream_hud.tscn' remapped 'res://scenes/ui/dream_hud.tscn' at thread -1
+Loading resource: res://scenes/ui/character_card.tscn remapped: res://scenes/ui/character_card.tscn
+Loading resource: res://scripts/ui/character_card.gd remapped: res://scripts/ui/character_card.gd
+Completed load for: 'res://scripts/ui/character_card.gd' remapped 'res://scripts/ui/character_card.gd' at thread -1
+Loading resource: res://art/Dream/chr_page.png remapped: res://art/Dream/chr_page.png
+Loading resource: res://.godot/imported/chr_page.png-90bd17c3d4a2ca04b72a2bcb5e1400ee.ctex remapped: res://.godot/imported/chr_page.png-90bd17c3d4a2ca04b72a2bcb5e1400ee.ctex
+Completed load for: 'res://art/Dream/chr_page.png' remapped 'res://art/Dream/chr_page.png' at thread -1
+Completed load for: 'res://scenes/ui/character_card.tscn' remapped 'res://scenes/ui/character_card.tscn' at thread -1
+Loading resource: res://scenes/ui/upgrade_panel.tscn remapped: res://scenes/ui/upgrade_panel.tscn
+Loading resource: res://scripts/ui/upgrade_panel.gd remapped: res://scripts/ui/upgrade_panel.gd
+Loading resource: res://art/icon/Sprites_Cropped/Boardgames_Card_Attack_Sword.png remapped: res://art/icon/Sprites_Cropped/Boardgames_Card_Attack_Sword.png
+Loading resource: res://.godot/imported/Boardgames_Card_Attack_Sword.png-170ec0a9457b7b0b9866791c7f00c87b.ctex remapped: res://.godot/imported/Boardgames_Card_Attack_Sword.png-170ec0a9457b7b0b9866791c7f00c87b.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Boardgames_Card_Attack_Sword.png' remapped 'res://art/icon/Sprites_Cropped/Boardgames_Card_Attack_Sword.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/Alchemy_Potion_Vial_Bottle_Lightning_Bolt_Zap_Speed_Full.png remapped: res://art/icon/Sprites_Cropped/Alchemy_Potion_Vial_Bottle_Lightning_Bolt_Zap_Speed_Full.png
+Loading resource: res://.godot/imported/Alchemy_Potion_Vial_Bottle_Lightning_Bolt_Zap_Speed_Full.png-efefd3b9fe1f64b9dd8dc67173dbd364.ctex remapped: res://.godot/imported/Alchemy_Potion_Vial_Bottle_Lightning_Bolt_Zap_Speed_Full.png-efefd3b9fe1f64b9dd8dc67173dbd364.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Alchemy_Potion_Vial_Bottle_Lightning_Bolt_Zap_Speed_Full.png' remapped 'res://art/icon/Sprites_Cropped/Alchemy_Potion_Vial_Bottle_Lightning_Bolt_Zap_Speed_Full.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/Arrows_Double_Horizontal_Left_Right.png remapped: res://art/icon/Sprites_Cropped/Arrows_Double_Horizontal_Left_Right.png
+Loading resource: res://.godot/imported/Arrows_Double_Horizontal_Left_Right.png-15d20125322d21204025df27b20db20c.ctex remapped: res://.godot/imported/Arrows_Double_Horizontal_Left_Right.png-15d20125322d21204025df27b20db20c.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Arrows_Double_Horizontal_Left_Right.png' remapped 'res://art/icon/Sprites_Cropped/Arrows_Double_Horizontal_Left_Right.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Closed_Sleeping.png remapped: res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Closed_Sleeping.png
+Loading resource: res://.godot/imported/Media_Eyeball_Vision_Closed_Sleeping.png-b49755a1680803dbe47b778e31928c6e.ctex remapped: res://.godot/imported/Media_Eyeball_Vision_Closed_Sleeping.png-b49755a1680803dbe47b778e31928c6e.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Closed_Sleeping.png' remapped 'res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Closed_Sleeping.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/Boardgames_Card_Defense_Shield.png remapped: res://art/icon/Sprites_Cropped/Boardgames_Card_Defense_Shield.png
+Loading resource: res://.godot/imported/Boardgames_Card_Defense_Shield.png-b4604aca6ca291adbd8940dc6de3f0ba.ctex remapped: res://.godot/imported/Boardgames_Card_Defense_Shield.png-b4604aca6ca291adbd8940dc6de3f0ba.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Boardgames_Card_Defense_Shield.png' remapped 'res://art/icon/Sprites_Cropped/Boardgames_Card_Defense_Shield.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/RPG_Skill_Dash_Dodge_Movement_Speed_Run_Sprint.png remapped: res://art/icon/Sprites_Cropped/RPG_Skill_Dash_Dodge_Movement_Speed_Run_Sprint.png
+Loading resource: res://.godot/imported/RPG_Skill_Dash_Dodge_Movement_Speed_Run_Sprint.png-84b6155c268c2dec103a0643ec40cf80.ctex remapped: res://.godot/imported/RPG_Skill_Dash_Dodge_Movement_Speed_Run_Sprint.png-84b6155c268c2dec103a0643ec40cf80.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/RPG_Skill_Dash_Dodge_Movement_Speed_Run_Sprint.png' remapped 'res://art/icon/Sprites_Cropped/RPG_Skill_Dash_Dodge_Movement_Speed_Run_Sprint.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Shown.png remapped: res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Shown.png
+Loading resource: res://.godot/imported/Media_Eyeball_Vision_Shown.png-3d7ac09a315c7012338d61f6c6734aae.ctex remapped: res://.godot/imported/Media_Eyeball_Vision_Shown.png-3d7ac09a315c7012338d61f6c6734aae.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Shown.png' remapped 'res://art/icon/Sprites_Cropped/Media_Eyeball_Vision_Shown.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/Misc_Egypt_Eye_Of_Horus.png remapped: res://art/icon/Sprites_Cropped/Misc_Egypt_Eye_Of_Horus.png
+Loading resource: res://.godot/imported/Misc_Egypt_Eye_Of_Horus.png-22da9b41e2b8385756245956ed8f0dad.ctex remapped: res://.godot/imported/Misc_Egypt_Eye_Of_Horus.png-22da9b41e2b8385756245956ed8f0dad.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Misc_Egypt_Eye_Of_Horus.png' remapped 'res://art/icon/Sprites_Cropped/Misc_Egypt_Eye_Of_Horus.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/RPG_Stat_HP_Health_Heart.png remapped: res://art/icon/Sprites_Cropped/RPG_Stat_HP_Health_Heart.png
+Loading resource: res://.godot/imported/RPG_Stat_HP_Health_Heart.png-349be496e07305570d8da11a3605dcb4.ctex remapped: res://.godot/imported/RPG_Stat_HP_Health_Heart.png-349be496e07305570d8da11a3605dcb4.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/RPG_Stat_HP_Health_Heart.png' remapped 'res://art/icon/Sprites_Cropped/RPG_Stat_HP_Health_Heart.png' at thread -1
+Completed load for: 'res://scripts/ui/upgrade_panel.gd' remapped 'res://scripts/ui/upgrade_panel.gd' at thread -1
+Loading resource: res://shaders/upgrade_slot_crt.gdshader remapped: res://shaders/upgrade_slot_crt.gdshader
+Completed load for: 'res://shaders/upgrade_slot_crt.gdshader' remapped 'res://shaders/upgrade_slot_crt.gdshader' at thread -1
+Completed load for: 'res://scenes/ui/upgrade_panel.tscn' remapped 'res://scenes/ui/upgrade_panel.tscn' at thread -1
+Loading resource: res://scenes/ui/death_crt_effect.tscn remapped: res://scenes/ui/death_crt_effect.tscn
+Loading resource: res://scripts/ui/death_crt_effect.gd remapped: res://scripts/ui/death_crt_effect.gd
+Completed load for: 'res://scripts/ui/death_crt_effect.gd' remapped 'res://scripts/ui/death_crt_effect.gd' at thread -1
+Loading resource: res://shaders/crt_shutdown.gdshader remapped: res://shaders/crt_shutdown.gdshader
+Completed load for: 'res://shaders/crt_shutdown.gdshader' remapped 'res://shaders/crt_shutdown.gdshader' at thread -1
+Completed load for: 'res://scenes/ui/death_crt_effect.tscn' remapped 'res://scenes/ui/death_crt_effect.tscn' at thread -1
+Loading resource: res://shaders/dream3d/outside_black_gradient.gdshader remapped: res://shaders/dream3d/outside_black_gradient.gdshader
+Completed load for: 'res://shaders/dream3d/outside_black_gradient.gdshader' remapped 'res://shaders/dream3d/outside_black_gradient.gdshader' at thread -1
+Completed load for: 'res://scripts/dream/dream_3d_random_dungeon.gd' remapped 'res://scripts/dream/dream_3d_random_dungeon.gd' at thread -1
+Loading resource: res://scripts/dream/dream_3d_pause_bridge.gd remapped: res://scripts/dream/dream_3d_pause_bridge.gd
+Loading resource: res://scenes/ui/pause_menu.tscn remapped: res://scenes/ui/pause_menu.tscn
+Loading resource: res://scripts/ui/pause_menu.gd remapped: res://scripts/ui/pause_menu.gd
+Completed load for: 'res://scripts/ui/pause_menu.gd' remapped 'res://scripts/ui/pause_menu.gd' at thread -1
+Completed load for: 'res://scenes/ui/pause_menu.tscn' remapped 'res://scenes/ui/pause_menu.tscn' at thread -1
+Completed load for: 'res://scripts/dream/dream_3d_pause_bridge.gd' remapped 'res://scripts/dream/dream_3d_pause_bridge.gd' at thread -1
+Completed load for: 'res://scenes/dream/Dream3D_RandomDungeon.tscn' remapped 'res://scenes/dream/Dream3D_RandomDungeon.tscn' at thread -1
+Loading resource: res://scenes/ui/results.tscn remapped: res://scenes/ui/results.tscn
+Loading resource: res://scripts/ui/results.gd remapped: res://scripts/ui/results.gd
+Completed load for: 'res://scripts/ui/results.gd' remapped 'res://scripts/ui/results.gd' at thread -1
+Completed load for: 'res://scenes/ui/results.tscn' remapped 'res://scenes/ui/results.tscn' at thread -1
+Loading resource: res://art/icon/Computer Systems/1. Pointer.png remapped: res://art/icon/Computer Systems/1. Pointer.png
+Loading resource: res://.godot/imported/1. Pointer.png-40ad8835354a4261c425744cd6b06d00.ctex remapped: res://.godot/imported/1. Pointer.png-40ad8835354a4261c425744cd6b06d00.ctex
+Completed load for: 'res://art/icon/Computer Systems/1. Pointer.png' remapped 'res://art/icon/Computer Systems/1. Pointer.png' at thread -1
+Loading resource: res://art/icon/Computer Systems/2. Hand Pointer.png remapped: res://art/icon/Computer Systems/2. Hand Pointer.png
+Loading resource: res://.godot/imported/2. Hand Pointer.png-21639f7d5b2b7364eaf4e4f12c6af90e.ctex remapped: res://.godot/imported/2. Hand Pointer.png-21639f7d5b2b7364eaf4e4f12c6af90e.ctex
+Completed load for: 'res://art/icon/Computer Systems/2. Hand Pointer.png' remapped 'res://art/icon/Computer Systems/2. Hand Pointer.png' at thread -1
+Completed load for: 'res://scripts/app/main.gd' remapped 'res://scripts/app/main.gd' at thread -1
+Loading resource: res://scenes/ui/debug_console.tscn remapped: res://scenes/ui/debug_console.tscn
+Loading resource: res://scripts/ui/debug_console.gd remapped: res://scripts/ui/debug_console.gd
+Completed load for: 'res://scripts/ui/debug_console.gd' remapped 'res://scripts/ui/debug_console.gd' at thread -1
+Completed load for: 'res://scenes/ui/debug_console.tscn' remapped 'res://scenes/ui/debug_console.tscn' at thread -1
+Loading resource: res://shaders/palette_quantize.gdshader remapped: res://shaders/palette_quantize.gdshader
+Completed load for: 'res://shaders/palette_quantize.gdshader' remapped 'res://shaders/palette_quantize.gdshader' at thread -1
+Completed load for: 'res://scenes/app/main.tscn' remapped 'res://scenes/app/main.tscn' at thread -1
+Loading resource: res://scenes/dream/3d/PhysicalDoor3D.tscn remapped: res://scenes/dream/3d/PhysicalDoor3D.tscn
+Completed load for: 'res://scenes/dream/3d/PhysicalDoor3D.tscn' remapped 'res://scenes/dream/3d/PhysicalDoor3D.tscn' at thread -1
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/Scenes/Walls/wall_1m.tscn remapped: res://art/Dream/LoafbrrAssets/Interiors_A/Scenes/Walls/wall_1m.tscn
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres remapped: res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Normal_2K.png remapped: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Normal_2K.png
+Loading resource: res://.godot/imported/Surface_Wall_A_Normal_2K.png-f31f81243bb92a229fcd0fdcddd9250c.s3tc.ctex remapped: res://.godot/imported/Surface_Wall_A_Normal_2K.png-f31f81243bb92a229fcd0fdcddd9250c.s3tc.ctex
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Normal_2K.png' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Normal_2K.png' at thread -1
+Loading resource: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_ORM_2K.png remapped: res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_ORM_2K.png
+Loading resource: res://.godot/imported/Surface_Wall_A_ORM_2K.png-ebba2fb4b4cbf8ceb24092759a5d99fb.s3tc.ctex remapped: res://.godot/imported/Surface_Wall_A_ORM_2K.png-ebba2fb4b4cbf8ceb24092759a5d99fb.s3tc.ctex
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_ORM_2K.png' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_ORM_2K.png' at thread -1
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres' at thread -1
+Completed load for: 'res://art/Dream/LoafbrrAssets/Interiors_A/Scenes/Walls/wall_1m.tscn' remapped 'res://art/Dream/LoafbrrAssets/Interiors_A/Scenes/Walls/wall_1m.tscn' at thread -1
+Loading resource: res://scenes/dream/Dream3D_RandomDungeon.tscn remapped: res://scenes/dream/Dream3D_RandomDungeon.tscn
+Completed load for: 'res://scenes/dream/Dream3D_RandomDungeon.tscn' remapped 'res://scenes/dream/Dream3D_RandomDungeon.tscn' at thread -1
+[  50% ] [90m[1mloading_editor_layout[22m | 正在加载中央编辑器布局……[39m[0m
+[  66% ] [90m[1mloading_editor_layout[22m | 正在加载插件窗口布局……[39m[0m
+Loading resource: res://scripts/dream/beam_weapon.gd remapped: res://scripts/dream/beam_weapon.gd
+Loading resource: res://scenes/entities/beam_effect.tscn remapped: res://scenes/entities/beam_effect.tscn
+Loading resource: res://scripts/entities/beam_effect.gd remapped: res://scripts/entities/beam_effect.gd
+Loading resource: res://art/Effects/projetilNew.png remapped: res://art/Effects/projetilNew.png
+Loading resource: res://.godot/imported/projetilNew.png-49818ab417dcdc6b1d22b6d878a28455.ctex remapped: res://.godot/imported/projetilNew.png-49818ab417dcdc6b1d22b6d878a28455.ctex
+Completed load for: 'res://art/Effects/projetilNew.png' remapped 'res://art/Effects/projetilNew.png' at thread -1
+Completed load for: 'res://scripts/entities/beam_effect.gd' remapped 'res://scripts/entities/beam_effect.gd' at thread -1
+Completed load for: 'res://scenes/entities/beam_effect.tscn' remapped 'res://scenes/entities/beam_effect.tscn' at thread -1
+Completed load for: 'res://scripts/dream/beam_weapon.gd' remapped 'res://scripts/dream/beam_weapon.gd' at thread -1
+Loading resource: res://tests/bedroom_art_test.gd remapped: res://tests/bedroom_art_test.gd
+Completed load for: 'res://tests/bedroom_art_test.gd' remapped 'res://tests/bedroom_art_test.gd' at thread -1
+Loading resource: res://tests/dream3d_combat_parity_test.gd remapped: res://tests/dream3d_combat_parity_test.gd
+Completed load for: 'res://tests/dream3d_combat_parity_test.gd' remapped 'res://tests/dream3d_combat_parity_test.gd' at thread -1
+Loading resource: res://scripts/dream/dream_large_room_shapes.gd remapped: res://scripts/dream/dream_large_room_shapes.gd
+Completed load for: 'res://scripts/dream/dream_large_room_shapes.gd' remapped 'res://scripts/dream/dream_large_room_shapes.gd' at thread -1
+Loading resource: res://scripts/dream/dream_map_builder.gd remapped: res://scripts/dream/dream_map_builder.gd
+Completed load for: 'res://scripts/dream/dream_map_builder.gd' remapped 'res://scripts/dream/dream_map_builder.gd' at thread -1
+Loading resource: res://scripts/dream/dream_room_manager.gd remapped: res://scripts/dream/dream_room_manager.gd
+Loading resource: res://scenes/dream/rooms/room_start_01.tscn remapped: res://scenes/dream/rooms/room_start_01.tscn
+Loading resource: res://scenes/dream/dream_card_reward.tscn remapped: res://scenes/dream/dream_card_reward.tscn
+Completed load for: 'res://scenes/dream/dream_card_reward.tscn' remapped 'res://scenes/dream/dream_card_reward.tscn' at thread -1
+Completed load for: 'res://scenes/dream/rooms/room_start_01.tscn' remapped 'res://scenes/dream/rooms/room_start_01.tscn' at thread -1
+Loading resource: res://scenes/dream/rooms/room_large_01.tscn remapped: res://scenes/dream/rooms/room_large_01.tscn
+Completed load for: 'res://scenes/dream/rooms/room_large_01.tscn' remapped 'res://scenes/dream/rooms/room_large_01.tscn' at thread -1
+Loading resource: res://scenes/dream/rooms/room_medium_01.tscn remapped: res://scenes/dream/rooms/room_medium_01.tscn
+Completed load for: 'res://scenes/dream/rooms/room_medium_01.tscn' remapped 'res://scenes/dream/rooms/room_medium_01.tscn' at thread -1
+Loading resource: res://scenes/dream/rooms/room_small_01.tscn remapped: res://scenes/dream/rooms/room_small_01.tscn
+Completed load for: 'res://scenes/dream/rooms/room_small_01.tscn' remapped 'res://scenes/dream/rooms/room_small_01.tscn' at thread -1
+Loading resource: res://scenes/dream/rooms/room_weapon_01.tscn remapped: res://scenes/dream/rooms/room_weapon_01.tscn
+Completed load for: 'res://scenes/dream/rooms/room_weapon_01.tscn' remapped 'res://scenes/dream/rooms/room_weapon_01.tscn' at thread -1
+Loading resource: res://scenes/dream/rooms/room_boss_01.tscn remapped: res://scenes/dream/rooms/room_boss_01.tscn
+Completed load for: 'res://scenes/dream/rooms/room_boss_01.tscn' remapped 'res://scenes/dream/rooms/room_boss_01.tscn' at thread -1
+Completed load for: 'res://scripts/dream/dream_room_manager.gd' remapped 'res://scripts/dream/dream_room_manager.gd' at thread -1
+Loading resource: res://scripts/dream/dream_spawn_warning.gd remapped: res://scripts/dream/dream_spawn_warning.gd
+Completed load for: 'res://scripts/dream/dream_spawn_warning.gd' remapped 'res://scripts/dream/dream_spawn_warning.gd' at thread -1
+Loading resource: res://scripts/dream/dream_world.gd remapped: res://scripts/dream/dream_world.gd
+Loading resource: res://shaders/vision_darkness_overlay.gdshader remapped: res://shaders/vision_darkness_overlay.gdshader
+Completed load for: 'res://shaders/vision_darkness_overlay.gdshader' remapped 'res://shaders/vision_darkness_overlay.gdshader' at thread -1
+Completed load for: 'res://scripts/dream/dream_world.gd' remapped 'res://scripts/dream/dream_world.gd' at thread -1
+Loading resource: res://scripts/dream/enemy_spawner.gd remapped: res://scripts/dream/enemy_spawner.gd
+Completed load for: 'res://scripts/dream/enemy_spawner.gd' remapped 'res://scripts/dream/enemy_spawner.gd' at thread -1
+Loading resource: res://scripts/dream/katana_weapon.gd remapped: res://scripts/dream/katana_weapon.gd
+Completed load for: 'res://scripts/dream/katana_weapon.gd' remapped 'res://scripts/dream/katana_weapon.gd' at thread -1
+Loading resource: res://tests/phone_melatonin_currency_test.gd remapped: res://tests/phone_melatonin_currency_test.gd
+Completed load for: 'res://tests/phone_melatonin_currency_test.gd' remapped 'res://tests/phone_melatonin_currency_test.gd' at thread -1
+Loading resource: res://resources/phone_shop.json remapped: res://resources/phone_shop.json
+Completed load for: 'res://resources/phone_shop.json' remapped 'res://resources/phone_shop.json' at thread -1
+Loading resource: res://scripts/ui/player_combat_info_panel.gd remapped: res://scripts/ui/player_combat_info_panel.gd
+Loading resource: res://art/icon/Sprites_Cropped/RPG_Stat_Strength_Fist_Melee_Attack.png remapped: res://art/icon/Sprites_Cropped/RPG_Stat_Strength_Fist_Melee_Attack.png
+Loading resource: res://.godot/imported/RPG_Stat_Strength_Fist_Melee_Attack.png-90bbb79cabc2e7670a98c93bbba1323d.ctex remapped: res://.godot/imported/RPG_Stat_Strength_Fist_Melee_Attack.png-90bbb79cabc2e7670a98c93bbba1323d.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/RPG_Stat_Strength_Fist_Melee_Attack.png' remapped 'res://art/icon/Sprites_Cropped/RPG_Stat_Strength_Fist_Melee_Attack.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/Software_Flashlight_Torch_Illumination_Lighting.png remapped: res://art/icon/Sprites_Cropped/Software_Flashlight_Torch_Illumination_Lighting.png
+Loading resource: res://.godot/imported/Software_Flashlight_Torch_Illumination_Lighting.png-b372abe3acc354e3ffa6461ee0c06955.ctex remapped: res://.godot/imported/Software_Flashlight_Torch_Illumination_Lighting.png-b372abe3acc354e3ffa6461ee0c06955.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Software_Flashlight_Torch_Illumination_Lighting.png' remapped 'res://art/icon/Sprites_Cropped/Software_Flashlight_Torch_Illumination_Lighting.png' at thread -1
+Loading resource: res://art/icon/Sprites_Cropped/Food_Bread_Loaf.png remapped: res://art/icon/Sprites_Cropped/Food_Bread_Loaf.png
+Loading resource: res://.godot/imported/Food_Bread_Loaf.png-10d7aba6a9bf416d3f0024544de17200.ctex remapped: res://.godot/imported/Food_Bread_Loaf.png-10d7aba6a9bf416d3f0024544de17200.ctex
+Completed load for: 'res://art/icon/Sprites_Cropped/Food_Bread_Loaf.png' remapped 'res://art/icon/Sprites_Cropped/Food_Bread_Loaf.png' at thread -1
+Completed load for: 'res://scripts/ui/player_combat_info_panel.gd' remapped 'res://scripts/ui/player_combat_info_panel.gd' at thread -1
+Loading resource: res://tests/reload_breakable_props_test.gd remapped: res://tests/reload_breakable_props_test.gd
+Completed load for: 'res://tests/reload_breakable_props_test.gd' remapped 'res://tests/reload_breakable_props_test.gd' at thread -1
+Loading resource: res://tests/room_runtime_additions_test.gd remapped: res://tests/room_runtime_additions_test.gd
+Loading resource: res://scenes/dream/dream_world.tscn remapped: res://scenes/dream/dream_world.tscn
+Loading resource: res://scripts/dream/dream_clock.gd remapped: res://scripts/dream/dream_clock.gd
+Completed load for: 'res://scripts/dream/dream_clock.gd' remapped 'res://scripts/dream/dream_clock.gd' at thread -1
+Loading resource: res://scenes/ui/wake_overlay.tscn remapped: res://scenes/ui/wake_overlay.tscn
+Loading resource: res://scripts/ui/wake_overlay.gd remapped: res://scripts/ui/wake_overlay.gd
+Completed load for: 'res://scripts/ui/wake_overlay.gd' remapped 'res://scripts/ui/wake_overlay.gd' at thread -1
+Completed load for: 'res://scenes/ui/wake_overlay.tscn' remapped 'res://scenes/ui/wake_overlay.tscn' at thread -1
+Loading resource: res://assets/art/dream/crawling_depths/crawling_depths_tileset.tres remapped: res://assets/art/dream/crawling_depths/crawling_depths_tileset.tres
+Loading resource: res://assets/art/dream/crawling_depths/tiles.png remapped: res://assets/art/dream/crawling_depths/tiles.png
+Loading resource: res://.godot/imported/tiles.png-7599a3b5d14bf65a5ee64c386395df54.ctex remapped: res://.godot/imported/tiles.png-7599a3b5d14bf65a5ee64c386395df54.ctex
+Completed load for: 'res://assets/art/dream/crawling_depths/tiles.png' remapped 'res://assets/art/dream/crawling_depths/tiles.png' at thread -1
+Loading resource: res://assets/art/dream/crawling_depths/cliff.png remapped: res://assets/art/dream/crawling_depths/cliff.png
+Loading resource: res://.godot/imported/cliff.png-0528a7bdbb0e0d34c1fadc2e15bf29a5.ctex remapped: res://.godot/imported/cliff.png-0528a7bdbb0e0d34c1fadc2e15bf29a5.ctex
+Completed load for: 'res://assets/art/dream/crawling_depths/cliff.png' remapped 'res://assets/art/dream/crawling_depths/cliff.png' at thread -1
+Loading resource: res://assets/art/dream/crawling_depths/cracks.png remapped: res://assets/art/dream/crawling_depths/cracks.png
+Loading resource: res://.godot/imported/cracks.png-551da8210995941cb78815bbdbec766e.ctex remapped: res://.godot/imported/cracks.png-551da8210995941cb78815bbdbec766e.ctex
+Completed load for: 'res://assets/art/dream/crawling_depths/cracks.png' remapped 'res://assets/art/dream/crawling_depths/cracks.png' at thread -1
+Completed load for: 'res://assets/art/dream/crawling_depths/crawling_depths_tileset.tres' remapped 'res://assets/art/dream/crawling_depths/crawling_depths_tileset.tres' at thread -1
+Completed load for: 'res://scenes/dream/dream_world.tscn' remapped 'res://scenes/dream/dream_world.tscn' at thread -1
+Completed load for: 'res://tests/room_runtime_additions_test.gd' remapped 'res://tests/room_runtime_additions_test.gd' at thread -1
+Loading resource: res://scripts/entities/sword_wave.gd remapped: res://scripts/entities/sword_wave.gd
+Loading resource: res://art/Effects/SP301_nyknck/SP301_04.png remapped: res://art/Effects/SP301_nyknck/SP301_04.png
+Loading resource: res://.godot/imported/SP301_04.png-dcbd12e0facb8a0729e2680161b2e6b6.ctex remapped: res://.godot/imported/SP301_04.png-dcbd12e0facb8a0729e2680161b2e6b6.ctex
+Completed load for: 'res://art/Effects/SP301_nyknck/SP301_04.png' remapped 'res://art/Effects/SP301_nyknck/SP301_04.png' at thread -1
+Completed load for: 'res://scripts/entities/sword_wave.gd' remapped 'res://scripts/entities/sword_wave.gd' at thread -1
+Loading resource: res://shaders/dream3d/door_target_outline.gdshader remapped: res://shaders/dream3d/door_target_outline.gdshader
+Completed load for: 'res://shaders/dream3d/door_target_outline.gdshader' remapped 'res://shaders/dream3d/door_target_outline.gdshader' at thread -1
+[  83% ] [90m[1mloading_editor_layout[22m | 编辑器布局就绪。[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+Failed to bind socket. Error: 3.
+bcdec: Decompression of a 352x256 DXT5 RGBA8 image with 8 mipmaps took 0 ms.
+bcdec: Decompression of a 448x416 DXT5 RGBA8 image with 8 mipmaps took 1 ms.
+bcdec: Decompression of a 384x416 DXT5 RGBA8 image with 8 mipmaps took 0 ms.
+bcdec: Decompression of a 640x512 DXT5 RGBA8 image with 9 mipmaps took 1 ms.
+Script docs haven't been properly loaded or regenerated, so don't save them to disk.
+ERROR: Cannot save file 'C:/Users/Administrator/AppData/Roaming/Godot/editor_settings-4.7.tres'.
+   at: save (scene/resources/resource_format_text.cpp:1768)
+ERROR: Error saving editor settings to C:/Users/Administrator/AppData/Roaming/Godot/editor_settings-4.7.tres
+   at: save (editor/settings/editor_settings.cpp:1525)
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+Orphan StringName: Node (static: 7, total: 8)
+StringName: 1 unclaimed string names at exit.

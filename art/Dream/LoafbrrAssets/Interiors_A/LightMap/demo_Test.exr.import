@@ -1,0 +1,30 @@
+[remap]
+
+importer="2d_array_texture"
+type="CompressedTexture2DArray"
+uid="uid://cq58b2qsdp4pt"
+path.bptc="res://.godot/imported/demo_Test.exr-ea5092d0df14484c28f8f79f911f5e25.bptc.ctexarray"
+path.astc="res://.godot/imported/demo_Test.exr-ea5092d0df14484c28f8f79f911f5e25.astc.ctexarray"
+metadata={
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
+}
+
+[deps]
+
+source_file="res://art/Dream/LoafbrrAssets/Interiors_A/LightMap/demo_Test.exr"
+dest_files=["res://.godot/imported/demo_Test.exr-ea5092d0df14484c28f8f79f911f5e25.bptc.ctexarray", "res://.godot/imported/demo_Test.exr-ea5092d0df14484c28f8f79f911f5e25.astc.ctexarray"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
+compress/hdr_compression=1
+compress/channel_pack=1
+mipmaps/generate=false
+mipmaps/limit=-1
+slices/horizontal=1
+slices/vertical=1

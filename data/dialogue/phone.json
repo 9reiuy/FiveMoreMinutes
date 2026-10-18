@@ -1,0 +1,30 @@
+{
+  "dialogues": [
+    {
+      "id": "phone_deleted_message",
+      "lines": [
+        {"speaker": "system", "text": "该信息已被创作者删除", "typewriter_speed": 0.0, "text_color": "#8A939E", "blip": false}
+      ]
+    },
+    {
+      "id": "phone_deleted_author",
+      "lines": [
+        {"speaker": "system", "text": "匿名", "typewriter_speed": 0.0, "text_color": "#8A939E", "blip": false}
+      ]
+    },
+    {
+      "id": "phone_message_list_end",
+      "lines": [
+        {"speaker": "system", "text": "这里是宇宙尽头", "typewriter_speed": 0.0, "text_color": "#5F626C", "blip": false}
+      ]
+    }
+  ],
+  "messages": [
+    {"id": "work_lead_01", "initial": true, "received_day_id": 0, "category": "项目组长-速联科技控股", "text": "明天早上别迟到，项目进度需要重新确认。", "is_read": false},
+    {"id": "mother_01", "initial": true, "received_day_id": 0, "category": "妈妈", "text": "最近还好吗？有空记得回个电话。", "is_read": false},
+    {"id": "quicklink_news_debt_1993", "initial": true, "received_day_id": 0, "category": "速联快讯", "text": "一项发表在《希望财经》上的研究，分析了1993年大崩溃事件下的债务与收入，研究者找到了证据表明，债务可能影响自杀的可能性。", "is_read": false},
+    {"id": "mom_hunger_day3", "initial": false, "category": "妈妈", "text": "你一个人在外面上班有没有好好吃饭啊，记得吃饭。", "is_read": false},
+    {"id": "day3_quicklink_news", "initial": false, "category": "速联快讯", "text": "速联科技股价连续两天大涨！50万股民迎利好，净利润暴涨325%", "is_read": false},
+    {"id": "day5_northern_times", "initial": false, "category": "北方时报", "text": "速联科技裁员2万、连关多厂后速联科技上半季度仍然亏损。", "is_read": false}
+  ]
+}

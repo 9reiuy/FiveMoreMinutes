@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/environment_debris.gd" id="1_debris"]
+[ext_resource type="Texture2D" path="res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Icons_32x32.png" id="2_atlas"]
+
+[sub_resource type="CircleShape2D" id="CircleShape_debris"]
+radius = 9.0
+
+[node name="EnvironmentDebris" type="Area2D" groups=["environment_debris"]]
+collision_layer = 0
+# The live DreamWorld Player instance uses layer 1; hand-authored room actor
+# instances use layer 2.  The callback still filters by the dream_player group.
+collision_mask = 3
+monitoring = true
+monitorable = false
+script = ExtResource("1_debris")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_atlas")
+hframes = 7
+vframes = 6
+frame = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape_debris")

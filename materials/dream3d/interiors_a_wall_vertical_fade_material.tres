@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dqvra06b5mgwt"]
+
+[ext_resource type="Shader" uid="uid://hsbhvmdy5rg4" path="res://shaders/dream3d/interiors_a_wall_vertical_fade.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" uid="uid://bx2yivdj7nu0l" path="res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Diffuse_2K_A.png" id="2_wall"]
+
+[resource]
+resource_name = "Interiors A Wall vertical 100-70-30 fade"
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/albedo_texture = ExtResource("2_wall")

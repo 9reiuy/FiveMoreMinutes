@@ -1,11 +1,14 @@
 extends SceneTree
 
 const CONFIG := preload("res://resources/demo_config.tres")
-const PHONE := preload("res://scenes/ui/bedroom_phone.tscn")
-const BEDROOM := preload("res://scenes/bedroom/bedroom.tscn")
-const MELATONIN := preload("res://scenes/ui/melatonin_interaction.tscn")
-const MAIN_SCRIPT := preload("res://scripts/app/main.gd")
 const FORMAT := preload("res://scripts/ui/display_format.gd")
+
+# SceneTree scripts compile before autoload names are registered. Load dependent
+# scenes only after startup, as the actual Main entrypoint does.
+var PHONE: PackedScene
+var BEDROOM: PackedScene
+var MELATONIN: PackedScene
+var MAIN_SCRIPT: GDScript
 
 var failures: Array[String] = []
 var event_counts: Dictionary = {}
@@ -16,6 +19,10 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	PHONE = load("res://scenes/ui/bedroom_phone.tscn")
+	BEDROOM = load("res://scenes/bedroom/bedroom.tscn")
+	MELATONIN = load("res://scenes/ui/melatonin_interaction.tscn")
+	MAIN_SCRIPT = load("res://scripts/app/main.gd")
 	var manager := root.get_node_or_null("SFXManager")
 	_assert(manager != null, "SFXManager autoload is missing")
 	if manager != null:
@@ -154,7 +161,7 @@ func _test_melatonin_dialogue_limit() -> void:
 
 
 func _test_dream_start_and_currency() -> void:
-	var main := MAIN_SCRIPT.new()
+	var main: Node = MAIN_SCRIPT.new()
 	var expected := [240.0, 210.0, 180.0, 150.0]
 	for count in 4:
 		_assert(is_equal_approx(main._dream_start_minutes_for_melatonin_count(count), expected[count]), "Dream start is wrong for %d tablet(s)" % count)

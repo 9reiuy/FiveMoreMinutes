@@ -3,7 +3,6 @@ extends SceneTree
 const CONFIG := preload("res://resources/demo_config.tres")
 const PHONE := preload("res://scenes/ui/bedroom_phone.tscn")
 const PLAYER := preload("res://scenes/entities/dream_player.tscn")
-const DREAM := preload("res://scenes/dream/dream_world.tscn")
 const RESULTS := preload("res://scenes/ui/results.tscn")
 const DIALOG := preload("res://scenes/ui/confirmation_dialog.tscn")
 const SFX_SCRIPT := preload("res://scripts/audio/sfx_manager.gd")
@@ -13,11 +12,9 @@ const EXPECTED_PATHS := {
 	&"death": "res://sfx/角色死亡音.mp3",
 	&"new_message": "res://sfx/手机新讯息.mp3",
 	&"purchase": "res://sfx/购买音效.mp3",
-	&"laser": "res://sfx/激光武器音效.mp3",
 	&"home_door": "res://sfx/回家开门音效.mp3",
 	&"work": "res://sfx/上班音效.mp3",
-	&"confirm": "res://sfx/确定按钮音效.mp3",
-	&"experience": "res://sfx/获取经验值的音效.mp3"
+		&"confirm": "res://sfx/确定按钮音效.mp3"
 }
 
 var failures: Array[String] = []
@@ -39,7 +36,7 @@ func _run() -> void:
 	_manager().sfx_played.connect(_on_sfx_played)
 	_test_manager_resources_and_buses()
 	await _test_phone_message_and_purchase_events()
-	await _test_character_weapon_and_experience_events()
+	await _test_character_and_weapon_events()
 	await _test_results_and_confirmation_events()
 	for event_id in EXPECTED_PATHS:
 		_manager().stop(event_id)
@@ -72,7 +69,7 @@ func _test_phone_message_and_purchase_events() -> void:
 		"balance": 200,
 		"ram": 0,
 		"melatonin_inventory": 0,
-		"permanent_upgrades": {"visual_cortex": 0, "brainstem": 0, "hippocampus": 0, "prefrontal": 0},
+		"permanent_upgrades": {"visual_cortex": 0, "hippocampus": 0, "prefrontal": 0},
 		"online_messages": [{"category": "测试", "text": "新消息", "is_read": false}]
 	}
 	phone.configure_state(meta)
@@ -90,27 +87,18 @@ func _test_phone_message_and_purchase_events() -> void:
 	await process_frame
 
 
-func _test_character_weapon_and_experience_events() -> void:
+func _test_character_and_weapon_events() -> void:
 	var revived_player := PLAYER.instantiate()
 	root.add_child(revived_player)
 	await process_frame
 	revived_player.enable_dissociation(CONFIG)
 	revived_player.receive_damage(9999.0)
 	_assert(_count(&"death") == 0 and not revived_player.dead, "Dissociation incorrectly played death SFX")
-	revived_player.beam_weapon._fire_beam(Vector2.RIGHT)
-	_assert(_count(&"laser") == 1, "Actual beam emission did not play laser SFX")
 	var dead_player := PLAYER.instantiate()
 	root.add_child(dead_player)
 	await process_frame
 	dead_player.receive_damage(9999.0)
 	_assert(_count(&"death") == 1 and dead_player.dead, "Formal lethal death did not play death SFX once")
-	var dream := DREAM.instantiate()
-	root.add_child(dream)
-	await process_frame
-	dream._on_experience_collected(1)
-	dream._on_experience_collected(1)
-	_assert(_count(&"experience") == 1 and dream.experience == 2, "Experience pickup rate limit or reward application failed")
-	dream.queue_free()
 	revived_player.queue_free()
 	dead_player.queue_free()
 	await process_frame

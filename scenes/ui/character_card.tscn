@@ -1,0 +1,170 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/character_card.gd" id="1_card"]
+[ext_resource type="Texture2D" path="res://art/Dream/chr_page.png" id="2_portrait"]
+
+[sub_resource type="StyleBoxFlat" id="Style_card"]
+bg_color = Color(0.105, 0.094, 0.125, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.64, 0.61, 0.65, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 6
+
+[node name="CharacterCard" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+process_mode = 3
+script = ExtResource("1_card")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.035, 0.027, 0.05, 0.58)
+
+[node name="CardPanel" type="Panel" parent="."]
+offset_left = 40.0
+offset_top = 34.0
+offset_right = 600.0
+offset_bottom = 326.0
+mouse_filter = 1
+theme_override_styles/panel = SubResource("Style_card")
+
+[node name="PortraitDivider" type="ColorRect" parent="CardPanel"]
+offset_left = 214.0
+offset_top = 14.0
+offset_right = 216.0
+offset_bottom = 230.0
+color = Color(0.32, 0.29, 0.35, 1)
+mouse_filter = 2
+
+[node name="PortraitFooterDivider" type="ColorRect" parent="CardPanel"]
+offset_left = 16.0
+offset_top = 224.0
+offset_right = 208.0
+offset_bottom = 226.0
+color = Color(0.32, 0.29, 0.35, 1)
+mouse_filter = 2
+
+[node name="Portrait" type="TextureRect" parent="CardPanel"]
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 208.0
+offset_bottom = 224.0
+texture_filter = 1
+texture = ExtResource("2_portrait")
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="NameLabel" type="Label" parent="CardPanel"]
+visible = false
+offset_left = 18.0
+offset_top = 232.0
+offset_right = 208.0
+offset_bottom = 256.0
+theme_override_colors/font_color = Color(0.82, 0.78, 0.7, 1)
+theme_override_font_sizes/font_size = 14
+text = "Reiuy"
+horizontal_alignment = 1
+
+[node name="HealthTitle" type="Label" parent="CardPanel"]
+offset_left = 225.0
+offset_top = 18.0
+offset_right = 310.0
+offset_bottom = 38.0
+theme_override_colors/font_color = Color(0.78, 0.75, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "HP"
+
+[node name="HealthValue" type="Label" parent="CardPanel"]
+offset_left = 259.0
+offset_top = 18.0
+offset_right = 322.0
+offset_bottom = 38.0
+theme_override_colors/font_color = Color(0.67, 0.7, 0.46, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="HealthCells" type="HBoxContainer" parent="CardPanel"]
+offset_left = 225.0
+offset_top = 47.0
+offset_right = 395.0
+offset_bottom = 61.0
+theme_override_constants/separation = 3
+
+[node name="CombatStats" type="VBoxContainer" parent="CardPanel"]
+offset_left = 438.0
+offset_top = 18.0
+offset_right = 535.0
+offset_bottom = 150.0
+theme_override_constants/separation = 5
+
+[node name="AttackLabel" type="Label" parent="CardPanel/CombatStats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.35, 0.35, 1)
+theme_override_font_sizes/font_size = 12
+text = "ATK"
+
+[node name="AttackValue" type="Label" parent="CardPanel/CombatStats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.45, 0.4, 1)
+theme_override_font_sizes/font_size = 11
+text = "2"
+
+[node name="DefenseLabel" type="Label" parent="CardPanel/CombatStats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.63, 0.64, 0.67, 1)
+theme_override_font_sizes/font_size = 12
+text = "DEF   1"
+
+[node name="LuckLabel" type="Label" parent="CardPanel/CombatStats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.59, 0.32, 1)
+theme_override_font_sizes/font_size = 12
+text = "LCK   1"
+
+[node name="CueLabel" type="Label" parent="CardPanel/CombatStats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.58, 0.66, 1)
+theme_override_font_sizes/font_size = 12
+text = "CUE 999"
+
+[node name="PreviewAnchor" type="Node2D" parent="CardPanel"]
+position = Vector2(335, 192)
+
+[node name="PreviewLabel" type="Label" parent="CardPanel"]
+offset_left = 294.0
+offset_top = 151.0
+offset_right = 348.0
+offset_bottom = 170.0
+theme_override_colors/font_color = Color(0.56, 0.54, 0.62, 1)
+theme_override_font_sizes/font_size = 9
+text = "PLAYER"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="CardPanel"]
+offset_left = 18.0
+offset_top = 254.0
+offset_right = 130.0
+offset_bottom = 276.0
+theme_override_colors/font_color = Color(0.45, 0.43, 0.5, 1)
+theme_override_font_sizes/font_size = 9
+text = "TAB  CLOSE"
+horizontal_alignment = 1

@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/dream/world_weapon_pickup.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://art/Dream/weapons/Guns/Luger.png" id="2_guns"]
+[ext_resource type="Texture2D" path="res://art/Dream/shadow.png" id="3_shadow"]
+
+[sub_resource type="RectangleShape2D" id="Rectangle_weapon_body"]
+size = Vector2(26, 12)
+
+[sub_resource type="CircleShape2D" id="Circle_interaction"]
+radius = 34.0
+
+[node name="WorldWeaponPickup" type="RigidBody2D" groups=["kickable_prop", "pushable_prop", "world_weapon_pickups"]]
+collision_layer = 8
+collision_mask = 15
+mass = 0.45
+gravity_scale = 0.0
+lock_rotation = false
+angular_damp = 8.0
+linear_damp = 7.0
+script = ExtResource("1_script")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 0.42)
+z_index = -1
+position = Vector2(0, 4)
+scale = Vector2(0.48, 0.22)
+texture = ExtResource("3_shadow")
+
+[node name="WeaponSprite" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -7)
+scale = Vector2(1, 1)
+texture = ExtResource("2_guns")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
+shape = SubResource("Rectangle_weapon_body")
+
+[node name="InteractionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+position = Vector2(0, -4)
+shape = SubResource("Circle_interaction")
+
+## 交互提示已移入顶层 HUD（res://scripts/dream/dream_3d_random_dungeon.gd 的
+## GameplayUI / InteractionPrompt）。它不再作为本节点子节点，也不再被深度桥捕获，
+## 因此不再受夜灯/手电/枪口火光影响，也不会被 3D 物体遮挡。

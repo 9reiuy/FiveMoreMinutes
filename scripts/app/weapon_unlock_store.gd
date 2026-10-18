@@ -10,12 +10,9 @@ extends RefCounted
 
 const UNLOCK_FILE := "user://weapon_unlocks.cfg"
 const CONFIG := preload("res://resources/demo_config.tres")
-const WEAPON_IDS := ["shotgun", "beam", "katana", "grenade"]
+const WEAPON_IDS := ["shotgun"]
 const STATE_KEYS := {
 	"shotgun": "shotgun_unlocked",
-	"beam": "beam_weapon_unlocked",
-	"katana": "katana_unlocked",
-	"grenade": "grenade_weapon_unlocked",
 }
 
 
@@ -25,7 +22,7 @@ static func get_unlocked() -> Dictionary:
 	var config := ConfigFile.new()
 	if config.load(UNLOCK_FILE) != OK:
 		return result
-	if str(config.get_value("meta", "save_version", "")) != CONFIG.game_version_text:
+	if str(config.get_value("meta", "save_version", "")) != CONFIG.save_compatibility_version:
 		clear_all()
 		return result
 	for weapon in WEAPON_IDS:
@@ -38,10 +35,10 @@ static func sync_from(state: Dictionary) -> void:
 	var config := ConfigFile.new()
 	config.load(UNLOCK_FILE)
 	var changed := false
-	if str(config.get_value("meta", "save_version", "")) != CONFIG.game_version_text:
+	if str(config.get_value("meta", "save_version", "")) != CONFIG.save_compatibility_version:
 		config = ConfigFile.new()
 		changed = true
-	config.set_value("meta", "save_version", CONFIG.game_version_text)
+	config.set_value("meta", "save_version", CONFIG.save_compatibility_version)
 	for weapon in WEAPON_IDS:
 		if bool(state.get(STATE_KEYS[weapon], false)):
 			config.set_value("weapons", weapon, true)

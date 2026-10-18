@@ -3,13 +3,17 @@ extends Control
 
 const CONFIG := preload("res://resources/demo_config.tres")
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
+const OPTION_FRAME_TEXTURE := preload("res://art/icon/space-worm-theme/general/Blue.png")
+
+@export var show_selection_frame := true
+@export var enable_hover_scale := true
 
 var _options: Array[Button] = []
 var _connections: Dictionary = {}
 var _button_tweens: Dictionary = {}
 var _active_option: Button
 var _frame_tween: Tween
-var _frame_style := StyleBoxFlat.new()
+var _frame_style := StyleBoxTexture.new()
 var _triangle_anim_elapsed := 0.0
 
 var _frame_position := Vector2.ZERO:
@@ -28,8 +32,8 @@ var _frame_alpha := 0.0:
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_frame_style.set_border_width_all(0)
-	_frame_style.set_corner_radius_all(4)
+	_frame_style.texture = OPTION_FRAME_TEXTURE
+	_frame_style.set_texture_margin_all(8.0)
 	set_process(true)
 
 
@@ -114,7 +118,7 @@ func _on_option_entered(option: Button) -> void:
 
 
 func _on_option_exited(option: Button) -> void:
-	_animate_option_scale(option, Vector2.ONE)
+	_set_option_scale(option, Vector2.ONE)
 	call_deferred("_refresh_active_option")
 
 
@@ -124,7 +128,7 @@ func _on_option_focus_entered(option: Button) -> void:
 
 
 func _on_option_focus_exited(option: Button) -> void:
-	_animate_option_scale(option, Vector2.ONE)
+	_set_option_scale(option, Vector2.ONE)
 	call_deferred("_refresh_active_option")
 
 
@@ -149,10 +153,18 @@ func _activate(option: Button, play_sound: bool) -> void:
 		SFX.play_event(&"ui_hover")
 	for other in _options:
 		if is_instance_valid(other) and other != option:
-			_animate_option_scale(other, Vector2.ONE)
+			_set_option_scale(other, Vector2.ONE)
 	_set_option_pivot(option)
-	_animate_option_scale(option, Vector2.ONE * CONFIG.option_hover_scale)
+	_set_option_scale(option, Vector2.ONE * (CONFIG.option_hover_scale if enable_hover_scale else 1.0))
 	_move_frame_to(option)
+
+
+func _set_option_scale(option: Button, target: Vector2) -> void:
+	if enable_hover_scale:
+		_animate_option_scale(option, target)
+	else:
+		_kill_button_tween(option)
+		option.scale = Vector2.ONE
 
 
 func _set_option_pivot(option: Button) -> void:
@@ -199,7 +211,8 @@ func _move_frame_to(option: Button) -> void:
 
 
 func _target_rect(option: Button) -> Rect2:
-	var text_size := _measure_button_text(option) * CONFIG.option_hover_scale
+	var visual_scale := CONFIG.option_hover_scale if enable_hover_scale else 1.0
+	var text_size := _measure_button_text(option) * visual_scale
 	var option_global := option.get_global_rect()
 	var host_global := get_global_rect()
 	var text_left_global: float
@@ -256,11 +269,10 @@ func _disconnect_if_connected(signal_value: Signal, callback: Callable) -> void:
 func _draw() -> void:
 	if _frame_alpha <= 0.001 or _frame_size.x <= 0.0 or _frame_size.y <= 0.0:
 		return
-	var fill := CONFIG.option_frame_fill_color
-	fill.a *= _frame_alpha
-	_frame_style.bg_color = fill
+	_frame_style.modulate_color = Color(1.0, 1.0, 1.0, _frame_alpha)
 	var frame_rect := Rect2(_frame_position, _frame_size)
-	draw_style_box(_frame_style, frame_rect)
+	if show_selection_frame:
+		draw_style_box(_frame_style, frame_rect)
 	var triangle_center := Vector2(
 		frame_rect.position.x + CONFIG.option_frame_padding.x + CONFIG.option_triangle_size * 0.5 + triangle_animation_offset(_triangle_anim_elapsed),
 		frame_rect.get_center().y
@@ -305,10 +317,9 @@ static func draw_custom_option(
 			).round(),
 			Vector2(width, height).round()
 		)
-		var style := StyleBoxFlat.new()
-		style.bg_color = CONFIG.option_frame_fill_color
-		style.set_border_width_all(0)
-		style.set_corner_radius_all(4)
+		var style := StyleBoxTexture.new()
+		style.texture = OPTION_FRAME_TEXTURE
+		style.set_texture_margin_all(8.0)
 		canvas.draw_style_box(style, frame_rect)
 		var triangle_center := Vector2(
 			frame_rect.position.x + CONFIG.option_frame_padding.x + CONFIG.option_triangle_size * 0.5 + triangle_animation_offset(triangle_anim_elapsed),

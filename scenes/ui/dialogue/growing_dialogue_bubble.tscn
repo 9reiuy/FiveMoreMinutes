@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue/dream_dialogue_bubble.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/dialogue/growing_dialogue_bubble.gd" id="2"]
+
+[node name="DreamDialogueBubble" instance=ExtResource("1")]
+script = ExtResource("2")

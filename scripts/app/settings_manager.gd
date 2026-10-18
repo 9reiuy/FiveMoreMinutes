@@ -7,12 +7,15 @@ const SETTINGS_PATH := "user://game_settings.cfg"
 const LEGACY_SETTINGS_PATH := "user://game_settings.json"
 const CONFIG := preload("res://resources/demo_config.tres")
 const AUDIO_KEYS := [&"master_volume", &"music_volume", &"sfx_volume"]
+const SHADOW_QUALITIES := ["low", "standard", "high"]
 var defaults := {
 	"master_volume": 100,
 	"music_volume": 70,
 	"sfx_volume": 80,
-	"sleepwalk_mode": false,
-	"fast_sleep_enabled": CONFIG.fast_sleep_default_enabled
+	"pixelation_enabled": true,
+	"palette_enabled": true,
+	"palette_scheme": 1,
+	"shadow_quality": "standard"
 }
 
 var values: Dictionary
@@ -36,12 +39,20 @@ func get_volume(setting_name: StringName) -> int:
 	return clampi(int(get_setting(setting_name, 100)), 0, 100)
 
 
-func get_sleepwalk_mode() -> bool:
-	return bool(get_setting(&"sleepwalk_mode", false))
+func get_palette_enabled() -> bool:
+	return bool(get_setting(&"palette_enabled", true))
 
 
-func get_fast_sleep_enabled() -> bool:
-	return bool(get_setting(&"fast_sleep_enabled", true))
+func get_palette_scheme() -> int:
+	return clampi(int(get_setting(&"palette_scheme", 1)), 1, 5)
+
+
+func get_shadow_quality() -> String:
+	return _normalize_shadow_quality(get_setting(&"shadow_quality", "standard"))
+
+
+func _normalize_shadow_quality(value: Variant) -> String:
+	return String(value) if value is String and value in SHADOW_QUALITIES else "standard"
 
 
 func set_volume(setting_name: StringName, value: float) -> void:
@@ -50,12 +61,32 @@ func set_volume(setting_name: StringName, value: float) -> void:
 	_set_setting(setting_name, clampi(roundi(value), 0, 100))
 
 
-func set_sleepwalk_mode(enabled: bool) -> void:
-	_set_setting(&"sleepwalk_mode", enabled)
+func set_palette_enabled(enabled: bool) -> void:
+	_set_setting(&"palette_enabled", bool(enabled))
 
 
-func set_fast_sleep_enabled(enabled: bool) -> void:
-	_set_setting(&"fast_sleep_enabled", enabled)
+func set_palette_scheme(scheme: int) -> void:
+	_set_setting(&"palette_scheme", clampi(scheme, 1, 5))
+
+
+## 通用设置写入（UI 正式入口）。只允许 defaults 里声明过的键，
+## 持久化到 user://game_settings.cfg 并广播 setting_changed。
+func set_setting(setting_name: StringName, value: Variant) -> void:
+	if not defaults.has(String(setting_name)):
+		push_warning("SettingsManager: unknown setting '%s'" % String(setting_name))
+		return
+	var normalized: Variant = _normalize_setting(setting_name, value)
+	_set_setting(setting_name, normalized)
+
+
+func _normalize_setting(setting_name: StringName, value: Variant) -> Variant:
+	var normalized: Variant = value
+	match setting_name:
+		&"pixelation_enabled": normalized = bool(value)
+		&"palette_enabled": normalized = bool(value)
+		&"palette_scheme": normalized = clampi(int(value), 1, 5)
+		&"shadow_quality": normalized = _normalize_shadow_quality(value)
+	return normalized
 
 
 func _set_setting(setting_name: StringName, value: Variant) -> void:
@@ -65,21 +96,37 @@ func _set_setting(setting_name: StringName, value: Variant) -> void:
 	values[key] = value
 	if setting_name in AUDIO_KEYS:
 		_apply_audio_setting(setting_name)
+	# All user-facing settings share one persistence path.  This is called only
+	# after a user change (or a dedicated setter), never while loading values.
 	_save_settings()
 	setting_changed.emit(setting_name, value)
 
 
-func _load_settings() -> void:
+func _load_settings(path: String = SETTINGS_PATH) -> void:
 	values = defaults.duplicate(true)
 	var file := ConfigFile.new()
-	if file.load(SETTINGS_PATH) == OK:
+	if file.load(path) == OK:
 		for key in AUDIO_KEYS:
 			values[String(key)] = clampi(int(file.get_value("audio", String(key), defaults[String(key)])), 0, 100)
-		values.sleepwalk_mode = bool(file.get_value("gameplay", "sleepwalk_mode", defaults.sleepwalk_mode))
-		values.fast_sleep_enabled = bool(file.get_value("gameplay", "fast_sleep_enabled", defaults.fast_sleep_enabled))
+		# Pixel lighting was a different, retired effect. An old value must not
+		# override the default of the new selective pixelation setting.
+		values["pixelation_enabled"] = bool(
+			file.get_value("graphics", "pixelation_enabled", bool(defaults["pixelation_enabled"]))
+		)
+		values["shadow_quality"] = _normalize_shadow_quality(
+			file.get_value("graphics", "shadow_quality", "standard")
+		)
+		if file.has_section_key("graphics", "palette_enabled"):
+			values["palette_enabled"] = bool(file.get_value("graphics", "palette_enabled", true))
+		elif file.has_section_key("graphics", "palette_scheme"):
+			# 旧配置迁移：无论旧值是方案 1 还是方案 2，均迁移为方案 1（true）
+			values["palette_enabled"] = true
+		else:
+			values["palette_enabled"] = bool(defaults["palette_enabled"])
+		values["palette_scheme"] = clampi(int(file.get_value("graphics", "palette_scheme", 1)), 1, 5)
 		return
 	_migrate_legacy_settings()
-	_save_settings()
+	_save_settings(path)
 
 
 func _migrate_legacy_settings() -> void:
@@ -89,18 +136,26 @@ func _migrate_legacy_settings() -> void:
 	if not parsed is Dictionary:
 		return
 	var legacy: Variant = parsed.get("settings", {})
+	# 已废弃的旧设置不再迁移；这里只迁移仍然有效的音量数据。
 	if legacy is Dictionary:
-		values.sleepwalk_mode = bool(legacy.get("sleepwalk_mode", defaults.sleepwalk_mode))
-		values.fast_sleep_enabled = bool(legacy.get("fast_sleep_enabled", defaults.fast_sleep_enabled))
+		for key in AUDIO_KEYS:
+			if legacy.has(String(key)):
+				values[String(key)] = clampi(int(legacy[String(key)]), 0, 100)
+		if legacy.has("palette_enabled"):
+			values["palette_enabled"] = bool(legacy["palette_enabled"])
+		elif legacy.has("palette_scheme"):
+			values["palette_enabled"] = true
 
 
-func _save_settings() -> void:
+func _save_settings(path: String = SETTINGS_PATH) -> void:
 	var file := ConfigFile.new()
 	for key in AUDIO_KEYS:
 		file.set_value("audio", String(key), get_volume(key))
-	file.set_value("gameplay", "sleepwalk_mode", get_sleepwalk_mode())
-	file.set_value("gameplay", "fast_sleep_enabled", get_fast_sleep_enabled())
-	file.save(SETTINGS_PATH)
+	file.set_value("graphics", "pixelation_enabled", bool(get_setting(&"pixelation_enabled", true)))
+	file.set_value("graphics", "palette_enabled", get_palette_enabled())
+	file.set_value("graphics", "palette_scheme", get_palette_scheme())
+	file.set_value("graphics", "shadow_quality", get_shadow_quality())
+	file.save(path)
 
 
 func _ensure_audio_bus(bus_name: StringName, send_name: StringName) -> void:

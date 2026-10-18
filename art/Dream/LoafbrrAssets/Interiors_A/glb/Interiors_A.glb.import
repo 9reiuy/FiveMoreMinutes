@@ -1,0 +1,88 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://di258drncq56a"
+path="res://.godot/imported/Interiors_A.glb-7326ef70246a13c295c8c7168d505be0.scn"
+
+[deps]
+
+source_file="res://art/Dream/LoafbrrAssets/Interiors_A/glb/Interiors_A.glb"
+dest_files=["res://.godot/imported/Interiors_A.glb-7326ef70246a13c295c8c7168d505be0.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+mesh_library/use_node_names_as_mesh_names=false
+array_mesh/deduplicate_surfaces=true
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"materials": {
+"Door": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres",
+"use_external/path": "uid://canwefv74vsd6"
+},
+"Glass": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Glass_Mat.tres",
+"use_external/path": "uid://dn04f3wubif1c"
+},
+"MiscTrim": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Misc_Trim_Mat.tres",
+"use_external/path": "uid://cjg55dhp2epy1"
+},
+"Surface_Ceiling_A": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_B_Mat.tres",
+"use_external/path": "uid://k107765ilw3v"
+},
+"Surface_Ceiling_B": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_B_Mat.tres",
+"use_external/path": "uid://ckp17uxivi87k"
+},
+"Surface_Floor_A": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres",
+"use_external/path": "uid://blggib5lan34i"
+},
+"Surface_Floor_B": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_B_Mat.tres",
+"use_external/path": "uid://k107765ilw3v"
+},
+"Surface_Wall_A": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/Dream/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres",
+"use_external/path": "uid://b7hge802pa85x"
+}
+}
+}
+gltf/naming_version=1
+gltf/embedded_image_handling=1
+gltf/texture_map_mode=0

@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://scripts/ui/settings_panel.gd" id="1_settings"]
 
 [node name="SettingsPanel" type="VBoxContainer"]
-custom_minimum_size = Vector2(280, 210)
-theme_override_constants/separation = 8
+custom_minimum_size = Vector2(280, 230)
+theme_override_constants/separation = 1
 script = ExtResource("1_settings")
 
 [node name="Master" type="VBoxContainer" parent="."]
@@ -82,12 +82,51 @@ layout_mode = 2
 text = "80%"
 horizontal_alignment = 2
 
-[node name="FastSleep" type="CheckButton" parent="."]
-custom_minimum_size = Vector2(270, 28)
+[node name="Pixelation" type="VBoxContainer" parent="."]
 layout_mode = 2
-text = "快速睡觉  FAST SLEEP"
+theme_override_constants/separation = 2
 
-[node name="Sleepwalk" type="CheckButton" parent="."]
-custom_minimum_size = Vector2(270, 28)
+[node name="Label" type="Label" parent="Pixelation"]
 layout_mode = 2
-text = "梦游模式  SLEEPWALK MODE"
+text = "像素化  PIXELATION"
+
+[node name="ControlRow" type="HBoxContainer" parent="Pixelation"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Check" type="CheckBox" parent="Pixelation/ControlRow"]
+custom_minimum_size = Vector2(214, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "开启 / 关闭"
+
+[node name="PaletteScheme" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Label" type="Label" parent="PaletteScheme"]
+layout_mode = 2
+text = "配色滤镜  COLOR PALETTE"
+
+[node name="ControlRow" type="HBoxContainer" parent="PaletteScheme"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Option" type="OptionButton" parent="PaletteScheme/ControlRow"]
+custom_minimum_size = Vector2(214, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ShadowQuality" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+tooltip_text = "仅影响 3D 办公楼阴影：低 2 盏、默认 4 盏、高 6 盏室内投影灯。"
+
+[node name="Label" type="Label" parent="ShadowQuality"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "阴影品质  SHADOWS"
+
+[node name="Option" type="OptionButton" parent="ShadowQuality"]
+custom_minimum_size = Vector2(100, 20)
+layout_mode = 2

@@ -1,0 +1,54 @@
+[
+  {
+    "name": "floor_reflection_sample_test",
+    "entry": "res://tests/floor_reflection_sample_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Opt-in profiles, live actor uniforms, camera layers, RNG and transition cleanup.",
+    "missing_references": []
+  },
+  {
+    "name": "floor_reflection_sample_delivery",
+    "entry": "res://tests/floor_reflection_sample_delivery.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 240,
+    "user_args": [
+      "--artifact-dir=res://.runtime/floor_reflection_sample_20261017/camera_regression"
+    ],
+    "reason": "Five actual Camera material comparisons, real reflection depth, blood, pause and measured cost.",
+    "missing_references": []
+  },
+  {
+    "name": "approved_office_art_test",
+    "entry": "res://tests/approved_office_art_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 240,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  },
+  {
+    "name": "character_projection_world_test",
+    "entry": "res://tests/character_projection_world_test.gd",
+    "entry_kind": "script",
+    "classification": "headless+gpu",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Logic assertions plus actual Camera capture; both modes required.",
+    "missing_references": []
+  },
+  {
+    "name": "office_dither_formal_test",
+    "entry": "res://tests/office_dither_formal_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
+    "missing_references": []
+  }
+]

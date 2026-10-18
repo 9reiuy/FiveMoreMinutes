@@ -1,13 +1,14 @@
 class_name BedroomStatusHUD
 extends Control
 
-# 压力三档像素表情（临时占位图，待人工替换最终美术）：
+# 压力三档像素表情使用统一emoji素材：
 # stress <= config.stress_face_happy_max → 开心；
 # < config.stress_face_sweat_min → 一般；其余 → 流汗。
-const FACE_HAPPY := preload("res://assets/art/ui/stress/stress_happy.png")
-const FACE_NORMAL := preload("res://assets/art/ui/stress/stress_normal.png")
-const FACE_SWEAT := preload("res://assets/art/ui/stress/stress_sweat.png")
-const SATIETY_ICON_RECT := Rect2(160, 18, 24, 24)
+const FACE_HAPPY := preload("res://art/icon/emoji/Emoji_Face_Happy.png")
+const FACE_NORMAL := preload("res://art/icon/emoji/Emoji_Face_Neutral.png")
+const FACE_SWEAT := preload("res://art/icon/emoji/Emoji_Face_Unhappy_Grossed_Out.png")
+const SATIETY_ICON := preload("res://art/icon/Sprites_Cropped/Food_Restaurant_Eating_Utensils_Plate_Fork_Knife.png")
+const SATIETY_ICON_RECT := Rect2(160, 18, 32, 24)
 
 @export var config: DemoConfig
 
@@ -80,9 +81,5 @@ func _draw() -> void:
 
 
 func _draw_satiety_icon(origin: Vector2) -> void:
-	# 原创16×16像素胃轮廓，按1.5倍整数像素块绘制；只传达状态，不提供点击行为。
-	var pixel := 1.5
-	var color := Color("86a9b8")
-	var points := [Vector2i(7,1),Vector2i(7,2),Vector2i(8,3),Vector2i(8,4),Vector2i(9,5),Vector2i(11,5),Vector2i(13,6),Vector2i(14,8),Vector2i(14,11),Vector2i(13,13),Vector2i(11,14),Vector2i(8,14),Vector2i(6,13),Vector2i(5,11),Vector2i(5,9),Vector2i(4,8),Vector2i(3,8),Vector2i(2,7),Vector2i(2,5),Vector2i(3,4),Vector2i(4,5),Vector2i(4,7),Vector2i(5,8),Vector2i(7,8),Vector2i(9,7),Vector2i(9,6),Vector2i(7,5),Vector2i(6,3)]
-	for point in points:
-		draw_rect(Rect2(origin + Vector2(point) * pixel, Vector2(pixel, pixel)), color)
+	# 原图16x12，按2倍整数倍率显示为32x24，避免像素模糊。
+	draw_texture_rect(SATIETY_ICON, Rect2(origin, Vector2(32, 24)), false)

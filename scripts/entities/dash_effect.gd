@@ -39,6 +39,9 @@ func setup(new_target: Node2D, direction: Vector2, duration: float, streak_lengt
 		tex.region = Rect2(index * FRAME_SIZE.x, 0, FRAME_SIZE.x, FRAME_SIZE.y)
 		frames.add_frame(&"dash", tex)
 	sprite = AnimatedSprite2D.new()
+	# Stable child name lets a 3D Dream scene register this short-lived visual
+	# with its existing depth bridge without introducing a second visual owner.
+	sprite.name = "DashTrailSprite"
 	sprite.sprite_frames = frames
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	sprite.animation_finished.connect(_on_animation_finished)

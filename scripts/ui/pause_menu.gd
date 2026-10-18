@@ -14,7 +14,7 @@ signal exit_to_main_menu_requested
 @onready var option_group: PixelOptionGroup = $Root/PauseOptionGroup
 @onready var title: Label = $Root/Panel/Layout/Title
 @onready var menu_buttons: VBoxContainer = $Root/Panel/Layout/MenuButtons
-@onready var settings_panel: UnifiedSettingsPanel = $Root/Panel/Layout/SettingsPanel
+@onready var settings_panel: Control = $Root/Panel/Layout/SettingsPanel
 @onready var settings_back: Button = $Root/Panel/Layout/SettingsBack
 
 var settings_open := false

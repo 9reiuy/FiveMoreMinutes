@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://drcggsk1tx5jh"]
+
+[ext_resource type="Script" uid="uid://cgfu5l2dw3fmj" path="res://scenes/dream/rooms/chair_01.gd" id="1_p0utv"]
+[ext_resource type="PackedScene" uid="uid://wut2aqnodrrw" path="res://scenes/dream/effects/shatter_piece.tscn" id="2_tb6j2"]
+[ext_resource type="Texture2D" uid="uid://db6lxcmlv1yh5" path="res://art/Dream/shadow.png" id="3_6innw"]
+[ext_resource type="Texture2D" uid="uid://cur60w2onhyrs" path="res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32.png" id="4_wh0dl"]
+[ext_resource type="Script" uid="uid://c1hu82nwl5nkd" path="res://scenes/dream/rooms/hurtbox.gd" id="5_eq17j"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jhsc8"]
+size = Vector2(18, 22)
+
+[node name="chair01" type="RigidBody2D" unique_id=1232704290 groups=["damageable_props", "pushable_prop"]]
+collision_layer = 8
+collision_mask = 15
+gravity_scale = 0.0
+angular_damp = 9.0
+linear_damp = 8.0
+script = ExtResource("1_p0utv")
+max_hp = 40.0
+furniture_size_category = 1
+shatter_piece_scene = ExtResource("2_tb6j2")
+shatter_size = 16
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=10031934]
+modulate = Color(0.96862745, 0.6313726, 0.6392157, 0.7411765)
+position = Vector2(-0.078178406, -10.073059)
+scale = Vector2(0.6298864, 0.62689096)
+texture = ExtResource("3_6innw")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=50785286]
+position = Vector2(0, -19)
+texture = ExtResource("4_wh0dl")
+region_enabled = true
+region_rect = Rect2(519, 340, 18, 38)
+region_filter_clip_enabled = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1477650467]
+light_mask = 8
+visibility_layer = 8
+position = Vector2(0, -12)
+shape = SubResource("RectangleShape2D_jhsc8")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1722244680 groups=["damage_hurtboxes"]]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("5_eq17j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=990538011]
+position = Vector2(0, -19.415)
+scale = Vector2(1, 1.7)
+shape = SubResource("RectangleShape2D_jhsc8")
+
+[node name="HitParticles" type="CPUParticles2D" parent="." unique_id=1454070631]
+modulate = Color(0.4, 0.30588236, 0.23529412, 1)
+self_modulate = Color(0.49411765, 0.39607844, 0.3254902, 1)
+position = Vector2(0, -33)
+emitting = false
+amount = 6
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+lifetime_randomness = 0.8
+spread = 180.0
+initial_velocity_min = 60.0
+initial_velocity_max = 120.0
+scale_amount_min = 1.5
+scale_amount_max = 5.0

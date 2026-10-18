@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=4 uid="uid://cu41nbddtcmqf"]
+
+[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres" id="1_dj6hf"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_m5n7u"]
+_surfaces = [{
+"aabb": AABB(-1.5, -1.96701e-07, -0.5, 3, 1e-05, 1),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEAAwAEAAEAAwAFAAQABgAEAAUABgAFAAcA"),
+"name": "Surface_Floor_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("//8AAP//AACqqjwCAAAAAP//PAIAAAAAqqoAAP//AABVVTwCAAAAAFVVAAD//wAAAAA8AgAAAAAAAAAA//8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_2b3bg"]
+resource_name = "Interiors_A_Floor_1x3_1Side"
+_surfaces = [{
+"aabb": AABB(-1.5, -1.96701e-07, -0.5, 3, 1e-05, 1),
+"attribute_data": PackedByteArray("//8AAKmqVVX//1VVqqoAAFRVVVVVVQAAAABVVQAAAAA="),
+"format": 34896613399,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEAAwAEAAEAAwAFAAQABgAEAAUABgAFAAcA"),
+"material": ExtResource("1_dj6hf"),
+"name": "Surface_Floor_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("//8AAP///z+qqjwCAAD/P///PAIAAP8/qqoAAP///z9VVTwCAAD/P1VVAAD///8/AAA8AgAA/z8AAAAA////P////3////9/////f////3////9/////f////3////9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_m5n7u")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_flo5k"]
+data = PackedVector3Array(-1.5, -1.09278e-07, -0.5, 1.5, -1.96701e-07, 0.5, -1.5, -1.96701e-07, 0.5, -1.5, -1.09278e-07, -0.5, 1.5, -1.09278e-07, -0.5, 1.5, -1.96701e-07, 0.5)
+
+[node name="Floor_1x3_1Side" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_2b3bg")
+skeleton = NodePath("")
+
+[node name="Floor_1x3_1Side" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor_1x3_1Side"]
+shape = SubResource("ConcavePolygonShape3D_flo5k")

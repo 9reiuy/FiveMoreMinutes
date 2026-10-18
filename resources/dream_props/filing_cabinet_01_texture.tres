@@ -1,0 +1,8 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://art/Dream/Post Apoc - Office 32x32 Grid/Office_Furniture_32x32.png" id="1_atlas"]
+
+[resource]
+atlas = ExtResource("1_atlas")
+region = Rect2(485, 131, 22, 60)
+filter_clip = true

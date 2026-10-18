@@ -3,9 +3,8 @@ extends Node2D
 
 const CONFIG := preload("res://resources/demo_config.tres")
 
-## 低成本世界光晕：正式敌人、弹丸和掉落物共用一个Additive/Unshaded
-## Material，不创建大量PointLight2D或独立GradientTexture。
-@export_enum("projectile", "pickup", "enemy") var profile := "projectile"
+## 低成本拾取物提示光晕；Projectile已彻底退出该系统。
+@export_enum("pickup", "enemy") var profile := "pickup"
 @export var glow_color := Color("6fa8c4")
 @export_range(0.0, 0.5, 0.01) var glow_alpha := 0.16
 @export_range(0.0, 128.0, 1.0) var glow_radius := 9.0
@@ -23,12 +22,10 @@ func _ready() -> void:
 		_shared_additive_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 		_shared_additive_material.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
 	material = _shared_additive_material
-	if profile == "pickup":
-		configure(glow_color if glow_color != Color("6fa8c4") else CONFIG.pickup_glow_color, CONFIG.pickup_glow_alpha, CONFIG.pickup_glow_radius)
-	elif profile == "enemy":
+	if profile == "enemy":
 		configure(CONFIG.player_light_color, 0.0, 0.0)
 	else:
-		configure(CONFIG.projectile_glow_color, CONFIG.projectile_glow_alpha, CONFIG.projectile_glow_radius)
+		configure(glow_color if glow_color != Color("6fa8c4") else CONFIG.pickup_glow_color, CONFIG.pickup_glow_alpha, CONFIG.pickup_glow_radius)
 	queue_redraw()
 
 

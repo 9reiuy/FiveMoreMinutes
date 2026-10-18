@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://shaders/dream3d/interiors_a_floor_pixel_light.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Floor_A/Surface_Floor_A_Diffuse_2K.png" id="2_floor_a"]
+
+[resource]
+resource_name = "Interiors A Floor A pixel lighting"
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/albedo_texture = ExtResource("2_floor_a")
+shader_parameter/surface_tint = Color(1.32, 1.36, 1.48, 1)
+shader_parameter/texture_contrast = 0.45
+shader_parameter/roughness = 1.0

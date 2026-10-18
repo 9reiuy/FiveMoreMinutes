@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://01untavj4x8u"
+path="res://.godot/imported/mesh_sticker_parcel_box_01.obj-2f88afcee1c76cf683fc4f9dff702d7e.mesh"
+
+[deps]
+
+files=["res://.godot/imported/mesh_sticker_parcel_box_01.obj-2f88afcee1c76cf683fc4f9dff702d7e.mesh"]
+
+source_file="res://art/Dream/3d_props/mesh_sticker_parcel_box_01.obj"
+dest_files=["res://.godot/imported/mesh_sticker_parcel_box_01.obj-2f88afcee1c76cf683fc4f9dff702d7e.mesh", "res://.godot/imported/mesh_sticker_parcel_box_01.obj-2f88afcee1c76cf683fc4f9dff702d7e.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

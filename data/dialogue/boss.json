@@ -1,0 +1,10 @@
+{
+  "dialogues": [
+    {
+      "id": "boss_placeholder",
+      "lines": [
+        {"speaker": "system", "text": "……", "typewriter_speed": 0.08, "pre_delay": 0.5, "post_delay": 1.0, "text_color": "#D84B56", "blip": false}
+      ]
+    }
+  ]
+}

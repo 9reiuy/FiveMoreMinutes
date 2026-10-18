@@ -1,0 +1,70 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/dream/rooms/chair_01.gd" id="1_prop"]
+[ext_resource type="Script" path="res://scenes/dream/rooms/hurtbox.gd" id="2_hurtbox"]
+[ext_resource type="PackedScene" path="res://scenes/dream/effects/shatter_piece.tscn" id="3_shatter"]
+[ext_resource type="Texture2D" path="res://art/Dream/things/jiaju.png" id="4_texture"]
+[ext_resource type="Texture2D" path="res://art/Dream/shadow.png" id="5_shadow"]
+
+[sub_resource type="RectangleShape2D" id="BodyShape"]
+size = Vector2(14, 10)
+
+[sub_resource type="RectangleShape2D" id="HurtShape"]
+size = Vector2(18, 16)
+
+[node name="ParcelBox01" type="RigidBody2D" groups=["damageable_props", "pushable_prop"]]
+editor_description = "jiaju.png 普通快递盒；小型方形地面占地。"
+collision_layer = 8
+collision_mask = 15
+mass = 0.8
+gravity_scale = 0.0
+angular_damp = 9.0
+linear_damp = 7.0
+script = ExtResource("1_prop")
+max_hp = 20.0
+furniture_size_category = 1
+vaultable = true
+bullet_knockback = 105.0
+shatter_piece_scene = ExtResource("3_shatter")
+shatter_size = 8
+
+[node name="Shadow" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.42)
+z_index = -1
+position = Vector2(0, -4)
+scale = Vector2(0.52, 0.32)
+texture = ExtResource("5_shadow")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -8)
+texture = ExtResource("4_texture")
+region_enabled = true
+region_rect = Rect2(230, 96, 18, 16)
+region_filter_clip_enabled = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -5)
+shape = SubResource("BodyShape")
+
+[node name="Hurtbox" type="Area2D" parent="." groups=["damage_hurtboxes"]]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("2_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -8)
+shape = SubResource("HurtShape")
+
+[node name="HitParticles" type="CPUParticles2D" parent="."]
+position = Vector2(0, -8)
+emitting = false
+amount = 4
+lifetime = 0.45
+one_shot = true
+explosiveness = 1.0
+lifetime_randomness = 0.8
+spread = 180.0
+initial_velocity_min = 60.0
+initial_velocity_max = 115.0
+scale_amount_max = 2.5

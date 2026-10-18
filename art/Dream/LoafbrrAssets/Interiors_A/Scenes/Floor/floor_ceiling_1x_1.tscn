@@ -1,0 +1,70 @@
+[gd_scene load_steps=6 format=3 uid="uid://cdm4wli1s8o1i"]
+
+[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres" id="1_eo31l"]
+[ext_resource type="Material" uid="uid://k107765ilw3v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_B_Mat.tres" id="2_klcd1"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_fawep"]
+_surfaces = [{
+"aabb": AABB(-0.5, -1.96701e-07, -0.5, 1, 1e-05, 1),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface_Floor_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 0, 0, 255, 255, 0, 0, 0, 0, 60, 2, 0, 0, 0, 0, 255, 255, 60, 2, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0)
+}, {
+"aabb": AABB(-0.5, 2.8, -0.5, 1, 1e-05, 1),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface_Ceiling_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 0, 0, 255, 255, 0, 0, 0, 0, 26, 6, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 255, 255, 26, 6, 0, 0, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_pesjp"]
+resource_name = "Interiors_A_FloorCeiling_1x1"
+_surfaces = [{
+"aabb": AABB(-0.5, -1.96701e-07, -0.5, 1, 1e-05, 1),
+"attribute_data": PackedByteArray(255, 255, 0, 0, 169, 170, 85, 85, 255, 255, 85, 85, 170, 170, 0, 0),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"material": ExtResource("1_eo31l"),
+"name": "Surface_Floor_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 0, 0, 255, 255, 255, 63, 0, 0, 60, 2, 0, 0, 255, 63, 255, 255, 60, 2, 0, 0, 255, 63, 0, 0, 0, 0, 255, 255, 255, 63, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127)
+}, {
+"aabb": AABB(-0.5, 2.8, -0.5, 1, 1e-05, 1),
+"attribute_data": PackedByteArray(255, 255, 0, 0, 169, 170, 85, 85, 170, 170, 0, 0, 255, 255, 85, 85),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"material": ExtResource("2_klcd1"),
+"name": "Surface_Ceiling_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 0, 0, 255, 255, 255, 191, 0, 0, 26, 6, 0, 0, 255, 191, 0, 0, 0, 0, 255, 255, 255, 191, 255, 255, 26, 6, 0, 0, 255, 191, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_fawep")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_pb67x"]
+data = PackedVector3Array(-0.5, 2.8, 0.5, 0.5, 2.8, 0.5, 0.5, 2.8, -0.5, 0.5, -1.09278e-07, -0.5, 0.5, -1.96701e-07, 0.5, -0.5, -1.96701e-07, 0.5, -0.5, 2.8, 0.5, 0.5, 2.8, -0.5, -0.5, 2.8, -0.5, 0.5, -1.09278e-07, -0.5, -0.5, -1.96701e-07, 0.5, -0.5, -1.09278e-07, -0.5)
+
+[node name="FloorCeiling_1x1" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_pesjp")
+skeleton = NodePath("")
+
+[node name="FloorCeiling_1x1" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorCeiling_1x1"]
+shape = SubResource("ConcavePolygonShape3D_pb67x")

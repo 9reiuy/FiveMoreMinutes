@@ -11,6 +11,9 @@ enum ScreenState { LOCKED, HOME, ONLINE, QUICKLINK, SETTINGS }
 
 signal balance_changed
 signal state_changed
+signal open_requested(page: StringName)
+signal external_close_requested
+signal external_story_effect_requested(effect: StringName)
 
 const FINGERPRINT_AREA := Rect2(54, 220, 52, 52)
 const BACK_BUTTON := Rect2(14, 40, 48, 22)
@@ -29,8 +32,6 @@ const ONLINE_BOTTOM_PADDING := 12.0
 const SETTINGS_MASTER_SLIDER := Rect2(16, 92, 128, 22)
 const SETTINGS_MUSIC_SLIDER := Rect2(16, 137, 128, 22)
 const SETTINGS_SFX_SLIDER := Rect2(16, 182, 128, 22)
-const SETTINGS_SLEEPWALK := Rect2(16, 222, 128, 26)
-const SETTINGS_FAST_SLEEP := Rect2(16, 254, 128, 26)
 const APP_IDS := ["online", "quicklink", "settings"]
 const APP_NAMES := [
 	["在线！™", "ONLINE!™"],
@@ -62,10 +63,11 @@ var bedroom_time_minutes := 1260.0
 var movement_tween: Tween
 var hovered_app_index := -1
 var hovered_phone_action := ""
-var phone_option_triangle_elapsed := 0.0
 # 手机静止基准位置：所有震动坐标都基于它计算，不基于当前 position 累计加减，
 # 保证震动结束后准确恢复原位，不会越震越偏。
 var phone_rest_position := Vector2.ZERO
+var external_ui_enabled := false
+var external_ui_active := false
 var page_drag_candidate := false
 var page_drag_active := false
 var page_drag_start_y := 0.0
@@ -113,7 +115,7 @@ func _ready() -> void:
 	settings_scrollbar.page = app_content_height
 	screen_state = ScreenState.LOCKED if config.phone_lock_on_bedroom_entry else ScreenState.HOME
 	phone_rest_position = Vector2(config.phone_position_x, config.phone_collapsed_y)
-	messages = _load_array("res://resources/phone_messages.json", "messages")
+	messages = TextContent.get_initial_phone_messages()
 	quicklink_items = _load_array("res://resources/quicklink_items.json", "items")
 	mouse_exited.connect(_clear_app_hover)
 	SettingsManager.setting_changed.connect(_on_setting_changed)
@@ -126,7 +128,7 @@ func _ready() -> void:
 func configure_state(meta: Dictionary) -> void:
 	persistent_state = meta
 	if not persistent_state.has("online_messages"):
-		var message_templates := messages if not messages.is_empty() else _load_array("res://resources/phone_messages.json", "messages")
+		var message_templates := messages if not messages.is_empty() else TextContent.get_phone_message_templates()
 		persistent_state.online_messages = message_templates.duplicate(true)
 	_merge_online_templates()
 	_migrate_online_message_schema()
@@ -151,9 +153,6 @@ func set_bedroom_time(total_minutes: float) -> void:
 
 
 func _process(delta: float) -> void:
-	if not hovered_phone_action.is_empty():
-		phone_option_triangle_elapsed += delta
-		queue_redraw()
 	var battery_ratio := _get_battery_ratio()
 	if not is_equal_approx(battery_ratio, last_battery_ratio):
 		last_battery_ratio = battery_ratio
@@ -168,11 +167,12 @@ func _process(delta: float) -> void:
 func _clear_app_hover() -> void:
 	hovered_app_index = -1
 	hovered_phone_action = ""
-	phone_option_triangle_elapsed = 0.0
 	queue_redraw()
 
 
 func force_collapse() -> void:
+	if external_ui_enabled and external_ui_active:
+		external_close_requested.emit()
 	if movement_tween != null and movement_tween.is_valid():
 		movement_tween.kill()
 	position.y = config.phone_collapsed_y
@@ -181,15 +181,37 @@ func force_collapse() -> void:
 
 
 func blocks_bedroom_interaction() -> bool:
-	return state != PhoneState.COLLAPSED
+	return external_ui_active or state != PhoneState.COLLAPSED
 
 
 func is_fully_collapsed() -> bool:
-	return state == PhoneState.COLLAPSED and is_equal_approx(position.y, config.phone_collapsed_y)
+	return not external_ui_active and state == PhoneState.COLLAPSED and is_equal_approx(position.y, config.phone_collapsed_y)
+
+
+func set_external_ui_enabled(enabled: bool) -> void:
+	external_ui_enabled = enabled
+	if enabled:
+		force_collapse()
+		size.x = 56.0
+		$PhoneShell.hide()
+		screen_clip.hide()
+	else:
+		size.x = config.phone_panel_width
+		$PhoneShell.show()
+		screen_clip.show()
+	queue_redraw()
+
+
+func set_external_ui_active(active: bool) -> void:
+	external_ui_active = active
+	queue_redraw()
 
 
 func open_quicklink_from_bedroom() -> void:
 	if interaction_locked:
+		return
+	if external_ui_enabled:
+		open_requested.emit(&"shop")
 		return
 	screen_state = ScreenState.QUICKLINK
 	_sync_content_visibility()
@@ -258,7 +280,6 @@ func _gui_input(event: InputEvent) -> void:
 			SFX.play_event(&"ui_hover")
 		if next_action != hovered_phone_action:
 			hovered_phone_action = next_action
-			phone_option_triangle_elapsed = 0.0
 			queue_redraw()
 		if next_hovered != hovered_app_index:
 			hovered_app_index = next_hovered
@@ -270,6 +291,9 @@ func _gui_input(event: InputEvent) -> void:
 	if interaction_locked:
 		return
 	if state == PhoneState.COLLAPSED:
+		if external_ui_enabled:
+			open_requested.emit(&"home")
+			return
 		_animate_phone(true)
 		return
 	if state != PhoneState.EXPANDED:
@@ -425,7 +449,8 @@ func _build_online_messages() -> void:
 		var history_gray := not deleted and int(message.get("received_day_id", 0)) < int(persistent_state.get("calendar_day_id", 0))
 		var category := Label.new()
 		# 被删除的北方时报消息：作者名（分类）改为"匿名"。
-		category.text = "匿名" if deleted else str(message.get("category", "消息"))
+		var deleted_author: Dictionary = TextContent.get_dialogue(&"phone_deleted_author").get("lines", [{}])[0]
+		category.text = str(deleted_author.get("text", "")) if deleted else str(message.get("category", "消息"))
 		category.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		category.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		category.add_theme_font_size_override("font_size", 9 if not deleted else 7)
@@ -439,7 +464,8 @@ func _build_online_messages() -> void:
 		header.add_child(category)
 		header.add_child(date)
 		var body := Label.new()
-		body.text = "该信息已被创作者删除" if deleted else str(message.get("text", ""))
+		var deleted_line: Dictionary = TextContent.get_dialogue(&"phone_deleted_message").get("lines", [{}])[0]
+		body.text = str(deleted_line.get("text", "")) if deleted else str(message.get("text", ""))
 		body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		body.custom_minimum_size.x = content_width
 		body.add_theme_font_size_override("font_size", 7 if deleted else 9)
@@ -455,7 +481,7 @@ func _build_online_messages() -> void:
 		separator.modulate = Color(0.4, 0.4, 0.45, 0.4)
 		message_list.add_child(separator)
 	var ending := Label.new()
-	ending.text = "这里是宇宙尽头"
+	ending.text = str(TextContent.get_dialogue(&"phone_message_list_end").get("lines", [{}])[0].get("text", ""))
 	ending.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ending.add_theme_font_size_override("font_size", 8)
 	ending.modulate = Color("5f626c")
@@ -493,6 +519,9 @@ func _on_message_card_input(event: InputEvent, message: Dictionary) -> void:
 ## 播放一次全屏 glitch 效果（<1 秒），覆盖整个游戏画面后自动消失，
 ## 同时触发短暂的屏幕震动。
 func _play_screen_glitch(duration: float = 0.4) -> void:
+	if external_ui_enabled:
+		external_story_effect_requested.emit(&"phone_message_glitch")
+		return
 	var layer := get_parent()  # PhoneLayer（CanvasLayer）
 	if layer == null:
 		return
@@ -608,8 +637,6 @@ func _phone_action_at(point: Vector2) -> String:
 		if SETTINGS_MASTER_SLIDER.has_point(content_point): return "settings_master"
 		if SETTINGS_MUSIC_SLIDER.has_point(content_point): return "settings_music"
 		if SETTINGS_SFX_SLIDER.has_point(content_point): return "settings_sfx"
-		if SETTINGS_SLEEPWALK.has_point(content_point): return "settings_sleepwalk"
-		if SETTINGS_FAST_SLEEP.has_point(content_point): return "settings_fast_sleep"
 	# 内容层优先：点到内容返回空动作；只有点到手机顶部 1/3 的背景空白处
 	# 才返回 collapse，下方 2/3 完全不触发收起。
 	if _is_content_point(point):
@@ -632,10 +659,6 @@ func _update_phone_setting(point: Vector2) -> void:
 		SettingsManager.set_volume(&"music_volume", _slider_percent(SETTINGS_MUSIC_SLIDER, point.x))
 	elif SETTINGS_SFX_SLIDER.has_point(point):
 		SettingsManager.set_volume(&"sfx_volume", _slider_percent(SETTINGS_SFX_SLIDER, point.x))
-	elif SETTINGS_SLEEPWALK.has_point(point):
-		SettingsManager.set_sleepwalk_mode(not SettingsManager.get_sleepwalk_mode())
-	elif SETTINGS_FAST_SLEEP.has_point(point):
-		SettingsManager.set_fast_sleep_enabled(not SettingsManager.get_fast_sleep_enabled())
 
 
 func _activate_scrolled_page_point(point: Vector2) -> void:
@@ -658,6 +681,12 @@ func _on_phone_page_scrolled(_value: float) -> void:
 
 
 func _animate_phone(expand: bool) -> void:
+	if external_ui_enabled:
+		if expand:
+			open_requested.emit(&"home")
+		else:
+			external_close_requested.emit()
+		return
 	if state == PhoneState.EXPANDING or state == PhoneState.COLLAPSING:
 		return
 	state = PhoneState.EXPANDING if expand else PhoneState.COLLAPSING
@@ -698,7 +727,8 @@ func _load_array(path: String, key: String) -> Array:
 
 func _merge_online_templates() -> void:
 	var existing: Array = persistent_state.get("online_messages", [])
-	var templates := _load_array("res://resources/phone_messages.json", "messages")
+	var templates := TextContent.get_phone_message_templates()
+	var initial_templates := TextContent.get_initial_phone_messages()
 	for message in existing:
 		if not message is Dictionary:
 			continue
@@ -715,7 +745,7 @@ func _merge_online_templates() -> void:
 				break
 		if not str(message.get("id", "")).is_empty():
 			known_ids[str(message.id)] = true
-	for template in templates:
+	for template in initial_templates:
 		if template is Dictionary and not known_ids.has(str(template.get("id", ""))):
 			existing.append(template.duplicate(true))
 	persistent_state.online_messages = existing
@@ -816,6 +846,14 @@ func _flash_balance() -> void:
 
 
 func _draw() -> void:
+	if external_ui_enabled:
+		if not external_ui_active:
+			draw_rect(Rect2(0, 0, 56, 17), Color("172a43"))
+			draw_rect(Rect2(0.5, 0.5, 55, 16), Color("879aaf"), false, 1)
+			draw_rect(Rect2(6, 4, 6, 9), Color("c6d2de"), false, 1)
+			draw_line(Vector2(8, 11), Vector2(10, 11), Color("c6d2de"), 1)
+			draw_string(PixelFont.get_font(), Vector2(20, 12), "手机", HORIZONTAL_ALIGNMENT_LEFT, 32, 9, Color("dce3ed"))
+		return
 	# Phone.png is drawn by the input-ignoring PhoneShell child behind this runtime content.
 	# 屏幕内的全部内容改由 ScreenClip 画布绘制并严格裁剪在手机屏幕区内，
 	# 手机本体只绘制屏幕外底部下巴（屏幕底边 325 以下）的 home 指示条。
@@ -839,7 +877,7 @@ func _draw_screen(canvas: CanvasItem) -> void:
 # 速联跑腿™ 只在此绘制共用的顶部返回按钮与标题；商品列表由
 # QuicklinkScroll/QuicklinkContent 自绘（支持滚动）。
 func _draw_quicklink_header(canvas: CanvasItem, font: Font) -> void:
-	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "速联跑腿™", "QUICKLINK™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size, phone_option_triangle_elapsed)
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "速联跑腿™", "QUICKLINK™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
 
 
 func _draw_lock_screen(canvas: CanvasItem, font: Font) -> void:
@@ -940,7 +978,7 @@ func _draw_app_icon(canvas: CanvasItem, rect: Rect2, chinese: String, english: S
 
 
 func _draw_online(canvas: CanvasItem, font: Font) -> void:
-	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "在线！™", "ONLINE!™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size, phone_option_triangle_elapsed)
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "在线！™", "ONLINE!™", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
 
 
 func _draw_settings(canvas: CanvasItem, font: Font) -> void:
@@ -948,27 +986,8 @@ func _draw_settings(canvas: CanvasItem, font: Font) -> void:
 	_draw_phone_slider(canvas, font, "总音量", &"master_volume", SETTINGS_MASTER_SLIDER)
 	_draw_phone_slider(canvas, font, "音乐", &"music_volume", SETTINGS_MUSIC_SLIDER)
 	_draw_phone_slider(canvas, font, "音效", &"sfx_volume", SETTINGS_SFX_SLIDER)
-	var enabled := SettingsManager.get_sleepwalk_mode()
-	# 开关项：16bit 像素斜面底 + 方块指示灯，命中矩形不变。
-	var sleepwalk_hovered := hovered_phone_action == "settings_sleepwalk"
-	canvas.draw_rect(SETTINGS_SLEEPWALK, Color("000000") if enabled and sleepwalk_hovered else (Color("1b2b3d") if enabled else Color("151d27")))
-	canvas.draw_line(SETTINGS_SLEEPWALK.position, SETTINGS_SLEEPWALK.position + Vector2(SETTINGS_SLEEPWALK.size.x, 0), Color("3e627a") if enabled else Color("26323d"), 1.0)
-	canvas.draw_line(SETTINGS_SLEEPWALK.position + Vector2(0, SETTINGS_SLEEPWALK.size.y - 1), SETTINGS_SLEEPWALK.end, Color("0a0e15"), 1.0)
-	canvas.draw_rect(Rect2(SETTINGS_SLEEPWALK.position + Vector2(5, 7), Vector2(12, 12)), Color("4fb3c9") if enabled else Color("252933"))
-	canvas.draw_rect(Rect2(SETTINGS_SLEEPWALK.position + Vector2(5, 7), Vector2(12, 12)), Color("8fd0de") if enabled else Color("38424c"), false, 1.0)
-	canvas.draw_string(font, SETTINGS_SLEEPWALK.position + Vector2(23, 17), "梦游模式  %s" % ("ON" if enabled else "OFF"), HORIZONTAL_ALIGNMENT_LEFT, 98, 9, Color("cfe0e7") if enabled else Color("8fa0a9"))
-
-
-	var fast_sleep_enabled := SettingsManager.get_fast_sleep_enabled()
-	var fast_sleep_hovered := hovered_phone_action == "settings_fast_sleep"
-	canvas.draw_rect(SETTINGS_FAST_SLEEP, Color("000000") if fast_sleep_enabled and fast_sleep_hovered else (Color("1b2b3d") if fast_sleep_enabled else Color("151d27")))
-	canvas.draw_line(SETTINGS_FAST_SLEEP.position, SETTINGS_FAST_SLEEP.position + Vector2(SETTINGS_FAST_SLEEP.size.x, 0), Color("3e627a") if fast_sleep_enabled else Color("26323d"), 1.0)
-	canvas.draw_line(SETTINGS_FAST_SLEEP.position + Vector2(0, SETTINGS_FAST_SLEEP.size.y - 1), SETTINGS_FAST_SLEEP.end, Color("0a0e15"), 1.0)
-	canvas.draw_rect(Rect2(SETTINGS_FAST_SLEEP.position + Vector2(5, 7), Vector2(12, 12)), Color("4fb3c9") if fast_sleep_enabled else Color("252933"))
-	canvas.draw_rect(Rect2(SETTINGS_FAST_SLEEP.position + Vector2(5, 7), Vector2(12, 12)), Color("8fd0de") if fast_sleep_enabled else Color("38424c"), false, 1.0)
-	canvas.draw_string(font, SETTINGS_FAST_SLEEP.position + Vector2(23, 17), "快速睡觉  %s" % ("ON" if fast_sleep_enabled else "OFF"), HORIZONTAL_ALIGNMENT_LEFT, 98, 9, Color("cfe0e7") if fast_sleep_enabled else Color("8fa0a9"))
 	canvas.draw_set_transform(-screen_clip.position)
-	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "设置", "SETTINGS", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size, phone_option_triangle_elapsed)
+	PhoneShopUI.draw_app_header(canvas, SCREEN_RECT, BACK_BUTTON, get_local_mouse_position(), "设置", "SETTINGS", font, config.phone_app_chinese_title_font_size, config.phone_app_english_title_font_size)
 
 
 func _draw_phone_slider(canvas: CanvasItem, font: Font, label_text: String, setting_name: StringName, rect: Rect2) -> void:

@@ -1,0 +1,33 @@
+{
+  "root": "E:\\Agent\\5MinuteMore\\5min more",
+  "files": [
+    {
+      "relative": "art/Badroom/button.png",
+      "bytes": 52526,
+      "modified_ms": 1788319363487.391,
+      "reason": "unreferenced_exact_duplicate_with_retained_original"
+    },
+    {
+      "relative": "art/Badroom/button.png.import",
+      "bytes": 934,
+      "modified_ms": 1788319375364.4443,
+      "reason": "unreferenced_exact_duplicate_with_retained_original"
+    },
+    {
+      "relative": "art/ui_imported/button_panel.png",
+      "bytes": 13811,
+      "modified_ms": 1786174772178.406,
+      "reason": "unreferenced_exact_duplicate_with_retained_original"
+    },
+    {
+      "relative": "art/ui_imported/button_panel.png.import",
+      "bytes": 956,
+      "modified_ms": 1786174784474.319,
+      "reason": "unreferenced_exact_duplicate_with_retained_original"
+    }
+  ],
+  "retained": [
+    "art/Badroom/talk.png",
+    "art/ui_imported/talk_panel.png"
+  ]
+}

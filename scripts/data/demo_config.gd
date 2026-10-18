@@ -2,6 +2,12 @@ class_name DemoConfig
 extends Resource
 
 ## All vertical-slice tuning lives here so later balancing does not touch gameplay code.
+@export_group("Player Vision")
+## Alpha of the black world overlay outside the combined circle/cone visibility.
+@export_range(0.0, 0.8, 0.01) var vision_darkness_alpha: float = 0.52
+## Width of the black-alpha falloff at the circle and visibility-polygon edges.
+@export_range(0.0, 128.0, 1.0) var vision_edge_softness_px: float = 32.0
+
 @export_group("Dream Clock")
 @export var dream_start_minutes: float = 240.0
 @export var alarm_start_minutes: float = 360.0
@@ -14,41 +20,161 @@ extends Resource
 ## 每个生成周期独立尝试批次数量；合法点不足时生成器允许少生成。
 @export var maximum_enemies: int = 110
 @export var enemy_spawn_count_per_interval: int = 2
-@export var base_enemy_health: float = 18.0
-@export var base_enemy_damage: float = 8.0
-@export var base_enemy_movement_speed: float = 42.0
-@export var enemy_health_growth_per_second: float = 0.018
+## All newly spawned Enemy gameplay actors use this fixed health baseline.
+## Difficulty no longer inflates HP; combat tuning remains in damage/AI values.
+@export var base_enemy_health: float = 10.0
+@export var enemy_health_growth_per_second: float = 0.0
 @export var enemy_damage_growth_per_second: float = 0.012
 @export var enemy_minimum_spawn_distance: float = 150.0
 @export var enemy_spawn_minimum_spacing: float = 30.0
 @export var enemy_spawn_position_max_retries: int = 12
+## Employee 是正式 Dream 中唯一普通敌人。剧情模式按全地牢人口逐只补充，
+## 且只选择非当前、非 Start、当前相机不可见的已生成房间。
+@export_range(1, 40, 1) var employee_global_population_target: int = 30
+@export_range(1, 3, 1) var employee_population_refill_batch: int = 3
+@export_range(0.25, 15.0, 0.25) var employee_population_refill_interval: float = 3.0
+@export_range(1, 50, 1) var employee_xp_value: int = 5
+@export_range(20.0, 200.0, 1.0) var employee_movement_speed: float = 100.0
+@export_range(1.0, 3.0, 0.05) var employee_run_speed_multiplier: float = 1.6
+
+@export_group("Enemy Perception")
+## Enemy视觉最大距离。它只负责廉价的候选筛选，不能代替FOV或LOS。
+@export_range(64.0, 800.0, 1.0) var employee_vision_range: float = 360.0
+## Enemy视觉扇形角度；真正发现Player还必须通过正式Gameplay墙/门LOS。
+@export_range(30.0, 360.0, 1.0) var employee_vision_fov_degrees: float = 120.0
+## Enemy枪声/破门声听觉半径。
+@export_range(100.0, 1500.0, 10.0) var employee_sound_hearing_range: float = 700.0
+## 感知检查频率。每个Enemy会以实例ID派生的相位错开检查时刻。
+@export_range(0.05, 0.5, 0.01) var employee_vision_update_interval: float = 0.10
+
+@export_range(0.1, 8.0, 0.05) var employee_wander_pause_min: float = 0.35
+@export_range(0.1, 8.0, 0.05) var employee_wander_pause_max: float = 0.85
+@export_range(0.1, 5.0, 0.05) var employee_weapon_search_interval: float = 0.30
+@export_range(12.0, 80.0, 1.0) var employee_weapon_pickup_radius: float = 28.0
+@export_range(0.05, 1.0, 0.01) var employee_weapon_pickup_pause: float = 0.12
+@export_range(40.0, 300.0, 1.0) var employee_flee_distance: float = 120.0
+## AI目标一旦选定会短暂保持；只有持续低位移才触发重规划，避免家具边缘上下震荡。
+@export_range(0.1, 2.0, 0.05) var employee_decision_cooldown: float = 0.30
+@export_range(0.1, 2.0, 0.05) var employee_steering_commit_time: float = 0.40
+@export_range(0.2, 3.0, 0.05) var employee_stuck_detection_seconds: float = 0.55
+@export_range(0.1, 16.0, 0.1) var employee_stuck_distance_threshold: float = 2.5
+## Neutral employees occasionally leave their current room after several wander points.
+@export_range(0.0, 1.0, 0.01) var employee_room_travel_chance: float = 0.18
+@export_range(1.0, 20.0, 0.25) var employee_room_travel_cooldown_min: float = 4.0
+@export_range(1.0, 30.0, 0.25) var employee_room_travel_cooldown_max: float = 8.0
+## A local gunshot keeps neutral employees fleeing long enough to cross an open door.
+@export_range(0.5, 12.0, 0.25) var employee_gunshot_flee_duration: float = 5.0
+@export_range(0.25, 4.0, 0.25) var employee_gunshot_recovery_duration: float = 1.25
+## Neutral惊恐只在进入一次panic决策时Roll一次；持枪者改为调查枪声。
+@export_range(0.0, 1.0, 0.01) var employee_panic_counterattack_chance: float = 0.20
+@export_range(0.25, 8.0, 0.25) var employee_gunshot_investigate_duration: float = 2.5
+@export_range(1.0, 40.0, 1.0) var employee_unarmed_punch_damage: float = 6.0
+@export_range(1.0, 40.0, 1.0) var employee_unarmed_kick_damage: float = 10.0
+@export_range(12.0, 64.0, 1.0) var employee_unarmed_attack_range: float = 30.0
+@export_range(0.15, 1.5, 0.05) var employee_unarmed_attack_interval: float = 0.45
+@export_range(0.2, 4.0, 0.05) var employee_attack_strafe_min_seconds: float = 0.55
+@export_range(0.2, 4.0, 0.05) var employee_attack_strafe_max_seconds: float = 1.20
+## 首次进入敌对状态后仍保留短暂可读反应，不允许同一帧精准开火。
+@export_range(0.05, 1.0, 0.01) var employee_reaction_time_min: float = 0.20
+@export_range(0.05, 1.0, 0.01) var employee_reaction_time_max: float = 0.40
+## 每次正式Attack Action独立扰动间隔，避免同武器敌人整齐齐射。
+@export_range(0.0, 0.4, 0.01) var employee_attack_cadence_jitter_ratio: float = 0.12
+@export_range(8.0, 96.0, 1.0) var employee_door_approach_distance: float = 34.0
+@export_range(4.0, 64.0, 1.0) var employee_door_transit_distance: float = 14.0
+@export_range(16.0, 128.0, 1.0) var employee_door_exit_distance: float = 44.0
+@export_range(0.0, 1.0, 0.01) var employee_kick_knockdown_chance: float = 0.35
+@export_range(0.1, 4.0, 0.05) var employee_knockdown_duration: float = 1.2
+@export_range(0.1, 1.5, 0.05) var employee_get_up_duration: float = 0.4
+@export_range(20.0, 600.0, 10.0) var employee_knockdown_knockback_force: float = 210.0
+@export_range(20.0, 600.0, 10.0) var employee_knockdown_weapon_drop_force: float = 160.0
+@export_range(1.01, 3.0, 0.05) var employee_knockdown_weapon_force_multiplier: float = 1.75
+@export_range(20.0, 240.0, 5.0) var employee_knockdown_launch_velocity: float = 90.0
+@export_range(50.0, 800.0, 10.0) var employee_knockdown_fake_gravity: float = 300.0
+## Employee在真正执行一次攻击时才采样误差；这是静止、首发时的总散布角。
+@export_range(0.0, 180.0, 1.0) var employee_weapon_spread_degrees: float = 12.0
+## Enemy自身或Player高速移动时增加的最大总散布角。
+@export_range(0.0, 90.0, 1.0) var employee_movement_spread_degrees: float = 10.0
+## 同一连续射击段中，每次Attack Action追加的总散布角。
+@export_range(0.0, 30.0, 0.5) var employee_burst_spread_step_degrees: float = 3.0
+@export_range(0, 8, 1) var employee_burst_spread_max_steps: int = 3
+@export_range(0.1, 2.0, 0.05) var employee_burst_reset_seconds: float = 0.55
+## 同一物理帧内多颗霰弹命中同一Employee时只生成一份视觉反馈，伤害仍逐颗结算。
+@export_range(0.0, 0.25, 0.005) var projectile_impact_feedback_min_interval: float = 0.04
+## Bosses share the same fixed Enemy HP authority for this ruleset.
+@export_range(0.5, 20.0, 0.5) var employee_boss_health_multiplier: float = 1.0
+## 房间模式中先显示地面预警，再真正实例化敌人。
+@export_range(0.1, 3.0, 0.05) var room_spawn_warning_duration: float = 0.9
+@export_range(32.0, 256.0, 4.0) var employee_sky_drop_height: float = 96.0
+@export_range(50.0, 1200.0, 10.0) var employee_sky_drop_gravity: float = 520.0
+## 剧情房间不读取Day数值曲线：所有敌人只在各自基础HP上乘该值，伤害保持基础值。
+## 通用剧情敌人/Boss 的生命倍率保持独立；普通 Employee 使用下方专用倍率。
+@export_range(1.0, 10.0, 0.1) var story_enemy_health_multiplier: float = 1.0
+## 普通 Employee 与其它正式 Enemy 共用 10 HP，不再叠加剧情倍率。
+@export_range(1.0, 10.0, 0.1) var story_employee_health_multiplier: float = 1.0
+## Room战斗数据：上限仍作为全局Population分配的安全上限；正式房间不再
+## 使用按尺寸硬编码的首批敌人数。
+@export_range(1, 40, 1) var large_room_enemy_cap: int = 20
+@export_range(1, 30, 1) var medium_room_enemy_cap: int = 10
+@export_range(1, 20, 1) var small_room_enemy_cap: int = 10
+## Phase 7：正式房间人口只由全局Population目标驱动；以下参数把全局人口
+## 分配到房间可承载的密度，避免小房间被塞满，同时保留房间节奏差异。
+@export_group("Room Density & Pacing")
+@export_range(0.1, 2.0, 0.05) var employee_room_density_per_10000_px: float = 1.15
+@export_range(0.0, 1.0, 0.05) var employee_room_furniture_capacity_penalty: float = 0.15
+@export_range(0.0, 2.0, 0.1) var employee_room_door_capacity_bonus: float = 0.5
+@export_range(1, 8, 1) var employee_room_minimum_capacity: int = 2
+@export_range(0.1, 5.0, 0.25) var employee_room_breathing_seconds: float = 2.25
+@export_range(0.25, 1.5, 0.05) var employee_small_room_density_multiplier: float = 0.75
+@export_range(0.25, 1.5, 0.05) var employee_medium_room_density_multiplier: float = 0.9
+@export_range(0.25, 1.5, 0.05) var employee_large_room_density_multiplier: float = 1.0
+@export_range(0.0, 1.0, 0.05) var employee_ground_weapon_room_chance: float = 0.35
+@export var employee_room_pacing_weights: Dictionary = {
+	"combat": 0.42,
+	"transition": 0.18,
+	"ambush": 0.10,
+	"furniture_heavy": 0.12,
+	"gun_heavy": 0.10,
+	"melee_heavy": 0.08,
+}
+## Deprecated compatibility fields. They are no longer read by Dream RoomManager.
+@export_range(1, 20, 1) var large_room_initial_enemy_count: int = 24
+@export_range(1, 10, 1) var medium_room_initial_enemy_count: int = 16
+@export_range(1, 10, 1) var small_room_initial_enemy_count: int = 12
+@export_range(5, 20, 1) var dungeon_room_count: int = 8
+@export_range(2, 8, 1) var dungeon_boss_min_depth: int = 4
+@export_range(0.0, 1.0, 0.01) var dungeon_loop_connection_chance: float = 0.28
+@export_range(0.25, 15.0, 0.25) var dungeon_population_refill_interval: float = 3.0
+@export_range(1, 10, 1) var dungeon_population_refill_batch: int = 3
+@export_range(32.0, 600.0, 1.0) var dungeon_enemy_follow_door_distance: float = 240.0
+@export_range(0, 20, 1) var dungeon_enemy_follow_maximum: int = 6
+@export_range(0.0, 2.0, 0.05) var dungeon_enemy_door_follow_delay: float = 0.35
+@export_range(1, 8, 1) var large_room_wave_count: int = 2
+@export_range(1, 8, 1) var medium_room_wave_count: int = 2
+@export_range(1, 8, 1) var small_room_wave_count: int = 2
+@export_range(1, 20, 1) var large_room_enemies_per_wave: int = 8
+@export_range(1, 10, 1) var medium_room_enemies_per_wave: int = 4
+@export_range(1, 8, 1) var small_room_enemies_per_wave: int = 3
+## 世界卡片为物理物体；参数只控制交互/阻尼，不复制Upgrade效果。
+@export_range(24.0, 96.0, 1.0) var world_card_interaction_radius: float = 50.0
+@export_range(1.0, 30.0, 0.5) var world_card_linear_damp: float = 10.0
+@export_range(20.0, 240.0, 1.0) var world_card_max_push_speed: float = 90.0
 ## 屏幕外生成安全边距：常规/触手怪必须生成在相机可见矩形外扩该边距的禁区之外。
 @export_range(0.0, 200.0, 4.0) var enemy_spawn_visibility_margin: float = 64.0
 @export var enemy_separation_strength: float = 24.0
 @export var enemy_separation_radius: float = 30.0
 ## 压力倍率作用在现有难度曲线之后，但不会突破这个硬下限。
 @export_range(0.05, 2.0, 0.05) var stress_absolute_minimum_spawn_interval: float = 0.25
-## 正式敌人解锁日程；tentacle与large_correction由各自生成器读取同一张表。
+## 正式Dream敌人池只包含Employee。旧敌人资源保留作历史兼容，但不再进入Spawner。
 @export var enemy_unlock_days: Dictionary = {
-	"basic": 1,
-	"correction": 1,
-	"tentacle": 1,
-	"stapler": 2,
-	"alarm_clock": 3,
-	"mailbox": 4,
-	"large_correction": 5,
+	"employee": 1,
 }
 @export var enemy_base_spawn_weights: Dictionary = {
-	"basic": 1.0,
-	"correction": 1.0,
-	"stapler": 1.0,
-	"alarm_clock": 1.0,
-	"mailbox": 1.0,
-	"tentacle": 1.0,
-	"large_correction": 1.0,
+	"employee": 1.0,
 }
 ## 每提升一天，沿用旧线性秒成长曲线所对应的秒数，不改写既有HP/伤害调参。
 @export_range(1.0, 600.0, 1.0) var difficulty_seconds_per_day: float = 120.0
+## Endless Dream HUD uses its own day cycle duration. Keep this explicit
+## because the 2D Dream world reads it directly during startup.
 @export_range(10.0, 600.0, 1.0) var endless_day_duration: float = 120.0
 
 @export_group("Interaction Highlight")
@@ -59,6 +185,10 @@ extends Resource
 ## Spawn protection uses the same central player damage gate as hurt and dash invulnerability.
 @export_range(0.0, 10.0, 0.1) var player_spawn_invulnerability_duration: float = 3.0
 @export var hurt_invulnerability_seconds: float = 0.55
+## Launch/knockdown keeps the gameplay body solid.  Damage stays gated through
+## the short recovery pose, then for this additional grace period.
+@export_range(0.0, 3.0, 0.05) var player_knockback_recovery_seconds: float = 0.18
+@export_range(0.0, 3.0, 0.05) var player_post_getup_invulnerability_seconds: float = 0.80
 @export var hurt_flash_frequency: float = 12.0
 @export var hurt_flash_seconds: float = 0.18
 @export var hurt_shake_pixels: float = 2.0
@@ -73,25 +203,63 @@ extends Resource
 @export var dialogue_portrait_filter_color: Color = Color("8db9d8")
 @export_range(0.0, 0.6, 0.01) var dialogue_portrait_filter_strength: float = 0.18
 
-@export_group("Dream Lighting")
-## 梦境世界保留低可见度，不使用纯黑环境色。
+@export_group("Dream Visual Glow (No Light2D)")
+## CanvasModulate仅做全局色调；以下半径/颜色只供SoftGlow绘制，不创建局部Light2D。
 @export var dream_ambient_color: Color = Color("26313f")
 @export_range(48.0, 240.0, 1.0) var player_light_radius: float = 104.0
-@export_range(0.0, 4.0, 0.05) var player_light_energy: float = 1.15
 @export var player_light_color: Color = Color("e7f0f8")
-@export_range(0.05, 0.8, 0.01) var player_light_falloff: float = 0.32
-## 高压力只收缩同一盏PlayerLight，不再叠加旧黑色圆孔遮罩。
-@export_range(0.25, 1.0, 0.01) var stress_light_radius_multiplier: float = 0.72
-## 正式敌人/掉落物读取玩家当局实际有效半径的比例，不复制固定像素值。
-@export_range(0.1, 1.0, 0.05) var enemy_light_radius_multiplier: float = 0.50
-## Enemy PointLight2D energy relative to the effective PlayerLight energy.
-@export_range(0.1, 1.0, 0.05) var enemy_light_energy_multiplier: float = 0.55
 @export_range(0.01, 0.5, 0.01) var pickup_light_radius_multiplier: float = 0.10
-## Kept for old resource compatibility; enemies now use a real PointLight2D.
 @export_range(0.0, 0.5, 0.01) var enemy_environment_glow_alpha: float = 0.12
 @export_range(0.0, 0.5, 0.01) var pickup_environment_glow_alpha: float = 0.14
-## 由DreamWorld启动时写入；非导出运行态字段，不会污染平衡资源。
-var runtime_player_light_radius: float = -1.0
+
+@export_group("3D Visual Glow")
+## A tiny visibility floor for the pixel carriers of Player and Enemy.  This
+## is material emission only: it never creates a Light3D or illuminates the
+## floor/world.  Both actor types use the same configured value.
+@export_range(0.0, 0.25, 0.005) var character_self_emission_strength: float = 0.10
+## Multiplier applied to 3D diffuse lighting on character pixel carriers (Player & Enemies).
+## Lowers the direct light brightness illuminating the character without changing the cast shadow.
+@export_range(0.0, 2.0, 0.05) var character_light_scale: float = 0.50
+## Projectile heads remain on the unshaded carrier; this value only controls
+## the small local halo added around the single procedural tracer head.
+@export_range(0.0, 1.0, 0.05) var projectile_visual_glow_strength: float = 0.65
+## Projectile carriers also receive a small unshaded material emission so the
+## bullet head remains as readable as the Player/Enemy pixel carriers.  This is
+## presentation-only and never illuminates the world.
+@export_range(0.0, 2.0, 0.05) var projectile_self_emission_strength: float = 0.85
+## Small, presentation-only 3D lights around active characters/projectiles.
+## These never replace the authored room, window, or flashlight lighting.
+@export var character_local_light_enabled: bool = false
+@export_range(0.0, 1.0, 0.01) var character_local_light_energy: float = 0.18
+@export_range(0.10, 3.0, 0.05) var character_local_light_range: float = 1.25
+@export_range(0.0, 2.0, 0.01) var character_local_light_attenuation: float = 1.0
+@export var character_local_light_color: Color = Color("dceeff")
+@export var projectile_local_light_enabled: bool = true
+@export_range(0.0, 1.0, 0.01) var projectile_local_light_energy: float = 0.08
+@export_range(0.05, 2.0, 0.05) var projectile_local_light_range: float = 0.55
+@export_range(0.0, 2.0, 0.01) var projectile_local_light_attenuation: float = 1.0
+@export var projectile_local_light_color: Color = Color("ffffff")
+@export_range(1, 32, 1) var projectile_local_light_pool_size: int = 8
+## 弹丸被墙体/家具遮挡时的 Occlusion Cutout（半调半透挖洞）表现配置。
+@export var projectile_occlusion_cutout_enabled: bool = true
+@export_range(0.05, 1.0, 0.01) var projectile_occlusion_cutout_radius: float = 0.20
+## Ground pickups use a local material sweep.  The shader is presentation-only
+## and is disabled while the pickup is airborne, claimed, hidden, or removed.
+@export var world_weapon_shine_enabled: bool = true
+@export_range(0.0, 1.0, 0.05) var world_weapon_shine_strength: float = 0.55
+@export_range(0.01, 0.35, 0.01) var world_weapon_shine_width: float = 0.10
+@export_range(0.5, 8.0, 0.1) var world_weapon_shine_period: float = 3.2
+
+@export_group("3D Window Lights")
+## Window fixtures cast cool-toned nocturnal city light with crisp shadows through window apertures.
+## The dungeon passes topology-derived normals to each wall.
+@export var window_light_enabled: bool = true
+@export_range(0.0, 5.0, 0.05) var window_light_energy: float = 2.2
+@export_range(1.0, 24.0, 0.1) var window_light_range: float = 6.5
+@export_range(20.0, 120.0, 1.0) var window_light_angle: float = 50.0
+@export_range(0.0, 4.0, 0.01) var window_light_attenuation: float = 1.3
+@export var window_light_color: Color = Color(0.52, 0.76, 1.0, 1.0)
+@export_range(0.0, 0.5, 0.01) var window_light_inset: float = 0.12
 
 @export_group("Alarm Visuals")
 @export_range(0.0, 0.75, 0.01) var alarm_screen_brightness_alpha: float = 0.30
@@ -103,7 +271,51 @@ var runtime_player_light_radius: float = -1.0
 @export var extra_hold_every_seconds: float = 10.0
 @export var extra_hold_seconds: float = 2.0
 @export var wake_progress_regress_per_second: float = 2.0
-@export_range(0.05, 1.0, 0.05) var bullet_time_scale: float = 0.20
+
+@export_group("Superhot Dream Time")
+## Player-driven time is intentionally separate from the legacy bullet-time
+## tuning above.  The controller resolves these values using a real-time clock.
+@export_range(0.001, 1.0, 0.001) var superhot_min_time_scale: float = 0.005
+@export_range(0.05, 1.0, 0.01) var superhot_max_time_scale: float = 1.0
+@export_range(0.005, 0.5, 0.005) var superhot_resume_tau: float = 0.035
+@export_range(0.005, 0.5, 0.005) var superhot_slowdown_tau: float = 0.075
+@export_range(0.01, 0.25, 0.01) var superhot_shot_pulse_seconds: float = 0.05
+@export_range(0.01, 0.5, 0.01) var superhot_movement_wake_grace_seconds: float = 0.12
+## Movement activity remains active briefly after WASD is released.  This is
+## deliberately separate from the edge-triggered wake grace above so the
+## slowdown curve itself stays unchanged.
+@export_range(0.05, 0.5, 0.01) var superhot_movement_release_grace_seconds: float = 0.20
+@export_range(0.0, 0.3, 0.01) var superhot_movement_deadzone: float = 0.05
+
+@export_group("Player Movement Actions")
+## Space taps keep the directional Roll/Dash while a longer real-time hold
+## enters the mouse-directed DashAim preview.  Input timing is intentionally
+## independent from Engine.time_scale.
+@export_range(0.08, 0.30, 0.01) var dash_aim_hold_threshold: float = 0.16
+## Vault trigger distance is measured from the Player to the nearest point on
+## a vaultable Furniture CollisionShape2D, never to its visual/center point.
+@export_range(32.0, 120.0, 1.0) var vault_trigger_radius_px: float = 80.0
+## Roll speed trails are presentation-only samples taken from actual gameplay
+## displacement.  They never alter dash distance, duration, or collision.
+@export_range(4.0, 40.0, 1.0) var roll_trail_sample_distance: float = 14.0
+@export_range(0.04, 0.6, 0.01) var roll_trail_lifetime: float = 0.26
+@export_range(0.0, 1.0, 0.02) var roll_trail_stretch: float = 0.12
+@export_range(0.0, 1.0, 0.05) var roll_trail_start_alpha: float = 0.85
+
+@export_group("Superhot Gameplay Audio")
+## World SFX use a compressed time curve rather than following Engine.time_scale
+## directly.  This keeps frozen-time impacts audible instead of stretching them
+## into unusable subsonic tails.
+@export_range(0.05, 1.0, 0.01) var gameplay_sfx_min_pitch: float = 0.35
+@export_range(0.5, 1.5, 0.01) var gameplay_sfx_max_pitch: float = 1.0
+@export_range(0.1, 2.0, 0.05) var gameplay_sfx_curve_exponent: float = 0.5
+@export_range(0.005, 0.5, 0.005) var gameplay_sfx_resume_tau: float = 0.045
+@export_range(0.005, 0.5, 0.005) var gameplay_sfx_slowdown_tau: float = 0.09
+@export_range(500.0, 8000.0, 100.0) var gameplay_sfx_lowpass_min_hz: float = 2500.0
+@export_range(8000.0, 22000.0, 100.0) var gameplay_sfx_lowpass_max_hz: float = 20000.0
+@export_range(4.0, 128.0, 1.0) var gameplay_sfx_3d_max_distance: float = 64.0
+@export_range(0.1, 32.0, 0.5) var gameplay_sfx_3d_unit_size: float = 10.0
+@export_range(1.0, 32.0, 1.0) var gameplay_sfx_3d_voice_count: int = 12
 
 @export_group("Progression")
 @export var first_level_experience_requirement: int = 20
@@ -111,23 +323,47 @@ var runtime_player_light_radius: float = -1.0
 @export var experience_requirement_cap: int = 32767
 @export var damage_upgrade_multiplier: float = 1.5
 
+@export_group("Character Card")
+## TAB角色卡的可分段属性。第1格就是当前默认游戏手感，不额外放大基础速度。
+@export_range(1, 10, 1) var character_card_max_stat_cells: int = 10
+@export_range(1.0, 100.0, 1.0) var character_card_hp_per_cell: float = 20.0
+@export_range(0.0, 1.0, 0.01) var character_card_speed_bonus_per_cell: float = 0.20
+@export_range(1, 10, 1) var character_card_default_hp_cells: int = 4
+@export_range(1, 10, 1) var character_card_default_speed_cells: int = 1
+@export_range(0.15, 1.0, 0.01) var character_card_enter_seconds: float = 0.42
+@export_range(0.15, 1.0, 0.01) var character_card_exit_seconds: float = 0.32
+
 @export_group("Pixel Art and Effects")
 ## Pix_chr只在Visual/HealOverlay使用稳定绝对缩放；不得在进场时累乘。
-@export_range(0.25, 4.0, 0.05) var player_visual_scale: float = 0.75
+## Standard 32x32 Dream actors map to one gameplay cell in the 3D bridge.
+## This is the single visual-scale authority for Player and EmployeeEnemy;
+## the bridge keeps its fixed 1/32 pixel-to-world conversion and does not add
+## another actor multiplier.
+@export_range(0.25, 4.0, 0.05) var player_visual_scale: float = 1.0
 @export var player_visual_offset: Vector2 = Vector2(0.0, -18.25)
+## dream_chr_32x32.png为32px分层图集；以下位置均以脚底(0,0)为视觉基准。
+@export var player_parts_ground_offset: Vector2 = Vector2.ZERO
+@export_range(1.0, 4.0, 0.1) var player_idle_breath_period: float = 1.8
+@export_range(0.0, 4.0, 1.0) var player_idle_body_breath_pixels: float = 1.0
+@export_range(0.0, 4.0, 1.0) var player_idle_head_breath_pixels: float = 2.0
+@export_range(1.0, 12.0, 0.5) var player_blink_interval_min: float = 2.0
+@export_range(1.0, 12.0, 0.5) var player_blink_interval_max: float = 6.0
+@export_range(0.02, 0.20, 0.01) var player_blink_frame_seconds: float = 0.06
+@export_range(0.0, 5.0, 1.0) var player_walk_leg_swing_pixels: float = 2.0
+@export_range(0.0, 4.0, 1.0) var player_walk_leg_lift_pixels: float = 2.0
+@export_range(0.5, 8.0, 0.1) var player_walk_cycles_per_second: float = 2.2
+@export_range(0.0, 4.0, 1.0) var player_walk_body_bob_pixels: float = 2.0
+@export_range(0.0, 5.0, 1.0) var player_walk_visual_bounce_pixels: float = 3.0
+## 每几个「步态半步」播放一次脚步。1 = 每只脚落地都响，满速约 4.4 步/秒；
+## 2 = 只在每整周期的一只脚落地时响，约 2.2 步/秒，听感更舒缓；数值越大越稀疏。
+@export_range(1, 4, 1) var player_footstep_step_interval: int = 1
 @export_range(1.0, 32.0, 0.5) var player_collision_radius: float = 7.5
 @export var player_collision_offset: Vector2 = Vector2(0.0, -13.0)
 @export var player_weapon_root_offset: Vector2 = Vector2(0.0, -18.25)
-## 玩家 1px Alpha 描边宽度（源纹理像素空间，基于 TEXTURE_PIXEL_SIZE；
-## 玩家 1:1 显示时 1 源像素 ≈ 1 视觉像素）。
-@export_range(0.5, 8.0, 0.5) var player_outline_width_px: float = 1.0
 @export_range(0.5, 8.0, 0.5) var player_idle_animation_fps: float = 1.0
 @export_range(2.0, 16.0, 0.5) var player_walk_animation_fps: float = 8.0
 @export_range(0.1, 1.0, 0.05) var heal_feedback_seconds: float = 0.3
-## 弹丸/掉落物仅使用低成本绘制光晕，不创建PointLight2D。
-@export var projectile_glow_color: Color = Color("6fa8c4")
-@export_range(0.0, 0.5, 0.01) var projectile_glow_alpha: float = 0.16
-@export_range(2.0, 24.0, 1.0) var projectile_glow_radius: float = 9.0
+## 只有经验/回复等拾取物保留低成本提示光晕；所有Projectile均为普通像素Sprite。
 @export var pickup_glow_color: Color = Color("77b8cf")
 @export_range(0.0, 0.5, 0.01) var pickup_glow_alpha: float = 0.18
 @export_range(2.0, 24.0, 1.0) var pickup_glow_radius: float = 10.0
@@ -154,210 +390,376 @@ var runtime_player_light_radius: float = -1.0
 @export_range(0.02, 0.3, 0.01) var weapon_muzzle_flash_seconds: float = 0.07
 @export_range(0.04, 0.5, 0.01) var weapon_hit_effect_seconds: float = 0.14
 @export_range(2.0, 32.0, 1.0) var projectile_trail_length: float = 10.0
-@export_range(0.05, 0.6, 0.01) var beam_charge_seconds: float = 0.18
-@export_range(0.05, 0.6, 0.01) var katana_afterimage_seconds: float = 0.20
-@export var weapon_effect_primary_color: Color = Color("517b98")
-@export var weapon_effect_secondary_color: Color = Color("9ab6c8")
-@export var weapon_effect_warning_color: Color = Color("9b4658")
+@export var weapon_effect_primary_color: Color = Color("ff9d32")
+@export var weapon_effect_secondary_color: Color = Color("ffd07a")
+@export var weapon_effect_warning_color: Color = Color("d86b24")
 
-@export_group("Weapons")
+@export_group("Player Control")
 ## 玩家和武器基础数值统一由本资源提供，场景脚本只维护运行时强化结果。
-@export var player_base_maximum_health: float = 100.0
-@export var player_movement_speed: float = 112.0
+@export var player_base_maximum_health: float = 80.0
+## Player移动手感：较高的目标速度配合独立加/减速，避免按键松开后滑行。
+@export_range(20.0, 320.0, 1.0) var player_movement_speed: float = 204.0
+@export_range(100.0, 2400.0, 25.0) var player_movement_acceleration: float = 900.0
+@export_range(100.0, 3000.0, 25.0) var player_movement_deceleration: float = 1200.0
+@export_group("Weapons")
+## Weapon data stores seconds-per-shot/attack.  Keep the global multiplier at
+## one so each weapon uses its original authored cadence; upgrades remain the
+## only runtime source of an intentional speed change.
+@export_range(0.1, 2.0, 0.025) var weapon_fire_rate_multiplier: float = 1.0
 @export var basic_weapon_damage: float = 10.0
 @export var basic_weapon_attack_interval: float = 0.30
-@export var basic_weapon_range: float = 270.0
-@export var basic_projectile_speed: float = 310.0
-@export var beam_damage: float = 20.0
-@export var beam_attack_interval: float = 2.0
-@export var beam_range: float = 150.0
-@export var beam_width: float = 12.0
-@export var beam_display_seconds: float = 0.15
+@export var basic_weapon_range: float = 350.0
+## Firearm projectile speed is the original 310 px/s baseline reduced by 50%.
+@export var basic_projectile_speed: float = 550.0
+@export_range(0.25, 1.0, 0.05) var basic_projectile_visual_scale: float = 0.75
+@export_range(1, 99, 1) var basic_magazine_size: int = 15
+@export var basic_recoil_multiplier: float = 1.0
+@export_range(0.0, 1.0, 0.01) var projectile_penetration_chance: float = 0.10
+@export_range(0, 1, 1) var projectile_max_penetrations: int = 1
+@export_group("Assault Rifle")
+## 低于手枪单发伤害，但以高射速维持压制；普通 Employee 约三发失去战斗能力。
+@export var assault_rifle_damage: float = 6.0
+@export var assault_rifle_attack_interval: float = 0.15
+@export var assault_rifle_range: float = 500.0
+## Original authored assault-rifle projectile speed: 360 px/s; this pass uses
+## the requested 50% projectile-speed reduction.
+@export var assault_rifle_projectile_speed: float = 550.0
+@export_range(0.25, 1.0, 0.05) var assault_rifle_projectile_visual_scale: float = 0.60
+@export_range(1, 99, 1) var assault_rifle_magazine_size: int = 30
+@export var assault_rifle_recoil_multiplier: float = 0.8
+@export_group("")
 @export var shotgun_pellet_count: int = 9
-@export var shotgun_pellet_damage: float = 3.0
+## 近距离一轮霰弹应明显高于手枪；9 颗弹丸合计最高 36 伤害。
+@export var shotgun_pellet_damage: float = 4.0
 @export var shotgun_attack_interval: float = 0.8
 @export var shotgun_spread_degrees: float = 30.0
-@export var shotgun_projectile_speed: float = 310.0
-@export var shotgun_max_distance: float = 270.0
+## Original authored shotgun projectile speed: 310 px/s; this pass uses 50%.
+@export var shotgun_projectile_speed: float = 550.0
+@export var shotgun_max_distance: float = 220.0
 @export var shotgun_recoil_multiplier: float = 1.8
-@export var katana_attack_interval: float = 2.0
-@export var katana_melee_damage: float = 30.0
-@export var katana_melee_radius: float = 50.0
-@export var katana_wave_damage: float = 10.0
-@export var katana_wave_speed: float = 450.0
-@export var katana_wave_max_distance: float = 300.0
-## 宽度同时驱动视觉线段、碰撞形状与手动扫掠命中半径。
-@export var katana_wave_width: float = 32.0
-## Curve只改变沿固定直线方向的速度进度，并使用受暂停/慢动作影响的游戏时间。
-@export_range(0.1, 1.0, 0.01) var katana_wave_initial_speed_ratio: float = 0.35
-@export_range(0.05, 0.8, 0.01) var katana_wave_acceleration_duration: float = 0.25
-@export var katana_wave_acceleration_curve: Curve
-## SP301_04 月牙素材自身默认朝向（尖端朝 -x）与飞行方向（+x）的补偿角：
-## 最终 rotation = aim_direction.angle() + deg_to_rad(本值)，使视觉尖端/碰撞/运动三者一致。
-@export_range(-180.0, 180.0, 1.0) var katana_wave_texture_forward_angle_deg: float = 180.0
-## 榴弹出生点沿瞄准方向偏移的像素数，保证出生在当前玩家碰撞体外侧。
-@export_range(0.0, 64.0, 1.0) var grenade_spawn_offset_px: float = 14.0
-@export var grenade_attack_interval: float = 3.0
-@export var grenade_projectile_speed: float = 300.0
-@export var grenade_explosion_radius: float = 150.0
-## Visual radius is independent from damage radius so presentation cannot alter gameplay.
-@export var grenade_explosion_visual_radius: float = 150.0
-@export var grenade_enemy_damage: float = 30.0
-@export var grenade_player_self_damage: float = 10.0
+@export var lucille_damage: float = 30.0
+@export var lucille_attack_range: float = 30.0
+@export_range(1.0, 180.0, 1.0) var lucille_attack_arc_degrees: float = 120.0
+@export var lucille_attack_interval: float = 0.6
+## Books使用与Lucille相同的统一近战挥击管线，保留独立的轻武器参数。
+@export var books_damage: float = 5.0
+@export var books_attack_range: float = 30.0
+@export_range(1.0, 180.0, 1.0) var books_attack_arc_degrees: float = 120.0
+@export_range(0.1, 3.0, 0.05) var books_attack_interval: float = 0.8
+@export_range(0.1, 3.0, 0.05) var books_knockback_multiplier: float = 0.75
 
+
+@export_range(2, 16, 1) var lucille_trail_max_points: int = 12
+@export_range(0.02, 0.4, 0.01) var lucille_trail_fade_seconds: float = 0.12
+@export_range(0.10, 0.24, 0.01) var lucille_trail_lifetime: float = 0.18
+## 近战挥击拖尾的总弧线半径（HandAnchor局部像素）；Books使用更紧凑的半径。
+@export_range(8.0, 48.0, 1.0) var lucille_trail_radius: float = 26.0
+@export_range(8.0, 48.0, 1.0) var books_trail_radius: float = 19.0
+## 宽弧拖尾的最大宽度；Line2D width_curve 会让尾端逐渐变窄。
+@export_range(2.0, 24.0, 1.0) var lucille_trail_width: float = 10.0
+@export_range(2.0, 24.0, 1.0) var books_trail_width: float = 7.0
+## 视觉第4阶段的命中时刻；必须早于一次近战攻击间隔。
+@export_range(0.04, 0.20, 0.01) var melee_swing_impact_delay: float = 0.12
+## 当前Run内的弹丸武器共用同一默认弹匣规格；每把武器各自保存剩余弹量。
+@export_range(1, 99, 1) var default_weapon_magazine_size: int = 12
+@export_range(0.1, 10.0, 0.05) var weapon_reload_duration: float = 0.75
+@export_range(8.0, 64.0, 1.0) var crosshair_reload_bar_width: float = 24.0
+@export_range(2.0, 8.0, 1.0) var crosshair_reload_bar_height: float = 3.0
+@export var crosshair_reload_bar_offset: Vector2 = Vector2(-12.0, 13.0)
+## HandAnchor只控制世界武器视觉/发射挂点，不改变Player Body或武器数值。
+@export var held_weapon_distance: float = 11.0
+@export var held_weapon_world_scale: float = 1.0
+@export var weapon_recoil_distance: float = 4.0
+@export_range(0.01, 0.2, 0.01) var weapon_recoil_kick_seconds: float = 0.04
+@export_range(0.01, 0.3, 0.01) var weapon_recoil_return_seconds: float = 0.09
+## Physical movement recoil is a small external impulse, separate from visual
+## weapon kick and from airborne knockback. Values are per shot velocity units.
+@export_range(0.0, 120.0, 1.0) var player_default_firearm_recoil: float = 0.0
+@export_range(0.0, 160.0, 1.0) var player_assault_rifle_recoil: float = 20.0
+@export_range(0.0, 220.0, 1.0) var player_shotgun_recoil: float = 44.0
+@export_range(0.0, 100.0, 1.0) var player_melee_furniture_recoil: float = 22.0
+
+@export_group("Employee ranged attack")
+@export_range(0.05, 2.0, 0.05) var employee_ranged_attack_windup: float = 0.8
+@export_range(1.0, 30.0, 0.5) var employee_ranged_windup_animation_fps: float = 12.0
+
+@export_group("Player Kick")
+## 踢击是身体动作，不读取武器伤害、暴击或卡片倍率。
+@export var kick_damage: float = 10.0
+@export_range(12.0, 72.0, 1.0) var kick_range: float = 34.0
+@export_range(12.0, 64.0, 1.0) var kick_width: float = 28.0
+@export_range(0.15, 0.8, 0.01) var kick_animation_duration: float = 0.28
+@export_range(1.0, 24.0, 1.0) var kick_leg_extension_pixels: float = 12.0
+@export_range(0.0, 8.0, 0.5) var kick_body_lean_pixels: float = 3.0
+@export_range(0.0, 60.0, 1.0) var kick_body_max_lean_degrees: float = 45.0
+
+@export_group("Player Unarmed Punch")
+## 空手使用Primary Attack时的轻量近战参数；不属于可拾取Weapon。
+@export_range(0.5, 10.0, 0.5) var player_punch_damage: float = 2.0
+@export_range(8.0, 60.0, 1.0) var player_punch_range: float = 30.0
+@export_range(0.10, 0.80, 0.01) var player_punch_interval: float = 0.30
+@export_range(0.01, 0.20, 0.01) var player_punch_windup_seconds: float = 0.04
+@export_range(0.02, 0.20, 0.01) var player_punch_strike_seconds: float = 0.05
+@export_range(0.02, 0.30, 0.01) var player_punch_recover_seconds: float = 0.12
+@export_range(1.0, 120.0, 1.0) var player_punch_arc_degrees: float = 70.0
+
+@export_group("Combat Knockback")
+## 统一击退基准K。枪械=K，Kick=K×2，Lucille=Kick×2。
+@export_range(20.0, 800.0, 10.0) var gun_knockback_force: float = 300.0
+@export_range(1.0, 6.0, 0.1) var kick_knockback_multiplier: float = 2.0
+@export_range(1.0, 6.0, 0.1) var lucille_knockback_multiplier: float = 2.0
+@export_range(100.0, 3000.0, 25.0) var maximum_knockback_speed: float = 1200.0
+@export_range(100.0, 3000.0, 25.0) var character_knockback_drag: float = 900.0
+@export_range(0.0, 0.95, 0.05) var character_knockback_bounce_retention: float = 0.35
+@export_range(20.0, 400.0, 5.0) var character_knockback_vertical_velocity: float = 115.0
+@export_range(50.0, 1200.0, 10.0) var character_knockback_fake_gravity: float = 280.0
+## Player使用与Employee相同的“残余速度决定反弹”思路，但保留更克制的落地手感。
+@export_range(0.0, 1.0, 0.05) var player_knockback_air_drag_multiplier: float = 0.35
+@export_range(0.0, 0.95, 0.05) var player_knockback_ground_vertical_retention: float = 0.30
+@export_range(0.0, 0.95, 0.05) var player_knockback_ground_horizontal_retention: float = 0.65
+@export_range(1.0, 100.0, 1.0) var player_knockback_minimum_bounce_velocity: float = 30.0
+@export_range(1.0, 100.0, 1.0) var player_knockback_settle_speed: float = 22.0
+@export_range(0.0, 100.0, 1.0) var secondary_collision_damage: float = 8.0
+@export_range(0.05, 2.0, 0.05) var secondary_collision_cooldown: float = 0.35
+## 0 = 血迹在本场 Dream 内永久保留（不按时间/数量清理）；正值 = 全局预算上限。
+@export_range(0, 160, 1) var black_blood_max_stains: int = 0
+
+@export_group("Blood Intensity")
+@export_range(0.35, 1.8, 0.05) var blood_pistol_intensity: float = 0.82
+@export_range(0.35, 1.8, 0.05) var blood_automatic_intensity: float = 0.68
+@export_range(0.35, 1.8, 0.05) var blood_shotgun_intensity: float = 1.45
+@export_range(0.35, 1.8, 0.05) var blood_kick_intensity: float = 0.90
+@export_range(0.35, 1.8, 0.05) var blood_lucille_intensity: float = 1.55
+@export_range(0.35, 1.8, 0.05) var blood_furniture_intensity: float = 1.05
+
+@export_group("Death Blood")
+## Death Burst remains one BlackBloodEffect, with these multipliers applied
+## only to its droplet count, initial velocity and angular spread.
+@export_range(0.35, 3.0, 0.05) var death_burst_intensity: float = 1.8
+@export_range(0.25, 3.0, 0.05) var death_burst_droplet_multiplier: float = 1.5
+@export_range(0.25, 3.0, 0.05) var death_burst_speed_multiplier: float = 1.35
+@export_range(0.25, 3.0, 0.05) var death_burst_spread_multiplier: float = 1.25
+@export_range(0.1, 6.0, 0.05) var corpse_bleed_duration: float = 2.2
+@export_range(0.05, 1.0, 0.01) var corpse_bleed_initial_interval: float = 0.22
+@export_range(0.5, 0.99, 0.01) var corpse_bleed_decay: float = 0.78
+@export_range(0.0, 2.0, 0.05) var death_pool_growth_duration: float = 0.45
+@export_range(0.1, 2.0, 0.05) var death_pool_min_scale: float = 0.35
+@export_range(0.1, 2.0, 0.05) var death_pool_max_scale: float = 1.0
+@export_range(1, 64, 1) var max_active_corpse_blood_emitters: int = 12
+
+@export_group("Corpse Presentation")
+## 敌人死亡后尸体在地面停留时长（秒），默认约15秒。
+@export_range(1.0, 60.0, 0.5) var corpse_linger_duration: float = 15.0
+## 尸体在地面明度降低过渡时间（秒），默认3秒。
+@export_range(0.5, 10.0, 0.1) var corpse_darken_duration: float = 3.0
+## 尸体明度降低的目标比例，0.5即50%。
+@export_range(0.0, 1.0, 0.05) var corpse_darken_target_brightness: float = 0.5
+## 致死受力转换为整具尸体的初始水平速度；不改变存活时的击退或伤害。
+@export_range(0.1, 1.5, 0.05) var corpse_impulse_transfer: float = 0.75
+@export_range(0.0, 1.0, 0.05) var corpse_inherited_velocity_ratio: float = 0.35
+@export_range(60.0, 600.0, 10.0) var corpse_max_launch_speed: float = 360.0
+@export_range(0.0, 300.0, 10.0) var corpse_air_drag: float = 40.0
+@export_range(50.0, 800.0, 10.0) var corpse_ground_drag: float = 320.0
+@export_range(0.0, 0.5, 0.02) var corpse_wall_restitution: float = 0.18
+@export_range(0.0, 1.0, 0.05) var corpse_wall_slide_retention: float = 0.65
+
+@export_group("Top Wall Head Clearance")
+## 角色视觉是与屏幕平行的斜牌：头部会向镜头远侧前伸约等于其像素高度的距离。
+## 因此在顶墙（房间靠地图上方一侧）的房间内生成一条只作用于 Actor 的空气墙，
+## 让脚锚点永远停在头部不会越过墙平面的位置。子弹、血滴射线与视线都不使用
+## 该层，行为完全不变。0 表示关闭该空气墙。
+# Keep the actor-only head-clearance band inside the near half of a gameplay
+# cell.  A deeper band overlaps the Player's centred body capsule at an
+# otherwise valid neighbouring floor cell and becomes an invisible traversal
+# blocker, especially at macro-room boundaries.
+@export_range(0.0, 128.0, 1.0) var top_wall_air_wall_depth_px: float = 8.0
+
+@export_group("World Weapon Pickup")
+@export_range(16.0, 64.0, 1.0) var world_weapon_interaction_radius: float = 34.0
+@export_range(12.0, 64.0, 1.0) var world_weapon_drop_offset: float = 28.0
+@export_range(0.0, 160.0, 5.0) var world_weapon_swap_drop_impulse: float = 45.0
+@export_range(0.1, 4.0, 0.05) var world_weapon_mass: float = 0.65
+## Player右键抛掷沿用WorldWeapon真实RigidBody；速度/伤害仅由此处调节。
+@export_range(40.0, 1200.0, 10.0) var world_weapon_throw_force: float = 460.0
+@export_range(0.1, 2.0, 0.05) var world_weapon_throw_melee_force_multiplier: float = 1.15
+## Throw移动速度与命中冲击力分离；该倍率只影响武器飞行速度。
+@export_range(1.0, 3.0, 0.05) var world_weapon_throw_speed_multiplier: float = 2.1
+## 普通地面武器保持场景阻尼，Throw阶段使用较低阻尼保留高速动量。
+@export_range(0.0, 5.0, 0.05) var world_weapon_throw_linear_damp: float = 0.8
+@export_range(0.0, 10.0, 0.1) var world_weapon_throw_angular_damp: float = 1.5
+@export_range(0.5, 6.0, 0.1) var world_weapon_throw_max_duration: float = 2.8
+@export_range(20.0, 300.0, 5.0) var world_weapon_throw_minimum_speed: float = 72.0
+@export_range(0.1, 1.5, 0.05) var world_weapon_throw_pickup_lockout: float = 0.45
+## A melee weapon gets one break roll after its first valid high-speed throw
+## impact.  Firearms never use this chance.
+@export_range(0.0, 1.0, 0.01) var world_weapon_throw_melee_break_chance: float = 0.50
+
+@export_group("Shell Ejection")
+@export_range(8, 96, 1) var shell_effect_max_visible: int = 48
+@export_range(0.5, 5.0, 0.1) var shell_effect_lifetime: float = 2.2
+@export_range(50.0, 600.0, 10.0) var shell_effect_fake_gravity: float = 180.0
+
+@export_group("Furniture Impact")
+## Weapon hits use the shared gun force as their base, but furniture needs a
+## separate visual hierarchy: pistol small, a full shotgun volley obvious,
+## Kick high, and Lucille very high. Shotgun is expressed per pellet so a
+## complete nine-pellet volley lands at roughly 1.8x the gun base instead of
+## incorrectly applying nine full pistol impulses.
+@export_range(0.0, 2.0, 0.05) var furniture_pistol_force_multiplier: float = 0.35
+@export_range(0.0, 2.0, 0.05) var furniture_assault_rifle_force_multiplier: float = 0.20
+@export_range(0.0, 1.0, 0.01) var furniture_shotgun_pellet_force_multiplier: float = 0.20
+@export_range(0.0, 2.0, 0.05) var furniture_hitscan_force_multiplier: float = 0.75
+## 高速家具撞击是独立伤害源，不经过武器或Enemy接触伤害倍率。
+@export var furniture_impact_damage: float = 20.0
+## 房间实例化/重新激活后的短暂保护只屏蔽错误的出生冲击伤害，不关闭物理碰撞。
+@export_range(0.0, 1.0, 0.01) var furniture_impact_spawn_grace: float = 0.25
+@export_range(20.0, 500.0, 5.0) var furniture_impact_minimum_speed: float = 100.0
+@export_range(0.05, 2.0, 0.05) var furniture_impact_target_cooldown: float = 0.45
+@export_range(0.1, 1.0, 0.05) var furniture_impact_velocity_retention: float = 0.72
+@export_range(0.1, 1.0, 0.05) var furniture_velocity_retention_after_character_hit: float = 0.72
+@export_range(0.0, 0.95, 0.05) var furniture_wall_bounce_retention: float = 0.45
+@export_range(0.0, 0.95, 0.05) var furniture_prop_bounce_retention: float = 0.55
+@export_range(0.0, 2.0, 0.05) var furniture_prop_impulse_multiplier: float = 0.65
+@export_range(20.0, 600.0, 10.0) var furniture_impact_enemy_knockback: float = 180.0
+@export_range(0.5, 3.0, 0.05) var furniture_impact_knockdown_force_multiplier: float = 1.5
+
+@export_group("Furniture Size Behavior")
+## Shared response multipliers.  Furniture scenes select a size category; these
+## values keep push/kick/combat tuning centralized instead of per-scene.
+@export_range(0.0, 3.0, 0.05) var furniture_small_push_response: float = 1.25
+@export_range(0.0, 3.0, 0.05) var furniture_medium_push_response: float = 1.0
+@export_range(0.0, 3.0, 0.05) var furniture_large_push_response: float = 0.65
+@export_range(0.0, 3.0, 0.05) var furniture_small_kick_response: float = 1.25
+@export_range(0.0, 3.0, 0.05) var furniture_medium_kick_response: float = 0.80
+@export_range(0.0, 3.0, 0.05) var furniture_large_kick_response: float = 0.0
+@export_range(0.0, 3.0, 0.05) var furniture_small_combat_impulse_response: float = 1.10
+@export_range(0.0, 3.0, 0.05) var furniture_medium_combat_impulse_response: float = 0.85
+@export_range(0.0, 3.0, 0.05) var furniture_large_combat_impulse_response: float = 0.35
+
+## Books只从指定可破坏家具的最终销毁事件中稀有掉落，不进入普通武器池。
+@export_range(0.0, 1.0, 0.01) var books_drop_chance_cabinet: float = 0.22
+@export_range(0.0, 1.0, 0.01) var books_drop_chance_table: float = 0.12
+@export_range(0.0, 1.0, 0.01) var books_drop_chance_trash_can: float = 0.08
+
+@export_group("Environment Debris")
+## Environment debris uses the existing 32px Office icon atlas.  The room
+## area determines the ambient count and these bounds keep density tunable.
+@export_range(0, 32, 1) var environment_debris_ambient_min_per_room: int = 2
+@export_range(0, 64, 1) var environment_debris_ambient_max_per_room: int = 10
+@export_range(1024.0, 50000.0, 256.0) var environment_debris_area_per_item: float = 12000.0
+@export_range(4, 160, 1) var environment_debris_max_per_room: int = 64
+@export_range(16.0, 160.0, 1.0) var environment_debris_door_clearance: float = 48.0
+@export_range(16.0, 160.0, 1.0) var environment_debris_spawn_clearance: float = 56.0
+@export_range(20.0, 400.0, 5.0) var environment_debris_hit_spray_speed: float = 82.0
+@export_range(20.0, 500.0, 5.0) var environment_debris_destroy_spray_speed: float = 135.0
+@export_range(20.0, 600.0, 10.0) var environment_debris_spray_speed_variance: float = 35.0
+@export_range(0.0, 180.0, 1.0) var environment_debris_spray_spread_degrees: float = 36.0
+@export_range(0.0, 500.0, 10.0) var environment_debris_spray_up_velocity: float = 42.0
+@export_range(0.0, 1200.0, 10.0) var environment_debris_spray_gravity: float = 240.0
+@export_range(0.0, 1600.0, 10.0) var environment_debris_spray_drag: float = 420.0
+@export_range(0.05, 0.5, 0.01) var environment_debris_break_duration: float = 0.12
 @export_group("Critical Hits")
 @export_range(0.0, 1.0, 0.01) var player_base_critical_chance: float = 0.10
 @export_range(1.0, 5.0, 0.05) var player_critical_damage_multiplier: float = 1.50
 
 @export_group("Dash")
-@export var dash_distance: float = 100.0
-@export var dash_duration: float = 0.18
-@export var dash_cooldown: float = 2.0
+## 短距离高爆发；门仍由真实连续位移处理，跨房后由现有cancel_dash()收尾。
+@export_range(32.0, 240.0, 1.0) var dash_distance: float = 168.0
+@export_range(0.06, 0.5, 0.01) var dash_duration: float = 0.14
+@export_range(0.2, 5.0, 0.05) var dash_cooldown: float = 0.8
 @export var dash_invulnerability_seconds: float = 0.18
 ## Thunder.png 实际切帧数（512×256 横向 8 列 64×256，从左到右播放）。
 @export_range(1, 16, 1) var dash_thunder_frame_count: int = 8
 ## Thunder 序列帧播放 FPS：与 Dash 位移/冷却/无敌完全解耦，仅控制视觉。
 @export_range(4.0, 60.0, 1.0) var dash_thunder_fps: float = 24.0
 
+@export_group("Dive")
+## 飞扑（空格键）：45度起跳滞空、空中射击、0.2倍速子弹时间、落地接翻滚
+@export_range(0.15, 0.8, 0.01) var dive_duration: float = 0.35
+@export_range(0.05, 1.0, 0.05) var dive_bullet_time_scale: float = 0.2
+@export_range(0.4, 0.9, 0.05) var dive_airborne_ratio: float = 0.70
+@export_range(15.0, 75.0, 1.0) var dive_takeoff_angle_degrees: float = 45.0
+@export_range(8.0, 36.0, 1.0) var dive_peak_height: float = 18.0
+
+@export_group("Tactical Planning Dash")
+## 长按 Space 进入 2 倍距离战术预演模式（类似晶体管 Turn() / 武士零预演）
+@export var tactical_dash_enabled: bool = true
+@export_range(1.5, 4.0, 0.1) var tactical_dash_distance_multiplier: float = 2.0
+@export_range(1.0, 15.0, 0.5) var tactical_dash_cooldown_seconds: float = 5.0
+@export_range(0.01, 0.5, 0.01) var tactical_dash_time_scale: float = 0.05
+@export_range(0.08, 0.50, 0.01) var tactical_dash_hold_threshold: float = 0.16
+
+@export_group("Map Generation")
+## 地图生成算法："otxo_mansion" 为迈阿密热线/OTXO连体紧凑大楼；"macro_corridor" 为原版独立走廊地牢
+@export_enum("otxo_mansion", "macro_corridor") var map_generator_type: String = "otxo_mansion"
+## OTXO连体大楼目标房间数（推荐 14~18 间）
+@export_range(6, 24, 1) var otxo_mansion_room_count: int = 16
+## 室内可击碎玻璃窗生成概率 (0.0~1.0)
+@export_range(0.0, 1.0, 0.05) var otxo_mansion_glass_chance: float = 0.35
+## 连通回路率加成 (增加套房之间的互通门)
+@export_range(0.0, 1.0, 0.05) var otxo_mansion_loop_ratio: float = 0.45
+
 @export_group("Aim")
-## 梦游模式是玩家设置；此字段仅提供首次启动时的默认值。
-@export var sleepwalk_mode_default: bool = false
 ## 0表示不限制搜索半径；默认值覆盖完整梦境场地。
-@export_range(0.0, 4000.0, 10.0) var auto_aim_search_radius: float = 900.0
-@export_range(0.02, 1.0, 0.01) var auto_aim_refresh_interval: float = 0.08
 @export var crosshair_cooldown_color: Color = Color(0.35, 0.36, 0.4, 1.0)
 @export var crosshair_ready_color: Color = Color.WHITE
 @export var crosshair_color_lerp_speed: float = 10.0
 @export var crosshair_recoil_pixels: float = 5.0
 @export var crosshair_recoil_recovery_seconds: float = 0.12
+@export_range(0.0, 180.0, 1.0) var crosshair_recoil_angle_degrees: float = 45.0
 @export var basic_weapon_recoil_multiplier: float = 1.0
-@export var beam_weapon_recoil_multiplier: float = 1.5
 
-@export_group("Correction Tape Enemy")
-@export var correction_trigger_distance: float = 150.0
-@export var correction_charge_seconds: float = 0.75
-@export var correction_dash_distance: float = 200.0
-@export var correction_dash_speed: float = 360.0
-@export var correction_dash_damage: float = 18.0
-@export var correction_recovery_seconds: float = 0.5
-@export var correction_dash_max_seconds: float = 1.25
+@export_group("Dream Camera")
 
-@export_group("Large Correction Tape Enemy")
-@export var large_correction_health_multiplier: float = 10.0
-@export var large_correction_size_multiplier: float = 1.8
-@export var large_correction_trigger_distance: float = 150.0
-@export var large_correction_charge_seconds: float = 0.75
-@export var large_correction_dash_distance: float = 200.0
-@export var large_correction_dash_speed: float = 360.0
-@export var large_correction_dash_damage: float = 24.0
-@export var large_correction_dash_count: int = 3
-@export var large_correction_dash_interval: float = 0.2
-@export var large_correction_recovery_seconds: float = 0.5
-@export var large_correction_experience_ratio: float = 0.5
-## 精英魔眼（internal_id 仍为 large_correction_tape）换用 Flying Eye 视觉后的统一缩放，
-## 与普通魔眼共用描边/Hit Flash/死亡序列，数值（HP/伤害/冲刺）不变。
-@export_range(0.02, 2.0, 0.01) var large_correction_visual_scale: float = 1.0
+## Player在镜头中央允许活动的区域。
+@export_range(0.0, 160.0, 1.0) var camera_dead_zone_x: float = 28.0
+@export_range(0.0, 120.0, 1.0) var camera_dead_zone_y: float = 18.0
+
+## 准星能够把镜头拉向四周的最大距离。
+@export_range(0.0, 400.0, 1.0) var camera_aim_max_offset_x: float = 160.0
+@export_range(0.0, 300.0, 1.0) var camera_aim_max_offset_y: float = 100.0
+
+## 鼠标/目标距离达到这个值以后，准星镜头偏移达到最大值。
+@export_range(32.0, 1200.0, 1.0) var camera_aim_distance_for_max_offset: float = 340.0
+
+## Player超出中央区域后，Camera追上来的速度。
+@export_range(1.0, 30.0, 0.5) var camera_follow_smoothing: float = 10.0
+
+## Camera跟随准星的速度。
+@export_range(1.0, 30.0, 0.5) var camera_aim_smoothing: float = 8.5
 
 @export_group("Enemy Outline")
 ## 敌人被锁定/选中时的白描边宽度（源纹理像素空间，基于 TEXTURE_PIXEL_SIZE，
 ## 不随节点缩放放大；VisualRoot ×4 时屏幕实际观感仍为细描边）。
 @export_range(0.5, 8.0, 0.5) var enemy_outline_width_px: float = 2.0
-## 怪物死亡时的相对层级偏移：-1 = 死亡动画低于存活怪物（仍参与世界层排序，
-## 不会掉到地板下），禁止死亡时强制提升 z_index。
-@export_range(-4, 0, 1) var enemy_death_z_bias: int = -1
-
 @export_group("Enemy Hit Feedback")
 @export var enemy_hit_flash_color: Color = Color(1.8, 1.8, 1.8, 1.0)
-@export var enemy_hit_flash_seconds: float = 0.08
+@export var enemy_hit_flash_seconds: float = 0.06
 @export var enemy_hit_scale_seconds: float = 0.12
 @export_range(0.0, 0.5, 0.01) var enemy_hit_scale_amount: float = 0.16
-@export_range(0.0, 24.0, 0.5) var enemy_hit_visual_knockback_pixels: float = 6.0
-@export_range(0.01, 0.12, 0.005) var hit_stop_duration: float = 0.04
-@export_range(0.01, 0.5, 0.01) var hit_stop_minimum_interval: float = 0.09
+## 真实物理击退使用move_and_slide并快速线性衰减；特殊敌人可覆写Resistance。
+@export_range(0.0, 400.0, 1.0) var enemy_knockback_strength: float = 96.0
+@export_range(0.0, 1.0, 0.01) var employee_dismember_chance: float = 0.30
+@export_range(0.02, 0.5, 0.01) var enemy_knockback_duration: float = 0.14
+@export_group("Combat Response")
+## A real resolved knockback force is normalized against this value before it
+## selects hit-stop and camera response.  Weapon names are not a second tuning
+## table; callers without force data may still use the legacy tier API.
+@export_range(1.0, 2400.0, 1.0) var combat_impact_reference_knockback: float = 600.0
+@export_range(0.1, 3.0, 0.05) var combat_impact_max_normalized: float = 1.5
+## HitStop分级：由实际冲击归一化后选择。
+@export_range(0.005, 0.08, 0.005) var hit_stop_duration: float = 0.02
+@export_range(0.005, 0.08, 0.005) var hit_stop_medium_duration: float = 0.04
+@export_range(0.005, 0.08, 0.005) var hit_stop_heavy_duration: float = 0.07
+@export_range(0.01, 0.5, 0.01) var hit_stop_minimum_interval: float = 0.06
 @export_range(0.01, 1.0, 0.01) var hit_stop_time_scale: float = 0.05
+## Camera冲击仅影响World相机，不暂停UI或输入。
+@export_range(0.0, 32.0, 0.5) var camera_small_impulse: float = 2.0
+@export_range(0.0, 32.0, 0.5) var camera_medium_impulse: float = 4.5
+@export_range(0.0, 32.0, 0.5) var camera_heavy_impulse: float = 8.0
+@export_range(0.03, 0.4, 0.01) var camera_impulse_duration: float = 0.12
+@export_range(1.0, 80.0, 1.0) var camera_shake_frequency: float = 28.0
 @export_range(0.05, 1.0, 0.01) var kill_pop_animation_seconds: float = 0.24
-
-@export_group("Enemy Animation")
-## 敌人视觉身份已替换为 Monster 素材；内部 ID 仍为 correction_tape/stapler/alarm_clock/mailbox。
-@export_range(1.0, 24.0, 0.5) var slime_move_fps: float = 7.0
-@export_range(1.0, 24.0, 0.5) var slime_death_fps: float = 9.0
-@export_range(1.0, 24.0, 0.5) var flying_eye_move_fps: float = 9.0
-@export_range(1.0, 24.0, 0.5) var flying_eye_death_fps: float = 6.0
-@export_range(1.0, 24.0, 0.5) var huntress_move_fps: float = 10.0
-@export_range(1.0, 24.0, 0.5) var huntress_shoot_fps: float = 12.0
-@export_range(1.0, 24.0, 0.5) var huntress_death_fps: float = 8.0
-@export_range(1.0, 24.0, 0.5) var mushroom_move_fps: float = 8.0
-@export_range(1.0, 24.0, 0.5) var mushroom_death_fps: float = 4.0
-@export_range(1.0, 24.0, 0.5) var mimic_move_fps: float = 6.0
-@export_range(1.0, 24.0, 0.5) var mimic_death_fps: float = 7.0
-@export_range(1.0, 24.0, 0.5) var tentacle_idle_fps: float = 3.0
-@export_range(1.0, 20.0, 0.5) var large_correction_enemy_walk_animation_fps: float = 4.0
-@export_range(1.0, 24.0, 0.5) var correction_charge_animation_fps: float = 8.0
-@export_range(1.0, 24.0, 0.5) var large_correction_charge_animation_fps: float = 7.0
-@export_range(0.1, 1.0, 0.01) var stapler_attack_windup_seconds: float = 0.35
-
-@export_group("Enemy Visual Scale")
-## 统一 visual_scale：不同画布尺寸的序列帧统一缩放到最终游戏内体型，碰撞体单独适配不随缩放变化。
-## 本组保存的是绝对最终缩放（已包含 ×4 放大：旧值 0.15/0.19/0.34/0.12/0.42；触手怪 ×2：0.5→1.0），
-## 运行时代码直接使用该值，不再二次乘倍率。
-@export_range(0.02, 2.0, 0.01) var slime_visual_scale: float = 0.60
-@export_range(0.02, 2.0, 0.01) var flying_eye_visual_scale: float = 0.76
-@export_range(0.02, 2.0, 0.01) var huntress_visual_scale: float = 1.02
-@export_range(0.02, 2.0, 0.01) var mushroom_visual_scale: float = 0.96
-@export_range(0.02, 2.0, 0.01) var mimic_visual_scale: float = 1.68
-@export_range(0.02, 2.0, 0.01) var tentacle_visual_scale: float = 1.0
-
-@export_group("Stapler Enemy")
-@export var stapler_fire_interval: float = 2.0
-@export var staple_damage: float = 10.0
-@export var staple_speed: float = 170.0
-@export var staple_max_distance: float = 300.0
-@export var staple_collision_radius: float = 5.0
-
-@export_group("Alarm Clock Enemy")
-@export var alarm_enemy_max_hp: float = 10.0
-@export var alarm_enemy_contact_damage: float = 0.0
-@export var alarm_enemy_movement_speed: float = 72.0
-@export var alarm_enemy_trigger_distance: float = 52.0
-@export var alarm_enemy_charge_seconds: float = 0.65
-@export var alarm_enemy_explosion_radius: float = 50.0
-@export var alarm_enemy_explosion_damage: float = 30.0
-@export var alarm_enemy_death_delay: float = 1.0
-@export var alarm_enemy_chain_delay: float = 0.10
-@export var alarm_enemy_blue_exp_value: int = 5
-
-@export_group("Mailbox Enemy")
-@export var mailbox_enemy_max_hp: float = 100.0
-@export var mailbox_enemy_contact_damage: float = 8.0
-@export var mailbox_enemy_movement_speed: float = 28.0
-@export var mailbox_enemy_attack_trigger_distance: float = 50.0
-@export var mailbox_enemy_slam_angle: float = 30.0
-@export var mailbox_enemy_slam_range: float = 200.0
-@export var mailbox_enemy_slam_damage: float = 30.0
-@export var mailbox_enemy_slam_windup: float = 0.8
-@export var mailbox_enemy_attack_cooldown: float = 2.5
-@export var mailbox_enemy_split_count: int = 3
-@export var mailbox_enemy_purple_exp_value: int = 25
-
-@export_group("Tentacle Enemy")
-## 触手怪：不移动的环境型可破坏怪物，使用 Crawling Depths Tentacle 素材。
-@export var tentacle_max_hp: float = 100.0
-@export var tentacle_contact_damage: float = 5.0
-@export var tentacle_spawn_interval: float = 30.0
-@export_range(1, 10, 1) var tentacle_spawn_batch_min: int = 1
-@export_range(1, 10, 1) var tentacle_spawn_batch_max: int = 5
-@export_range(0, 30, 1) var tentacle_max_alive: int = 10
-@export var tentacle_min_spawn_distance_from_player: float = 120.0
-## 死亡掉落 1 个紫色经验球，数值沿用现有紫色经验球配置（mailbox_enemy_purple_exp_value）。
-@export var tentacle_purple_exp_value: int = 25
-## 触手怪死亡额外掉落的红心拾取后回复的生命值。
-@export_range(1.0, 100.0, 1.0) var heart_pickup_heal_amount: float = 15.0
-
-@export_group("Huntress Attack")
-## 精灵射手（Legacy internal ID: stapler）投射物绑定到 shoot 动画的指定帧。
-@export_range(0, 5, 1) var huntress_shoot_projectile_frame: int = 3
-## 进入攻击状态立即 velocity=0 并暂停寻路/追踪，攻击动画完整播完才恢复移动。
-@export var huntress_attack_stop_before_shot: bool = true
 
 @export_group("Opening Text")
 @export_range(1.0, 120.0, 1.0) var opening_characters_per_second: float = 22.0
@@ -413,7 +815,9 @@ var runtime_player_light_radius: float = -1.0
 @export_range(0.08, 0.4, 0.01) var main_menu_selection_tween_duration: float = 0.18
 @export var main_menu_selection_fill_color: Color = Color(0.055, 0.12, 0.13, 0.58)
 @export var main_menu_selection_border_color: Color = Color(0.216, 0.298, 0.302, 0.92)
-@export var game_version_text: String = "V0.4.7"
+@export var game_version_text: String = "V0.5.0"
+# Release labels do not invalidate otherwise-compatible progression saves.
+@export var save_compatibility_version: String = "V0.4.7"
 @export var community_group_text: String = "游戏存活进度群:833796070"
 @export var community_group_url: String = "https://qm.qq.com/q/Mq3wuCuZQ6"
 
@@ -565,7 +969,6 @@ var runtime_player_light_radius: float = -1.0
 
 @export_group("Sunday Events")
 @export var sunday_event_probabilities: PackedFloat32Array = PackedFloat32Array([0.05, 0.05, 0.05, 0.05, 0.80])
-@export var sunday_event_texts: PackedStringArray = PackedStringArray(["出去帮做义工了", "吃了一顿大餐", "做了其他公司的外包", "感冒了...", "今天什么也没做"])
 @export var sunday_event_balance_deltas: PackedInt32Array = PackedInt32Array([200, -500, 1000, -300, 0])
 
 @export_group("Bedroom Weather")
@@ -609,7 +1012,6 @@ var runtime_player_light_radius: float = -1.0
 @export_range(-60.0, 6.0, 1.0) var sfx_death_volume_db: float = -8.0
 @export_range(-60.0, 6.0, 1.0) var sfx_new_message_volume_db: float = -12.0
 @export_range(-60.0, 6.0, 1.0) var sfx_purchase_volume_db: float = -10.0
-@export_range(-60.0, 6.0, 1.0) var sfx_laser_volume_db: float = -18.0
 @export_range(-60.0, 6.0, 1.0) var sfx_home_door_volume_db: float = -10.0
 @export_range(-60.0, 6.0, 1.0) var sfx_work_volume_db: float = -10.0
 @export_range(-60.0, 6.0, 1.0) var sfx_confirm_volume_db: float = -14.0
@@ -626,10 +1028,25 @@ var runtime_player_light_radius: float = -1.0
 @export_range(-60.0, 6.0, 1.0) var sfx_player_hurt_volume_db: float = -12.0
 @export_range(-60.0, 6.0, 1.0) var sfx_heal_volume_db: float = -8.0
 @export_range(-60.0, 6.0, 1.0) var sfx_weapon_fire_volume_db: float = -17.0
+@export_range(-60.0, 6.0, 1.0) var sfx_weapon_reload_volume_db: float = -14.0
+@export_range(-60.0, 6.0, 1.0) var sfx_weapon_pickup_volume_db: float = -12.0
+@export_range(-60.0, 6.0, 1.0) var sfx_weapon_throw_volume_db: float = -14.0
+@export_range(-60.0, 6.0, 1.0) var sfx_weapon_dry_fire_volume_db: float = -16.0
 @export_range(-60.0, 6.0, 1.0) var sfx_pistol_fire_volume_db: float = -20.0
 @export_range(-60.0, 6.0, 1.0) var sfx_shotgun_fire_volume_db: float = -16.0
 @export_range(400.0, 10000.0, 50.0) var sfx_weapon_lowpass_cutoff_hz: float = 3400.0
 @export_range(-60.0, 6.0, 1.0) var sfx_enemy_kill_volume_db: float = -14.0
+@export_range(-60.0, 6.0, 1.0) var sfx_enemy_hit_volume_db: float = -20.0
+## 近战命中敌人的专用音量；与通用 enemy_hit 反馈分开，避免战斗命中过轻。
+@export_range(-60.0, 6.0, 1.0) var sfx_melee_hit_enemy_volume_db: float = -14.0
+## 弹丸命中敌人的专用音量；与通用 enemy_hit 反馈分开。
+@export_range(-60.0, 6.0, 1.0) var sfx_bullet_hit_enemy_volume_db: float = -14.0
+## 近战命中家具的专用音量；与通用 furniture_impact 反馈分开。
+@export_range(-60.0, 6.0, 1.0) var sfx_melee_hit_furniture_volume_db: float = -11.0
+@export_range(-60.0, 6.0, 1.0) var sfx_body_impact_volume_db: float = -20.0
+@export_range(-60.0, 6.0, 1.0) var sfx_wall_impact_volume_db: float = -18.0
+@export_range(-60.0, 6.0, 1.0) var sfx_furniture_impact_volume_db: float = -17.0
+@export_range(-60.0, 6.0, 1.0) var sfx_melee_swing_volume_db: float = -14.0
 @export_range(-60.0, 6.0, 1.0) var sfx_door_knock_volume_db: float = -13.0
 @export_range(-60.0, 6.0, 1.0) var sfx_thunder_volume_db: float = -18.0
 ## 临时程序化 buzz 占位音量（待人工替换 res://sfx/手机震动.wav）。
@@ -637,10 +1054,6 @@ var runtime_player_light_radius: float = -1.0
 
 @export_group("Pause Menus")
 @export var tab_menu_pauses_tree: bool = true
-
-@export_group("Game Settings")
-@export var fast_sleep_default_enabled: bool = true
-@export_range(1.0, 3.0, 0.1) var fast_sleep_game_speed_multiplier: float = 1.5
 
 @export_group("Bedroom Time")
 @export var bedroom_start_minutes: float = 1260.0
@@ -658,8 +1071,8 @@ var runtime_player_light_radius: float = -1.0
 @export var death_wake_delay_max_minutes: int = 90
 
 @export_group("Death CRT Effect")
-## 角色死亡时老电视关机动画的总时长（秒）。
-@export_range(0.2, 2.0, 0.05) var death_crt_effect_seconds: float = 0.7
+## 角色死亡时报错与关机动画的总时长（秒）。
+@export_range(0.2, 5.0, 0.05) var death_crt_effect_seconds: float = 2.2
 
 @export_group("Economy")
 @export var initial_balance: int = 1325
@@ -698,7 +1111,6 @@ var runtime_player_light_radius: float = -1.0
 @export var permanent_upgrade_prices: PackedInt32Array = PackedInt32Array([1, 3, 5, 8, 10])
 @export var permanent_upgrade_max_level: int = 5
 @export var visual_cortex_range_per_level: float = 50.0
-@export var brainstem_experience_per_level: float = 0.2
 @export var hippocampus_health_per_level: float = 20.0
 @export var prefrontal_attack_speed_per_level: float = 0.2
 
@@ -728,10 +1140,6 @@ var runtime_player_light_radius: float = -1.0
 @export var blackjack_chip_values: PackedInt32Array = PackedInt32Array([10, 50, 100, 500])
 @export_range(1, 1000, 1) var blackjack_dealer_stand_value: int = 17
 @export_range(1.0, 3.0, 0.5) var blackjack_natural_payout_ratio: float = 1.5
-
-@export_group("Drops")
-@export_range(1, 16, 1) var correction_experience_drop_count: int = 2
-@export_range(1, 16, 1) var stapler_experience_drop_count: int = 3
 
 @export_group("Endings")
 @export_range(1, 365, 1) var normal_life_ending_required_workdays: int = 14
@@ -775,3 +1183,42 @@ var runtime_player_light_radius: float = -1.0
 @export_range(0.05, 1.0, 0.01) var bedroom_chr_glow_interval_min: float = 0.06
 @export_range(0.05, 1.0, 0.01) var bedroom_chr_glow_interval_max: float = 0.18
 @export_range(0.0, 1.0, 0.01) var bedroom_chr_glow_big_change_chance: float = 0.15
+
+@export_range(0.0, 20.0, 0.5)
+var lucille_character_hop_pixels: float = 5.0
+@export_range(0.0, 20.0, 0.5)
+var lucille_character_back_pixels: float = 3.0
+@export_range(0.0, 20.0, 0.5)
+var lucille_character_forward_pixels: float = 6.0
+@export_range(0.0, 45.0, 1.0)
+var lucille_character_back_lean_degrees: float = 16.0
+@export_range(0.02, 0.20, 0.01)
+var lucille_character_windup_seconds: float = 0.04
+@export_range(0.02, 0.20, 0.01)
+var lucille_character_strike_seconds: float = 0.10
+@export_range(0.02, 0.30, 0.01)
+var lucille_character_recover_seconds: float = 0.10
+
+func get_kick_knockback_force() -> float:
+	return gun_knockback_force * kick_knockback_multiplier
+
+
+func get_lucille_knockback_force() -> float:
+	return get_kick_knockback_force() * lucille_knockback_multiplier
+
+
+func get_furniture_projectile_force_multiplier(weapon_id: StringName) -> float:
+	match weapon_id:
+		&"shotgun":
+			return furniture_shotgun_pellet_force_multiplier
+		&"assault_rifle":
+			return furniture_assault_rifle_force_multiplier
+		_:
+			return furniture_pistol_force_multiplier
+
+
+func weapon_interval_for_rate(base_interval: float) -> float:
+	## Convert the authored seconds-per-shot value through the neutral global
+	## cadence multiplier.  The default value is one, preserving the original
+	## weapon fire rate while leaving this hook available for intentional tuning.
+	return maxf(base_interval, 0.001) / maxf(weapon_fire_rate_multiplier, 0.001)

@@ -53,7 +53,8 @@ func configure(new_value: int, rarity: String = "normal") -> void:
 
 
 func set_environment_reference(config: DemoConfig) -> void:
-	environment_reference_radius = config.runtime_player_light_radius if config.runtime_player_light_radius > 0.0 else config.player_light_radius
+	# 仅供SoftGlow绘制尺寸参考；Dream中不再存在局部Light2D。
+	environment_reference_radius = config.player_light_radius
 
 
 func _build_frames(sheet: Texture2D, regions: Array[Rect2]) -> void:
@@ -90,6 +91,21 @@ func _draw() -> void:
 	# 按各帧自身尺寸居中绘制，避免帧间尺寸差异造成抖动。
 	# HDR modulate 只提亮原素材，不改变蓝/紫稀有度。
 	draw_texture_rect(frame_texture, Rect2(draw_offset - frame_size * 0.5, frame_size), false, Color(1.48, 1.48, 1.48, 1.0))
+
+
+## The 3D random-building bridge renders this custom-drawn pickup in a
+## passive duplicate.  Mirror the source animation state instead of letting a
+## second pickup process/attraction lifecycle run in the depth viewport.
+func copy_depth_visual_state_to(target: Node2D) -> void:
+	if target == null or not target.has_method("_draw"):
+		return
+	target.set("anim_elapsed", anim_elapsed)
+	target.set("frames", frames)
+	target.set("pop_elapsed", pop_elapsed)
+	target.set("draw_offset", draw_offset)
+	target.scale = scale
+	target.modulate = modulate
+	target.queue_redraw()
 
 
 func _rarity_glow_color() -> Color:

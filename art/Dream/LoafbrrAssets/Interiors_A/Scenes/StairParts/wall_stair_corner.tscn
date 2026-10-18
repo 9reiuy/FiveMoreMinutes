@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=4 uid="uid://c57jhdl5rfc1i"]
+
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="1_xhii8"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_d0p4b"]
+_surfaces = [{
+"aabb": AABB(-4.37114e-09, -4.37115e-09, 4.37114e-09, 0.1, 3, 0.1),
+"format": 34896613377,
+"index_count": 24,
+"index_data": PackedByteArray("AAABAAIAAAADAAEAAgABAAQAAgAEAAUABgAEAAEABgABAAcABwABAAMABwADAAgA"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 9,
+"vertex_data": PackedByteArray("/v8AAAAAAAD///9//v8AAP7//38AAAAA//8AAP7/AAD+//////8AAP7///8AAAAAAAD///7/AAAAAP9//v8AAAAAAAD+/wAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_lehki"]
+resource_name = "Interiors_A_Wall_Stair_Corner"
+_surfaces = [{
+"aabb": AABB(-4.37114e-09, -4.37115e-09, 4.37114e-09, 0.1, 3, 0.1),
+"attribute_data": PackedByteArray("3fv///7//3/d+/9//////937/v/+//9/3fv/f////v/d+/9//v///937///+//9/3fv/f/7////d+/7//v//fw=="),
+"format": 34896613399,
+"index_count": 24,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0A"),
+"material": ExtResource("1_xhii8"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(2.06667, 1, 0, 0),
+"vertex_count": 16,
+"vertex_data": PackedByteArray("/v8AAAAAAAD///9//v8AAP7//38AAAAA//8AAP7/AAD+//9/AAAAAP7//////wAA/v///wAAAAD///9//v8AAAAA/3/+/wCA//8AAP7/AIAAAAAA/v8AgP///3/+/wCAAAD///7/AID///9//v8AgAAA/3/+/wCA/v//////AID/v/9//7//f/+//3//v/9//7//f/+//3//v/9//7//f/9/////f////3////9/////f////3////9/////f///")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_d0p4b")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_e7duo"]
+data = PackedVector3Array(-4.37113e-09, -4.37115e-09, 0.0999999, -4.37114e-09, 3, 0.1, 0.0999999, 3, 0.1, 0.0999999, 3, 0.1, 0.0999999, 3, 4.37114e-09, 0.1, 4.37114e-09, 4.37114e-09, -4.37113e-09, -4.37115e-09, 0.0999999, 0.0999999, 3, 0.1, 0.1, -4.37115e-09, 0.0999999, 0.0999999, 3, 0.1, 0.1, 4.37114e-09, 4.37114e-09, 0.1, -4.37115e-09, 0.0999999)
+
+[node name="Wall_Stair_Corner" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_lehki")
+skeleton = NodePath("")
+
+[node name="Wall_Stair_Corner" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Stair_Corner"]
+shape = SubResource("ConcavePolygonShape3D_e7duo")

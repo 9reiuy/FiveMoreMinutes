@@ -21,9 +21,11 @@ var waiting_alpha := 0.0
 var elapsed := 0.0
 var glow_rect: ColorRect
 var glow_material: ShaderMaterial
+var knock_prompt := ""
 
 
 func _ready() -> void:
+	knock_prompt = str(TextContent.get_dialogue(&"hallway_knock_prompt").get("lines", [{}])[0].get("text", ""))
 	glow_material = ShaderMaterial.new()
 	glow_material.shader = GLOW_SHADER
 	glow_rect = ColorRect.new()
@@ -108,7 +110,7 @@ func _draw() -> void:
 	# 不再跟随交互区中心（280px）偏左；垂直位置紧贴视口底部。
 	var center_x := viewport_size.x * 0.5
 	var font := PixelFont.get_font()
-	var text := "有人敲门"
+	var text := knock_prompt
 	var font_size := 10
 	var color := Color(0.82, 0.91, 0.96, 0.92)
 	var text_width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x

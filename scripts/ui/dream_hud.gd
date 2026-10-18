@@ -2,20 +2,15 @@ extends Control
 
 @export var config: DemoConfig
 
-@onready var experience_area: Control = $ExperienceBarArea
-@onready var experience_bar: ProgressBar = $ExperienceBarArea/ExperienceProgressBar
-@onready var experience_value_label: Label = $ExperienceBarArea/ExperienceValueLabel
 @onready var dash_icon: TextureRect = $DashIndicator/DashIcon
 @onready var endless_day_area: Control = $EndlessDayArea
 @onready var endless_day_label: Label = $EndlessDayArea/DayLabel
 @onready var endless_day_progress: ProgressBar = $EndlessDayArea/DayProgress
+var dungeon_minimap: Control = null
 
 var time_text := "04:00"
 var health := 100.0
 var maximum_health := 100.0
-var level := 1
-var experience := 0
-var experience_target := 20
 var kills := 0
 var dash_remaining := 0.0
 var dash_total := 2.0
@@ -25,32 +20,47 @@ var dash_max_charges := 1
 var dash_hunger_disabled := false
 var shielded := false
 var dissociation_ready := false
-var displayed_experience_ratio := 0.0
-var target_experience_ratio := 0.0
-var level_flash_left := 0.0
 var endless_mode := false
 var endless_day_duration := 120.0
+var displayed_time_scale := 1.0
+var vhs_preview_rect: ColorRect = null
 
 
 func _ready() -> void:
-	# 顶部只保留经验条：Y=0 贴顶、横向满宽、极薄，无外围 Panel。
-	# 高度为旧版 12 的一半（6）；EXP 文字由 Label 垂直居中自动适配。
-	experience_area.offset_left = 0.0
-	experience_area.offset_top = 0.0
-	experience_area.offset_right = 0.0
-	experience_area.offset_bottom = 6.0
-	_update_experience_labels()
 	_update_dash_indicator()
 	endless_day_area.visible = endless_mode
+	dash_icon.visible = false
+	_init_vhs_preview()
 
 
-func _process(delta: float) -> void:
-	displayed_experience_ratio = move_toward(displayed_experience_ratio, target_experience_ratio, config.experience_bar_fill_animation_speed * delta)
-	experience_bar.value = displayed_experience_ratio * 100.0
-	level_flash_left = maxf(0.0, level_flash_left - delta)
-	var near_level := target_experience_ratio >= config.experience_bar_near_level_threshold and target_experience_ratio < 1.0
-	var pulse := 0.86 + sin(Time.get_ticks_msec() * 0.009) * 0.14 if near_level else 1.0
-	experience_bar.modulate = Color(1.18, 1.18, 1.08, 1.0) if level_flash_left > 0.0 else Color(pulse, pulse, pulse, 1.0)
+func _init_vhs_preview() -> void:
+	var shader = load("res://shaders/dream3d/vhs_tactical_preview.gdshader") as Shader
+	if shader != null:
+		vhs_preview_rect = ColorRect.new()
+		vhs_preview_rect.name = "VHSTacticalPreview"
+		var mat := ShaderMaterial.new()
+		mat.shader = shader
+		vhs_preview_rect.material = mat
+		vhs_preview_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		vhs_preview_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		vhs_preview_rect.visible = false
+		add_child(vhs_preview_rect)
+
+
+func _process(_delta: float) -> void:
+	var time_controller := get_node_or_null("/root/DreamTimeController")
+	if time_controller == null:
+		time_controller = get_tree().get_first_node_in_group(&"dream_time_controller")
+	if time_controller != null and time_controller.has_method("get_resolved_time_scale"):
+		displayed_time_scale = maxf(float(time_controller.call("get_resolved_time_scale")), 0.0)
+	else:
+		displayed_time_scale = maxf(Engine.time_scale, 0.0)
+
+	if time_controller != null and time_controller.has_method("is_tactical_planning_active"):
+		var is_planning: bool = bool(time_controller.call("is_tactical_planning_active"))
+		if vhs_preview_rect != null and vhs_preview_rect.visible != is_planning:
+			vhs_preview_rect.visible = is_planning
+
 	queue_redraw()
 
 
@@ -79,23 +89,47 @@ func set_health(current: float, maximum: float) -> void:
 	queue_redraw()
 
 
-func set_progression(new_level: int, new_experience: int, target: int, new_kills: int) -> void:
-	if new_level > level:
-		level_flash_left = 0.35
-	level = new_level
-	experience = maxi(0, new_experience)
-	experience_target = maxi(1, target)
-	kills = new_kills
-	target_experience_ratio = clampf(float(experience) / experience_target, 0.0, 1.0)
-	_update_experience_labels()
-	queue_redraw()
+func set_weapon_state(
+	ranged_weapon_id: String,
+	melee_weapon_id: String,
+	selected_weapon_id: String,
+	active_weapon_category: StringName = &""
+) -> void:
+	# Kept as a compatibility endpoint for DreamPlayer; the removed combat panel
+	# no longer owns an update chain or a second inventory presentation.
+	pass
 
 
-func _update_experience_labels() -> void:
-	if not is_node_ready():
-		return
-	# 等级显示已移除（内部 level 变量保留），EXP 数值居中叠在经验条内。
-	experience_value_label.text = "%d / %d" % [experience, experience_target]
+func set_flashlight_available(available: bool) -> void:
+	# Compatibility endpoint retained for older Player callers.
+	pass
+
+
+## The Random Dream world supplies the already-authored macro topology.  HUD
+## only forwards it to the minimap renderer; it never discovers rooms itself.
+func set_dungeon_minimap_data(
+	rooms: Array,
+	connections: Array,
+	corridors: Array,
+	cell_pixels: float = 32.0
+) -> void:
+	if dungeon_minimap != null and dungeon_minimap.has_method("configure"):
+		dungeon_minimap.call("configure", rooms, connections, corridors, cell_pixels)
+
+
+func set_dungeon_minimap_room_state(room_id: int, state: StringName) -> void:
+	if dungeon_minimap != null and dungeon_minimap.has_method("set_room_state"):
+		dungeon_minimap.call("set_room_state", room_id, state)
+
+
+func set_dungeon_minimap_corridor_state(corridor_id: int, state: StringName) -> void:
+	if dungeon_minimap != null and dungeon_minimap.has_method("set_corridor_state"):
+		dungeon_minimap.call("set_corridor_state", corridor_id, state)
+
+
+func set_dungeon_minimap_player(position: Vector2, room_id: int) -> void:
+	if dungeon_minimap != null and dungeon_minimap.has_method("set_player_state"):
+		dungeon_minimap.call("set_player_state", position, room_id)
 
 
 func set_dash_state(remaining: float, total: float, active: bool, charges: int = 1, maximum_charges: int = 1) -> void:
@@ -138,14 +172,21 @@ func set_skill_state(has_shield: bool, revive_ready: bool) -> void:
 
 func _draw() -> void:
 	var font := PixelFont.get_font()
-	# HP 条与 HP 文字已全部移除（受伤/回血逻辑不受影响）；
-	# Dash 图标由 DashIndicator 节点绘制；文字只保留状态说明。
-	# 冲刺状态仅由DashIcon内部灰色冷却遮罩表达，不再显示任何就绪/充能文字。
-	# 无尽模式仍保留内部 elapsed_time、Day 和 RAM 结算，只隐藏顶部经过时间。
+	# The HUD draws the clock, shared time multiplier, and non-progression status.
 	if not endless_mode:
 		draw_string(font, Vector2(0, 66), time_text, HORIZONTAL_ALIGNMENT_CENTER, 640, 19, Color("d2ced6"))
-	draw_string(font, Vector2(510, 61), "击败 %d" % kills, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("8f8c98"))
 	if shielded:
 		draw_string(font, Vector2(510, 80), "护盾 ◆", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("8ebad0"))
 	if dissociation_ready:
 		draw_string(font, Vector2(510, 97), "意识解离 ◈", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("d7b45f"))
+	# Keep the time multiplier in the Dream HUD itself so both legacy 2D and 3D
+	# gameplay presentations consume the same DreamTimeController authority.
+	var viewport_size := get_viewport_rect().size
+	var indicator_y := viewport_size.y - 14.0
+	var triangle := PackedVector2Array([
+		Vector2(14.0, indicator_y - 7.0),
+		Vector2(14.0, indicator_y + 5.0),
+		Vector2(20.0, indicator_y - 1.0),
+	])
+	draw_colored_polygon(triangle, Color("d2ced6"))
+	draw_string(font, Vector2(27.0, indicator_y + 3.0), "x %.2f" % displayed_time_scale, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("d2ced6"))

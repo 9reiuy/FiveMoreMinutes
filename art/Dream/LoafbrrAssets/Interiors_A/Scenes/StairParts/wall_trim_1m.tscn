@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3 uid="uid://42e32lj48udw"]
+
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="1_kpmpg"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_1rfjn"]
+_surfaces = [{
+"aabb": AABB(-0.5, -4.37114e-09, 0.100879, 1, 0.75, 1e-05),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 195, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 195, 0, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ohnt7"]
+resource_name = "Interiors_A_Wall_Trim_1m"
+_surfaces = [{
+"aabb": AABB(-0.5, -4.37114e-09, 0.100879, 1, 0.75, 1e-05),
+"attribute_data": PackedByteArray(170, 170, 255, 255, 255, 255, 255, 191, 255, 255, 255, 255, 170, 170, 255, 191),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"material": ExtResource("1_kpmpg"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 128, 255, 255, 255, 255, 195, 0, 0, 128, 255, 255, 0, 0, 0, 0, 0, 128, 0, 0, 255, 255, 195, 0, 0, 128, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_1rfjn")
+
+[node name="Wall_Trim_1m" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_ohnt7")
+skeleton = NodePath("")

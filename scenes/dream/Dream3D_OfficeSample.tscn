@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/dream/Dream3D_RandomDungeon.tscn" id="1_world"]
+
+[node name="Dream3D_OfficeSample" instance=ExtResource("1_world")]
+use_authored_office_sample = true
+persist_profile = false

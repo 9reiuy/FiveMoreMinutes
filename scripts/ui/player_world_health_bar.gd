@@ -7,6 +7,11 @@ var visible_left := 0.0
 var bar_width := 50.0
 var bar_height := 5.0
 
+func copy_depth_visual_state_to(target: Node2D) -> void:
+	for property_name in ["current_health","maximum_health","bar_width","bar_height"]:
+		target.set(property_name, get(property_name))
+	target.queue_redraw()
+
 
 func _ready() -> void:
 	visible = false

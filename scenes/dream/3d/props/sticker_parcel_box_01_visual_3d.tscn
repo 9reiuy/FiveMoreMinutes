@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="ArrayMesh" path="res://art/Dream/3d_props/mesh_sticker_parcel_box_01.obj" id="1_mesh"]
+[ext_resource type="Texture2D" path="res://art/Dream/3d_props/tex_sticker_parcel_box_01.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://art/Dream/shadow.png" id="3_shadow_tex"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_Box"]
+albedo_texture = ExtResource("2_tex")
+texture_filter = 0
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Mat_Shadow"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 1, 1, 0.42)
+albedo_texture = ExtResource("3_shadow_tex")
+
+[sub_resource type="PlaneMesh" id="Mesh_Shadow"]
+material = SubResource("Mat_Shadow")
+size = Vector2(0.52, 0.32)
+
+[node name="StickerParcelBox01_Visual3D" type="Node3D"]
+
+[node name="Shadow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, -0.15625)
+mesh = SubResource("Mesh_Shadow")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.15625)
+material_override = SubResource("Mat_Box")
+mesh = ExtResource("1_mesh")

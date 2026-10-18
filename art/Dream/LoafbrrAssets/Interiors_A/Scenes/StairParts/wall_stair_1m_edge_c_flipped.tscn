@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=4 uid="uid://bxv33lanpbv3d"]
+
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="1_fsvmp"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ldaru"]
+_surfaces = [{
+"aabb": AABB(-0.5, -4.37114e-09, -0.1, 1, 1, 0.200001),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAHAAQACAAJAAcA"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 10,
+"vertex_data": PackedByteArray("/v///wAAAAAAAAAAAAAAAP7/AAAAAAAAAAD//wAAAAAAAP////8AAP//AAD+/wAAAAAAAP7/AAD//////v8AAAAA////fwAA/v////9/AAA=")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_kjp6k"]
+resource_name = "Interiors_A_Wall_Stair_1m_Edge_C_Flipped"
+_surfaces = [{
+"aabb": AABB(-0.5, -4.37114e-09, -0.1, 1, 1, 0.200001),
+"attribute_data": PackedByteArray("qaqqqv7///+pqv///v+qqv7/qiqpqv9//v//f6mqqir+/5mZqaohov7/IaKpqpmZ"),
+"format": 34896613399,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkA"),
+"material": ExtResource("1_fsvmp"),
+"name": "Surface_Wall_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("/v///wAA//8AAAAAAAD///7/AAAAAP//AAD//wAA//8AAP////8AAP//AAD+/wAAAAAAAP7/AAD//////v8AAAAA////fwAA//////7/AAAAAP////8AAP7/////fwAA/3////9/////f////3////9//3//f/9//3//f/9//3//f/+//3//v/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ldaru")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_u6vi5"]
+data = PackedVector3Array(0.5, 1, -0.1, -0.5, 4.37114e-09, -0.0999998, 0.5, 4.37114e-09, -0.1, 0.5, 1, -0.1, -0.5, 1, -0.0999997, -0.5, 4.37114e-09, -0.0999998, -0.5, 1, 0.1, 0.5, -4.37114e-09, 0.0999997, -0.5, -4.37114e-09, 0.1, -0.5, 1, 0.1, 0.5, 1, 0.0999997, 0.5, -4.37114e-09, 0.0999997, -0.5, 1, 6.4075e-07, 0.5, 1, 0.0999997, -0.5, 1, 0.1, -0.5, 1, 6.4075e-07, 0.5, 1, 7.45058e-08, 0.5, 1, 0.0999997)
+
+[node name="Wall_Stair_1m_Edge_C_Flipped" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_kjp6k")
+skeleton = NodePath("")
+
+[node name="Wall_Stair_1m_Edge_C_Flipped" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Stair_1m_Edge_C_Flipped"]
+shape = SubResource("ConcavePolygonShape3D_u6vi5")

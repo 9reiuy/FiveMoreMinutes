@@ -35,7 +35,7 @@ var interaction_token := 0
 var pill_progress := 0.0
 var total_shake_distance := 0.0
 var shake_window_left := 0.0
-var status_text := "按住药瓶，左右摇晃"
+var status_text := ""
 var swallow_audio: AudioStreamPlayer
 var consume_progress := 0.0
 var hand_reach_progress := 0.0
@@ -53,6 +53,7 @@ var last_motion_msec := 0
 
 
 func _ready() -> void:
+	status_text = _interaction_text(&"melatonin_interaction_instruction")
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	hand_sprite.texture = RIGHT_HAND_OPEN
 	bottle_sprite.visible = false
@@ -91,7 +92,7 @@ func open(state: Dictionary) -> void:
 	right_hand_position = _clamped_mouse_position()
 	last_motion_msec = Time.get_ticks_msec()
 	interaction_token += 1
-	status_text = "空瓶" if int(state.get("melatonin_inventory", 0)) <= 0 else "按住药瓶，左右摇晃"
+	status_text = _interaction_text(&"melatonin_interaction_empty") if int(state.get("melatonin_inventory", 0)) <= 0 else _interaction_text(&"melatonin_interaction_instruction")
 	previous_mouse_mode = Input.mouse_mode
 	_hide_all_pointers()
 	visible = true
@@ -206,6 +207,10 @@ func _clamp_hand_position(point: Vector2) -> Vector2:
 	return Vector2(clampf(point.x, 64.0, viewport_size.x - 64.0), clampf(point.y, 64.0, viewport_size.y - 64.0))
 
 
+func _interaction_text(dialogue_id: StringName) -> String:
+	return str(TextContent.get_dialogue(dialogue_id).get("lines", [{}])[0].get("text", ""))
+
+
 func _play_shake_sound_if_available() -> void:
 	if not held or dispensing or int(persistent_state.get("melatonin_inventory", 0)) <= 0:
 		return
@@ -216,7 +221,7 @@ func _begin_pill_drop() -> void:
 	if dispensing:
 		return
 	if int(persistent_state.get("melatonin_inventory", 0)) <= 0:
-		status_text = "空瓶"
+		status_text = _interaction_text(&"melatonin_interaction_empty")
 		return
 	dispensing = true
 	held = false
@@ -246,7 +251,7 @@ func _begin_pill_drop() -> void:
 		return
 	# Recheck stock at the hand before beginning the non-interactive consume motion.
 	if int(persistent_state.get("melatonin_inventory", 0)) <= 0:
-		status_text = "空瓶"
+		status_text = _interaction_text(&"melatonin_interaction_empty")
 		dispensing = false
 		return
 	await get_tree().create_timer(config.melatonin_consume_pre_swallow_pause, false).timeout
@@ -264,17 +269,17 @@ func _begin_pill_drop() -> void:
 	if token != interaction_token or not visible:
 		return
 	if int(persistent_state.get("melatonin_inventory", 0)) <= 0:
-		status_text = "空瓶"
+		status_text = _interaction_text(&"melatonin_interaction_empty")
 		dispensing = false
 		return
 	swallow_audio.stop()
 	swallow_audio.play()
-	status_text = "咽下去了"
+	status_text = _interaction_text(&"melatonin_interaction_swallowed")
 	queue_redraw()
 	await get_tree().create_timer(config.melatonin_consume_end_pause, false).timeout
 	if token == interaction_token and visible:
 		if int(persistent_state.get("melatonin_inventory", 0)) <= 0:
-			status_text = "空瓶"
+			status_text = _interaction_text(&"melatonin_interaction_empty")
 			dispensing = false
 			return
 		# 库存、当晚片数信号与压力只在完整演出结束后一次性提交。
