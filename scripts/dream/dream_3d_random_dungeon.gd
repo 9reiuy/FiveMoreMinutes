@@ -745,6 +745,8 @@ var _active_firearm_impact_count := 0
 var _cutout_furniture_query_frame: int = -1
 var _cached_damageable_props: Array = []
 var _cached_damageable_props_frame: int = -1
+var _throw_aim_cleared := true
+var _dash_aim_cleared := true
 var _cutout_furniture_mesh_centers := PackedVector3Array()
 var _cutout_furniture_mesh_bins: Dictionary = {}
 ## Per-frame screen-rect cache keyed by MeshInstance3D instance_id.
@@ -1285,10 +1287,12 @@ func _update_dash_aim_presentation() -> void:
 		and bool(player.call("is_dash_aim_active"))
 		and player.has_method("get_dash_path_result")
 	):
+		_dash_aim_cleared = false
 		dash_aim_presentation.global_position = player.global_position
 		dash_aim_presentation.call("set_path", player.call("get_dash_path_result"))
-	else:
+	elif not _dash_aim_cleared:
 		dash_aim_presentation.call("clear")
+		_dash_aim_cleared = true
 
 
 func _configure_dungeon_minimap() -> void:
@@ -1503,14 +1507,16 @@ func _update_throw_aim_presentation() -> void:
 		and player.has_method("is_throw_aim_active")
 		and bool(player.call("is_throw_aim_active"))
 	):
+		_throw_aim_cleared = false
 		var prediction := get_throw_aim_prediction()
 		throw_trajectory_visual.call(
 			"set_points",
 			prediction.get("points", []),
 			prediction.get("impact_world", Vector3.ZERO)
 		)
-	else:
+	elif not _throw_aim_cleared:
 		throw_trajectory_visual.call("clear_points")
+		_throw_aim_cleared = true
 
 
 func get_throw_aim_prediction() -> Dictionary:
