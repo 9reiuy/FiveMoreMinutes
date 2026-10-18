@@ -5899,7 +5899,9 @@ func _update_occlusion_cutouts() -> void:
 				"slot": enemy_slot,
 				"distance": camera_3d.global_position.distance_squared_to(enemy_world) if camera_3d != null else 0.0,
 			})
-		_cached_enemy_cutout_candidates = candidates.duplicate()
+		# Keep the refresh-frame array; only duplicate on alternate frames when
+		# projectiles will append into the working list.
+		_cached_enemy_cutout_candidates = candidates
 	elif not refresh_enemy_cutouts:
 		candidates = _cached_enemy_cutout_candidates.duplicate()
 	var effective_config: DemoConfig = config if config != null else EMPLOYEE_CONFIG
