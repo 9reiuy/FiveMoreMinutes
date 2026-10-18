@@ -9,6 +9,7 @@ var interior_light: OmniLight3D
 var spill_light: SpotLight3D
 var opening_fraction:=0.0
 var last_door_transform:=Transform3D()
+var _idle_closed_frames:=0
 
 func configure(source: Node3D) -> void:
 	source.indicator_label.hide()
@@ -24,6 +25,12 @@ func configure(source: Node3D) -> void:
 			"void fragment() {\nvec3 aperture_point=(world_to_door*vec4(architecture_world,1.0)).xyz;\nif(abs(aperture_point.x)>aperture_half_width || aperture_point.y<0.0 || aperture_point.y>2.6) { discard; }")
 	super.configure(source)
 
+func wake_facade_process() -> void:
+	_idle_closed_frames = 0
+	if not is_processing():
+		set_process(true)
+
+
 func _process(_delta: float) -> void:
 	if not is_instance_valid(door) or not is_instance_valid(interior_light): return
 	var leaf_width: float=(door.left_door_mesh.mesh as BoxMesh).size.x
@@ -33,10 +40,18 @@ func _process(_delta: float) -> void:
 	interior_light.light_energy=1.8*opening_fraction
 	spill_light.light_energy=2.1*opening_fraction
 	get_node("FreightInteriorLamp").visible=opening_fraction>.001
-	if last_door_transform!=_door_transform():
-		last_door_transform=_door_transform()
+	var door_xform := _door_transform()
+	if last_door_transform!=door_xform:
+		last_door_transform=door_xform
 		for material in aperture_materials:
 			material.set_shader_parameter("world_to_door",last_door_transform.affine_inverse())
+		_idle_closed_frames = 0
+	elif opening_fraction <= 0.001:
+		_idle_closed_frames += 1
+		if _idle_closed_frames >= 12:
+			set_process(false)
+	else:
+		_idle_closed_frames = 0
 
 func _door_transform() -> Transform3D:
 	return door.global_transform if door.is_inside_tree() else door.transform

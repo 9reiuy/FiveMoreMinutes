@@ -570,6 +570,8 @@ func open_doors(duration: float = 0.45) -> Signal:
 	if doors_open and current_state == State.OPEN:
 		return doors_opened
 	current_state = State.OPENING
+	if industrial_facade != null and industrial_facade.has_method("wake_facade_process"):
+		industrial_facade.call("wake_facade_process")
 	doors_open = true
 
 	if door_collider_2d != null and is_instance_valid(door_collider_2d):
@@ -594,6 +596,8 @@ func close_doors(duration: float = 0.45) -> Signal:
 	if not doors_open and current_state == State.CLOSED:
 		return doors_closed
 	current_state = State.CLOSING
+	if industrial_facade != null and industrial_facade.has_method("wake_facade_process"):
+		industrial_facade.call("wake_facade_process")
 	doors_open = false
 
 	if door_tween != null and door_tween.is_valid():
