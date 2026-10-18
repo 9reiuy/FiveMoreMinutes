@@ -27,6 +27,7 @@ var _melee_shape: CircleShape2D
 var _melee_query: PhysicsShapeQueryParameters2D
 var _melee_exclude_rids: Array[RID] = []
 var _melee_handled: Dictionary = {}
+var _cached_dream_world: Node
 
 
 func configure_weapon(config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
@@ -114,9 +115,19 @@ func _perform_swing(allow_extra: bool) -> void:
 		melee_action_active = false
 
 
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
+
+
 func _resolve_swing_hits(owner: Node2D, origin: Vector2, direction: Vector2) -> bool:
 	# 判定圆心是Player本体；HeldWeapon挂点只负责视觉，不再把10px直线当近战范围。
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	_melee_handled.clear()
 	var hit_something := false
 	var hit_furniture := false

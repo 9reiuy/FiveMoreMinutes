@@ -313,6 +313,7 @@ var _self_exclude_rids: Array[RID] = []
 var _dash_exclude_rids: Array[RID] = []
 var _punch_handled: Dictionary = {}
 var _kick_handled: Dictionary = {}
+var _cached_dream_world: Node
 var kick_left_foot := true
 var next_kick_left_foot := true
 var kick_blocked_by_interaction := false
@@ -1258,8 +1259,18 @@ func _update_punch(delta: float) -> void:
 
 
 
+
+func _dream_world() -> Node:
+	if is_instance_valid(_cached_dream_world):
+		return _cached_dream_world
+	if not is_inside_tree():
+		return null
+	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
+	return _cached_dream_world
+
+
 func _props_for_melee() -> Array:
-	var world: Node = get_tree().get_first_node_in_group(&"dream_world")
+	var world: Node = _dream_world()
 	if world != null and world.has_method("get_damageable_props_snapshot"):
 		return world.call("get_damageable_props_snapshot")
 	return get_tree().get_nodes_in_group(&"damageable_props")
@@ -1269,7 +1280,7 @@ func _apply_punch_hits() -> bool:
 	var origin := global_position
 	var radius := maxf(runtime_config.player_punch_range, 1.0)
 	var half_arc := deg_to_rad(runtime_config.player_punch_arc_degrees * 0.5)
-	var world: Node = get_tree().get_first_node_in_group(&"dream_world")
+	var world: Node = _dream_world()
 	var hit_something := false
 	var hit_furniture := false
 	_punch_handled.clear()
@@ -1471,7 +1482,7 @@ func configure_feedback_audio(config: DemoConfig) -> void:
 func _camera_relative_movement_input(screen_input: Vector2) -> Vector2:
 	if screen_input.length_squared() <= 0.0001:
 		return Vector2.ZERO
-	var world := get_tree().get_first_node_in_group(&"dream_world") as Node3D
+	var world := _dream_world() as Node3D
 	if world == null:
 		return screen_input
 	var camera := get_viewport().get_camera_3d()
@@ -2017,7 +2028,7 @@ func _apply_kick_hits() -> void:
 		_kick_query,
 		32
 	)
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	if world != null and world.has_method("apply_door_impact_near"):
 		# Kick uses the current formal knockback force and is intentionally much
 		# stronger than the E push and unarmed punch paths.
@@ -3104,7 +3115,7 @@ func resolve_tactical_dash_path(target_position: Vector2) -> Dictionary:
 
 
 func _dash_floor_position_valid(position: Vector2) -> bool:
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	if world == null or not world.has_method("_cell_for_gameplay_position"):
 		return true
 	var floors: Variant = world.get("floor_cells")
@@ -3228,7 +3239,7 @@ func _dash_is_vaultable_obstacle(obstacle: Node) -> bool:
 func _is_dash_landing_valid_from(start: Vector2, landing: Vector2, obstacle: PhysicsBody2D) -> bool:
 	if not _dash_floor_position_valid(landing):
 		return false
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	if world != null:
 		if not _is_vault_path_topology_valid(start, landing, world):
 			return false
@@ -3565,7 +3576,7 @@ func _vault_support_point(shape_node: CollisionShape2D, direction: Vector2) -> V
 
 
 func _is_vault_landing_valid(landing: Vector2, obstacle: PhysicsBody2D) -> bool:
-	var world: Node = get_tree().get_first_node_in_group(&"dream_world")
+	var world: Node = _dream_world()
 	if world != null:
 		var floors: Variant = world.get("floor_cells")
 		if floors is Dictionary and world.has_method("_cell_for_gameplay_position"):
@@ -4098,7 +4109,7 @@ func _clear_dash_enemy_contacts() -> void:
 func _apply_dash_enemy_knockback(from_position: Vector2, to_position: Vector2) -> void:
 	if not is_inside_tree():
 		return
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	var motion := to_position - from_position
 	var distance := motion.length()
 	if distance <= 0.001:
@@ -4617,7 +4628,7 @@ func start_airborne_knockback(
 			forced_drop["forced_drop"] = true
 			forced_drop["drop_impulse"] = drop_impulse
 			weapon_drop_requested.emit(forced_drop)
-	var impact_world := get_tree().get_first_node_in_group(&"dream_world")
+	var impact_world := _dream_world()
 	if impact_world != null and impact_world.has_method("request_combat_impact"):
 		impact_world.call("request_combat_impact", strength, direction, &"player_knockback")
 
@@ -5650,7 +5661,7 @@ func _apply_firearm_recoil(multiplier: float) -> void:
 
 
 func _request_combat_camera_impulse(level: StringName, direction: Vector2) -> void:
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	if world != null and world.has_method("request_camera_impulse"):
 		world.request_camera_impulse(level, direction)
 
@@ -6081,7 +6092,7 @@ func _show_weapon_name() -> void:
 func _update_weapon_name(delta: float) -> void:
 	# Native 3D worlds retain reload status independently of the short pickup
 	# popup lifetime. Random3D suppresses this local label and owns its HUD copy.
-	if get_tree().get_first_node_in_group(&"dream_world") is Node3D:
+	if _dream_world() is Node3D:
 		var reloading := bool(get_ammo_status().get("reloading", false))
 		if reloading and not dead:
 			weapon_name_label.text = "正在换弹"
@@ -6271,7 +6282,7 @@ func _camera_muzzle_aim_direction() -> Vector2:
 func _camera_muzzle_aim_direction_at(mouse: Vector2) -> Vector2:
 	if not is_inside_tree() or projectile_origin == null:
 		return Vector2.ZERO
-	var world := get_tree().get_first_node_in_group(&"dream_world") as Node3D
+	var world := _dream_world() as Node3D
 	if world == null:
 		return Vector2.ZERO
 	var camera := get_viewport().get_camera_3d()
@@ -6298,13 +6309,14 @@ func _camera_muzzle_aim_direction_at(mouse: Vector2) -> Vector2:
 	return direction.normalized() if direction.length_squared() > 0.0001 else last_aim_direction
 
 func get_constrained_aim_position() -> Vector2:
-	var world := get_tree().get_first_node_in_group(&"dream_world")
+	var world := _dream_world()
 	if world != null and world.has_method("get_gameplay_aim_position"):
 		return world.call("get_gameplay_aim_position")
 	return get_global_mouse_position()
 
 
 func _exit_tree() -> void:
+	_cached_dream_world = null
 	_cancel_tactical_plan()
 	_cancel_throw_aim()
 	_cancel_dash_aim()
