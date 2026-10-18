@@ -32,7 +32,8 @@ func _process(delta: float) -> void:
 	if production_mode and get_parent().get_parent()!=world.office_art_root: return
 	if production_mode:
 		_sync_frame += 1
-		if (_sync_frame & 1) == 0:
+		# Cutaway uniforms change with room visibility, not every frame.
+		if (_sync_frame % 4) != 0:
 			return
 	for record in windows: _apply_window(record)
 	for record in doors:
