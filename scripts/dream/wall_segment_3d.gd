@@ -210,17 +210,22 @@ func _update_wall_materials() -> void:
 ## office_wall_dressing group. Room commits flip dozens of walls at once; each
 ## used to allocate a full group Array and re-mark every dressing.
 static var _dressing_notify_frame: int = -1
+## Diagnostic: how many times the dressing group was walked (call-count proof).
+static var debug_dressing_group_walks: int = 0
+static var debug_dressing_cutaway_flips: int = 0
 
 func set_cutaway_mode(enabled: bool) -> void:
 	if cutaway_mode == enabled:
 		return
 	cutaway_mode = enabled
 	_update_active_mesh()
+	debug_dressing_cutaway_flips += 1
 	if is_inside_tree():
 		var frame := Engine.get_process_frames()
 		if frame == _dressing_notify_frame:
 			return
 		_dressing_notify_frame = frame
+		debug_dressing_group_walks += 1
 		for dressing in get_tree().get_nodes_in_group(&"office_wall_dressing"):
 			if dressing.has_method("mark_cutaway_dirty"):
 				dressing.call("mark_cutaway_dirty")
