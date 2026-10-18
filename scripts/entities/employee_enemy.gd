@@ -5723,7 +5723,7 @@ func _update_local_separation(
 	if separation_query_left > 0.0:
 		return
 
-	separation_query_left = 0.16
+	separation_query_left = 0.28
 
 	if _separation_shape == null:
 		_separation_shape = CircleShape2D.new()

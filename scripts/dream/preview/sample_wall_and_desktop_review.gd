@@ -21,6 +21,7 @@ static var shared_door_shader: Shader
 static var shared_glass_shader: Shader
 const DETAIL_TEXTURE_CACHE_LIMIT := 64
 var production_mode := false
+var _sync_frame := 0
 const STYLE = preload("res://scripts/dream/office_art_room_style.gd")
 
 func _ready() -> void:
@@ -29,6 +30,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if production_mode and get_parent().get_parent()!=world.office_art_root: return
+	if production_mode:
+		_sync_frame += 1
+		if (_sync_frame & 1) == 0:
+			return
 	for record in windows: _apply_window(record)
 	for record in doors:
 		for leaf in record.leaves:
