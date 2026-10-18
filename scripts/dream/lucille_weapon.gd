@@ -27,6 +27,7 @@ var _melee_shape: CircleShape2D
 var _melee_query: PhysicsShapeQueryParameters2D
 var _melee_exclude_rids: Array[RID] = []
 var _melee_handled: Dictionary = {}
+var _empty_exclude_rids: Array[RID] = []
 var _cached_dream_world: Node
 
 
@@ -175,7 +176,7 @@ func _resolve_swing_hits(owner: Node2D, origin: Vector2, direction: Vector2) -> 
 			_melee_exclude_rids[0] = (owner as CollisionObject2D).get_rid()
 		_melee_query.exclude = _melee_exclude_rids
 	else:
-		_melee_query.exclude = []
+		_melee_query.exclude = _empty_exclude_rids
 	for hit in owner.get_world_2d().direct_space_state.intersect_shape(_melee_query, 16):
 		var prop := hit.get("collider") as Node
 		if prop == null or _melee_handled.has(prop.get_instance_id()) or not prop.is_in_group(&"damageable_props"):
