@@ -730,20 +730,20 @@ func _passive_leaf_sweeps_into_player(leaf_index: int, omega: float) -> bool:
 	var tangent3: Vector3 = _get_map_basis().inverse() * leaf_basis.x
 	var half := Vector2(tangent3.x, tangent3.z).normalized() * leaf_width * world_scale * 0.5
 	var center := get_leaf_center_2d(leaf_index)
-	for actor in get_tree().get_nodes_in_group(&"dream_player"):
-		if not actor is Node2D or not is_instance_valid(actor):
-			continue
-		var player_center: Vector2 = actor.global_position + CONFIG.player_collision_offset
-		var closest := Geometry2D.get_closest_point_to_segment(player_center, center - half, center + half)
-		var separation := player_center - closest
-		var clearance: float = CONFIG.player_collision_radius + wall_thickness * world_scale * 0.5 + 2.0
-		if separation.length_squared() > clearance * clearance:
-			continue
-		var radial := closest - hinge_2d
-		var point_velocity := Vector2(radial.y, -radial.x) * omega
-		if point_velocity.dot(separation) > 0.0:
-			return true
-	return false
+	# One local player — prefer first-node over allocating the group Array on
+	# every passive-swing physics tick across every door leaf.
+	var actor := get_tree().get_first_node_in_group(&"dream_player") as Node2D
+	if not is_instance_valid(actor):
+		return false
+	var player_center: Vector2 = actor.global_position + CONFIG.player_collision_offset
+	var closest := Geometry2D.get_closest_point_to_segment(player_center, center - half, center + half)
+	var separation := player_center - closest
+	var clearance: float = CONFIG.player_collision_radius + wall_thickness * world_scale * 0.5 + 2.0
+	if separation.length_squared() > clearance * clearance:
+		return false
+	var radial := closest - hinge_2d
+	var point_velocity := Vector2(radial.y, -radial.x) * omega
+	return point_velocity.dot(separation) > 0.0
 
 
 func push_from_proxy(_position: Vector3, _motion: Vector3, _delta: float) -> void:
