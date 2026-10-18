@@ -807,6 +807,7 @@ var _room_path_clear_query: PhysicsRayQueryParameters2D
 var _furniture_shot_path_query: PhysicsRayQueryParameters2D
 var _employee_nav_ray: PhysicsRayQueryParameters2D
 var _debris_spray_ray: PhysicsRayQueryParameters2D
+var _door_proximity_ray: PhysicsRayQueryParameters2D
 var employee_path_cache: Dictionary = {}
 var _floor_path_cache_enabled := false
 var _floor_path_adjacency: Dictionary = {}
@@ -9652,8 +9653,14 @@ func _iter_physical_doors_near(origin: Vector2, direction: Vector2, radius_pixel
 			continue
 		if has_direction and distance > 0.001 and absf(normalized_direction.angle_to(to_door)) > deg_to_rad(75.0):
 			continue
-		var query := PhysicsRayQueryParameters2D.create(origin, center, WORLD_WALL_LAYER | 8)
-		var hit := player.get_world_2d().direct_space_state.intersect_ray(query)
+		if _door_proximity_ray == null:
+			_door_proximity_ray = PhysicsRayQueryParameters2D.new()
+			_door_proximity_ray.collision_mask = WORLD_WALL_LAYER | 8
+			_door_proximity_ray.collide_with_bodies = true
+			_door_proximity_ray.collide_with_areas = false
+		_door_proximity_ray.from = origin
+		_door_proximity_ray.to = center
+		var hit := player.get_world_2d().direct_space_state.intersect_ray(_door_proximity_ray)
 		if not hit.is_empty():
 			var blocker: Node = hit.get("collider")
 			if int(blocker.get_meta(&"generated_door_id", -1)) != int(door.get_meta(&"door_id", -2)):
