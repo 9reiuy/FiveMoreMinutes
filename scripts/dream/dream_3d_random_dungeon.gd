@@ -674,6 +674,8 @@ var furniture_count := 0
 var enemy_count := 0
 var _content_rng := RandomNumberGenerator.new()
 var _corpse_blood_emitter_serial: int = 0
+## Owned emitters for this world; avoids get_nodes_in_group on each spawn.
+var _owned_corpse_blood_emitters: Array = []
 const BLOOD_MERGE_BUCKET_PIXELS := 128.0
 const BLOOD_MERGE_CAPTURE_EXTENT := 112.0
 var _settled_blood_buckets: Dictionary = {}
@@ -4391,6 +4393,7 @@ func _clear_generated_building() -> void:
 	if is_instance_valid(interaction_prompt):
 		interaction_prompt.dismiss(true)
 	_settled_blood_buckets.clear()
+	_owned_corpse_blood_emitters.clear()
 	if is_instance_valid(shadow_manager):
 		shadow_manager.clear_floor()
 	_layout_generation += 1
@@ -12150,18 +12153,16 @@ func spawn_corpse_blood_pulse(
 
 func _enforce_corpse_blood_emitter_limit() -> void:
 	var maximum := maxi(int(EMPLOYEE_CONFIG.get(&"max_active_corpse_blood_emitters")), 1)
-	var emitters := get_tree().get_nodes_in_group(&"corpse_blood_emitters")
 	var owned_count := 0
 	var oldest: Node = null
 	var oldest_serial := INF
-	for emitter_variant in emitters:
-		var emitter := emitter_variant as Node
-		if emitter == null or not is_instance_valid(emitter):
+	var write := 0
+	for i in range(_owned_corpse_blood_emitters.size()):
+		var emitter := _owned_corpse_blood_emitters[i] as Node
+		if emitter == null or not is_instance_valid(emitter) or emitter.is_queued_for_deletion():
 			continue
-		if emitter.is_queued_for_deletion():
-			continue
-		if int(emitter.get_meta(&"blood_world_instance_id", -1)) != get_instance_id():
-			continue
+		_owned_corpse_blood_emitters[write] = emitter
+		write += 1
 		var active_state: Variant = emitter.get(&"active")
 		if active_state is bool and not bool(active_state):
 			continue
@@ -12170,11 +12171,13 @@ func _enforce_corpse_blood_emitter_limit() -> void:
 		if serial < oldest_serial:
 			oldest_serial = serial
 			oldest = emitter
+	_owned_corpse_blood_emitters.resize(write)
 	if owned_count >= maximum and oldest != null:
 		if oldest.has_method("stop_and_free"):
 			oldest.call("stop_and_free")
 		else:
 			oldest.call_deferred("queue_free")
+
 
 
 func spawn_corpse_blood_emitter(
@@ -12210,6 +12213,7 @@ func spawn_corpse_blood_emitter(
 		float(EMPLOYEE_CONFIG.get(&"corpse_bleed_decay")),
 		source
 	)
+	_owned_corpse_blood_emitters.append(emitter)
 	return true
 
 

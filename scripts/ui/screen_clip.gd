@@ -7,7 +7,12 @@ extends Control
 
 
 func _ready() -> void:
-	set_process(true)
+	visibility_changed.connect(_on_visibility_changed)
+	_on_visibility_changed()
+
+
+func _on_visibility_changed() -> void:
+	set_process(is_visible_in_tree())
 
 
 func _process(_delta: float) -> void:
