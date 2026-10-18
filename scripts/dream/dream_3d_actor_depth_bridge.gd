@@ -1037,6 +1037,7 @@ func _process(_delta: float) -> void:
 			skip_capture_sync = not viewport.get_visible_rect().grow(160).has_point(camera.unproject_position(origin))
 	if has_meta(&"test_capture_sync_skipped"):
 		set_meta(&"test_capture_sync_skipped", skip_capture_sync)
+	var has_shot_origin := source_actor.has_meta(&"shot_visual_origin")
 	# Crowd CPU: upright enemy capture trees rarely need 60 Hz property copies.
 	# Alternate frames by instance id so a packed room does not sync every enemy
 	# every tick. Player stays every frame. World Sprite3D pose / lights below
@@ -1052,7 +1053,6 @@ func _process(_delta: float) -> void:
 		skip_staggered_enemy_sync = ((Engine.get_process_frames() + get_instance_id()) & 1) == 1
 	if not skip_capture_sync and not skip_staggered_enemy_sync:
 		weapon_capture_rotation_delta = _weapon_capture_delta(camera)
-		var has_shot_origin := source_actor.has_meta(&"shot_visual_origin")
 		var shot_heading := _shot_capture_heading(camera) if has_shot_origin else NAN
 		if not is_nan(shot_heading) and not _cached_bullet_sprite_resolved:
 			_cached_bullet_sprite = source_actor.get_node_or_null(^"BulletSprite") as Node2D
