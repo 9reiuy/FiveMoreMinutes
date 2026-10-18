@@ -805,6 +805,8 @@ var _placement_clear_shape: CircleShape2D
 var _placement_clear_query: PhysicsShapeQueryParameters2D
 var _room_path_clear_query: PhysicsRayQueryParameters2D
 var _furniture_shot_path_query: PhysicsRayQueryParameters2D
+var _employee_nav_ray: PhysicsRayQueryParameters2D
+var _debris_spray_ray: PhysicsRayQueryParameters2D
 var employee_path_cache: Dictionary = {}
 var _floor_path_cache_enabled := false
 var _floor_path_adjacency: Dictionary = {}
@@ -10985,8 +10987,14 @@ func get_employee_wander_target(employee: EmployeeEnemy) -> Vector2:
 
 func get_employee_navigation_target(employee: EmployeeEnemy, destination: Vector2) -> Vector2:
 	# Keep the formal state machine; only route around concave floor boundaries.
-	var ray := PhysicsRayQueryParameters2D.create(employee.global_position, destination, WORLD_WALL_LAYER)
-	if employee.get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
+	if _employee_nav_ray == null:
+		_employee_nav_ray = PhysicsRayQueryParameters2D.new()
+		_employee_nav_ray.collision_mask = WORLD_WALL_LAYER
+		_employee_nav_ray.collide_with_bodies = true
+		_employee_nav_ray.collide_with_areas = false
+	_employee_nav_ray.from = employee.global_position
+	_employee_nav_ray.to = destination
+	if employee.get_world_2d().direct_space_state.intersect_ray(_employee_nav_ray).is_empty():
 		return destination
 	var start := Vector2i((employee.global_position / CELL_PIXELS).round())
 	var finish := Vector2i((destination / CELL_PIXELS).round())
@@ -11657,8 +11665,14 @@ func _environment_debris_spray_origin(origin: Vector2, direction: Vector2, room_
 				for corner in [rect.position, Vector2(rect.end.x, rect.position.y), rect.end, Vector2(rect.position.x, rect.end.y)]:
 					distance = maxf(distance, (collider.to_global(corner) - origin).dot(direction) + 6.0)
 	var candidate := origin + direction * distance
-	var ray := PhysicsRayQueryParameters2D.create(origin, candidate, WORLD_WALL_LAYER)
-	if not player.get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
+	if _debris_spray_ray == null:
+		_debris_spray_ray = PhysicsRayQueryParameters2D.new()
+		_debris_spray_ray.collision_mask = WORLD_WALL_LAYER
+		_debris_spray_ray.collide_with_bodies = true
+		_debris_spray_ray.collide_with_areas = false
+	_debris_spray_ray.from = origin
+	_debris_spray_ray.to = candidate
+	if not player.get_world_2d().direct_space_state.intersect_ray(_debris_spray_ray).is_empty():
 		return Vector2.INF
 	return candidate if is_environment_debris_position_allowed(candidate, room_id) else Vector2.INF
 
