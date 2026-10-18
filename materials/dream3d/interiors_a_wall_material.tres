@@ -1,9 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://ct2ltxjg4c3h8"]
-
-[ext_resource type="Texture2D" uid="uid://bx2yivdj7nu0l" path="res://art/Dream/LoafbrrAssets/Interiors_A/texture/Surface_Wall_A/Surface_Wall_A_Diffuse_2K_A.png" id="1_wall"]
-
-[resource]
-resource_name = "Interiors A Wall A - authored gray lower quarter"
-albedo_texture = ExtResource("1_wall")
-metallic_specular = 0.0
-texture_filter = 2

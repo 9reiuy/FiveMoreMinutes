@@ -1,5 +1,0 @@
-[gd_scene format=3 uid="uid://du3b3h5c842au"]
-
-[ext_resource type="PackedScene" uid="uid://b4lgerhuaaxkq" path="res://scenes/dream/Dream3D_Editable.tscn" id="1_editable"]
-
-[node name="Dream3D_Editable" unique_id=348074795 instance=ExtResource("1_editable")]
