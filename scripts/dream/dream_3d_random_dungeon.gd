@@ -321,6 +321,9 @@ const WORLD_WALL_LAYER := 4
 ## Shared screen-space cutout slots. Slot 0 is reserved for Player whenever
 ## the Player is genuinely occluded; the remaining slots are nearest enemies and projectiles.
 const OCCLUSION_CUTOUT_SLOT_COUNT := 8
+## Avoid "occlusion_cutout_%d" % index string format every changed slot write.
+var _occlusion_cutout_param_names: Array[StringName] = []
+const _OCCLUSION_VIEWPORT_SIZE_PARAM := &_OCCLUSION_VIEWPORT_SIZE_PARAM
 # The formal Player root is the foot baseline while its circular body shape is
 # offset upward by 13 px.  A thin edge collider therefore lets the visible feet
 # cross the near wall before the body shape reports contact.  Give generated
@@ -1201,8 +1204,8 @@ func _exit_tree() -> void:
 	if dialogue_camera != null and is_instance_valid(dialogue_camera):
 		dialogue_camera.call("clear_dialogue_focus")
 	for index in range(OCCLUSION_CUTOUT_SLOT_COUNT):
-		RenderingServer.global_shader_parameter_set("occlusion_cutout_%d" % index, Vector4.ZERO)
-	RenderingServer.global_shader_parameter_set("occlusion_viewport_size", Vector2.ONE)
+		RenderingServer.global_shader_parameter_set(_occlusion_cutout_param_name(index), Vector4.ZERO)
+	RenderingServer.global_shader_parameter_set(_OCCLUSION_VIEWPORT_SIZE_PARAM, Vector2.ONE)
 	_occlusion_bounds_cache.clear()
 	_clear_projectile_local_light_pool()
 	_exit_dream_time_mode()
@@ -5903,7 +5906,7 @@ func _update_occlusion_cutouts() -> void:
 			if vp_size != _last_cutout_viewport_size:
 				_last_cutout_viewport_size = vp_size
 				RenderingServer.global_shader_parameter_set(
-					"occlusion_viewport_size",
+					_OCCLUSION_VIEWPORT_SIZE_PARAM,
 					vp_size
 				)
 	var cam_vp_rect := Rect2()
@@ -6041,7 +6044,7 @@ func _update_occlusion_cutouts() -> void:
 		var slot_val := slots[index]
 		if force_set_slots or _last_cutout_slots[index] != slot_val:
 			_last_cutout_slots[index] = slot_val
-			RenderingServer.global_shader_parameter_set("occlusion_cutout_%d" % index, slot_val)
+			RenderingServer.global_shader_parameter_set(_occlusion_cutout_param_name(index), slot_val)
 	_end_cutout_query_snapshot()
 
 func _begin_cutout_query_snapshot() -> void:
@@ -8783,7 +8786,7 @@ func _sync_transition_render_pose() -> void:
 	if is_instance_valid(player_depth_bridge): player_depth_bridge._process(0.0)
 	if is_instance_valid(room_visibility): room_visibility._update_outside_mask()
 	for index in OCCLUSION_CUTOUT_SLOT_COUNT:
-		RenderingServer.global_shader_parameter_set("occlusion_cutout_%d" % index,Vector4.ZERO)
+		RenderingServer.global_shader_parameter_set(_occlusion_cutout_param_name(index),Vector4.ZERO)
 
 
 func _set_floor_runtime_suspended_for_cab(suspended: bool) -> void:
