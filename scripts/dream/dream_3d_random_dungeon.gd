@@ -731,6 +731,8 @@ var _cached_enemy_cutout_dists := PackedFloat32Array()
 var _cutout_work_slots := PackedVector4Array()
 var _cutout_work_dists := PackedFloat32Array()
 var _cutout_sort_indices: Array[int] = []
+var _furniture_near_indices: Array = []
+var _furniture_near_seen: Dictionary = {}
 var _cached_projectile_cutout_nodes: Array = []
 var _cached_projectile_cutout_frame: int = -1
 
@@ -6626,14 +6628,14 @@ func _furniture_mesh_indices_near(camera_world: Vector3, actor_world: Vector3) -
 	var max_bx := int(floor(max_x / FURNITURE_MESH_BIN_SIZE))
 	var min_bz := int(floor(min_z / FURNITURE_MESH_BIN_SIZE))
 	var max_bz := int(floor(max_z / FURNITURE_MESH_BIN_SIZE))
-	var indices: Array = []
-	var seen: Dictionary = {}
+	_furniture_near_indices.clear()
+	_furniture_near_seen.clear()
 	var radius_sq := radius * radius
 	for bz in range(min_bz, max_bz + 1):
 		for bx in range(min_bx, max_bx + 1):
 			var bin_indices: Array = _cutout_furniture_mesh_bins.get(Vector2i(bx, bz), [])
 			for index in bin_indices:
-				if seen.has(index):
+				if _furniture_near_seen.has(index):
 					continue
 				if index < 0 or index >= _cutout_furniture_mesh_centers.size():
 					continue
@@ -6653,9 +6655,9 @@ func _furniture_mesh_indices_near(camera_world: Vector3, actor_world: Vector3) -
 				)
 				if not near_actor and not in_corridor:
 					continue
-				seen[index] = true
-				indices.append(index)
-	return indices
+				_furniture_near_seen[index] = true
+				_furniture_near_indices.append(index)
+	return _furniture_near_indices
 
 
 ## A mesh counts as furniture when one of its ancestors carries the marker set by
