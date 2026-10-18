@@ -6360,15 +6360,24 @@ func _aabb_screen_rect(world_aabb: AABB) -> Variant:
 		return null
 	var min_screen := Vector2(INF, INF)
 	var max_screen := Vector2(-INF, -INF)
-	for xi in [world_aabb.position.x, world_aabb.end.x]:
-		for yi in [world_aabb.position.y, world_aabb.end.y]:
-			for zi in [world_aabb.position.z, world_aabb.end.z]:
-				var corner := Vector3(float(xi), float(yi), float(zi))
-				if camera_3d.is_position_behind(corner):
-					return null
-				var projected := camera_3d.unproject_position(corner)
-				min_screen = Vector2(minf(min_screen.x, projected.x), minf(min_screen.y, projected.y))
-				max_screen = Vector2(maxf(max_screen.x, projected.x), maxf(max_screen.y, projected.y))
+	# Bit-walk 8 corners; avoid allocating [x0,x1]/[y0,y1]/[z0,z1] Arrays per call.
+	var x0 := world_aabb.position.x
+	var x1 := world_aabb.end.x
+	var y0 := world_aabb.position.y
+	var y1 := world_aabb.end.y
+	var z0 := world_aabb.position.z
+	var z1 := world_aabb.end.z
+	for corner_i in 8:
+		var corner := Vector3(
+			x1 if (corner_i & 1) != 0 else x0,
+			y1 if (corner_i & 2) != 0 else y0,
+			z1 if (corner_i & 4) != 0 else z0
+		)
+		if camera_3d.is_position_behind(corner):
+			return null
+		var projected := camera_3d.unproject_position(corner)
+		min_screen = Vector2(minf(min_screen.x, projected.x), minf(min_screen.y, projected.y))
+		max_screen = Vector2(maxf(max_screen.x, projected.x), maxf(max_screen.y, projected.y))
 	return Rect2(min_screen, max_screen - min_screen)
 
 
