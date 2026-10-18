@@ -323,7 +323,7 @@ const WORLD_WALL_LAYER := 4
 const OCCLUSION_CUTOUT_SLOT_COUNT := 8
 ## Avoid "occlusion_cutout_%d" % index string format every changed slot write.
 var _occlusion_cutout_param_names: Array[StringName] = []
-const _OCCLUSION_VIEWPORT_SIZE_PARAM := &_OCCLUSION_VIEWPORT_SIZE_PARAM
+const _OCCLUSION_VIEWPORT_SIZE_PARAM := &"occlusion_viewport_size"
 # The formal Player root is the foot baseline while its circular body shape is
 # offset upward by 13 px.  A thin edge collider therefore lets the visible feet
 # cross the near wall before the body shape reports contact.  Give generated
@@ -5886,6 +5886,15 @@ func _process_pit_contacts() -> void:
 			prop.call("destroy")
 		else:
 			prop.queue_free()
+
+
+
+func _occlusion_cutout_param_name(index: int) -> StringName:
+	if _occlusion_cutout_param_names.size() != OCCLUSION_CUTOUT_SLOT_COUNT:
+		_occlusion_cutout_param_names.resize(OCCLUSION_CUTOUT_SLOT_COUNT)
+		for i in OCCLUSION_CUTOUT_SLOT_COUNT:
+			_occlusion_cutout_param_names[i] = StringName("occlusion_cutout_%d" % i)
+	return _occlusion_cutout_param_names[index]
 
 
 func _update_occlusion_cutouts() -> void:
