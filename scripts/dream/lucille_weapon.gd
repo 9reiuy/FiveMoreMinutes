@@ -119,7 +119,12 @@ func _resolve_swing_hits(owner: Node2D, origin: Vector2, direction: Vector2) -> 
 	var hit_something := false
 	var hit_furniture := false
 	var half_arc := attack_arc_radians * 0.5
-	for enemy in get_tree().get_nodes_in_group(&"dream_enemies"):
+	var enemies: Array
+	if world != null and world.has_method("get_dream_enemies_snapshot"):
+		enemies = world.call("get_dream_enemies_snapshot")
+	else:
+		enemies = get_tree().get_nodes_in_group(&"dream_enemies")
+	for enemy in enemies:
 		if not is_instance_valid(enemy) or enemy.get("dead") == true:
 			continue
 		var to_enemy: Vector2 = origin.direction_to(enemy.global_position)

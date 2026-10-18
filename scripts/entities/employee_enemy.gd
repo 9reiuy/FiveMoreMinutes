@@ -252,6 +252,7 @@ var _separation_shape: CircleShape2D
 var _separation_query: PhysicsShapeQueryParameters2D
 var _los_query: PhysicsRayQueryParameters2D
 var _muzzle_clamp_query: PhysicsRayQueryParameters2D
+var _self_exclude_rids: Array[RID] = []
 
 var strafe_sign := 1.0
 var strafe_time_left := 0.0
@@ -3066,7 +3067,11 @@ func get_projectile_origin() -> Vector2:
 	_muzzle_clamp_query.from = start_pos
 	_muzzle_clamp_query.to = nominal_pos
 	_muzzle_clamp_query.collision_mask = mask
-	_muzzle_clamp_query.exclude = [get_rid()]
+	if _self_exclude_rids.is_empty():
+		_self_exclude_rids.append(get_rid())
+	else:
+		_self_exclude_rids[0] = get_rid()
+	_muzzle_clamp_query.exclude = _self_exclude_rids
 	var hit: Dictionary = space_state.intersect_ray(_muzzle_clamp_query)
 	if not hit.is_empty():
 		var hit_pos: Vector2 = hit.get("position", nominal_pos)
@@ -5753,7 +5758,11 @@ func _update_local_separation(
 	# invulnerable.  This is physical occupancy only; no damage or teleport is
 	# introduced here.
 	_separation_query.collision_mask = 1 | 2
-	_separation_query.exclude = [get_rid()]
+	if _self_exclude_rids.is_empty():
+		_self_exclude_rids.append(get_rid())
+	else:
+		_self_exclude_rids[0] = get_rid()
+	_separation_query.exclude = _self_exclude_rids
 
 	var separation := Vector2.ZERO
 

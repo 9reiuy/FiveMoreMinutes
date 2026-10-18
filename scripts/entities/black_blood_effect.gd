@@ -8,6 +8,7 @@ var _pool_circle_query: PhysicsShapeQueryParameters2D
 var _pool_circle_shape: CircleShape2D
 var _deposit_bounds_query: PhysicsShapeQueryParameters2D
 var _deposit_bounds_shape: ConvexPolygonShape2D
+var _batch_wall_ray: PhysicsRayQueryParameters2D
 var ground_bounds_local := Rect2()
 var ground_bounds_enabled := false
 ## The 3D office uses its complete floor footprint instead of a source-room
@@ -1287,9 +1288,15 @@ func _new_blood_cell_query_cache() -> Dictionary:
 		if not context.is_empty():
 			context[&"transform"]=global_transform
 			context[&"ray_space"]=get_world_2d().direct_space_state
-			var ray := PhysicsRayQueryParameters2D.create(global_position,global_position,wall_collision_mask)
-			ray.collide_with_bodies=true; ray.collide_with_areas=false
-			context[&"ray"]=ray; cache[&"query_batch"]=context
+			if _batch_wall_ray == null:
+				_batch_wall_ray = PhysicsRayQueryParameters2D.new()
+				_batch_wall_ray.collide_with_bodies = true
+				_batch_wall_ray.collide_with_areas = false
+			_batch_wall_ray.from = global_position
+			_batch_wall_ray.to = global_position
+			_batch_wall_ray.collision_mask = wall_collision_mask
+			context[&"ray"] = _batch_wall_ray
+			cache[&"query_batch"] = context
 	return cache
 
 

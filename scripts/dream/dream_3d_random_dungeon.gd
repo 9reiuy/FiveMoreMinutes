@@ -749,6 +749,11 @@ var _active_firearm_impact_count := 0
 var _cutout_furniture_query_frame: int = -1
 var _cached_damageable_props: Array = []
 var _cached_damageable_props_frame: int = -1
+var _cached_dream_enemies: Array = []
+var _cached_dream_enemies_frame: int = -1
+var _cutout_candidate_scratch: Array[Dictionary] = []
+var _debris_point_query: PhysicsPointQueryParameters2D
+var _blood_batch_point_query: PhysicsPointQueryParameters2D
 var _throw_aim_cleared := true
 var _dash_aim_cleared := true
 var _cutout_furniture_mesh_centers := PackedVector3Array()
@@ -4467,6 +4472,8 @@ func _clear_generated_building() -> void:
 	_active_firearm_impact_count = 0
 	_cached_damageable_props.clear()
 	_cached_damageable_props_frame = -1
+	_cached_dream_enemies.clear()
+	_cached_dream_enemies_frame = -1
 	_cutout_furniture_screen_rects.clear()
 	_cutout_furniture_screen_rect_frame = -1
 	_last_cutout_viewport_size = Vector2.ZERO
@@ -5937,11 +5944,13 @@ func _update_occlusion_cutouts() -> void:
 				"slot": enemy_slot,
 				"distance": camera_3d.global_position.distance_squared_to(enemy_world) if camera_3d != null else 0.0,
 			})
-		# Keep the refresh-frame array; only duplicate on alternate frames when
-		# projectiles will append into the working list.
+		# Snapshot enemies only. Projectiles append into scratch so they never
+		# pollute the alternate-frame enemy cache.
 		_cached_enemy_cutout_candidates = candidates
-	elif not refresh_enemy_cutouts:
-		candidates = _cached_enemy_cutout_candidates.duplicate()
+	# Working list always goes through scratch so projectile appends stay local.
+	_cutout_candidate_scratch.clear()
+	_cutout_candidate_scratch.append_array(_cached_enemy_cutout_candidates)
+	candidates = _cutout_candidate_scratch
 	var effective_config: DemoConfig = config if config != null else EMPLOYEE_CONFIG
 	var candidate_slot_limit: int = OCCLUSION_CUTOUT_SLOT_COUNT - (1 if player_occluded else 0)
 	var proj_cutout_enabled := bool(effective_config.get("projectile_occlusion_cutout_enabled")) if effective_config != null and effective_config.get("projectile_occlusion_cutout_enabled") != null else true
@@ -11623,12 +11632,13 @@ func is_environment_debris_position_allowed(at_position: Vector2, room_id: int =
 	var space: PhysicsDirectSpaceState2D = player.get_world_2d().direct_space_state if player != null and player.is_inside_tree() else null
 	if space == null:
 		return true
-	var query := PhysicsPointQueryParameters2D.new()
-	query.position = at_position
-	query.collision_mask = WORLD_WALL_LAYER | 8
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
-	for hit_variant in space.intersect_point(query, 16):
+	if _debris_point_query == null:
+		_debris_point_query = PhysicsPointQueryParameters2D.new()
+		_debris_point_query.collision_mask = WORLD_WALL_LAYER | 8
+		_debris_point_query.collide_with_bodies = true
+		_debris_point_query.collide_with_areas = false
+	_debris_point_query.position = at_position
+	for hit_variant in space.intersect_point(_debris_point_query, 16):
 		var collider := (hit_variant as Dictionary).get("collider") as Node
 		if collider == null or collider == source_prop or collider.is_in_group(&"environment_debris") or collider.is_in_group(&"world_weapon_pickups"):
 			continue
@@ -12279,9 +12289,10 @@ func _is_blood_ground_block_allowed(bounds: Rect2) -> bool:
 
 func _begin_blood_ground_query_batch() -> Dictionary:
 	if bool(get_meta(&"test_legacy_blood_queries",false)) or not is_instance_valid(player): return {}
-	var query := PhysicsPointQueryParameters2D.new()
-	query.collision_mask = WORLD_WALL_LAYER
-	return {&"floor":floor_cells,&"cell_size":CELL_PIXELS,&"point":query,
+	if _blood_batch_point_query == null:
+		_blood_batch_point_query = PhysicsPointQueryParameters2D.new()
+		_blood_batch_point_query.collision_mask = WORLD_WALL_LAYER
+	return {&"floor":floor_cells,&"cell_size":CELL_PIXELS,&"point":_blood_batch_point_query,
 		&"point_space":player.get_world_2d().direct_space_state}
 
 
@@ -13075,6 +13086,17 @@ func get_damageable_props_snapshot() -> Array:
 	_cached_damageable_props_frame = frame
 	_cached_damageable_props = get_tree().get_nodes_in_group(&"damageable_props")
 	return _cached_damageable_props
+
+
+func get_dream_enemies_snapshot() -> Array:
+	var frame := Engine.get_process_frames()
+	if frame == _cached_dream_enemies_frame and not _cached_dream_enemies.is_empty():
+		return _cached_dream_enemies
+	if frame - _cached_dream_enemies_frame <= 2 and not _cached_dream_enemies.is_empty():
+		return _cached_dream_enemies
+	_cached_dream_enemies_frame = frame
+	_cached_dream_enemies = get_tree().get_nodes_in_group(&"dream_enemies")
+	return _cached_dream_enemies
 
 
 func damage_furniture_along_segment(origin: Vector2, endpoint: Vector2, width: float, amount: float, hit_direction: Vector2, source_actor: Node = null, hit_registry: Dictionary = {}) -> void:

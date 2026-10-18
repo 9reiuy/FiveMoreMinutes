@@ -309,6 +309,7 @@ var _kick_shape: RectangleShape2D
 var _kick_query: PhysicsShapeQueryParameters2D
 var _dash_query: PhysicsShapeQueryParameters2D
 var _muzzle_clamp_query: PhysicsRayQueryParameters2D
+var _self_exclude_rids: Array[RID] = []
 var kick_left_foot := true
 var next_kick_left_foot := true
 var kick_blocked_by_interaction := false
@@ -1270,7 +1271,12 @@ func _apply_punch_hits() -> bool:
 	var hit_furniture := false
 	var handled: Dictionary = {}
 
-	for enemy_variant in get_tree().get_nodes_in_group(&"dream_enemies"):
+	var enemies: Array
+	if world != null and world.has_method("get_dream_enemies_snapshot"):
+		enemies = world.call("get_dream_enemies_snapshot")
+	else:
+		enemies = get_tree().get_nodes_in_group(&"dream_enemies")
+	for enemy_variant in enemies:
 		var enemy := enemy_variant as Node2D
 		if enemy == null or not is_instance_valid(enemy) or enemy.get("dead") == true:
 			continue
@@ -1989,7 +1995,11 @@ func _apply_kick_hits() -> void:
 		runtime_config.kick_width
 	)
 
-	_kick_query.exclude = [get_rid()]
+	if _self_exclude_rids.is_empty():
+		_self_exclude_rids.append(get_rid())
+	else:
+		_self_exclude_rids[0] = get_rid()
+	_kick_query.exclude = _self_exclude_rids
 
 	var center := global_position + kick_direction * (
 		runtime_config.kick_range * 0.5 + 6.0
@@ -6161,7 +6171,11 @@ func get_projectile_origin() -> Vector2:
 	_muzzle_clamp_query.from = start_pos
 	_muzzle_clamp_query.to = nominal_pos
 	_muzzle_clamp_query.collision_mask = mask
-	_muzzle_clamp_query.exclude = [get_rid()]
+	if _self_exclude_rids.is_empty():
+		_self_exclude_rids.append(get_rid())
+	else:
+		_self_exclude_rids[0] = get_rid()
+	_muzzle_clamp_query.exclude = _self_exclude_rids
 	var hit: Dictionary = space_state.intersect_ray(_muzzle_clamp_query)
 	if not hit.is_empty():
 		var hit_pos: Vector2 = hit.get("position", nominal_pos)
