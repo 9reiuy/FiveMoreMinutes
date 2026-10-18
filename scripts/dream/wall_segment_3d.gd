@@ -211,6 +211,10 @@ func set_cutaway_mode(enabled: bool) -> void:
 		return
 	cutaway_mode = enabled
 	_update_active_mesh()
+	if is_inside_tree():
+		for dressing in get_tree().get_nodes_in_group(&"office_wall_dressing"):
+			if dressing.has_method("mark_cutaway_dirty"):
+				dressing.call("mark_cutaway_dirty")
 
 
 func set_wall_opacity(value: float) -> void:

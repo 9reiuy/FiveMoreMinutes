@@ -21,30 +21,43 @@ static var shared_door_shader: Shader
 static var shared_glass_shader: Shader
 const DETAIL_TEXTURE_CACHE_LIMIT := 64
 var production_mode := false
-var _sync_frame := 0
+var _cutaway_dirty := true
 const STYLE = preload("res://scripts/dream/office_art_room_style.gd")
 
 func _ready() -> void:
 	if world==null: world=get_parent()
+	add_to_group(&"office_wall_dressing")
 	call_deferred("refresh_assets")
+
+func mark_cutaway_dirty() -> void:
+	_cutaway_dirty = true
+	if production_mode and not is_processing():
+		set_process(true)
+
+
+func _sync_cutaway_uniforms() -> void:
+	for record in windows:
+		_apply_window(record)
+	for record in doors:
+		for leaf in record.leaves:
+			var visual: MeshInstance3D=leaf.node.get_ref()
+			if not is_instance_valid(visual) or leaf.glass==null or not visual.material_override is ShaderMaterial:
+				continue
+			for parameter in ["architecture_cutaway","architecture_wall_height","architecture_floor_y"]:
+				var value: Variant=visual.material_override.get_shader_parameter(parameter)
+				if value!=null:
+					leaf.glass.material_override.set_shader_parameter(parameter,value)
+
 
 func _process(delta: float) -> void:
 	if production_mode and get_parent().get_parent()!=world.office_art_root: return
 	if production_mode:
-		_sync_frame += 1
-		# Cutaway uniforms change with room visibility, not every frame.
-		if (_sync_frame % 4) != 0:
-			return
-	for record in windows: _apply_window(record)
-	for record in doors:
-		for leaf in record.leaves:
-			var visual: MeshInstance3D=leaf.node.get_ref()
-			if not is_instance_valid(visual) or leaf.glass==null or not visual.material_override is ShaderMaterial: continue
-			for parameter in ["architecture_cutaway","architecture_wall_height","architecture_floor_y"]:
-				var value: Variant=visual.material_override.get_shader_parameter(parameter)
-				if value!=null: leaf.glass.material_override.set_shader_parameter(parameter,value)
-	if production_mode:
+		if _cutaway_dirty:
+			_cutaway_dirty = false
+			_sync_cutaway_uniforms()
+		set_process(false)
 		return
+	_sync_cutaway_uniforms()
 	elapsed+=delta
 	if elapsed>=.5: elapsed=0; refresh_assets()
 
