@@ -4477,7 +4477,7 @@ func _clear_generated_building() -> void:
 	_last_furniture_art_child_count = -1
 	_last_furniture_2d_child_count = -1
 	_cutout_furniture_meshes.clear()
-	_cutout_furniture_mesh_centers = PackedVector3Array()
+	_cutout_furniture_mesh_centers.clear()
 	_cutout_furniture_mesh_bins.clear()
 	_cutout_furniture_meshes_dirty = true
 	_cutout_furniture_meshes_frame = -1
@@ -4486,6 +4486,10 @@ func _clear_generated_building() -> void:
 	_cached_damageable_props_frame = -1
 	_cached_dream_enemies.clear()
 	_cached_dream_enemies_frame = -1
+	_cached_enemy_cutout_slots.clear()
+	_cached_enemy_cutout_dists.clear()
+	_cutout_work_slots.clear()
+	_cutout_work_dists.clear()
 	_cutout_furniture_screen_rects.clear()
 	_cutout_furniture_screen_rect_frame = -1
 	_last_cutout_viewport_size = Vector2.ZERO
@@ -6572,7 +6576,7 @@ func _furniture_meshes() -> Array:
 
 func _rebuild_furniture_mesh_cache() -> void:
 	_cutout_furniture_meshes.clear()
-	_cutout_furniture_mesh_centers = PackedVector3Array()
+	_cutout_furniture_mesh_centers.clear()
 	_cutout_furniture_mesh_bins.clear()
 	# Scope the mesh scan to furniture art / known furniture bridges. A whole-tree
 	# find_children("*", MeshInstance3D) was ~10–18ms on crowded floors and ran
