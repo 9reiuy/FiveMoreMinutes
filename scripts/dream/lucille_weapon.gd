@@ -26,6 +26,7 @@ var impact_delay := 0.12
 var _melee_shape: CircleShape2D
 var _melee_query: PhysicsShapeQueryParameters2D
 var _melee_exclude_rids: Array[RID] = []
+var _melee_handled: Dictionary = {}
 
 
 func configure_weapon(config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
@@ -116,7 +117,7 @@ func _perform_swing(allow_extra: bool) -> void:
 func _resolve_swing_hits(owner: Node2D, origin: Vector2, direction: Vector2) -> bool:
 	# 判定圆心是Player本体；HeldWeapon挂点只负责视觉，不再把10px直线当近战范围。
 	var world := get_tree().get_first_node_in_group(&"dream_world")
-	var handled: Dictionary = {}
+	_melee_handled.clear()
 	var hit_something := false
 	var hit_furniture := false
 	var half_arc := attack_arc_radians * 0.5
@@ -136,7 +137,7 @@ func _resolve_swing_hits(owner: Node2D, origin: Vector2, direction: Vector2) -> 
 			distance = float(enemy.distance_to_hurtbox(origin))
 		if distance > attack_range:
 			continue
-		handled[enemy.get_instance_id()] = true
+		_melee_handled[enemy.get_instance_id()] = true
 		if world != null and world.has_method("resolve_player_hit"):
 			var result: Dictionary = world.resolve_player_hit(
 				enemy,
@@ -166,7 +167,7 @@ func _resolve_swing_hits(owner: Node2D, origin: Vector2, direction: Vector2) -> 
 		_melee_query.exclude = []
 	for hit in owner.get_world_2d().direct_space_state.intersect_shape(_melee_query, 16):
 		var prop := hit.get("collider") as Node
-		if prop == null or handled.has(prop.get_instance_id()) or not prop.is_in_group(&"damageable_props"):
+		if prop == null or _melee_handled.has(prop.get_instance_id()) or not prop.is_in_group(&"damageable_props"):
 			continue
 		var to_prop := origin.direction_to((prop as Node2D).global_position)
 		if to_prop.length_squared() <= 0.0001 or absf(direction.angle_to(to_prop)) > half_arc:
@@ -177,7 +178,7 @@ func _resolve_swing_hits(owner: Node2D, origin: Vector2, direction: Vector2) -> 
 			and not bool(world.is_room_projectile_path_clear(origin, (prop as Node2D).global_position))
 		):
 			continue
-		handled[prop.get_instance_id()] = true
+		_melee_handled[prop.get_instance_id()] = true
 		if prop.has_method("take_damage"):
 			prop.take_damage(damage, direction, knockback_multiplier)
 			# Emit the furniture impact cue at the same frame as the accepted

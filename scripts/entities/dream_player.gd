@@ -311,6 +311,8 @@ var _dash_query: PhysicsShapeQueryParameters2D
 var _muzzle_clamp_query: PhysicsRayQueryParameters2D
 var _self_exclude_rids: Array[RID] = []
 var _dash_exclude_rids: Array[RID] = []
+var _punch_handled: Dictionary = {}
+var _kick_handled: Dictionary = {}
 var kick_left_foot := true
 var next_kick_left_foot := true
 var kick_blocked_by_interaction := false
@@ -1270,7 +1272,7 @@ func _apply_punch_hits() -> bool:
 	var world: Node = get_tree().get_first_node_in_group(&"dream_world")
 	var hit_something := false
 	var hit_furniture := false
-	var handled: Dictionary = {}
+	_punch_handled.clear()
 
 	var enemies: Array
 	if world != null and world.has_method("get_dream_enemies_snapshot"):
@@ -1296,9 +1298,9 @@ func _apply_punch_hits() -> bool:
 		):
 			continue
 		var enemy_id := enemy.get_instance_id()
-		if handled.has(enemy_id):
+		if _punch_handled.has(enemy_id):
 			continue
-		handled[enemy_id] = true
+		_punch_handled[enemy_id] = true
 		if world != null and world.has_method("resolve_player_hit"):
 			var result: Dictionary = world.resolve_player_hit(
 				enemy,
@@ -1325,9 +1327,9 @@ func _apply_punch_hits() -> bool:
 		):
 			continue
 		var prop_id := prop.get_instance_id()
-		if handled.has(prop_id) or not prop.has_method("take_damage"):
+		if _punch_handled.has(prop_id) or not prop.has_method("take_damage"):
 			continue
-		handled[prop_id] = true
+		_punch_handled[prop_id] = true
 		prop.take_damage(runtime_config.player_punch_damage, punch_direction, 1.0)
 		hit_something = true
 		hit_furniture = true
@@ -2029,15 +2031,15 @@ func _apply_kick_hits() -> void:
 			get_instance_id()
 		)
 
-	var handled: Dictionary = {}
+	_kick_handled.clear()
 
 	for hit in hits:
 		var target_node := hit.get("collider") as Node
 
-		if target_node == null or handled.has(target_node.get_instance_id()):
+		if target_node == null or _kick_handled.has(target_node.get_instance_id()):
 			continue
 
-		handled[target_node.get_instance_id()] = true
+		_kick_handled[target_node.get_instance_id()] = true
 
 		if target_node.is_in_group("dream_enemies") and target_node.has_method("take_damage"):
 			target_node.set_meta(&"last_damage_source", &"kick")
