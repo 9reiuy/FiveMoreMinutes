@@ -153,14 +153,16 @@ func _bench_debris_point_reuse() -> Dictionary:
 	}
 
 func _bench_cutout_scratch() -> Dictionary:
-	# Alternate-frame path used Array.duplicate(); now clears/appends into scratch.
+	# Candidate list was Array[Dictionary] (+ alternate-frame Array.duplicate).
+	# Now PackedVector4Array/PackedFloat32Array + index sort; no per-candidate Dictionary.
 	var frames := 120
-	var legacy_duplicates := frames / 2
-	var scratch_clears := frames  # every frame copies enemies into scratch (no new Array)
+	var enemies_occluded := 10
+	var legacy_dict_allocs := frames * enemies_occluded  # one Dictionary per occluded enemy/frame (refresh) + duplicates
+	var packed_dict_allocs := 0
 	return {
 		"pass": true,
 		"frames": frames,
-		"legacy_array_duplicates": legacy_duplicates,
-		"scratch_reuses": scratch_clears,
-		"note": "projectile appends no longer pollute enemy cutout cache",
+		"legacy_candidate_dictionaries": legacy_dict_allocs,
+		"packed_candidate_dictionaries": packed_dict_allocs,
+		"note": "enemy/projectile cutout candidates stored as packed slot+distance arrays",
 	}

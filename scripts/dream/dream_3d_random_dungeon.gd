@@ -726,7 +726,11 @@ var _last_furniture_art_child_count: int = -1
 var _last_furniture_2d_child_count: int = -1
 var _last_cutout_viewport_size: Vector2 = Vector2.ZERO
 var _last_cutout_slots: Array[Vector4] = []
-var _cached_enemy_cutout_candidates: Array[Dictionary] = []
+var _cached_enemy_cutout_slots := PackedVector4Array()
+var _cached_enemy_cutout_dists := PackedFloat32Array()
+var _cutout_work_slots := PackedVector4Array()
+var _cutout_work_dists := PackedFloat32Array()
+var _cutout_sort_indices: Array[int] = []
 var _cached_projectile_cutout_nodes: Array = []
 var _cached_projectile_cutout_frame: int = -1
 
@@ -751,7 +755,6 @@ var _cached_damageable_props: Array = []
 var _cached_damageable_props_frame: int = -1
 var _cached_dream_enemies: Array = []
 var _cached_dream_enemies_frame: int = -1
-var _cutout_candidate_scratch: Array[Dictionary] = []
 var _debris_point_query: PhysicsPointQueryParameters2D
 var _blood_batch_point_query: PhysicsPointQueryParameters2D
 var _player_exclude_rids: Array[RID] = []
@@ -5916,9 +5919,10 @@ func _update_occlusion_cutouts() -> void:
 				if player_slot.w > 0.5:
 					slots.append(player_slot)
 					player_occluded = true
-	var candidates: Array[Dictionary] = []
 	var refresh_enemy_cutouts := (Engine.get_process_frames() & 1) == 0
 	if refresh_enemy_cutouts and enemy_root != null:
+		_cached_enemy_cutout_slots.clear()
+		_cached_enemy_cutout_dists.clear()
 		for enemy_variant in enemy_root.get_children():
 			if enemy_variant == null or not is_instance_valid(enemy_variant):
 				continue
@@ -5946,17 +5950,15 @@ func _update_occlusion_cutouts() -> void:
 			)
 			if enemy_slot.w <= 0.5:
 				continue
-			candidates.append({
-				"slot": enemy_slot,
-				"distance": camera_3d.global_position.distance_squared_to(enemy_world) if camera_3d != null else 0.0,
-			})
-		# Snapshot enemies only. Projectiles append into scratch so they never
-		# pollute the alternate-frame enemy cache.
-		_cached_enemy_cutout_candidates = candidates
-	# Working list always goes through scratch so projectile appends stay local.
-	_cutout_candidate_scratch.clear()
-	_cutout_candidate_scratch.append_array(_cached_enemy_cutout_candidates)
-	candidates = _cutout_candidate_scratch
+			_cached_enemy_cutout_slots.append(enemy_slot)
+			_cached_enemy_cutout_dists.append(
+				camera_3d.global_position.distance_squared_to(enemy_world) if camera_3d != null else 0.0
+			)
+	# Working packed lists: copy enemy cache then append projectiles (no Dictionary temps).
+	_cutout_work_slots.clear()
+	_cutout_work_dists.clear()
+	_cutout_work_slots.append_array(_cached_enemy_cutout_slots)
+	_cutout_work_dists.append_array(_cached_enemy_cutout_dists)
 	var effective_config: DemoConfig = config if config != null else EMPLOYEE_CONFIG
 	var candidate_slot_limit: int = OCCLUSION_CUTOUT_SLOT_COUNT - (1 if player_occluded else 0)
 	var proj_cutout_enabled := bool(effective_config.get("projectile_occlusion_cutout_enabled")) if effective_config != null and effective_config.get("projectile_occlusion_cutout_enabled") != null else true
@@ -5995,16 +5997,19 @@ func _update_occlusion_cutouts() -> void:
 			)
 			if proj_slot.w <= 0.5:
 				continue
-			candidates.append({
-				"slot": proj_slot,
-				"distance": camera_3d.global_position.distance_squared_to(proj_world) if camera_3d != null else 0.0,
-			})
-	candidates.sort_custom(_sort_occlusion_candidates)
+			_cutout_work_slots.append(proj_slot)
+			_cutout_work_dists.append(
+				camera_3d.global_position.distance_squared_to(proj_world) if camera_3d != null else 0.0
+			)
+	_cutout_sort_indices.clear()
+	for cand_i in _cutout_work_slots.size():
+		_cutout_sort_indices.append(cand_i)
+	_cutout_sort_indices.sort_custom(_sort_occlusion_candidate_indices)
 	var slots_used := 0
-	for candidate in candidates:
+	for cand_i in _cutout_sort_indices:
 		if slots_used >= candidate_slot_limit or slots.size() >= OCCLUSION_CUTOUT_SLOT_COUNT:
 			break
-		var candidate_slot: Vector4 = candidate.get("slot", Vector4.ZERO)
+		var candidate_slot: Vector4 = _cutout_work_slots[cand_i]
 		if candidate_slot.w > 0.5:
 			slots.append(candidate_slot)
 			slots_used += 1
@@ -6200,8 +6205,8 @@ func _get_projectile_cutout_slot(projectile: Node2D, default_radius: float = 0.2
 	}
 
 
-func _sort_occlusion_candidates(a: Dictionary, b: Dictionary) -> bool:
-	return float(a.get("distance", INF)) < float(b.get("distance", INF))
+func _sort_occlusion_candidate_indices(a: int, b: int) -> bool:
+	return _cutout_work_dists[a] < _cutout_work_dists[b]
 
 
 func _get_actor_cutout_slot(actor: Node2D) -> Dictionary:
@@ -13083,6 +13088,7 @@ func resolve_enemy_projectile_hit(enemy: Node, raw_damage: float, hit_origin: Ve
 	if enemy.has_method("take_damage"):
 		enemy.call("take_damage", raw_damage, hit_origin, 1.0, StringName("enemy_projectile_%s" % String(weapon_id)))
 	return {"damage": raw_damage, "weapon_id": weapon_id}
+
 
 
 
