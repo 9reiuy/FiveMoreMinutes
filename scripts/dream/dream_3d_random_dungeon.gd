@@ -718,6 +718,8 @@ var _static_cutout_door_candidates: Array[VisualInstance3D] = []
 var _last_door_root_child_count: int = -1
 var _cached_furniture_bridges: Array = []
 var _last_bridges_child_count: int = -1
+var _last_furniture_art_child_count: int = -1
+var _last_furniture_2d_child_count: int = -1
 var _last_cutout_viewport_size: Vector2 = Vector2.ZERO
 var _last_cutout_slots: Array[Vector4] = []
 
@@ -743,6 +745,7 @@ var _cutout_furniture_screen_rect_frame: int = -1
 var _cutout_furniture_screen_rects: Dictionary = {}
 
 const FURNITURE_MESH_REFRESH_FRAMES := 120
+const FURNITURE_MESH_CENTER_REFRESH_FRAMES := 6
 const FURNITURE_MESH_BIN_SIZE := 4.0
 ## World-XZ radius around the actor used to gather candidate furniture meshes.
 ## Covering pieces sit near the actor under the gameplay camera; a tight
@@ -4412,6 +4415,8 @@ func _clear_generated_building() -> void:
 	_last_door_root_child_count = -1
 	_cached_furniture_bridges.clear()
 	_last_bridges_child_count = -1
+	_last_furniture_art_child_count = -1
+	_last_furniture_2d_child_count = -1
 	_cutout_furniture_meshes.clear()
 	_cutout_furniture_mesh_centers = PackedVector3Array()
 	_cutout_furniture_mesh_bins.clear()
@@ -5986,7 +5991,9 @@ func _begin_cutout_query_snapshot() -> void:
 			var current_child_count := actor_depth_bridges_root.get_child_count()
 			if current_child_count != _last_bridges_child_count:
 				_last_bridges_child_count = current_child_count
-				_cutout_furniture_meshes_dirty = true
+				# Bridge count changes for projectiles/shells/blood too. Only rebuild
+				# the furniture-bridge subset here — do NOT dirty the mesh cache
+				# (that used to force a whole-tree find_children spike every shot).
 				_cached_furniture_bridges.clear()
 				for bridge in actor_depth_bridges_root.get_children():
 					if bridge.is_queued_for_deletion(): continue
@@ -5995,6 +6002,13 @@ func _begin_cutout_query_snapshot() -> void:
 					var source := source_value as Node2D
 					if is_instance_valid(source) and source.is_in_group(&"damageable_props") and not source.is_queued_for_deletion():
 						_cached_furniture_bridges.append(bridge)
+			# Dirty mesh cache only when furniture art / 2D furniture population changes.
+			var art_count := office_art_root.get_child_count() if is_instance_valid(office_art_root) else 0
+			var furn2d_count := furniture_root.get_child_count() if is_instance_valid(furniture_root) else 0
+			if art_count != _last_furniture_art_child_count or furn2d_count != _last_furniture_2d_child_count:
+				_last_furniture_art_child_count = art_count
+				_last_furniture_2d_child_count = furn2d_count
+				_cutout_furniture_meshes_dirty = true
 			for bridge_variant in _cached_furniture_bridges:
 				if not is_instance_valid(bridge_variant): continue
 				var bridge := bridge_variant as Node
@@ -6412,15 +6426,22 @@ func _ensure_furniture_mesh_cache() -> void:
 		and frame == _cutout_furniture_meshes_frame
 	):
 		return
-	_cutout_furniture_meshes_frame = frame
 	var need_rebuild := (
 		_cutout_furniture_meshes_dirty
 		or _cutout_furniture_meshes.is_empty()
 		or frame % FURNITURE_MESH_REFRESH_FRAMES == 0
 	)
+	# Centre/bin refresh used to run every process frame (~600 mesh global_position
+	# reads). Static office furniture rarely moves; refresh on rebuild or every
+	# FURNITURE_MESH_CENTER_REFRESH_FRAMES instead.
+	var need_centers := need_rebuild or (
+		frame % FURNITURE_MESH_CENTER_REFRESH_FRAMES == 0
+		and frame != _cutout_furniture_meshes_frame
+	)
+	_cutout_furniture_meshes_frame = frame
 	if need_rebuild:
 		_rebuild_furniture_mesh_cache()
-	else:
+	elif need_centers:
 		_refresh_furniture_mesh_centers_and_bins()
 
 
@@ -6433,9 +6454,30 @@ func _rebuild_furniture_mesh_cache() -> void:
 	_cutout_furniture_meshes.clear()
 	_cutout_furniture_mesh_centers = PackedVector3Array()
 	_cutout_furniture_mesh_bins.clear()
-	for node in find_children("*", "MeshInstance3D", true, false):
-		if _mesh_belongs_to_furniture(node):
-			_cutout_furniture_meshes.append(node)
+	# Scope the mesh scan to furniture art / known furniture bridges. A whole-tree
+	# find_children("*", MeshInstance3D) was ~10–18ms on crowded floors and ran
+	# whenever any depth bridge (projectile/shell) was added.
+	var scan_roots: Array[Node] = []
+	if is_instance_valid(office_art_root):
+		scan_roots.append(office_art_root)
+	for bridge_variant in _cached_furniture_bridges:
+		if is_instance_valid(bridge_variant):
+			scan_roots.append(bridge_variant)
+	if scan_roots.is_empty() and is_instance_valid(furniture_root):
+		# Fallback: rare floors without office art still need a mesh list.
+		for node in find_children("*", "MeshInstance3D", true, false):
+			if _mesh_belongs_to_furniture(node):
+				_cutout_furniture_meshes.append(node)
+	else:
+		var seen: Dictionary = {}
+		for root_node in scan_roots:
+			for node in root_node.find_children("*", "MeshInstance3D", true, false):
+				var id := node.get_instance_id()
+				if seen.has(id):
+					continue
+				if _mesh_belongs_to_furniture(node):
+					seen[id] = true
+					_cutout_furniture_meshes.append(node)
 	_cutout_furniture_meshes_dirty = false
 	_refresh_furniture_mesh_centers_and_bins()
 
