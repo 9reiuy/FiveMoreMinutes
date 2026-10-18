@@ -5823,7 +5823,7 @@ func _process_pit_contacts() -> void:
 			_pit_enemy_handled[employee.get_instance_id()] = true
 			if employee.has_method("force_pit_death"):
 				employee.call("force_pit_death", employee.global_position)
-	for prop_variant in _damageable_props_snapshot():
+	for prop_variant in get_damageable_props_snapshot():
 		var prop := prop_variant as Node2D
 		if prop == null or not is_instance_valid(prop) or prop.get("destroyed") == true or prop.get("is_destroyed") == true:
 			continue
@@ -12997,7 +12997,7 @@ func resolve_enemy_projectile_hit(enemy: Node, raw_damage: float, hit_origin: Ve
 
 
 
-func _damageable_props_snapshot() -> Array:
+func get_damageable_props_snapshot() -> Array:
 	var frame := Engine.get_process_frames()
 	if frame == _cached_damageable_props_frame and not _cached_damageable_props.is_empty():
 		return _cached_damageable_props
@@ -13011,7 +13011,7 @@ func _damageable_props_snapshot() -> Array:
 
 func damage_furniture_along_segment(origin: Vector2, endpoint: Vector2, width: float, amount: float, hit_direction: Vector2, source_actor: Node = null, hit_registry: Dictionary = {}) -> void:
 	var handled := hit_registry
-	for prop_variant in _damageable_props_snapshot():
+	for prop_variant in get_damageable_props_snapshot():
 		var prop := prop_variant as Node2D
 		if prop == null or prop == source_actor or prop.get("destroyed") == true:
 			continue
@@ -13026,7 +13026,7 @@ func damage_furniture_along_segment(origin: Vector2, endpoint: Vector2, width: f
 
 
 func damage_furniture_in_radius(center: Vector2, radius: float, amount: float, source_actor: Node = null) -> void:
-	for prop_variant in _damageable_props_snapshot():
+	for prop_variant in get_damageable_props_snapshot():
 		var prop := prop_variant as Node2D
 		if prop == null or prop == source_actor or prop.get("destroyed") == true:
 			continue

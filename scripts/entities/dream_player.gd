@@ -1249,6 +1249,14 @@ func _update_punch(delta: float) -> void:
 		_start_punch()
 
 
+
+func _props_for_melee() -> Array:
+	var world: Node = get_tree().get_first_node_in_group(&"dream_world")
+	if world != null and world.has_method("get_damageable_props_snapshot"):
+		return world.call("get_damageable_props_snapshot")
+	return get_tree().get_nodes_in_group(&"damageable_props")
+
+
 func _apply_punch_hits() -> bool:
 	var origin := global_position
 	var radius := maxf(runtime_config.player_punch_range, 1.0)
@@ -1290,7 +1298,7 @@ func _apply_punch_hits() -> bool:
 			if not result.is_empty():
 				hit_something = true
 
-	for prop_variant in get_tree().get_nodes_in_group(&"damageable_props"):
+	for prop_variant in _props_for_melee():
 		var prop := prop_variant as Node2D
 		if prop == null or not is_instance_valid(prop) or prop.get("destroyed") == true:
 			continue
@@ -3382,7 +3390,7 @@ func _try_start_vault(direction: Vector2) -> bool:
 	var best_landing: Vector2 = Vector2.ZERO
 	var best_direction: Vector2 = Vector2.RIGHT
 	var best_score: float = INF
-	for candidate_variant in get_tree().get_nodes_in_group(&"damageable_props"):
+	for candidate_variant in _props_for_melee():
 		var candidate_node: Node = candidate_variant as Node
 		var obstacle: PhysicsBody2D = candidate_node as PhysicsBody2D
 		if obstacle == null or not is_instance_valid(obstacle) or obstacle == self:
