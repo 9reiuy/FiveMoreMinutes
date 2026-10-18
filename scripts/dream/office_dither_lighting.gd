@@ -6,6 +6,11 @@ const OUTLINE_SHADER_PATH := "res://shaders/dream3d/furniture_pixel_outline.gdsh
 static var shader_cache: Dictionary = {}
 ## Shared outline material -> its cutout-enabled copy (occluder furniture only).
 static var cutout_outline_cache: Dictionary = {}
+## Shader RID/instance_id -> whether its source declares occlusion_cutout_enabled.
+## Avoids scanning shader.code (multi-KB string) up to 24 meshes/frame in _apply.
+static var _shader_has_cutout_uniform: Dictionary = {}
+## Shader RID/instance_id -> whether code contains sample_capture_pass (wall cutaway etc.).
+static var _shader_has_sample_capture_pass: Dictionary = {}
 var materials: Dictionary = {}
 var meshes: Array[WeakRef] = []
 var cursor := 0
@@ -79,7 +84,7 @@ func _apply(mesh: MeshInstance3D) -> void:
 			mesh.material_override = replacement
 		if furniture and mesh.material_override is ShaderMaterial:
 			var live_shader: Shader = (mesh.material_override as ShaderMaterial).shader
-			if live_shader != null and live_shader.code.contains("occlusion_cutout_enabled"):
+			if live_shader != null and _shader_supports_cutout(live_shader):
 				(mesh.material_override as ShaderMaterial).set_shader_parameter("occlusion_cutout_enabled", true)
 	elif mesh.mesh != null:
 		for index in mesh.mesh.get_surface_count():
@@ -94,7 +99,7 @@ func _apply(mesh: MeshInstance3D) -> void:
 			# cannot leak into walls or floors.
 			if furniture:
 				var live_surface := mesh.get_active_material(index) as ShaderMaterial
-				if live_surface != null and live_surface.shader != null and live_surface.shader.code.contains("occlusion_cutout_enabled"):
+				if live_surface != null and live_surface.shader != null and _shader_supports_cutout(live_surface.shader):
 					live_surface.set_shader_parameter("occlusion_cutout_enabled", true)
 
 
@@ -133,14 +138,14 @@ func _material(source: Material) -> Material:
 	if not source is ShaderMaterial or source.shader == null:
 		return source
 	# Retain the live material used by wall cutaway, doors and furniture.
-	if source.shader.code.contains("sample_capture_pass"):
+	if _shader_has_capture_pass(source.shader):
 		return source
 	var res_path: String = source.shader.resource_path
 	if res_path.is_empty():
 		return source
 	var filename: String = res_path.get_file()
 	# Actor/blood/glass/emission/outline shaders are deliberately outside scope.
-	if not (filename in ["office_pixel_surface.gdshader", "office_surface.gdshader", "office_low_pixel.gdshader", "office_low_pixel_refined.gdshader", "office_detail_atlas.gdshader"] or filename.begins_with("interiors_a_floor_") or filename in ["interiors_a_wall_pixel_light.gdshader", "interiors_a_wall_vertical_fade.gdshader", "interiors_a_door_pixel_light.gdshader"]):
+	if not (filename in ["office_pixel_surface.gdshader", "office_low_pixel.gdshader", "office_low_pixel_refined.gdshader", "office_detail_atlas.gdshader"] or filename.begins_with("interiors_a_floor_") or filename in ["interiors_a_wall_pixel_light.gdshader", "interiors_a_wall_vertical_fade.gdshader", "interiors_a_door_pixel_light.gdshader"]):
 		return source
 	if not materials.has(source):
 		var copy: ShaderMaterial = source.duplicate()
@@ -153,6 +158,25 @@ func _material(source: Material) -> Material:
 		copy.set_shader_parameter("office_dither_enabled", true)
 		materials[source] = copy
 	return materials[source]
+
+
+static func _shader_supports_cutout(shader: Shader) -> bool:
+	var id := shader.get_instance_id()
+	if _shader_has_cutout_uniform.has(id):
+		return bool(_shader_has_cutout_uniform[id])
+	var has := shader.code.contains("occlusion_cutout_enabled")
+	_shader_has_cutout_uniform[id] = has
+	return has
+
+
+static func _shader_has_capture_pass(shader: Shader) -> bool:
+	var id := shader.get_instance_id()
+	if _shader_has_sample_capture_pass.has(id):
+		return bool(_shader_has_sample_capture_pass[id])
+	var has := shader.code.contains("sample_capture_pass")
+	_shader_has_sample_capture_pass[id] = has
+	return has
+
 
 static func _shader(source: Shader) -> Shader:
 	if shader_cache.has(source):
