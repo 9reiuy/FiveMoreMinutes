@@ -1208,7 +1208,7 @@ func _process(_delta: float) -> void:
 		and camera_viewport_rect.grow(160).has_point(camera.unproject_position(actor_sprite.global_position)))
 	# 血迹（永久保留）纳入静态捕获：settle 后 SubViewport 不再每帧重绘，
 	# 仅当载荷版本变化（新血滴落地 / append_wall_impact）时刷新一次。
-	if room_gated_source:
+	if _cached_room_gated_prop:
 		# configure() and _process() can both run before the first rendered frame.
 		# Do not cancel UPDATE_ONCE or accept a static capture until the renderer
 		# has actually completed it with this room's drawable source.
