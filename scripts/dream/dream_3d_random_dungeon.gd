@@ -723,6 +723,8 @@ var _last_furniture_2d_child_count: int = -1
 var _last_cutout_viewport_size: Vector2 = Vector2.ZERO
 var _last_cutout_slots: Array[Vector4] = []
 var _cached_enemy_cutout_candidates: Array[Dictionary] = []
+var _cached_projectile_cutout_nodes: Array = []
+var _cached_projectile_cutout_frame: int = -1
 
 ## World position of whatever broke the sightline during the last query, plus
 ## whether it is valid. Cutout slots project THIS point instead of the actor:
@@ -5901,7 +5903,11 @@ func _update_occlusion_cutouts() -> void:
 	var proj_cutout_enabled := bool(effective_config.get("projectile_occlusion_cutout_enabled")) if effective_config != null and effective_config.get("projectile_occlusion_cutout_enabled") != null else true
 	if proj_cutout_enabled:
 		var default_proj_radius := float(effective_config.get("projectile_occlusion_cutout_radius")) if effective_config != null and effective_config.get("projectile_occlusion_cutout_radius") != null else 0.20
-		for projectile_node in get_tree().get_nodes_in_group(&"dream_projectiles"):
+		var proj_frame := Engine.get_process_frames()
+		if proj_frame - _cached_projectile_cutout_frame >= 2 or _cached_projectile_cutout_nodes.is_empty():
+			_cached_projectile_cutout_frame = proj_frame
+			_cached_projectile_cutout_nodes = get_tree().get_nodes_in_group(&"dream_projectiles")
+		for projectile_node in _cached_projectile_cutout_nodes:
 			var projectile := projectile_node as Node2D
 			if projectile == null or not is_instance_valid(projectile) or not projectile.is_inside_tree() or projectile.is_queued_for_deletion():
 				continue
