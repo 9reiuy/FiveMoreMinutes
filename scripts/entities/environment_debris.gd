@@ -17,6 +17,7 @@ var debris_gravity := 240.0
 var drag := 420.0
 var settled := true
 var breaking := false
+var _sweep_query: PhysicsRayQueryParameters2D
 
 
 func _ready() -> void:
@@ -58,8 +59,14 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var next_ground := global_position + spray_velocity * delta
-	var sweep := PhysicsRayQueryParameters2D.create(global_position, next_ground, 1 | 4)
-	var hit := get_world_2d().direct_space_state.intersect_ray(sweep)
+	if _sweep_query == null:
+		_sweep_query = PhysicsRayQueryParameters2D.new()
+		_sweep_query.collision_mask = 1 | 4
+		_sweep_query.collide_with_bodies = true
+		_sweep_query.collide_with_areas = false
+	_sweep_query.from = global_position
+	_sweep_query.to = next_ground
+	var hit := get_world_2d().direct_space_state.intersect_ray(_sweep_query)
 	if not hit.is_empty():
 		next_ground = Vector2(hit.position) + Vector2(hit.normal) * 2.0
 		spray_velocity = Vector2.ZERO
