@@ -14,6 +14,7 @@ class_name PlayerPhysicsProxy3D
 
 var source_actor: Node2D
 var push_cooldown_left := 0.0
+var _cached_parent_3d: Node3D
 var _door_cache: Array = []
 var _door_cache_msec: int = 0
 const DOOR_CACHE_TTL_MSEC: int = 500
@@ -35,7 +36,9 @@ func _physics_process(delta: float) -> void:
 	if bool(source_actor.get("dead")):
 		set_physics_process(false)
 		return
-	var parent_3d := get_parent_node_3d()
+	if _cached_parent_3d == null or not is_instance_valid(_cached_parent_3d):
+		_cached_parent_3d = get_parent_node_3d()
+	var parent_3d := _cached_parent_3d
 	if parent_3d == null:
 		return
 	var ground_position := _ground_anchor_position()
@@ -52,12 +55,12 @@ func _physics_process(delta: float) -> void:
 		if motion.length_squared() < 0.0000001:
 			var actor_velocity_variant: Variant = source_actor.get("velocity")
 			var actor_velocity := Vector2.ZERO if actor_velocity_variant == null else Vector2(actor_velocity_variant)
-			motion = get_parent_node_3d().global_basis * Vector3(actor_velocity.x, 0.0, actor_velocity.y) / maxf(world_scale, 0.01) * delta
+			motion = parent_3d.global_basis * Vector3(actor_velocity.x, 0.0, actor_velocity.y) / maxf(world_scale, 0.01) * delta
 		if motion.length_squared() < 0.0000001:
 			var destination: Variant = source_actor.get("route_transit_point")
 			if destination is Vector2:
 				var intended := Vector2(destination) - ground_position
-				motion = get_parent_node_3d().global_basis * Vector3(intended.x, 0, intended.y)
+				motion = parent_3d.global_basis * Vector3(intended.x, 0, intended.y)
 		if motion.length_squared() < 0.0000001:
 			return
 		var now_msec := Time.get_ticks_msec()
