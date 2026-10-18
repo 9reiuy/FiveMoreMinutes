@@ -251,6 +251,7 @@ var cached_separation_velocity := Vector2.ZERO
 var _separation_shape: CircleShape2D
 var _separation_query: PhysicsShapeQueryParameters2D
 var _los_query: PhysicsRayQueryParameters2D
+var _muzzle_clamp_query: PhysicsRayQueryParameters2D
 
 var strafe_sign := 1.0
 var strafe_time_left := 0.0
@@ -3057,11 +3058,16 @@ func get_projectile_origin() -> Vector2:
 	if segment.length_squared() <= 0.01:
 		return nominal_pos
 	var mask: int = 1 | 4 | 8
-	var query := PhysicsRayQueryParameters2D.create(start_pos, nominal_pos, mask, [get_rid()])
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
-	query.hit_from_inside = true
-	var hit: Dictionary = space_state.intersect_ray(query)
+	if _muzzle_clamp_query == null:
+		_muzzle_clamp_query = PhysicsRayQueryParameters2D.new()
+		_muzzle_clamp_query.collide_with_bodies = true
+		_muzzle_clamp_query.collide_with_areas = false
+		_muzzle_clamp_query.hit_from_inside = true
+	_muzzle_clamp_query.from = start_pos
+	_muzzle_clamp_query.to = nominal_pos
+	_muzzle_clamp_query.collision_mask = mask
+	_muzzle_clamp_query.exclude = [get_rid()]
+	var hit: Dictionary = space_state.intersect_ray(_muzzle_clamp_query)
 	if not hit.is_empty():
 		var hit_pos: Vector2 = hit.get("position", nominal_pos)
 		var dir := segment.normalized()
