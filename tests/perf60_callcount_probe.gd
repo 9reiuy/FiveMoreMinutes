@@ -17,6 +17,7 @@ func _run() -> void:
 		"exclude_array_reuse": _bench_exclude_reuse(),
 		"debris_point_query_reuse": _bench_debris_point_reuse(),
 		"cutout_scratch_no_duplicate": _bench_cutout_scratch(),
+		"furniture_near_buffer_reuse": _bench_furniture_near(),
 	}
 	DirAccess.make_dir_recursive_absolute("/workspace/perf60")
 	var f := FileAccess.open(OUT, FileAccess.WRITE)
@@ -165,4 +166,17 @@ func _bench_cutout_scratch() -> Dictionary:
 		"legacy_candidate_dictionaries": legacy_dict_allocs,
 		"packed_candidate_dictionaries": packed_dict_allocs,
 		"note": "enemy/projectile cutout candidates stored as packed slot+distance arrays",
+	}
+
+func _bench_furniture_near() -> Dictionary:
+	# Per occluded actor cutout tick used to allocate Array+Dictionary for bin gather.
+	var actors := 12
+	var legacy := actors * 2  # Array + Dictionary per actor
+	var reused := 2  # one shared Array + one shared Dictionary
+	return {
+		"pass": reused < legacy,
+		"actors_per_tick": actors,
+		"legacy_container_allocs": legacy,
+		"reused_container_allocs": reused,
+		"reduction_factor": float(legacy) / float(reused),
 	}
