@@ -315,7 +315,7 @@ static func _glass_material(size: Vector2,use_cache: bool=false,generate_pixels:
 static func _glass_shader(use_cache: bool) -> Shader:
 	if use_cache and shared_glass_shader!=null: return shared_glass_shader
 	var shader := Shader.new()
-	shader.code="shader_type spatial;\nrender_mode diffuse_lambert,cull_disabled;\n#include \"res://shaders/dream3d/architecture_cutaway.gdshaderinc\"\nuniform sampler2D glass_pixels : source_color, filter_nearest, repeat_disable;\nvoid vertex(){architecture_world=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;}\nvoid fragment(){if(architecture_cutaway && architecture_visibility(architecture_world)<0.5){discard;} vec4 tex=texture(glass_pixels,UV); ALBEDO=tex.rgb; ALPHA=tex.a; ROUGHNESS=1.0; SPECULAR=0.0;}"
+	shader.code="shader_type spatial;\nrender_mode diffuse_lambert,cull_disabled;\n#include \"res://shaders/dream3d/architecture_cutaway.gdshaderinc\"\n#include \"res://shaders/dream3d/occlusion_cutout.gdshaderinc\"\nuniform sampler2D glass_pixels : source_color, filter_nearest, repeat_disable;\nvoid vertex(){architecture_world=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;}\nvoid fragment(){if(architecture_cutaway && architecture_visibility(architecture_world)<0.5){discard;} if(combined_cutout(SCREEN_UV)<0.35){discard;} vec4 tex=texture(glass_pixels,UV); ALBEDO=tex.rgb; ALPHA=tex.a; ROUGHNESS=1.0; SPECULAR=0.0;}"
 	if use_cache: shared_glass_shader=shader
 	return shader
 
@@ -329,6 +329,8 @@ func _apply_door(record: Dictionary) -> void:
 			var use_cache := production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",false))
 			var mat := ShaderMaterial.new(); mat.shader=_door_shader(use_cache)
 			mat.set_shader_parameter("review_door_size",leaf.size)
+			# Door leaves occlude actors like furniture: opt in to the halftone hole.
+			mat.set_shader_parameter("occlusion_cutout_enabled",true)
 			mat.set_shader_parameter("atlas",_door_texture(leaf.size,record.style,leaf.index,use_cache)); visual.material_override=mat
 			if leaf.handle!=null: leaf.handle.material_override=_color("b4bec0")
 		else:

@@ -6130,6 +6130,8 @@ func _get_actor_cutout_slot(actor: Node2D) -> Dictionary:
 ## / CELL_PIXELS underestimates that billboard (≈0.9 world → ~30px while the
 ## sprite is ~126px tall), so a hole aimed at the visual centre would only dig
 ## near the head and leave the body sealed by furniture.
+const ACTOR_CUTOUT_RADIUS_HEIGHT_SCALE := 1.0
+
 func _actor_cutout_world_from_visual(actor: Node2D, center_global: Vector2, bounds_radius: float) -> Dictionary:
 	var world := to_global(Vector3(
 		center_global.x / CELL_PIXELS,
@@ -6148,8 +6150,10 @@ func _actor_cutout_world_from_visual(actor: Node2D, center_global: Vector2, boun
 				if tex != null:
 					var half_w := sprite.pixel_size * float(tex.get_width()) * 0.5
 					var half_h := sprite.pixel_size * float(tex.get_height()) * 0.5
-					# Half-diagonal of the billboard + small pad for outline/halftone rim.
-					radius = maxf(radius, sqrt(half_w * half_w + half_h * half_h) + 0.08)
+					# Half the billboard height (+ small rim pad): covers the body and a
+					# sliver of floor at the feet without hollowing out large furniture.
+					# (Half-diagonal was ~93 vp-px, judged too large by the user.)
+					radius = maxf(radius, half_h * ACTOR_CUTOUT_RADIUS_HEIGHT_SCALE + 0.04)
 			else:
 				var height := 0.70710678
 				var depth := -0.70710678
