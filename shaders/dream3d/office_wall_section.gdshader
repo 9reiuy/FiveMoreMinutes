@@ -1,5 +1,6 @@
 shader_type spatial;
-render_mode diffuse_lambert;
+render_mode blend_mix, diffuse_lambert, depth_draw_never;
+#include "res://shaders/dream3d/occlusion_cutout.gdshaderinc"
 uniform sampler2D section_pixels : source_color, filter_nearest, repeat_disable;
 uniform float section_height=2.6;
 uniform float section_thickness=0.5;
@@ -11,4 +12,8 @@ void fragment(){
     EMISSION=ALBEDO*0.30;
     ROUGHNESS=1.0;
     SPECULAR=0.0;
+    // Cutaway wall face must dig with the wall body or it paints over the hole.
+    float occlusion_cut = combined_cutout(SCREEN_UV);
+    if (occlusion_cut < 0.35) { discard; }
+    ALPHA = occlusion_cut;
 }

@@ -1,6 +1,7 @@
 shader_type spatial;
 render_mode unshaded, fog_disabled;
 // Architectural top cap renders as solid black.
+#include "res://shaders/dream3d/occlusion_cutout.gdshaderinc"
 uniform float wall_height = 2.6;
 varying vec3 world_position;
 varying vec3 world_normal;
@@ -18,5 +19,7 @@ void fragment() {
 		float threshold = (mod(cell.x + mod(cell.y, 4.0) * 3.0, 4.0) + 0.5) / 4.0;
 		if (coverage < threshold) { discard; }
 	}
+	// Same dig as wall body: without it the black cap seals the cutout hole.
+	if (combined_cutout(SCREEN_UV) < 0.35) { discard; }
 	ALBEDO = vec3(0.0, 0.0, 0.0);
 }

@@ -1,6 +1,7 @@
 shader_type spatial;
 render_mode unshaded, cull_disabled, depth_draw_never, shadows_disabled;
 #include "res://shaders/dream3d/character_reference_depth.gdshaderinc"
+#include "res://shaders/dream3d/occlusion_cutout.gdshaderinc"
 uniform sampler2D capture_texture : filter_nearest, repeat_disable;
 
 void fragment() {
@@ -15,6 +16,7 @@ void fragment() {
 		}
 	}
 	if (edge <= 0.05) { discard; }
+	if (combined_cutout(SCREEN_UV) < 0.35) { discard; }
 	ALBEDO = vec3(0.0);
 	ALPHA = 1.0;
 }

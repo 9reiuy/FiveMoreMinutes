@@ -5843,12 +5843,12 @@ func _update_occlusion_cutouts() -> void:
 			var player_world: Vector3 = player_cutout.get("world", Vector3.ZERO)
 			var player_radius: float = float(player_cutout.get("radius", 0.24))
 			var player_wall_door := _actor_is_occluded_by_wall_or_door(player_world)
-			var player_furn_overlap: Variant = _furniture_screen_overlap(player_world, player_radius, false)
-			if player_wall_door or player_furn_overlap != null:
+			# early_exit: only need covered/not; hole aims at visual centre, not overlap.
+			var player_furn_covered := _furniture_screen_overlap(player_world, player_radius, true) != null
+			if player_wall_door or player_furn_covered:
 				var player_slot: Vector4 = _project_occlusion_cutout(
 					player_world,
-					player_radius,
-					player_furn_overlap
+					player_radius
 				)
 				if player_slot.w > 0.5:
 					slots.append(player_slot)
@@ -5871,13 +5871,12 @@ func _update_occlusion_cutouts() -> void:
 					continue
 			var enemy_radius: float = float(cutout.get("radius", 0.24))
 			var enemy_wall_door := _actor_is_occluded_by_wall_or_door(enemy_world)
-			var enemy_furn_overlap: Variant = _furniture_screen_overlap(enemy_world, enemy_radius, false)
-			if not enemy_wall_door and enemy_furn_overlap == null:
+			var enemy_furn_covered := _furniture_screen_overlap(enemy_world, enemy_radius, true) != null
+			if not enemy_wall_door and not enemy_furn_covered:
 				continue
 			var enemy_slot: Vector4 = _project_occlusion_cutout(
 				enemy_world,
-				enemy_radius,
-				enemy_furn_overlap
+				enemy_radius
 			)
 			if enemy_slot.w <= 0.5:
 				continue
@@ -5908,13 +5907,12 @@ func _update_occlusion_cutouts() -> void:
 					continue
 			var proj_radius: float = float(proj_cutout.get("radius", default_proj_radius))
 			var proj_wall_door := _actor_is_occluded_by_wall_or_door(proj_world)
-			var proj_furn_overlap: Variant = _furniture_screen_overlap(proj_world, proj_radius, false)
-			if not proj_wall_door and proj_furn_overlap == null:
+			var proj_furn_covered := _furniture_screen_overlap(proj_world, proj_radius, true) != null
+			if not proj_wall_door and not proj_furn_covered:
 				continue
 			var proj_slot: Vector4 = _project_occlusion_cutout(
 				proj_world,
-				proj_radius,
-				proj_furn_overlap
+				proj_radius
 			)
 			if proj_slot.w <= 0.5:
 				continue
@@ -6114,11 +6112,59 @@ func _get_actor_cutout_slot(actor: Node2D) -> Dictionary:
 	if visual_root != null and visual_root != actor:
 		local_center += visual_root.position - cached.get("visual_root_position", Vector2.ZERO)
 	var center_global := actor.global_transform * local_center
-	return {
-		"world": to_global(Vector3(center_global.x / CELL_PIXELS, 0.48, center_global.y / CELL_PIXELS)),
-		"radius": float(cached.get("radius", 0.24)),
-	}
+	# Align the hole with the on-screen visual carrier (center_height + depth_offset),
+	# not a hardcoded mid-torso Y. Projectiles already use actor_sprite.global_position.
+	var placed: Dictionary = _actor_cutout_world_from_visual(
+		actor, center_global, float(cached.get("radius", 0.24))
+	)
+	return placed
 
+
+
+
+## World-space centre + radius for an actor cutout. Prefer the live depth-bridge
+## sprite (same plane the player sees). Fallback matches configure() defaults:
+## actor_center_height=0.707..., actor_center_depth_offset=-0.707...
+##
+## Radius must cover the on-screen Sprite3D quad. The 2D CharacterVisual bounds
+## / CELL_PIXELS underestimates that billboard (≈0.9 world → ~30px while the
+## sprite is ~126px tall), so a hole aimed at the visual centre would only dig
+## near the head and leave the body sealed by furniture.
+func _actor_cutout_world_from_visual(actor: Node2D, center_global: Vector2, bounds_radius: float) -> Dictionary:
+	var world := to_global(Vector3(
+		center_global.x / CELL_PIXELS,
+		0.70710678,
+		center_global.y / CELL_PIXELS - 0.70710678
+	))
+	var radius := maxf(bounds_radius, 0.24)
+	if actor.has_meta(&"depth_visual_bridge"):
+		var bridge_ref: Variant = actor.get_meta(&"depth_visual_bridge")
+		var bridge: Node3D = bridge_ref.get_ref() if bridge_ref is WeakRef else null
+		if bridge != null and is_instance_valid(bridge):
+			var sprite: Sprite3D = bridge.get(&"actor_sprite") as Sprite3D
+			if sprite != null and is_instance_valid(sprite):
+				world = sprite.global_position
+				var tex: Texture2D = sprite.texture
+				if tex != null:
+					var half_w := sprite.pixel_size * float(tex.get_width()) * 0.5
+					var half_h := sprite.pixel_size * float(tex.get_height()) * 0.5
+					# Half-diagonal of the billboard + small pad for outline/halftone rim.
+					radius = maxf(radius, sqrt(half_w * half_w + half_h * half_h) + 0.08)
+			else:
+				var height := 0.70710678
+				var depth := -0.70710678
+				var height_variant: Variant = bridge.get(&"actor_center_height")
+				var depth_variant: Variant = bridge.get(&"actor_center_depth_offset")
+				if height_variant is float or height_variant is int:
+					height = float(height_variant)
+				if depth_variant is float or depth_variant is int:
+					depth = float(depth_variant)
+				world = to_global(Vector3(
+					center_global.x / CELL_PIXELS,
+					height,
+					center_global.y / CELL_PIXELS + depth
+				))
+	return {"world": world, "radius": radius}
 
 func _project_occlusion_cutout(world_center: Vector3, world_radius: float, screen_override: Variant = null) -> Vector4:
 	if camera_3d == null or not is_instance_valid(camera_3d):
