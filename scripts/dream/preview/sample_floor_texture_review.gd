@@ -20,9 +20,14 @@ const STYLE = preload("res://scripts/dream/office_art_room_style.gd")
 
 func _ready() -> void:
 	if world==null: world=get_parent()
+	if production_mode:
+		set_process(false)
 	call_deferred("refresh_assets")
 
 func _process(delta: float) -> void:
+	if production_mode:
+		set_process(false)
+		return
 	elapsed+=delta
 	if elapsed>=.5: elapsed=0.0; refresh_assets()
 

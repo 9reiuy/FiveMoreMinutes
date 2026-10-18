@@ -37,6 +37,8 @@ func _process(delta: float) -> void:
 			for parameter in ["architecture_cutaway","architecture_wall_height","architecture_floor_y"]:
 				var value: Variant=visual.material_override.get_shader_parameter(parameter)
 				if value!=null: leaf.glass.material_override.set_shader_parameter(parameter,value)
+	if production_mode:
+		return
 	elapsed+=delta
 	if elapsed>=.5: elapsed=0; refresh_assets()
 

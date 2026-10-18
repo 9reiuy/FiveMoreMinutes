@@ -24,6 +24,8 @@ var production_mode := false
 func _ready() -> void:
 	if world==null: world=get_parent()
 	process_priority=100
+	if production_mode:
+		set_process(false)
 
 func _enter_tree() -> void:
 	if not RenderingServer.frame_pre_draw.is_connected(_sync_render_snapshot):
@@ -33,6 +35,9 @@ func _exit_tree() -> void:
 	if RenderingServer.frame_pre_draw.is_connected(_sync_render_snapshot): RenderingServer.frame_pre_draw.disconnect(_sync_render_snapshot)
 
 func _process(_delta: float) -> void:
+	if production_mode:
+		set_process(false)
+		return
 	if world.floor_cells.is_empty() or world.room_visibility==null: return
 	if scene_root==null or not is_instance_valid(scene_root) or build_seed!=world.active_seed:
 		_build()

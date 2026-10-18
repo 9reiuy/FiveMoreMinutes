@@ -549,6 +549,11 @@ func set_gameplay_collision_enabled(enabled: bool) -> void:
 			body.set_deferred("collision_layer", _collision_layer_2d if enabled else 0)
 
 
+func wake_door_physics() -> void:
+	if not is_physics_processing():
+		set_physics_process(true)
+
+
 func _physics_process(delta: float) -> void:
 	if is_destroyed:
 		return
@@ -604,6 +609,8 @@ func _physics_process(delta: float) -> void:
 				if leaf != null:
 					leaf.freeze = true
 					leaf.angular_velocity = Vector3.ZERO
+	if latched and _impact_window_left <= 0.0 and not any_swing and _quiet_time > 0.35:
+		set_physics_process(false)
 
 
 func get_open_angle() -> float:
@@ -777,6 +784,7 @@ func prepare_enemy_passage(actor_position_2d: Vector2) -> bool:
 			continue
 		all_clear = false
 		latched = false
+		wake_door_physics()
 		leaf.freeze = false
 		leaf.sleeping = false
 		_passive_swing[index] = true
@@ -850,6 +858,7 @@ func apply_door_impact(source: StringName, point: Vector3, direction: Vector3, f
 		_combat_swing_left[selected_index] = 0.0
 		_combat_swing_instigator[selected_index] = 0
 	latched = false
+	wake_door_physics()
 	set_meta(&"last_impact_source", source)
 	leaf.freeze = false
 	leaf.sleeping = false
@@ -883,6 +892,7 @@ func apply_door_impact(source: StringName, point: Vector3, direction: Vector3, f
 func take_damage(amount: float, direction: Vector2 = Vector2.ZERO, force: float = 1.0, leaf_idx: int = -1) -> void:
 	if is_destroyed or locked or is_boss_door:
 		return
+	wake_door_physics()
 	current_health -= amount
 	if current_health <= 0.0:
 		shatter(direction)

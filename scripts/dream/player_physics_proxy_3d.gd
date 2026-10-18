@@ -14,6 +14,9 @@ class_name PlayerPhysicsProxy3D
 
 var source_actor: Node2D
 var push_cooldown_left := 0.0
+var _door_cache: Array = []
+var _door_cache_msec: int = 0
+const DOOR_CACHE_TTL_MSEC: int = 500
 
 
 func _ready() -> void:
@@ -57,12 +60,16 @@ func _physics_process(delta: float) -> void:
 				motion = get_parent_node_3d().global_basis * Vector3(intended.x, 0, intended.y)
 		if motion.length_squared() < 0.0000001:
 			return
-		for door in get_tree().get_nodes_in_group(door_group):
+		var now_msec := Time.get_ticks_msec()
+		if now_msec - _door_cache_msec >= DOOR_CACHE_TTL_MSEC or _door_cache.is_empty():
+			_door_cache = get_tree().get_nodes_in_group(door_group)
+			_door_cache_msec = now_msec
+		var world := get_tree().get_first_node_in_group(&"dream_world")
+		var push_force := 260.0
+		if world != null and world.get("door_push_force") != null:
+			push_force = float(world.get("door_push_force"))
+		for door in _door_cache:
 			if is_instance_valid(door) and door.has_method("request_proxy_impact"):
-				var world := get_tree().get_first_node_in_group(&"dream_world")
-				var push_force := 260.0
-				if world != null and world.get("door_push_force") != null:
-					push_force = float(world.get("door_push_force"))
 				if door.call("request_proxy_impact", target_position, motion, delta, push_force):
 					# One deliberate push, not an impact on every contact frame.
 					push_cooldown_left = 0.45
