@@ -34,3 +34,6 @@ Thumbs.db
 # 日志和崩溃报告
 *.log
 godot.log
+
+# Local headless probe leftovers (shader cache / appdata)
+.godot_runtime_check/
