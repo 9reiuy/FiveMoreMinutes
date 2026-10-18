@@ -3128,12 +3128,13 @@ func _dash_shape_collisions_at(position: Vector2, ignored_bodies: Array = []) ->
 		position + local_offset
 	)
 	_dash_query.collision_mask = collision_mask
-	var exclusions: Array[RID] = [get_rid()]
+	_self_exclude_rids.clear()
+	_self_exclude_rids.append(get_rid())
 	for body_variant in ignored_bodies:
 		var body := body_variant as CollisionObject2D
 		if body != null and is_instance_valid(body):
-			exclusions.append(body.get_rid())
-	_dash_query.exclude = exclusions
+			_self_exclude_rids.append(body.get_rid())
+	_dash_query.exclude = _self_exclude_rids
 	return get_world_2d().direct_space_state.intersect_shape(_dash_query, 16)
 
 

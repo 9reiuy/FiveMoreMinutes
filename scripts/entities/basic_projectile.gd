@@ -67,6 +67,7 @@ var _history_texture_size := Vector2i.ZERO
 var _office_tracer_update_pending := false
 var _cached_bullet_sprite: Sprite2D
 var _ray_query: PhysicsRayQueryParameters2D
+var _cast_exclude_rids: Array[RID] = []
 static var _history_texture_pool: Dictionary = {}
 static var _history_image_pool: Dictionary = {}
 const MAX_POOLED_TEXTURES_PER_SIZE := 32
@@ -497,23 +498,22 @@ func _physics_process(delta: float) -> void:
 
 ## WorldWeapon和发射者不是伤害目标；命中它们时继续查询同一运动线段后方的第一个正式目标。
 func _cast_movement_segment(from_position: Vector2, to_position: Vector2) -> Dictionary:
-	var excluded: Array[RID] = []
+	_cast_exclude_rids.clear()
 	var furniture_hit: Dictionary = {}
 	var live_shooter := _get_live_shooter()
 	if live_shooter is CollisionObject2D:
-		excluded.append((live_shooter as CollisionObject2D).get_rid())
+		_cast_exclude_rids.append((live_shooter as CollisionObject2D).get_rid())
 	var space_state := get_world_2d().direct_space_state
 	if _ray_query == null:
-		_ray_query = PhysicsRayQueryParameters2D.create(from_position, to_position, PROJECTILE_COLLISION_MASK)
+		_ray_query = PhysicsRayQueryParameters2D.new()
 		_ray_query.collide_with_bodies = true
 		_ray_query.collide_with_areas = true
 		_ray_query.hit_from_inside = true
-	else:
-		_ray_query.from = from_position
-		_ray_query.to = to_position
-		_ray_query.collision_mask = PROJECTILE_COLLISION_MASK
+	_ray_query.from = from_position
+	_ray_query.to = to_position
+	_ray_query.collision_mask = PROJECTILE_COLLISION_MASK
 	for _attempt in range(64 if office_ballistics else MAX_IGNORED_COLLIDERS):
-		_ray_query.exclude = excluded
+		_ray_query.exclude = _cast_exclude_rids
 		var hit := space_state.intersect_ray(_ray_query)
 		if hit.is_empty():
 			return furniture_hit
@@ -529,7 +529,7 @@ func _cast_movement_segment(from_position: Vector2, to_position: Vector2) -> Dic
 			else:
 				return furniture_hit if not furniture_hit.is_empty() and from_position.distance_squared_to(furniture_hit.position) < from_position.distance_squared_to(hit.position) else hit
 		if collider is CollisionObject2D:
-			excluded.append((collider as CollisionObject2D).get_rid())
+			_cast_exclude_rids.append((collider as CollisionObject2D).get_rid())
 		else:
 			return {}
 	if office_ballistics and furniture_hit.is_empty():

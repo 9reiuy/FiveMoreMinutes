@@ -253,6 +253,7 @@ var _separation_query: PhysicsShapeQueryParameters2D
 var _los_query: PhysicsRayQueryParameters2D
 var _muzzle_clamp_query: PhysicsRayQueryParameters2D
 var _self_exclude_rids: Array[RID] = []
+var _los_exclude_rids: Array[RID] = []
 
 var strafe_sign := 1.0
 var strafe_time_left := 0.0
@@ -1189,10 +1190,10 @@ func _has_target_line_of_sight(candidate_position: Vector2) -> bool:
 	_los_query.from = global_position
 	_los_query.to = candidate_position
 	_los_query.collision_mask = mask
-	var excludes: Array[RID] = []
+	_los_exclude_rids.clear()
 	if self is CollisionObject2D:
-		excludes.append(get_rid())
-	_los_query.exclude = excludes
+		_los_exclude_rids.append(get_rid())
+	_los_query.exclude = _los_exclude_rids
 
 	for _i in range(5):
 		var hit := space_state.intersect_ray(_los_query)
@@ -1200,8 +1201,8 @@ func _has_target_line_of_sight(candidate_position: Vector2) -> bool:
 			return true
 		var collider: Object = hit.get("collider", null)
 		if collider is Node and (collider.is_in_group(&"glass_windows") or collider.is_in_group(&"breakable_glass_windows")):
-			excludes.append(hit.get("rid"))
-			_los_query.exclude = excludes
+			_los_exclude_rids.append(hit.get("rid"))
+			_los_query.exclude = _los_exclude_rids
 			continue
 		return false
 	return false
