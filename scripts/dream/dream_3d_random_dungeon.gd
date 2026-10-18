@@ -6172,13 +6172,13 @@ func _collect_cutout_door_visuals(node: Node) -> void:
 
 func _end_cutout_query_snapshot() -> void:
 	_cutout_query_snapshot_active = false
-	_cutout_query_walls = []
+	_cutout_query_walls.clear()
 	_cutout_wall_centres.clear()
-	_cutout_wall_positions = PackedVector3Array()
-	_cutout_wall_bins = {}
-	_cutout_wall_edges = []
-	_cutout_wall_heights = PackedFloat32Array()
-	_cutout_wall_meshes = []
+	_cutout_wall_positions.clear()
+	_cutout_wall_bins.clear()
+	_cutout_wall_edges.clear()
+	_cutout_wall_heights.clear()
+	_cutout_wall_meshes.clear()
 	_cutout_query_furniture.clear()
 	_cutout_furniture_visuals.clear()
 	_cutout_furniture_positions.clear()
