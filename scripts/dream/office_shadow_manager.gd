@@ -103,6 +103,7 @@ func rebuild_floor() -> void:
 	# that moire without removing the real furniture/person/window shadows.
 	sun.shadow_bias = 0.05
 	sun.shadow_normal_bias = 1.0
+	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	sun.directional_shadow_max_distance = 28.0
 	add_child(sun)
 	# A single world-space direction, independent of the rotated map or window normals.

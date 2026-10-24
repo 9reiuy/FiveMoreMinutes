@@ -9,6 +9,7 @@ render_mode cull_disabled, unshaded, fog_disabled, blend_mix, depth_prepass_alph
 
 uniform sampler2D capture_texture : filter_nearest, repeat_disable;
 uniform float projectile_emission_strength = 0.85;
+uniform bool smoke_silhouette = false;
 
 // The SubViewport capture is sampled as linear by the spatial shader. Match
 // the existing pixel-carrier colour-space correction before using the pixel as
@@ -30,6 +31,7 @@ void fragment() {
 	);
 	ALBEDO = color;
 	EMISSION = color * max(projectile_emission_strength, 0.0);
+	if (smoke_silhouette) { ALBEDO=vec3(0.0); EMISSION=vec3(0.0); }
 	ALPHA = pixel.a;
 	ALPHA_SCISSOR_THRESHOLD = 0.05;
 	ROUGHNESS = 1.0;

@@ -10,11 +10,13 @@ const TARGET_GRAY := 2
 var current_state := TARGET_NONE
 var _aim_ray_query: PhysicsRayQueryParameters2D
 var _aim_exclude_rids: Array[RID] = []
+var _melee_carriers: Dictionary={}
 
 func configure(owner_world: Node3D) -> void:
 	world = owner_world
 
 func _physics_process(_delta: float) -> void:
+	_update_melee_highlights()
 	if not is_instance_valid(world) or not is_instance_valid(world.player):
 		_select(null)
 		return
@@ -42,10 +44,28 @@ func _physics_process(_delta: float) -> void:
 		origin = player.call("get_projectile_origin")
 	var direction := origin.direction_to(world.get_gameplay_aim_position())
 	var target := find_target(origin, direction, last_range, player.get_rid())
-	var state := TARGET_WHITE
-	if target != null and target.is_in_group(&"dream_enemies") and player.has_method("can_current_weapon_fire_for_target"):
-		state = TARGET_WHITE if bool(player.call("can_current_weapon_fire_for_target")) else TARGET_GRAY
-	_select(target, state)
+	_select(target, TARGET_WHITE)
+
+func _update_melee_highlights() -> void:
+	var next: Dictionary={}
+	if is_instance_valid(world) and is_instance_valid(world.player) and is_instance_valid(world.get("enemy_root")) and not world.player.dead:
+		var player: Node2D=world.player
+		if String(player.get("selected_weapon_id")) in ["","lucille","books"]:
+			var max_distance: float=player.get_effective_attack_range()+32.0
+			for enemy in world.enemy_root.get_children():
+				if enemy.get_meta(&"smoke_hidden_from_player",false):continue
+				if not enemy is Node2D or enemy.global_position.distance_squared_to(player.global_position)>max_distance*max_distance: continue
+				if not player.is_enemy_in_melee_preview(enemy): continue
+				var reference: Variant=enemy.get_meta(&"depth_visual_bridge",null)
+				var carrier: Node=reference.get_ref() if reference is WeakRef else null
+				if is_instance_valid(carrier) and carrier.has_method("set_combat_range_highlight"):
+					carrier.set_combat_range_highlight(true)
+					next[carrier.get_instance_id()]=weakref(carrier)
+	for id in _melee_carriers:
+		if next.has(id): continue
+		var carrier: Node=_melee_carriers[id].get_ref()
+		if is_instance_valid(carrier): carrier.set_combat_range_highlight(false)
+	_melee_carriers=next
 
 func find_target(origin: Vector2, direction: Vector2, attack_range: float, excluded: RID) -> Node:
 	if _aim_ray_query == null:
@@ -82,13 +102,14 @@ func _resolve(node: Node) -> Node:
 	var cursor := node
 	while cursor != null:
 		if cursor.is_in_group(&"dream_enemies"):
-			return null if bool(cursor.get("dead")) or not cursor.visible else cursor
+			return null if bool(cursor.get("dead")) or not cursor.visible or cursor.get_meta(&"smoke_hidden_from_player",false) else cursor
 		if cursor.is_in_group(&"damageable_props"):
 			return cursor
 		cursor = cursor.get_parent()
 	return null
 
 func _select(target: Node, state: int = TARGET_WHITE) -> void:
+	if is_instance_valid(target) and target.get_meta(&"smoke_hidden_from_player",false):target=null
 	state = clampi(state, TARGET_NONE, TARGET_GRAY)
 	if is_instance_valid(target) and current_target == target and current_state == state:
 		return

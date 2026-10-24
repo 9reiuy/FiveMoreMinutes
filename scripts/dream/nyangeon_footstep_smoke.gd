@@ -2,6 +2,17 @@ extends Node3D
 ## Floor-owned, depth-tested native sprites; no capture viewports.
 const SHAPES=preload("res://scripts/dream/nyangeon_vfx_shapes.gd")
 const LIMIT:=72
+## Merged cloud shapes: three unpacked dust circles fused, then one 1px ring drawn
+## around the union (#131333). Baked because the source build outlines a whole layer
+## once, which is what makes separate circles read as a single cloud.
+const CLUSTER_TEXTURES: Array= [
+	preload("res://assets/art/vfx/smoke_cluster/cluster_0.png"),
+	preload("res://assets/art/vfx/smoke_cluster/cluster_1.png"),
+	preload("res://assets/art/vfx/smoke_cluster/cluster_2.png"),
+	preload("res://assets/art/vfx/smoke_cluster/cluster_3.png"),
+	preload("res://assets/art/vfx/smoke_cluster/cluster_4.png"),
+	preload("res://assets/art/vfx/smoke_cluster/cluster_5.png"),
+]
 var rng:=RandomNumberGenerator.new()
 var world: Node3D
 var tracked: Dictionary={}
@@ -14,18 +25,33 @@ var update_usec:=0
 var updates:=0
 var enabled:=true
 var floor_token:=-1
+## Puffs fired per footstep. Each baked cloud already contains three circles.
+var cluster:=2
+## Seconds a puff spends growing into its full size. 0 keeps the older curve,
+## which only shrank after 25% of its life.
+var grow_time:=0.12
+## Pre-baked cloud shapes: several circles merged, one outline around the union.
+var variants: Array[Texture2D]=[]
+var variant_pixel_size:=1.0/28.0
+## Life fraction at which the alpha starts dropping to zero. 0.75 matched the older
+## curve; 0.45 keeps the fade visible across most of a short-lived puff.
+var fade_start:=0.45
 
 func configure(owner_world: Node3D)->void:
 	world=owner_world
 	# Presentation randomness must never advance gameplay/weapon RNG.
 	rng.randomize()
-	var texture:=SHAPES.smoke_texture()
+	if variants.is_empty():
+		variants.assign(CLUSTER_TEXTURES)
+	var texture:=SHAPES.active_smoke_texture()
+	var filter:=BaseMaterial3D.TEXTURE_FILTER_LINEAR if SHAPES.smoke_style=="soft" else BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	for i in LIMIT:
 		var sprite:=Sprite3D.new()
 		sprite.texture=texture; sprite.pixel_size=1.0/32.0
 		sprite.billboard=BaseMaterial3D.BILLBOARD_ENABLED
-		sprite.texture_filter=BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		sprite.texture_filter=filter
 		sprite.no_depth_test=false; sprite.shaded=false; sprite.visible=false
+		sprite.alpha_cut=SpriteBase3D.ALPHA_CUT_OPAQUE_PREPASS
 		add_child(sprite); sprites.append(sprite)
 	process_physics_priority=20
 
@@ -73,7 +99,12 @@ func sample(actor: Node2D)->void:
 	# local offset differs between player and enemies. Use that same contact.
 	var collider:=actor.get_node_or_null("CollisionShape2D") as Node2D
 	var ground: Vector2=collider.global_position if collider!=null else at
-	emit_puff(ground-move.normalized()*4.0,-move.normalized())
+	for i in maxi(1,cluster):
+		var offset:=Vector2.ZERO
+		if cluster>1:
+			var angle:=rng.randf()*TAU
+			offset=Vector2(cos(angle),sin(angle))*rng.randf_range(2.0,7.0)
+		emit_puff(ground-move.normalized()*4.0+offset,-move.normalized())
 
 func emit_puff(at: Vector2,drift: Vector2)->void:
 	# Stop allocating work when full; near actors are sampled first.
@@ -85,6 +116,9 @@ func emit_puff(at: Vector2,drift: Vector2)->void:
 	cursor=(slot+1)%LIMIT
 	var sprite:=sprites[slot]
 	sprite.visible=true
+	if not variants.is_empty():
+		sprite.texture=variants[rng.randi_range(0,variants.size()-1)]
+		sprite.pixel_size=variant_pixel_size
 	var point: Vector3=world.get_gameplay_world_position(at,.09)
 	# Distinct small/medium/large silhouettes, with a short group followed by
 	# a real gap, read as irregular footsteps at the actual gameplay zoom.
@@ -113,8 +147,9 @@ func _physics_process(delta: float)->void:
 			sprite.visible=false; puffs.remove_at(i); continue
 		sprite.global_position=Vector3(puff.origin)+Vector3(puff.drift)*t+Vector3.UP*.08*t
 		var size:=float(puff.size)*(1.0-.7*maxf(0,(t-.25)/.75))
+		if grow_time>0.0: size*=.55+.45*clampf(float(puff.age)/grow_time,0.0,1.0)
 		sprite.scale=Vector3.ONE*size
-		sprite.modulate.a=1.0 if t<.75 else (1.0-t)/.25
+		sprite.modulate.a=1.0 if t<fade_start else clampf((1.0-t)/maxf(0.01,1.0-fade_start),0.0,1.0)
 	var actors: Array[Node2D]=[]
 	var player: Node2D=world.get("player")
 	if is_instance_valid(player): actors.append(player)

@@ -23,6 +23,7 @@ func validate(world:Node3D)->void:
 		check(record.style==String(base.get_meta(&"floor_surface_style","")),"Reflection follows actual room material identity")
 		check(is_equal_approx(float(record.material.get_shader_parameter("sample_surface_gloss")),EFFECT.profile(record.style).z),"Room uses its approved gloss profile")
 func run()->void:
+	if "--background-gpu" in OS.get_cmdline_user_args(): preload("res://tests/support/background_gpu.gd").start(self)
 	AudioServer.set_bus_mute(0,true)
 	var world:=WORLD.instantiate()
 	world.generate_on_ready=false; world.persist_profile=false; world.enable_game_start_cab_exit=false

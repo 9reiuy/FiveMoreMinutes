@@ -19,6 +19,9 @@ static var door_texture_cache: Dictionary={}
 static var glass_texture_cache: Dictionary={}
 static var shared_door_shader: Shader
 static var shared_glass_shader: Shader
+static var _color_cache: Dictionary={}
+static var _desktop_box_cache: Dictionary={}
+static var _desktop_variant_cache: Dictionary={}
 const DETAIL_TEXTURE_CACHE_LIMIT := 64
 var production_mode := false
 var _cutaway_dirty := true
@@ -27,7 +30,17 @@ const STYLE = preload("res://scripts/dream/office_art_room_style.gd")
 func _ready() -> void:
 	if world==null: world=get_parent()
 	add_to_group(&"office_wall_dressing")
-	call_deferred("refresh_assets")
+	if not production_mode:
+		call_deferred("refresh_assets")
+
+func _exit_tree() -> void:
+	if not is_instance_valid(world) or not world.is_inside_tree() or world.is_queued_for_deletion():
+		wall_texture_cache.clear()
+		door_texture_cache.clear()
+		glass_texture_cache.clear()
+		_color_cache.clear()
+		_desktop_box_cache.clear()
+		_desktop_variant_cache.clear()
 
 func mark_cutaway_dirty() -> void:
 	_cutaway_dirty = true
@@ -138,7 +151,7 @@ func _wall_material(room_id: int, wall: Node3D) -> ShaderMaterial:
 			wall_shader.code=code
 		var material := ShaderMaterial.new(); material.shader=wall_shader
 		var atlas: Texture2D
-		if production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",false)):
+		if production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",true)):
 			# Pixel construction depends on the style and rounded texture height;
 			# phase/height/cutaway uniforms continue to belong to each wall material.
 			var texture_key := "%s:%d" % [key,maxi(1,roundi(world.wall_height*32))]
@@ -229,7 +242,7 @@ func _refresh_windows() -> void:
 		if pane==null or not pane.visible or not pane.mesh is BoxMesh: continue
 		var size: Vector3=pane.mesh.size
 		var quad := QuadMesh.new(); quad.size=Vector2(size.x,size.y)
-		var use_cache := production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",false))
+		var use_cache := production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",true))
 		# Window pixels below replace the door-glass pattern. Do not construct
 		# that unused pattern on the cached path.
 		var mat := _glass_material(quad.size,use_cache,not use_cache)
@@ -289,7 +302,7 @@ func _refresh_doors() -> void:
 			if style!="solid":
 				pane=MeshInstance3D.new(); pane.name="ReviewPixelGlass"
 				var quad := QuadMesh.new(); quad.size=opening; pane.mesh=quad; pane.position.y=center
-				pane.material_override=_glass_material(opening,production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",false)))
+				pane.material_override=_glass_material(opening,production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",true)))
 				pane.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 				visual.add_child(pane)
 			var caster := visual.get_node_or_null("SolidShadowCaster") as MeshInstance3D
@@ -347,7 +360,7 @@ func _apply_door(record: Dictionary) -> void:
 		visual.mesh=leaf.new_mesh if enabled else leaf.old_mesh
 		visual.transform=Transform3D.IDENTITY if enabled else leaf.old_transform
 		if enabled:
-			var use_cache := production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",false))
+			var use_cache := production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",true))
 			var mat := ShaderMaterial.new(); mat.shader=_door_shader(use_cache)
 			mat.set_shader_parameter("review_door_size",leaf.size)
 			# Door leaves occlude actors like furniture: opt in to the halftone hole.
@@ -420,11 +433,15 @@ static func door_image(size: Vector3, style: String, index: int) -> Image:
 	return image
 
 static func _color(color: String, alpha: float = 1.0) -> StandardMaterial3D:
+	if alpha >= 1.0 and _color_cache.has(color):
+		return _color_cache[color]
 	var mat := StandardMaterial3D.new(); mat.albedo_color=Color(color); mat.albedo_color.a=alpha
 	mat.roughness=1.0; mat.metallic_specular=0.0
 	if alpha<1.0:
 		mat.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
 		mat.cull_mode=BaseMaterial3D.CULL_DISABLED
+	else:
+		_color_cache[color]=mat
 	return mat
 
 static func _cylinder(root: Node3D, name: String, at: Vector3, radius: float, height: float, mat: Material) -> MeshInstance3D:
@@ -453,13 +470,60 @@ func _water(visual: Node3D) -> void:
 	root.visible=enabled
 
 static func _box(root: Node3D, at: Vector3, size: Vector3, tile: String) -> void:
-	var st := SurfaceTool.new(); st.begin(Mesh.PRIMITIVE_TRIANGLES); ROOM._box(st,size,Vector3.ZERO,tile)
-	var result := FACE.build(st.commit(),ROOM.texture(),"desktop",0)
-	var mesh := MeshInstance3D.new(); mesh.mesh=result.mesh
+	var key := "%s:%s" % [str(size), tile]
+	var cached: Dictionary
+	if _desktop_box_cache.has(key):
+		cached = _desktop_box_cache[key]
+	else:
+		var st := SurfaceTool.new(); st.begin(Mesh.PRIMITIVE_TRIANGLES); ROOM._box(st,size,Vector3.ZERO,tile)
+		var result := FACE.build(st.commit(),ROOM.texture(),"desktop",0)
+		var mat := ShaderMaterial.new(); mat.shader=DITHER._shader(LOW); mat.set_shader_parameter("atlas",result.texture)
+		mat.set_shader_parameter("office_dither_step",1.0/32.0); mat.set_shader_parameter("office_dither_enabled",true)
+		cached = {"mesh": result.mesh, "mat": mat}
+		_desktop_box_cache[key] = cached
+	var mesh := MeshInstance3D.new(); mesh.mesh=cached.mesh
 	mesh.set_meta(&"review_desktop_detail",true)
-	var mat := ShaderMaterial.new(); mat.shader=DITHER._shader(LOW); mat.set_shader_parameter("atlas",result.texture)
-	mat.set_shader_parameter("office_dither_step",1.0/32.0); mat.set_shader_parameter("office_dither_enabled",true)
-	mesh.position=at; mesh.material_override=mat; root.add_child(mesh)
+	mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mesh.position=at; mesh.material_override=cached.mat; root.add_child(mesh)
+
+static func _append_transformed_box(st: SurfaceTool, xform: Transform3D, size: Vector3, tile: String) -> void:
+	var box_st := SurfaceTool.new()
+	box_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	ROOM._box(box_st, size, Vector3.ZERO, tile)
+	var m := box_st.commit()
+	var a := m.surface_get_arrays(0)
+	var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+	var n: PackedVector3Array = a[Mesh.ARRAY_NORMAL]
+	var u: PackedVector2Array = a[Mesh.ARRAY_TEX_UV]
+	for idx in v.size():
+		st.set_normal((xform.basis * n[idx]).normalized())
+		st.set_uv(u[idx])
+		st.add_vertex(xform * v[idx])
+
+static func _desktop_variant_boxes(variant: int) -> Dictionary:
+	if _desktop_variant_cache.has(variant):
+		return _desktop_variant_cache[variant]
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_append_transformed_box(st, Transform3D(Basis.IDENTITY, Vector3(.058, .045, 0)), Vector3(.026, .04, .018), "porcelain")
+	if variant != 3:
+		var book_basis := Basis.from_euler(Vector3(0.0, -.18 + variant * .17, 0.0))
+		var book_origin := Vector3(-.20, 0.0, .05)
+		_append_transformed_box(st, Transform3D(book_basis, book_origin + book_basis * Vector3(0, .018, 0)), Vector3(.16, .028, .22), "paper")
+		_append_transformed_box(st, Transform3D(book_basis, book_origin + book_basis * Vector3(0, .036, 0)), Vector3(.17, .009, .23), "mustard" if variant == 1 else "fabric")
+		_append_transformed_box(st, Transform3D(book_basis, book_origin + book_basis * Vector3(-.08, .023, 0)), Vector3(.016, .03, .23), "dark")
+	var pens_basis := Basis.from_euler(Vector3(0.0, .35 + variant * .22, 0.0))
+	var pens_origin := Vector3(.13, .008, 0.0)
+	_append_transformed_box(st, Transform3D(pens_basis, pens_origin), Vector3(.015, .014, .16), "dark")
+	_append_transformed_box(st, Transform3D(pens_basis, pens_origin + pens_basis * Vector3(0, 0, -.055)), Vector3(.018, .016, .035), "steel")
+	if variant == 2:
+		_append_transformed_box(st, Transform3D(pens_basis, pens_origin + pens_basis * Vector3(.035, 0, .025)), Vector3(.014, .013, .15), "mustard")
+	var result := FACE.build(st.commit(), ROOM.texture(), "desktop", 0)
+	var mat := ShaderMaterial.new(); mat.shader = DITHER._shader(LOW); mat.set_shader_parameter("atlas", result.texture)
+	mat.set_shader_parameter("office_dither_step", 1.0 / 32.0); mat.set_shader_parameter("office_dither_enabled", true)
+	var cached := {"mesh": result.mesh, "mat": mat}
+	_desktop_variant_cache[variant] = cached
+	return cached
 
 func _desktop(visual: Node3D, source: Node2D, kind: String) -> void:
 	var variant := posmod((str(world.active_seed)+str(source.get_index())+kind).hash(),4)
@@ -477,14 +541,12 @@ func _desktop(visual: Node3D, source: Node2D, kind: String) -> void:
 	var cup_body := _cylinder(cup,"CupBody",Vector3(0,.045,0),.048,.09,_color("d7dccc" if variant%2==0 else "738894"))
 	cup_body.mesh.cap_top=false
 	_cylinder(cup,"Coffee",Vector3(0,.085,0),.039,.004,_color("543d2b"))
-	_box(cup,Vector3(.058,.045,0),Vector3(.026,.04,.018),"porcelain")
-	if variant!=3:
-		var book := Node3D.new(); book.position=Vector3(center.x-.20,height,center.y+.05); book.rotation.y=-.18+variant*.17; root.add_child(book)
-		_box(book,Vector3(0,.018,0),Vector3(.16,.028,.22),"paper")
-		_box(book,Vector3(0,.036,0),Vector3(.17,.009,.23),"mustard" if variant==1 else "fabric")
-		_box(book,Vector3(-.08,.023,0),Vector3(.016,.03,.23),"dark")
-	var pens := Node3D.new(); pens.position=Vector3(center.x+.13,height+.008,center.y); pens.rotation.y=.35+variant*.22; root.add_child(pens)
-	_box(pens,Vector3.ZERO,Vector3(.015,.014,.16),"dark")
-	_box(pens,Vector3(0,0,-.055),Vector3(.018,.016,.035),"steel")
-	if variant==2: _box(pens,Vector3(.035,0,.025),Vector3(.014,.013,.15),"mustard")
+	var boxes_data := _desktop_variant_boxes(variant)
+	var boxes_mesh := MeshInstance3D.new()
+	boxes_mesh.name = "DesktopBoxes"
+	boxes_mesh.mesh = boxes_data.mesh
+	boxes_mesh.material_override = boxes_data.mat
+	boxes_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	boxes_mesh.set_meta(&"review_desktop_detail", true)
+	cup.add_child(boxes_mesh)
 	root.visible=enabled

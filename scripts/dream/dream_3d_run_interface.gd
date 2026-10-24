@@ -2,6 +2,7 @@ extends Node
 ## Runtime adapter for the 3D Dream HUD, card, save state and combat flow.
 const SAVE = preload("res://scripts/app/game_save_store.gd")
 const CONFIG = preload("res://resources/demo_config.tres")
+const SFX = preload("res://scripts/audio/sfx_manager.gd")
 var world: Node3D
 var player: Node
 var hud: Control
@@ -9,6 +10,9 @@ var card: Control
 var crosshair: Control
 var profile: Dictionary = {}
 var kills := 0
+var kill_streak_count := 0
+var last_kill_timestamp := 0.0
+const KILL_STREAK_WINDOW := 3.0
 var seconds := 0.0
 var host: Node
 var death_label: Label
@@ -24,6 +28,7 @@ var damage_flash: ColorRect
 var damage_flash_left := 0.0
 var rapid_eye_left := 0.0
 var death_transition_finished := false
+var death_sequence_generation := 0
 var ui_layer: CanvasLayer
 
 func configure(owner_world: Node3D, ui: CanvasLayer, cursor: Control) -> void:
@@ -178,6 +183,20 @@ func _change_profile(next: Dictionary) -> void:
 
 func record_kill() -> void:
 	kills += 1
+	var now := Time.get_ticks_msec() / 1000.0
+	if now - last_kill_timestamp <= KILL_STREAK_WINDOW:
+		kill_streak_count += 1
+	else:
+		kill_streak_count = 1
+	last_kill_timestamp = now
+
+	if kill_streak_count >= 2:
+		var reaction: StringName = &"golf_clap"
+		if kill_streak_count == 3:
+			reaction = &"canned_laughter"
+		elif kill_streak_count >= 4:
+			reaction = &"audience_applause" if (kill_streak_count % 2 == 0) else &"canned_laughter"
+		SFX.trigger_multi_kill_reaction(reaction)
 
 func _save() -> void:
 	if not world.persist_profile:
@@ -202,6 +221,7 @@ func complete_boss_layer(layer_id: int) -> void:
 func _on_death() -> void:
 	_clear_death_presentation()
 	death_transition_finished = false
+	SFX.finish_player_death_music()
 	world.reset_hit_stop()
 	var time_controller := get_node_or_null("/root/DreamTimeController")
 	if time_controller != null:
@@ -222,6 +242,16 @@ func _on_death() -> void:
 	damage_flash_left = 0.0
 	if is_instance_valid(damage_flash):
 		damage_flash.color.a = 0.0
+	death_sequence_generation += 1
+	var current_gen := death_sequence_generation
+	if player.last_damage_source == &"exterior_fall" and player.get_meta(&"exterior_fall_wilhelm", false):
+		var start_msec: int = int(player.get_meta(&"wilhelm_scream_start_msec", 0))
+		var elapsed := float(Time.get_ticks_msec() - start_msec) / 1000.0 if start_msec > 0 else 0.5
+		var remaining := maxf(0.0, 1.62 - elapsed)
+		if remaining > 0.05:
+			await get_tree().create_timer(remaining, true, false, true).timeout
+			if current_gen != death_sequence_generation or not is_instance_valid(player) or not player.dead or death_transition_finished:
+				return
 	var crt := preload("res://scenes/ui/death_crt_effect.tscn").instantiate()
 	death_effect = crt
 	world.add_child(crt)
@@ -255,6 +285,7 @@ func _finish_death_transition() -> void:
 	death_layer.add_child(death_label)
 
 func _clear_death_presentation() -> void:
+	death_sequence_generation += 1
 	if is_instance_valid(death_effect):
 		death_effect.queue_free()
 	death_effect = null
@@ -272,6 +303,7 @@ func _restart_after_death() -> void:
 	if rapid_eye_left > 0.0:
 		rapid_eye_left = 0.0
 		_set_enemy_slow(1.0)
+	SFX.play_battle_music(false, world.get_instance_id() if is_instance_valid(world) else 0)
 	if is_instance_valid(world) and world.has_method("restart_current_floor_after_death"):
 		world.call("restart_current_floor_after_death")
 		if is_instance_valid(hud) and is_instance_valid(player):
@@ -297,7 +329,7 @@ func _restart_after_death() -> void:
 	get_tree().reload_current_scene()
 
 func _on_damage(_amount: float) -> void:
-	damage_flash_left = CONFIG.player_hurt_screen_flash_seconds
+	damage_flash_left = 0.0 if player.has_meta(&"stylized_player_hurt") else CONFIG.player_hurt_screen_flash_seconds
 	if int(skill_levels.get("rapid_eye",0)) > 0:
 		rapid_eye_left = CONFIG.rapid_eye_duration_seconds
 		_set_enemy_slow(CONFIG.rapid_eye_slow_multiplier)

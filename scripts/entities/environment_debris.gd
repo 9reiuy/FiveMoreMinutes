@@ -75,11 +75,12 @@ func _physics_process(delta: float) -> void:
 	var next_room := room_id
 	if owner_world != null and owner_world.has_method("resolve_environment_debris_room_id"):
 		next_room = int(owner_world.call("resolve_environment_debris_room_id", next_ground, room_id))
-	if next_room < 0 or (
+	var exterior_crossing: bool = owner_world != null and owner_world.has_method("can_fall_through_exterior") and owner_world.can_fall_through_exterior(global_position,next_ground)
+	if not exterior_crossing and (next_room < 0 or (
 		owner_world != null
 		and owner_world.has_method("is_environment_debris_position_allowed")
 		and not bool(owner_world.call("is_environment_debris_position_allowed", next_ground, next_room, source_prop))
-	):
+	)):
 		# The last valid point is the settled point.  This keeps spray from
 		# crossing a wall/closed door while still allowing an open-door path.
 		spray_velocity = Vector2.ZERO

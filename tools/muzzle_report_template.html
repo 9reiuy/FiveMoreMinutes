@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>枪口烟 · 长度与起点修正</title>
+<style>
+:root{--bg:#0d1017;--panel:#151a24;--line:#232b3a;--tx:#dfe6f2;--dim:#8b96ab;--ok:#5fd08a;--hot:#e8b44a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.7 "Segoe UI","Microsoft YaHei",sans-serif;padding:32px}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--dim);font-size:13px;margin-bottom:24px}
+h2{font-size:16px;margin:28px 0 10px;border-left:3px solid #4a7dd6;padding-left:9px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:14px}
+img{image-rendering:pixelated;border:1px solid var(--line);border-radius:6px;max-width:100%;display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+td,th{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#1b2230;color:var(--dim);font-weight:600}
+.ok{color:var(--ok)}.hot{color:var(--hot)}code{background:#1b2230;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.cap{color:var(--dim);font-size:12.5px;margin:6px 0 0}
+ul{margin:0;padding-left:20px}
+.big{font-size:15px}
+</style></head><body>
+<h1>枪口烟 · 长度与起点修正</h1>
+<div class="sub">FiveMinuteMore · 2026-10-23 · 实机采集（真实 Main 入口、真实生成办公室、真实游戏相机）</div>
+
+<h2>先说结论</h2>
+<div class="panel big">
+你说「太短、离枪口太近」——<b>这不只是参数给小了，是一个真 bug</b>。
+位移是用 <code>velocity × age</code> 算的，但 <code>velocity</code> 每帧都在衰减，等于把衰减算了两次，
+烟实际只飘了理论距离的 <b>约 35%</b>。改成累加位移之后，同样的速度参数位移直接翻倍。
+在此基础上又把出生带从「贴着枪口 0–0.30」推到「0.70–2.40」，两项加起来跨度涨了 <b class="hot">4.2 倍</b>。
+</div>
+
+<h2>改前 / 改后（左射，同一机位同一裁切窗口）</h2>
+<div class="grid">
+<div class="panel"><img src="data:image/gif;base64,@@gif_v4_left@@"><p class="cap">改前：烟团挤在枪口一小团，飘不动</p></div>
+<div class="panel"><img src="data:image/gif;base64,@@gif_v6_left@@"><p class="cap">改后：沿弹道拉开一条烟带，白烟前冲、火光烟后退上飘</p></div>
+</div>
+
+<h2>另一个方向</h2>
+<div class="panel"><img src="data:image/gif;base64,@@gif_v6_right@@">
+<p class="cap">向右射击 —— 同一套参数，方向随弹道镜像。斜视角下「沿弹道后退」本身就是屏幕斜向，所以左右两侧的视觉夹角不同，世界坐标里的行为是对称的。</p></div>
+
+<h2>枪口相对位置（红圈 = 枪口，彩圈/白圈 = 各团烟投影）</h2>
+<div class="panel"><img src="data:image/png;base64,@@mark_v6_left@@">
+<p class="cap">同一裁切窗口下的两帧。白圈（白烟层）在枪口左前方，橙/黄圈（火光层）退向右后上方。</p></div>
+
+<h2>长度量化（世界单位；1 单位 = 32.67 视口像素）</h2>
+<div class="panel">
+<table>
+<tr><th>档位</th><th>出生带</th><th>寿命末落点</th><th>跨度</th><th>白层质心</th><th>彩层质心</th></tr>
+<tr><td>改前（bug 未修）</td><td>0 – 0.30</td><td>−0.33 … 0.56</td><td class="hot">0.89</td><td>—</td><td>—</td></tr>
+<tr><td>改后（现在）</td><td>0.70 – 2.40</td><td>−0.41 … 3.29</td><td class="ok">3.70</td><td>2.27</td><td>0.61</td></tr>
+</table>
+<p class="cap">落点跨度 3.70 单位 ≈ 121 视口像素 ≈ 画面宽度的 19%。数据来自 120 发 × 10 团的蒙特卡洛统计（<code>muzzle_smoke_reach_test</code>），
+不是单发目测 —— 单发只有 10 团，左右两次采集能得出相反结论。</p>
+</div>
+
+<h2>改了什么</h2>
+<div class="panel">
+<table>
+<tr><th>文件</th><th>改动</th></tr>
+<tr><td><code>scripts/dream/muzzle_smoke.gd</code></td><td><b>位移 bug</b>：<code>_refresh()</code> 原来用 <code>velocity * age</code>，而 velocity 每帧乘 <code>(1 − 1.6·delta)</code>，衰减被算两次。改为在 <code>_physics_process</code> 里累加 <code>drift += velocity·delta</code>，渲染读 <code>origin + drift</code>。</td></tr>
+<tr><td>同上</td><td><b>出生带推远</b>：<code>REACH_MIN 0.45→0.70</code>、<code>REACH_MAX 1.75→2.40</code>。出生距离是<b>独立随机</b>的，不按 puff 序号阶梯排列（阶梯正是之前变成一条规律直线的原因）。</td></tr>
+<tr><td>同上</td><td><b>两层配对出生</b>：第 i 个白团和第 i 个彩团共用同一个出生点与摆动。之前两层各自独立随机抽，5 个样本的质心会被噪声淹没 —— 实测出现过彩层跑到白层<b>前面</b>的情况。配对之后「穿插出来、再一前一后分开」才稳定成立。</td></tr>
+<tr><td>同上</td><td>速度上调：白层 <code>1.00–1.75</code>，彩层 <code>1.35–2.15</code>。摆动改为按<b>出生距离</b>（而非 puff 序号）取正弦，保持沿枪线的蛇形带感。</td></tr>
+<tr><td><code>tests/muzzle_smoke_reach_test.gd</code></td><td>新增：120 发统计，锁住「无烟生在枪口上 / 出生带够远 / 落点跨度 > 3.0 / 平均离枪口 > 1.0 / 两层分离 > 1.0」6 项。</td></tr>
+<tr><td><code>tests/muzzle_smoke_direction_test.gd</code></td><td>改为跨 8 发统计（单发 10 团的最大值波动太大，曾随机失败）；位移同样改读 <code>drift</code>。</td></tr>
+<tr><td><code>tests/muzzle_smoke_motion_test.gd</code> / <code>tests/smoke_ab_capture.gd</code></td><td>位移计算同步改读 <code>drift</code>，否则会把位移低估到 1/3。</td></tr>
+</table>
+</div>
+
+<h2>测试</h2>
+<div class="panel">
+<table>
+<tr><th>项</th><th>结果</th></tr>
+<tr><td><code>muzzle_smoke_reach_test</code>（新）</td><td class="ok">checks=6 failures=0 · born=[0.70..2.40] ends=[−0.41..3.29] span=3.70 mean=1.44</td></tr>
+<tr><td><code>muzzle_smoke_direction_test</code></td><td class="ok">checks=30 failures=0 · 连跑三次稳定</td></tr>
+<tr><td><code>muzzle_smoke_motion_test</code></td><td class="ok">recede=−0.63 rise=1.00 big_ratio=0.73 checks=6 failures=0（修 bug 前 recede 只有 −0.30）</td></tr>
+<tr><td>headless 启动 <code>--quit-after 180</code></td><td class="ok">0 个 SCRIPT ERROR / Parse Error</td></tr>
+<tr><td>实机采集 left / right</td><td class="ok">checks=7 failures=0 ×2</td></tr>
+</table>
+</div>
+
+<h2>想再调，改这两个常量</h2>
+<div class="panel">
+<ul>
+<li><code>REACH_MIN</code> / <code>REACH_MAX</code>（<code>muzzle_smoke.gd</code> 顶部）—— 整条烟带的位置与长度。嫌长就把 MAX 往回收，嫌离枪口近就把 MIN 往外推。改完跑一次 <code>muzzle_smoke_reach_test</code> 就能看到新的落点区间。</li>
+<li>速度 <code>velocity</code> 的两个区间 —— 白层向前、彩层向后的幅度，决定两层分开得有多开。</li>
+<li>注意：改完必须同步放宽/收紧 <code>reach_test</code> 和 <code>direction_test</code> 里的阈值，它们现在是按 0.70–2.40 定的。</li>
+<li>已知取舍不变：覆盖层画在调色板之后，烟永远压在最上层，可能盖住本应挡住它的墙。</li>
+</ul>
+</div>
+</body></html>

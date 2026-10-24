@@ -14,6 +14,8 @@ const SFX := preload("res://scripts/audio/sfx_manager.gd")
 @export var max_health: float = 1.0
 var current_health: float = 1.0
 var is_shattered: bool = false
+var exterior := false
+var cracks: MeshInstance3D
 var edge_data: Dictionary = {}
 var edge_key: String = ""
 var structural_height: float = 2.6
@@ -36,6 +38,7 @@ static var shard_material: StandardMaterial3D = null
 func _ready() -> void:
 	add_to_group(&"breakable_glass_windows")
 	_init_materials()
+	set_process(false)
 
 
 static func _init_materials() -> void:
@@ -130,6 +133,18 @@ func configure_window(edge: Dictionary, key: String, wall_height: float, wall_th
 	if collision_parent != null and is_instance_valid(collision_parent):
 		_build_2d_collision(collision_parent, is_vertical)
 
+func configure_exterior_window(edge: Dictionary, key: String, height: float, thickness: float, collision_parent: Node2D, approved_pane: MeshInstance3D) -> void:
+	# Reuse approved facade art without building then discarding another frame.
+	exterior = true
+	max_health = 100.0
+	current_health = max_health
+	edge_data = edge.duplicate(true)
+	edge_key = key
+	structural_height = height
+	structural_thickness = thickness
+	glass_pane = approved_pane
+	_build_2d_collision(collision_parent,String(edge.axis)=="V")
+
 
 func set_cutaway_mode(enabled: bool) -> void:
 	cutaway_mode = enabled
@@ -201,14 +216,41 @@ func take_damage(amount: float, direction: Vector2 = Vector2.ZERO, _force: float
 	if is_shattered:
 		return
 	current_health -= amount
+	_update_cracks()
 	if current_health <= 0.0:
 		shatter(direction)
+
+func _update_cracks() -> void:
+	if not exterior or not is_instance_valid(glass_pane): return
+	if cracks == null:
+		cracks = MeshInstance3D.new()
+		var quad := QuadMesh.new()
+		quad.size = Vector2(.96,structural_height-.12)
+		cracks.mesh = quad
+		var mat := ShaderMaterial.new()
+		mat.shader = preload("res://shaders/dream3d/glass_damage_cracks.gdshader")
+		cracks.material_override = mat
+		cracks.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(cracks)
+		cracks.position = glass_pane.position
+		cracks.position.z += structural_thickness*.26
+	set_process(true)
+	cracks.material_override.set_shader_parameter("damage",clampf(1.0-current_health/max_health,0,1))
+
+func _process(_delta: float) -> void:
+	if not exterior or not is_instance_valid(cracks) or is_shattered:
+		set_process(false)
+		return
+	cracks.material_override.set_shader_parameter("architecture_cutaway",bool(get_parent().get("cutaway_mode")))
+	cracks.material_override.set_shader_parameter("architecture_wall_height",structural_height)
 
 
 func shatter(impact_direction: Vector2 = Vector2.ZERO) -> void:
 	if is_shattered:
 		return
 	is_shattered = true
+	set_process(false)
+	if is_instance_valid(cracks): cracks.hide()
 
 	window_shattered.emit(self)
 
@@ -234,6 +276,7 @@ func shatter(impact_direction: Vector2 = Vector2.ZERO) -> void:
 
 
 func _spawn_shards(impact_direction: Vector2) -> void:
+	if preload("res://scripts/dream/destruction_floor_debris.gd").spawn(self,impact_direction,true): return
 	var shard_count := 8
 	var dir_3d := Vector3(impact_direction.x, 0.2, impact_direction.y).normalized() if impact_direction.length_squared() > 0.01 else Vector3(0, 0.2, 1)
 

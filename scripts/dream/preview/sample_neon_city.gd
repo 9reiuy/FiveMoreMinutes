@@ -20,6 +20,36 @@ var window_lights_enabled := true
 var height_fog_enabled := true
 var last_light_selection := -1000
 var production_mode := false
+## Local visibility only: no scene alpha sorting or per-building material clones.
+var soft_occlusion_enabled := true
+
+static func interior_cut_depth_image(classification: Dictionary) -> Image:
+	var source: Image = classification.image
+	var width := source.get_width()
+	var height := source.get_height()
+	var values := PackedFloat32Array()
+	values.resize(width * height)
+	for y in height:
+		for x in width:
+			values[y * width + x] = 0.0 if source.get_pixel(x,y).r > 0.5 else 4.0
+	# Eight-neighbour distance propagation. Built once per floor, never per frame.
+	for y in height:
+		for x in width:
+			var i := y * width + x
+			if x > 0: values[i] = minf(values[i], values[i-1] + 1.0)
+			if y > 0:
+				values[i] = minf(values[i], values[i-width] + 1.0)
+				if x > 0: values[i] = minf(values[i], values[i-width-1] + 1.414214)
+				if x+1 < width: values[i] = minf(values[i], values[i-width+1] + 1.414214)
+	for y in range(height-1,-1,-1):
+		for x in range(width-1,-1,-1):
+			var i := y * width + x
+			if x+1 < width: values[i] = minf(values[i], values[i+1] + 1.0)
+			if y+1 < height:
+				values[i] = minf(values[i], values[i+width] + 1.0)
+				if x > 0: values[i] = minf(values[i], values[i+width-1] + 1.414214)
+				if x+1 < width: values[i] = minf(values[i], values[i+width+1] + 1.414214)
+	return Image.create_from_data(width,height,false,Image.FORMAT_RF,values.to_byte_array())
 
 func _ready() -> void:
 	if world==null: world=get_parent()
@@ -41,8 +71,6 @@ func _process(_delta: float) -> void:
 	if world.floor_cells.is_empty() or world.room_visibility==null: return
 	if scene_root==null or not is_instance_valid(scene_root) or build_seed!=world.active_seed:
 		_build()
-	var mask: ShaderMaterial=world.room_visibility.outside_mask_material
-	if mask!=null and mask!=attached_mask: _attach_mask(mask)
 	if Time.get_ticks_msec()-last_light_selection>=300: _select_window_lights()
 
 static func classify_void(floor_cells: Dictionary, rect: Rect2i) -> Dictionary:
@@ -70,6 +98,7 @@ func _build() -> void:
 	if is_instance_valid(scene_root): scene_root.free()
 	attached_mask=null; build_seed=world.active_seed
 	topology=classify_void(world.floor_cells,world.building_rect)
+	topology["clearance_texture"] = ImageTexture.create_from_image(interior_cut_depth_image(topology))
 	scene_root=Node3D.new(); scene_root.name="SampleNeonCityGeometry"
 	if production_mode: get_parent().add_child(scene_root)
 	else: world.add_child(scene_root)
@@ -257,6 +286,7 @@ func _scenery_material(neon: bool, own: bool) -> ShaderMaterial:
 	var mat := ShaderMaterial.new(); mat.shader=CITY_SHADER
 	mat.set_shader_parameter("neon_surface",neon); mat.set_shader_parameter("own_facade",own)
 	mat.set_shader_parameter("city_void",ImageTexture.create_from_image(topology.image))
+	mat.set_shader_parameter("city_clearance",topology.clearance_texture)
 	mat.set_shader_parameter("city_origin",Vector2(topology.bounds.position))
 	mat.set_shader_parameter("city_grid_size",Vector2(topology.bounds.size))
 	render_materials.append(mat); return mat
@@ -275,30 +305,19 @@ func _sync_render_snapshot() -> void:
 	# Reparenting into the rollback stash must not sample the staged new floor.
 	if production_mode and (world==null or get_parent().get_parent()!=world.office_art_root): return
 	if not is_instance_valid(scene_root) or world.room_visibility==null: return
-	var mask: ShaderMaterial=world.room_visibility.outside_mask_material
-	if mask==null: return
+	var snapshot: Dictionary=world.room_visibility.view_snapshot
+	if snapshot.is_empty(): return
 	for mat in render_materials:
+		mat.set_shader_parameter("soft_occlusion_enabled",soft_occlusion_enabled)
 		mat.set_shader_parameter("height_fog_enabled",height_fog_enabled)
 		for parameter in ["map_origin","map_x_axis","map_z_axis","ray_origin_tl","ray_origin_dx","ray_origin_dy","ray_direction_tl","ray_direction_dx","ray_direction_dy"]:
-			var value: Variant=mask.get_shader_parameter(parameter)
+			var value: Variant=snapshot.get(parameter)
 			if value!=null: mat.set_shader_parameter(parameter,value)
 	var active := String(world.transition_phase)!="CAB_RIDE"
 	scene_root.visible=active and enabled
 	for light in window_lights: light.visible=active and enabled and window_lights_enabled and int(light.get_meta(&"candidate_tower",-1))>=0
 
-func _attach_mask(source: ShaderMaterial) -> void:
-	var material := source.duplicate() as ShaderMaterial
-	var shader := Shader.new(); var code := source.shader.code
-	code=code.replace("uniform sampler2D footprint_distance", "uniform sampler2D city_void : filter_nearest, repeat_disable;\nuniform vec2 city_origin;\nuniform vec2 city_grid_size;\nuniform sampler2D footprint_distance")
-	code=code.replace("float alpha = 1.0;","float alpha = 1.0;\nvec3 background_color=vec3(0.0);\nbool city_exterior=true;")
-	code=code.replace("vec2 uv = (map_cell", "vec2 city_uv=(map_cell-city_origin+vec2(.5))/city_grid_size;\nif(all(greaterThanEqual(city_uv,vec2(0.0))) && all(lessThanEqual(city_uv,vec2(1.0)))){vec2 classification=texture(city_void,city_uv).rg; city_exterior=classification.r>.5; if(classification.r<.5 && classification.g<.5){alpha=1.0;}}\nvec2 uv = (map_cell")
-	code=code.replace("alpha = smoothstep(0.0, 1.0, distance_to_floor);", "alpha = smoothstep(0.0, 1.0, distance_to_floor);\nvec2 classification=texture(city_void,city_uv).rg; if(!city_exterior && classification.g<.5){alpha=1.0;}")
-	# Exterior pixels remain in the formal 3D depth buffer, instead of being painted over.
-	code=code.replace("COLOR = vec4(0.0, 0.0, 0.0, alpha);", "if(city_exterior){alpha=0.0;}\nCOLOR = vec4(background_color, alpha);")
-	shader.code=code; material.shader=shader
-	material.set_shader_parameter("city_void",ImageTexture.create_from_image(topology.image))
-	material.set_shader_parameter("city_origin",Vector2(topology.bounds.position))
-	material.set_shader_parameter("city_grid_size",Vector2(topology.bounds.size))
-	world.room_visibility.outside_mask_material=material
-	world.room_visibility.outside_black_gradient.material=material
-	attached_mask=material
+func _attach_mask(_source: ShaderMaterial) -> void:
+	# Legacy preview hook. City rendering now reads camera data directly and
+	# never creates or rewrites a screen-space black overlay.
+	pass

@@ -125,7 +125,7 @@ static func _office_material(archetype: String, wall: bool) -> Material:
 	if not _office_materials.has(key):
 		var data := profile(archetype)
 		var style := "paint" if wall else ("fabric" if data.pattern == 1 else ("wood" if data.pattern == 3 else "tile"))
-		var material := preload("res://scripts/dream/office_pixel_materials.gd").make(data.wall if wall else data.floor, style)
+		var material := preload("res://scripts/dream/office_pixel_materials.gd").make(data.wall, style) if wall else preload("res://scripts/dream/office_pixel_materials.gd").make_floor(data.floor, style)
 		if wall:
 			material = material.duplicate()
 			material.set_shader_parameter("wall_surface", true)
@@ -160,7 +160,7 @@ static func get_sample_accent_floor_material(room: Dictionary) -> Material:
 		return preload("res://scripts/dream/office_pixel_materials.gd").make(Color(.54,.44,.34),"rug")
 	if approved_key(room) == "lounge":
 		if _sample_lounge_rug == null:
-			_sample_lounge_rug = preload("res://scripts/dream/office_pixel_materials.gd").make(Color(.44, .41, .37), "fabric")
+			_sample_lounge_rug = preload("res://scripts/dream/office_pixel_materials.gd").make_floor(Color(.44, .41, .37), "fabric")
 		return _sample_lounge_rug
 	var key := approved_key(room)
 	return get_accent_floor_material(key if not key.is_empty() else String(room.get("archetype", "")))

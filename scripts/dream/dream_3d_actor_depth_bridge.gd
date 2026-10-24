@@ -38,6 +38,7 @@ var outline_material: ShaderMaterial
 var floor_contact_lift := 0.0
 var lowest_visible_pixel := 0.0
 var lit_material: ShaderMaterial
+var smoke_silhouette := false
 var blood_material: ShaderMaterial
 var projectile_material: ShaderMaterial
 var feedback_material: ShaderMaterial
@@ -112,6 +113,9 @@ var _cached_bullet_sprite_resolved := false
 var _cached_height_prop: StringName = &""
 var _cached_height_prop_resolved := false
 var _cached_is_enemy := false
+var _enemy_rim_active := false
+var _combat_range_highlight := false
+var _target_highlight_state := 0
 var _cached_static_capture_source := false
 var _cached_room_gated_prop := false
 var _cached_is_player := false
@@ -406,6 +410,8 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 		else:
 			lit_material.shader = carrier_shader
 		lit_material.set_shader_parameter("capture_texture", render_viewport.get_texture())
+		lit_material.set_meta(&"runtime_uniform_owner", true)
+		_sync_character_readability()
 		# Keep the visibility floor scoped to the formal Player/Enemy gameplay
 		# groups. Furniture, weapons, and non-Blood pickups remain ordinary lit
 		# objects and never become accidental environment lights.
@@ -618,6 +624,8 @@ func _create_character_layers() -> void:
 			weapon_capture_root = capture
 			weapon_sprite = sprite
 			weapon_material = lit_material.duplicate() as ShaderMaterial
+			# Readability belongs to the body, not a detached glowing gun.
+			weapon_material.set_shader_parameter("enemy_rim_enabled", false)
 			weapon_material.set_shader_parameter("capture_texture", viewport.get_texture())
 			sprite.material_override = weapon_material
 		else:
@@ -646,7 +654,7 @@ func _character_ground() -> Vector3:
 		_cached_collision_shape_resolved = true
 	var collider := _cached_collision_shape if is_instance_valid(_cached_collision_shape) else null
 	var point := collider.global_position if collider != null else source_actor.global_position
-	return get_parent_node_3d().to_global(Vector3(point.x / PIXELS_PER_WORLD_CELL, 0.0, point.y / PIXELS_PER_WORLD_CELL))
+	return get_parent_node_3d().to_global(Vector3(point.x / PIXELS_PER_WORLD_CELL, float(source_actor.get_meta(&"exterior_fall_offset",0.0)), point.y / PIXELS_PER_WORLD_CELL))
 
 
 func _refresh_body_contact() -> void:
@@ -715,6 +723,30 @@ func _sync_character_planes(camera: Camera3D, height: float) -> void:
 	if body_plane_changed:
 		CHARACTER_PROJECTION.set_material_plane(attachment_sprite.material_override as ShaderMaterial, body_reference_origin, body_reference_normal)
 
+
+## Project the complete displayed corpse onto its real gameplay floor. Inputs
+## and outputs are actor-local; the caller owns passive contact physics only.
+func get_corpse_contact_projection_signature() -> int:
+	var camera := _active_world_camera()
+	return hash([lowest_visible_pixel,viewport_offset,render_viewport.size if is_instance_valid(render_viewport) else Vector2i.ZERO,camera.global_basis if camera!=null else Basis.IDENTITY])
+
+func project_corpse_contact_points(points: PackedVector2Array) -> PackedVector2Array:
+	var camera := _active_world_camera()
+	var map_parent := get_parent_node_3d()
+	if not configured or not character_projection or camera==null or map_parent==null: return PackedVector2Array()
+	var result := PackedVector2Array()
+	var colour_origin := _character_colour_origin(camera,0.0)
+	var basis := camera.global_basis.orthonormalized()
+	for point in points:
+		var capture_point := point+viewport_offset-Vector2(render_viewport.size)*.5
+		var colour_point := colour_origin+basis*Vector3(capture_point.x,-capture_point.y,0)/PIXELS_PER_WORLD_CELL
+		var screen := camera.unproject_position(colour_point)
+		var ray_origin := map_parent.to_local(camera.project_ray_origin(screen))
+		var ray_direction := map_parent.global_basis.inverse()*camera.project_ray_normal(screen)
+		if absf(ray_direction.y)<.00001: return PackedVector2Array()
+		var floor_point := ray_origin+ray_direction*(-ray_origin.y/ray_direction.y)
+		result.append(source_actor.to_local(Vector2(floor_point.x,floor_point.z)*PIXELS_PER_WORLD_CELL))
+	return result
 
 ## Camera-facing hit point on the visible torso, with a small depth clearance.
 func get_hit_feedback_world_position() -> Vector3:
@@ -956,8 +988,16 @@ func _shot_capture_heading(camera: Camera3D) -> float:
 	return screen_direction.angle() if screen_direction.length_squared() > 0.0001 else NAN
 
 
+## Presentation offsets (shoulder drop, etc.) are expressed in body/screen
+## pixels. Undo the weapon capture's heading before attaching that offset;
+## otherwise a vertical drop turns into a constant sideways displacement.
+func compensate_weapon_pixel_offset(body_pixel_offset: Vector2) -> Vector2:
+	if not configured or not character_projection:
+		return body_pixel_offset
+	return body_pixel_offset.rotated(-_weapon_capture_delta(_active_world_camera()))
+
 func _weapon_capture_delta(camera: Camera3D) -> float:
-	if not character_projection or camera == null:
+	if not character_projection or not is_instance_valid(camera) or not camera.is_inside_tree():
 		return 0.0
 	if not is_instance_valid(_cached_weapon_root) and source_actor != null and is_instance_valid(source_actor):
 		_cached_weapon_root = source_actor.get_node_or_null(^"WeaponRoot") as Node2D
@@ -990,6 +1030,7 @@ func _process(_delta: float) -> void:
 		return
 	if not room_presentation_active:
 		return
+	if _cached_is_enemy or _cached_is_player: _sync_character_readability()
 	if transform_only:
 		# STATIC_CAPTURE_FOLLOW_TRANSFORM：capture 内容已冻结（不再 sync/签名/
 		# viewport 更新），仅保留载体 transform 跟随门叶，血迹不悬空。
@@ -1173,6 +1214,8 @@ func _process(_delta: float) -> void:
 			var shadow_pixel := shadow_source.global_position - source_actor.global_position + viewport_offset - Vector2(render_viewport.size) * 0.5
 			target_pos = _character_ground() + Vector3.UP * actor_center_height - actor_sprite.global_basis * Vector3(shadow_pixel.x, -shadow_pixel.y, 0) / PIXELS_PER_WORLD_CELL
 	if actor_sprite.is_inside_tree():
+		if not character_projection and not (ground_only and (_cached_is_player or _cached_is_enemy)):
+			target_pos += get_parent_node_3d().global_basis.y * float(source_actor.get_meta(&"exterior_fall_offset",0.0))
 		actor_sprite.global_position = target_pos
 	else:
 		actor_sprite.position = target_pos
@@ -1603,6 +1646,12 @@ func set_target_highlight(enabled: bool) -> void:
 func set_target_highlight_state(state: int) -> void:
 	if actor_sprite == null:
 		return
+	if _cached_is_enemy:
+		_target_highlight_state=state
+		actor_sprite.material_overlay=null
+		if is_instance_valid(weapon_sprite): weapon_sprite.material_overlay=null
+		_sync_character_readability()
+		return
 	if state != 0 and outline_material == null:
 		outline_material = ShaderMaterial.new()
 		outline_material.shader = load("res://shaders/dream3d/pixel_target_outline.gdshader")
@@ -1625,3 +1674,45 @@ func set_target_highlight_state(state: int) -> void:
 				weapon_sprite.material_overlay = weapon_outline
 			weapon_outline.set_shader_parameter("outline_color", outline_color)
 			CHARACTER_PROJECTION.set_material_plane(weapon_outline, Vector3(0, weapon_reference_height, 0), Vector3.UP)
+
+func set_combat_range_highlight(enabled: bool) -> void:
+	_combat_range_highlight=enabled
+	_sync_character_readability()
+
+func _sync_character_readability() -> void:
+	if lit_material==null or not is_instance_valid(source_actor) or not (_cached_is_enemy or _cached_is_player): return
+	set_smoke_silhouette(bool(source_actor.get_meta(&"extinguisher_smoke",false)))
+	var active: bool=not smoke_silhouette and not bool(source_actor.get_meta(&"smoke_hidden_from_player",false)) and character_projection and (_cached_is_player or (_cached_is_enemy and not bool(source_actor.get("dead"))))
+	if active!=_enemy_rim_active or lit_material.get_shader_parameter("enemy_rim_enabled")!=active:
+		_enemy_rim_active=active
+		lit_material.set_shader_parameter("enemy_rim_enabled",active)
+	var color:=Color.WHITE if _cached_is_player or _target_highlight_state==1 or _combat_range_highlight else Color(.55,.58,.62,1)
+	if lit_material.get_shader_parameter("enemy_rim_color")!=color:
+		lit_material.set_shader_parameter("enemy_rim_color",color)
+
+func set_smoke_silhouette(enabled: bool) -> void:
+	smoke_silhouette=enabled
+	var targets: Array=[lit_material,weapon_material]
+	if is_instance_valid(attachment_sprite):targets.append(attachment_sprite.material_override)
+	for material in targets:
+		if material is ShaderMaterial and material.get_shader_parameter("smoke_silhouette")!=enabled:
+			material.set_shader_parameter("smoke_silhouette",enabled)
+	if enabled and lit_material!=null:lit_material.set_shader_parameter("enemy_rim_enabled",false)
+	for sprite in [actor_sprite,weapon_sprite,attachment_sprite]:
+		if not is_instance_valid(sprite):continue
+		var overlay: ShaderMaterial=sprite.get_meta(&"smoke_overlay") if sprite.has_meta(&"smoke_overlay") else null
+		if enabled:
+			if overlay==null:
+				overlay=ShaderMaterial.new()
+				overlay.shader=preload("res://shaders/dream3d/extinguisher_silhouette.gdshader")
+				overlay.render_priority=8
+				sprite.set_meta(&"smoke_overlay",overlay)
+				sprite.set_meta(&"pre_smoke_overlay",sprite.material_overlay)
+			overlay.set_shader_parameter("capture_texture",sprite.texture)
+			var base: ShaderMaterial=sprite.material_override
+			if base!=null:
+				for key in ["reference_depth_enabled","reference_plane_origin","reference_plane_normal"]:
+					overlay.set_shader_parameter(key,base.get_shader_parameter(key))
+			sprite.material_overlay=overlay
+		elif overlay!=null and sprite.material_overlay==overlay:
+			sprite.material_overlay=sprite.get_meta(&"pre_smoke_overlay") if sprite.has_meta(&"pre_smoke_overlay") else null

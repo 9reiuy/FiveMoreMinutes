@@ -2,6 +2,8 @@ class_name ReceptionWaitressNPC
 extends Node2D
 enum ConversationMode { ACTIVE, PASSIVE }
 @export var conversation_mode: ConversationMode=ConversationMode.PASSIVE
+## Presentation state; dialogue and interaction decisions remain unchanged.
+@export_enum("neutral","happy","joy","angry","sad","surprised","nervous") var hint_emotion: String="nervous"
 
 ## Peaceful Waitress NPC Actor standing behind the reception desk.
 ## Complies with AGENTS.md aesthetic and behavioral standards:

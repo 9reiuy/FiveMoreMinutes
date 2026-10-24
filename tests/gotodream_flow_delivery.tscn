@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/gotodream_flow_delivery.gd" id="1_flow"]
+
+[node name="GotodreamFlowDelivery" type="Node"]
+script = ExtResource("1_flow")

@@ -19,6 +19,14 @@ const RENDER_SCALE := 2.0
 const RENDER_PADDING := 100.0
 const REST_ROTATION := Vector3(-0.03, 0.06, -0.015)
 const POINTER_LIMIT := 0.034906585
+const FEEDBACK_MIN_PRESS_MSEC := 120
+const FEEDBACK_DPAD_TILT := 0.045
+const FEEDBACK_DPAD_DEPTH := 0.008
+const FEEDBACK_CENTRE_DEPTH := 0.008
+const FEEDBACK_SOFTKEY_DEPTH := 0.009
+const FEEDBACK_PRESS_FREQUENCY := 48.0
+const FEEDBACK_RELEASE_FREQUENCY := 44.0
+const FEEDBACK_RELEASE_DAMPING := 0.62
 
 var screen_size := SCREEN_SIZE
 var screen_root: Control
@@ -35,6 +43,7 @@ var _key_plane: Node3D
 var _keys: Dictionary = {}
 var _motion: Tween
 var _drag_screen := false
+var _screen_hovered := false
 var _pressed: StringName = &""
 var _last_screen_point := Vector2.ZERO
 var _materials: Dictionary = {}
@@ -42,6 +51,7 @@ var _pointer_pose: Node3D
 var _held_actions: Dictionary = {}
 var _pulse_until: Dictionary = {}
 var _feedback_amounts: Dictionary = {}
+var _feedback_velocities: Dictionary = {}
 var _pointer_target := Vector3.ZERO
 var _pointer_global := Vector2.ZERO
 var _interaction_frozen := false
@@ -175,11 +185,19 @@ func _build() -> void:
  _disc(_lid, Vector3(-.64, 2.52, .088), .031, .008, black)
  _box(_lid, Vector3(-.50,2.52,.082), Vector3(.052,.018,.010), .007, seam)
  _box(_lid, Vector3(.57,2.51,.083), Vector3(.32,.037,.012), .012, dark)
- # Full length lower shell: its back and every keypad row remain solid offscreen.
- var lower := _box(_pointer_pose, Vector3(0, -2.04, -.015), Vector3(1.80, 2.64, .18), .045, white)
+ # A hollow housing retains the original back and exterior side silhouette.
+ # Its solid back stops behind the wells; no hidden full front plate crosses them.
+ var lower := _box(_pointer_pose, Vector3(0, -2.04, -.065), Vector3(1.80, 2.64, .080), .035, white)
  lower.name = "SilverLowerShell"
- _box(_pointer_pose, Vector3(0, -2.04, -.079), Vector3(1.79, 2.60, .026), .045, edge)
- _box(_pointer_pose, Vector3(0, -2.04, .079), Vector3(1.70, 2.54, .020), .030, white)
+ lower.set_meta(&"key_clearance_role", &"housing_back")
+ var back := _box(_pointer_pose, Vector3(0, -2.04, -.095), Vector3(1.79, 2.60, .020), .035, edge)
+ back.name = "LowerShellBack"
+ for side in [-1,1]:
+  var wall := _box(_pointer_pose,Vector3(side*.86,-2.04,-.015),Vector3(.08,2.56,.18),.020,white)
+  wall.name = "LowerSideWallLeft" if side<0 else "LowerSideWallRight"
+ for item in [[-.76,.08],[-3.32,.08]]:
+  var wall := _box(_pointer_pose,Vector3(0,item[0],-.015),Vector3(1.70,item[1],.18),.018,white)
+  wall.name = "LowerEndWallTop" if item[0]>-1 else "LowerEndWallBottom"
  # The reference has a squared, full-width hinge with a large raised central block.
  _box(_pointer_pose, Vector3(0,-.72,.096), Vector3(1.80,.235,.205), .032, edge)
  _box(_pointer_pose, Vector3(0,-.70,.129), Vector3(.94,.225,.205), .025, white)
@@ -193,12 +211,21 @@ func _build() -> void:
  _pointer_pose.add_child(_key_plane)
  var key_white := _material("key", Color("b6bbc0"), .67)
  var centre_white := _material("key_center", Color("bcc2c6"), .66)
- # One shallow white circular navigation plate and a raised white centre button.
- _disc(_key_plane, Vector3(0,-.49,.001), .305, .012, seam)
- _disc(_key_plane, Vector3(0,-.49,.014), .292, .021, white)
- var ring_key := _disc(_key_plane, Vector3(0,-.49,.034), .278, .026, key_white)
- _disc(_key_plane, Vector3(0,-.49,.049), .112, .016, edge)
- var centre_key := _disc(_key_plane, Vector3(0,-.49,.065), .098, .030, centre_white)
+ # A continuous pale front cover backs the keys. Short mechanical travel
+ # fits above shallow circular seats, without square cutouts or dark deep wells.
+ _build_key_deck(_key_plane,white)
+ var seat := _annulus(_key_plane,Vector3(0,-.49,-.028),.116,.284,.002,white)
+ seat.name = "DpadSupportSeat"
+ seat.set_meta(&"key_clearance_role", &"dpad_fixed")
+ var ring_key := _annulus(_key_plane,Vector3(0,-.49,.020),.116,.278,.026,key_white)
+ ring_key.name = "DpadMovingRing"
+ ring_key.set_meta(&"key_clearance_role", &"dpad_moving")
+ var socket := _annulus(_key_plane,Vector3(0,-.49,-.0045),.102,.108,.049,white)
+ socket.name = "ConfirmSocket"
+ socket.set_meta(&"key_clearance_role", &"centre_fixed")
+ var centre_key := _disc(_key_plane,Vector3(0,-.49,.050),.098,.030,centre_white)
+ centre_key.name = "ConfirmMovingKey"
+ centre_key.set_meta(&"key_clearance_role", &"centre_moving")
  _ring_mesh = ring_key
  _centre_mesh = centre_key
  _ring_rest_rotation = ring_key.rotation
@@ -209,30 +236,101 @@ func _build() -> void:
  _key(&"down", Vector2(0,-.71), Vector2(.20,.18), ring_key)
  _key(&"left", Vector2(-.22,-.49), Vector2(.18,.20), ring_key)
  _key(&"right", Vector2(.22,-.49), Vector2(.18,.20), ring_key)
- # Four small square auxiliary keys flank the circle, as in the supplied device.
+ # Soft keys have close-fitting shallow white seats. Each legend remains a
+ # child of its moving key, including throughout the short press and rebound.
  for action in [&"home",&"back"]:
   var x := -.57 if action==&"home" else .57
-  var button := _box(_key_plane,Vector3(x,-.35,.030),Vector3(.24,.215,.052),.025,key_white)
+  var prefix := "Home" if action==&"home" else "Back"
+  _build_softkey_seat(_key_plane,Vector2(x,-.35),prefix,white)
+  var button := _box(_key_plane,Vector3(x,-.35,.012),Vector3(.24,.215,.052),.025,key_white)
+  button.name = prefix+"MovingKey"
+  button.set_meta(&"key_clearance_role", &"soft_moving")
+  var legend := _label(button,"MENU" if action==&"home" else "←",Vector3(0,0,.031),5 if action==&"home" else 9,Color("48505b"))
+  legend.name = "KeyLegend"
   _key(action,Vector2(x,-.35),Vector2(.24,.215),button)
  for x in [-.57,.57]:
-  _box(_key_plane,Vector3(x,-.67,.026),Vector3(.24,.215,.046),.025,key_white)
- _label(_key_plane,"MENU",Vector3(-.57,-.35,.062),5,Color("48505b"))
- _label(_key_plane,"←",Vector3(.57,-.35,.062),9,Color("48505b"))
- _label(_key_plane,"@",Vector3(-.57,-.67,.055),8,Color("48505b"))
- _label(_key_plane,"□",Vector3(.57,-.67,.055),8,Color("48505b"))
+  var button := _box(_key_plane,Vector3(x,-.67,.026),Vector3(.24,.215,.046),.025,key_white)
+  button.name = "LowerAuxiliaryLeft" if x<0 else "LowerAuxiliaryRight"
+  var legend := _label(button,"@" if x<0 else "□",Vector3(0,0,.029),8,Color("48505b"))
+  legend.name = "KeyLegend"
  # Three short function keys are below the directional control, not above it.
  for col in range(3):
   var at := Vector3((col-1)*.50,-.98,.022)
-  _box(_key_plane,at,Vector3(.43,.20,.045),.025,key_white)
-  _label(_key_plane,["CALL","CLR","END"][col],at+Vector3(0,0,.028),5,Color("48505b"))
+  var button := _box(_key_plane,at,Vector3(.43,.20,.045),.025,key_white)
+  button.name = "FunctionKey_"+str(col)
+  var legend := _label(button,["CALL","CLR","END"][col],Vector3(0,0,.028),5,Color("48505b"))
+  legend.name = "KeyLegend"
  for row in range(4):
   for col in range(3):
    var at := Vector3((col-1)*.50,-1.25-row*.28,.018)
-   _box(_key_plane,at,Vector3(.43,.205,.040),.025,key_white)
+   var button := _box(_key_plane,at,Vector3(.43,.205,.040),.025,key_white)
+   button.name = "NumericKey_"+str(row*3+col)
    var caption: String = str(row*3+col+1) if row<3 else ["*","0","#"][col]
-   _label(_key_plane,caption,at+Vector3(0,0,.028),8,Color("48505b"))
+   var legend := _label(button,caption,Vector3(0,0,.028),8,Color("48505b"))
+   legend.name = "KeyLegend"
  _disc(_key_plane,Vector3(0,-2.48,.010),.013,.009,seam)
  _stage.visible = false
+
+
+func _plain_box(parent: Node3D, at: Vector3, dimensions: Vector3, material: Material, node_name: String) -> MeshInstance3D:
+ var node := MeshInstance3D.new()
+ var geometry := BoxMesh.new()
+ geometry.size=dimensions
+ node.mesh=geometry
+ node.material_override=material
+ node.position=at
+ node.name=node_name
+ parent.add_child(node)
+ return node
+
+
+func _build_key_deck(parent: Node3D, material: Material) -> void:
+ var deck := Node3D.new()
+ deck.name="KeyDeck"
+ parent.add_child(deck)
+ var panel := _plain_box(deck,Vector3(0,-1.32,-.039),Vector3(1.70,2.54,.020),material,"DeckTile_00")
+ panel.set_meta(&"key_clearance_role", &"deck_fixed")
+
+
+func _build_softkey_seat(parent: Node3D, centre: Vector2, prefix: String, material: Material) -> void:
+ var seat := _plain_box(parent,Vector3(centre.x,centre.y,-.028),Vector3(.248,.223,.002),material,prefix+"SupportSeat")
+ seat.set_meta(&"key_clearance_role", &"soft_fixed")
+
+
+func _annulus(parent: Node3D, at: Vector3, inner_radius: float, outer_radius: float, depth: float, material: Material, square_outer: bool = false) -> MeshInstance3D:
+ var st := SurfaceTool.new()
+ st.begin(Mesh.PRIMITIVE_TRIANGLES)
+ var segments := 32
+ for i in range(segments):
+  var a := TAU*float(i)/segments
+  var b := TAU*float(i+1)/segments
+  var da := Vector2(cos(a),sin(a))
+  var db := Vector2(cos(b),sin(b))
+  var ra := outer_radius/maxf(absf(da.x),absf(da.y)) if square_outer else outer_radius
+  var rb := outer_radius/maxf(absf(db.x),absf(db.y)) if square_outer else outer_radius
+  var ia := Vector3(da.x*inner_radius,da.y*inner_radius,depth*.5)
+  var ib := Vector3(db.x*inner_radius,db.y*inner_radius,depth*.5)
+  var oa := Vector3(da.x*ra,da.y*ra,depth*.5)
+  var ob := Vector3(db.x*rb,db.y*rb,depth*.5)
+  var iab := ia-Vector3(0,0,depth)
+  var ibb := ib-Vector3(0,0,depth)
+  var oab := oa-Vector3(0,0,depth)
+  var obb := ob-Vector3(0,0,depth)
+  _triangle(st,ia,oa,ob)
+  _triangle(st,ia,ob,ib)
+  _triangle(st,iab,obb,oab)
+  _triangle(st,iab,ibb,obb)
+  _triangle(st,oa,oab,ob)
+  _triangle(st,ob,oab,obb)
+  _triangle(st,ia,ib,iab)
+  _triangle(st,ib,ibb,iab)
+ st.generate_normals()
+ var node := MeshInstance3D.new()
+ node.mesh=st.commit()
+ node.material_override=material
+ node.position=at
+ parent.add_child(node)
+ return node
 
 
 func _material(key: String, colour: Color, roughness: float) -> StandardMaterial3D:
@@ -283,12 +381,12 @@ func _triangle(st: SurfaceTool,a:Vector3,b:Vector3,c:Vector3) -> void:
  st.add_vertex(a)
 
 
-func _cylinder(parent:Node3D,at:Vector3,length:float,radius:float,material:Material,horizontal:bool=false) -> MeshInstance3D:
+func _cylinder(parent:Node3D,at:Vector3,length:float,radius:float,material:Material,horizontal:bool=false,segments:int=12) -> MeshInstance3D:
  var geometry := CylinderMesh.new()
  geometry.top_radius=radius
  geometry.bottom_radius=radius
  geometry.height=length
- geometry.radial_segments=12
+ geometry.radial_segments=segments
  geometry.rings=1
  var node := MeshInstance3D.new()
  node.mesh=geometry
@@ -299,13 +397,13 @@ func _cylinder(parent:Node3D,at:Vector3,length:float,radius:float,material:Mater
  return node
 
 
-func _disc(parent:Node3D,at:Vector3,radius:float,depth:float,material:Material) -> MeshInstance3D:
- var mesh := _cylinder(parent,at,depth,radius,material)
+func _disc(parent:Node3D,at:Vector3,radius:float,depth:float,material:Material,segments:int=12) -> MeshInstance3D:
+ var mesh := _cylinder(parent,at,depth,radius,material,false,segments)
  mesh.rotation.x=PI*.5
  return mesh
 
 
-func _label(parent:Node3D,text:String,at:Vector3,font_size:int,colour:Color) -> void:
+func _label(parent:Node3D,text:String,at:Vector3,font_size:int,colour:Color) -> Label3D:
  var node := Label3D.new()
  node.text=text
  node.font=FONT
@@ -317,6 +415,7 @@ func _label(parent:Node3D,text:String,at:Vector3,font_size:int,colour:Color) -> 
  node.shaded=true
  node.position=at
  parent.add_child(node)
+ return node
 
 
 func _key(action:StringName,at:Vector2,extent:Vector2,mesh:MeshInstance3D) -> void:
@@ -361,7 +460,7 @@ func open_phone(animated:bool=true) -> void:
 func close_phone(animated:bool=true) -> void:
  if not is_open and not is_animating:
   return
- _stop_motion()
+ _stop_motion(true)
  is_open=false
  if not animated:
   _finish_motion(false)
@@ -374,7 +473,7 @@ func close_phone(animated:bool=true) -> void:
  _motion.chain().tween_callback(_finish_motion.bind(false))
 
 
-func _stop_motion() -> void:
+func _stop_motion(preserve_feedback: bool = false) -> void:
  if _motion != null and _motion.is_valid():
   _motion.kill()
  is_animating=false
@@ -386,14 +485,14 @@ func _stop_motion() -> void:
   release.global_position=_last_screen_point
   _ui.push_input(release,true)
  _drag_screen=false
+ _set_screen_hovered(false)
  _release_key()
  _held_actions.clear()
- _pulse_until.clear()
- _feedback_amounts.clear()
  _interaction_frozen = false
  _wheel_freeze_until = 0
- _pointer_pose.rotation = Vector3.ZERO
- _apply_feedback()
+ if not preserve_feedback:
+  _reset_feedback()
+  _pointer_pose.rotation = Vector3.ZERO
  _refresh_screen_activity()
 
 
@@ -405,6 +504,7 @@ func _finish_motion(opened:bool) -> void:
   _render.render_target_update_mode=SubViewport.UPDATE_DISABLED
   _ui.render_target_update_mode=SubViewport.UPDATE_DISABLED
   _ui.gui_release_focus()
+  _reset_feedback()
  animation_finished.emit(opened)
 
 
@@ -463,6 +563,8 @@ func _key_at(point:Vector2) -> StringName:
 func press_action(action: StringName) -> void:
  if not _keys.has(action) or not is_open or is_animating:
   return
+ if not _held_actions.has(action):
+  _pulse_until[action] = maxi(int(_pulse_until.get(action,0)),Time.get_ticks_msec()+FEEDBACK_MIN_PRESS_MSEC)
  _held_actions[action] = true
 
 
@@ -473,7 +575,7 @@ func release_action(action: StringName) -> void:
 func pulse_action(action: StringName) -> void:
  if not _keys.has(action) or not is_open or is_animating:
   return
- _pulse_until[action] = Time.get_ticks_msec() + 110
+ _pulse_until[action] = Time.get_ticks_msec() + FEEDBACK_MIN_PRESS_MSEC
 
 
 func set_interaction_frozen(frozen: bool) -> void:
@@ -495,6 +597,14 @@ func get_feedback_state() -> Dictionary:
  return {
   "pressed": _held_actions.keys(),
   "amounts": _feedback_amounts.duplicate(),
+  "velocities": _feedback_velocities.duplicate(),
+  "minimum_hold_until": _pulse_until.duplicate(),
+  "center_depth": _centre_rest_z-_centre_mesh.position.z,
+  "soft_depths": {
+   &"home": _keys[&"home"].rest_z-_keys[&"home"].mesh.position.z,
+   &"back": _keys[&"back"].rest_z-_keys[&"back"].mesh.position.z
+  },
+  "closing_feedback_active": not is_open and is_animating,
   "dpad_rotation": _ring_mesh.rotation - _ring_rest_rotation,
   "dpad_depth": _ring_rest_z - _ring_mesh.position.z,
   "pointer_rotation": _pointer_pose.rotation,
@@ -510,19 +620,50 @@ func _process(_delta: float) -> void:
  var now := Time.get_ticks_usec()
  var elapsed := clampf(float(now-_last_process_usec)/1000000.0,0,.05) if _last_process_usec else .016
  _last_process_usec = now
- if not is_open or is_animating:
+ if not is_open and not is_animating:
   return
  for action in _pulse_until.keys():
   if Time.get_ticks_msec() >= int(_pulse_until[action]):
    _pulse_until.erase(action)
- var weight := 1.0-exp(-elapsed*24.0)
- for action in _keys:
-  var target := 1.0 if _held_actions.has(action) or _pulse_until.has(action) else 0.0
-  _feedback_amounts[action] = lerpf(float(_feedback_amounts.get(action,0.0)),target,weight)
+ _advance_feedback(elapsed)
  _apply_feedback()
- if not _follow_frozen():
+ if is_open and not is_animating and not _follow_frozen():
   _pointer_pose.rotation = _pointer_pose.rotation.lerp(_pointer_target,1.0-exp(-elapsed*9.0))
  _refresh_screen_activity()
+
+
+func _advance_feedback(elapsed: float) -> void:
+ # One wall-clock spring owns each action. Quick taps retain a brief visible
+ # downstroke; releasing targets zero with a small, naturally decaying rebound.
+ var steps := maxi(1,int(ceil(elapsed*240.0)))
+ var dt := elapsed/float(steps)
+ for action in _keys:
+  var target := 1.0 if _held_actions.has(action) or _pulse_until.has(action) else 0.0
+  var frequency := FEEDBACK_PRESS_FREQUENCY if target > .5 else FEEDBACK_RELEASE_FREQUENCY
+  var damping := 1.0 if target > .5 else FEEDBACK_RELEASE_DAMPING
+  var amount := float(_feedback_amounts.get(action,0.0))
+  var velocity := float(_feedback_velocities.get(action,0.0))
+  for step in steps:
+   velocity += (frequency*frequency*(target-amount)-2.0*damping*frequency*velocity)*dt
+   amount += velocity*dt
+   if amount < -.12:
+    amount = -.12
+    velocity = maxf(0.0,velocity)
+   elif amount > 1.02:
+    amount = 1.02
+    velocity = minf(0.0,velocity)
+  if target == 0.0 and absf(amount) < .0003 and absf(velocity) < .01:
+   amount = 0.0
+   velocity = 0.0
+  _feedback_amounts[action] = amount
+  _feedback_velocities[action] = velocity
+
+
+func _reset_feedback() -> void:
+ _pulse_until.clear()
+ _feedback_amounts.clear()
+ _feedback_velocities.clear()
+ _apply_feedback()
 
 
 func _amount(action: StringName) -> float:
@@ -532,13 +673,17 @@ func _amount(action: StringName) -> float:
 func _apply_feedback() -> void:
  var horizontal := _amount(&"right")-_amount(&"left")
  var vertical := _amount(&"down")-_amount(&"up")
- var ring_down := maxf(maxf(_amount(&"up"),_amount(&"down")),maxf(_amount(&"left"),_amount(&"right")))
- _ring_mesh.rotation = _ring_rest_rotation + Vector3(vertical*.095,horizontal*.095,0)
- _ring_mesh.position.z = _ring_rest_z-ring_down*.018
- _centre_mesh.position.z = _centre_rest_z-_amount(&"confirm")*.025
+ var ring_down := 0.0
+ for action in [&"up",&"down",&"left",&"right"]:
+  if absf(_amount(action)) > absf(ring_down):
+   ring_down = _amount(action)
+ var tilt := Vector2(vertical,horizontal).limit_length(1.0)*FEEDBACK_DPAD_TILT
+ _ring_mesh.rotation = _ring_rest_rotation + Vector3(tilt.x,tilt.y,0)
+ _ring_mesh.position.z = _ring_rest_z-clampf(ring_down,-.12,1.0)*FEEDBACK_DPAD_DEPTH
+ _centre_mesh.position.z = _centre_rest_z-_amount(&"confirm")*FEEDBACK_CENTRE_DEPTH
  for action in [&"home",&"back"]:
   var key: Dictionary = _keys[action]
-  key.mesh.position.z = key.rest_z-_amount(action)*.025
+  key.mesh.position.z = key.rest_z-_amount(action)*FEEDBACK_SOFTKEY_DEPTH
 
 
 func _refresh_screen_activity() -> void:
@@ -546,6 +691,18 @@ func _refresh_screen_activity() -> void:
  if active != _screen_activity_state:
   _screen_activity_state=active
   screen_activity.emit(active)
+
+
+func _set_screen_hovered(value: bool) -> void:
+ if _screen_hovered == value:
+  return
+ _screen_hovered = value
+ # This viewport is drawn on a 3D mesh, without a SubViewportContainer to
+ # provide mouse enter/exit. Motion GUI dispatch requires these notifications.
+ if value:
+  _ui.notify_mouse_entered()
+ else:
+  _ui.notify_mouse_exited()
 
 
 func _release_key() -> void:
@@ -572,6 +729,7 @@ func _input(event: InputEvent) -> void:
   return
  var point := _screen_at(mouse.position)
  var over_screen := Rect2(Vector2.ZERO,Vector2(SCREEN_SIZE)).has_point(point)
+ _set_screen_hovered(over_screen or _drag_screen)
  if over_screen or _drag_screen:
   var mapped := event.duplicate() as InputEventMouse
   mapped.position=point
@@ -588,6 +746,8 @@ func _input(event: InputEvent) -> void:
     _wheel_freeze_until=Time.get_ticks_msec()+160
   _refresh_screen_activity()
   _ui.push_input(mapped,true)
+  if not over_screen and not _drag_screen:
+   _set_screen_hovered(false)
   get_viewport().set_input_as_handled()
   return
  if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed:

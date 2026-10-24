@@ -15,8 +15,8 @@ static func configure() -> void:
 	# as a just-pressed edge there, never as a hold-to-slow override.
 	_add_key_action("toggle_slow_time", [KEY_T])
 	_add_key_action("bullet_time", [KEY_T])
-	# Space owns both the directional tap Roll/Dash and the hold-to-aim Dash.
-	# Keep dialogue/UI confirmation on Enter so either gameplay path can never
+	# Space triggers mouse-directed phase dash on press, without hold planning.
+	# Keep dialogue/UI confirmation on Enter so the gameplay path can never
 	# also submit a confirmation in the same input frame.
 	_add_key_action("confirm", [KEY_ENTER])
 	_remove_key_action("confirm", KEY_SPACE)

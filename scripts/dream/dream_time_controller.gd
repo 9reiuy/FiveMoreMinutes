@@ -60,6 +60,25 @@ var tactical_planning_active := false
 var tactical_planning_scale := 0.05
 var dive_bullet_time_active := false
 var dive_bullet_time_scale := 0.2
+var reaction_remaining_real := 0.0
+var near_miss_cooldown_real := 0.0
+
+func begin_reaction_time(reason: StringName = &"parry") -> bool:
+	if not mode_enabled or not lifecycle_enabled or pause_authority or get_tree().paused: return false
+	if not is_instance_valid(bound_player) or bool(bound_player.get("dead")): return false
+	if reason==&"near_miss" and near_miss_cooldown_real>0: return false
+	reaction_remaining_real = .6
+	if reason==&"near_miss": near_miss_cooldown_real=.8
+	# The compositor writes Engine.time_scale on its next idle update. Changing
+	# it inside a projectile physics callback would mismatch this tick's delta.
+	return true
+
+func is_reaction_time_active() -> bool:
+	return reaction_remaining_real>0 and mode_enabled and lifecycle_enabled and not pause_authority and not get_tree().paused
+
+func clear_reaction_time() -> void:
+	reaction_remaining_real=0.0
+	near_miss_cooldown_real=0.0
 
 
 func _ready() -> void:
@@ -85,12 +104,17 @@ func _process(_scaled_delta: float) -> void:
 		_apply_engine_scale(DEFAULT_MAX_TIME_SCALE)
 		return
 
+	if is_instance_valid(bound_player) and bool(bound_player.get("dead")): clear_reaction_time()
 	if pause_authority or get_tree().paused:
 		_apply_engine_scale(DEFAULT_MAX_TIME_SCALE)
 		return
 
 	if tactical_planning_active:
 		resolved_time_scale = tactical_planning_scale
+		_apply_engine_scale(resolved_time_scale)
+		return
+	if reaction_remaining_real>0:
+		resolved_time_scale=minf(.2,hitstop_scale if hitstop_active else 1.0)
 		_apply_engine_scale(resolved_time_scale)
 		return
 
@@ -260,6 +284,7 @@ func is_manual_bullet_time_active() -> bool:
 
 
 func enter_dream_time_mode(player: Node, config: DemoConfig = null, owner: Node = null) -> void:
+	clear_reaction_time()
 	if bound_player != null and bound_player != player and is_instance_valid(bound_player):
 		_disconnect_player_signal(bound_player)
 	bound_player = player if player != null and is_instance_valid(player) else null
@@ -298,6 +323,7 @@ func exit_dream_time_mode(owner: Node = null) -> void:
 	# global reset used by Main/menu lifecycle code.
 	if owner != null and bound_owner != null and bound_owner != owner:
 		return
+	clear_reaction_time()
 	if bound_player != null and is_instance_valid(bound_player):
 		_disconnect_player_signal(bound_player)
 	mode_enabled = false
@@ -333,6 +359,7 @@ func clear() -> void:
 func set_lifecycle_enabled(enabled: bool) -> void:
 	lifecycle_enabled = enabled
 	if not enabled:
+		clear_reaction_time()
 		_apply_engine_scale(DEFAULT_MAX_TIME_SCALE)
 
 
@@ -446,6 +473,9 @@ func _reset_real_clock() -> void:
 
 
 func _update_real_timers(real_delta: float) -> void:
+	if lifecycle_enabled and not pause_authority and not get_tree().paused:
+		reaction_remaining_real=maxf(0.0,reaction_remaining_real-real_delta)
+		near_miss_cooldown_real=maxf(0.0,near_miss_cooldown_real-real_delta)
 	shot_pulse_remaining_real = maxf(0.0, shot_pulse_remaining_real - real_delta)
 	movement_wake_remaining_real = maxf(0.0, movement_wake_remaining_real - real_delta)
 	movement_release_remaining_real = maxf(0.0, movement_release_remaining_real - real_delta)

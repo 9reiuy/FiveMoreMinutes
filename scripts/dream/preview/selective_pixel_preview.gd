@@ -87,8 +87,8 @@ func _ready() -> void:
 	_install_coordinate_mapping()
 	var palette_layer := CanvasLayer.new()
 	palette_layer.name = "WorldPaletteLayer"
-	# The floor-footprint mask is layer 19; draw it after palette so outside
-	# space stays absolute black even when Palette mode is selected.
+	# Palette processes the 3D world only; empty regions are now depth-tested
+	# geometry, not a later screen-space floor-footprint overlay.
 	palette_layer.layer = 18
 	world_viewport.add_child(palette_layer)
 	var palette_rect := ColorRect.new()
@@ -261,7 +261,7 @@ func _retarget_canvas_layers() -> void:
 			continue
 		# Physics/gameplay coordinates and the floor-footprint mask belong to
 		# Camera3D's viewport. UI and world prompts draw on the root canvas.
-		if layer == world.get("gameplay_canvas") or layer.name == &"OutsideFootprintMaskLayer":
+		if layer == world.get("gameplay_canvas") or layer.name == &"OutsideFootprintMaskLayer" or layer.get_meta(&"world_post_effect",false):
 			continue
 		layers_to_process.append(layer)
 
@@ -286,6 +286,10 @@ func _retarget_canvas_layers() -> void:
 
 func _on_node_added(node: Node) -> void:
 	if _initialized and is_instance_valid(world) and world.is_ancestor_of(node) and node is CanvasLayer:
+		# world_post_effect layers are always skipped by _retarget_canvas_layers();
+		# do not schedule a whole-world CanvasLayer scan for them.
+		if node.get_meta(&"world_post_effect", false):
+			return
 		_canvas_dirty = true
 
 

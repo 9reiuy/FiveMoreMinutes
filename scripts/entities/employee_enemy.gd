@@ -158,6 +158,46 @@ var authored_patrol_index := 0
 var wander_wait_left := 0.0
 var neutral_room_travel_cooldown_left: float = 0.0
 var gunshot_flee_left: float = 0.0
+var burning_panic := false
+var burning_panic_turn_left := 0.0
+var burning_panic_destination := Vector2.ZERO
+
+func set_burning_panic(enabled: bool) -> void:
+	if enabled and (dead or boss_variant):return
+	if burning_panic==enabled:return
+	burning_panic=enabled
+	if enabled:
+		_release_weapon_reservation()
+		_cancel_ranged_attack_windup()
+		panic_counterattack_active=false
+		unarmed_attack_active=false
+		melee_visual_active=false
+		melee_visual_elapsed=0.0
+		weapon_motion.rotation=0.0
+		body_pivot.rotation=0.0
+		melee_trail.hide()
+		melee_trail.clear_points()
+		_drop_held_weapon(Vector2.RIGHT.rotated(random.randf()*TAU)*120.0)
+		burning_panic_turn_left=0.0
+	else:
+		steering_commit_left=0.0
+		if not dead and state not in [State.KNOCKED_DOWN,State.GETTING_UP]:
+			state=State.ALERT if hostile else State.NEUTRAL_WANDER
+			wander_target=global_position
+
+func _update_burning_panic(delta: float) -> void:
+	_cancel_ranged_attack_windup()
+	state=State.FLEE
+	burning_panic_turn_left-=delta
+	if burning_panic_turn_left<=0.0 or global_position.distance_to(burning_panic_destination)<10.0 or get_slide_collision_count()>0:
+		burning_panic_turn_left=random.randf_range(.45,.85)
+		steering_commit_left=0.0
+		var inset:=arena_bounds.grow(-16.0)
+		if not inset.has_area():inset=arena_bounds
+		burning_panic_destination=Vector2(random.randf_range(inset.position.x,inset.end.x),random.randf_range(inset.position.y,inset.end.y))
+	velocity=_steer_toward(burning_panic_destination)
+	move_and_slide()
+	_constrain_position_to_room_bounds()
 var gunshot_recovery_left: float = 0.0
 var gunshot_threat_position := Vector2.ZERO
 var gunshot_source_room_id := -1
@@ -182,9 +222,12 @@ var attack_cooldown_left := 0.0
 ## immediate and a cancelled windup never consumes a shot/cooldown.
 var ranged_attack_windup_left: float = 0.0
 var ranged_attack_windup_pending: bool = false
+var ranged_attack_fire_locked := false
+var ranged_attack_magazine_primed := false
+var ranged_attack_shot_serial := 0
 var ranged_attack_target_snapshot := Vector2.ZERO
-## Automatic firearms keep one windup for a continuous attack session; the
-## normal per-weapon cooldown controls subsequent bullets.
+## Automatic firearms prime once per magazine. Losing attack intent does not
+## reprime the remaining rounds; reload and weapon replacement reset it.
 var ranged_attack_session_active: bool = false
 var ranged_attack_session_weapon_id: String = ""
 var reaction_left := 0.0
@@ -941,6 +984,11 @@ func _physics_process(delta: float) -> void:
 		_constrain_knockback_to_room_bounds()
 
 		return
+	if burning_panic:
+		if state in [State.KNOCKED_DOWN,State.GETTING_UP]:
+			velocity=Vector2.ZERO
+		else:_update_burning_panic(delta)
+		return
 
 	# With no valid target there is no target-dependent AI to advance.  The
 	# physical branch above has already handled active knockback and the _process
@@ -988,7 +1036,7 @@ func _physics_process(delta: float) -> void:
 	# Windup owns the final movement composition for the whole pending attack;
 	# separation/navigation code must not be able to reintroduce a slide after
 	# the initial zeroing above.
-	if ranged_attack_windup_pending and not _is_otxo_mode():
+	if ranged_attack_windup_pending:
 		velocity = Vector2.ZERO
 
 	move_and_slide()
@@ -1052,6 +1100,9 @@ func _steering_identity() -> int:
 
 
 func _update_target_perception_clock(delta: float) -> void:
+	if _smoke_blocks_target():
+		_lose_target_in_smoke()
+		return
 	if not uses_visual_perception:
 		_update_direct_target_awareness()
 		return
@@ -1063,6 +1114,9 @@ func _update_target_perception_clock(delta: float) -> void:
 
 
 func _update_direct_target_awareness() -> void:
+	if _smoke_blocks_target():
+		_lose_target_in_smoke()
+		return
 	## Ordinary Employees do not have visual discovery constraints.  While their
 	## room simulation is active, the valid Player target is an authoritative
 	## gameplay fact: cache its current ground position and room for the normal
@@ -1113,6 +1167,9 @@ func _update_direct_target_awareness() -> void:
 
 
 func _update_visual_target_perception() -> void:
+	if _smoke_blocks_target():
+		_lose_target_in_smoke()
+		return
 	# Keep this guard even for direct/internal callers (debug fixtures and older
 	# integrations may invoke the named method explicitly). Ordinary Employees
 	# must never fall through to the FOV/LOS ray implementation.
@@ -1174,6 +1231,7 @@ func _update_visual_target_perception() -> void:
 
 func _has_target_line_of_sight(candidate_position: Vector2) -> bool:
 	var world := _get_world()
+	if world!=null and world.has_method("is_smoke_sight_blocked") and world.is_smoke_sight_blocked(global_position,candidate_position):return false
 	# The project-wide fallback is the authoritative wall/door bit (bit value 4).
 	# Never include Player, Enemy, Furniture or the actor-only air-wall bits in a
 	# perception ray; the world adapter may provide its dynamic wall/door mask.
@@ -1659,7 +1717,7 @@ func _minimum_player_center_distance() -> float:
 
 func _update_attack_player(delta: float) -> void:
 	attack_movement_intent = false
-	if ranged_attack_windup_pending and not _is_otxo_mode():
+	if ranged_attack_windup_pending:
 		_update_ranged_attack_windup(delta)
 		return
 	# A hostile Enemy may only consume the last position published by the
@@ -1863,10 +1921,14 @@ func _update_attack_player(delta: float) -> void:
 		and pickup_pause_left <= 0.0
 		and distance <= _weapon_max_range()
 	):
-		if not _is_otxo_mode() and _weapon_requires_ranged_windup():
+		if _weapon_requires_ranged_windup():
 			if not ranged_attack_session_active:
-				_begin_ranged_attack_windup()
-				return
+				if DREAM_GUN_ATLAS.is_automatic_weapon(held_weapon_id) and ranged_attack_magazine_primed:
+					ranged_attack_session_active=true
+					ranged_attack_session_weapon_id=held_weapon_id
+				else:
+					_begin_ranged_attack_windup()
+					return
 			# Automatic firearms stay in the same attack session after the
 			# first windup; their ordinary cooldown governs each next shot.
 			_fire_held_weapon()
@@ -1885,6 +1947,10 @@ func _weapon_requires_ranged_windup() -> bool:
 
 
 func _begin_ranged_attack_windup() -> void:
+	if _smoke_blocks_target():
+		_lose_target_in_smoke()
+		return
+	if burning_panic:return
 	if (
 		dead
 		or ranged_attack_windup_pending
@@ -1894,11 +1960,12 @@ func _begin_ranged_attack_windup() -> void:
 		return
 	ranged_attack_windup_pending = true
 	ranged_attack_session_active = true
+	ranged_attack_session_weapon_id=held_weapon_id
 	var default_windup: float = 0.25 if held_weapon_id == "assault_rifle" else (0.35 if held_weapon_id == "shotgun" else 0.20)
-	ranged_attack_windup_left = clampf(_cfg("employee_ranged_attack_windup", default_windup), 0.0, 5.0)
+	ranged_attack_windup_left = .5 if _is_otxo_mode() else clampf(_cfg("employee_ranged_attack_windup", default_windup), 0.0, 5.0)
 	ranged_attack_target_snapshot = _get_known_target_position()
 	velocity = Vector2.ZERO
-	_show_ranged_charge_visual()
+	if not _is_otxo_mode(): _show_ranged_charge_visual()
 
 
 func _update_ranged_attack_windup(delta: float) -> void:
@@ -1919,14 +1986,16 @@ func _update_ranged_attack_windup(delta: float) -> void:
 	if global_position.distance_to(target_position) > _weapon_max_range():
 		_cancel_ranged_attack_windup()
 		return
-	ranged_attack_target_snapshot = target_position
+	if ranged_attack_windup_left>.12: ranged_attack_target_snapshot = target_position
 	ranged_attack_windup_left = maxf(ranged_attack_windup_left - delta, 0.0)
 	if ranged_attack_windup_left > 0.0:
 		return
 	ranged_attack_windup_pending = false
-	ranged_attack_target_snapshot = Vector2.ZERO
 	_hide_ranged_charge_visual()
+	ranged_attack_fire_locked=true
 	_fire_held_weapon()
+	ranged_attack_fire_locked=false
+	ranged_attack_target_snapshot=Vector2.ZERO
 	if not DREAM_GUN_ATLAS.is_automatic_weapon(ranged_attack_session_weapon_id):
 		ranged_attack_session_active = false
 		ranged_attack_session_weapon_id = ""
@@ -1939,6 +2008,13 @@ func _cancel_ranged_attack_windup() -> void:
 	ranged_attack_session_active = false
 	ranged_attack_session_weapon_id = ""
 	_hide_ranged_charge_visual()
+
+func get_ranged_telegraph_state() -> Dictionary:
+	if _smoke_blocks_target():return {}
+	if dead or state!=State.ATTACK_PLAYER or not can_see_target or reload_left>0.0 or pickup_pause_left>0.0 or not _weapon_requires_ranged_windup(): return {}
+	if ranged_attack_windup_pending:
+		return {"target":ranged_attack_target_snapshot,"progress":clampf(1.0-ranged_attack_windup_left/.5,0,1)}
+	return {}
 
 
 func _ensure_ranged_charge_visual() -> void:
@@ -2037,6 +2113,12 @@ func _start_unarmed_counterattack() -> void:
 
 
 func _update_unarmed_counterattack(delta: float) -> void:
+	if _smoke_blocks_target():
+		_lose_target_in_smoke()
+		return
+	if burning_panic:
+		unarmed_attack_active=false
+		return
 	if not unarmed_attack_active:
 		return
 	if (
@@ -2592,6 +2674,9 @@ func _collect_weapon(
 	pickup: WorldWeaponPickup,
 	allow_arbitration: bool = true
 ) -> void:
+	if burning_panic:
+		_release_weapon_reservation()
+		return
 	# In the live world, an Enemy only submits a soft request here.  The World
 	# commits one winner after the Player interaction pass; this keeps explicit
 	# Player E ownership independent of SceneTree callback order.  Off-screen
@@ -2658,6 +2743,8 @@ func equip_weapon(
 	weapon_id: String,
 	skin_index: int = -1
 ) -> void:
+	if burning_panic:return
+	ranged_attack_magazine_primed=false
 	_cancel_ranged_attack_windup()
 	weapon_id = DREAM_GUN_ATLAS.sanitize_weapon_id(weapon_id)
 	if weapon_id.is_empty():
@@ -2834,6 +2921,10 @@ func _play_enemy_gunshot() -> void:
 
 
 func _fire_held_weapon() -> void:
+	if _smoke_blocks_target():
+		_lose_target_in_smoke()
+		return
+	if burning_panic:return
 	# A successful or defensive fire path always owns the end of the visual
 	# windup.  The pending flag is cleared by the caller before this function so
 	# one cooldown can produce at most one shot.
@@ -2847,12 +2938,16 @@ func _fire_held_weapon() -> void:
 	):
 		return
 
+	# Consuming the last round starts reload and clears the windup state. Keep
+	# this shot's committed target before that lifecycle change.
+	var committed_aim_target: Vector2=ranged_attack_target_snapshot if ranged_attack_fire_locked else _get_known_target_position()
+	# Snapshot before the last round starts reload and clears magazine priming.
+	var announce_attack:=not DREAM_GUN_ATLAS.is_automatic_weapon(held_weapon_id) or not ranged_attack_magazine_primed
 	if not _consume_ammo_for_attack():
 		return
 
-	var aim_direction := global_position.direction_to(
-		_get_known_target_position()
-	)
+	var aim_origin := get_projectile_origin() if _weapon_requires_ranged_windup() else global_position
+	var aim_direction := aim_origin.direction_to(committed_aim_target)
 
 	var direction := (
 		aim_direction
@@ -2876,6 +2971,11 @@ func _fire_held_weapon() -> void:
 			_set_weapon_attack_cooldown(float(parameters.interval))
 			for shot_direction in FIREARM_RULES.directions(direction, int(parameters.pellets), float(parameters.spread_degrees), random):
 				_spawn_bullet(shot_direction, float(parameters.damage), float(parameters.range), float(parameters.speed), weapon_kind)
+			ranged_attack_shot_serial+=1
+			if DREAM_GUN_ATLAS.is_automatic_weapon(held_weapon_id):
+				ranged_attack_magazine_primed=current_ammo>0 and reload_left<=0.0
+				if not ranged_attack_magazine_primed: ranged_attack_session_active=false
+			if _is_otxo_mode() and announce_attack: SFX.play_event(&"enemy_fire_cue")
 			_play_enemy_gunshot()
 		"lucille":
 			_set_weapon_attack_cooldown(_cfg(
@@ -2988,6 +3088,8 @@ func _start_reload() -> void:
 		or reload_left > 0.0
 	):
 		return
+	ranged_attack_magazine_primed=false
+	_cancel_ranged_attack_windup()
 
 	reload_left = maxf(
 		_cfg(
@@ -3121,6 +3223,8 @@ func _fire_books(direction: Vector2) -> void:
 
 
 func _fire_melee_swing(direction: Vector2, weapon_id: String) -> void:
+	if _smoke_blocks_target():return
+	if burning_panic:return
 	if not can_see_target or not _has_known_target():
 		return
 	var range_property: StringName = &"lucille_attack_range"
@@ -3328,7 +3432,8 @@ func _update_weapon_aim() -> void:
 		# employee must not visually/implicitly acquire the Player through walls.
 		direction = global_position.direction_to(gunshot_threat_position)
 	elif hostile and _has_known_target():
-		direction = global_position.direction_to(_get_known_target_position())
+		var aim_locked: bool=ranged_attack_windup_pending and ranged_attack_windup_left<=.12
+		direction = global_position.direction_to(ranged_attack_target_snapshot if aim_locked else _get_known_target_position())
 	elif velocity.length_squared() > 0.001:
 		direction = velocity.normalized()
 	elif character_visual.scale.x < 0.0:
@@ -3435,6 +3540,7 @@ func _is_player_awareness_source(source: StringName) -> bool:
 
 
 func _remember_player_damage_awareness() -> void:
+	if _smoke_blocks_target():return
 	if not is_instance_valid(target):
 		return
 	# Damage is an event-time awareness source.  This is deliberately the only
@@ -3445,6 +3551,16 @@ func _remember_player_damage_awareness() -> void:
 	if world != null and world.has_method("get_current_room_id"):
 		room_id = int(world.call("get_current_room_id"))
 	_remember_target_position(position, room_id)
+
+func _smoke_blocks_target() -> bool:
+	if not is_instance_valid(target):return false
+	var owner_world:=_get_world()
+	return owner_world!=null and owner_world.has_method("is_smoke_sight_blocked") and owner_world.is_smoke_sight_blocked(global_position,target.global_position)
+
+func _lose_target_in_smoke() -> void:
+	can_see_target=false
+	unarmed_attack_active=false
+	_cancel_ranged_attack_windup()
 
 
 func _is_enemy_projectile_source(source: StringName) -> bool:
@@ -3587,6 +3703,14 @@ func take_damage(
 	# Emit one accepted formal gun hit before the lethal early
 	# return, so nonlethal and lethal hits share the same presentation event.
 	var sample_gun_hit: bool=world!=null and world.has_method("uses_pixel_combat_vfx") and bool(world.uses_pixel_combat_vfx()) and _is_gun_damage_source(damage_source)
+	var crescent_hit := actual > 0.0 and world != null and world.has_method("spawn_melee_hit_feedback") and (
+		damage_source in [&"lucille", &"books"]
+		or (damage_source == &"player_punch" and world.has_method("is_resolving_phase_dash_hit") and bool(world.is_resolving_phase_dash_hit()))
+	)
+	# One accepted hit, including lethal attacks, before the death early return.
+	# Capsule dedup, damage, blood and existing hit-stop ownership are untouched.
+	if crescent_hit:
+		world.spawn_melee_hit_feedback(self, direction)
 	if sample_gun_hit and (current_health<=0.0 or Time.get_ticks_msec()-last_hit_feedback_msec>=int(float(_cfg("projectile_impact_feedback_min_interval",.04))*1000)):
 		last_hit_feedback_msec=Time.get_ticks_msec()
 		world.spawn_combat_feedback(global_position,direction,current_health<=0.0,true,self)
@@ -3716,11 +3840,12 @@ func take_damage(
 	):
 		last_hit_feedback_msec = now_msec
 
-		world.spawn_combat_feedback(
-			global_position,
-			direction,
-			false
-		)
+		if not crescent_hit:
+			world.spawn_combat_feedback(
+				global_position,
+				direction,
+				false
+			)
 
 		if world.has_method("request_combat_impact"):
 			world.request_combat_impact(hit_force, direction, damage_source)
@@ -4233,6 +4358,13 @@ func force_pit_death(pit_position: Vector2 = Vector2.INF) -> void:
 	_die()
 
 
+func defeat_by_parry(hit_origin: Vector2) -> void:
+	if dead: return
+	take_damage(maxf(current_health,1.0),hit_origin,1.0,&"player_projectile_parry")
+	if not dead:
+		current_health=0.0
+		_die()
+
 func _die() -> void:
 	if dead:
 		return
@@ -4389,14 +4521,28 @@ func _update_death_motion(delta: float) -> void:
 			_corpse_motion_query.shape=footprint
 			_corpse_motion_query.collision_mask=4|8
 		var sweep := _corpse_motion_query
-		sweep.transform = Transform2D(0.0,global_position)
+		var footprint_transform := Transform2D(0.0,global_position)
+		if death_landed and is_instance_valid(corpse_contact) and is_instance_valid(corpse_contact.contact_shape):
+			corpse_contact.sync_pose()
+			sweep.shape = corpse_contact.contact_shape.shape
+			footprint_transform = corpse_contact.global_transform
+		sweep.transform = footprint_transform
 		sweep.motion = next_position-global_position
 		sweep.collision_mask = 4 | 8 # Walls, door leaves and furniture; never player.
+		# A freshly enlarged/rotated corpse may already touch a wall. Cast-motion
+		# ignores initial overlaps: stop inward motion, but allow escape outward.
+		var motion := sweep.motion
+		sweep.motion = Vector2.ZERO
+		var initial_contact: Dictionary = get_world_2d().direct_space_state.get_rest_info(sweep) if death_landed else {}
+		sweep.motion = motion
 		var travel := get_world_2d().direct_space_state.cast_motion(sweep)
+		var initial_normal: Vector2 = initial_contact.get("normal",Vector2.ZERO)
+		if initial_normal.length_squared()>.001 and motion.dot(initial_normal)<-.001:
+			travel = PackedFloat32Array([0.0,0.0])
 		if travel[0] < 1.0:
 			next_position = global_position+sweep.motion*travel[0]
 			# Resolve the contact normal at the unsafe end of the real sweep.
-			sweep.transform=Transform2D(0.0,global_position+sweep.motion*travel[1])
+			sweep.transform=Transform2D(footprint_transform.x,footprint_transform.y,footprint_transform.origin+sweep.motion*travel[1])
 			sweep.motion=Vector2.ZERO
 			var contact := get_world_2d().direct_space_state.get_rest_info(sweep)
 			var normal: Vector2=contact.get("normal",Vector2.ZERO)
@@ -4405,7 +4551,7 @@ func _update_death_motion(delta: float) -> void:
 				death_ground_velocity=(death_ground_velocity-normal*normal_speed)*float(_cfg(&"corpse_wall_slide_retention",0.65))-normal*normal_speed*float(_cfg(&"corpse_wall_restitution",0.18))
 			else: death_ground_velocity=Vector2.ZERO
 		var floor_world := _get_world()
-		if floor_world != null and floor_world.has_method("_is_blood_ground_allowed") and not floor_world.call("_is_blood_ground_allowed",next_position):
+		if floor_world != null and floor_world.has_method("_is_blood_ground_allowed") and not floor_world.call("_is_blood_ground_allowed",next_position) and not floor_world.can_fall_through_exterior(global_position,next_position):
 			next_position = global_position
 			death_ground_velocity = Vector2.ZERO
 		global_position = next_position

@@ -233,6 +233,9 @@ func _stop_fade_physics() -> void:
 
 
 func _constrain_to_room_bounds() -> void:
+	var world: Node = _bleed_world.get_ref() if _bleed_world != null else null
+	if is_instance_valid(world) and world.has_method("can_fall_through_exterior"):
+		return # Formal 3D wall collisions, not a birth-room rectangle, own motion.
 	if room_bounds.size.x <= 0.0 or room_bounds.size.y <= 0.0:
 		return
 	var clamped := Vector2(

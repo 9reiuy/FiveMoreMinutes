@@ -1,6 +1,6 @@
 [gd_resource type="Theme" format=3 uid="uid://cma8i20toy0p2"]
 
-[ext_resource type="FontFile" path="res://assets/fonts/boutique_bitmap/BoutiqueBitmap9x9_Bold_1.9.ttf" id="1_font"]
+[ext_resource type="FontFile" uid="uid://bqbtdnqjcxyre" path="res://assets/fonts/boutique_bitmap/BoutiqueBitmap9x9_Bold_1.9.ttf" id="1_font"]
 [ext_resource type="Texture2D" uid="uid://bnf4a0raxkqen" path="res://art/icon/space-worm-theme/general/Blue.png" id="2_button"]
 [ext_resource type="Texture2D" uid="uid://ba7mvawrmi0qt" path="res://art/icon/space-worm-theme/button/Blue_Hover.png" id="3_button_hover"]
 [ext_resource type="Texture2D" uid="uid://dvx3hvav2n7b7" path="res://art/icon/space-worm-theme/panel/Panel.png" id="4_panel"]

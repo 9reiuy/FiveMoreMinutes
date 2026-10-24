@@ -1,4 +1,4 @@
-extends Control
+﻿extends Control
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 
@@ -35,10 +35,12 @@ var has_save := false
 var overlay_mode := ""
 var progression_state: Dictionary = {}
 
-# 主菜单选项使用 Home Screen 美术指定的蓝色：默认 #264586，悬停 #396FE2。
-const MENU_ENTRY_COLOR := Color("264586")
+# NieR list: unselected #396FE2；选中实心填充反色字（背景 knock-out）。
+const MENU_ENTRY_COLOR := Color("396fe2")
 const MENU_ENTRY_HOVER_COLOR := Color("396fe2")
-const MENU_ENTRY_DISABLED_COLOR := MENU_ENTRY_COLOR
+const MENU_ENTRY_DISABLED_COLOR := Color("264586")
+const MENU_SELECTED_TEXT_COLOR := Color("f2efe6")  # cream on accent fill (readable knock-out)
+const PAGE_TWEEN_SECONDS := 0.20
 
 # Four Home Screen textures share one 1260x710 source canvas.  The center is
 # derived from the mask's actual non-transparent bounds (x625..672/y207..226).
@@ -60,6 +62,7 @@ var eye_origin_position := Vector2.ZERO
 var eye_material: ShaderMaterial
 var last_mouse_position := Vector2.ZERO
 var eye_mouse_idle_seconds := 0.0
+var _page_tween: Tween
 
 
 func _ready() -> void:
@@ -70,15 +73,17 @@ func _ready() -> void:
 	for overlay_button in [primary_button, back_button]:
 		_style_button(overlay_button)
 	continue_button.disabled = not has_save
+	_configure_nier_option_group(menu_option_group, MENU_SELECTED_TEXT_COLOR)
+	_configure_nier_option_group(overlay_option_group, Color("f2efe6"))
 	menu_option_group.register_options([continue_button, start_button, settings_button, quit_button])
 	overlay_option_group.register_options([primary_button, back_button])
 	continue_button.gui_input.connect(_on_continue_gui_input)
-	continue_button.pressed.connect(_on_continue)
-	start_button.pressed.connect(_on_start)
-	settings_button.pressed.connect(_show_settings)
-	quit_button.pressed.connect(_show_confirmation.bind("quit"))
-	primary_button.pressed.connect(_on_primary)
-	back_button.pressed.connect(_return_to_menu)
+	continue_button.pressed.connect(_on_continue_pressed)
+	start_button.pressed.connect(_on_start_pressed)
+	settings_button.pressed.connect(_on_settings_pressed)
+	quit_button.pressed.connect(_on_quit_pressed)
+	primary_button.pressed.connect(_on_primary_pressed)
+	back_button.pressed.connect(_on_back_pressed)
 	global_upgrade_panel.progression_changed.connect(_on_global_progress_changed)
 	global_upgrade_panel.configure(progression_state)
 	# 底栏拆为两个独立点击区：版本号（Hover 变亮 + 点击开全屏公告）
@@ -167,6 +172,7 @@ func _style_menu_entry(button: Button) -> void:
 	# 纯文字选项：无按钮底框，悬停只改变文字颜色；Triangle 由独立层绘制。
 	button.focus_mode = Control.FOCUS_NONE
 	button.flat = true
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.add_theme_font_size_override("font_size", 17)
 	button.add_theme_color_override("font_color", MENU_ENTRY_COLOR)
@@ -184,6 +190,7 @@ func _style_button(button: Button) -> void:
 	# 暗化背景上居中显示，无底框，悬停仅变亮。
 	button.focus_mode = Control.FOCUS_NONE
 	button.flat = true
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.add_theme_font_size_override("font_size", 17)
 	button.add_theme_color_override("font_color", MENU_ENTRY_HOVER_COLOR)
@@ -204,6 +211,32 @@ func _on_continue_gui_input(event: InputEvent) -> void:
 	if continue_button.disabled and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		SFX.play_event(&"forbidden")
 		continue_button.accept_event()
+
+
+
+func _await_menu_spring() -> void:
+	# PixelOptionGroup already started spring on the same pressed signal.
+	await menu_option_group.wait_confirm_spring()
+
+
+func _on_continue_pressed() -> void:
+	await _await_menu_spring()
+	_on_continue()
+
+
+func _on_start_pressed() -> void:
+	await _await_menu_spring()
+	_on_start()
+
+
+func _on_settings_pressed() -> void:
+	await _await_menu_spring()
+	_show_settings()
+
+
+func _on_quit_pressed() -> void:
+	await _await_menu_spring()
+	_show_confirmation("quit")
 
 
 func _on_continue() -> void:
@@ -247,15 +280,14 @@ func _show_settings() -> void:
 		return
 	_play_confirm()
 	overlay_mode = "settings"
-	overlay_title.text = "设置 // SETTINGS"
+	overlay_title.text = "设置"
 	overlay_message.visible = false
 	primary_button.visible = false
 	settings_panel.visible = true
 	global_upgrade_panel.visible = false
 	back_button.text = "返回"
-	menu_content.visible = false
 	menu_option_group.clear_highlight()
-	overlay.visible = true
+	_tween_to_overlay()
 
 
 func _show_confirmation(mode: String) -> void:
@@ -274,9 +306,23 @@ func _show_confirmation(mode: String) -> void:
 		overlay_message.text = "确定要退出游戏吗？"
 		primary_button.text = "退出"
 	back_button.text = "返回"
-	menu_content.visible = false
 	menu_option_group.clear_highlight()
-	overlay.visible = true
+	_tween_to_overlay()
+
+
+
+func _await_overlay_spring() -> void:
+	await overlay_option_group.wait_confirm_spring()
+
+
+func _on_primary_pressed() -> void:
+	await _await_overlay_spring()
+	_on_primary()
+
+
+func _on_back_pressed() -> void:
+	await _await_overlay_spring()
+	_return_to_menu()
 
 
 func _on_primary() -> void:
@@ -292,14 +338,13 @@ func _on_primary() -> void:
 func _return_to_menu() -> void:
 	_play_confirm()
 	overlay_option_group.clear_highlight()
-	overlay.visible = false
-	menu_content.visible = true
 	overlay_mode = ""
 	settings_panel.visible = false
 	global_upgrade_panel.visible = false
 	overlay_message.visible = true
 	primary_button.disabled = false
 	back_button.disabled = false
+	_tween_to_menu()
 
 
 func consume_escape() -> bool:
@@ -308,6 +353,94 @@ func consume_escape() -> bool:
 	else:
 		_show_settings()
 	return true
+
+
+func _configure_nier_option_group(group: PixelOptionGroup, selected_text: Color) -> void:
+	group.solid_fill = true
+	group.show_selection_frame = false
+	group.enable_hover_scale = false
+	group.selected_text_color = selected_text
+	group.unselected_text_color = MENU_ENTRY_COLOR
+	group.option_frame_spring_duration = 0.12
+	group.option_frame_spring_start_scale = 0.20
+	group.option_frame_spring_overshoot = 1.20
+	group.option_text_spring_start_scale = 0.82
+	group.option_text_spring_overshoot = 1.12
+
+
+func _kill_page_tween() -> void:
+	if _page_tween != null and _page_tween.is_valid():
+		_page_tween.kill()
+	_page_tween = null
+
+
+func _tween_to_overlay() -> void:
+	_kill_page_tween()
+	menu_content.visible = true
+	overlay.visible = true
+	menu_content.modulate.a = 1.0
+	overlay.modulate.a = 0.0
+	_page_tween = create_tween()
+	_page_tween.set_parallel(true)
+	_page_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_page_tween.tween_property(menu_content, "modulate:a", 0.0, PAGE_TWEEN_SECONDS)
+	_page_tween.tween_property(overlay, "modulate:a", 1.0, PAGE_TWEEN_SECONDS)
+	_page_tween.chain().tween_callback(func() -> void:
+		menu_content.visible = false
+		menu_content.modulate.a = 1.0
+	)
+
+
+func _tween_to_menu() -> void:
+	_kill_page_tween()
+	menu_content.visible = true
+	overlay.visible = true
+	menu_content.modulate.a = 0.0
+	overlay.modulate.a = 1.0
+	_page_tween = create_tween()
+	_page_tween.set_parallel(true)
+	_page_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_page_tween.tween_property(overlay, "modulate:a", 0.0, PAGE_TWEEN_SECONDS)
+	_page_tween.tween_property(menu_content, "modulate:a", 1.0, PAGE_TWEEN_SECONDS)
+	_page_tween.chain().tween_callback(func() -> void:
+		overlay.visible = false
+		overlay.modulate.a = 1.0
+		# Back to list: restore selection WITH spring (hover-style).
+		var opts := menu_option_group.get_selectable_options()
+		if not opts.is_empty():
+			menu_option_group.activate_option(opts[0], false)
+	)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible or not is_visible_in_tree():
+		return
+	if is_instance_valid(announcement_window) and announcement_window.visible:
+		return
+	if overlay.visible and overlay_mode == "settings" and settings_panel is UnifiedSettingsPanel:
+		var settings := settings_panel as UnifiedSettingsPanel
+		if event.is_action_pressed("ui_down") or event.is_action_pressed("move_down"):
+			settings.activate_row_delta(1)
+			get_viewport().set_input_as_handled()
+			return
+		if event.is_action_pressed("ui_up") or event.is_action_pressed("move_up"):
+			settings.activate_row_delta(-1)
+			get_viewport().set_input_as_handled()
+			return
+		if event.is_action_pressed("ui_accept") or event.is_action_pressed("confirm"):
+			if settings.trigger_active_row() or overlay_option_group.trigger_active():
+				get_viewport().set_input_as_handled()
+			return
+	var group: PixelOptionGroup = overlay_option_group if overlay.visible else menu_option_group
+	if event.is_action_pressed("ui_down") or event.is_action_pressed("move_down"):
+		group.activate_delta(1)
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("ui_up") or event.is_action_pressed("move_up"):
+		group.activate_delta(-1)
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("ui_accept") or event.is_action_pressed("confirm"):
+		if group.trigger_active():
+			get_viewport().set_input_as_handled()
 
 
 func _setup_footer_label(label: Label, text: String, on_click: Callable) -> void:
@@ -341,7 +474,7 @@ func _layout_footer() -> void:
 func _on_footer_label_hover(label: Label, hovered: bool) -> void:
 	label.add_theme_color_override("font_color", MENU_ENTRY_HOVER_COLOR if hovered else MENU_ENTRY_COLOR)
 	if hovered:
-		SFX.play_event(&"ui_hover")
+		SFX.play_event(&"watch_tick")
 
 
 func _on_footer_label_input(event: InputEvent, label: Label, on_click: Callable) -> void:

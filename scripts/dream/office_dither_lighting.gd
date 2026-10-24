@@ -126,15 +126,21 @@ func _enable_outline_cutout(mesh: MeshInstance3D) -> void:
 ## A mesh counts as furniture when one of its ancestors carries the marker set by
 ## office_low_pixel_art.make_visual(), or owns a damageable_props source actor.
 func _is_furniture_occluder(mesh: Node) -> bool:
+	if mesh.has_meta(&"_dither_is_furn"):
+		return bool(mesh.get_meta(&"_dither_is_furn"))
+	var result := false
 	var cursor: Node = mesh
 	while cursor != null:
 		if cursor.has_meta(&"occlusion_cutout_occluder"):
-			return bool(cursor.get_meta(&"occlusion_cutout_occluder"))
+			result = bool(cursor.get_meta(&"occlusion_cutout_occluder"))
+			break
 		var source: Variant = cursor.get("source_actor")
 		if source is Node2D:
-			return (source as Node2D).is_in_group(&"damageable_props")
+			result = (source as Node2D).is_in_group(&"damageable_props")
+			break
 		cursor = cursor.get_parent()
-	return false
+	mesh.set_meta(&"_dither_is_furn", result)
+	return result
 
 
 func _material(source: Material) -> Material:
@@ -148,7 +154,7 @@ func _material(source: Material) -> Material:
 		return source
 	var filename: String = res_path.get_file()
 	# Actor/blood/glass/emission/outline shaders are deliberately outside scope.
-	if not (filename in ["office_pixel_surface.gdshader", "office_low_pixel.gdshader", "office_low_pixel_refined.gdshader", "office_detail_atlas.gdshader"] or filename.begins_with("interiors_a_floor_") or filename in ["interiors_a_wall_pixel_light.gdshader", "interiors_a_wall_vertical_fade.gdshader", "interiors_a_door_pixel_light.gdshader"]):
+	if not (filename in ["office_pixel_surface.gdshader", "office_low_pixel.gdshader", "office_low_pixel_refined.gdshader", "office_detail_atlas.gdshader", "office_floor_opaque.gdshader", "office_floor_swatch_opaque.gdshader"] or filename.begins_with("interiors_a_floor_") or filename in ["interiors_a_wall_pixel_light.gdshader", "interiors_a_wall_vertical_fade.gdshader", "interiors_a_door_pixel_light.gdshader"]):
 		return source
 	if not materials.has(source):
 		var copy: ShaderMaterial = source.duplicate()

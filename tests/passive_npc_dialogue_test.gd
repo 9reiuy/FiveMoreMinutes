@@ -20,8 +20,8 @@ func run() -> void:
 	for i in 6: await process_frame
 	check(room.interaction_resolver.current_target==room.waitress_npc,"Existing proximity resolver reaches NPC")
 	check(not room.dialogue_controller.is_active(),"Passive NPC never automatically starts dialogue on proximity")
-	check(room.npc_hint_bubble.visible and not room.interaction_prompt.visible,"Proximity uses dialogue bubble, not interaction tooltip")
-	check(room.npc_hint_bubble.dialogue_label.text=="..." and not room.npc_hint_bubble.progress_bar_container.visible,"Same bubble renders ellipsis without a countdown")
+	check(room.npc_hint_bubble.visible and room.interaction_prompt.visible and room.interaction_prompt.text=="交流","Proximity displays emotion and talk prompt")
+	check(room.npc_hint_bubble.emotion==&"nervous" and room.npc_hint_bubble.get_node_or_null("ProgressBarContainer")==null,"Independent emotion hint has no dialogue countdown")
 	await press("pickup_weapon"); await create_timer(.2).timeout
 	var controller=room.dialogue_controller
 	var bubble=room.dialogue_bubble

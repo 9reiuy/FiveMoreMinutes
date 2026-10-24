@@ -47,15 +47,11 @@ float cutout_factor(vec2 screen_uv, vec4 slot) {
 		return 1.0;
 	}
 	float norm_d = distance_px / slot.z;
-	// Core region: completely open cutout so the character is fully visible
 	if (norm_d < 0.22) {
 		return 0.0;
 	}
-	// Radial gradient density from core (1.0) to perimeter (0.0)
 	float t = (norm_d - 0.22) / 0.78;
 	float density = 1.0 - (t * t * (3.0 - 2.0 * t));
-
-	// 45-degree rotated halftone grid anchored to cutout center
 	float dot_spacing = clamp(slot.z * 0.12, 5.0, 8.0);
 	vec2 rot_px = vec2(
 		delta_px.x * 0.7071068 - delta_px.y * 0.7071068,
@@ -63,7 +59,6 @@ float cutout_factor(vec2 screen_uv, vec4 slot) {
 	);
 	vec2 cell = fract(rot_px / dot_spacing) - vec2(0.5);
 	float dist_in_cell = length(cell) * dot_spacing;
-
 	float max_hole_r = dot_spacing * 0.75;
 	float hole_r = max_hole_r * density;
 	float hole_factor = 1.0;

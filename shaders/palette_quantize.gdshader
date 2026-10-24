@@ -50,6 +50,16 @@ const float CHARGE_MARKER_EPSILON = 0.005;
 const vec3 PICKUP_SHINE_SEMANTIC_MARKER = vec3(1.0, 0.0, 1.0);
 const vec3 PICKUP_SHINE_OUTPUT_COLOR = vec3(1.0, 1.0, 1.0); // #FFFFFF
 const float PICKUP_SHINE_MARKER_EPSILON = 0.005;
+// Muzzle smoke cooling ramp. Five reserved markers live in the blue channel of an
+// otherwise pure red, so they never collide with the charge marker (blue 0.0) and
+// stay distinguishable from each other. Outputs are deliberately muted embers so
+// the flash reads as warm light inside a cold palette instead of pasted-on neon.
+const float MUZZLE_MARKER_STEP = 0.02;
+const vec3 MUZZLE_OUTPUT_1 = vec3(0.7607843, 0.4431373, 0.1960784); // #C27132
+const vec3 MUZZLE_OUTPUT_2 = vec3(0.9372549, 0.8039216, 0.2980392); // #EFCD4C
+const vec3 MUZZLE_OUTPUT_3 = vec3(0.4313725, 0.2235294, 0.5450980); // #6E398B
+const vec3 MUZZLE_OUTPUT_4 = vec3(0.2392157, 0.2039216, 0.2705882); // #3D3445
+const vec3 MUZZLE_OUTPUT_5 = vec3(0.2392157, 0.2039216, 0.2705882); // #3D3445
 
 float palette_distance_squared(vec3 source, vec3 candidate) {
 	vec3 delta = source - candidate;
@@ -99,6 +109,38 @@ bool is_pickup_shine_semantic_marker(vec3 source) {
 	return distance(source, PICKUP_SHINE_SEMANTIC_MARKER) <= PICKUP_SHINE_MARKER_EPSILON;
 }
 
+// Returns 1..5 for a muzzle marker, 0 for "not a muzzle marker".
+int muzzle_marker_index(vec3 source) {
+	if (source.r < 0.995 || source.g > 0.005) {
+		return 0;
+	}
+	float level = source.b / MUZZLE_MARKER_STEP;
+	int rounded = int(level + 0.5);
+	if (rounded < 1 || rounded > 5) {
+		return 0;
+	}
+	if (abs(level - float(rounded)) > 0.25) {
+		return 0;
+	}
+	return rounded;
+}
+
+vec3 muzzle_output_color(int index) {
+	if (index <= 1) {
+		return MUZZLE_OUTPUT_1;
+	}
+	if (index == 2) {
+		return MUZZLE_OUTPUT_2;
+	}
+	if (index == 3) {
+		return MUZZLE_OUTPUT_3;
+	}
+	if (index == 4) {
+		return MUZZLE_OUTPUT_4;
+	}
+	return MUZZLE_OUTPUT_5;
+}
+
 void fragment() {
 	vec4 source = texture(screen_texture, SCREEN_UV);
 	vec3 output_color;
@@ -106,6 +148,16 @@ void fragment() {
 	// Blood/Charge outputs are intentionally absent from generic palette.
 	if (distance(source.rgb, vec3(0.0, 1.0, 1.0)) < 0.05) {
 		output_color = PALETTE_00;
+	} else if (source.r>.995 && source.g<.005 && source.b>=.515 && source.b<=.605 && abs((source.b-.52)/.04-round((source.b-.52)/.04))<.15) {
+		// Extinguisher red paint only; labels and hardware remain scene-lit.
+		int phase=int(round((source.b-.52)/.04));
+		output_color=phase==0 ? vec3(.91,.25,.26) : (phase==1 ? vec3(.72,.12,.18) : vec3(.43,.055,.095));
+	} else if (source.r>.995 && source.g<.005 && source.b>=.195 && source.b<=.405 && abs((source.b-.20)/.04-round((source.b-.20)/.04))<.15) {
+		// Reserved fire-only codes: resolve before ANY palette selection.
+		int phase=int(round((source.b-.20)/.04));
+		output_color=phase==0 ? vec3(1.0,.960784,.698039) : (phase==1 ? vec3(1.0,.819608,.317647) : (phase==2 ? vec3(1.0,.517647,.160784) : vec3(.772549,.243137,.152941)));
+		if (phase==4) { output_color=vec3(1.0,.850980,.486275); }
+		if (phase==5) { output_color=vec3(.886275,.384314,.160784); }
 	} else if (is_blood_semantic_marker(source.rgb)) {
 		output_color = BLOOD_OUTPUT_COLOR;
 	} else if (distance(source.rgb, BLOOD_AIRBORNE_MARKER) <= BLOOD_MARKER_EPSILON) {
@@ -114,6 +166,8 @@ void fragment() {
 		output_color = CHARGE_OUTPUT_COLOR;
 	} else if (is_pickup_shine_semantic_marker(source.rgb)) {
 		output_color = PICKUP_SHINE_OUTPUT_COLOR;
+	} else if (muzzle_marker_index(source.rgb) > 0) {
+		output_color = muzzle_output_color(muzzle_marker_index(source.rgb));
 	} else if (palette_enabled) {
 		output_color = nearest_palette_color(source.rgb);
 	} else {

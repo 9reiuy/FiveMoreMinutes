@@ -38,14 +38,19 @@ func update_target() -> Node2D:
 	for group_name in candidate_groups:
 		var members: Array = _group_cache.get(group_name, [])
 		for candidate_variant in members:
-			var candidate := candidate_variant as Node2D
-			if candidate == null or not is_instance_valid(candidate):
+			# Group snapshots can outlive a pickup, even within the same frame.
+			# Validate the raw Variant BEFORE a typed cast can touch a freed object.
+			if not _is_live_candidate(candidate_variant):
 				continue
+			var candidate := candidate_variant as Node2D
 			var candidate_id := candidate.get_instance_id()
 			if _seen_ids.has(candidate_id):
 				continue
 			_seen_ids[candidate_id] = true
 			if not _is_available(candidate):
+				continue
+			# Eligibility callbacks belong to gameplay objects and may delete them.
+			if not _is_live_candidate(candidate) or not is_instance_valid(actor):
 				continue
 			var radius_variant: Variant = candidate.get("interaction_radius")
 			var radius := 34.0 if radius_variant == null else maxf(float(radius_variant), 0.0)
@@ -57,18 +62,41 @@ func update_target() -> Node2D:
 	return current_target
 
 
-func set_target(target: Node2D) -> void:
-	if current_target == target:
+func _is_live_candidate(candidate: Variant) -> bool:
+	return (
+		is_instance_valid(candidate)
+		and candidate is Node2D
+		and not candidate.is_queued_for_deletion()
+		and candidate.is_inside_tree()
+		and candidate.can_process()
+		and not bool(candidate.get_meta(&"exterior_falling",false))
+	)
+
+
+func set_target(target: Variant) -> void:
+	# The provisional nearest can also be freed by a later candidate's callback.
+	var next: Node2D = target as Node2D if _is_live_candidate(target) else null
+	if not is_instance_valid(current_target):
+		current_target = null
+	if current_target == next:
 		return
-	if current_target != null and is_instance_valid(current_target) and current_target.has_method("set_interaction_targeted"):
-		current_target.call("set_interaction_targeted", false)
-	current_target = target
-	if current_target != null and is_instance_valid(current_target) and current_target.has_method("set_interaction_targeted"):
+	var previous: Variant = current_target
+	current_target = null
+	if is_instance_valid(previous) and previous.has_method("set_interaction_targeted"):
+		previous.call("set_interaction_targeted", false)
+	if not _is_live_candidate(next):
+		return
+	current_target = next
+	if current_target.has_method("set_interaction_targeted"):
 		current_target.call("set_interaction_targeted", true)
+	if not _is_live_candidate(current_target):
+		current_target = null
 
 
 func clear_target() -> void:
 	set_target(null)
+	_group_cache.clear()
+	_group_cache_frame = -1
 
 
 func _is_available(candidate: Node2D) -> bool:

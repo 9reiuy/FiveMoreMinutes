@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://ck8x2n7p1q4wr"]
+
+[ext_resource type="Script" path="res://tests/deep_perf_audit.gd" id="1_audit"]
+
+[node name="DeepPerfAudit" type="Node"]
+script = ExtResource("1_audit")

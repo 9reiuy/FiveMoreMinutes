@@ -77,6 +77,24 @@ func _run() -> void:
 	_check(max_angle > deg_to_rad(door.door_open_collision_angle_degrees), "one ordinary push opens the hinged doorway at walking-safe speed")
 	_check(door._collision_body_2d.global_position.distance_to(door.get_leaf_center_2d()) < 0.01, "2D collision mirror follows hinged leaf")
 	_check(door._combat_swing_left[0] <= 0.0, "ordinary push does not turn the leaf into an attack")
+	var closing_actor := Node2D.new()
+	closing_actor.add_to_group(&"dream_player")
+	root.add_child(closing_actor)
+	var closing_center := door.get_leaf_center_2d(0)
+	var closing_radial := closing_center-hinge_2d
+	var closing_omega := door._return_angular_velocity(door.left_leaf.rotation.y,0.0,1.0/60.0)
+	var closing_direction := Vector2(closing_radial.y,-closing_radial.x).normalized()*signf(closing_omega)
+	closing_actor.global_position = closing_center+closing_direction*9.0-CONFIG.player_collision_offset
+	door._passive_drive_left[0]=0.0
+	door._return_hold_left[0]=0.0
+	door.left_leaf.angular_velocity=Vector3.ZERO
+	door._physics_process(1.0/60.0)
+	_check(absf(door.left_leaf.angular_velocity.y)<.001,"Automatic return brakes instead of closing into player")
+	closing_actor.global_position=Vector2(-10000,-10000)
+	door._physics_process(1.0/60.0)
+	_check(door.left_leaf.angular_velocity.y*door.left_leaf.rotation.y<0.0,"Return resumes toward closed after player leaves")
+	_check(door._passive_swing[0] and door._combat_swing_left[0]<=0.0,"Door closer never becomes a combat attack")
+	closing_actor.free()
 	_check(door.apply_door_impact(&"kick", hit, Vector3.FORWARD, 300.0, &"", 0), "kick impact remains accepted")
 	_check(not door._passive_swing[0] and absf(door.left_leaf.angular_velocity.y) > door.door_passive_max_angular_velocity, "kick retains a stronger combat swing")
 	door.shatter()

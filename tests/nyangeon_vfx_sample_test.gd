@@ -25,19 +25,22 @@ func run()->void:
 	var smoke:=SMOKE.new(); fixture.add_child(smoke); smoke.configure(fixture); smoke.set_physics_process(false)
 	smoke.rng.seed=8412
 	smoke.sample(actor); actor.position.x=20; smoke.sample(actor)
-	check(smoke.emitted==1,"Ground travel emits one smoke puff")
-	check(is_equal_approx(smoke.sprites[0].global_position.z,-13.0/32),"Footstep uses the same offset foot contact as the character bridge")
+	# One step fires `cluster` puffs; the invariant is "a step emits, nothing else does".
+	var step_emits:=smoke.cluster
+	check(smoke.emitted==step_emits,"Ground travel emits one smoke step")
+	# Per-puff scatter moves the puff on the floor plane, so this is a bound check:/n/t# the point must sit at the foot contact, not at the actor origin 13px higher.
+	check(absf(smoke.sprites[0].global_position.z+13.0/32)<=0.25,"Footstep uses the same offset foot contact as the character bridge")
 	var point: Vector3=smoke.sprites[0].global_position
 	for i in 10: smoke.sample(actor)
-	check(smoke.emitted==1,"Standing creates no new smoke")
+	check(smoke.emitted==step_emits,"Standing creates no new smoke")
 	actor.position.x+=1; smoke.sample(actor)
 	check(smoke.sprites[0].global_position==point,"A foot puff remains behind instead of following its actor")
 	actor.knockback_height=8; actor.position.x+=20; smoke.sample(actor)
-	check(smoke.emitted==1,"Airborne actor does not leave footsteps")
+	check(smoke.emitted==step_emits,"Airborne actor does not leave footsteps")
 	actor.knockback_height=0; actor.dead=true; actor.position.x+=20; smoke.sample(actor)
-	check(smoke.emitted==1,"Corpse movement does not leave footsteps")
+	check(smoke.emitted==step_emits,"Corpse movement does not leave footsteps")
 	actor.dead=false; actor.position.x+=100; smoke.sample(actor)
-	check(smoke.emitted==1,"Teleport does not emit a trail across the floor")
+	check(smoke.emitted==step_emits,"Teleport does not emit a trail across the floor")
 	for i in 100: smoke.emit_puff(Vector2(i,0),Vector2.LEFT)
 	check(smoke.puffs.size()==SMOKE.LIMIT and smoke.sprites.size()==SMOKE.LIMIT,"Busy scene respects fixed carrier capacity")
 	var sizes: Dictionary={}; var lives: Dictionary={}

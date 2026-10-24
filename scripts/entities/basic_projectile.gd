@@ -1,6 +1,7 @@
 extends Node2D
 
 const CONFIG := preload("res://resources/demo_config.tres")
+const FURNITURE_CATALOG := preload("res://scripts/dream/office_furniture_catalog.gd")
 const PROJECTILE_TRAIL_PATH := NodePath("ProjectileTrail")
 const PROJECTILE_GLOW_SHADER := preload("res://shaders/projectile_visual_glow.gdshader")
 ## Presentation-only multiplier for the compact tracer head. Gameplay
@@ -53,6 +54,8 @@ var penetration_count := 0
 var hit_targets: Dictionary = {}
 var _initial_spawn_verified := false
 var office_ballistics := false
+const MAX_LOW_FURNITURE_PASSES := FURNITURE_CATALOG.MAX_PROJECTILE_FURNITURE_PASSES
+var low_furniture_passes := 0
 const MAX_OFFICE_SEGMENT_HITS := 32
 const HISTORY_WINDOW_SECONDS := 0.06
 const TERMINAL_TRAIL_SECONDS := 0.04
@@ -266,18 +269,44 @@ func _sweep_office_to(end: Vector2, count_range: bool) -> void:
 	# excludes it immediately. No teleport through unseen solid geometry.
 	for attempt in MAX_OFFICE_SEGMENT_HITS:
 		var start := global_position
+		var defense_world := _dream_world()
+		if defense_world!=null and defense_world.has_method("get_combat_defense") and defense_world.get_combat_defense().inspect_segment(self,start,end):
+			_disperse_smoke_segment(start,global_position)
+			return
 		var hit := _cast_movement_segment(start,end)
 		if hit.is_empty():
 			global_position = end
+			_disperse_smoke_segment(start,global_position)
 			if count_range: traveled += start.distance_to(end)
 			return
 		global_position = hit.get("position",end)
+		_disperse_smoke_segment(start,global_position)
 		if count_range: traveled += start.distance_to(global_position)
 		_handle_collision(hit.get("collider") as Node,hit.get("normal",Vector2.ZERO))
 		if consumed: return
 		if global_position.distance_squared_to(end) < 0.000001: return
 	# Fail closed on malformed stacks; never advance past an untested collider.
 	_despawn()
+
+func reflect_from_player(player: Node2D, contact: Vector2) -> void:
+	var original_shooter := _get_live_shooter()
+	var return_direction := -direction
+	if is_instance_valid(original_shooter) and original_shooter is Node2D and not original_shooter.is_queued_for_deletion() and original_shooter.get("dead") != true:
+		return_direction = contact.direction_to(original_shooter.global_position)
+	set_meta(&"reflected_by_parry",true)
+	global_position=contact
+	direction=return_direction.normalized() if return_direction.length_squared()>.001 else -player.last_aim_direction.normalized()
+	velocity=direction*speed
+	rotation=direction.angle()
+	source_faction=&"player"
+	shooter_instance_id=player.get_instance_id()
+	traveled=0.0
+	_initial_spawn_verified=true
+	hit_targets.clear()
+	_trail_history.clear()
+	set_meta(&"near_miss_used",true)
+	_record_trail_position()
+	_request_office_tracer_update()
 
 
 func _ready() -> void:
@@ -322,6 +351,7 @@ func setup(new_direction: Vector2, new_damage: float, new_max_distance: float = 
 	consumed = false
 	traveled = 0.0
 	penetration_count = 0
+	low_furniture_passes = 0
 	hit_targets.clear()
 	_initial_spawn_verified = false
 	_trail_clock = 0.0
@@ -487,10 +517,12 @@ func _physics_process(delta: float) -> void:
 		var hit_position: Vector2 = hit.get("position", movement_end)
 		global_position = hit_position
 		traveled += movement_start.distance_to(hit_position)
+		_disperse_smoke_segment(movement_start,global_position)
 		lifetime -= delta
 		_handle_collision(hit.get("collider") as Node, hit.get("normal", Vector2.ZERO))
 		return
 	global_position = movement_end
+	_disperse_smoke_segment(movement_start,global_position)
 	traveled += step
 	lifetime -= delta
 	if lifetime <= 0.0 or traveled >= max_distance:
@@ -506,6 +538,11 @@ func _dream_world() -> Node:
 		return null
 	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
 	return _cached_dream_world
+
+func _disperse_smoke_segment(from: Vector2,to: Vector2) -> void:
+	var owner_world:=_dream_world()
+	if is_instance_valid(owner_world) and owner_world.has_method("disperse_smoke_segment"):
+		owner_world.disperse_smoke_segment(from,to)
 
 
 func _cast_movement_segment(from_position: Vector2, to_position: Vector2) -> Dictionary:
@@ -532,7 +569,15 @@ func _cast_movement_segment(from_position: Vector2, to_position: Vector2) -> Dic
 		if not _should_ignore_collider(collider):
 			var owner_node := _resolve_damage_owner(collider)
 			if has_meta(&"shot_height_pixels") and owner_node is Node2D and owner_node.is_in_group(&"damageable_props"):
-				var height_hit: Dictionary = preload("res://scripts/dream/office_furniture_catalog.gd").shot_hit(owner_node, from_position, to_position, float(get_meta(&"shot_height_pixels")))
+				var shot_height := float(get_meta(&"shot_height_pixels"))
+				var height_hit: Dictionary
+				if office_ballistics and FURNITURE_CATALOG.allows_projectile_pass_through(owner_node):
+					# Low furniture gets one footprint contact even above its top.
+					# Requery after damage to continue this segment in hit order.
+					if shot_height >= FURNITURE_CATALOG.height_offset(owner_node):
+						height_hit = {"position": hit.position}
+				else:
+					height_hit = FURNITURE_CATALOG.shot_hit(owner_node, from_position, to_position, shot_height)
 				if not height_hit.is_empty():
 					hit["position"] = height_hit.position
 					if furniture_hit.is_empty() or from_position.distance_squared_to(hit.position) < from_position.distance_squared_to(furniture_hit.position):
@@ -619,7 +664,9 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 			_despawn()
 			return
 		var target_id := target.get_instance_id()
-		if not hit_targets.has(target_id):
+		var low_cover_pass := office_ballistics and target is Node2D and FURNITURE_CATALOG.allows_projectile_pass_through(target)
+		var first_contact := not hit_targets.has(target_id)
+		if first_contact:
 			hit_targets[target_id] = true
 			if target.has_method("take_damage"):
 				var force_multiplier := CONFIG.get_furniture_projectile_force_multiplier(source_weapon_id)
@@ -627,7 +674,18 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 					target.take_damage(damage, direction, force_multiplier, global_position)
 				else:
 					target.take_damage(damage, direction, force_multiplier)
-		# A height-filtered hit crossed actual solid furniture, regardless of size.
+		# Both factions may pass ONE low furniture item. The second still takes
+		# ordinary damage, then stops the bullet. Doors/glass and enemy-body
+		# penetration use their own existing policies, not this counter.
+		if low_cover_pass:
+			if not first_contact:
+				return
+			if low_furniture_passes < MAX_LOW_FURNITURE_PASSES:
+				low_furniture_passes += 1
+				return
+			_despawn()
+			return
+		# High furniture keeps its existing true-height blocking contract.
 		if has_meta(&"shot_height_pixels"):
 			_despawn()
 			return
@@ -658,6 +716,20 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 			# Friendly fire使用原始武器伤害，且不会经过Player暴击/伤害倍率。
 			if world != null and world.has_method("resolve_enemy_projectile_hit"):
 				damage_result = world.resolve_enemy_projectile_hit(target, damage, global_position, shooter_instance_id, source_weapon_id)
+		elif bool(get_meta(&"reflected_by_parry",false)):
+			var feedback_snapshot: Dictionary=world._capture_player_hit_feedback(target) if is_instance_valid(world) and world.has_method("_capture_player_hit_feedback") else {}
+			# Execute the actual enemy struck, through its normal death lifecycle.
+			# No arbitrary damage ceiling and no wall/prop collision bypass.
+			if target.has_method("defeat_by_parry"):
+				target.defeat_by_parry(global_position)
+			else:
+				var health: Variant=target.get("current_health")
+				if health==null: health=target.get("hp")
+				if health!=null: target.take_damage(maxf(float(health),1.0),global_position,1.0,&"player_projectile_parry")
+			damage_result={"executed":true}
+			if is_instance_valid(world) and world.has_method("_finish_player_hit_feedback"):
+				world._finish_player_hit_feedback(feedback_snapshot,target if is_instance_valid(target) else null,damage_result)
+			if world!=null: world.SFX.play_bullet_enemy_hit()
 		elif world != null:
 			# 保留武器ID供统一战斗反馈分级（霰弹比普通枪击更重）。
 			damage_result = world.resolve_player_hit(
@@ -671,6 +743,9 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 			# another target.  hit_targets prevents re-damaging this enemy.
 			return
 	elif target.is_in_group(&"dream_player") and source_faction == &"enemy":
+		if target.get("dashing")==true and not bool(get_meta(&"near_miss_used",false)) and world!=null and world.has_method("notify_dodged_projectile"):
+			set_meta(&"near_miss_used",true)
+			world.notify_dodged_projectile()
 		if target.has_method("receive_damage"):
 			target.receive_damage(damage, &"employee_projectile", global_position, direction)
 	# Walls, closed Door blockers, furniture and players remain terminal hits.

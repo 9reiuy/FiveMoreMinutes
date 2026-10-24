@@ -45,7 +45,8 @@ func _ready()->void:
 	layer=1100;process_mode=Node.PROCESS_MODE_ALWAYS
 	_pauses=get_tree().root.get_node("PauseManager")
 	canvas=Control.new();canvas.name="GamePhoneRoot";add_child(canvas)
-	backdrop=ColorRect.new();backdrop.color=Color(.012,.022,.04,.40)
+	# Retain the input shield, without tinting the bedroom or 3D world.
+	backdrop=ColorRect.new();backdrop.color=Color(0,0,0,0)
 	canvas.add_child(backdrop);backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	shell=SHELL.new();canvas.add_child(shell)
 	screen=SCREEN.new();shell.set_screen_content(screen)

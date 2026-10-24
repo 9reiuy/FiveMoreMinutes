@@ -45,6 +45,8 @@ func build(walls: Node3D) -> void:
 	walls.add_child(self)
 	var groups: Dictionary = {}
 	for wall in walls.get_children():
+		if wall.get_node_or_null("ExteriorBreakablePane") != null:
+			continue # Destructible panes keep their individually removable shadow.
 		if wall == self or not wall.has_method("set_wall_shadow_visible"):
 			continue
 		var mesh: MeshInstance3D = wall.get("shadow_mesh")

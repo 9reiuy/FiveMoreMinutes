@@ -29,7 +29,7 @@ func _run() -> void:
 	screen.navigate(&"right"); screen.navigate(&"right")
 	check(screen.get_selected_index() == 1, "Top-right navigation clamps")
 	screen.navigate(&"down"); screen.navigate(&"down")
-	check(screen.get_selected_index() == 3, "Bottom-right navigation clamps")
+	check(screen.get_selected_index() == 3 and screen.get_focus_region() == &"footer" and screen.get_focused_softkey() == &"back", "Bottom-right Down enters existing Back footer while preserving app index")
 	var stationary := InputEventMouseMotion.new()
 	stationary.position = screen.get_control_point(&"chat")
 	stationary.relative = Vector2.ZERO
@@ -48,7 +48,7 @@ func _run() -> void:
 		screen.navigate(&"right")
 		check(manager.get_volume(key) == 50, "Volume row adjusts real manager: " + String(key))
 		screen.navigate(&"down")
-	check(screen.get_selected_index() == 2, "Last sound row does not wrap")
+	check(screen.get_selected_index() == 2 and screen.get_focus_region() == &"footer", "Last sound row Down enters footer without wrapping its content index")
 	_click(screen.get_control_point(&"sfx_volume_min"), true)
 	check(manager.get_volume(&"sfx_volume") == 0 and screen.get_interaction_locked(), "Slider press writes exact zero and freezes phone tilt")
 	_click(screen.get_control_point(&"sfx_volume_max"), false)

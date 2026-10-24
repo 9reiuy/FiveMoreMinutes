@@ -1,132 +1,235 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/settings_panel.gd" id="1_settings"]
+[ext_resource type="Script" path="res://scripts/ui/pixel_option_group.gd" id="2_option"]
 
-[node name="SettingsPanel" type="VBoxContainer"]
-custom_minimum_size = Vector2(280, 230)
-theme_override_constants/separation = 1
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_assistance_link"]
+
+[node name="SettingsPanel" type="Control"]
+custom_minimum_size = Vector2(340, 230)
 script = ExtResource("1_settings")
 
-[node name="Master" type="VBoxContainer" parent="."]
-layout_mode = 2
-theme_override_constants/separation = 2
+[node name="RowSelect" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_option")
+show_selection_frame = false
+enable_hover_scale = false
+solid_fill = true
+option_frame_spring_duration = 0.12
+option_frame_spring_start_scale = 0.20
+option_frame_spring_overshoot = 1.20
 
-[node name="Label" type="Label" parent="Master"]
-layout_mode = 2
-text = "总音量  MASTER"
+[node name="Rows" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -110.0
+offset_right = 150.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+alignment = 1
+mouse_filter = 2
 
-[node name="ControlRow" type="HBoxContainer" parent="Master"]
+[node name="Master" type="HBoxContainer" parent="Rows"]
 layout_mode = 2
-theme_override_constants/separation = 8
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
 
-[node name="Slider" type="HSlider" parent="Master/ControlRow"]
-custom_minimum_size = Vector2(214, 16)
+[node name="Desc" type="Button" parent="Rows/Master"]
 layout_mode = 2
-size_flags_horizontal = 3
+custom_minimum_size = Vector2(128, 0)
+size_flags_horizontal = 0
+flat = true
+alignment = 0
+text = "总音量"
+
+[node name="Slider" type="HSlider" parent="Rows/Master"]
+custom_minimum_size = Vector2(120, 16)
+layout_mode = 2
+size_flags_vertical = 4
 max_value = 100.0
 step = 1.0
 
-[node name="Value" type="Label" parent="Master/ControlRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="Value" type="Label" parent="Rows/Master"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 text = "100%"
 horizontal_alignment = 2
 
-[node name="Music" type="VBoxContainer" parent="."]
+[node name="Music" type="HBoxContainer" parent="Rows"]
 layout_mode = 2
-theme_override_constants/separation = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="Music"]
+[node name="Desc" type="Button" parent="Rows/Music"]
 layout_mode = 2
-text = "音乐  MUSIC"
+custom_minimum_size = Vector2(128, 0)
+size_flags_horizontal = 0
+flat = true
+alignment = 0
+text = "音乐"
 
-[node name="ControlRow" type="HBoxContainer" parent="Music"]
+[node name="Slider" type="HSlider" parent="Rows/Music"]
+custom_minimum_size = Vector2(120, 16)
 layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Slider" type="HSlider" parent="Music/ControlRow"]
-custom_minimum_size = Vector2(214, 16)
-layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 4
 max_value = 100.0
 step = 1.0
 
-[node name="Value" type="Label" parent="Music/ControlRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="Value" type="Label" parent="Rows/Music"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 text = "70%"
 horizontal_alignment = 2
 
-[node name="SFX" type="VBoxContainer" parent="."]
+[node name="SFX" type="HBoxContainer" parent="Rows"]
 layout_mode = 2
-theme_override_constants/separation = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="SFX"]
+[node name="Desc" type="Button" parent="Rows/SFX"]
 layout_mode = 2
-text = "音效  SFX"
+custom_minimum_size = Vector2(128, 0)
+size_flags_horizontal = 0
+flat = true
+alignment = 0
+text = "音效"
 
-[node name="ControlRow" type="HBoxContainer" parent="SFX"]
+[node name="Slider" type="HSlider" parent="Rows/SFX"]
+custom_minimum_size = Vector2(120, 16)
 layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Slider" type="HSlider" parent="SFX/ControlRow"]
-custom_minimum_size = Vector2(214, 16)
-layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 4
 max_value = 100.0
 step = 1.0
 
-[node name="Value" type="Label" parent="SFX/ControlRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="Value" type="Label" parent="Rows/SFX"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 text = "80%"
 horizontal_alignment = 2
 
-[node name="Pixelation" type="VBoxContainer" parent="."]
+[node name="Pixelation" type="HBoxContainer" parent="Rows"]
 layout_mode = 2
-theme_override_constants/separation = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="Pixelation"]
+[node name="Desc" type="Button" parent="Rows/Pixelation"]
 layout_mode = 2
-text = "像素化  PIXELATION"
+custom_minimum_size = Vector2(128, 0)
+size_flags_horizontal = 0
+flat = true
+alignment = 0
+text = "像素化"
 
-[node name="ControlRow" type="HBoxContainer" parent="Pixelation"]
+[node name="Check" type="CheckBox" parent="Rows/Pixelation"]
+custom_minimum_size = Vector2(120, 20)
 layout_mode = 2
-theme_override_constants/separation = 8
+size_flags_vertical = 4
+text = ""
 
-[node name="Check" type="CheckBox" parent="Pixelation/ControlRow"]
-custom_minimum_size = Vector2(214, 20)
+[node name="PaletteScheme" type="HBoxContainer" parent="Rows"]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "开启 / 关闭"
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
 
-[node name="PaletteScheme" type="VBoxContainer" parent="."]
+[node name="Desc" type="Button" parent="Rows/PaletteScheme"]
 layout_mode = 2
-theme_override_constants/separation = 2
+custom_minimum_size = Vector2(128, 0)
+size_flags_horizontal = 0
+flat = true
+alignment = 0
+text = "配色滤镜"
 
-[node name="Label" type="Label" parent="PaletteScheme"]
+[node name="Option" type="OptionButton" parent="Rows/PaletteScheme"]
+custom_minimum_size = Vector2(120, 20)
 layout_mode = 2
-text = "配色滤镜  COLOR PALETTE"
+size_flags_vertical = 4
 
-[node name="ControlRow" type="HBoxContainer" parent="PaletteScheme"]
+[node name="ShadowQuality" type="HBoxContainer" parent="Rows"]
 layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Option" type="OptionButton" parent="PaletteScheme/ControlRow"]
-custom_minimum_size = Vector2(214, 24)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ShadowQuality" type="HBoxContainer" parent="."]
-layout_mode = 2
-theme_override_constants/separation = 8
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
 tooltip_text = "仅影响 3D 办公楼阴影：低 2 盏、默认 4 盏、高 6 盏室内投影灯。"
 
-[node name="Label" type="Label" parent="ShadowQuality"]
+[node name="Desc" type="Button" parent="Rows/ShadowQuality"]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "阴影品质  SHADOWS"
+custom_minimum_size = Vector2(128, 0)
+size_flags_horizontal = 0
+flat = true
+alignment = 0
+text = "阴影品质"
 
-[node name="Option" type="OptionButton" parent="ShadowQuality"]
-custom_minimum_size = Vector2(100, 20)
+[node name="Option" type="OptionButton" parent="Rows/ShadowQuality"]
+custom_minimum_size = Vector2(120, 20)
 layout_mode = 2
+size_flags_vertical = 4
+
+[node name="AssistanceButton" type="Button" parent="Rows"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBoxEmpty_assistance_link")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_assistance_link")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_assistance_link")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_assistance_link")
+flat = true
+alignment = 0
+text = "游戏辅助功能"
+
+[node name="AssistanceOptions" type="VBoxContainer" parent="Rows"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 6
+
+[node name="AutoVault" type="HBoxContainer" parent="Rows/AssistanceOptions"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
+
+[node name="Desc" type="Button" parent="Rows/AssistanceOptions/AutoVault"]
+layout_mode = 2
+custom_minimum_size = Vector2(128, 0)
+size_flags_horizontal = 0
+flat = true
+alignment = 0
+text = "自动跳跃"
+tooltip_text = "朝低矮家具移动并贴近时自动翻越；落点必须安全。"
+
+[node name="Check" type="CheckBox" parent="Rows/AssistanceOptions/AutoVault"]
+custom_minimum_size = Vector2(120, 20)
+layout_mode = 2
+size_flags_vertical = 4
+text = ""
+
+[node name="ScreenShake" type="HBoxContainer" parent="Rows/AssistanceOptions"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
+
+[node name="Desc" type="Button" parent="Rows/AssistanceOptions/ScreenShake"]
+layout_mode = 2
+custom_minimum_size = Vector2(128, 0)
+size_flags_horizontal = 0
+flat = true
+alignment = 0
+text = "屏幕抖动"
+tooltip_text = "控制战斗和电梯镜头震动，不影响镜头跟随与武器动作。"
+
+[node name="Check" type="CheckBox" parent="Rows/AssistanceOptions/ScreenShake"]
+custom_minimum_size = Vector2(120, 20)
+layout_mode = 2
+size_flags_vertical = 4
+text = ""

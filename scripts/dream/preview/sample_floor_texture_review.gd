@@ -1,6 +1,6 @@
 extends Node
 ## Shared approved floor presentation; production placement uses actual room bounds.
-const LOW = preload("res://shaders/dream3d/office_low_pixel.gdshader")
+const LOW = preload("res://shaders/dream3d/office_floor_opaque.gdshader")
 const DITHER = preload("res://scripts/dream/office_dither_lighting.gd")
 const CATALOG = preload("res://scripts/dream/office_furniture_catalog.gd")
 const PROP = preload("res://scenes/dream/props/desk.tscn")
@@ -15,6 +15,8 @@ var old_rugs: Array[WeakRef]=[]
 var plant_rooms: Dictionary={}
 var production_mode := false
 static var floor_texture_cache: Dictionary={}
+static var _floor_shader_no_bevel: Shader
+static var _floor_shader_bevel: Shader
 const FLOOR_TEXTURE_CACHE_LIMIT := 32
 const STYLE = preload("res://scripts/dream/office_art_room_style.gd")
 
@@ -22,7 +24,12 @@ func _ready() -> void:
 	if world==null: world=get_parent()
 	if production_mode:
 		set_process(false)
+		return
 	call_deferred("refresh_assets")
+
+func _exit_tree() -> void:
+	if not is_instance_valid(world) or not world.is_inside_tree() or world.is_queued_for_deletion():
+		floor_texture_cache.clear()
 
 func _process(delta: float) -> void:
 	if production_mode:
@@ -36,11 +43,20 @@ func _material(image: Image, bevel: Image = null) -> ShaderMaterial:
 
 func _material_from_textures(atlas: Texture2D, bevel: Texture2D = null) -> ShaderMaterial:
 	var mat := ShaderMaterial.new()
-	var shader := Shader.new()
-	shader.code=DITHER._shader(LOW).code.replace("filter_nearest_mipmap","filter_nearest")
+	var shader: Shader
 	if bevel!=null:
-		shader.code=shader.code.replace("varying vec3 world_normal;","varying vec3 world_normal;\nuniform sampler2D review_bevel : hint_normal, filter_nearest, repeat_disable;")
-		shader.code=shader.code.replace("ROUGHNESS = 1.0;","NORMAL_MAP = texture(review_bevel, atlas_uv).rgb;\nNORMAL_MAP_DEPTH = 1.0;\nROUGHNESS = 1.0;")
+		if _floor_shader_bevel==null:
+			_floor_shader_bevel=Shader.new()
+			var code := DITHER._shader(LOW).code.replace("filter_nearest_mipmap","filter_nearest")
+			code=code.replace("varying vec3 world_normal;","varying vec3 world_normal;\nuniform sampler2D review_bevel : hint_normal, filter_nearest, repeat_disable;")
+			code=code.replace("ROUGHNESS = 1.0;","NORMAL_MAP = texture(review_bevel, atlas_uv).rgb;\nNORMAL_MAP_DEPTH = 1.0;\nROUGHNESS = 1.0;")
+			_floor_shader_bevel.code=code
+		shader=_floor_shader_bevel
+	else:
+		if _floor_shader_no_bevel==null:
+			_floor_shader_no_bevel=Shader.new()
+			_floor_shader_no_bevel.code=DITHER._shader(LOW).code.replace("filter_nearest_mipmap","filter_nearest")
+		shader=_floor_shader_no_bevel
 	mat.shader=shader
 	mat.set_shader_parameter("atlas",atlas)
 	if bevel!=null: mat.set_shader_parameter("review_bevel",bevel)
@@ -54,7 +70,7 @@ func floor_material(room: Dictionary) -> Material:
 	var variant := posmod((str(world.active_seed)+key).hash(),3)
 	var cache_key := key+str(variant)
 	if not materials.has(cache_key):
-		if production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",false)):
+		if production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",true)):
 			var texture_key := "%s:%d" % [key,variant]
 			if not floor_texture_cache.has(texture_key):
 				# Only immutable pixels cross floors. Per-floor uniforms and materials

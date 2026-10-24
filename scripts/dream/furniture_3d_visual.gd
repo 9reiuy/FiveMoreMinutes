@@ -173,6 +173,7 @@ func _sync_transform() -> bool:
 	var drop_height: Variant = target_furniture.get("sky_drop_height")
 	if drop_height is float or drop_height is int:
 		fake_height = maxf(fake_height, float(drop_height))
+	fake_height += float(target_furniture.get_meta(&"exterior_fall_offset",0.0))*PIXELS_PER_WORLD_CELL
 
 	if pos2d != _last_pos2d or fake_height != _last_fake_height:
 		_last_pos2d = pos2d

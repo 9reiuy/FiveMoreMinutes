@@ -29,7 +29,6 @@ func _ready() -> void:
 	if world==null: world=get_parent()
 	if production_mode:
 		set_process(false)
-		call_deferred("refresh_assets")
 		return
 	var canvas := CanvasLayer.new(); canvas.layer=110
 	label=Label.new(); label.position=Vector2(18,48)

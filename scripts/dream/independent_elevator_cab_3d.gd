@@ -123,7 +123,7 @@ func _init_materials() -> void:
 	var pixel_mats := preload("res://scripts/dream/office_pixel_materials.gd")
 	# Gray-blue metallic cab interior walls matching Image 1
 	mat_wall = pixel_mats.make(Color(0.48, 0.54, 0.60), "metal", true)
-	mat_floor = pixel_mats.make(Color(0.38, 0.42, 0.46), "tile")
+	mat_floor = pixel_mats.make_floor(Color(0.38, 0.42, 0.46), "tile")
 	mat_doors = pixel_mats.make(Color(0.58, 0.64, 0.70), "metal", true)
 	mat_housing = pixel_mats.make(Color(0.24, 0.28, 0.34), "metal", true)
 	mat_camera = pixel_mats.make(Color(0.18, 0.20, 0.24), "metal", true)

@@ -37,3 +37,7 @@ godot.log
 
 # Local headless probe leftovers (shader cache / appdata)
 .godot_runtime_check/
+
+# Local UI/SFX preview captures (do not commit)
+ui-previews/
+

@@ -1,4 +1,4 @@
-﻿class_name RollSpeedTrail
+class_name RollSpeedTrail
 extends Node2D
 
 ## Katana ZERO (武士 零) 风格高能霓虹残影与剑气疾速流光特效。
@@ -135,6 +135,8 @@ func _spawn_speed_streaks(direction: Vector2, neon_color: Color, ghost_idx: int)
 		add_child(streak)
 
 
+static var _shared_streak_curve: Curve
+
 func _create_speed_streak(local_origin: Vector2, direction: Vector2, length: float, color: Color) -> Line2D:
 	var line := Line2D.new()
 	line.name = "BladeStreak"
@@ -142,11 +144,12 @@ func _create_speed_streak(local_origin: Vector2, direction: Vector2, length: flo
 	line.width = 1.6
 	line.z_index = -1
 
-	var curve := Curve.new()
-	curve.add_point(Vector2(0.0, 1.0))
-	curve.add_point(Vector2(0.25, 0.85))
-	curve.add_point(Vector2(1.0, 0.0))
-	line.width_curve = curve
+	if _shared_streak_curve == null:
+		_shared_streak_curve = Curve.new()
+		_shared_streak_curve.add_point(Vector2(0.0, 1.0))
+		_shared_streak_curve.add_point(Vector2(0.25, 0.85))
+		_shared_streak_curve.add_point(Vector2(1.0, 0.0))
+	line.width_curve = _shared_streak_curve
 
 	var grad := Gradient.new()
 	grad.set_color(0, Color(1.0, 1.0, 1.0, color.a))

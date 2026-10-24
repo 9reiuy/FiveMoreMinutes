@@ -6,9 +6,28 @@ const CONFIG := preload("res://resources/demo_config.tres")
 const MUSIC_STREAMS := {
 	&"bedroom": preload("res://sfx/卧室背景音乐.mp3"),
 	&"bedroom_short": preload("res://sfx/卧室背景音乐短.mp3"),
-	&"battle": preload("res://art/Dream/BGM/Track01.ogg"),
-	&"battle_short": preload("res://art/Dream/BGM/Track01.ogg")
+	&"safe": preload("res://art/Dream/BGM/Sweet_Vermouth.ogg"),
+	&"sweet_vermouth": preload("res://art/Dream/BGM/Sweet_Vermouth.ogg"),
+	&"sing_swing_bada_bing": preload("res://art/Dream/BGM/Sing_Swing_Bada_Bing.mp3"),
+	&"battle_sing_swing": preload("res://art/Dream/BGM/Sing_Swing_Bada_Bing.mp3"),
+	&"groovy_ignition": preload("res://art/Dream/BGM/Groovy_Ignition.mp3"),
+	&"battle_groovy": preload("res://art/Dream/BGM/Groovy_Ignition.mp3"),
+	&"battle": preload("res://art/Dream/BGM/Sing_Swing_Bada_Bing.mp3"),
+	&"battle_short": preload("res://art/Dream/BGM/Sing_Swing_Bada_Bing.mp3"),
+	&"elevator": preload("res://art/Dream/BGM/Nocturne_Op9_No2.mp3"),
+	&"nocturne": preload("res://art/Dream/BGM/Nocturne_Op9_No2.mp3")
 }
+const MUSIC_START_OFFSETS := {
+	&"safe": 41.0,
+	&"sweet_vermouth": 41.0,
+	&"sing_swing_bada_bing": 12.0,
+	&"battle_sing_swing": 12.0,
+	&"battle": 12.0,
+	&"battle_short": 12.0,
+	&"groovy_ignition": 15.0,
+	&"battle_groovy": 15.0
+}
+const BATTLE_TRACKS: Array[StringName] = [&"sing_swing_bada_bing", &"groovy_ignition"]
 const WEATHER_STREAMS := {
 	&"rain": preload("res://sfx/雨天.mp3"),
 	&"thunder": preload("res://sfx/雨天打雷.mp3"),
@@ -34,6 +53,12 @@ const STREAMS := {
 	&"heal": preload("res://sfx/heal.wav"),
 	&"glass_shatter": preload("res://sfx/glass_shatter.wav"),
 	&"wood_shatter": preload("res://sfx/wood_shatter.wav"),
+	&"wilhelm_scream": preload("res://sfx/wilhelm_scream.wav"),
+	&"canned_laughter": preload("res://sfx/canned_laughter.wav"),
+	&"audience_applause": preload("res://sfx/audience_applause.wav"),
+	&"golf_clap": preload("res://sfx/golf_clap.wav"),
+	&"rimshot": preload("res://sfx/rimshot.wav"),
+	&"vinyl_scratch_brake": preload("res://sfx/vinyl_scratch_brake.wav"),
 	## Footstep is deliberately absent from this table.  It is a multi-clip
 	## random group rather than a single authored stream, registered separately
 	## in _ready() from FOOTSTEP_STREAMS.  Bus and volume stay in EVENT_BUSES /
@@ -185,6 +210,8 @@ const EVENT_BUSES := {
 	&"heal": &"Characters",
 	&"text_blip": &"UI",
 	&"slot_tick": &"UI",
+	&"watch_tick": &"UI",
+	&"watch_tick_early": &"UI",
 	&"tarot_shuffle": &"UI",
 	&"tarot_deal": &"UI",
 	&"tarot_flip": &"UI",
@@ -194,9 +221,16 @@ const EVENT_BUSES := {
 	## acquisition confirmation, so it follows the purchase/experience
 	## convention and goes to UI (also a direct child of SFX).
 	&"elevator_ding": &"SFX",
-	&"elevator_badge": &"UI"
+	&"elevator_badge": &"UI",
+	&"enemy_fire_cue": &"SFX",
+	&"wilhelm_scream": &"SFX",
+	&"canned_laughter": &"SFX",
+	&"audience_applause": &"SFX",
+	&"golf_clap": &"SFX",
+	&"rimshot": &"SFX",
+	&"vinyl_scratch_brake": &"UI"
 }
-const GENERATED_EVENTS := [&"ui_hover", &"player_hurt", &"enemy_hit", &"body_impact", &"wall_impact", &"furniture_impact", &"thunder", &"crt_off", &"text_blip", &"slot_tick"]
+const GENERATED_EVENTS := [&"ui_hover", &"player_hurt", &"enemy_hit", &"body_impact", &"wall_impact", &"furniture_impact", &"thunder", &"crt_off", &"text_blip", &"slot_tick", &"watch_tick", &"watch_tick_early", &"enemy_fire_cue"]
 const EVENT_MIN_INTERVALS := {
 	&"enemy_kill": 0.04,
 	&"enemy_hit": 0.025,
@@ -233,6 +267,8 @@ var last_event_play_msec: Dictionary = {}
 var last_experience_play_msec := -1000000
 var last_bottle_shake_play_msec := -1000000
 var last_slot_tick_play_msec := -1000000
+var last_watch_tick_play_msec := -1000000
+var last_watch_tick_early_play_msec := -1000000
 var enemy_kill_pitch_random := 1.0
 var music_player: AudioStreamPlayer
 var weather_player: AudioStreamPlayer
@@ -346,6 +382,10 @@ static func play_tarot_flip() -> bool:
 	return play_event(&"tarot_flip")
 
 
+static func play_wilhelm_scream() -> bool:
+	return play_event(&"wilhelm_scream")
+
+
 static func play_tarot_select() -> bool:
 	return play_event(&"tarot_select")
 
@@ -387,10 +427,61 @@ static func play_bedroom_music(use_short: bool = false, owner_id: int = 0) -> vo
 		manager.play_music(&"bedroom_short" if use_short else &"bedroom", owner_id)
 
 
-static func play_battle_music(use_short: bool = false, owner_id: int = 0) -> void:
+static func play_safe_music(owner_id: int = 0) -> void:
 	var manager := _manager()
 	if manager != null:
-		manager.play_music(&"battle_short" if use_short else &"battle", owner_id)
+		manager.play_music(&"sweet_vermouth", owner_id)
+
+
+static func play_battle_music(use_short: bool = false, owner_id: int = 0, track_id: StringName = &"") -> void:
+	var manager := _manager()
+	if manager != null:
+		var selected_track: StringName = track_id
+		if selected_track == &"":
+			selected_track = manager.next_battle_track()
+		manager.play_music(selected_track, owner_id)
+
+
+static func trigger_multi_kill_reaction(reaction_id: StringName = &"") -> void:
+	var manager := _manager()
+	if manager != null:
+		manager.play_multi_kill_reaction(reaction_id)
+
+
+static func finish_combat_music(style: String = "") -> void:
+	var manager := _manager()
+	if manager != null:
+		manager.apply_combat_finish(style)
+
+
+static func finish_player_death_music() -> void:
+	var manager := _manager()
+	if manager != null:
+		manager.apply_player_death_finish()
+
+
+static func trigger_combat_duck() -> void:
+	var manager := _manager()
+	if manager != null:
+		manager.apply_combat_duck()
+
+
+static func play_elevator_music(owner_id: int = 0) -> void:
+	var manager := _manager()
+	if manager != null:
+		manager.apply_elevator_music(owner_id)
+
+
+static func stop_elevator_music() -> void:
+	var manager := _manager()
+	if manager != null:
+		manager.apply_stop_elevator_music()
+
+
+static func finish_floor_badge_music() -> void:
+	var manager := _manager()
+	if manager != null:
+		manager.apply_floor_badge_music_finish()
 
 
 static func play_weather_ambience(weather_type: StringName) -> void:
@@ -714,6 +805,8 @@ func _register_player(event_id: StringName, stream: AudioStream) -> void:
 		player.max_polyphony = 8
 	elif event_id in [&"tarot_deal", &"tarot_flip"]:
 		player.max_polyphony = 4
+	elif event_id == &"enemy_fire_cue":
+		player.max_polyphony = 4
 	elif event_id == &"footstep":
 		# At 4.4 steps per second the tail of one footfall can still be ringing
 		# when the next begins; overlapping voices keep the gait continuous
@@ -797,6 +890,16 @@ func play(event_id: StringName) -> bool:
 		if tick_now - last_slot_tick_play_msec < int(CONFIG.sfx_slot_tick_min_interval * 1000.0):
 			return false
 		last_slot_tick_play_msec = tick_now
+	elif event_id == &"watch_tick":
+		var watch_now := Time.get_ticks_msec()
+		if watch_now - last_watch_tick_play_msec < int(CONFIG.sfx_watch_tick_min_interval * 1000.0):
+			return false
+		last_watch_tick_play_msec = watch_now
+	elif event_id == &"watch_tick_early":
+		var watch_early_now := Time.get_ticks_msec()
+		if watch_early_now - last_watch_tick_early_play_msec < int(CONFIG.sfx_watch_tick_early_min_interval * 1000.0):
+			return false
+		last_watch_tick_early_play_msec = watch_early_now
 	var player: AudioStreamPlayer = players[event_id]
 	if EVENT_MIN_INTERVALS.has(event_id):
 		var now_msec := Time.get_ticks_msec()
@@ -813,6 +916,7 @@ func play(event_id: StringName) -> bool:
 	if player.max_polyphony <= 1:
 		player.stop()
 	player.play()
+	_check_combat_duck(event_id)
 	sfx_played.emit(event_id)
 	return true
 
@@ -886,6 +990,7 @@ func _play_random_sound_set(event_id: StringName) -> bool:
 		stop_positions_variant = {}
 	var stop_positions: Dictionary = stop_positions_variant
 	stop_positions[voice_id] = region.y
+	_check_combat_duck(event_id)
 	sfx_played.emit(event_id)
 	return true
 
@@ -907,7 +1012,193 @@ func stop(event_id: StringName) -> void:
 		(stop_positions_variant as Dictionary).clear()
 
 
-func play_music(track_id: StringName, owner_id: int = 0) -> void:
+var battle_track_index: int = 0
+var multi_kill_duck_tween: Tween = null
+
+
+func next_battle_track() -> StringName:
+	var track: StringName = BATTLE_TRACKS[battle_track_index % BATTLE_TRACKS.size()]
+	battle_track_index = (battle_track_index + 1) % BATTLE_TRACKS.size()
+	return track
+
+
+func play_multi_kill_reaction(reaction_id: StringName = &"") -> void:
+	var chosen: StringName = reaction_id
+	if chosen == &"":
+		var options := [&"canned_laughter", &"audience_applause", &"golf_clap"]
+		chosen = options[randi() % options.size()]
+	play_event(chosen)
+
+	# Sidechain ducking: 1.5s duck combat BGM by -4.5dB
+	request_music_duck(&"multi_kill_reaction", -4.5, 0.08)
+	if multi_kill_duck_tween != null and multi_kill_duck_tween.is_valid():
+		multi_kill_duck_tween.kill()
+	var duck_tw := create_tween()
+	duck_tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	duck_tw.tween_interval(1.5)
+	duck_tw.tween_callback(func() -> void:
+		release_music_duck(&"multi_kill_reaction", 0.4)
+	)
+	multi_kill_duck_tween = duck_tw
+
+
+func apply_combat_finish(style: String = "") -> void:
+	if style.is_empty():
+		style = CONFIG.combat_finish_style if ("combat_finish_style" in CONFIG) else "both"
+	if not is_instance_valid(music_player) or not music_player.playing:
+		return
+	if music_tween != null and music_tween.is_valid():
+		music_tween.kill()
+	if music_duck_tween != null and music_duck_tween.is_valid():
+		music_duck_tween.kill()
+	if multi_kill_duck_tween != null and multi_kill_duck_tween.is_valid():
+		multi_kill_duck_tween.kill()
+
+	current_music_id = &""
+	current_music_owner_id = 0
+
+	match style:
+		"rimshot":
+			music_player.stop()
+			music_player.pitch_scale = 1.0
+			play_event(&"rimshot")
+		"tape_stop":
+			play_event(&"vinyl_scratch_brake")
+			var tw := create_tween()
+			tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			tw.tween_property(music_player, "pitch_scale", 0.05, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			tw.tween_callback(func() -> void:
+				music_player.stop()
+				music_player.pitch_scale = 1.0
+			)
+			music_tween = tw
+		"both", _:
+			var tw := create_tween()
+			tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			tw.tween_property(music_player, "pitch_scale", 0.05, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			tw.tween_callback(func() -> void:
+				music_player.stop()
+				music_player.pitch_scale = 1.0
+				play_event(&"rimshot")
+			)
+			music_tween = tw
+
+
+const COMBAT_DUCK_EVENTS: Array[StringName] = [
+	&"weapon_fire", &"gunshot", &"pistol_fire", &"shotgun_fire",
+	&"enemy_fire_cue", &"melee_hit_enemy", &"bullet_hit_enemy",
+	&"melee_swing", &"enemy_hit", &"player_hurt"
+]
+var combat_duck_tween: Tween = null
+
+
+func apply_combat_duck() -> void:
+	var duck_db: float = float(CONFIG.combat_duck_db) if ("combat_duck_db" in CONFIG) else -7.0
+	var hold: float = float(CONFIG.combat_duck_hold_duration) if ("combat_duck_hold_duration" in CONFIG) else 0.8
+	var release: float = float(CONFIG.combat_duck_release_duration) if ("combat_duck_release_duration" in CONFIG) else 0.5
+	request_music_duck(&"combat_fire", duck_db, 0.04)
+	if combat_duck_tween != null and combat_duck_tween.is_valid():
+		combat_duck_tween.kill()
+	var tw := create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_interval(hold)
+	tw.tween_callback(func() -> void:
+		release_music_duck(&"combat_fire", release)
+	)
+	combat_duck_tween = tw
+
+
+func apply_player_death_finish() -> void:
+	if not is_instance_valid(music_player) or not music_player.playing:
+		return
+	if music_tween != null and music_tween.is_valid():
+		music_tween.kill()
+	if music_duck_tween != null and music_duck_tween.is_valid():
+		music_duck_tween.kill()
+	if combat_duck_tween != null and combat_duck_tween.is_valid():
+		combat_duck_tween.kill()
+	if multi_kill_duck_tween != null and multi_kill_duck_tween.is_valid():
+		multi_kill_duck_tween.kill()
+
+	current_music_id = &""
+	current_music_owner_id = 0
+
+	var stop_seconds: float = float(CONFIG.player_death_tape_stop_seconds) if ("player_death_tape_stop_seconds" in CONFIG) else 0.4
+	var tw := create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_property(music_player, "pitch_scale", 0.05, stop_seconds).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func() -> void:
+		music_player.stop()
+		music_player.pitch_scale = 1.0
+	)
+	music_tween = tw
+
+
+func apply_elevator_music(owner_id: int = 0) -> void:
+	if not MUSIC_STREAMS.has(&"elevator"):
+		return
+	if current_music_id in [&"elevator", &"nocturne"] and is_instance_valid(music_player) and music_player.playing:
+		return
+	var stream: AudioStream = MUSIC_STREAMS[&"elevator"]
+	var total_length := stream.get_length() if stream != null else 0.0
+	# 随机进度播放，不得离结束小于 30s
+	var max_offset := maxf(0.0, total_length - 30.0)
+	var random_offset := randf_range(0.0, max_offset) if max_offset > 0.0 else 0.0
+	play_music(&"elevator", owner_id, random_offset)
+
+
+func apply_stop_elevator_music() -> void:
+	if current_music_id in [&"elevator", &"nocturne"]:
+		current_music_id = &""
+		current_music_owner_id = 0
+		if is_instance_valid(music_player):
+			music_player.stop()
+
+
+func apply_floor_badge_music_finish() -> void:
+	if not is_instance_valid(music_player) or not music_player.playing:
+		play_event(&"elevator_badge")
+		return
+	if music_tween != null and music_tween.is_valid():
+		music_tween.kill()
+	if music_duck_tween != null and music_duck_tween.is_valid():
+		music_duck_tween.kill()
+	if combat_duck_tween != null and combat_duck_tween.is_valid():
+		combat_duck_tween.kill()
+	if multi_kill_duck_tween != null and multi_kill_duck_tween.is_valid():
+		multi_kill_duck_tween.kill()
+
+	current_music_id = &""
+	current_music_owner_id = 0
+
+	# 瞬间磁带停转不被其他声音打扰：临时将 WORLD_SFX_BUS 屏蔽静音
+	var world_bus_idx := AudioServer.get_bus_index(WORLD_SFX_BUS)
+	if world_bus_idx >= 0:
+		AudioServer.set_bus_mute(world_bus_idx, true)
+
+	# 播放电梯卡音效（在UI总线上，不受WorldSFX静音影响，清脆可闻）
+	play_event(&"elevator_badge")
+	play_event(&"vinyl_scratch_brake")
+
+	# 0.3s 磁带减速断电停转
+	var tw := create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_property(music_player, "pitch_scale", 0.05, 0.30).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func() -> void:
+		music_player.stop()
+		music_player.pitch_scale = 1.0
+		if world_bus_idx >= 0:
+			AudioServer.set_bus_mute(world_bus_idx, false)
+	)
+	music_tween = tw
+
+
+func _check_combat_duck(event_id: StringName) -> void:
+	if event_id in COMBAT_DUCK_EVENTS:
+		apply_combat_duck()
+
+
+func play_music(track_id: StringName, owner_id: int = 0, start_offset: float = -1.0) -> void:
 	if not MUSIC_STREAMS.has(track_id) or not is_instance_valid(music_player):
 		return
 	var owner_changed := owner_id != 0 and owner_id != current_music_owner_id
@@ -916,13 +1207,14 @@ func play_music(track_id: StringName, owner_id: int = 0) -> void:
 		music_duck_reasons.clear()
 		if music_duck_tween != null and music_duck_tween.is_valid():
 			music_duck_tween.kill()
-		music_player.volume_db = 0.0
+		music_player.volume_db = _music_target_volume_db()
 	current_music_owner_id = owner_id
 	if current_music_id == track_id and music_player.playing:
 		music_player.stream_paused = false
 		return
 	current_music_id = track_id
-	_crossfade_unique(music_player, MUSIC_STREAMS[track_id], CONFIG.music_fade_duration, true)
+	var offset: float = start_offset if start_offset >= 0.0 else float(MUSIC_START_OFFSETS.get(track_id, 0.0))
+	_crossfade_unique(music_player, MUSIC_STREAMS[track_id], CONFIG.music_fade_duration, true, offset)
 
 
 func play_weather(weather_type: StringName) -> void:
@@ -992,16 +1284,21 @@ func is_elevator_rumble_active() -> bool:
 	return is_instance_valid(elevator_rumble_player) and elevator_rumble_player.playing
 
 
+func _music_target_volume_db() -> float:
+	var base: float = float(CONFIG.music_baseline_volume_db) if ("music_baseline_volume_db" in CONFIG) else -6.0
+	return base + _current_music_duck_db()
+
+
 func request_music_duck(reason: StringName, duck_db: float, fade_duration: float) -> void:
 	if reason == &"":
 		return
 	music_duck_reasons[reason] = minf(0.0, duck_db)
-	_tween_music_volume(_current_music_duck_db(), fade_duration)
+	_tween_music_volume(_music_target_volume_db(), fade_duration)
 
 
 func release_music_duck(reason: StringName, fade_duration: float) -> void:
 	music_duck_reasons.erase(reason)
-	_tween_music_volume(_current_music_duck_db(), fade_duration)
+	_tween_music_volume(_music_target_volume_db(), fade_duration)
 
 
 func _current_music_duck_db() -> float:
@@ -1108,11 +1405,12 @@ func _play_world_sfx_3d(
 	selected.pitch_scale = current_gameplay_audio_pitch
 	selected.stream_paused = get_tree().paused
 	selected.play()
+	_check_combat_duck(event_id)
 	sfx_played.emit(event_id)
 	return true
 
 
-func _crossfade_unique(player: AudioStreamPlayer, stream: AudioStream, duration: float, is_music: bool) -> void:
+func _crossfade_unique(player: AudioStreamPlayer, stream: AudioStream, duration: float, is_music: bool, from_position: float = 0.0) -> void:
 	if is_music and music_duck_tween != null and music_duck_tween.is_valid():
 		music_duck_tween.kill()
 	var active_tween: Tween = music_tween if is_music else weather_tween
@@ -1126,9 +1424,10 @@ func _crossfade_unique(player: AudioStreamPlayer, stream: AudioStream, duration:
 		tween.tween_property(player, "volume_db", -60.0, half)
 	tween.tween_callback(func() -> void:
 		player.stop()
+		player.pitch_scale = 1.0
 		player.stream = stream
 		player.volume_db = -60.0 if duration > 0.0 else settle_volume
-		player.play()
+		player.play(from_position)
 	)
 	if duration > 0.0:
 		tween.tween_property(player, "volume_db", settle_volume, maxf(duration - half, 0.01))
@@ -1140,7 +1439,7 @@ func _crossfade_unique(player: AudioStreamPlayer, stream: AudioStream, duration:
 
 func _crossfade_settle_volume(is_music: bool) -> float:
 	if is_music:
-		return _current_music_duck_db()
+		return _music_target_volume_db()
 	if weather_volume_multiplier < 1.0:
 		return linear_to_db(weather_volume_multiplier)
 	return 0.0
@@ -1277,6 +1576,7 @@ func _volume_for(event_id: StringName) -> float:
 		&"shotgun_fire": return CONFIG.sfx_shotgun_fire_volume_db
 		&"glass_shatter", &"wood_shatter": return CONFIG.sfx_melee_hit_furniture_volume_db
 		&"footstep": return -18.0
+		&"enemy_fire_cue": return -12.0
 		&"melee_hit_1", &"melee_hit_2", &"melee_hit_3", &"melee_hit_4", &"melee_hit_enemy": return CONFIG.sfx_melee_hit_enemy_volume_db
 		&"bullet_hit_enemy": return CONFIG.sfx_bullet_hit_enemy_volume_db
 		&"melee_hit_furniture": return CONFIG.sfx_melee_hit_furniture_volume_db
@@ -1292,16 +1592,27 @@ func _volume_for(event_id: StringName) -> float:
 		&"heal": return CONFIG.sfx_heal_volume_db
 		&"text_blip": return CONFIG.dialogue_text_blip_volume_db
 		&"slot_tick": return CONFIG.sfx_slot_tick_volume_db
+		&"watch_tick": return CONFIG.sfx_watch_tick_volume_db
+		&"watch_tick_early": return CONFIG.sfx_watch_tick_early_volume_db
 		&"tarot_shuffle", &"tarot_deal", &"tarot_flip", &"tarot_select": return 0.0
 		# Both elevator cues are peak-normalised at authoring time, so these are
 		# modest trims that keep them level with home_door (-10) without the
 		# long airy tail becoming intrusive.
 		&"elevator_ding": return -11.0
 		&"elevator_badge": return -13.0
+		&"wilhelm_scream": return -4.0
+		&"canned_laughter": return CONFIG.sfx_canned_laughter_volume_db if ("sfx_canned_laughter_volume_db" in CONFIG) else -6.0
+		&"audience_applause": return CONFIG.sfx_audience_applause_volume_db if ("sfx_audience_applause_volume_db" in CONFIG) else -6.0
+		&"golf_clap": return CONFIG.sfx_golf_clap_volume_db if ("sfx_golf_clap_volume_db" in CONFIG) else -6.0
+		&"rimshot": return CONFIG.sfx_rimshot_volume_db if ("sfx_rimshot_volume_db" in CONFIG) else -4.0
+		&"vinyl_scratch_brake": return 0.0
 		_: return 0.0
 
 
 func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
+	if event_id==&"enemy_fire_cue": return _create_enemy_fire_ding()
+	if event_id == &"watch_tick": return _create_watch_tick()
+	if event_id == &"watch_tick_early": return _create_watch_tick_early()
 	var stream := AudioStreamWAV.new()
 	stream.format = AudioStreamWAV.FORMAT_8_BITS
 	stream.mix_rate = 11025
@@ -1411,6 +1722,74 @@ func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
 	stream.data = bytes
 	return stream
 
+
+
+func _create_watch_tick() -> AudioStreamWAV:
+	# Soft mechanical watch click for option hover (menus / settings rows / controls).
+	# Warm ~1.15kHz; not the harsh square slot_tick and not the bright early pass.
+	var stream := AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = 44100
+	var duration := 0.028
+	var count := int(duration * stream.mix_rate)
+	var bytes := PackedByteArray()
+	bytes.resize(count * 2)
+	for i in count:
+		var t := float(i) / float(stream.mix_rate)
+		var attack := minf(t / 0.0008, 1.0)
+		var env := attack * exp(-t * 110.0) * clampf((duration - t) / 0.005, 0.0, 1.0)
+		# Body ~1.15kHz + soft 2nd partial; warmer / less piercing than 1.7kHz early.
+		var body := sin(TAU * 1150.0 * t) * 0.78 + sin(TAU * 2300.0 * t) * 0.12 * exp(-t * 180.0)
+		var noise := 0.0
+		if t < 0.0015:
+			var n := fmod(sin(float(i) * 19.191 + 41.7) * 29157.13, 1.0)
+			noise = (n * 2.0 - 1.0) * 0.14 * (1.0 - t / 0.0015)
+		var sample := (body + noise) * env * 0.34
+		bytes.encode_s16(i * 2, int(clampf(sample, -1.0, 1.0) * 32767.0))
+	stream.data = bytes
+	return stream
+
+
+func _create_watch_tick_early() -> AudioStreamWAV:
+	# First (pre-soften) watch tick: brighter ~1.7kHz mechanical click for volume drag.
+	# Crisp / shorter than soft watch_tick; still sine+noise, not square slot_tick.
+	var stream := AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = 44100
+	var duration := 0.022
+	var count := int(duration * stream.mix_rate)
+	var bytes := PackedByteArray()
+	bytes.resize(count * 2)
+	for i in count:
+		var t := float(i) / float(stream.mix_rate)
+		var attack := minf(t / 0.0005, 1.0)
+		var env := attack * exp(-t * 145.0) * clampf((duration - t) / 0.004, 0.0, 1.0)
+		var body := sin(TAU * 1700.0 * t) * 0.82 + sin(TAU * 3400.0 * t) * 0.22 * exp(-t * 150.0)
+		var noise := 0.0
+		if t < 0.0020:
+			var n := fmod(sin(float(i) * 19.191 + 41.7) * 29157.13, 1.0)
+			noise = (n * 2.0 - 1.0) * 0.22 * (1.0 - t / 0.0020)
+		var sample := (body + noise) * env * 0.40
+		bytes.encode_s16(i * 2, int(clampf(sample, -1.0, 1.0) * 32767.0))
+	stream.data = bytes
+	return stream
+
+
+func _create_enemy_fire_ding() -> AudioStreamWAV:
+	# Original short bell, rounded attack and bounded polyphony avoid harsh clicks.
+	var stream:=AudioStreamWAV.new()
+	stream.format=AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate=44100
+	var count:=int(.095*stream.mix_rate)
+	var bytes:=PackedByteArray()
+	bytes.resize(count*2)
+	for i in count:
+		var t:=float(i)/stream.mix_rate
+		var envelope:=minf(t/.0015,1.0)*exp(-t*48.0)*clampf((.095-t)/.008,0,1)
+		var bell:=sin(TAU*1480*t)+.28*sin(TAU*2960*t)*exp(-t*25.0)
+		bytes.encode_s16(i*2,int(clampf(bell*envelope*.38,-1,1)*32767))
+	stream.data=bytes
+	return stream
 
 ## 临时程序化手机震动音效（占位，待人工替换 res://sfx/手机震动.wav）：
 ## 低沉（约 145Hz）短包络 buzz，两段振动中间留与视觉震动相同的停顿，

@@ -18,6 +18,9 @@ func _check(condition: bool, label: String) -> void:
 
 
 func _run() -> void:
+	root.size=Vector2i(640,360)
+	var diag:=root.get_node_or_null("_DroneGameDiag")
+	if diag!=null: diag.free()
 	print("--- Starting Reception Interaction Range Test ---")
 
 	var room: Dream3DReceptionRoom = RECEPTION_SCENE.instantiate() as Dream3DReceptionRoom
@@ -49,15 +52,16 @@ func _run() -> void:
 		var pos: Vector2 = entry["pos"]
 
 		player.global_position = pos
+		room._update_camera_and_projection(0.0)
 		var target = resolver.update_target()
 		_check(resolver.current_target == waitress, "%s: current_target is waitress_npc" % pos_name)
 		_check(target == waitress, "%s: update_target() returned waitress_npc" % pos_name)
 
 		room._update_interaction_prompt()
-		_check(room.npc_hint_bubble.visible and not room.interaction_prompt.visible, "%s: interaction_prompt.visible is true" % pos_name)
-		_check(room.npc_hint_bubble.dialogue_label.text == "...", "%s: passive NPC displays ellipsis hint" % pos_name)
-		_check((room.npc_hint_bubble.arrow_tip+room.npc_hint_bubble.position).distance_to(room._get_waitress_hud_pos())<4.1,
-			"Ellipsis hint centers on NPC head")
+		_check(room.npc_hint_bubble.visible and room.interaction_prompt.visible, "%s: emotion and talk prompt are visible" % pos_name)
+		_check(room.interaction_prompt.text=="交流", "%s: passive NPC exposes short talk action" % pos_name)
+		_check(room.interaction_prompt.anchor.y+room.interaction_prompt.size.y<room.npc_hint_bubble.position.y,
+			"Talk action sits above emotion bubble")
 
 	# Test far away position (entrance)
 	var far_pos := Vector2(12.5, 18.5) * 32.0
@@ -68,7 +72,7 @@ func _run() -> void:
 
 	room._update_interaction_prompt()
 	await create_timer(0.22).timeout
-	_check(not room.npc_hint_bubble.visible and not room.interaction_prompt.visible, "Entrance far away: interaction_prompt.visible is false")
+	_check(not room.interaction_prompt.visible and not room.npc_hint_bubble.visible, "Entrance far away: both proximity widgets are hidden")
 
 	print("--- Reception Interaction Range Test Completed ---")
 	if failures.is_empty():

@@ -15,7 +15,9 @@ var defaults := {
 	"pixelation_enabled": true,
 	"palette_enabled": true,
 	"palette_scheme": 1,
-	"shadow_quality": "standard"
+	"shadow_quality": "standard",
+	"auto_vault_enabled": true,
+	"screen_shake_enabled": true
 }
 
 var values: Dictionary
@@ -84,6 +86,7 @@ func _normalize_setting(setting_name: StringName, value: Variant) -> Variant:
 	match setting_name:
 		&"pixelation_enabled": normalized = bool(value)
 		&"palette_enabled": normalized = bool(value)
+		&"auto_vault_enabled", &"screen_shake_enabled": normalized = bool(value)
 		&"palette_scheme": normalized = clampi(int(value), 1, 5)
 		&"shadow_quality": normalized = _normalize_shadow_quality(value)
 	return normalized
@@ -124,6 +127,8 @@ func _load_settings(path: String = SETTINGS_PATH) -> void:
 		else:
 			values["palette_enabled"] = bool(defaults["palette_enabled"])
 		values["palette_scheme"] = clampi(int(file.get_value("graphics", "palette_scheme", 1)), 1, 5)
+		for key in ["auto_vault_enabled","screen_shake_enabled"]:
+			values[key]=bool(file.get_value("accessibility",key,defaults[key]))
 		return
 	_migrate_legacy_settings()
 	_save_settings(path)
@@ -155,6 +160,8 @@ func _save_settings(path: String = SETTINGS_PATH) -> void:
 	file.set_value("graphics", "palette_enabled", get_palette_enabled())
 	file.set_value("graphics", "palette_scheme", get_palette_scheme())
 	file.set_value("graphics", "shadow_quality", get_shadow_quality())
+	for key in ["auto_vault_enabled","screen_shake_enabled"]:
+		file.set_value("accessibility",key,bool(get_setting(StringName(key),true)))
 	file.save(path)
 
 

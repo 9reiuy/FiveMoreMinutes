@@ -3,6 +3,7 @@ extends RefCounted
 
 ## One footprint/height contract shared by layout, 2D collision and 3D presentation.
 const SCALE := 32.0
+const MAX_PROJECTILE_FURNITURE_PASSES := 1
 const PIXEL_MATERIALS = preload("res://scripts/dream/office_pixel_materials.gd")
 const MODEL_ROOT := "res://art/Dream/office_lowpoly/kenney/"
 const DEFINITIONS := {
@@ -69,7 +70,7 @@ static func configure(source: Node2D, kind: String) -> void:
 		hurtbox.scale = Vector2.ONE
 		hurtbox.position = Vector2.ZERO
 	source.set("furniture_size_category", int(DEFINITIONS[kind][2]))
-	source.set("vaultable", size_of(kind).y < 1.1)
+	source.set("vaultable", kind=="plant" or size_of(kind).y < 1.1)
 	if kind in ["chair", "office_chair"]:
 		source.set("is_swivel_chair", true)
 		if source is RigidBody2D:
@@ -94,6 +95,20 @@ static func height_offset(source: Node2D) -> float:
 		if value is float or value is int:
 			result = maxf(result, float(value))
 	return result
+
+static func allows_projectile_pass_through(source: Node2D) -> bool:
+	# Architectural glass/sills have their own explicit ballistic policy.
+	if source.has_method("get_projectile_blocking_height") or source.get("destroyed") == true:
+		return false
+	# Body height, not footprint: conference tables are low, servers are high.
+	# Uncatalogued large props must not inherit the fallback desk profile.
+	if not source.has_meta(&"office_furniture_kind") and source.has_method("get_size_category") and int(source.call("get_size_category")) == 3:
+		return false
+	return size_of(resolved_kind(source)).y < 1.1
+
+static func allows_auto_vault(source: Node2D) -> bool:
+	return resolved_kind(source)=="plant" or allows_projectile_pass_through(source)
+
 
 static func shot_hit(source: Node2D, start: Vector2, end: Vector2, height_pixels: float) -> Dictionary:
 	# Architectural glass/sills must never inherit the fallback desk profile.

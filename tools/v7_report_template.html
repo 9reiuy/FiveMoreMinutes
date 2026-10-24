@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>枪口烟 · 方案 A 落地 + 按参考图精修白色层</title>
+<style>
+:root{--bg:#0d1017;--panel:#151a24;--line:#232b3a;--tx:#dfe6f2;--dim:#8b96ab;--ok:#5fd08a;--hot:#e8b44a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.7 "Segoe UI","Microsoft YaHei",sans-serif;padding:32px}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--dim);font-size:13px;margin-bottom:24px}
+h2{font-size:16px;margin:28px 0 10px;border-left:3px solid #4a7dd6;padding-left:9px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:14px}
+img{image-rendering:pixelated;border:1px solid var(--line);border-radius:6px;max-width:100%;display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+td,th{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#1b2230;color:var(--dim);font-weight:600}
+.ok{color:var(--ok)}.hot{color:var(--hot)}code{background:#1b2230;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.cap{color:var(--dim);font-size:12.5px;margin:6px 0 0}
+ul{margin:0;padding-left:20px}
+.big{font-size:15px}
+</style></head><body>
+<h1>枪口烟 · 方案 A 落地 + 按参考图精修白色层</h1>
+<div class="sub">FiveMinuteMore · 2026-10-23 · 实机采集（真实 Main 入口、真实游戏相机）</div>
+
+<h2>这轮做了两件事</h2>
+<div class="panel big">
+<b>① 配色换成 A（余烬暗红）</b>：<code>#D9762E → #F2C548 → #8E2F26 → #3A3038</code>，全程暖色走真实火焰冷却路径。<br>
+<b>② 白色层整个重做</b>。参考图里枪口旁是 <b>3 个离散的白色实心圆点</b>（一大两小，正圆，紧贴枪口）——
+而之前做的是 5 团 22×20 的「两圆并集云团」，又大又连成片。现在换成 4 个 12×12 的<b>单圆</b>，
+直径只有 4–7 视口像素，贴着枪口排开。
+</div>
+
+<h2>参考 vs 实现（白色层特写，同倍率放大）</h2>
+<div class="grid">
+<div class="panel"><img src="data:image/png;base64,@@ref_dots@@"><p class="cap">参考图枪口右侧：3 个离散白点，大 ~7px、小 ~4px</p></div>
+<div class="panel"><img src="data:image/png;base64,@@impl_dots@@"><p class="cap">实现（开火后 0.28s）：白色圆点贴枪口排开，尺寸同量级</p></div>
+</div>
+
+<h2>改前 / 改后（左射）</h2>
+<div class="grid">
+<div class="panel"><img src="data:image/gif;base64,@@gif_v6_left@@"><p class="cap">改前：白层是大云团，配色带品红紫</p></div>
+<div class="panel"><img src="data:image/gif;base64,@@gif_v7_left@@"><p class="cap">改后：白层是离散小圆点，配色 A，火光烟从它们身后拉出</p></div>
+</div>
+
+<h2>改后 · 另一个方向</h2>
+<div class="panel"><img src="data:image/gif;base64,@@gif_v7_right@@">
+<p class="cap">向右射击 —— 同一套参数随弹道镜像。参考图是右射，这一张可以直接和参考图对照。</p></div>
+
+<h2>白色层改了什么</h2>
+<div class="panel">
+<table>
+<tr><th>项</th><th>改前</th><th>改后</th><th>为什么</th></tr>
+<tr><td>贴图</td><td>body_0..5（22×20 两圆并集云团）</td><td><b>dot_0..2（12×12 单圆，实心白）</b></td><td>参考里是离散正圆，不是融合云团。新贴图不烘描边，1px 深色圈仍由池化的暗色拷贝负责，和火光烟同一套机制。</td></tr>
+<tr><td>数量</td><td>5 团</td><td><b>4 点</b></td><td>参考可见 3 个；留 1 个余量给随机性。</td></tr>
+<tr><td>尺寸</td><td>11–14 视口像素</td><td><b>4–7 视口像素</b></td><td>参考白点 ~4–8px。这档之前严重过大。</td></tr>
+<tr><td>出生距离</td><td>0.70–2.40（与彩层共享）</td><td><b>0.35–1.30</b>（独立区间）</td><td>参考白点紧贴枪口；火光烟才需要拉到远处。</td></tr>
+<tr><td>上升</td><td>0.4–0.9</td><td><b>0.10–0.30</b></td><td>参考白点基本沿枪线，几乎不上飘。</td></tr>
+<tr><td>寿命 / 前冲 / 缩小消失</td><td colspan="2" style="text-align:center">不变（1.15–1.25s、0.80–1.40、×(1−0.65t)）</td><td>这三项是你之前定下的规格，参考图与它们不冲突。</td></tr>
+</table>
+</div>
+
+<h2>顺带修的一个可见度问题</h2>
+<div class="panel">
+上一轮发现第 3 档（现在 <code>#8E2F26</code> 暗血红）在实机只有 99 个像素 —— 因为 <code>BOUNDS</code> 要到 55% 寿命才进第 3 档，
+那时烟已经缩得太小。<b>这次把 <code>BOUNDS</code> 改成 <code>[0, 0.18, 0.48, 0.75, 1.0001]</code></b>，冷却色提前登场。
+另外 <code>RAMP</code>/<code>BOUNDS</code> 从 <code>const</code> 改成了 <code>var</code>，采集脚本可以用
+<code>--ramp=#XXXXXX,#XXXXXX,#XXXXXX,#XXXXXX</code> 直接换配色实拍，不用改代码。
+</div>
+
+<h2>测试（形态变了，规格断言同步更新）</h2>
+<div class="panel">
+<table>
+<tr><th>项</th><th>结果</th></tr>
+<tr><td><code>muzzle_smoke_reach_test</code></td><td class="ok">checks=6 failures=0 · born=[0.36..2.40] ends=[−0.40..2.02] span=2.42 mean=0.96</td></tr>
+<tr><td><code>muzzle_smoke_direction_test</code></td><td class="ok">checks=30 failures=0</td></tr>
+<tr><td><code>muzzle_smoke_motion_test</code></td><td class="ok">recede=−1.09 rise=0.74 big_ratio=0.74 checks=6 failures=0</td></tr>
+<tr><td>headless 启动</td><td class="ok">0 个 SCRIPT ERROR / Parse Error</td></tr>
+<tr><td>实机采集 left / right</td><td class="ok">checks=7 failures=0 ×2</td></tr>
+</table>
+<p class="cap">阈值为什么变了：白色层贴枪口是这次按参考图定的<b>新规格</b>，所以「无烟生在枪口上」从 0.55 收到 0.30、
+跨度断言从 3.0 收到 2.0 —— 旧阈值是在「白层也拉到远处」的旧形态下定的，不改就会把正确的新形态判成回归。</p>
+</div>
+
+<h2>接下来还能对齐参考的点</h2>
+<div class="panel">
+<ul>
+<li>参考图白点似乎<b>没有可见描边</b>（深色地板上白点边缘很干净）。如果实际游戏里也想要无描边的白点，可以把白层的暗色拷贝 alpha 降到 0.35 左右，或干脆跳过 —— 一行的事。</li>
+<li>参考白点的间距比我的略密。如果想让它们更聚拢，把 <code>WHITE_REACH_MAX 1.30 → 1.05</code> 即可。</li>
+<li>火光烟的形态这轮没动（你之前确认过「火光是对的」），只换了配色和它登场的时机。</li>
+</ul>
+</div>
+</body></html>

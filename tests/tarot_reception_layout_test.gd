@@ -39,6 +39,7 @@ func run() -> void:
 	var variant: int=posmod((str(room.active_seed)+"reception").hash(),3)
 	var expected: Image=FINAL_FLOOR.floor_image("reception",variant)
 	for floor_mesh in room.floor_root.get_children():
+		if not floor_mesh is MeshInstance3D or floor_mesh.mesh == null: continue
 		var material: ShaderMaterial=floor_mesh.mesh.surface_get_material(0)
 		var atlas: Texture2D=material.get_shader_parameter("atlas")
 		check(atlas!=null and atlas.get_image().get_data()==expected.get_data(),"Floor uses final approved reception marble pixels")

@@ -39,6 +39,9 @@ var _card_press := -1
 var _poll_left := 0.0
 var _content_signature := 0
 var _note := ""
+var _focus_region: StringName = &"content"
+var _focused_softkey: StringName = &"home"
+var _focus_memory: Dictionary = {}
 
 func _ready() -> void:
 	custom_minimum_size = SCREEN_SIZE
@@ -74,6 +77,9 @@ func configure_apps(profile: Dictionary, bedroom_phone: Control = null, clock_pr
 func set_context(context: StringName) -> void:
 	_context = context
 	_history.clear()
+	_focus_memory.clear()
+	_focus_region = &"content"
+	_focused_softkey = &"home"
 	_page = &"settings" if context == &"settings" else &"home"
 	_note = ""
 	cancel_interaction()
@@ -85,6 +91,11 @@ func get_page_id() -> StringName: return _page
 func get_selected_index() -> int: return int(_selections.get(_page, 0))
 func get_page_content_rect() -> Rect2: return CONTENT_RECT
 func get_interaction_locked() -> bool: return _locked
+func get_focus_region() -> StringName: return _focus_region
+func get_focused_softkey() -> StringName: return _focused_softkey
+
+func get_softkey_rect(action: StringName) -> Rect2:
+	return Rect2(3 if action == &"home" else 77, 210, 68, 19)
 
 func open_app(id: StringName) -> void:
 	if id in HOME_APPS or id == &"settings":
@@ -115,7 +126,8 @@ func cancel_interaction() -> void:
 
 func _rows() -> Array:
 	match _page:
-		&"settings": return [[&"sounds", "声音"], [&"graphics", "画面"]]
+		&"settings": return [[&"sounds", "声音"], [&"graphics", "画面"], [&"assistance", "游戏辅助功能"]]
+		&"assistance": return [[&"auto_vault_enabled", "自动跳跃"], [&"screen_shake_enabled", "屏幕抖动"]]
 		&"sounds": return [[&"master_volume", "总音量"], [&"music_volume", "音乐"], [&"sfx_volume", "音效"]]
 		&"graphics": return [[&"pixelation_enabled", "像素化"], [&"palette_enabled", "配色滤镜"], [&"shadow_quality", "阴影品质"]]
 		&"music": return [[&"playback", "播放 / 暂停"], [&"music_volume", "音乐音量"]]
@@ -154,36 +166,73 @@ func navigate(action: StringName) -> void:
 		if _history.is_empty(): close_requested.emit()
 		else:
 			_page = _history.pop_back()
+			var restored: Dictionary = _focus_memory.get(_page, {})
+			_focus_region = restored.get("region", &"content")
+			_focused_softkey = restored.get("softkey", &"home")
 			_refresh_content()
 			page_changed.emit(_page)
 	elif action in [&"home", &"soft_left"]:
-		if _page == &"home": _push_page(&"settings")
-		elif _page == &"chat": _scroll.scroll_vertical += 28
+		_activate_softkey(&"home")
+	elif action == &"confirm":
+		if _focus_region == &"footer": _activate_softkey(_focused_softkey)
 		else: _activate_selection()
-	elif action == &"confirm": _activate_selection()
 	elif action in [&"up", &"down", &"left", &"right"]:
-		if _page == &"home":
+		if _focus_region == &"footer":
+			if action == &"left": _focused_softkey = &"home"
+			elif action == &"right": _focused_softkey = &"back"
+			elif action == &"up":
+				_focus_region = &"content"
+				if _page == &"home": _selections[_page] = 2 if _focused_softkey == &"home" else 3
+				elif _page != &"chat": _selections[_page] = maxi(0, (3 if _page == &"shop" else _rows().size()) - 1)
+		elif _page == &"home":
 			var old := get_selected_index()
 			var col := old % 2
 			var row := old / 2
 			if action == &"left": col = maxi(0, col - 1)
 			if action == &"right": col = mini(1, col + 1)
 			if action == &"up": row = maxi(0, row - 1)
-			if action == &"down": row = mini(1, row + 1)
+			if action == &"down":
+				if row == 1: _enter_footer(&"home" if col == 0 else &"back")
+				else: row = 1
 			_selections[_page] = row * 2 + col
 		elif _page == &"chat":
-			if action in [&"up", &"down"]: _scroll.scroll_vertical += -28 if action == &"up" else 28
+			if action == &"up": _scroll.scroll_vertical -= 28
+			elif action == &"down":
+				if _can_scroll_down(): _scroll.scroll_vertical += 28
+				else: _enter_footer(&"home")
 		elif action in [&"up", &"down"]:
 			var count := 3 if _page == &"shop" else _rows().size()
-			_selections[_page] = clampi(get_selected_index() + (-1 if action == &"up" else 1), 0, maxi(count - 1, 0))
-			if _page == &"shop" and _cards.get_child_count() > get_selected_index(): _scroll.ensure_control_visible(_cards.get_child(get_selected_index()))
+			if action == &"down" and (count == 0 or get_selected_index() >= count - 1):
+				if _page == &"shop" and _can_scroll_down(): _scroll.scroll_vertical += 28
+				else: _enter_footer(&"home")
+			else:
+				_selections[_page] = clampi(get_selected_index() + (-1 if action == &"up" else 1), 0, maxi(count - 1, 0))
+				if _page == &"shop" and _cards.get_child_count() > get_selected_index(): _scroll.ensure_control_visible(_cards.get_child(get_selected_index()))
 		else: _adjust_selection(-1 if action == &"left" else 1)
 	_refresh_card_selection()
 	queue_redraw()
 
+func _enter_footer(action: StringName) -> void:
+	_focus_region = &"footer"
+	_focused_softkey = action
+
+func _can_scroll_down() -> bool:
+	if not is_instance_valid(_scroll) or not _scroll.visible: return false
+	var bar := _scroll.get_v_scroll_bar()
+	return float(_scroll.scroll_vertical) < maxf(0.0, bar.max_value - bar.page) - 0.5
+
+func _activate_softkey(action: StringName) -> void:
+	if action == &"back": navigate(&"back")
+	elif _page == &"home": _push_page(&"settings")
+	elif _page == &"chat": _scroll.scroll_vertical += 28
+	else: _activate_selection()
+
 func _push_page(page: StringName) -> void:
+	_focus_memory[_page] = {"region": _focus_region, "softkey": _focused_softkey}
 	_history.append(_page)
 	_page = page
+	_focus_region = &"content"
+	_focused_softkey = &"home"
 	_note = ""
 	if page == &"chat": apps_model.open_messages()
 	_refresh_content()
@@ -196,7 +245,7 @@ func _activate_selection() -> void:
 		_note = "" if apps_model.purchase(get_selected_index()) else "请回卧室购买"
 		_refresh_content()
 	elif _page == &"music" and get_selected_index() == 0: apps_model.toggle_music(get_tree())
-	elif _page == &"graphics":
+	elif _page in [&"graphics",&"assistance"]:
 		var key := StringName(_rows()[get_selected_index()][0])
 		if key == &"shadow_quality": _adjust_selection(1)
 		else: _manager.set_setting(key, not bool(_get_setting(key, true)))
@@ -212,7 +261,7 @@ func _adjust_selection(direction: int) -> void:
 	var key := StringName(rows[get_selected_index()][0])
 	if _page == &"sounds" or (_page == &"music" and key == &"music_volume"):
 		_manager.set_volume(key, clampi(int(_get_setting(key, 100)) + direction * 5, 0, 100))
-	elif _page == &"graphics":
+	elif _page in [&"graphics",&"assistance"]:
 		if key == &"shadow_quality":
 			var current := maxi(0, QUALITIES.find(String(_get_setting(key, "standard"))))
 			_manager.set_setting(key, QUALITIES[clampi(current + direction, 0, 2)])
@@ -290,7 +339,7 @@ func _refresh_card_selection() -> void:
 		var card := _cards.get_child(index) as PanelContainer
 		if card == null: continue
 		var style := StyleBoxFlat.new()
-		style.bg_color = HIGHLIGHT if _page == &"shop" and index == get_selected_index() else Color("e3ebf0")
+		style.bg_color = HIGHLIGHT if _focus_region == &"content" and _page == &"shop" and index == get_selected_index() else Color("e3ebf0")
 		style.content_margin_left = 5
 		style.content_margin_right = 5
 		style.content_margin_top = 6
@@ -299,13 +348,16 @@ func _refresh_card_selection() -> void:
 
 func _card_input(event: InputEvent, index: int) -> void:
 	if event is InputEventMouseMotion and event.relative.length_squared() > 0.001 and event.button_mask == 0:
+		_focus_region = &"content"
 		_selections[_page] = index
 		if _page == &"chat":
 			var messages := apps_model.get_messages()
 			if index < messages.size(): apps_model.hover_message(messages[index])
 		_refresh_card_selection()
+	queue_redraw()
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
+			_focus_region = &"content"
 			_card_press = index
 			_selections[_page] = index
 			_pointer_down = true
@@ -326,12 +378,19 @@ func _gui_input(event: InputEvent) -> void:
 			else: cancel_interaction()
 			accept_event()
 		elif event.relative.length_squared() > 0.001 and event.button_mask == 0:
-			if _page == &"home":
+			if event.position.y >= SCREEN_SIZE.y - FOOTER_HEIGHT:
+				_enter_footer(&"home" if event.position.x < 74 else &"back")
+			elif _page == &"home":
 				for index in 4:
-					if _app_rect(index).has_point(event.position): _selections[_page] = index
+					if _app_rect(index).has_point(event.position):
+						_focus_region = &"content"
+						_selections[_page] = index
 			else:
 				for index in _rows().size():
-					if _row_rect(index).has_point(event.position): _selections[_page] = index
+					if _row_rect(index).has_point(event.position):
+						_focus_region = &"content"
+						_selections[_page] = index
+			_refresh_card_selection()
 			queue_redraw()
 		return
 	if event is InputEventPanGesture:
@@ -352,18 +411,21 @@ func _gui_input(event: InputEvent) -> void:
 	_set_locked(true)
 	if event.position.y >= SCREEN_SIZE.y - FOOTER_HEIGHT:
 		var action: StringName = &"home" if event.position.x < 74 else &"back"
+		_enter_footer(action)
 		_press_feedback(action)
 		navigate(action)
 		return
 	if _page == &"home":
 		for index in 4:
 			if _app_rect(index).has_point(event.position):
+				_focus_region = &"content"
 				_selections[_page] = index
 				_press_feedback(&"confirm")
 				_activate_selection()
 				return
 	for index in _rows().size():
 		if not _row_rect(index).has_point(event.position): continue
+		_focus_region = &"content"
 		_selections[_page] = index
 		var slider := _page == &"sounds" or (_page == &"music" and index == 1)
 		if slider:
@@ -417,7 +479,7 @@ func _draw() -> void:
 	if _page == &"home":
 		draw_colored_polygon(PackedVector2Array([Vector2(0, 64), Vector2(148, 118), Vector2(148, 184), Vector2(0, 130)]), Color("c2d5e3"))
 		draw_colored_polygon(PackedVector2Array([Vector2(0, 165), Vector2(148, 108), Vector2(148, 148), Vector2(0, 206)]), Color("e5edf2"))
-	var titles := {&"home": "手机", &"settings": "设置", &"sounds": "声音", &"graphics": "画面", &"chat": "讯息", &"call": "电话", &"music": "音乐", &"shop": "购物"}
+	var titles := {&"home": "手机", &"settings": "设置", &"sounds": "声音", &"graphics": "画面", &"assistance": "游戏辅助功能", &"chat": "讯息", &"call": "电话", &"music": "音乐", &"shop": "购物"}
 	_text(Vector2(6, 18), String(titles.get(_page, "手机")))
 	var status: Dictionary = apps_model.get_status()
 	_text(Vector2(87, 18), str(status.time), MUTED, 43, HORIZONTAL_ALIGNMENT_RIGHT)
@@ -427,7 +489,7 @@ func _draw() -> void:
 	if _page == &"home":
 		for index in 4:
 			var rect := _app_rect(index)
-			if get_selected_index() == index:
+			if _focus_region == &"content" and get_selected_index() == index:
 				draw_rect(rect, HIGHLIGHT)
 				draw_rect(rect.grow(-0.5), Color("7b9fb7"), false, 1)
 			_draw_home_icon(rect, index)
@@ -443,7 +505,7 @@ func _draw() -> void:
 	for index in _rows().size():
 		var row := _row_rect(index)
 		var key := StringName(_rows()[index][0])
-		if get_selected_index() == index: draw_rect(row, HIGHLIGHT)
+		if _focus_region == &"content" and get_selected_index() == index: draw_rect(row, HIGHLIGHT)
 		_text(row.position + Vector2(8, 16), String(_rows()[index][1]))
 		if _page == &"sounds" or (_page == &"music" and index == 1):
 			var percent := clampi(int(_get_setting(key, 100)), 0, 100)
@@ -452,15 +514,19 @@ func _draw() -> void:
 			draw_rect(slider, Color("aec3d2"))
 			draw_rect(Rect2(slider.position, Vector2(slider.size.x * percent / 100.0, slider.size.y)), Color("5b89a8"))
 			draw_rect(Rect2(slider.position + Vector2(roundf(slider.size.x * percent / 100.0) - 1, -2), Vector2(3, 11)), INK)
-		elif _page == &"graphics":
+		elif _page in [&"graphics",&"assistance"]:
 			var value: String = QUALITY_LABELS[maxi(0, QUALITIES.find(String(_get_setting(key, "standard"))))] if key == &"shadow_quality" else "开" if bool(_get_setting(key, true)) else "关"
 			_text(row.position + Vector2(86, 16), value, MUTED, 43, HORIZONTAL_ALIGNMENT_RIGHT)
 		elif _page == &"music" and index == 0:
 			var info: Dictionary = apps_model.get_music_info(get_tree())
 			_text(row.position + Vector2(8, 34), "暂停" if not bool(info.paused) else "播放", MUTED)
 	if _page == &"shop": _text(Vector2(5, 205), _note if not _note.is_empty() else apps_model.get_balance_text(), MUTED, 138)
-	elif _saved and _page in [&"settings", &"sounds", &"graphics"]: _text(Vector2(101, 205), "已保存", MUTED)
+	elif _saved and _page in [&"settings", &"sounds", &"graphics", &"assistance"]: _text(Vector2(101, 205), "已保存", MUTED)
 	draw_rect(Rect2(0, 209, 148, 21), Color("b9cfde"))
+	if _focus_region == &"footer":
+		var selected_footer := get_softkey_rect(_focused_softkey)
+		draw_rect(selected_footer, HIGHLIGHT)
+		draw_rect(selected_footer.grow(-0.5), Color("527b98"), false, 1)
 	var left := "设置" if _page == &"home" else "购买" if _page == &"shop" and apps_model.can_purchase() else "只读" if _page == &"shop" else "翻阅" if _page == &"chat" else "选择"
 	_text(Vector2(8, 224), left)
 	_text(Vector2(112, 224), "返回")

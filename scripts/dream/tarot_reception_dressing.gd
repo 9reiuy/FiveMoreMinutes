@@ -19,7 +19,7 @@ func build(target: Node3D) -> void:
 		var mesh := ArrayMesh.new()
 		for key in batches[chunk]:
 			var tool: SurfaceTool=batches[chunk][key]
-			tool.set_material(PIXEL.make(palette[key],"fabric" if key=="rug" else "paint",false,key in ["lamp","led"]))
+			tool.set_material(PIXEL.make_floor(palette[key], "fabric") if key=="rug" else PIXEL.make(palette[key],"paint",false,key in ["lamp","led"]))
 			tool.commit(mesh)
 		var visual := MeshInstance3D.new()
 		visual.name="LobbyDetails_%d_%d"%[chunk.x,chunk.y]; visual.mesh=mesh

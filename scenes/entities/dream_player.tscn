@@ -99,6 +99,7 @@ texture = SubResource("Atlas_player_body")
 centered = false
 
 [node name="SideBangs" type="Node2D" parent="CharacterVisual/BodyPivot/Head"]
+z_index = 1
 position = Vector2(22, 17)
 script = ExtResource("16_bangs")
 
@@ -153,6 +154,7 @@ texture = SubResource("Atlas_player_body")
 centered = false
 
 [node name="SideBangs" type="Node2D" parent="HealOverlay/BodyPivot/Head"]
+z_index = 1
 position = Vector2(22, 17)
 
 [node name="Strand" type="Sprite2D" parent="HealOverlay/BodyPivot/Head/SideBangs"]

@@ -1,0 +1,73 @@
+extends SceneTree
+const SYSTEM=preload("res://scripts/dream/elemental_particles_3d.gd")
+var checks:=0
+var failures: Array[String]=[]
+func _initialize() -> void: call_deferred("run")
+func check(ok: bool,label: String) -> void:
+	checks+=1
+	if not ok: failures.append(label); push_error(label)
+func run() -> void:
+	var effect:=SYSTEM.new()
+	root.add_child(effect)
+	effect.set_process(false)
+	effect.rng.seed=321
+	var id:=effect.emit_fire(Vector3.ZERO)
+	check(id>0,"Fire has a reusable stop handle")
+	for i in 120: effect.step(1.0/60.0)
+	check(effect.particles.size()>20,"Continuous fire produces overlapping particles")
+	check(effect.banks.size()==3 and effect.lights.size()==4,"Bounded shared render/light pools")
+	effect.stop_fire(id)
+	for i in 240: effect.step(1.0/60.0)
+	check(effect.particles.is_empty(),"Stop lets fire and smoke expire naturally")
+	effect.explode(Vector3.ZERO)
+	check(effect.particles.size()==88,"Explosion contains heat, smoke and sparks")
+	check(effect.shockwaves.size()==1,"Explosion creates a bounded expanding shockwave")
+	var wave=effect.shockwaves[0].mesh
+	var first_scale: float=wave.scale.x
+	effect.step(.1)
+	check(wave.scale.x>first_scale,"Shockwave expands outwards instead of a stationary flash")
+	for i in 240: effect.step(1.0/60.0)
+	check(effect.particles.is_empty(),"Explosion cleans itself up")
+	check(effect.shockwaves.is_empty(),"Shockwave retires after the burst")
+	effect.emit_muzzle(Vector3.ZERO,Vector3.RIGHT)
+	check(effect.particles.size()==20,"Muzzle contains twelve fire clumps and eight sparks")
+	check(effect.particles.all(func(p: Dictionary)->bool:return Vector3(p.velocity).x>0.0),"Muzzle sprays forward along actual barrel direction")
+	check(effect.particles.any(func(p: Dictionary)->bool:return int(p.kind)==2 and Vector3(p.velocity).length()>5),"Muzzle includes fast flying hot sparks")
+	effect.clear()
+	for side in [-1.0,1.0]:
+		effect.clear(); effect.rng.seed=123; effect.clock=0.0
+		effect.set_wind(Vector3(side*2,0,0))
+		effect.emit_smoke(Vector3.ZERO,20)
+		for i in 60: effect.step(1.0/60.0)
+		var average:=0.0
+		for particle in effect.particles: average+=Vector3(particle.at).x
+		average/=maxi(1,effect.particles.size())
+		check(average*side>.6,"Living particles respond to wind in either direction")
+	effect.clear()
+	effect.emit_fire(Vector3.ZERO,.3,.1)
+	for i in 240: effect.step(1.0/60.0)
+	check(effect.fires.is_empty() and effect.particles.is_empty(),"Timed fire expires")
+	for i in 8: check(effect.emit_fire(Vector3.ZERO)>0,"Bounded fire emitter admitted")
+	check(effect.emit_fire(Vector3.ZERO)==-1,"Emitter limit enforced")
+	for i in 30: effect.explode(Vector3.ZERO)
+	effect.step(10.0)
+	check(effect.particles.size()<=SYSTEM.LIMIT,"Burst spam and long frames stay bounded")
+	effect.clear()
+	check(effect.banks.all(func(bank: MultiMesh)->bool:return bank.visible_instance_count==0),"Clear hides all pooled geometry")
+	check(effect.lights.all(func(light: OmniLight3D)->bool:return not light.visible),"Clear disables pooled lights")
+	check(effect.outline_banks.all(func(bank: MultiMesh)->bool:return bank.visible_instance_count==0),"Clear also hides union contours")
+	effect.emit_smoke(Vector3.ZERO,12)
+	effect.set_wind(Vector3(-2,0,0))
+	for i in 30: effect.step(1.0/60.0)
+	effect.set_wind(Vector3(2,0,0))
+	for i in 40: effect.step(1.0/60.0)
+	check(effect.particles.all(func(particle: Dictionary)->bool:return Vector3(particle.velocity).x>0.0),"Changing wind steers particles that are already alive")
+	effect.clear()
+	for i in 8: effect.emit_fire(Vector3.ZERO)
+	for i in 120:effect.step(1.0/60.0)
+	var before:=effect.particles.size()
+	effect.explode(Vector3.ZERO)
+	check(effect.particles.size()==before+88,"Continuous fire reserves capacity for an explosion")
+	effect.free()
+	print("ELEMENTAL_PARTICLES checks=",checks," failures=",failures.size())
+	quit(0 if failures.is_empty() else 1)

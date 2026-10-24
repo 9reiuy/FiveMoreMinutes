@@ -36,6 +36,8 @@ var pending:Array[WeakRef]=[]
 var actor_bindings:Array[Dictionary]=[]
 var last_render_usec:=0
 var cleanup_elapsed:=0.0
+static var _regex_vertex:RegEx
+static var _regex_fragment:RegEx
 
 static func install(owner_world:Node3D)->Node3D:
 	if bool(owner_world.get_meta(&"test_floor_reflections_disabled",false)): return null
@@ -95,6 +97,9 @@ func _on_node_added(node:Node)->void:
 	if world.is_ancestor_of(node) and (node is GeometryInstance3D or node is Light3D) and not installed_ids.has(node.get_instance_id()):
 		pending.append(weakref(node))
 
+func _should_exclude_mesh(mesh:MeshInstance3D)->bool:
+	return mesh.name==&"_contact_shadow" or mesh.name.begins_with("ReviewRug_") or mesh.has_meta(&"review_desktop_detail")
+
 func _register_visual(node:GeometryInstance3D)->void:
 	if installed_ids.has(node.get_instance_id()): return
 	if node is Sprite3D:
@@ -104,6 +109,9 @@ func _register_visual(node:GeometryInstance3D)->void:
 		else: _exclude(node)
 	elif node is MeshInstance3D:
 		if node.name.begins_with("FloorBatch_"): return
+		if _should_exclude_mesh(node as MeshInstance3D):
+			_exclude(node)
+			return
 		_replace_material(node,false)
 
 func _install_surfaces()->void:
@@ -191,6 +199,9 @@ func _install_scene_carriers()->void:
 			for sprite in bridge.find_children("*","Sprite3D",true,false): _exclude(sprite)
 	for mesh in world.find_children("*","MeshInstance3D",true,false):
 		if installed_ids.has(mesh.get_instance_id()): continue
+		if _should_exclude_mesh(mesh as MeshInstance3D):
+			_exclude(mesh)
+			continue
 		_replace_material(mesh,false)
 	# Ground blood, shell carriers and native smoke must not reflect recursively.
 	for sprite in world.find_children("*","Sprite3D",true,false):
@@ -207,8 +218,10 @@ func _replace_material(node:GeometryInstance3D,actor:bool)->void:
 	# coexist with the next scene for one frame, so never mutate those caches.
 	# Actor, dither, wall-cutaway and aperture materials are owner-local and
 	# must keep their references for ongoing uniform writes.
-	var raw_swatch:bool=source.shader==preload("res://shaders/dream3d/office_pixel_surface.gdshader") or source.shader==preload("res://shaders/dream3d/office_low_pixel.gdshader")
-	var live:bool=not raw_swatch and (actor or source.has_meta(&"dither_origin") or code.contains("architecture_cutaway") or code.contains("world_to_door"))
+	# Animated effects opt in explicitly too: copying their zero-opacity
+	# startup state disconnects the rendered resource from the animation owner.
+	var raw_swatch:bool=source.shader in [preload("res://shaders/dream3d/office_pixel_surface.gdshader"), preload("res://shaders/dream3d/office_low_pixel.gdshader"), preload("res://shaders/dream3d/office_floor_opaque.gdshader"), preload("res://shaders/dream3d/office_floor_swatch_opaque.gdshader")]
+	var live:bool=not raw_swatch and (actor or bool(source.get_meta(&"runtime_uniform_owner",false)) or source.has_meta(&"dither_origin") or code.contains("architecture_cutaway") or code.contains("world_to_door"))
 	if not live:
 		var old:Material=source
 		if not static_variants.has(old.get_instance_id()):
@@ -234,12 +247,14 @@ func _replace_material(node:GeometryInstance3D,actor:bool)->void:
 			vertex+="if(sample_capture_pass>0.5 && reference_depth_enabled){ vec3 p=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; vec3 ray=p-sample_primary_eye; float d=dot(reference_plane_normal,ray); if(abs(d)>0.00001){ float t=dot(reference_plane_normal,reference_plane_origin-sample_primary_eye)/d; if(t>0.0){ VERTEX=(inverse(MODEL_MATRIX)*vec4(sample_primary_eye+ray*t,1.0)).xyz; } } }\n"
 		vertex+="sample_capture_world=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;\n"
 		code=code.replace("shader_type spatial;","shader_type spatial;"+header)
-		var function:=RegEx.new(); function.compile("void\\s+vertex\\s*\\(\\s*\\)\\s*\\{")
-		var function_match:=function.search(code)
+		if _regex_vertex==null:
+			_regex_vertex=RegEx.new(); _regex_vertex.compile("void\\s+vertex\\s*\\(\\s*\\)\\s*\\{")
+		var function_match:=_regex_vertex.search(code)
 		if function_match!=null: code=code.insert(function_match.get_end(),"\n"+vertex)
 		else: code+="\nvoid vertex(){"+vertex+"}\n"
-		function.compile("void\\s+fragment\\s*\\(\\s*\\)\\s*\\{")
-		function_match=function.search(code)
+		if _regex_fragment==null:
+			_regex_fragment=RegEx.new(); _regex_fragment.compile("void\\s+fragment\\s*\\(\\s*\\)\\s*\\{")
+		function_match=_regex_fragment.search(code)
 		if function_match!=null:
 			code=code.insert(function_match.get_end(),"\nif(sample_capture_pass>0.5 && sample_capture_world.y<0.005){discard;}\n")
 		code=code.replace("combined_cutout(SCREEN_UV)","(sample_capture_pass>0.5 ? 1.0 : combined_cutout(SCREEN_UV))")

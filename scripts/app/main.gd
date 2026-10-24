@@ -75,6 +75,8 @@ func _ready() -> void:
 	add_child(game_phone)
 	game_phone.call("configure", self)
 	debug_console.configure(persistent_day_state, _on_debug_ram_changed)
+	if not debug_console.dream_jump_requested.is_connected(_on_debug_dream_jump_requested):
+		debug_console.dream_jump_requested.connect(_on_debug_dream_jump_requested)
 	_show_main_menu()
 
 
@@ -623,6 +625,22 @@ func _on_debug_ram_changed() -> void:
 	var active_phone := current_screen.get_node_or_null("PhoneLayer/BedroomPhone")
 	if active_phone != null:
 		active_phone.call("configure_state", persistent_day_state)
+
+
+func _on_debug_dream_jump_requested(weapon_id: String) -> void:
+	var saved_state := _load_current_version_progress()
+	if not saved_state.is_empty():
+		persistent_day_state = _merge_with_defaults(saved_state)
+		UNLOCK_STORE.apply_to(persistent_day_state)
+	var chosen_weapon := weapon_id.strip_edges().to_lower()
+	if chosen_weapon.is_empty():
+		chosen_weapon = _validated_story_weapon_id()
+	if chosen_weapon.is_empty():
+		chosen_weapon = "basic"
+	if is_instance_valid(game_phone):
+		game_phone.call("abort")
+	PauseManager.clear_all()
+	_show_dream(chosen_weapon)
 
 
 func _reset_dream_time() -> void:

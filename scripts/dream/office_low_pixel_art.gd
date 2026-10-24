@@ -234,6 +234,8 @@ static func material() -> ShaderMaterial:
 static func surface(kind: String) -> ShaderMaterial:
 	if not _surfaces.has(kind):
 		var result := material().duplicate() as ShaderMaterial
+		if kind == "floor":
+			result.shader = preload("res://shaders/dream3d/office_floor_opaque.gdshader")
 		var rect: Rect2i = REGIONS[kind]
 		result.set_shader_parameter("world_surface", 1 if kind == "floor" else 2)
 		result.set_shader_parameter("tile_rect", Vector4(rect.position.x, rect.position.y, rect.size.x, rect.size.y))

@@ -7,10 +7,14 @@ var post_length := 0.20
 var thin_meshes: Dictionary={}
 var joined_meshes: Dictionary={}
 var root_meshes: Dictionary={}
+static var shared_root_meshes: Dictionary={}
 
 func cut_mesh(height:float,depth:float,left:bool,right:bool,phase:float)->Mesh:
 	var key:="%s:%s:%s:%s:%s"%[height,depth,left,right,phase]
-	if not root_meshes.has(key): root_meshes[key]=_make_root_mesh(height,depth,left,right,phase)
+	if not root_meshes.has(key):
+		if not shared_root_meshes.has(key):
+			shared_root_meshes[key]=_make_root_mesh(height,depth,left,right,phase)
+		root_meshes[key]=shared_root_meshes[key]
 	return root_meshes[key]
 
 func _thin_mesh(source:Mesh,depth:float)->Mesh:

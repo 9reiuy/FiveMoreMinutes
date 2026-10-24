@@ -288,9 +288,8 @@ extends Resource
 @export_range(0.0, 0.3, 0.01) var superhot_movement_deadzone: float = 0.05
 
 @export_group("Player Movement Actions")
-## Space taps keep the directional Roll/Dash while a longer real-time hold
-## enters the mouse-directed DashAim preview.  Input timing is intentionally
-## independent from Engine.time_scale.
+## Legacy hold-preview timing; the current Space action triggers phase dash
+## immediately on press and does not enter this preview.
 @export_range(0.08, 0.30, 0.01) var dash_aim_hold_threshold: float = 0.16
 ## Vault trigger distance is measured from the Player to the nearest point on
 ## a vaultable Furniture CollisionShape2D, never to its visual/center point.
@@ -447,6 +446,12 @@ extends Resource
 @export_range(1.0, 180.0, 1.0) var books_attack_arc_degrees: float = 120.0
 @export_range(0.1, 3.0, 0.05) var books_attack_interval: float = 0.8
 @export_range(0.1, 3.0, 0.05) var books_knockback_multiplier: float = 0.75
+
+## Player-only reach. Enemy melee retains the original shared weapon values.
+@export var player_lucille_attack_range: float = 80.0
+@export_range(1.0, 180.0, 1.0) var player_lucille_attack_arc_degrees: float = 160.0
+@export var player_books_attack_range: float = 80.0
+@export_range(1.0, 180.0, 1.0) var player_books_attack_arc_degrees: float = 150.0
 
 
 @export_range(2, 16, 1) var lucille_trail_max_points: int = 12
@@ -663,10 +668,11 @@ extends Resource
 @export_range(1.0, 5.0, 0.05) var player_critical_damage_multiplier: float = 1.50
 
 @export_group("Dash")
-## 短距离高爆发；门仍由真实连续位移处理，跨房后由现有cancel_dash()收尾。
+## Space 按下立即朝鼠标穿墙冲刺；落地以单次胶囊结算，直接击杀刷新。
 @export_range(32.0, 240.0, 1.0) var dash_distance: float = 168.0
 @export_range(0.06, 0.5, 0.01) var dash_duration: float = 0.14
 @export_range(0.2, 5.0, 0.05) var dash_cooldown: float = 0.8
+@export_range(4.0, 48.0, 1.0) var phase_dash_attack_radius: float = 16.0
 @export var dash_invulnerability_seconds: float = 0.18
 ## Thunder.png 实际切帧数（512×256 横向 8 列 64×256，从左到右播放）。
 @export_range(1, 16, 1) var dash_thunder_frame_count: int = 8
@@ -674,7 +680,7 @@ extends Resource
 @export_range(4.0, 60.0, 1.0) var dash_thunder_fps: float = 24.0
 
 @export_group("Dive")
-## 飞扑（空格键）：45度起跳滞空、空中射击、0.2倍速子弹时间、落地接翻滚
+## 旧飞扑兼容参数；正式 Space 输入不再进入飞扑。
 @export_range(0.15, 0.8, 0.01) var dive_duration: float = 0.35
 @export_range(0.05, 1.0, 0.05) var dive_bullet_time_scale: float = 0.2
 @export_range(0.4, 0.9, 0.05) var dive_airborne_ratio: float = 0.70
@@ -682,8 +688,8 @@ extends Resource
 @export_range(8.0, 36.0, 1.0) var dive_peak_height: float = 18.0
 
 @export_group("Tactical Planning Dash")
-## 长按 Space 进入 2 倍距离战术预演模式（类似晶体管 Turn() / 武士零预演）
-@export var tactical_dash_enabled: bool = true
+## 旧预演兼容参数；正式 Space 使用按下即触发的穿墙冲刺。
+@export var tactical_dash_enabled: bool = false
 @export_range(1.5, 4.0, 0.1) var tactical_dash_distance_multiplier: float = 2.0
 @export_range(1.0, 15.0, 0.5) var tactical_dash_cooldown_seconds: float = 5.0
 @export_range(0.01, 0.5, 0.01) var tactical_dash_time_scale: float = 0.05
@@ -829,9 +835,9 @@ extends Resource
 @export_range(6.0, 10.0, 1.0) var option_triangle_text_gap: float = 8.0
 @export_range(2.0, 4.0, 0.5) var option_triangle_animation_amplitude: float = 3.0
 @export_range(0.45, 0.8, 0.05) var option_triangle_animation_period: float = 0.60
-@export_range(0.08, 0.4, 0.01) var option_hover_tween_duration: float = 0.16
-@export var option_frame_fill_color: Color = Color(0.290, 0.322, 0.329, 0.48)
-@export var option_triangle_color: Color = Color(0.443, 0.502, 0.514, 0.86)
+@export_range(0.08, 0.4, 0.01) var option_hover_tween_duration: float = 0.12
+@export var option_frame_fill_color: Color = Color(0.223529, 0.435294, 0.886275, 1.0)
+@export var option_triangle_color: Color = Color(0.223529, 0.435294, 0.886275, 1.0)
 
 @export_group("Pixel UI")
 @export var ui_border_color: Color = Color("517b98")
@@ -1000,6 +1006,18 @@ extends Resource
 @export_range(200.0, 4000.0, 50.0) var music_muffled_cutoff_hz: float = 700.0
 ## 暂停/恢复时低通效果的渐变时长（暂停中仍会渐变）。
 @export_range(0.0, 1.5, 0.05) var music_muffled_fade_seconds: float = 0.5
+## 关卡结束战斗音乐收尾样式: "both"(黑胶断电+爵士鼓收尾), "rimshot"(直接切断+爵士鼓收尾), "tape_stop"(0.3秒磁带停转入死寂)
+@export_enum("both", "rimshot", "tape_stop") var combat_finish_style: String = "both"
+## 音乐基准输出衰减（dB），默认 -6.0dB，避免音乐压过枪炮与战斗打击。
+@export_range(-24.0, 0.0, 0.5) var music_baseline_volume_db: float = -6.0
+## 战斗交火动态闪避深度（dB），开火/击中时压低战斗音乐音量（默认 -7.0dB）。
+@export_range(-24.0, 0.0, 0.5) var combat_duck_db: float = -7.0
+## 战斗交火动态闪避持续 Hold 时间（秒），连续交火会自动刷新该窗口。
+@export_range(0.1, 3.0, 0.05) var combat_duck_hold_duration: float = 0.8
+## 战斗交火动态闪避释放渐变恢复时间（秒）。
+@export_range(0.05, 1.5, 0.05) var combat_duck_release_duration: float = 0.5
+## 玩家死亡时磁带停转时长（秒）。
+@export_range(0.1, 1.5, 0.05) var player_death_tape_stop_seconds: float = 0.4
 
 @export_group("Experience Bar")
 @export_range(12.0, 48.0, 1.0) var experience_bar_height: float = 24.0
@@ -1021,6 +1039,10 @@ extends Resource
 @export_range(-60.0, 6.0, 1.0) var sfx_phone_operation_volume_db: float = -16.0
 @export_range(-60.0, 6.0, 1.0) var sfx_bottle_shake_volume_db: float = -12.0
 @export_range(0.02, 1.0, 0.01) var sfx_bottle_shake_min_interval: float = 0.10
+@export_range(-60.0, 6.0, 1.0) var sfx_canned_laughter_volume_db: float = -6.0
+@export_range(-60.0, 6.0, 1.0) var sfx_audience_applause_volume_db: float = -6.0
+@export_range(-60.0, 6.0, 1.0) var sfx_golf_clap_volume_db: float = -6.0
+@export_range(-60.0, 6.0, 1.0) var sfx_rimshot_volume_db: float = -4.0
 ## 下列事件使用集中生成的原创8-bit占位声，可随时在SFXManager中替换为导入资源。
 @export_range(-60.0, 6.0, 1.0) var sfx_ui_hover_volume_db: float = -27.0
 @export_range(80.0, 1000.0, 10.0) var sfx_ui_hover_tone_hz: float = 260.0
@@ -1072,7 +1094,9 @@ extends Resource
 
 @export_group("Death CRT Effect")
 ## 角色死亡时报错与关机动画的总时长（秒）。
-@export_range(0.2, 5.0, 0.05) var death_crt_effect_seconds: float = 2.2
+@export_range(0.2, 5.0, 0.05) var death_crt_effect_seconds: float = 2.45
+## 角色坠亡时触发威廉尖叫彩蛋的概率（默认 2% = 0.02）。
+@export_range(0.0, 1.0, 0.01) var wilhelm_scream_easter_egg_chance: float = 0.02
 
 @export_group("Economy")
 @export var initial_balance: int = 1325
@@ -1128,6 +1152,12 @@ extends Resource
 @export_range(0.2, 2.0, 0.05) var upgrade_jackpot_feedback_seconds: float = 0.7
 @export_range(-60.0, 0.0, 1.0) var sfx_slot_tick_volume_db: float = -28.0
 @export_range(0.0, 0.2, 0.005) var sfx_slot_tick_min_interval: float = 0.025
+## Soft mechanical watch click for option hover (menus / settings rows / controls).
+@export_range(-60.0, 0.0, 1.0) var sfx_watch_tick_volume_db: float = -8.0
+@export_range(0.0, 0.2, 0.005) var sfx_watch_tick_min_interval: float = 0.03
+## Early (pre-soften) brighter watch click for volume slider drag (~1.7kHz, not slot_tick).
+@export_range(-60.0, 0.0, 1.0) var sfx_watch_tick_early_volume_db: float = -8.0
+@export_range(0.0, 0.2, 0.005) var sfx_watch_tick_early_min_interval: float = 0.03
 @export_range(0.0, 1.0, 0.01) var upgrade_crt_scanline_strength: float = 0.10
 @export_range(0.0, 1.0, 0.01) var upgrade_crt_noise_strength: float = 0.025
 @export_range(0.0, 1.0, 0.01) var upgrade_crt_vignette_strength: float = 0.14

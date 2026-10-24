@@ -44,6 +44,7 @@ const FLOOR_BATCH_RENDERER: Script = preload("res://scripts/dream/dream_3d_floor
 const DASH_AIM_PRESENTATION_SCRIPT: Script = preload("res://scripts/dream/dream_dash_aim_presentation.gd")
 const INTERACTION_RESOLVER_SCRIPT: Script = preload("res://scripts/dream/dream_interaction_resolver.gd")
 const CONFIG: DemoConfig = preload("res://resources/demo_config.tres")
+const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const DREAM_GUN_ATLAS := preload("res://scripts/data/dream_gun_atlas.gd")
 const TRANSITION_GRADIENT_SHADER: Shader = preload("res://shaders/dream3d/transition_corridor_gradient.gdshader")
 
@@ -133,6 +134,7 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	preload("res://scripts/app/game_input_actions.gd").configure()
+	SFX.play_safe_music(get_instance_id())
 	interaction_prompt.add_theme_font_override(&"font", CRISP_INTERACTION_FONT.get_font())
 	interaction_prompt.add_theme_font_size_override(&"font_size", 12)
 
@@ -193,6 +195,7 @@ func _setup_dialogue_controller() -> void:
 		dialogue_controller.dialogue_interrupted.connect(_on_waitress_dialogue_interrupted)
 		dialogue_controller.dialogue_finished.connect(_on_waitress_dialogue_finished)
 		dialogue_controller.dialogue_option_selected.connect(_on_waitress_dialogue_option_selected)
+		dialogue_controller.dialogue_line_started.connect(_on_waitress_emotion_line)
 
 
 func _process(delta: float) -> void:
@@ -726,11 +729,13 @@ func _update_interaction_prompt() -> void:
 
 	var target := interaction_resolver.current_target if interaction_resolver != null else null
 	var state: Dictionary = {}
+	if target==waitress_npc and is_instance_valid(waitress_npc) and waitress_npc.visible and waitress_npc.interaction_enabled:
+		npc_hint_bubble.present_hint(_get_waitress_hud_pos(),StringName(waitress_npc.hint_emotion))
+	else:
+		npc_hint_bubble.dismiss()
 	if target==waitress_npc and waitress_npc.conversation_mode==waitress_npc.ConversationMode.PASSIVE:
-		interaction_prompt.dismiss(true)
-		npc_hint_bubble.present_hint(_get_waitress_hud_pos())
+		interaction_prompt.present("交流",npc_hint_bubble.prompt_anchor(interaction_prompt.size),waitress_npc.get_instance_id())
 		return
-	npc_hint_bubble.dismiss()
 	if target != null and is_instance_valid(target) and target.has_method("get_interaction_prompt_state"):
 		state = target.call("get_interaction_prompt_state")
 
@@ -744,8 +749,8 @@ func _update_interaction_prompt() -> void:
 		world_position = RECEPTION_DESK_POS_3D + Vector3(0.0, 1.25, 0.0)
 
 	var prompt_text := str(state.get("text", ""))
-	if prompt_text == "E 交谈":
-		prompt_text = "[E] 交谈"
+	if prompt_text in ["E 交谈","[E] 交谈"]:
+		prompt_text = "交流"
 	elif target.is_in_group(&"world_weapon_pickups") or target.is_in_group(&"employee_badge_pickup"):
 		prompt_text = COMPACT_PROMPT.pickup_verb(target, player)
 	var hud_point: Vector2 = player.get_presentation_hud_position(camera_3d.unproject_position(world_position))
@@ -859,6 +864,7 @@ func _on_waitress_interaction_requested() -> void:
 	_tween_dialogue_camera_weight(1.0,.40)
 
 func _on_waitress_dialogue_interrupted() -> void:
+	waitress_npc.hint_emotion="angry"
 	tarot_visit_state.selected = true
 	_tween_dialogue_camera_weight(0.0, 0.45)
 	if player != null and is_instance_valid(player):
@@ -888,7 +894,13 @@ func _on_waitress_dialogue_option_selected(index: int, choice_data: Dictionary) 
 		pass
 
 
+func _on_waitress_emotion_line(index: int, _line: Dictionary) -> void:
+	# Authored emotional beats, not a random face carousel.
+	var feelings: Array[String]=["nervous","sad","nervous","surprised","happy"]
+	waitress_npc.hint_emotion=feelings[clampi(index,0,feelings.size()-1)]
+
 func _on_waitress_dialogue_finished(interrupted: bool, action_id: Variant) -> void:
+	if not interrupted: waitress_npc.hint_emotion="happy"
 	if interrupted:
 		tarot_visit_state.selected = true
 	var act_name := StringName(str(action_id))

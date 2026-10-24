@@ -27,13 +27,12 @@ var confirmation_time := 0.0
 var cover_root: Node3D
 var outside_black_gradient: ColorRect
 var outside_mask_layer: CanvasLayer
-var outside_mask_material: ShaderMaterial
+var outside_mask_material: ShaderMaterial # Retired; no screen overlay is instantiated.
+var view_snapshot: Dictionary = {}
+var interior_void_backing: MeshInstance3D
 
 const COVER_Y := 0.035
-const OUTSIDE_MASK_MARGIN_CELLS := 3.0
-const OUTSIDE_MASK_FEATHER_CELLS := 2.25
 const FULL_FLOOR_CONTENT_VISIBLE := true
-const OUTSIDE_MASK_SHADER: Shader = preload("res://shaders/dream3d/outside_black_screen.gdshader")
 
 
 func configure(owner_world: Node3D) -> void:
@@ -50,7 +49,7 @@ func configure(owner_world: Node3D) -> void:
 	cover_root.name = "RoomFogRoot"
 	world.generated_root.add_child(cover_root)
 	var is_otxo: bool = (world.has_method("_is_otxo_mansion") and world.call("_is_otxo_mansion") == true)
-	_build_outside_black_gradient()
+	_build_interior_void_backing()
 	var lazy_presentation := bool(world.get("lazy_room_presentation"))
 	for room_variant in world.rooms:
 		var room: Dictionary = room_variant
@@ -186,6 +185,8 @@ func clear_layout() -> void:
 		outside_mask_layer.queue_free()
 	outside_mask_layer = null
 	outside_mask_material = null
+	view_snapshot.clear()
+	interior_void_backing = null
 	outside_black_gradient = null
 	room_covers.clear()
 	corridor_covers.clear()
@@ -207,53 +208,32 @@ func clear_layout() -> void:
 
 
 func _update_outside_mask() -> void:
-	if world == null or not is_instance_valid(world) or outside_mask_material == null:
-		return
+	# Compatibility entrypoint: publishes camera data, never draws a screen mask.
+	if world == null or not is_instance_valid(world): return
+	if is_instance_valid(interior_void_backing):
+		interior_void_backing.visible = StringName(world.get("transition_phase")) != &"CAB_RIDE"
 	var camera: Camera3D = world.camera_3d
-	if camera == null or not is_instance_valid(camera):
-		return
-	outside_black_gradient.visible = StringName(world.get("transition_phase")) != &"CAB_RIDE"
-	var viewport_size := camera.get_viewport().get_visible_rect().size
-	var top_left := Vector2.ZERO
-	var top_right := Vector2(viewport_size.x, 0.0)
-	var bottom_left := Vector2(0.0, viewport_size.y)
-	var origin_tl := camera.project_ray_origin(top_left)
-	var origin_tr := camera.project_ray_origin(top_right)
-	var origin_bl := camera.project_ray_origin(bottom_left)
-	var direction_tl := camera.project_ray_normal(top_left)
-	var direction_tr := camera.project_ray_normal(top_right)
-	var direction_bl := camera.project_ray_normal(bottom_left)
-	# Perspective rays must be un-normalized against camera forward before
-	# interpolation; otherwise the ground footprint swims as the view moves.
+	if not is_instance_valid(camera): return
+	var size := camera.get_viewport().get_visible_rect().size
+	var origin := camera.project_ray_origin(Vector2.ZERO)
+	var direction := camera.project_ray_normal(Vector2.ZERO)
+	var right := camera.project_ray_normal(Vector2(size.x, 0))
+	var bottom := camera.project_ray_normal(Vector2(0, size.y))
 	if camera.projection == Camera3D.PROJECTION_PERSPECTIVE:
 		var forward := -camera.global_basis.z
-		direction_tl /= maxf(direction_tl.dot(forward), 0.001)
-		direction_tr /= maxf(direction_tr.dot(forward), 0.001)
-		direction_bl /= maxf(direction_bl.dot(forward), 0.001)
-	outside_mask_material.set_shader_parameter("ray_origin_tl", origin_tl)
-	outside_mask_material.set_shader_parameter("ray_origin_dx", origin_tr - origin_tl)
-	outside_mask_material.set_shader_parameter("ray_origin_dy", origin_bl - origin_tl)
-	outside_mask_material.set_shader_parameter("ray_direction_tl", direction_tl)
-	outside_mask_material.set_shader_parameter("ray_direction_dx", direction_tr - direction_tl)
-	outside_mask_material.set_shader_parameter("ray_direction_dy", direction_bl - direction_tl)
-	outside_mask_material.set_shader_parameter("map_origin", world.global_position)
-	# The floor has no elevator-cab tiles, but the wall-thickness door must
-	# remain in front of the black outside mask. Its dark backing closes this
-	# strictly local screen aperture, so unrelated out-of-map nodes stay hidden.
-	var door_node: Node3D = world.get("elevator_floor_door")
-	var door_visible := door_node != null and is_instance_valid(door_node) and door_node.visible
-	outside_mask_material.set_shader_parameter("door_cutout_enabled", door_visible)
-	if door_visible:
-		var screen_min := Vector2(INF, INF)
-		var screen_max := Vector2(-INF, -INF)
-		for x in [-1.88, 1.88]:
-			for y in [0.0, 3.02]:
-				for z in [-0.17, 0.17]:
-					var pixel := camera.unproject_position(door_node.to_global(Vector3(x, y, z))) / viewport_size
-					screen_min = screen_min.min(pixel)
-					screen_max = screen_max.max(pixel)
-		outside_mask_material.set_shader_parameter("door_screen_min", screen_min)
-		outside_mask_material.set_shader_parameter("door_screen_max", screen_max)
+		direction /= maxf(direction.dot(forward), .001)
+		right /= maxf(right.dot(forward), .001)
+		bottom /= maxf(bottom.dot(forward), .001)
+	var basis: Basis = world.global_basis
+	view_snapshot = {
+		"ray_origin_tl": origin,
+		"ray_origin_dx": camera.project_ray_origin(Vector2(size.x, 0)) - origin,
+		"ray_origin_dy": camera.project_ray_origin(Vector2(0, size.y)) - origin,
+		"ray_direction_tl": direction, "ray_direction_dx": right - direction,
+		"ray_direction_dy": bottom - direction, "map_origin": world.global_position,
+		"map_x_axis": basis.x / maxf(basis.x.length_squared(), .001),
+		"map_z_axis": basis.z / maxf(basis.z.length_squared(), .001)
+	}
 
 
 func refresh_active_presentation() -> void:
@@ -483,67 +463,10 @@ func _make_cover_node(node_name: String, mesh: ArrayMesh) -> MeshInstance3D:
 	return cover
 
 
-func _build_outside_black_gradient() -> void:
-	## Distance from the actual floor-cell footprint, not its bounding rectangle.
-	## This also covers the empty corners of L/T/cross-shaped floors.
-	if cover_root == null or world == null:
-		return
-	var rect: Rect2i = world.building_rect
-	if rect.size.x <= 0 or rect.size.y <= 0:
-		return
-	var cell_world_size := 1.0
-	if world.has_method("_cell_world_size"):
-		cell_world_size = maxf(float(world.call("_cell_world_size")), 0.001)
-	var margin := ceili(maxf(OUTSIDE_MASK_FEATHER_CELLS, OUTSIDE_MASK_MARGIN_CELLS)) + 1
-	var grid_origin := rect.position - Vector2i(margin, margin)
-	var grid_size := rect.size + Vector2i(margin * 2, margin * 2)
-	var image := Image.create(grid_size.x, grid_size.y, false, Image.FORMAT_RF)
-	var floor: Dictionary = world.floor_cells
-	var elevator_room_id: int = int(world.get("elevator_room_id"))
-	if world.has_method("_has_elevator_reception") and bool(world.call("_has_elevator_reception")):
-		elevator_room_id = -1
-	var room_cell_map: Dictionary = world.room_cells
-	var search_radius := ceili(OUTSIDE_MASK_FEATHER_CELLS) + 1
-	for y in grid_size.y:
-		for x in grid_size.x:
-			var cell := grid_origin + Vector2i(x, y)
-			var distance := OUTSIDE_MASK_FEATHER_CELLS
-			var is_presented_floor := floor.has(cell) and (elevator_room_id < 0 or int(room_cell_map.get(cell, -1)) != elevator_room_id)
-			if is_presented_floor:
-				distance = 0.0
-			else:
-				for dy in range(-search_radius, search_radius + 1):
-					for dx in range(-search_radius, search_radius + 1):
-						var neighbor := cell + Vector2i(dx, dy)
-						if not floor.has(neighbor) or (elevator_room_id >= 0 and int(room_cell_map.get(neighbor, -1)) == elevator_room_id):
-							continue
-						var to_cell := Vector2(maxf(absf(float(dx)) - 0.5, 0.0), maxf(absf(float(dy)) - 0.5, 0.0))
-						distance = minf(distance, to_cell.length())
-			image.set_pixel(x, y, Color(clampf(distance / OUTSIDE_MASK_FEATHER_CELLS, 0.0, 1.0), 0.0, 0.0))
-	var texture := ImageTexture.create_from_image(image)
-	var layer := CanvasLayer.new()
-	layer.name = "OutsideFootprintMaskLayer"
-	layer.layer = 19 # World is below; GameplayUI is layer 20.
-	add_child(layer)
-	var mask := ColorRect.new()
-	mask.name = "OutsideBlackGradient"
-	mask.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	layer.add_child(mask)
-	mask.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var material := ShaderMaterial.new()
-	material.shader = OUTSIDE_MASK_SHADER
-	material.set_shader_parameter("footprint_distance", texture)
-	material.set_shader_parameter("grid_origin", Vector2(grid_origin))
-	material.set_shader_parameter("grid_size", Vector2(grid_size))
-	material.set_shader_parameter("cell_world_size", cell_world_size)
-	var map_basis: Basis = world.global_basis if world is Node3D else Basis.IDENTITY
-	material.set_shader_parameter("map_x_axis", map_basis.x / maxf(map_basis.x.length_squared(), 0.001))
-	material.set_shader_parameter("map_z_axis", map_basis.z / maxf(map_basis.z.length_squared(), 0.001))
-	mask.material = material
-	mask.set_meta(&"outside_black_gradient", true)
-	outside_black_gradient = mask
-	outside_mask_layer = layer
-	outside_mask_material = material
+func _build_interior_void_backing() -> void:
+	if cover_root == null or world == null: return
+	interior_void_backing = preload("res://scripts/dream/interior_void_geometry.gd").build(world.floor_cells, world.building_rect)
+	cover_root.add_child(interior_void_backing)
 	_update_outside_mask()
 
 

@@ -24,6 +24,7 @@ var clips: Dictionary={}
 var shots: Array=[]
 var metrics: Dictionary={}
 var output:="res://.runtime/nyangeon_vfx_sample_20261016/camera"
+var smoke_style:="pixel"
 var clip:=""
 var started:=0
 var captured:=0
@@ -31,6 +32,7 @@ var index:=0
 func _initialize()->void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--artifact-dir="): output=argument.trim_prefix("--artifact-dir=")
+		if argument.begins_with("--smoke-style="): smoke_style=argument.trim_prefix("--smoke-style=")
 	node_added.connect(func(node:Node)->void:
 		if node.get_script()!=null and String(node.get_script().resource_path)=="res://scripts/dream/office_skeleton_world_base.gd": node.persist_profile=false)
 	call_deferred("run")
@@ -165,6 +167,8 @@ func run()->void:
 	preload("res://tests/support/background_gpu.gd").start(self)
 	AudioServer.set_bus_mute(0,true); Engine.max_fps=60; root.size=Vector2i(1920,1080)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
+	load("res://scripts/dream/nyangeon_vfx_shapes.gd").set_smoke_style(smoke_style)
+	print("SMOKE_STYLE ",smoke_style)
 	main=load("res://scenes/app/main.tscn").instantiate(); root.add_child(main)
 	main.persistent_day_state=main._create_initial_state(); main.persistent_day_state["tutorial_completed"]=true
 	seed(120); main._show_dream("basic")
@@ -196,9 +200,11 @@ func run()->void:
 	if room_id<0: main.free(); quit(1); return
 	world.activate_room(room_id)
 	for enemy in world.enemy_root.get_children():
-		enemy.disable_mode=CollisionObject2D.DISABLE_MODE_KEEP_ACTIVE
-		enemy.hurtbox.disable_mode=CollisionObject2D.DISABLE_MODE_KEEP_ACTIVE
+		# The root is heterogeneous: actors plus plain Node2D proxies and a drone body.
 		enemy.process_mode=Node.PROCESS_MODE_DISABLED
+		if enemy is CollisionObject2D: enemy.disable_mode=CollisionObject2D.DISABLE_MODE_KEEP_ACTIVE
+		var hurtbox: Variant=enemy.get("hurtbox")
+		if hurtbox is CollisionObject2D: hurtbox.disable_mode=CollisionObject2D.DISABLE_MODE_KEEP_ACTIVE
 	world.player.global_position=origin+Vector2(-45,48)
 	world.player.invulnerability_left=0; world.player.invulnerability_reason=&""; world.player.hurt_flash_left=0; world.player.revive_flash_left=0
 	world.player.set_attacking_enabled(false)
@@ -279,7 +285,7 @@ func run()->void:
 	reception.player.clear_scripted_locomotion(); await wait(.5); finish()
 	check(hall_smoke.emitted>0,"Reception player uses the same floor smoke")
 	check(DisplayServer.window_get_mode()==DisplayServer.WINDOW_MODE_MINIMIZED,"GPU delivery remains minimized")
-	var report:={"checks":checks,"failures":failures,"clips":clips,"shots":shots,"metrics":metrics,"gpu":RenderingServer.get_video_adapter_name(),"room_id":room_id,"origin":origin,"scope":"Actual Main and gameplay Camera. Controlled natural office with three staged real enemies, scripted player locomotion and collision-respecting enemy motion, AI disabled. Real weapon projectiles and damage. Normal time fixture, unchanged production time rules. Performance samples exclude PNG readback; not combat FPS acceptance."}
+	var report:={"checks":checks,"failures":failures,"clips":clips,"shots":shots,"metrics":metrics,"gpu":RenderingServer.get_video_adapter_name(),"room_id":room_id,"origin":origin,"smoke_style":smoke_style,"scope":"Actual Main and gameplay Camera. Controlled natural office with three staged real enemies, scripted player locomotion and collision-respecting enemy motion, AI disabled. Real weapon projectiles and damage. Normal time fixture, unchanged production time rules. Performance samples exclude PNG readback; not combat FPS acceptance."}
 	var file:=FileAccess.open(output+"/report.json",FileAccess.WRITE); file.store_string(JSON.stringify(report,"\t")); file.close()
 	print("NYANGEON_VFX_DELIVERY ",JSON.stringify({"checks":checks,"failures":failures,"metrics":metrics}))
 	main.free(); quit(1 if failures.size() else 0)

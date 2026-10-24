@@ -5,10 +5,13 @@ shader_type spatial;
 render_mode cull_disabled, blend_mix, depth_draw_opaque, diffuse_lambert, specular_disabled;
 #include "res://shaders/dream3d/character_reference_depth.gdshaderinc"
 uniform sampler2D capture_texture : filter_nearest, repeat_disable;
+#include "res://shaders/dream3d/enemy_readability_rim.gdshaderinc"
 // Characters receive a tiny visibility floor, but this never becomes a
 // Light3D and therefore cannot illuminate floors, walls, or other actors.
 // The bridge leaves this at zero for furniture, weapons, blood, and effects.
 uniform float character_emission_strength = 0.0;
+uniform float hurt_flash_amount = 0.0;
+uniform bool smoke_silhouette = false;
 // Multiplier on 3D diffuse lighting (e.g. 0.50 for characters, 1.0 for props)
 uniform float character_light_scale : hint_range(0.0, 2.0) = 1.0;
 
@@ -39,15 +42,11 @@ float cutout_factor(vec2 screen_uv, vec4 slot) {
 		return 1.0;
 	}
 	float norm_d = distance_px / slot.z;
-	// Core region: completely open cutout so the character is fully visible
 	if (norm_d < 0.22) {
 		return 0.0;
 	}
-	// Radial gradient density from core (1.0) to perimeter (0.0)
 	float t = (norm_d - 0.22) / 0.78;
 	float density = 1.0 - (t * t * (3.0 - 2.0 * t));
-
-	// 45-degree rotated halftone grid anchored to cutout center
 	float dot_spacing = clamp(slot.z * 0.12, 5.0, 8.0);
 	vec2 rot_px = vec2(
 		delta_px.x * 0.7071068 - delta_px.y * 0.7071068,
@@ -55,7 +54,6 @@ float cutout_factor(vec2 screen_uv, vec4 slot) {
 	);
 	vec2 cell = fract(rot_px / dot_spacing) - vec2(0.5);
 	float dist_in_cell = length(cell) * dot_spacing;
-
 	float max_hole_r = dot_spacing * 0.75;
 	float hole_r = max_hole_r * density;
 	float hole_factor = 1.0;
@@ -102,8 +100,24 @@ void fragment() {
 	ALBEDO = vec3(_srgb_encode(pixel.r), _srgb_encode(pixel.g), _srgb_encode(pixel.b));
 	ALPHA = pixel.a;
 	EMISSION = ALBEDO * max(character_emission_strength, 0.0);
+	if (hurt_flash_amount > 0.5 && pixel.a > 0.05) {
+		ALBEDO = vec3(1.0);
+		EMISSION = vec3(1.0);
+	}
+	// Only fill formerly transparent edge texels: interior art, lighting and
+	// gameplay silhouettes are unchanged. The existing reference DEPTH and
+	// alpha scissor apply equally to the rim, so foreground cover still wins.
+	if (enemy_rim_enabled && pixel.a < 0.05 && enemy_rim_alpha(UV) > 0.5) {
+		ALBEDO = enemy_rim_color.rgb * 0.15;
+		EMISSION = enemy_rim_color.rgb * 0.85;
+		ALPHA = 1.0;
+	}
 	if (occlusion_cutout_enabled) {
 		ALPHA *= combined_cutout(SCREEN_UV);
+	}
+	if (smoke_silhouette) {
+		ALBEDO=vec3(0.0);
+		EMISSION=vec3(0.0);
 	}
 	ALPHA_SCISSOR_THRESHOLD = 0.05;
 	ROUGHNESS = 1.0;

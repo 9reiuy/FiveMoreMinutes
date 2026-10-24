@@ -111,7 +111,7 @@ func get_music_info(tree: SceneTree) -> Dictionary:
 		return {"title": "暂无音乐", "available": false, "paused": true}
 	var id: StringName = manager.current_music_id
 	var player: AudioStreamPlayer = manager.music_player
-	var titles := {&"bedroom": "卧室背景音乐", &"bedroom_short": "卧室背景音乐", &"battle": "办公楼层音乐", &"battle_short": "办公楼层音乐"}
+	var titles := {&"bedroom": "卧室背景音乐", &"bedroom_short": "卧室背景音乐", &"battle": "办公楼层音乐", &"battle_short": "办公楼层音乐", &"safe": "Sweet Vermouth", &"sweet_vermouth": "Sweet Vermouth", &"sing_swing_bada_bing": "Sing Swing Bada Bing", &"battle_sing_swing": "Sing Swing Bada Bing", &"groovy_ignition": "Groovy Ignition", &"battle_groovy": "Groovy Ignition", &"elevator": "降E大调夜曲Op.9 No.2", &"nocturne": "降E大调夜曲Op.9 No.2"}
 	return {"title": titles.get(id, String(id) if not id.is_empty() else "暂无音乐"), "available": not id.is_empty() and player.stream != null, "paused": player.stream_paused}
 
 func toggle_music(tree: SceneTree) -> void:

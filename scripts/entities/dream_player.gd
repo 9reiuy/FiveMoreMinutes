@@ -7,6 +7,8 @@ const HEAL_EFFECT_SCENE := preload("res://scenes/entities/heal_effect.tscn")
 const ROLL_SPEED_TRAIL_SCRIPT := preload("res://scripts/entities/roll_speed_trail.gd")
 const CONFIG := preload("res://resources/demo_config.tres")
 const WEAPON_POSE := preload("res://scripts/dream/dream_weapon_pose.gd")
+const HAND_PRESENTATION := preload("res://scripts/entities/player_hand_presentation.gd")
+var hand_presentation: RefCounted
 const WORLD_WEAPON_PICKUP_SCRIPT := preload("res://scripts/dream/world_weapon_pickup.gd")
 const TACTICAL_GHOST_PREVIEW_SCRIPT := preload("res://scripts/entities/tactical_ghost_preview.gd")
 
@@ -161,6 +163,7 @@ var dash_invulnerability_seconds := 0.18
 var dash_cooldown_left := 0.0
 var max_dash_charges := 1
 var dash_charges := 1
+var phase_dash: Node
 var dashing := false
 var is_diving := false
 var dive_bullet_time_active := false
@@ -354,6 +357,9 @@ var pit_recovery_landing_position := Vector2.ZERO
 ## Space action arbitration state.  Vault owns movement only after a complete
 ## forward/landing validation; otherwise the existing dash/roll path remains.
 var vault_active := false
+var _auto_vault_cooldown_left := 0.0
+var _auto_vault_query: PhysicsShapeQueryParameters2D
+var _auto_vault_shape: CircleShape2D
 var vault_start_position := Vector2.ZERO
 var vault_end_position := Vector2.ZERO
 var vault_direction := Vector2.RIGHT
@@ -943,6 +949,21 @@ func get_effective_attack_range() -> float:
 	var weapon := get_active_weapon()
 	return float(weapon.attack_range)
 
+func is_enemy_in_melee_preview(enemy: Node2D) -> bool:
+	if dead or not attacking_enabled or not movement_enabled or not is_instance_valid(enemy) or enemy.get("dead")==true: return false
+	if selected_weapon_id in ["lucille","books"]:
+		var weapon:=_get_weapon_node(selected_weapon_id)
+		return weapon!=null and weapon.is_target_in_attack_preview(enemy)
+	if not selected_weapon_id.is_empty(): return false
+	var offset:=global_position.direction_to(enemy.global_position)
+	var direction:=punch_direction if punch_active else get_aim_direction()
+	if absf(direction.angle_to(offset))>deg_to_rad(runtime_config.player_punch_arc_degrees*.5): return false
+	var distance:=global_position.distance_to(enemy.global_position)
+	if enemy.has_method("distance_to_hurtbox"): distance=enemy.distance_to_hurtbox(global_position)
+	if distance>runtime_config.player_punch_range: return false
+	var world:=_dream_world()
+	return world==null or not world.has_method("is_room_projectile_path_clear") or world.is_room_projectile_path_clear(global_position,enemy.global_position)
+
 
 func is_dash_hunger_disabled() -> bool:
 	return dash_disabled_by_hunger
@@ -989,6 +1010,8 @@ func _ready() -> void:
 	tactical_preview_overlay = TACTICAL_GHOST_PREVIEW_SCRIPT.new()
 	tactical_preview_overlay.name = "TacticalGhostPreview"
 	add_child(tactical_preview_overlay)
+	hand_presentation = HAND_PRESENTATION.new()
+	hand_presentation.bind(self)
 
 	queue_redraw()
 
@@ -1159,6 +1182,8 @@ func _update_hands_visibility() -> void:
 				hand.visible = hands_visible
 	_update_unarmed_hand_pose()
 	_sync_heal_part_positions()
+	if hand_presentation != null:
+		hand_presentation.apply()
 
 
 func _update_unarmed_hand_pose() -> void:
@@ -1192,6 +1217,9 @@ func _cancel_punch() -> void:
 
 
 func _cancel_melee_visual() -> void:
+	for weapon in [lucille_weapon, books_weapon]:
+		if is_instance_valid(weapon) and weapon.has_method("cancel_swing"):
+			weapon.cancel_swing()
 	if lucille_character_tween != null and lucille_character_tween.is_valid():
 		lucille_character_tween.kill()
 	if lucille_trail_tween != null and lucille_trail_tween.is_valid():
@@ -1518,6 +1546,8 @@ func _read_gameplay_movement_input() -> Vector2:
 
 
 func _physics_process(delta: float) -> void:
+	delta = combat_action_delta(delta)
+	_auto_vault_cooldown_left=maxf(0.0,_auto_vault_cooldown_left-delta)
 	# This sample is rebuilt only by the normal locomotion branch below.  Any
 	# airborne, dash, recovery or dead frame therefore contributes zero to the
 	# player-driven time activity signal.
@@ -1630,7 +1660,7 @@ func _physics_process(delta: float) -> void:
 		and Input.is_action_just_pressed("dash")
 		and _presentation_pointer_input_allowed()
 	):
-		_begin_dash_pending(input_vector)
+		try_start_phase_dash()
 
 	# Tactical Planning Mode (Hold Space with tactical CD ready)
 	if dash_input_state == DashInputState.TACTICAL_PLAN or tactical_plan_active:
@@ -1801,6 +1831,10 @@ func _physics_process(delta: float) -> void:
 		_emit_dash_state()
 		return
 
+	if try_auto_vault(input_vector):
+		_time_locomotion_velocity=Vector2.ZERO
+		velocity=Vector2.ZERO
+		return
 	_update_sleep_spindle(delta)
 
 	var position_before := global_position
@@ -1839,7 +1873,10 @@ func _physics_process(delta: float) -> void:
 		velocity if velocity.length_squared() > 0.0001 else input_vector,
 		delta
 	)
+	var reaction_compensation := combat_action_delta(1.0)
+	velocity *= reaction_compensation
 	move_and_slide()
+	velocity /= reaction_compensation
 
 	# Use post-collision gameplay displacement, subtracting only the explicit
 	# lightweight impulse applied by this frame.  The resulting component is the
@@ -1898,9 +1935,8 @@ func _push_rigid_props(input_direction: Vector2) -> void:
 					var is_destroyed: bool = door_node.get("is_destroyed") == true
 					if not is_locked and not is_destroyed:
 						var leaf_idx: int = int(collider.get("leaf_index")) if collider.get("leaf_index") != null else -1
-						var contact_point := Vector3(global_position.x / 32.0, 1.5, global_position.y / 32.0)
-						var push_dir_3d := Vector3(push_direction.x, 0.0, push_direction.y).normalized()
-						door_node.call("apply_door_impact", &"player_push", contact_point, push_dir_3d, 260.0, &"", leaf_idx)
+						if door_node.has_method("request_walk_push"):
+							door_node.call("request_walk_push", global_position + CONFIG.player_collision_offset, push_direction, leaf_idx)
 			continue
 
 		if not collider is RigidBody2D:
@@ -2054,6 +2090,7 @@ func _apply_kick_hits() -> void:
 
 		if target_node.is_in_group("dream_enemies") and target_node.has_method("take_damage"):
 			target_node.set_meta(&"last_damage_source", &"kick")
+			var feedback_snapshot: Dictionary=world._capture_player_hit_feedback(target_node) if is_instance_valid(world) and world.has_method("_capture_player_hit_feedback") else {}
 
 			if target_node.has_method("start_knockdown"):
 				target_node.take_damage(
@@ -2067,6 +2104,8 @@ func _apply_kick_hits() -> void:
 					runtime_config.kick_damage,
 					global_position
 				)
+			if is_instance_valid(world) and world.has_method("_finish_player_hit_feedback"):
+				world._finish_player_hit_feedback(feedback_snapshot,target_node if is_instance_valid(target_node) else null,{})
 
 		elif target_node is RigidBody2D and target_node.is_in_group("pushable_prop"):
 			if (
@@ -2545,7 +2584,8 @@ func _update_visual_feedback() -> void:
 	)
 
 	visual.visible = (
-		visible_invulnerability <= 0.0
+		(has_meta(&"stylized_player_hurt") and hurt_flash_left>maxf(0,hurt_flash_seconds-.07))
+		or visible_invulnerability <= 0.0
 		or fmod(
 			visible_invulnerability * flash_frequency,
 			2.0
@@ -2554,7 +2594,7 @@ func _update_visual_feedback() -> void:
 
 	visual.modulate = (
 		Color("e66f6b")
-		if hurt_flash_left > 0.0
+		if hurt_flash_left > 0.0 and not has_meta(&"stylized_player_hurt")
 		else Color.WHITE
 	)
 
@@ -2646,13 +2686,13 @@ func get_dash_path_result() -> Dictionary:
 	return dash_aim_result.duplicate(true)
 
 
-func can_start_dash_aim() -> bool:
+func can_start_dash_aim(ignore_recharge_with_charge: bool = false) -> bool:
 	if (
 		dead
 		or not movement_enabled
 		or not dash_enabled
 		or dash_charges <= 0
-		or dash_cooldown_left > 0.0
+		or (dash_cooldown_left > 0.0 and not ignore_recharge_with_charge)
 		or dashing
 		or vault_active
 		or airborne_knockback
@@ -2685,7 +2725,7 @@ func _begin_dash_pending(input_direction: Vector2) -> void:
 				if seg.get("kind") == &"vault":
 					chosen_dir = aim_dir
 					break
-		if chosen_dir.is_zero_approx() and move_dir.length_squared() > 0.0001:
+		if chosen_dir.is_zero_approx() and move_dir.length_squared() > 0.0001 and not move_dir.is_equal_approx(aim_dir):
 			var test_path2 := resolve_dash_path(move_dir)
 			for seg in test_path2.get("segments", []):
 				if seg.get("kind") == &"vault":
@@ -2834,6 +2874,10 @@ func _get_dream_time_controller() -> Node:
 			return direct
 		return root.find_child("DreamTimeController", true, false)
 	return null
+
+func combat_action_delta(delta: float) -> float:
+	var controller := _get_dream_time_controller()
+	return delta/maxf(Engine.time_scale,.001) if controller!=null and controller.has_method("is_reaction_time_active") and controller.is_reaction_time_active() else delta
 
 
 func _begin_dive_bullet_time() -> void:
@@ -3382,7 +3426,16 @@ func resolve_dash_path(direction: Vector2) -> Dictionary:
 	return result
 
 
-func _try_start_vault(direction: Vector2) -> bool:
+func try_auto_vault(direction: Vector2) -> bool:
+	if direction.length_squared()<=.0001 or not is_inside_tree() or get_tree().paused or scripted_locomotion_active or vault_active or _auto_vault_cooldown_left>0.0: return false
+	var manager:=get_tree().root.get_node_or_null("SettingsManager")
+	if manager!=null and not bool(manager.get_setting(&"auto_vault_enabled",true)): return false
+	if _try_start_vault(direction,true):
+		_auto_vault_cooldown_left=.4
+		return true
+	return false
+
+func _try_start_vault(direction: Vector2, automatic: bool=false) -> bool:
 	if (
 		dead
 		or dashing
@@ -3420,7 +3473,7 @@ func _try_start_vault(direction: Vector2) -> bool:
 	var best_landing: Vector2 = Vector2.ZERO
 	var best_direction: Vector2 = Vector2.RIGHT
 	var best_score: float = INF
-	for candidate_variant in _props_for_melee():
+	for candidate_variant in (_nearby_auto_vault_props(player_radius+3.0) if automatic else _props_for_melee()):
 		var candidate_node: Node = candidate_variant as Node
 		var obstacle: PhysicsBody2D = candidate_node as PhysicsBody2D
 		if obstacle == null or not is_instance_valid(obstacle) or obstacle == self:
@@ -3438,19 +3491,22 @@ func _try_start_vault(direction: Vector2) -> bool:
 			continue
 		if not obstacle.visible or not obstacle.is_inside_tree():
 			continue
+		if automatic and not preload("res://scripts/dream/office_furniture_catalog.gd").allows_auto_vault(obstacle): continue
+		if automatic and preload("res://scripts/dream/office_furniture_catalog.gd").height_offset(obstacle)>1.0: continue
 		var shape_node: CollisionShape2D = obstacle.get_node_or_null("CollisionShape2D") as CollisionShape2D
 		if shape_node == null or shape_node.shape == null:
 			continue
-		var nearest_point: Vector2 = _vault_nearest_point_on_shape(shape_node, global_position)
-		var collider_distance: float = global_position.distance_to(nearest_point)
-		if collider_distance > trigger_radius:
+		var contact_origin: Vector2=body_collision.global_position if automatic and body_collision!=null else global_position
+		var nearest_point: Vector2 = _vault_nearest_point_on_shape(shape_node, contact_origin)
+		var collider_distance: float = contact_origin.distance_to(nearest_point)
+		if collider_distance > (minf(trigger_radius,player_radius+3.0) if automatic else trigger_radius):
 			continue
-		var toward_furniture: Vector2 = global_position.direction_to(nearest_point)
+		var toward_furniture: Vector2 = contact_origin.direction_to(nearest_point)
 		if toward_furniture.length_squared() <= 0.0001:
 			# An already-overlapping body has no useful nearest-point direction;
 			# the explicit input still supplies the intended crossing direction.
 			toward_furniture = input_direction
-		if input_direction.dot(toward_furniture) <= 0.0:
+		if input_direction.dot(toward_furniture) <= (.7 if automatic else 0.0):
 			continue
 
 		# Put the landing point beyond the far support face of the actual collider,
@@ -3465,6 +3521,7 @@ func _try_start_vault(direction: Vector2) -> bool:
 		var landing_valid: bool = false
 		for landing_candidate_variant in landing_candidates:
 			var landing_candidate: Vector2 = landing_candidate_variant
+			if automatic and not _auto_vault_floor_supports(landing_candidate,player_radius): continue
 			if _is_vault_landing_valid(landing_candidate, obstacle):
 				landing = landing_candidate
 				landing_valid = true
@@ -3493,6 +3550,25 @@ func _try_start_vault(direction: Vector2) -> bool:
 	vault_visual_rotation = 0.0
 	vault_active = true
 	return true
+
+func _auto_vault_floor_supports(point: Vector2,radius: float) -> bool:
+	if not _dash_floor_position_valid(point): return false
+	var offset: Vector2=body_collision.global_position-global_position if body_collision!=null else Vector2.ZERO
+	for i in 8:
+		if not _dash_floor_position_valid(point+offset+Vector2.RIGHT.rotated(i*PI/4)*radius): return false
+	return true
+
+func _nearby_auto_vault_props(radius: float) -> Array:
+	# Native broadphase avoids scanning every piece of furniture while walking.
+	if _auto_vault_query==null:
+		_auto_vault_query=PhysicsShapeQueryParameters2D.new()
+		_auto_vault_shape=CircleShape2D.new()
+		_auto_vault_query.shape=_auto_vault_shape
+		_auto_vault_query.collision_mask=8
+		_auto_vault_query.collide_with_areas=false
+	_auto_vault_shape.radius=radius
+	_auto_vault_query.transform=Transform2D(0.0,body_collision.global_position)
+	return get_world_2d().direct_space_state.intersect_shape(_auto_vault_query,16).map(func(hit: Dictionary) -> Node: return hit.collider)
 
 
 func _vault_nearest_point_on_shape(shape_node: CollisionShape2D, world_point: Vector2) -> Vector2:
@@ -3684,31 +3760,42 @@ func _cancel_vault() -> void:
 
 func _start_dash(direction: Vector2) -> void:
 	var dir := direction.normalized()
+	var resolved: Dictionary = {}
 	if dir.length_squared() <= 0.0001:
 		var aim_dir := get_aim_direction().normalized()
 		var move_dir := last_move_direction.normalized()
 		var chosen_dir := Vector2.ZERO
+		var test_path: Dictionary = {}
+		var test_path2: Dictionary = {}
 		if aim_dir.length_squared() > 0.0001:
-			var test_path := resolve_dash_path(aim_dir)
+			test_path = resolve_dash_path(aim_dir)
 			for seg in test_path.get("segments", []):
 				if seg.get("kind") == &"vault":
 					chosen_dir = aim_dir
+					resolved = test_path
 					break
 		if chosen_dir.is_zero_approx() and move_dir.length_squared() > 0.0001:
-			var test_path2 := resolve_dash_path(move_dir)
+			if move_dir.is_equal_approx(aim_dir):
+				test_path2 = test_path
+			else:
+				test_path2 = resolve_dash_path(move_dir)
 			for seg in test_path2.get("segments", []):
 				if seg.get("kind") == &"vault":
 					chosen_dir = move_dir
+					resolved = test_path2
 					break
 		if chosen_dir.is_zero_approx():
 			if move_dir.length_squared() > 0.0001:
 				chosen_dir = move_dir
+				resolved = test_path2
 			elif aim_dir.length_squared() > 0.0001:
 				chosen_dir = aim_dir
+				resolved = test_path
 			else:
 				chosen_dir = Vector2.RIGHT
 		dir = chosen_dir
-	var resolved := resolve_dash_path(dir)
+	if resolved.is_empty():
+		resolved = resolve_dash_path(dir)
 	if bool(resolved.get("valid", false)):
 		_commit_dash_path(resolved)
 
@@ -4184,6 +4271,9 @@ func _finish_dash_path() -> void:
 
 
 func _update_dash(delta: float) -> void:
+	if is_phase_dash_active():
+		phase_dash.step(delta)
+		return
 	if dash_path_segments.is_empty() or dash_segment_index >= dash_path_segments.size():
 		_finish_dash_path()
 		return
@@ -4279,6 +4369,7 @@ func _update_dash(delta: float) -> void:
 
 
 func cancel_dash() -> void:
+	if is_instance_valid(phase_dash): phase_dash.cancel()
 	_end_dive_bullet_time()
 	is_diving = false
 	knockback_height = 0.0
@@ -4348,6 +4439,20 @@ func _is_knock_recovery_protected() -> bool:
 		or (invulnerability_left > 0.0 and invulnerability_reason == &"knockdown_recovery")
 	)
 
+
+func force_exterior_fall_death() -> void:
+	if dead: return
+	dead = true
+	current_health = 0.0
+	last_damage_source = &"exterior_fall"
+	cancel_dash()
+	_cancel_all_reloads()
+	_set_weapon_activity(false)
+	invulnerability_left = 0.0
+	health_changed.emit(current_health,maximum_health)
+	if not get_meta(&"exterior_fall_wilhelm", false):
+		SFX.play_event(&"death")
+	died.emit()
 
 func receive_damage(
 	amount: float,
@@ -4535,6 +4640,20 @@ func revive_for_floor_restart(
 	permanent_upgrades: Dictionary = runtime_permanent_upgrades
 ) -> void:
 	dead = false
+	if has_meta(&"exterior_fall_restore"):
+		var restore: Dictionary = get_meta(&"exterior_fall_restore")
+		collision_layer = int(restore.layer)
+		collision_mask = int(restore.mask)
+		set_physics_process(bool(restore.physics))
+		set_process(bool(restore.process))
+		remove_meta(&"exterior_fall_restore")
+		remove_meta(&"exterior_fall_offset")
+		remove_meta(&"exterior_falling")
+		if has_meta(&"exterior_fall_wilhelm"):
+			remove_meta(&"exterior_fall_wilhelm")
+		if has_meta(&"wilhelm_scream_start_msec"):
+			remove_meta(&"wilhelm_scream_start_msec")
+		show()
 	movement_enabled = true
 	attacking_enabled = true
 	cancel_dash()
@@ -5466,6 +5585,8 @@ func _refresh_held_weapon_visual() -> void:
 	)
 
 	held_weapon_sprite.flip_h = false
+	held_weapon_sprite.offset = Vector2.ZERO
+	held_weapon_sprite.rotation = 0.0
 	held_weapon_sprite.visible = not dead and not selected_weapon_id.is_empty()
 
 	_update_hands_visibility()
@@ -5532,6 +5653,9 @@ func _update_held_weapon_aim_at(mouse_screen: Vector2) -> void:
 	# muzzle. This avoids a one-frame aim lag when crossing the actor or turning.
 	for iteration in 2:
 		var direction := _aim_direction_at(mouse_screen)
+		var melee := get_active_weapon()
+		if melee != null and melee.get("melee_action_active") == true:
+			direction = melee.swing_direction
 		if direction.length_squared() <= 0.0001:
 			direction = Vector2.RIGHT
 		var pose: Dictionary = WEAPON_POSE.solve(
@@ -5550,6 +5674,8 @@ func _update_held_weapon_aim_at(mouse_screen: Vector2) -> void:
 		var origin_offset := orbit_offset + muzzle_local.rotated(resolved_direction.angle())
 		weapon_origin.position = origin_offset
 		projectile_origin.position = origin_offset
+	if hand_presentation != null:
+		hand_presentation.apply()
 
 
 func _on_weapon_fired(multiplier: float) -> void:
@@ -5561,8 +5687,9 @@ func _on_weapon_fired(multiplier: float) -> void:
 	elif is_melee:
 		# 挥击开始只给很轻的动作感；真正的重反馈在Impact信号到达时触发。
 		camera_level = &"small"
-	_request_combat_camera_impulse(camera_level, get_aim_direction())
-	_apply_firearm_recoil(multiplier)
+	if not is_melee:
+		_request_combat_camera_impulse(camera_level, get_aim_direction())
+		_apply_firearm_recoil(multiplier)
 
 	weapon_fired.emit(
 		multiplier
@@ -5618,10 +5745,11 @@ func _on_weapon_fired(multiplier: float) -> void:
 func _on_melee_impact(hit_something: bool) -> void:
 	if not hit_something or dead:
 		return
-	var level: StringName = &"medium"
-	if selected_weapon_id == "lucille":
-		level = &"heavy"
-	_request_combat_camera_impulse(level, lucille_attack_direction)
+	# One cue for the entire sweep, not one long freeze per enemy.
+	var world := _dream_world()
+	if world != null and world.has_method("request_hit_stop"):
+		world.request_hit_stop(&"medium" if selected_weapon_id == "lucille" else &"small")
+	_request_combat_camera_impulse(&"small", lucille_attack_direction)
 
 
 func _on_melee_furniture_hit(direction: Vector2) -> void:
@@ -5667,62 +5795,37 @@ func _request_combat_camera_impulse(level: StringName, direction: Vector2) -> vo
 
 
 func _play_melee_swing_visual() -> void:
-	if (
-		lucille_trail_tween != null
-		and lucille_trail_tween.is_valid()
-	):
-		lucille_trail_tween.kill()
-
+	# The weapon's physics clock publishes pose and sweep together. The old
+	# capture-space Line2D must not coexist with the world-space wide arc.
+	lucille_trail.hide()
 	lucille_trail.clear_points()
-	lucille_trail.visible = true
-	lucille_trail.modulate.a = 1.0
-	_configure_melee_trail_profile()
+	weapon_motion.position = Vector2.ZERO
+	weapon_motion.rotation = 0.0
 
-	# 六个视觉阶段约对应参考GIF的 6×40ms：起手、加速、主挥击、Impact、
-	# Follow Through、收尾。轨迹由同一个Tween驱动，避免并行动画抢Transform。
-	var total_duration: float = maxf(
-		runtime_config.lucille_character_windup_seconds
-		+ runtime_config.lucille_character_strike_seconds
-		+ runtime_config.lucille_character_recover_seconds,
-		0.01
-	)
-	total_duration /= maxf(acquired_attack_speed_multiplier, 1.0)
-	_set_melee_swing_progress(0.0)
-	weapon_visual_tween = create_tween()
-	weapon_visual_tween.tween_method(
-		_set_melee_swing_progress,
-		0.0,
-		1.0,
-		total_duration
-	).set_trans(Tween.TRANS_LINEAR)
-	weapon_visual_tween.tween_callback(_finish_melee_swing_visual)
+func apply_melee_swing_snapshot(snapshot: Dictionary) -> void:
+	if dead or String(snapshot.weapon_id) != selected_weapon_id:
+		return
+	lucille_attack_direction = snapshot.direction
+	var elapsed: float = snapshot.elapsed
+	var duration: float = snapshot.duration
+	var progress := clampf(elapsed / maxf(duration, 0.001), 0.0, 1.0)
+	_set_lucille_character_animation_progress(progress)
+	var angle: float = snapshot.angle
+	if float(snapshot.opacity) < 1.0:
+		angle *= float(snapshot.opacity)
+	weapon_motion.rotation = angle
+	_update_direction_animation(velocity, 0.0)
+	_update_visual_feedback()
+	_update_held_weapon_aim()
 
-	lucille_trail_tween = create_tween()
-	var trail_lifetime: float = clampf(
-		runtime_config.lucille_trail_lifetime
-		/ maxf(acquired_attack_speed_multiplier, 1.0),
-		0.10,
-		total_duration
-	)
-	var fade_seconds: float = clampf(
-		runtime_config.lucille_trail_fade_seconds
-		/ maxf(acquired_attack_speed_multiplier, 1.0),
-		0.02,
-		trail_lifetime
-	)
-	lucille_trail_tween.tween_interval(
-		maxf(trail_lifetime - fade_seconds, 0.0)
-	)
-	lucille_trail_tween.tween_property(
-		lucille_trail,
-		"modulate:a",
-		0.0,
-		fade_seconds
-	)
-
-	lucille_trail_tween.tween_callback(
-		_hide_lucille_trail
-	)
+func finish_melee_swing_snapshot() -> void:
+	_finish_melee_swing_visual()
+	_finish_lucille_character_visual()
+	lucille_trail.hide()
+	lucille_trail.clear_points()
+	if is_instance_valid(visual) and runtime_config != null:
+		_update_direction_animation(velocity, 0.0)
+		_update_visual_feedback()
 
 
 func _configure_melee_trail_profile() -> void:
@@ -5791,65 +5894,13 @@ func _set_melee_swing_progress(progress: float) -> void:
 
 
 func _play_melee_character_visual() -> void:
-	## Kick正在进行时不允许挥动攻击角色位移叠加。
-	if kick_active:
-		return
-
-	if (
-		lucille_character_tween != null
-		and lucille_character_tween.is_valid()
-	):
+	# Body lean is sampled by apply_melee_swing_snapshot, never a second Tween.
+	if lucille_character_tween != null and lucille_character_tween.is_valid():
 		lucille_character_tween.kill()
-
+	lucille_character_tween = null
 	lucille_character_offset = Vector2.ZERO
 	lucille_body_lean_rotation = 0.0
-
 	lucille_attack_direction = get_aim_direction()
-
-	if lucille_attack_direction.length_squared() <= 0.001:
-		lucille_attack_direction = last_aim_direction
-
-	if lucille_attack_direction.length_squared() <= 0.001:
-		lucille_attack_direction = Vector2.RIGHT
-
-	lucille_attack_direction = lucille_attack_direction.normalized()
-
-	var windup_seconds := maxf(
-		runtime_config.lucille_character_windup_seconds,
-		0.01
-	)
-
-	var strike_seconds := maxf(
-		runtime_config.lucille_character_strike_seconds,
-		0.01
-	)
-
-	var recover_seconds := maxf(
-		runtime_config.lucille_character_recover_seconds,
-		0.01
-	)
-
-	var total_duration := (
-		windup_seconds
-		+ strike_seconds
-		+ recover_seconds
-	)
-	total_duration /= maxf(acquired_attack_speed_multiplier, 1.0)
-
-	lucille_character_tween = create_tween()
-
-	lucille_character_tween.tween_method(
-		_set_lucille_character_animation_progress,
-		0.0,
-		1.0,
-		total_duration
-	).set_trans(
-		Tween.TRANS_LINEAR
-	)
-
-	lucille_character_tween.tween_callback(
-		_finish_lucille_character_visual
-	)
 
 
 func _set_lucille_character_animation_progress(progress: float) -> void:
@@ -6210,6 +6261,17 @@ func get_time_locomotion_speed() -> float:
 	## explicitly reset it to zero.
 	return maxf(_time_locomotion_speed, 0.0)
 
+func is_phase_dash_active() -> bool:
+	return is_instance_valid(phase_dash) and phase_dash.active
+
+func try_start_phase_dash() -> bool:
+	if not is_instance_valid(phase_dash):
+		phase_dash = preload("res://scripts/entities/player_phase_dash.gd").new()
+		phase_dash.name = "PhaseDash"
+		add_child(phase_dash)
+		phase_dash.configure(self)
+	return phase_dash.try_start()
+
 
 func is_time_activity_active() -> bool:
 	## SUPERHOT samples formal gameplay actions only. Restored WASD locomotion
@@ -6246,6 +6308,10 @@ func is_time_activity_active() -> bool:
 
 
 func get_aim_direction() -> Vector2:
+	if selected_weapon_id in ["lucille", "books"]:
+		var melee := lucille_weapon if selected_weapon_id == "lucille" else books_weapon
+		if is_instance_valid(melee) and melee.melee_action_active and melee.direction_locked:
+			return melee.swing_direction
 	return _aim_direction_at(get_presentation_pointer_position())
 
 

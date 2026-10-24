@@ -11,6 +11,11 @@ func ticks(n: int) -> void:
 	for i in n:
 		await physics_frame
 		await process_frame
+func inside_or_edge(point: Vector2, polygon: PackedVector2Array) -> bool:
+	if Geometry2D.is_point_in_polygon(point,polygon): return true
+	for i in polygon.size():
+		if Geometry2D.get_closest_point_to_segment(point,polygon[i],polygon[(i+1)%polygon.size()]).distance_to(point)<.05: return true
+	return false
 func run() -> void:
 	AudioServer.set_bus_mute(0,true)
 	var world = load("res://scenes/dream/Dream3D_RandomDungeon.tscn").instantiate()
@@ -33,8 +38,24 @@ func run() -> void:
 		for i in 120: enemy._update_death_presentation(1.0/60)
 		check(enemy.death_landed,"Formal corpse landed")
 		var sensor = enemy.corpse_contact
+		await ticks(2) # The real sensor shape is installed outside physics callbacks.
 		previous_sensor = weakref(sensor)
 		sensor._physics_process(1.0/60)
+		check(sensor.projected_to_floor,"Formal corpse footprint uses official camera-to-floor mapping")
+		var points := PackedVector2Array()
+		sensor._part_points(enemy.character_visual,points,enemy.character_visual.global_transform.affine_inverse(),0.0)
+		var local_points := PackedVector2Array()
+		for point in points: local_points.append(enemy.character_visual.transform*point)
+		var bridge: Node = enemy.get_meta(&"depth_visual_bridge").get_ref()
+		var projected: PackedVector2Array = bridge.project_corpse_contact_points(local_points)
+		var covered := not projected.is_empty()
+		var missed := 0
+		for point in projected:
+			var inside := inside_or_edge(sensor.to_local(enemy.to_global(point)),sensor.contact_shape.shape.points)
+			if not inside: missed += 1
+			covered = covered and inside
+		print("CORPSE_FOOTPRINT raw=",points.size()," projected=",projected.size()," hull=",sensor.contact_shape.shape.points.size()," missed=",missed," sleeping=",not enemy.ragdoll_active)
+		check(covered,"Head, torso, hand and foot bounds all lie inside full-body footprint")
 		world.player.global_position = anchor-Vector2(80,0)
 		var chair = load("res://scenes/dream/props/office_chair_01.tscn").instantiate()
 		world.furniture_root.add_child(chair)

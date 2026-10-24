@@ -40,11 +40,15 @@ static var shard_shader_anchors: Dictionary = {}
 ## Walking into / gently pushing a door must not make its mirrored 2D solid
 ## sweep faster than the player can walk away from it. Combat keeps the full
 ## angular speed above.
-@export var door_passive_max_angular_velocity: float = 1.1
+@export var door_passive_max_angular_velocity: float = 2.0
 @export var door_impact_accumulation_window: float = 0.08
 @export var door_max_accumulated_impulse: float = 32.0
 @export var latch_closed_angle_degrees: float = 2.0
 @export var latch_velocity_threshold: float = 0.12
+## Soft door closer: gameplay pushes/combat keep priority over the return.
+@export var door_return_delay: float = 1.2
+@export var door_return_stiffness: float = 4.0
+@export var door_return_damping: float = 3.6
 @export var hinge_side: String = "left"
 @export var door_id: int = -1
 @export var locked: bool = false
@@ -104,6 +108,7 @@ var _combat_swing_instigator: Array[int] = [0, 0]
 var _passive_swing: Array[bool] = [false, false]
 var _passive_drive_left: Array[float] = [0.0, 0.0]
 var _passive_drive_sign: Array[float] = [0.0, 0.0]
+var _return_hold_left: Array[float] = [0.0, 0.0]
 var _material_validation_reported: bool = false
 
 
@@ -185,6 +190,12 @@ func _configure_leaf(index: int) -> void:
 	var joint: HingeJoint3D = _joints[index]
 	if anchor == null or leaf == null or visual == null or joint == null:
 		return
+	# Cab/rollback suspension explicitly freezes bodies and clears collision
+	# masks. Removing either endpoint from PhysicsServer when processing is
+	# disabled invalidates the live hinge; on restore the leaf spins about its
+	# centre instead of its jamb. Preserve only these two registered endpoints.
+	anchor.disable_mode = CollisionObject3D.DISABLE_MODE_KEEP_ACTIVE
+	leaf.disable_mode = CollisionObject3D.DISABLE_MODE_KEEP_ACTIVE
 	var side_sign: float = 1.0 if index == 0 else -1.0
 	var hinge_x: float = side_sign * door_width * 0.5
 	var center_x: float = hinge_x - side_sign * leaf_width * 0.5
@@ -567,10 +578,17 @@ func _physics_process(delta: float) -> void:
 	for index in range(_leaves.size()):
 		_combat_swing_left[index] = maxf(_combat_swing_left[index] - delta, 0.0)
 		_passive_drive_left[index] = maxf(_passive_drive_left[index] - delta, 0.0)
+		_return_hold_left[index] = maxf(_return_hold_left[index] - delta, 0.0)
 		var leaf: RigidBody3D = _leaves[index]
 		if leaf == null or not is_instance_valid(leaf):
 			continue
 		var omega: float = leaf.angular_velocity.y
+		# Return through angular state only. Never move the body's centre or
+		# reset its transform: the registered jamb hinge remains authoritative.
+		if not locked and not latched and not leaf.freeze and _return_hold_left[index] <= 0.0 and _passive_drive_left[index] <= 0.0 and _combat_swing_left[index] <= 0.0:
+			_passive_swing[index] = true
+			omega = _return_angular_velocity(wrapf(leaf.rotation.y, -PI, PI), omega, delta)
+			leaf.angular_velocity.y = omega
 		# The hinge solver damps a one-frame gentle impulse heavily. Maintain a
 		# modest angular speed briefly so one deliberate E push opens a doorway,
 		# while its 2D solid never sweeps at combat-impulse speed.
@@ -613,6 +631,15 @@ func _physics_process(delta: float) -> void:
 					leaf.angular_velocity = Vector3.ZERO
 	if latched and _impact_window_left <= 0.0 and not any_swing and _quiet_time > 0.35:
 		set_physics_process(false)
+
+
+func _return_angular_velocity(angle: float, omega: float, delta: float) -> float:
+	var next := omega + (-angle * door_return_stiffness - omega * door_return_damping) * delta
+	# Extra near-latch braking, equivalent to the reference game's narrow
+	# closing-angle slowdown, but independent of display frame rate.
+	if absf(angle) <= deg_to_rad(3.0):
+		next *= exp(-4.0 * delta)
+	return clampf(next, -door_passive_max_angular_velocity, door_passive_max_angular_velocity)
 
 
 func get_open_angle() -> float:
@@ -752,6 +779,20 @@ func push_from_proxy(_position: Vector3, _motion: Vector3, _delta: float) -> voi
 	pass # Passive body contact never releases either latch.
 
 
+func request_walk_push(actor_position: Vector2, direction: Vector2, leaf_index: int) -> bool:
+	# Player collisions live in map-local pixels, not global 3D X/Z. The map
+	# can be rotated; treating these coordinates as world space reverses the
+	# lever/torque and makes the anti-crush brake reject a valid walking push.
+	if direction.length_squared() < 0.001:
+		return false
+	var contact := get_closest_leaf_point_2d(actor_position)
+	if contact.distance_to(actor_position) > 40.0:
+		return false
+	var point := _to_map_global(Vector3(contact.x/world_scale,door_height*0.5,contact.y/world_scale))
+	var force_direction := _get_map_basis()*Vector3(direction.x,0.0,direction.y)
+	return apply_door_impact(&"player_push",point,force_direction,260.0,&"",leaf_index)
+
+
 func request_proxy_impact(position_3d: Vector3, motion: Vector3, _delta: float, force: float = 260.0) -> bool:
 	var map_position := _to_map_local(position_3d)
 	var origin := Vector2(map_position.x, map_position.z) * world_scale
@@ -793,6 +834,7 @@ func prepare_enemy_passage(actor_position_2d: Vector2) -> bool:
 		_combat_swing_left[index] = 0.0
 		_passive_drive_sign[index] = away_sign
 		_passive_drive_left[index] = 0.25
+		_return_hold_left[index] = door_return_delay
 	return all_clear
 
 
@@ -861,6 +903,7 @@ func apply_door_impact(source: StringName, point: Vector3, direction: Vector3, f
 		_combat_swing_instigator[selected_index] = 0
 	latched = false
 	wake_door_physics()
+	_return_hold_left[selected_index] = door_return_delay
 	set_meta(&"last_impact_source", source)
 	leaf.freeze = false
 	leaf.sleeping = false
@@ -968,6 +1011,8 @@ func shatter(impact_direction: Vector2 = Vector2.ZERO) -> void:
 
 
 func _spawn_wood_shards(impact_direction: Vector2) -> void:
+	if preload("res://scripts/dream/destruction_floor_debris.gd").spawn(self,impact_direction,false):
+		return
 	var shard_count := 10
 	var dir_3d := Vector3(impact_direction.x, 0.25, impact_direction.y).normalized() if impact_direction.length_squared() > 0.01 else Vector3(0, 0.25, 1)
 

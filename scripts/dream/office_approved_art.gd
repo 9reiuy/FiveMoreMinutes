@@ -43,7 +43,6 @@ func refresh_assets() -> void:
 		started=Time.get_ticks_usec()
 	if not world.floor_cells.is_empty() and world.room_visibility != null:
 		city._build()
-		city._attach_mask(world.room_visibility.outside_mask_material)
 	if trace:
 		timings["city_ms"]=(Time.get_ticks_usec()-started)/1000.0
 		timings["floor"]=world.floor_index

@@ -4,6 +4,7 @@ extends RefCounted
 ## Shared authored pixel swatches. 32 texels represent one world unit.
 ## No screen-space mosaic, random noise, or per-object texture allocation.
 const SHADER = preload("res://shaders/dream3d/office_pixel_surface.gdshader")
+const FLOOR_SHADER = preload("res://shaders/dream3d/office_floor_swatch_opaque.gdshader")
 static var textures: Dictionary = {}
 static var materials: Dictionary = {}
 static var sample_furniture_materials: Dictionary = {}
@@ -57,11 +58,20 @@ static func make(color: Color, kind: String, object_space := false, glow := fals
 	var key := str(color) + kind + str(object_space) + str(glow)
 	if not materials.has(key):
 		var mat := ShaderMaterial.new()
-		mat.shader = SHADER
+		mat.shader = FLOOR_SHADER if kind in ["floor_carpet", "floor_tile", "office_tiles", "wet_tiles", "rug"] else SHADER
 		mat.set_shader_parameter("base_color", color)
 		mat.set_shader_parameter("pixel_texture", swatch(kind))
 		mat.set_shader_parameter("object_space", object_space)
 		mat.set_shader_parameter("glow", glow)
+		materials[key] = mat
+	return materials[key]
+
+## Explicit ground use of a swatch also shared by furniture (e.g. fabric).
+static func make_floor(color: Color, kind: String) -> ShaderMaterial:
+	var key := "opaque_floor:" + str(color) + kind
+	if not materials.has(key):
+		var mat := make(color, kind).duplicate() as ShaderMaterial
+		mat.shader = FLOOR_SHADER
 		materials[key] = mat
 	return materials[key]
 

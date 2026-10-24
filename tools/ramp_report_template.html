@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>枪口烟 · 火光渐变配色方案</title>
+<style>
+:root{--bg:#0d1017;--panel:#151a24;--line:#232b3a;--tx:#dfe6f2;--dim:#8b96ab;--ok:#5fd08a;--hot:#e8b44a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.7 "Segoe UI","Microsoft YaHei",sans-serif;padding:32px}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--dim);font-size:13px;margin-bottom:24px}
+h2{font-size:16px;margin:28px 0 10px;border-left:3px solid #4a7dd6;padding-left:9px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:14px}
+img{image-rendering:pixelated;border:1px solid var(--line);border-radius:6px;display:block}
+img.strip{max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:13px}
+td,th{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#1b2230;color:var(--dim);font-weight:600}
+.ok{color:var(--ok)}.hot{color:var(--hot)}code{background:#1b2230;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.cap{color:var(--dim);font-size:12.5px;margin:6px 0 0}
+ul{margin:0;padding-left:20px}
+.sw{display:inline-block;width:22px;height:22px;border-radius:4px;border:1px solid #00000080;vertical-align:-6px;margin-right:3px}
+.row{display:flex;gap:14px;align-items:flex-start;margin-bottom:18px}
+.row .meta{flex:0 0 250px}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+.tag{font-size:15px;font-weight:600;margin:0 0 4px}
+.hex{font-family:Consolas,monospace;font-size:12px;color:var(--dim)}
+.pick{display:inline-block;background:#2a3346;color:var(--hot);border-radius:4px;padding:1px 7px;font-size:11.5px;margin-left:6px}
+</style></head><body>
+<h1>枪口烟 · 火光渐变配色方案</h1>
+<div class="sub">FiveMinuteMore · 2026-10-23 · 6 套配色，全部实机采集（真实 Main 入口、真实游戏相机、同一机位同一裁切窗口）</div>
+
+<h2>问题</h2>
+<div class="panel">
+现在的第 3 档是 <code>#6E398B</code>，那是<b>品红紫</b> —— 偏冷、偏艳，读起来像魔法或能量，不像火焰余烬。
+火焰冷却下去该是「暗红 → 酒红 → 褐紫 → 灰」，紫只能作为余烬里最冷最暗的那一端出现，而且必须是<b>暖紫</b>（带红调）而不是品红紫。
+</div>
+
+<h2>一个先说清楚的事：第 4 档在实机里看不见</h2>
+<div class="panel">
+逐档数了实机画面里各档颜色的像素数，第 4 档（消失色）<b>六个方案全是 0</b>。
+原因是 <code>BOUNDS</code> 到 0.80 才进第 4 档，那时烟已经缩到出生的 17%、alpha 也开始淡出，肉眼根本捕捉不到。
+<br><br>所以<b>真正决定观感的是前 3 档</b>，第 4 档基本只在烟将死的一瞬间存在。选配色时重点看第 2、3 档。
+（如果希望末段也有存在感，可以把 <code>BOUNDS</code> 从 <code>[0, 0.18, 0.55, 0.80, 1.0]</code> 调成 <code>[0, 0.20, 0.60, 0.72, 1.0]</code>，让后段提前。）
+</div>
+
+<h2>六个方案 · 完整色阶（每格 = 一个色阶时刻）</h2>
+
+<div class="row"><div class="meta">
+<p class="tag">当前</p>
+<p class="hex"><span class="sw" style="background:#C27132"></span>#C27132 <span class="sw" style="background:#EFCD4C"></span>#EFCD4C <span class="sw" style="background:#6E398B"></span>#6E398B <span class="sw" style="background:#3D3445"></span>#3D3445</p>
+<p class="cap">第 3 档品红紫，偏冷偏艳，不像火光。这就是要换掉的那档。</p>
+</div><img class="strip" src="data:image/png;base64,@@strip_0_current@@"></div>
+
+<div class="row"><div class="meta">
+<p class="tag">A · 余烬暗红<span class="pick">最像火光</span></p>
+<p class="hex"><span class="sw" style="background:#D9762E"></span>#D9762E <span class="sw" style="background:#F2C548"></span>#F2C548 <span class="sw" style="background:#8E2F26"></span>#8E2F26 <span class="sw" style="background:#3A3038"></span>#3A3038</p>
+<p class="cap">把紫整段换成<b>暗血红</b>，全程暖色，走的是真实火焰冷却的路径：高温黄 → 橙 → 血红 → 暖灰。余烬感最强，也最不会让人想到魔法。</p>
+</div><img class="strip" src="data:image/png;base64,@@strip_A_ember@@"></div>
+
+<div class="row"><div class="meta">
+<p class="tag">B · 酒红紫<span class="pick">折中</span></p>
+<p class="hex"><span class="sw" style="background:#D9762E"></span>#D9762E <span class="sw" style="background:#F2C548"></span>#F2C548 <span class="sw" style="background:#7E2C46"></span>#7E2C46 <span class="sw" style="background:#40303F"></span>#40303F</p>
+<p class="cap">保留一点紫的意向，但改成<b>暖的酒红紫</b>（带明确红调），末段收在紫灰。你最早说原版是「橙→红→紫→灰」，这一档最接近那个描述，同时不再像品红。</p>
+</div><img class="strip" src="data:image/png;base64,@@strip_B_wine@@"></div>
+
+<div class="row"><div class="meta">
+<p class="tag">C · 高温白核<span class="pick">最爆</span></p>
+<p class="hex"><span class="sw" style="background:#FFF0A8"></span>#FFF0A8 <span class="sw" style="background:#FFB03A"></span>#FFB03A <span class="sw" style="background:#C93A22"></span>#C93A22 <span class="sw" style="background:#3D3445"></span>#3D3445</p>
+<p class="cap">第一档接近<b>白热</b>，枪口爆闪感最强，然后迅速掉到橙黄、赤红、冷灰。整体最亮最抢眼 —— 如果你嫌现在的烟太闷，选这个。</p>
+</div><img class="strip" src="data:image/png;base64,@@strip_C_whitehot@@"></div>
+
+<div class="row"><div class="meta">
+<p class="tag">D · 橙红余烬</p>
+<p class="hex"><span class="sw" style="background:#FF9E3D"></span>#FF9E3D <span class="sw" style="background:#FFC65C"></span>#FFC65C <span class="sw" style="background:#A83A2C"></span>#A83A2C <span class="sw" style="background:#3D3445"></span>#3D3445</p>
+<p class="cap">整体更「橙」，亮黄退到第二档当高光，红收到暗部作砖红。比 A 亮一档，比 C 收敛，属于稳的选择。</p>
+</div><img class="strip" src="data:image/png;base64,@@strip_D_orange@@"></div>
+
+<div class="row"><div class="meta">
+<p class="tag">E · 暗紫压暗<span class="pick">最保守</span></p>
+<p class="hex"><span class="sw" style="background:#C27132"></span>#C27132 <span class="sw" style="background:#EFCD4C"></span>#EFCD4C <span class="sw" style="background:#4A2B52"></span>#4A2B52 <span class="sw" style="background:#3D3445"></span>#3D3445</p>
+<p class="cap">只把紫压暗去艳，其余完全不动。<b>注意：实测这一档在画面里只有 0 个可辨认像素</b> —— 太暗，缩小的烟团上基本融进背景了。改动最小但收益也最小。</p>
+</div><img class="strip" src="data:image/png;base64,@@strip_E_darkviolet@@"></div>
+
+<h2>第 3 档特写（横向滚动，3 倍放大）</h2>
+<div class="panel">
+<p class="cap">从左到右：当前 / A / B / C / D / E。这是差别最大的一档，也是你说的「不像火光」的那一档。</p>
+<div class="scroll"><img src="data:image/png;base64,@@step3_closeup@@"></div>
+</div>
+
+<h2>各档实机可见像素数（容差 ±8，全画面统计）</h2>
+<div class="panel">
+<table>
+<tr><th>方案</th><th>第 1 档</th><th>第 2 档</th><th>第 3 档</th><th>第 4 档</th></tr>
+<tr><td>当前</td><td>1269</td><td>1089</td><td>450</td><td class="hot">0</td></tr>
+<tr><td>A · 余烬暗红</td><td>837</td><td>684</td><td>99</td><td class="hot">0</td></tr>
+<tr><td>B · 酒红紫</td><td>738</td><td>639</td><td>27</td><td class="hot">0</td></tr>
+<tr><td>C · 高温白核</td><td>1314</td><td>1260</td><td>801</td><td class="hot">0</td></tr>
+<tr><td>D · 橙红余烬</td><td>1179</td><td>981</td><td>477</td><td class="hot">0</td></tr>
+<tr><td>E · 暗紫压暗</td><td>1071</td><td>981</td><td class="hot">0</td><td class="hot">0</td></tr>
+</table>
+<p class="cap">越到后面烟越小越淡，像素数自然递减（这是对的）。但要注意：第 3 档已经很小了，
+<b>颜色太暗就会直接消失</b> —— E 方案就是这个情况。选第 3 档时宁可比想象中亮一点。</p>
+</div>
+
+<h2>选好之后怎么落地</h2>
+<div class="panel">
+<ul>
+<li>改 <code>scripts/dream/muzzle_smoke.gd</code> 里的 <code>RAMP</code>，把 4 个 <code>Color("...")</code> 换成你选的那套即可，其他都不用动。</li>
+<li>如果选了 A 或 B，建议顺手微调 <code>BOUNDS</code>：现在第 3 档从 55% 寿命才开始，而那时烟已经很小。
+  改成 <code>[0.0, 0.18, 0.48, 0.75, 1.0001]</code> 能让冷却色更早登场、看得更清楚。</li>
+<li><code>RAMP</code> 现在是 <code>var</code> 而不是 <code>const</code>，采集脚本支持 <code>--ramp=#XXXXXX,#XXXXXX,#XXXXXX,#XXXXXX</code>，
+  以后想再比配色直接跑采集就行，不用改代码。</li>
+<li>回归测试不受配色影响：<code>muzzle_smoke_reach_test</code> 6/0、<code>muzzle_smoke_direction_test</code> 30/0、<code>muzzle_smoke_motion_test</code> 6/0、启动 0 错误。</li>
+</ul>
+</div>
+</body></html>

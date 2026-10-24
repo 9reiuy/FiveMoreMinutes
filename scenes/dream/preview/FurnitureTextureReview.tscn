@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/dream/Dream3D_OfficeSample.tscn" id="1_sample"]
 [ext_resource type="Script" path="res://scripts/dream/preview/furniture_texture_review.gd" id="2_review"]
 [ext_resource type="Script" path="res://scripts/dream/preview/sample_floor_texture_review.gd" id="3_floor"]
 [ext_resource type="Script" path="res://scripts/dream/preview/sample_wall_and_desktop_review.gd" id="4_dressing"]
 [ext_resource type="Script" path="res://scripts/dream/preview/sample_neon_city.gd" id="5_city"]
+[ext_resource type="Script" path="res://scripts/dream/preview/sample_indoor_dust.gd" id="6_dust"]
 
 [node name="FurnitureTextureReview" instance=ExtResource("1_sample")]
 persist_profile = false
@@ -21,3 +22,6 @@ script = ExtResource("4_dressing")
 
 [node name="SampleNeonCity" type="Node" parent="."]
 script = ExtResource("5_city")
+
+[node name="SampleIndoorDust" type="Node" parent="."]
+script = ExtResource("6_dust")

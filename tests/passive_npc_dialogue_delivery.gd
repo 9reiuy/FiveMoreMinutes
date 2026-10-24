@@ -22,8 +22,8 @@ func run() -> void:
 	check(await move_to(Vector2(16,5)),"Ordinary input approaches passive NPC")
 	await frames(20); capture("ellipsis")
 	check(not room.dialogue_controller.is_active(),"Proximity displays hint without automatically opening dialogue")
-	check(room.npc_hint_bubble.visible and not room.interaction_prompt.visible,"Actual Camera ellipsis uses dialogue bubble")
-	check(not room.npc_hint_bubble.progress_bar_container.visible,"Ellipsis has no interaction countdown")
+	check(room.npc_hint_bubble.visible and room.interaction_prompt.text=="交流","Actual Camera shows emotion and short talk action")
+	check(room.npc_hint_bubble.get_node_or_null("ProgressBarContainer")==null,"Emotion has no dialogue countdown")
 	recording=true
 	await frames(20)
 	await tap("pickup_weapon"); await frames(5); capture("first_letters")

@@ -22,6 +22,7 @@ DreamDisplayBootstrap="*res://scripts/app/dream_display_bootstrap.gd"
 SFXManager="*res://scripts/audio/sfx_manager.gd"
 PauseManager="*res://scripts/app/pause_manager.gd"
 DreamTimeController="*res://scripts/dream/dream_time_controller.gd"
+PerformanceMonitor="*res://scripts/app/performance_monitor.gd"
 
 [display]
 
