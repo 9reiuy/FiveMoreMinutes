@@ -7319,6 +7319,8 @@ func _update_camera_and_actor_projection(delta: float = 0.0) -> void:
 		camera_3d.fov = phone_fov
 	else:
 		camera_3d.size = phone_size
+	if bool(get_meta(&"pixel_stability_sample",false)):
+		preload("res://scripts/dream/preview/pixel_camera_stability.gd").apply(camera_3d,get_meta(&"pixel_stability_anchor",to_global(ground_position)))
 	var screen_position := camera_3d.unproject_position(to_global(ground_position))
 	gameplay_canvas.transform = Transform2D(Vector2.RIGHT, Vector2.DOWN, screen_position - gameplay_position)
 

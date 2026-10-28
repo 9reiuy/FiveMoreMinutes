@@ -12,6 +12,17 @@ render_mode unshaded;
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
 uniform bool palette_enabled = true;
 uniform int palette_scheme = 1;
+uniform bool tonal_sample = false;
+
+float tonal_threshold(vec2 pixel) {
+	vec2 p = mod(floor(pixel), 4.0);
+	float a;
+	if (p.y < 1.0) a=p.x<1.?0.:(p.x<2.?8.:(p.x<3.?2.:10.));
+	else if (p.y < 2.0) a=p.x<1.?12.:(p.x<2.?4.:(p.x<3.?14.:6.));
+	else if (p.y < 3.0) a=p.x<1.?3.:(p.x<2.?11.:(p.x<3.?1.:9.));
+	else a=p.x<1.?15.:(p.x<2.?7.:(p.x<3.?13.:5.));
+	return (a+.5)/16.;
+}
 
 const vec3 PALETTE_00 = vec3(0.0196078, 0.0235294, 0.0392157); // 01 #05060A Void / 绝对暗部
 const vec3 PALETTE_01 = vec3(0.0509804, 0.0627451, 0.1254902); // 02 #0D1020 极深蓝黑
@@ -64,6 +75,10 @@ const vec3 MUZZLE_OUTPUT_5 = vec3(0.2392157, 0.2039216, 0.2705882); // #3D3445
 
 float palette_distance_squared(vec3 source, vec3 candidate) {
 	vec3 delta = source - candidate;
+	if (tonal_sample) {
+		float y=dot(delta,vec3(.2126,.7152,.0722));
+		return y*y*2.0+dot(delta,delta)*.35;
+	}
 	return dot(delta, delta);
 }
 
@@ -177,7 +192,16 @@ void fragment() {
 	} else if (muzzle_marker_index(source.rgb) > 0) {
 		output_color = muzzle_output_color(muzzle_marker_index(source.rgb));
 	} else if (palette_enabled) {
-		output_color = nearest_palette_color(source.rgb);
+		vec3 mapped=source.rgb;
+		if (tonal_sample) {
+			vec2 step_uv=SCREEN_PIXEL_SIZE;
+			vec3 around=(texture(screen_texture,SCREEN_UV+vec2(step_uv.x,0.)).rgb+texture(screen_texture,SCREEN_UV-vec2(step_uv.x,0.)).rgb+texture(screen_texture,SCREEN_UV+vec2(0.,step_uv.y)).rgb+texture(screen_texture,SCREEN_UV-vec2(0.,step_uv.y)).rgb)*.25;
+			mapped+=clamp(mapped-around,vec3(-.025),vec3(.025))*.20;
+			float amount=smoothstep(.015,.08,dot(mapped,vec3(.2126,.7152,.0722)));
+			mapped+=vec3((tonal_threshold(SCREEN_UV/SCREEN_PIXEL_SIZE)-.5)*.018*amount);
+			mapped=clamp(mapped,vec3(0.),vec3(1.));
+		}
+		output_color = nearest_palette_color(mapped);
 	} else {
 		output_color = source.rgb;
 	}
