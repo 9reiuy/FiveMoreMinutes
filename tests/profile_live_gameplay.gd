@@ -58,6 +58,35 @@ func _run() -> void:
 	for _i in 10:
 		await process_frame
 
+	# 0. Idle baseline with render CPU/GPU split for each heavy viewport
+	var display := get_first_node_in_group(&"dream_display")
+	var vps: Dictionary = {"root": root}
+	if display != null: vps["world"] = display.world_viewport
+	var refl_vp: Node = world.get_node_or_null("FloorReflections/FloorReflectionViewport")
+	if refl_vp != null: vps["reflection"] = refl_vp
+	for k in vps: RenderingServer.viewport_set_measure_render_time(vps[k].get_viewport_rid(), true)
+	for _i in 5: await process_frame
+	var mon: Node = root.get_node("PerformanceMonitor")
+	print("[PROFILE] refresh=%.1fHz vsync=%d" % [DisplayServer.screen_get_refresh_rate(), DisplayServer.window_get_vsync_mode()])
+	var bd_sum := {"script":0.0,"physics":0.0,"render_cpu":0.0,"gpu":0.0}
+	var idle_sum := 0.0
+	var idle_max := 0.0
+	var vp_cpu: Dictionary = {}
+	var vp_gpu: Dictionary = {}
+	for k in vps: vp_cpu[k] = 0.0; vp_gpu[k] = 0.0
+	for _i in 120:
+		var i0 := Time.get_ticks_usec()
+		await process_frame
+		var ims := (Time.get_ticks_usec() - i0) / 1000.0
+		idle_sum += ims; idle_max = maxf(idle_max, ims)
+		for k2 in bd_sum: bd_sum[k2] += float(mon.last_breakdown.get(k2, 0.0))
+		for k in vps:
+			vp_cpu[k] += RenderingServer.viewport_get_measured_render_time_cpu(vps[k].get_viewport_rid())
+			vp_gpu[k] += RenderingServer.viewport_get_measured_render_time_gpu(vps[k].get_viewport_rid())
+	print("[PROFILE] Idle 120 frames: avg=%.2f ms, max=%.2f ms | script=%.2f physics=%.2f renderCPU=%.2f GPU=%.2f" % [idle_sum / 120.0, idle_max, bd_sum.script/120.0, bd_sum.physics/120.0, bd_sum.render_cpu/120.0, bd_sum.gpu/120.0])
+	for k in vps:
+		print("  viewport %s: render CPU %.2f ms, GPU %.2f ms (avg)" % [k, vp_cpu[k] / 120.0, vp_gpu[k] / 120.0])
+
 	# 1. Measure First Weapon Shot (muzzle flash + smoke + projectile)
 	var player: Node2D = world.player
 	var shoot_pos := player.global_position + Vector2(18, 0)
@@ -91,6 +120,11 @@ func _run() -> void:
 
 	# 2. Measure Shotgun 8-pellet volley + rapid pistol fire over 30 frames
 	var volley_frame_times: Array[float] = []
+	var all_vps: Array = root.find_children("*", "SubViewport", true, false)
+	for v in all_vps: RenderingServer.viewport_set_measure_render_time(v.get_viewport_rid(), true)
+	var cat_cpu: Dictionary = {}
+	var cat_gpu: Dictionary = {}
+	var cat_count: Dictionary = {}
 	for f in 30:
 		var f0 := Time.get_ticks_usec()
 		var s_call_usec := 0
@@ -105,12 +139,22 @@ func _run() -> void:
 		var f1 := Time.get_ticks_usec()
 		var f_ms := (f1 - f0) / 1000.0
 		volley_frame_times.append(f_ms)
+		if f % 7 == 3:
+			all_vps = root.find_children("*", "SubViewport", true, false)
+			for v in all_vps:
+				var rid: RID = v.get_viewport_rid()
+				RenderingServer.viewport_set_measure_render_time(rid, true)
+				if v.render_target_update_mode == SubViewport.UPDATE_DISABLED: continue
+				var cat := String(v.get_parent().name).left(18) + "/" + String(v.name).left(22) + " %dx%d" % [v.size.x, v.size.y]
+				cat_cpu[cat] = float(cat_cpu.get(cat, 0.0)) + RenderingServer.viewport_get_measured_render_time_cpu(rid)
+				cat_gpu[cat] = float(cat_gpu.get(cat, 0.0)) + RenderingServer.viewport_get_measured_render_time_gpu(rid)
+				cat_count[cat] = int(cat_count.get(cat, 0)) + 1
 		if f_ms >= 14.0:
-			var p_ms := Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
-			var ph_ms := Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
+			var p_ms: float = root.get_node("PerformanceMonitor").last_breakdown.get("script", 0.0)
+			var ph_ms: float = root.get_node("PerformanceMonitor").last_breakdown.get("gpu", 0.0)
 			var dc := int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
 			var act_p := get_nodes_in_group(&"active_basic_projectiles").size()
-			print("  [VOLLEY FRAME %d] total=%.2fms | spawn_call=%.2fms | proc=%.2fms | phys=%.2fms | DC=%d | active_proj=%d" % [
+			print("  [VOLLEY FRAME %d] total=%.2fms | spawn_call=%.2fms | script=%.2fms | gpu=%.2fms | DC=%d | active_proj=%d" % [
 				f, f_ms, s_call_usec / 1000.0, p_ms, ph_ms, dc, act_p
 			])
 	var max_volley := 0.0
@@ -119,6 +163,11 @@ func _run() -> void:
 		sum_volley += t
 		if t > max_volley: max_volley = t
 	print("[PROFILE] Shotgun volley 30 frames: avg=%.2f ms, max=%.2f ms" % [sum_volley / volley_frame_times.size(), max_volley])
+	var cats := cat_cpu.keys()
+	cats.sort_custom(func(a, b): return cat_cpu[a] + cat_gpu[a] > cat_cpu[b] + cat_gpu[b])
+	print("[PROFILE] Active SubViewport render cost (summed over 4 sampled frames):")
+	for c in cats.slice(0, 15):
+		print("  %-55s n=%3d cpu=%.2fms gpu=%.2fms" % [c, cat_count[c], cat_cpu[c], cat_gpu[c]])
 
 	# Direct micro-benchmark of BasicProjectile._update_office_tracer()
 	var projs := get_nodes_in_group(&"active_basic_projectiles")

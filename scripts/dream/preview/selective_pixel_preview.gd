@@ -30,6 +30,8 @@ var _pointer_seen := false
 var _initialized := false
 var _canvas_dirty := false
 var _saved_mute := false
+## Preparation screens keep crisp UI hidden until the journey commits.
+var staging := false
 
 
 func _ready() -> void:
@@ -60,6 +62,8 @@ func _ready() -> void:
 	add_child(container)
 	world_viewport = SubViewport.new()
 	world_viewport.name = "WorldViewport"
+	# A prepared floor must not appear through the live lobby's camera.
+	world_viewport.own_world_3d = staging
 	world_viewport.size = pixel_size
 	world_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	world_viewport.msaa_3d = Viewport.MSAA_DISABLED
@@ -98,6 +102,7 @@ func _ready() -> void:
 	palette_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	palette_material = ShaderMaterial.new()
 	palette_material.shader = preload("res://shaders/palette_quantize.gdshader")
+	palette_material.set_shader_parameter(&"palette_scheme", SettingsManager.get_palette_scheme())
 	palette_material.set_shader_parameter(&"palette_enabled", palette_enabled and not bool(world.get_meta(&"preserve_local_palette",false)))
 	palette_rect.material = palette_material
 	if preview_mode:
@@ -182,6 +187,8 @@ func set_palette_enabled(value: bool) -> void:
 
 
 func _on_display_setting_changed(key: StringName, value: Variant) -> void:
+	if key == &"palette_scheme" and is_instance_valid(palette_material):
+		palette_material.set_shader_parameter(&"palette_scheme", int(value))
 	if key == &"pixelation_enabled":
 		set_selective_enabled(bool(value))
 	elif key == &"palette_enabled":
@@ -272,6 +279,7 @@ func _retarget_canvas_layers() -> void:
 				"node": weakref(layer),
 				"viewport": layer.custom_viewport,
 				"original_parent": weakref(layer.get_parent()),
+				"staging_visible": layer.visible,
 			}
 		# Reparent the CanvasLayer out of the SubViewport tree into
 		# SelectivePixelPreview (on the root Window canvas).  This gives
@@ -282,6 +290,16 @@ func _retarget_canvas_layers() -> void:
 			layer.reparent(self)
 			# After reparenting, the layer naturally uses its new parent's
 			# viewport (root Window). No need to set custom_viewport.
+		if staging: layer.hide()
+
+func commit_staging() -> void:
+	staging = false
+	_retarget_canvas_layers()
+	# Previously retargeted layers no longer descend from world.
+	for record in _original_canvas_viewports.values():
+		var layer: CanvasLayer = record.node.get_ref()
+		if is_instance_valid(layer): layer.visible = record.staging_visible
+	show()
 
 
 func _on_node_added(node: Node) -> void:

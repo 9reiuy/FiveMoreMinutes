@@ -38,6 +38,12 @@ func run() -> void:
 				check(player.left_hand_part.get_parent() == player.body_pivot, "Original hierarchy remains intact")
 			else:
 				check(not player.held_weapon_sprite.flip_h and player.held_weapon_sprite.offset == Vector2.ZERO and player.held_weapon_sprite.rotation == 0.0, "Switching restores original non-bat art transform %s" % id)
+	player.configure_weapon("basic", load("res://resources/demo_config.tres"), {})
+	player.set_attacking_enabled(false)
+	check(player.left_hand_part.visible and player.right_hand_part.visible and not hands.grip_root.visible, "Cabin stows the equipped gun while keeping both existing body hands visible")
+	check(player.selected_weapon_id == "basic" and not player.held_weapon_sprite.visible, "Cabin hand repair preserves equipped inventory and disabled gun")
+	player.set_attacking_enabled(true)
+	check(not player.left_hand_part.visible and not player.right_hand_part.visible and hands.grip_root.visible, "Leaving cabin restores equipped grip hands without duplicate fists")
 	player.dead = true
 	hands.apply()
 	check(not hands.grip_root.visible, "Death hides grip display")

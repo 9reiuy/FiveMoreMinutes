@@ -43,7 +43,16 @@ func _make_curve(parent: Node2D) -> Polygon2D:
 	polygon.name = "CurvedStrand"
 	# Reuse exact artist pixels in a clampable 4x11 texture. The full atlas
 	# permits a deformed edge to sample neighbouring transparent texels.
-	polygon.texture = ImageTexture.create_from_image(sprite.texture.get_image())
+	var atlas := sprite.texture as AtlasTexture
+	var strand_image: Image
+	if atlas != null and atlas.atlas != null:
+		strand_image = atlas.atlas.get_image()
+		if strand_image.is_compressed(): strand_image.decompress()
+		strand_image = strand_image.get_region(Rect2i(atlas.region))
+	else:
+		strand_image = sprite.texture.get_image()
+		if strand_image.is_compressed(): strand_image.decompress()
+	polygon.texture = ImageTexture.create_from_image(strand_image)
 	polygon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	polygon.texture_repeat = CanvasItem.TEXTURE_REPEAT_DISABLED
 	var uv := PackedVector2Array()

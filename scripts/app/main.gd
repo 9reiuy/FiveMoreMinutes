@@ -479,18 +479,20 @@ func _show_reception(weapon_id: String) -> void:
 	var reception := RECEPTION_SCENE.instantiate()
 	if reception.has_method("configure_reception"):
 		reception.call("configure_reception", weapon_id, persistent_day_state, night_state)
-	reception.connect("elevator_entered", Callable(self, "_on_reception_elevator_entered").bind(weapon_id), CONNECT_ONE_SHOT)
+	# Keep the connection alive when a failed preparation returns to this lobby.
+	reception.connect("elevator_entered", Callable(self, "_on_reception_elevator_entered").bind(weapon_id))
 	if reception.has_signal("weapon_equipped"):
 		reception.connect("weapon_equipped", Callable(self, "_on_story_weapon_equipped"))
 	_transition_to(reception)
 
 
 func _on_reception_elevator_entered(weapon_id: String) -> void:
-	_show_dream(weapon_id)
+	_show_dream(weapon_id, true)
 
 
-func _show_dream(weapon_id: String) -> void:
+func _show_dream(weapon_id: String, from_reception: bool = false) -> void:
 	var dream := DREAM_SCENE.instantiate()
+	dream.set_meta(&"reception_elevator_journey", from_reception)
 	# Every dream entry is a brand-new run: a fresh seed gives each day (and any
 	# same-day re-entry) a newly generated building. Tests keep seeding explicitly.
 	dream.seed = randi()
@@ -886,6 +888,9 @@ func _run_transition(next_screen: Node,duration: float)->void:
 
 
 func _run_dream_transition(dream: Node, duration: float) -> void:
+	if dream.get_meta(&"reception_elevator_journey", false) and is_instance_valid(_supported_dream_world) and _supported_dream_world.has_method("rollback_elevator_entry"):
+		await preload("res://scripts/app/reception_elevator_journey.gd").run(self, dream)
+		return
 	var previous_mode:=scene_container.process_mode
 	scene_container.process_mode=Node.PROCESS_MODE_DISABLED
 	if transition_director != null:

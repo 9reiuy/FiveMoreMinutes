@@ -323,27 +323,7 @@ func _on_bedroom_chr_glow_flicker_timeout() -> void:
 
 
 func _next_bedroom_chr_glow_alpha(current_alpha: float) -> float:
-	var normal_min := minf(config.bedroom_chr_glow_alpha_normal_min, config.bedroom_chr_glow_alpha_normal_max)
-	var normal_max := maxf(config.bedroom_chr_glow_alpha_normal_min, config.bedroom_chr_glow_alpha_normal_max)
-	var big_change_chance := clampf(config.bedroom_chr_glow_big_change_chance, 0.0, 1.0)
-	if randf() < big_change_chance:
-		# 强切换总是选当前亮度的另一侧，避免抽到数值接近的“伪强切换”。
-		if current_alpha >= (normal_min + normal_max) * 0.5:
-			var dark_min := minf(config.bedroom_chr_glow_alpha_dark_min, config.bedroom_chr_glow_alpha_dark_max)
-			var dark_max := maxf(config.bedroom_chr_glow_alpha_dark_min, config.bedroom_chr_glow_alpha_dark_max)
-			return randf_range(dark_min, dark_max)
-		var bright_min := minf(config.bedroom_chr_glow_alpha_bright_min, config.bedroom_chr_glow_alpha_bright_max)
-		var bright_max := maxf(config.bedroom_chr_glow_alpha_bright_min, config.bedroom_chr_glow_alpha_bright_max)
-		return randf_range(bright_min, bright_max)
-	# 同一视频镜头内优先围绕当前值小幅跳变；离开极端亮/暗画面后回到普通区间。
-	if current_alpha < normal_min or current_alpha > normal_max:
-		return randf_range(normal_min, normal_max)
-	var change_amount := randf_range(0.03, 0.10)
-	if current_alpha <= normal_min + 0.03:
-		return minf(current_alpha + change_amount, normal_max)
-	if current_alpha >= normal_max - 0.03:
-		return maxf(current_alpha - change_amount, normal_min)
-	return clampf(current_alpha + change_amount * (-1.0 if randf() < 0.5 else 1.0), normal_min, normal_max)
+	return preload("res://scripts/ui/screen_glow_flicker.gd").next_alpha(config,current_alpha)
 
 
 func _sync_sunshade_visibility() -> void:

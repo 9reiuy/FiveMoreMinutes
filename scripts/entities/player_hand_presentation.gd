@@ -44,7 +44,12 @@ func _hand(label: String, texture: Texture2D) -> Sprite2D:
 
 func apply() -> void:
 	if not is_instance_valid(actor) or not is_instance_valid(grip_root): return
-	var armed := not String(actor.selected_weapon_id).is_empty() and not bool(actor.dead)
+	# Exit cleanup can cancel a dash after the world's camera already exited.
+	var world: Node = actor._dream_world()
+	if world is Node3D:
+		var camera: Camera3D = world.get("camera_3d")
+		if not is_instance_valid(camera) or not camera.is_inside_tree(): return
+	var armed := not String(actor.selected_weapon_id).is_empty() and not bool(actor.dead) and bool(actor.attacking_enabled)
 	grip_root.visible = armed and actor.held_weapon_sprite.visible
 	if armed:
 		var sprite: Sprite2D = actor.held_weapon_sprite

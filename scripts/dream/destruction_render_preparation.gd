@@ -4,10 +4,14 @@ extends RefCounted
 ## Material references are the same families used by the formal constructors.
 static func run(tree: SceneTree,world: Node3D) -> Dictionary:
 	if DisplayServer.get_name()=="headless": return {"skipped":"headless"}
-	if not tree.paused: return {"skipped":"gameplay_not_frozen"}
+	if not tree.paused and (not is_instance_valid(world) or world.can_process()): return {"skipped":"gameplay_not_frozen"}
 	if not is_instance_valid(world) or not world.is_inside_tree(): return {"cancelled":true}
 	var token: int=world.get_current_floor_token()
 	var started:=Time.get_ticks_usec()
+	var audio_started:=Time.get_ticks_usec()
+	preload("res://scripts/ui/death_crt_effect.gd").prepare_audio()
+	var death_audio_prefill_ms:float=(Time.get_ticks_usec()-audio_started)/1000.0
+	var geometry_prefill:Dictionary=preload("res://scripts/dream/destruction_floor_debris.gd").prefill_standard_glass(world)
 	var viewport:=SubViewport.new()
 	viewport.set_meta(&"destruction_render_preparation",true)
 	viewport.size=Vector2i(64,64); viewport.own_world_3d=true
@@ -51,6 +55,22 @@ static func run(tree: SceneTree,world: Node3D) -> Dictionary:
 			if metal: material.specular_mode=BaseMaterial3D.SPECULAR_DISABLED
 			PhysicalDoor3D.shard_shader_anchors[metal]=material
 		materials.append(PhysicalDoor3D.shard_shader_anchors[metal])
+	var base_material_count:=materials.size()
+	var window_shader_hashes:Array=[]
+	if not bool(world.get_meta(&"test_skip_pending_window_preparation",false)):
+		# Dressing binds these owner-held materials after the paused loading
+		# phase. Prepare that future resource, not only the current pane shader.
+		# Reuse this viewport and its existing light states; leave owners intact.
+		for material:ShaderMaterial in _pending_window_materials(tree,world):
+			window_shader_hashes.append(material.shader.code.sha256_text());materials.append(material)
+	var room_firstuse:Dictionary={}
+	if not bool(world.get_meta(&"test_skip_room_firstuse_preparation",false)):
+		# These resident families first entered the actual render lists on room
+		# entry. Reuse the existing private view and 16 light states, rather than
+		# revealing rooms or changing their live material/lighting state.
+		var collected:Dictionary=preload("res://scripts/dream/room_firstuse_render_materials.gd").collect(world)
+		materials.append_array(collected.materials);room_firstuse=collected.report
+		room_firstuse["floor_token"]=token
 	var box:=BoxMesh.new(); box.size=Vector3(.5,.5,.5)
 	for point_state in 4:
 		for spot_state in 4:
@@ -61,7 +81,7 @@ static func run(tree: SceneTree,world: Node3D) -> Dictionary:
 				var piece:=MeshInstance3D.new(); piece.mesh=box
 				piece.material_override=materials[material_index]; piece.layers=layer
 				piece.position=origin+Vector3((material_index%3-1)*.7,0,-.7*(material_index/3))
-				if material_index==2: piece.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				if material_index==2 or material_index>=base_material_count: piece.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 				space.add_child(piece)
 			for light_index in 2:
 				if point_state in ([1,3] if light_index==0 else [2,3]):
@@ -87,4 +107,19 @@ static func run(tree: SceneTree,world: Node3D) -> Dictionary:
 	for frame in 2: await tree.process_frame
 	var cancelled:=not is_instance_valid(world) or not world.is_inside_tree()
 	if not cancelled: cancelled=world.get_current_floor_token()!=token
-	return {"elapsed_ms":(Time.get_ticks_usec()-started)/1000.0,"build_ms":build_ms,"draw_wait_ms":draw_wait_ms,"readback_ms":readback_ms,"cleanup_ms":(Time.get_ticks_usec()-cleanup_started)/1000.0,"cancelled":cancelled,"viewport_released":reference.get_ref()==null,"private_image_bytes":image.get_data().size(),"states":16,"material_families":materials.size()}
+	return {"elapsed_ms":(Time.get_ticks_usec()-started)/1000.0,"build_ms":build_ms,"geometry_prefill":geometry_prefill,"death_audio_prefill_ms":death_audio_prefill_ms,"draw_wait_ms":draw_wait_ms,"readback_ms":readback_ms,"cleanup_ms":(Time.get_ticks_usec()-cleanup_started)/1000.0,"cancelled":cancelled,"viewport_released":reference.get_ref()==null,"private_image_bytes":image.get_data().size(),"states":16,"material_families":materials.size(),"window_shader_hashes":window_shader_hashes,"room_firstuse":room_firstuse}
+
+static func _pending_window_materials(tree:SceneTree,world:Node3D)->Array[ShaderMaterial]:
+	var materials:Array[ShaderMaterial]=[]
+	if not is_instance_valid(world) or not world.is_inside_tree() or world.is_queued_for_deletion():return materials
+	var seen:Dictionary={}
+	for node:Node in tree.get_nodes_in_group(&"office_wall_dressing"):
+		if node.get_script()!=preload("res://scripts/dream/preview/sample_wall_and_desktop_review.gd"):continue
+		if not world.is_ancestor_of(node) or node.is_queued_for_deletion() or not node.production_mode or node.world!=world:continue
+		for record:Dictionary in node.windows:
+			var material:Material=record.get("new_mat")
+			if not material is ShaderMaterial or material.shader==null:continue
+			var shader_key:String=material.shader.code.sha256_text()
+			if seen.has(shader_key):continue
+			seen[shader_key]=true;materials.append(material)
+	return materials

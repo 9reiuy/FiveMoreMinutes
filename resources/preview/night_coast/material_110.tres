@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/coast_pixel_prop.gdshader" id="1_kkpuy"]
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_kkpuy")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/base_color = Color(0.2, 0.23, 0.25, 1)
+shader_parameter/moon_visibility = 1.0

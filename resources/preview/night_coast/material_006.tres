@@ -1,0 +1,17 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/night_coast_water.gdshader" id="1_u3j0d"]
+[ext_resource type="Texture2D" path="res://resources/preview/night_coast/texture_002.res" id="2_rs7qe"]
+[ext_resource type="Texture2D" path="res://resources/preview/night_coast/texture_005.res" id="3_p0pyy"]
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_u3j0d")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/flow_state = ExtResource("3_p0pyy")
+shader_parameter/scene_time = 9.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/ripples_enabled = true
+shader_parameter/coast_shape = ExtResource("2_rs7qe")

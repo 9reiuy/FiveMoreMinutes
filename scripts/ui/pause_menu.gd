@@ -71,12 +71,14 @@ func open_pause() -> void:
 	previous_mouse_mode = Input.mouse_mode
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	settings_open = false
+	option_group.set_hover_suppressed(false)
 	option_group.clear_highlight()
 	_sync_page(false)
 	root.visible = true
 
 
 func close_pause() -> void:
+	option_group.set_hover_suppressed(false)
 	option_group.clear_highlight()
 	root.visible = false
 	settings_open = false
@@ -152,6 +154,7 @@ func _sync_page(animate: bool = true) -> void:
 
 func _snap_page() -> void:
 	_kill_page_tween()
+	option_group.set_hover_suppressed(false)
 	menu_buttons.visible = not settings_open
 	menu_buttons.modulate.a = 1.0
 	settings_panel.visible = settings_open
@@ -170,27 +173,30 @@ func _tween_page_swap(to_settings: bool) -> void:
 	_kill_page_tween()
 	var outgoing: Control = menu_buttons if to_settings else settings_panel
 	var incoming: Control = settings_panel if to_settings else menu_buttons
-	outgoing.visible = true
-	incoming.visible = true
+	# Hide outgoing immediately. Dual-visible crossfade in this centered VBox
+	# reflowed pause rows and let PauseOptionGroup flash the bar at viewport (0,0).
+	outgoing.visible = false
 	outgoing.modulate.a = 1.0
+	incoming.visible = true
 	incoming.modulate.a = 0.0
-	settings_back.visible = true
 	if to_settings:
+		settings_back.visible = true
 		settings_back.modulate.a = 0.0
+	else:
+		settings_back.visible = false
+		settings_back.modulate.a = 1.0
+	option_group.set_hover_suppressed(true)
 	_page_tween = create_tween()
 	_page_tween.set_parallel(true)
 	_page_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	_page_tween.tween_property(outgoing, "modulate:a", 0.0, PAGE_TWEEN_SECONDS)
 	_page_tween.tween_property(incoming, "modulate:a", 1.0, PAGE_TWEEN_SECONDS)
 	if to_settings:
 		_page_tween.tween_property(settings_back, "modulate:a", 1.0, PAGE_TWEEN_SECONDS)
-	else:
-		_page_tween.tween_property(settings_back, "modulate:a", 0.0, PAGE_TWEEN_SECONDS * 0.75)
 	_page_tween.chain().tween_callback(func() -> void:
-		outgoing.visible = false
-		outgoing.modulate.a = 1.0
+		incoming.modulate.a = 1.0
 		settings_back.visible = to_settings
 		settings_back.modulate.a = 1.0
+		option_group.set_hover_suppressed(false)
 		if not to_settings:
 			var opts := option_group.get_selectable_options()
 			if not opts.is_empty():

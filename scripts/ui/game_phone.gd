@@ -40,6 +40,7 @@ var _camera_target:=0.0
 var _camera_elapsed:=0.0
 var _camera_started_usec:=0
 var _last_usec:=0
+var character_presentation: RefCounted
 
 func _ready()->void:
 	layer=1100;process_mode=Node.PROCESS_MODE_ALWAYS
@@ -122,6 +123,8 @@ func open_phone()->void:
 	if is_instance_valid(_world):
 		_install_pointer_gate()
 		_pauses.request_pause(PAUSE_REASON);_owns_pause=true
+		character_presentation=preload("res://scripts/dream/player_phone_presentation.gd").new()
+		character_presentation.bind(_world)
 		_begin_camera(1.0)
 	screen.configure_apps(_main.persistent_day_state,_backend,_clock_data)
 	screen.set_context(&"game" if is_instance_valid(_world) else &"bedroom")
@@ -131,6 +134,7 @@ func open_phone()->void:
 func close_phone(animated:bool=true)->void:
 	if not _session_live or _closing:return
 	active=false;_closing=true
+	if character_presentation!=null:character_presentation.begin_close()
 	_quarantine_held_input()
 	_clear_game_actions();_release_feedback();_begin_camera(0.0)
 	shell.close_phone(animated)
@@ -156,6 +160,9 @@ func _animation_finished(opened:bool)->void:
 func _complete_close()->void:
 	if not _session_live:return
 	_session_live=false;active=false;_closing=false
+	if character_presentation!=null:
+		character_presentation.release()
+		character_presentation=null
 	_camera_weight=0.0;_camera_target=0.0;_refresh_camera()
 	canvas.hide();_stop_environment()
 	if is_instance_valid(_bedroom):_bedroom.set_game_phone_active(false)
@@ -202,6 +209,7 @@ func _refresh_camera()->void:
 
 func _process(_delta:float)->void:
 	var now:=Time.get_ticks_usec()
+	var real_delta:=clampf(float(now-_last_usec)/1000000.0,0.0,.15)
 	_last_usec=now
 	if not _session_live:return
 	if not is_instance_valid(_main) or bool(_value(_main,&"transition_running",false)):
@@ -210,6 +218,7 @@ func _process(_delta:float)->void:
 	_camera_elapsed=float(now-_camera_started_usec)/1000000.0
 	_camera_weight=lerpf(_camera_from,_camera_target,smoothstep(0.0,1.0,minf(_camera_elapsed/.4,1.0)))
 	_refresh_camera()
+	if character_presentation!=null:character_presentation.advance(real_delta)
 
 func _key_action(event:InputEventKey)->StringName:
 	var code:=event.physical_keycode if event.physical_keycode!=0 else event.keycode

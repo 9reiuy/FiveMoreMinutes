@@ -56,6 +56,7 @@ func _run() -> void:
 	var ride_start:=Time.get_ticks_msec()
 	var actual_pause_ms:=0
 	if reached_cab:
+		_check(world.player.left_hand_part.visible and world.player.right_hand_part.visible, "Later-floor cab preserves both stowed-weapon hands")
 		var cab: IndependentElevatorCab3D = world.active_transition_cab
 		_check(cab != null, "Loading cab exists during ride")
 		_check(absf(cab.global_rotation.y) < 0.001, "Loading cab stays screen-aligned")

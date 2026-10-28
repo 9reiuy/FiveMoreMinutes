@@ -168,6 +168,10 @@ var slice_pool: Array[_ClipSliceBand] = []
 var bios_font: FontVariation
 var drone_player: AudioStreamPlayer
 var _drone_triggered := false
+static var _bios_drone_streams:Dictionary={}
+
+static func prepare_audio()->void:
+	_build_bios_drone_stream(1.65)
 
 
 class _ClipSliceBand extends Control:
@@ -705,7 +709,8 @@ func _sync_slice_bands(progress_val: float) -> void:
 				)
 
 
-func _build_bios_drone_stream(duration_sec: float) -> AudioStreamWAV:
+static func _build_bios_drone_stream(duration_sec: float) -> AudioStreamWAV:
+	if _bios_drone_streams.has(duration_sec):return _bios_drone_streams[duration_sec]
 	var stream := AudioStreamWAV.new()
 	stream.format = AudioStreamWAV.FORMAT_8_BITS
 	stream.mix_rate = 22050
@@ -741,4 +746,6 @@ func _build_bios_drone_stream(duration_sec: float) -> AudioStreamWAV:
 		var sample := (sub_wave * 0.82 + tick_signal) * env
 		bytes[idx] = clampi(int(128.0 + sample * 44.0), 0, 255)
 	stream.data = bytes
+	if _bios_drone_streams.size()>=8:_bios_drone_streams.clear()
+	_bios_drone_streams[duration_sec]=stream
 	return stream

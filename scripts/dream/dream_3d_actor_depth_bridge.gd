@@ -2,6 +2,7 @@ extends Node3D
 ## One live 2D gameplay owner, passive visual copies, one depth-tested carrier.
 ## No duplicated movement, timers, damage, groups, signals, or collision.
 const PIXELS_PER_WORLD_CELL := 32.0
+const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
 const CHARACTER_PROJECTION := preload("res://scripts/dream/character_visual_projection.gd")
 const ACTOR_VOLUME_SHADOW := preload("res://scripts/dream/actor_volume_shadow.gd")
 static var _character_no_shadow_shader: Shader
@@ -1016,6 +1017,11 @@ func _weapon_capture_delta(camera: Camera3D) -> float:
 	return wrapf(projected.angle() - gameplay_heading, -PI, PI)
 
 func _process(_delta: float) -> void:
+	var started:=PERF_TRACE.begin(self)
+	_process_profiled(_delta)
+	PERF_TRACE.end(self,"bridge_physics" if Engine.is_in_physics_frame() else "bridge_process",started)
+
+func _process_profiled(_delta:float)->void:
 	# A regular full sync after a snapshot already satisfies its deferred work.
 	# A later snapshot schedules fresh work again, so late poses never lag.
 	if not bool(get_meta(&"test_legacy_pending_refresh", false)):

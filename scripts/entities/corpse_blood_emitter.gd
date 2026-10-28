@@ -1,5 +1,6 @@
 class_name CorpseBloodEmitter
 extends Node2D
+const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
 
 ## A short-lived scheduler for corpse bleed pulses.  It deliberately owns no
 ## Sprite, shader, bridge or droplet simulation: every visible pulse is routed
@@ -106,6 +107,13 @@ func configure(
 
 
 func _process(delta: float) -> void:
+	var started:=PERF_TRACE.begin(self)
+	var scope:=PERF_TRACE.scope_begin(self,"blood_active_sim")
+	_process_profiled(delta)
+	PERF_TRACE.scope_end(self,scope)
+	PERF_TRACE.end(self,"blood_process",started)
+
+func _process_profiled(delta:float)->void:
 	if not active:
 		return
 	if not is_instance_valid(blood_world) or blood_world.is_queued_for_deletion():
@@ -232,6 +240,11 @@ func _emit_drag_segment(start: Vector2, finish: Vector2) -> void:
 
 
 func _emit_pulse() -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_active_init")
+	_emit_pulse_profiled()
+	PERF_TRACE.scope_end(self,scope)
+
+func _emit_pulse_profiled()->void:
 	if blood_world == null or not is_instance_valid(blood_world):
 		return
 	if not blood_world.has_method("spawn_blood_trail"):

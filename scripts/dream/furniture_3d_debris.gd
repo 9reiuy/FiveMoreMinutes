@@ -7,6 +7,7 @@ class_name Furniture3DDebris
 const GRAVITY: float = 12.0
 const LIFETIME: float = 1.6
 const FADE_TIME: float = 0.4
+const PERF=preload("res://scripts/app/performance_markers.gd")
 
 # Keep at most two actually used Compatibility material variants resident:
 # with and without an albedo texture. Each burst still owns its fading material.
@@ -24,11 +25,15 @@ func _ready() -> void:
 static func spawn(parent: Node, spawn_pos: Vector3, texture: Texture2D, piece_count: int = 6, impulse_dir: Vector3 = Vector3.ZERO) -> Node3D:
 	if parent == null or not is_instance_valid(parent):
 		return null
+	var diagnostic_started:=PERF.begin(parent)
 	var debris_script = load("res://scripts/dream/furniture_3d_debris.gd")
 	var debris: Node3D = debris_script.new()
 	debris.position = spawn_pos
 	parent.add_child(debris)
+	debris.add_to_group(&"perf_furniture_debris")
 	debris.call("_setup", texture, piece_count, impulse_dir)
+	PERF.end(parent,"fracture_build",diagnostic_started)
+	PERF.event(parent,"furniture_break",{"pieces":piece_count,"x":spawn_pos.x,"y":spawn_pos.y,"z":spawn_pos.z})
 	return debris
 
 func _setup(texture: Texture2D, count: int, impulse_dir: Vector3) -> void:

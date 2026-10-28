@@ -83,12 +83,19 @@ func _recover_landing(distance: float) -> Vector2:
 			best = cost
 	return nearest
 
-func try_start() -> bool:
+func try_start(target_direction: Vector2 = Vector2.ZERO) -> bool:
 	if active or not player.can_start_dash_aim(true) or not player.attacking_enabled or player.throw_aim_active or player.tactical_plan_active or player.is_dash_hunger_disabled() or not player._presentation_pointer_input_allowed(): return false
 	world = player._dream_world()
 	if world == null or not world.has_method("resolve_phase_dash_attack"): return false
 	origin = player.global_position
-	direction = origin.direction_to(player.get_constrained_aim_position())
+	if target_direction.length_squared() > 0.0001:
+		direction = target_direction.normalized()
+	else:
+		var move_input: Vector2 = player._read_gameplay_movement_input() if is_instance_valid(player) and player.has_method("_read_gameplay_movement_input") else Vector2.ZERO
+		if move_input.length_squared() > 0.0001:
+			direction = move_input.normalized()
+		else:
+			direction = origin.direction_to(player.get_constrained_aim_position())
 	if direction.length_squared()<.001: direction = player.last_aim_direction.normalized()
 	if direction.length_squared()<.001: direction = Vector2.RIGHT
 	old_layer = player.collision_layer

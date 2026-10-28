@@ -247,7 +247,10 @@ func _activate_selection() -> void:
 	elif _page == &"music" and get_selected_index() == 0: apps_model.toggle_music(get_tree())
 	elif _page in [&"graphics",&"assistance"]:
 		var key := StringName(_rows()[get_selected_index()][0])
-		if key == &"shadow_quality": _adjust_selection(1)
+		if key == &"palette_enabled":
+			var at_last: bool=bool(_get_setting(&"palette_enabled", true)) and int(_get_setting(&"palette_scheme", 1)) == 2
+			_adjust_selection(-2 if at_last else 1)
+		elif key == &"shadow_quality": _adjust_selection(1)
 		else: _manager.set_setting(key, not bool(_get_setting(key, true)))
 	elif _page == &"settings": _push_page(StringName(_rows()[get_selected_index()][0]))
 
@@ -262,7 +265,12 @@ func _adjust_selection(direction: int) -> void:
 	if _page == &"sounds" or (_page == &"music" and key == &"music_volume"):
 		_manager.set_volume(key, clampi(int(_get_setting(key, 100)) + direction * 5, 0, 100))
 	elif _page in [&"graphics",&"assistance"]:
-		if key == &"shadow_quality":
+		if key == &"palette_enabled":
+			var selected := (2 if int(_get_setting(&"palette_scheme", 1)) == 2 else 1) if bool(_get_setting(&"palette_enabled", true)) else 0
+			selected = clampi(selected + direction, 0, 2)
+			if selected > 0: _manager.set_setting(&"palette_scheme", selected)
+			_manager.set_setting(&"palette_enabled", selected > 0)
+		elif key == &"shadow_quality":
 			var current := maxi(0, QUALITIES.find(String(_get_setting(key, "standard"))))
 			_manager.set_setting(key, QUALITIES[clampi(current + direction, 0, 2)])
 		else: _manager.set_setting(key, direction > 0)
@@ -515,7 +523,7 @@ func _draw() -> void:
 			draw_rect(Rect2(slider.position, Vector2(slider.size.x * percent / 100.0, slider.size.y)), Color("5b89a8"))
 			draw_rect(Rect2(slider.position + Vector2(roundf(slider.size.x * percent / 100.0) - 1, -2), Vector2(3, 11)), INK)
 		elif _page in [&"graphics",&"assistance"]:
-			var value: String = QUALITY_LABELS[maxi(0, QUALITIES.find(String(_get_setting(key, "standard"))))] if key == &"shadow_quality" else "开" if bool(_get_setting(key, true)) else "关"
+			var value: String = QUALITY_LABELS[maxi(0, QUALITIES.find(String(_get_setting(key, "standard"))))] if key == &"shadow_quality" else ("方案%d" % (2 if int(_get_setting(&"palette_scheme",1)) == 2 else 1) if bool(_get_setting(key,true)) else "关") if key == &"palette_enabled" else "开" if bool(_get_setting(key, true)) else "关"
 			_text(row.position + Vector2(86, 16), value, MUTED, 43, HORIZONTAL_ALIGNMENT_RIGHT)
 		elif _page == &"music" and index == 0:
 			var info: Dictionary = apps_model.get_music_info(get_tree())

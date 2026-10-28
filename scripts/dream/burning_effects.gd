@@ -29,6 +29,14 @@ func configure(owner_world: Node3D) -> void:
 	add_child(effects)
 	_sync_palette()
 
+func clear() -> void:
+	for id in burning.keys():
+		remove_burn(id)
+	burning.clear()
+	hazards.clear()
+	if is_instance_valid(effects) and effects.has_method("clear"):
+		effects.clear()
+
 func _sync_palette() -> void:
 	if is_instance_valid(world):
 		effects.preserve_flame_colors=world.get_viewport().get_node_or_null("WorldPaletteLayer")!=null

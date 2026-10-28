@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/coast_grey_outline.gdshader" id="1_yrw1n"]
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_yrw1n")
+shader_parameter/outline_color = Color(0.36, 0.37, 0.38, 1)
+shader_parameter/outline_pixels = 1.1
+shader_parameter/moon_visibility = 1.0

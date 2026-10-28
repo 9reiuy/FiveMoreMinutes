@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/night_coast_sky.gdshader" id="1_hwqjy"]
+
+[resource]
+resource_local_to_scene = true
+shader = ExtResource("1_hwqjy")
+shader_parameter/scene_time = 9.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/reveal = 1.0
+shader_parameter/horizon_y = 0.0
+shader_parameter/sky_inverse_projection = Projection(0.9452613, 0, 0, 0, 0, 0.5317095, 0, 0, 0, 0, -5.9598683e-08, -9.999499, 0, 0, -1, 10.0005)
+shader_parameter/sky_camera_to_world = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+shader_parameter/moon_direction = Vector3(0.35693917, 0.15101647, -0.92183965)

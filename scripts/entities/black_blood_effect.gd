@@ -1,5 +1,6 @@
 class_name BlackBloodEffect
 extends Node2D
+const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
 
 var wall_collision_mask: int = 1
 ## Sequential droplet rays share only their query object, never hit results.
@@ -97,6 +98,8 @@ var wall_stain_accumulators: Dictionary = {}
 
 
 func _reset_runtime() -> void:
+	_merge_frontier_keys.clear();_merge_frontier.clear()
+	_compact_merge_cells.clear();_compact_merge_pixels.clear();_compact_merge_types.clear()
 	ground_pixels.clear()
 	_pool_growth_cells.clear()
 	_pool_cell_arrivals.clear()
@@ -151,6 +154,11 @@ func unbind_airborne_visual_sink(sink: Node = null) -> void:
 
 
 func _notify_airborne_visual_sink() -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_cpu_submit")
+	_notify_airborne_visual_sink_profiled()
+	PERF_TRACE.scope_end(self,scope)
+
+func _notify_airborne_visual_sink_profiled()->void:
 	if depth_replica or _airborne_visual_sink_ref == null:
 		return
 	var sink: Variant = _airborne_visual_sink_ref.get_ref()
@@ -158,6 +166,7 @@ func _notify_airborne_visual_sink() -> void:
 		_airborne_visual_sink_ref = null
 		return
 	if sink.has_method("sync_from_effect"):
+		PERF_TRACE.capture_request(self,"blood_airborne_sync_call",sink)
 		sink.call("sync_from_effect", self)
 
 
@@ -684,6 +693,11 @@ func setup(
 	speed_multiplier: float = 1.0,
 	spread_multiplier: float = 1.0
 ) -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_active_init")
+	_setup_profiled(spray_direction,lethal,random,environment_collision_mask,intensity,droplet_multiplier,speed_multiplier,spread_multiplier)
+	PERF_TRACE.scope_end(self,scope)
+
+func _setup_profiled(spray_direction:Vector2,lethal:bool,random:RandomNumberGenerator=null,environment_collision_mask:int=1,intensity:float=1.0,droplet_multiplier:float=1.0,speed_multiplier:float=1.0,spread_multiplier:float=1.0)->void:
 	wall_collision_mask = environment_collision_mask
 
 	_reset_runtime()
@@ -874,12 +888,24 @@ func _setup_ballistic_death_spray(random: RandomNumberGenerator, direction: Vect
 
 
 func _land_ballistic_droplet(particle: Dictionary, block_cache: Dictionary) -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_impact_settle")
+	_land_ballistic_droplet_profiled(particle,block_cache)
+	PERF_TRACE.scope_end(self,scope)
+
+func _land_ballistic_droplet_profiled(particle:Dictionary,block_cache:Dictionary)->void:
 	var rng := RandomNumberGenerator.new(); rng.seed=int(particle.splash_seed)
 	var radius: float=particle.splash_radius
 	var velocity: Vector2=particle.velocity
 	var patch := {"center":particle.position,"radii":Vector2(radius,radius*rng.randf_range(0.65,1.05)),"angle":velocity.angle(),"arrival":0.0}
 	var occupied := {}
-	for cell in ground_pixels: occupied[cell]=true
+	# All touchdowns in this one synchronous simulation step share the exact
+	# same growing set. Rasterization updates it as it appends new pixels. Never
+	# retain it across frames, reset, transforms, doors or floor changes.
+	if not bool(get_meta(&"test_legacy_landing_occupied",false)) and block_cache.has(&"landing_occupied"):
+		occupied=block_cache[&"landing_occupied"]
+	else:
+		for cell in ground_pixels:occupied[cell]=true
+		if not bool(get_meta(&"test_legacy_landing_occupied",false)):block_cache[&"landing_occupied"]=occupied
 	_rasterize_pool_deposit(patch,rng,occupied,block_cache,false,true)
 	landed_death_droplets+=1
 
@@ -898,6 +924,11 @@ func setup_drag_smear(
 	intensity: float = 1.0,
 	width_pixels: float = 4.0
 ) -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_active_init")
+	_setup_drag_smear_profiled(random,environment_collision_mask,world_start,world_end,intensity,width_pixels)
+	PERF_TRACE.scope_end(self,scope)
+
+func _setup_drag_smear_profiled(random:RandomNumberGenerator,environment_collision_mask:int,world_start:Vector2,world_end:Vector2,intensity:float=1.0,width_pixels:float=4.0)->void:
 	wall_collision_mask = environment_collision_mask
 	_reset_runtime()
 	ground_sampling_scale = 1.0
@@ -952,6 +983,11 @@ func setup_trail(
 	spray_direction: Vector2 = Vector2.ZERO,
 	airborne_count: int = 0
 ) -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_active_init")
+	_setup_trail_profiled(random,environment_collision_mask,intensity,spray_direction,airborne_count)
+	PERF_TRACE.scope_end(self,scope)
+
+func _setup_trail_profiled(random:RandomNumberGenerator=null,environment_collision_mask:int=1,intensity:float=1.0,spray_direction:Vector2=Vector2.ZERO,airborne_count:int=0)->void:
 	wall_collision_mask = environment_collision_mask
 
 	_reset_runtime()
@@ -1049,6 +1085,11 @@ func setup_death_pool(
 	max_scale: float = 1.0,
 	deposit_direction: Vector2 = Vector2.ZERO
 ) -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_active_init")
+	_setup_death_pool_profiled(random,environment_collision_mask,intensity,growth_duration,min_scale,max_scale,deposit_direction)
+	PERF_TRACE.scope_end(self,scope)
+
+func _setup_death_pool_profiled(random:RandomNumberGenerator=null,environment_collision_mask:int=1,intensity:float=1.0,growth_duration:float=.45,min_scale:float=.35,max_scale:float=1.0,deposit_direction:Vector2=Vector2.ZERO)->void:
 	wall_collision_mask = environment_collision_mask
 
 	_reset_runtime()
@@ -1150,6 +1191,11 @@ func setup_death_pool(
 ## Office deposits use fixed one-pixel cells. The former radial reveal below
 ## is selected only by explicit comparison metadata.
 func _setup_pixel_pool(phase: float, sub_phase: float, micro_phase: float, lobes: float, rng: RandomNumberGenerator = null, intensity: float = 1.0, direction: Vector2 = Vector2.ZERO) -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_active_init")
+	_setup_pixel_pool_profiled(phase,sub_phase,micro_phase,lobes,rng,intensity,direction)
+	PERF_TRACE.scope_end(self,scope)
+
+func _setup_pixel_pool_profiled(phase:float,sub_phase:float,micro_phase:float,lobes:float,rng:RandomNumberGenerator=null,intensity:float=1.0,direction:Vector2=Vector2.ZERO)->void:
 	var block_cache := _new_blood_cell_query_cache()
 	var satellite_cells: Array[Vector2] = []
 	for i in ground_pixels.size():
@@ -1357,6 +1403,11 @@ func _deposited_pool_bounds_are_clear(block_cache: Dictionary) -> bool:
 
 
 func _rasterize_pool_deposit(patch: Dictionary, rng: RandomNumberGenerator, occupied: Dictionary, block_cache: Dictionary, entire_pool_safe: bool, land_immediately: bool=false) -> void:
+	var started:=PERF_TRACE.begin(self)
+	_rasterize_pool_deposit_profiled(patch,rng,occupied,block_cache,entire_pool_safe,land_immediately)
+	PERF_TRACE.end(self,"blood_deposit_raster",started)
+
+func _rasterize_pool_deposit_profiled(patch: Dictionary, rng: RandomNumberGenerator, occupied: Dictionary, block_cache: Dictionary, entire_pool_safe: bool, land_immediately: bool=false) -> void:
 	if (ground_pixels.size() if land_immediately else _pool_growth_cells.size())>=MAX_POOL_CELLS: return
 	var center: Vector2 = patch.center
 	var radii: Vector2 = patch.radii
@@ -1375,11 +1426,20 @@ func _rasterize_pool_deposit(patch: Dictionary, rng: RandomNumberGenerator, occu
 	var last_x := mini(99, ceili(center.x + reach))
 	var first_y := maxi(-99, floori(center.y - reach))
 	var last_y := mini(99, ceili(center.y + reach))
+	var radius_x:=maxf(radii.x,0.5)
+	var radius_y:=maxf(radii.y,0.5)
+	if not bool(get_meta(&"test_legacy_deposit_bounds",false)):
+		# Conservative rotated ellipse AABB for distance_squared<=1.96, with
+		# two extra pixels for floating-point edges. RNG and row order unchanged.
+		var reach_x:=1.4*sqrt(pow(radius_x*cosine,2)+pow(radius_y*sine,2))+2.0
+		var reach_y:=1.4*sqrt(pow(radius_x*sine,2)+pow(radius_y*cosine,2))+2.0
+		first_x=maxi(first_x,floori(center.x-reach_x));last_x=mini(last_x,ceili(center.x+reach_x))
+		first_y=maxi(first_y,floori(center.y-reach_y));last_y=mini(last_y,ceili(center.y+reach_y))
 	for y in range(first_y, last_y + 1):
 		for x in range(first_x, last_x + 1):
 			var dx := float(x) - center.x
 			var dy := float(y) - center.y
-			var local := Vector2((dx * cosine + dy * sine) / maxf(radii.x, 0.5), (-dx * sine + dy * cosine) / maxf(radii.y, 0.5))
+			var local := Vector2((dx * cosine + dy * sine) / radius_x, (-dx * sine + dy * cosine) / radius_y)
 			var distance_squared := local.length_squared()
 			if distance_squared > 1.96: continue
 			var boundary := boundaries[posmod(int(round(local.angle() * POOL_DEPOSIT_EDGE_SAMPLES / TAU)), POOL_DEPOSIT_EDGE_SAMPLES)]
@@ -1534,6 +1594,11 @@ func setup_wall_stain(
 	random: RandomNumberGenerator = null,
 	impact_speed: float = -1.0
 ) -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_active_init")
+	_setup_wall_stain_profiled(wall_normal,random,impact_speed)
+	PERF_TRACE.scope_end(self,scope)
+
+func _setup_wall_stain_profiled(wall_normal:Vector2,random:RandomNumberGenerator=null,impact_speed:float=-1.0)->void:
 	_reset_runtime()
 
 	var rng: RandomNumberGenerator = (
@@ -1654,6 +1719,9 @@ func is_visual_settled() -> bool:
 ## Rasterize the exact ground stamps before combining them. Both effects use
 ## the same world pixel grid; removing an overlapping stamp cannot erase blood.
 func _ground_cells_in_target(effect: BlackBloodEffect) -> Dictionary:
+	if effect==self and _compact_ground_cache_matches_current():
+		_compact_merge_hits+=1
+		return _compact_merge_cells.duplicate()
 	var cells: Dictionary = {}
 	# Snapshot only for this synchronous rasterization, keeping the original
 	# two transform operations (not a precomposed matrix) before pixel rounding.
@@ -1716,14 +1784,30 @@ func _prepare_ground_merge(other: BlackBloodEffect, extent: float) -> Dictionary
 		return {}
 	if not _raycast_environment(Vector2.ZERO, to_local(other.global_position)).is_empty():
 		return {}
-	var cells := _ground_cells_in_target(self)
-	var incoming := _ground_cells_in_target(other)
+	var cells:Dictionary
+	var incoming:Dictionary
+	if bool(get_meta(&"test_legacy_ground_prepare_order",false)):
+		cells=_ground_cells_in_target(self)
+		incoming=_ground_cells_in_target(other)
+	else:
+		# A union cannot remove incoming cells. Reject an independently invalid
+		# incoming footprint BEFORE rasterizing a possibly dense settled atlas.
+		# The final dictionary is still target-first, retaining insertion order,
+		# rounding, hole-fill priority, capture bounds and all acceptance rules.
+		incoming=_ground_cells_in_target(other)
+		if incoming.is_empty() or incoming.size()>MAX_POOL_CELLS:return {}
+		for cell in incoming:
+			if cell.x < -extent or cell.y < -extent or cell.x + 1.0 > extent or cell.y + 1.0 > extent:return {}
+		cells=_ground_cells_in_target(self)
 	if cells.is_empty() or incoming.is_empty():
 		return {}
 	for cell in incoming:
 		cells[cell] = true
 	if cells.size() > MAX_POOL_CELLS:
 		return {}
+	# A union never removes target cells. With no new cells, its independently
+	# revalidated compact footprint still fits the original or a larger extent.
+	if _compact_ground_cache_matches_current() and cells.size()==_compact_merge_cells.size() and extent>=_compact_merge_extent:return cells
 	for cell in cells:
 		if cell.x < -extent or cell.y < -extent or cell.x + 1.0 > extent or cell.y + 1.0 > extent:
 			return {}
@@ -1731,7 +1815,77 @@ func _prepare_ground_merge(other: BlackBloodEffect, extent: float) -> Dictionary
 
 
 func absorb_ground_effect(other: BlackBloodEffect, extent: float = 108.0) -> bool:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_impact_settle")
+	var result:=_absorb_ground_effect_profiled(other,extent)
+	PERF_TRACE.scope_end(self,scope)
+	return result
+
+const MERGE_NEIGHBORS:Array[Vector2]=[Vector2.LEFT,Vector2.RIGHT,Vector2.UP,Vector2.DOWN]
+var _compact_merge_cells:Dictionary={}
+var _compact_merge_pixels:Array[Vector2]=[]
+var _compact_merge_types:Array[int]=[]
+var _compact_merge_transform:=Transform2D.IDENTITY
+var _compact_merge_hits:=0
+var _compact_merge_extent:=0.0
+
+func _compact_ground_cache_matches_current()->bool:
+	return not bool(get_meta(&"test_legacy_compact_ground_cache",false)) and not _compact_merge_cells.is_empty() and ground_visual_scale==1.0 and global_transform==_compact_merge_transform and ground_pixels==_compact_merge_pixels and ground_pixel_types==_compact_merge_types
+
+func _cache_compact_ground_cells(cells:Dictionary,extent:float)->void:
+	if bool(get_meta(&"test_legacy_compact_ground_cache",false)):return
+	if _compact_ground_cache_matches_current():return
+	_compact_merge_cells.clear()
+	var pose:=global_transform
+	# Conservative exact-roundtrip domain for the existing TWO transforms:
+	# integer pixels <=2^14, identity basis, translation <=2^16. Even float32
+	# addition/subtraction error is far below 0.5 pixel here. Affine/huge/nonfinite
+	# data uses the original rasterizer, never a precomposed matrix shortcut.
+	if ground_pixel_types.size()!=ground_pixels.size() or ground_visual_scale!=1.0 or extent<=0.0 or extent>16384.0 or pose.x!=Vector2.RIGHT or pose.y!=Vector2.DOWN or not pose.origin.is_finite() or absf(pose.origin.x)>65536.0 or absf(pose.origin.y)>65536.0:return
+	for cell:Vector2 in cells:
+		if not cell.is_finite() or cell!=cell.round():return
+		# Two identity-basis transforms normalize a signed zero. Do not retain
+		# an incoming -0 bit pattern as a future raster result, even though
+		# Vector2 equality/hash and rendered pixels regard +0 and -0 as equal.
+		if (cell.x==0.0 or cell.y==0.0) and var_to_bytes(cell)!=var_to_bytes(cell+Vector2.ZERO):return
+	_compact_merge_cells=cells.duplicate()
+	_compact_merge_pixels=ground_pixels.duplicate();_compact_merge_types=ground_pixel_types.duplicate()
+	_compact_merge_transform=pose
+	_compact_merge_extent=extent
+
+var _merge_frontier_keys:Array=[]
+var _merge_frontier:Dictionary={}
+
+func _merge_hole_candidates(cells:Dictionary)->Dictionary:
+	var keys:=cells.keys()
+	# Validate against the freshly rasterized ORDERED pixel set. Deletions,
+	# reordering, transformed rounding or external edits force a full rebuild.
+	var reuse:=not bool(get_meta(&"test_legacy_merge_frontier",false)) and not _merge_frontier_keys.is_empty() and keys.size()>=_merge_frontier_keys.size() and keys.slice(0,_merge_frontier_keys.size())==_merge_frontier_keys
+	var candidates:Dictionary=_merge_frontier.duplicate() if reuse else {}
+	var first:int=_merge_frontier_keys.size() if reuse else 0
+	if reuse:
+		for index in range(first,keys.size()):candidates.erase(keys[index])
+	for index in range(first,keys.size()):
+		var cell:Vector2=keys[index]
+		for step:Vector2 in MERGE_NEIGHBORS:
+			var candidate:=cell+step
+			if not cells.has(candidate):candidates[candidate]=int(candidates.get(candidate,0))+1
+	return candidates
+
+func _remember_merge_frontier(cells:Dictionary,candidates:Dictionary,filled:Array[Vector2])->void:
+	if bool(get_meta(&"test_legacy_merge_frontier",false)):return
+	# Newly filled holes affect ONLY the next merge, not this one-pass fill.
+	for cell:Vector2 in filled:candidates.erase(cell)
+	for cell:Vector2 in filled:
+		for step:Vector2 in MERGE_NEIGHBORS:
+			var candidate:=cell+step
+			if not cells.has(candidate):candidates[candidate]=int(candidates.get(candidate,0))+1
+	_merge_frontier=candidates
+	_merge_frontier_keys=cells.keys()
+
+func _absorb_ground_effect_profiled(other:BlackBloodEffect,extent:float)->bool:
+	var stage_started:=PERF_TRACE.begin(self)
 	var cells := _prepare_ground_merge(other, extent)
+	PERF_TRACE.end(self,"blood_merge_prepare",stage_started)
 	if cells.is_empty():
 		return false
 	if bool(get_meta(&"test_legacy_ground_merge", false)):
@@ -1740,12 +1894,11 @@ func absorb_ground_effect(other: BlackBloodEffect, extent: float = 108.0) -> boo
 		cells = _ground_cells_in_target(self)
 		for cell in _ground_cells_in_target(other): cells[cell] = true
 	# One pass closes only tiny, nearly enclosed holes, without bridging gaps.
-	var candidates: Dictionary = {}
-	for cell in cells:
-		for step in [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]:
-			var candidate: Vector2 = cell + step
-			if not cells.has(candidate):
-				candidates[candidate] = int(candidates.get(candidate, 0)) + 1
+	stage_started=PERF_TRACE.begin(self)
+	var candidates: Dictionary = _merge_hole_candidates(cells)
+	PERF_TRACE.end(self,"blood_merge_frontier",stage_started)
+	stage_started=PERF_TRACE.begin(self)
+	var filled:Array[Vector2]=[]
 	for cell in candidates:
 		if cells.size() >= MAX_POOL_CELLS:
 			break
@@ -1753,6 +1906,16 @@ func absorb_ground_effect(other: BlackBloodEffect, extent: float = 108.0) -> boo
 			continue
 		if _is_ground_world_position_valid(to_global(cell)) and _raycast_environment(Vector2.ZERO, cell).is_empty():
 			cells[cell] = true
+			filled.append(cell)
+	_remember_merge_frontier(cells,candidates,filled)
+	PERF_TRACE.end(self,"blood_merge_fill",stage_started)
+	stage_started=PERF_TRACE.begin(self)
+	# The complete target is present and this pipeline only adds cells. After
+	# hole filling, an equal count proves the same set without 8000 callbacks
+	# and membership probes; non-compact/mutated targets retain the old check.
+	if _compact_ground_cache_matches_current() and cells.size()==ground_pixels.size():
+		PERF_TRACE.end(self,"blood_merge_commit",stage_started)
+		return true
 	if is_equal_approx(ground_visual_scale, 1.0) and cells.size() == ground_pixels.size() and ground_pixel_types.all(func(stamp: int) -> bool: return stamp == StampType.PIXEL_CELL):
 		var unchanged := true
 		for cell in ground_pixels:
@@ -1760,23 +1923,38 @@ func absorb_ground_effect(other: BlackBloodEffect, extent: float = 108.0) -> boo
 				unchanged = false
 				break
 		if unchanged:
+			_cache_compact_ground_cells(cells,extent)
+			PERF_TRACE.end(self,"blood_merge_commit",stage_started)
 			return true
 	ground_pixels.clear()
 	ground_pixel_types.clear()
-	for cell in cells:
-		ground_pixels.append(cell)
-		ground_pixel_types.append(StampType.PIXEL_CELL)
+	if bool(get_meta(&"test_legacy_ground_commit_loop",false)):
+		for cell in cells:
+			ground_pixels.append(cell)
+			ground_pixel_types.append(StampType.PIXEL_CELL)
+	else:
+		ground_pixels.assign(cells.keys())
+		ground_pixel_types.resize(ground_pixels.size())
+		ground_pixel_types.fill(StampType.PIXEL_CELL)
 	ground_visual_scale = 1.0
 	ground_sampling_scale = 1.0
+	_cache_compact_ground_cells(cells,extent)
 	content_version += 1
 	_notify_bridge_dirty()
 	queue_redraw()
+	PERF_TRACE.end(self,"blood_merge_commit",stage_started)
 	return true
+
 
 
 ## 视觉静态化：源节点停帧（append_wall_impact 负责唤醒），
 ## 并通知 ActorDepthBridge 冻结其完整 _process（若桥已存在）。
 func _enter_static_presentation() -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_impact_settle")
+	_enter_static_presentation_profiled()
+	PERF_TRACE.scope_end(self,scope)
+
+func _enter_static_presentation_profiled()->void:
 	# 只有"已 settled 且空中血滴全部落地"才允许进入静态表现：
 	# setup 的即时墙检测可能在 stain 仍有 airborne 内容时经过 settled=true
 	# 分支——冻结那种 stain 会杀死剩余血滴的飞行模拟（血滴悬空、永不落地）。
@@ -1794,9 +1972,15 @@ func _enter_static_presentation() -> void:
 
 ## 冻结后有新载荷时唤醒桥做一次同步+捕获，随后桥会自动重新冻结。
 func _notify_bridge_dirty() -> void:
+	var scope:=PERF_TRACE.scope_begin(self,"blood_cpu_submit")
+	_notify_bridge_dirty_profiled()
+	PERF_TRACE.scope_end(self,scope)
+
+func _notify_bridge_dirty_profiled()->void:
 	var reference: Variant = get_meta(&"depth_visual_bridge") if has_meta(&"depth_visual_bridge") else null
 	var bridge: Node = reference.get_ref() if reference is WeakRef else null
 	if bridge != null and bridge.has_method("mark_visual_dirty"):
+		PERF_TRACE.capture_request(self,"blood_mark_dirty_call",bridge)
 		bridge.call("mark_visual_dirty")
 
 
@@ -1881,6 +2065,13 @@ func append_wall_impact(
 		_notify_bridge_dirty()
 
 func _process(delta: float) -> void:
+	var started:=PERF_TRACE.begin(self)
+	var scope:=PERF_TRACE.scope_begin(self,"blood_active_sim")
+	_process_profiled(delta)
+	PERF_TRACE.scope_end(self,scope)
+	PERF_TRACE.end(self,"blood_process",started)
+
+func _process_profiled(delta:float)->void:
 	elapsed += delta
 
 	if pool_growth_active:

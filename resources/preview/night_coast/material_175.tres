@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/coast_fog_ribbon.gdshader" id="1_5jk5u"]
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_5jk5u")
+shader_parameter/scene_time = 9.0
+shader_parameter/moon_visibility = 1.0

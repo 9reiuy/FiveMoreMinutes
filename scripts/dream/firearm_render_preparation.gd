@@ -3,8 +3,9 @@ extends RefCounted
 ## this world. No player's weapon is fired; ammo/spread/cooldowns stay intact.
 static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -> Dictionary:
 	if DisplayServer.get_name()=="headless": return {"skipped":"headless"}
-	if not tree.paused: return {"skipped":"gameplay_not_frozen"}
+	if not tree.paused and (not is_instance_valid(world) or world.can_process()): return {"skipped":"gameplay_not_frozen"}
 	if not is_instance_valid(world) or not world.is_inside_tree(): return {"cancelled":true}
+	preload("res://scripts/app/performance_markers.gd").lighting_event(world,"prewarm_start")
 	var whole_started:=Time.get_ticks_usec()
 	var phase_timings: Dictionary={}
 	var destruction: Dictionary=await preload("res://scripts/dream/destruction_render_preparation.gd").run(tree,world)
@@ -52,6 +53,7 @@ static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -
 		if not is_instance_valid(world) or not world.is_inside_tree() or world.get_current_floor_token()!=floor_token:
 			for node in temporary_sources:
 				if is_instance_valid(node): node.queue_free()
+			_clear_firearm_render_vfx(world)
 			return {"cancelled":true,"destruction":destruction}
 		build_started=Time.get_ticks_usec()
 		var retained: Dictionary={}
@@ -111,6 +113,7 @@ static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -
 		lighting.flash_muzzle_world(world.get_gameplay_world_position(landing,.8),&"assault_rifle")
 		for frame in 2: await RenderingServer.frame_post_draw
 	phase_timings["receiver_ms"]=(Time.get_ticks_usec()-receiver_started)/1000.0
+	preload("res://scripts/app/performance_markers.gd").lighting_event(world,"prewarm_completed_draws")
 	var cancelled: bool=not is_instance_valid(world) or not world.is_inside_tree()
 	if not cancelled: cancelled=world.get_current_floor_token()!=floor_token or not is_instance_valid(lighting)
 	var readback_bytes:=0
@@ -132,8 +135,20 @@ static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -
 	if is_instance_valid(world) and projectile_id!=0: world._release_projectile_local_light(projectile_id)
 	for node in temporary_sources:
 		if is_instance_valid(node): node.queue_free()
+	_clear_firearm_render_vfx(world)
 	# Release capture ownership and submit the restored world before revealing it.
 	for frame in 2: await tree.process_frame
 	if not cancelled: await RenderingServer.frame_post_draw
 	phase_timings["cleanup_ms"]=(Time.get_ticks_usec()-cleanup_started)/1000.0
 	return {"elapsed_ms":float(Time.get_ticks_usec()-whole_started)/1000.0,"firearm_elapsed_ms":float(Time.get_ticks_usec()-started)/1000.0,"phase_timings":phase_timings,"destruction":destruction,"world_readback_bytes":readback_bytes,"temporary_sources":temporary_sources.size(),"cancelled":cancelled}
+
+static func _clear_firearm_render_vfx(world: Node) -> void:
+	if not is_instance_valid(world): return
+	var host: Node = world.floor_root if is_instance_valid(world.get("floor_root")) else world
+	var burning_node: Node = host.get_node_or_null("BurningEffects") if is_instance_valid(host) else null
+	if is_instance_valid(burning_node) and burning_node.has_method("clear"):
+		burning_node.clear()
+	if world.has_method("_muzzle_smoke"):
+		var smoke: Node = world.call("_muzzle_smoke")
+		if is_instance_valid(smoke) and smoke.has_method("clear"):
+			smoke.clear()

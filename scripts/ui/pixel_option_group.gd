@@ -43,6 +43,9 @@ var _triangle_anim_elapsed := 0.0
 var _confirm_spring_busy := false
 var _pending_clear_highlight := false
 
+## When true, hover/focus refresh will not move the selection chrome.
+var _hover_suppressed := false
+
 var _frame_position := Vector2.ZERO:
 	set(value):
 		_frame_position = value
@@ -152,6 +155,8 @@ func clear_highlight() -> void:
 			option.scale = Vector2.ONE
 			_apply_option_text_color(option, false)
 	_frame_alpha = 0.0
+	_frame_position = Vector2.ZERO
+	_frame_size = Vector2.ZERO
 
 
 func _apply_plain_text_style(option: Button) -> void:
@@ -162,7 +167,13 @@ func _apply_plain_text_style(option: Button) -> void:
 		option.add_theme_stylebox_override(state, empty)
 
 
+func set_hover_suppressed(suppressed: bool) -> void:
+	_hover_suppressed = suppressed
+
+
 func _on_option_entered(option: Button) -> void:
+	if _hover_suppressed:
+		return
 	if option.disabled or not option.is_visible_in_tree():
 		option.mouse_default_cursor_shape = Control.CURSOR_ARROW
 		return
@@ -193,6 +204,8 @@ func _on_option_pressed(option: Button) -> void:
 
 
 func _refresh_active_option() -> void:
+	if _hover_suppressed:
+		return
 	for option in _options:
 		if not is_instance_valid(option) or option.disabled or not option.is_visible_in_tree():
 			continue
@@ -282,17 +295,24 @@ func _kill_text_tween(option: Button) -> void:
 
 
 func _move_frame_to(option: Button, with_spring: bool) -> void:
+	# Skip pre-layout / zero rects — writing (0,0) made the NieR bar flash at viewport TL.
+	var option_global := option.get_global_rect()
+	if option_global.size.x < 0.5 or option_global.size.y < 0.5:
+		return
 	var target := _target_rect(option)
+	if target.size.x < 0.5 or target.size.y < 0.5:
+		return
 	_kill_frame_tween()
 	if solid_fill:
 		# Progress-bar model: Y + left X snap; width = settle * expand.
-		# Force stub expand BEFORE position/size/alpha so first dirty draw is ~20%, not leftover 1.0.
+		# Keep alpha 0 until geometry is set so expand-first never draws at Vector2.ZERO.
+		_frame_alpha = 0.0
+		_frame_position = target.position
+		_frame_size = target.size
 		if with_spring:
 			_frame_expand = option_frame_spring_start_scale
 		else:
 			_frame_expand = 1.0
-		_frame_position = target.position
-		_frame_size = target.size
 		_frame_alpha = 1.0
 		if with_spring:
 			# Fill uses EASE_IN so early frames stay near the 20% stub (EASE_OUT looked like ~80% immediately).

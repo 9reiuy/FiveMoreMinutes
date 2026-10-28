@@ -4,6 +4,7 @@ extends CharacterBody2D
 const MAX_HP:=20.0
 const SPEED:=560.0
 const MAX_BOUNCES:=7
+const PERF=preload("res://scripts/app/performance_markers.gd")
 var world: Node3D
 var controller: Node3D
 var hp:=MAX_HP
@@ -18,6 +19,7 @@ var gas_emit_left:=0.0
 var paint_material: ShaderMaterial
 var palette_check_left:=0.0
 var gas_source_id:=0
+var emission_stopped:=false
 var smoke_silhouette:=false
 
 func _ready() -> void:
@@ -49,6 +51,7 @@ func take_damage(amount: float,direction:=Vector2.ZERO,_force:=1.0) -> void:
 	if hp>0:return
 	broken=true
 	flying=true
+	emission_stopped=false
 	velocity=(direction.normalized() if direction.length_squared()>.001 else inward)*SPEED
 	gas_source_id=controller.discharge(global_position)
 
@@ -60,7 +63,9 @@ func _physics_process(delta: float) -> void:
 		_sync_paint()
 	if not flying:return
 	if flying:
+		var diagnostic_started:=PERF.begin(self)
 		advance_flight(delta)
+		PERF.end(self,"extinguisher_flight",diagnostic_started)
 	_sync_visual()
 
 func advance_flight(delta: float) -> void:
@@ -68,14 +73,14 @@ func advance_flight(delta: float) -> void:
 	flight_age+=delta
 	if flight_age>=5.0:stop_flight();return
 	gas_emit_left-=delta
-	if gas_emit_left<=0.0:
+	if not emission_stopped and gas_emit_left<=0.0:
 		gas_emit_left=.035
 		controller.emit_jet(global_position,-velocity.normalized())
 	var remaining:=velocity*delta
 	for step in 4:
 		var from:=global_position
 		var collision:=move_and_collide(remaining)
-		controller.emit_trail(from,global_position,gas_source_id)
+		if not emission_stopped:controller.emit_trail(from,global_position,gas_source_id)
 		_hit_enemies(from,global_position)
 		if collision==null:break
 		bounce(collision.get_normal())
@@ -88,11 +93,17 @@ func advance_flight(delta: float) -> void:
 func bounce(normal: Vector2) -> void:
 	if not flying:return
 	bounces+=1
+	if not emission_stopped:
+		emission_stopped=true
+		PERF.event(self,"extinguisher_emission_stopped",{"source":gas_source_id,"bounces":bounces})
+	PERF.event(self,"extinguisher_bounce",{"bounces":bounces,"x":global_position.x,"y":global_position.y})
 	if bounces>=MAX_BOUNCES:stop_flight();return
 	velocity=velocity.bounce(normal).normalized()*SPEED
 
 func stop_flight() -> void:
+	PERF.event(self,"extinguisher_stopped",{"age":flight_age,"bounces":bounces})
 	flying=false
+	emission_stopped=true
 	velocity=Vector2.ZERO
 	contacts.clear()
 

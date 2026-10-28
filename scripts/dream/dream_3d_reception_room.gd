@@ -118,6 +118,10 @@ var dash_aim_depth_bridge: Node3D
 var elevator_floor_door: ElevatorFloorDoor3D
 var elevator_approach_active := false
 var elevator_transition_in_progress := false
+var entry_cab: IndependentElevatorCab3D
+var entry_return_position := Vector2.ZERO
+var entry_ride_started_usec := 0
+var entry_camera_weight := 0.0
 var reception_desk: Node3D
 
 
@@ -169,6 +173,9 @@ func _exit_tree() -> void:
 		_dialogue_camera_tween.kill()
 		_dialogue_camera_tween = null
 	_exit_dream_time_mode()
+	if elevator_transition_in_progress:
+		SFX.stop_elevator_music()
+		SFX.stop_elevator_rumble()
 
 
 func _setup_3d_audio_listener() -> void:
@@ -666,7 +673,10 @@ func _update_camera_and_projection(delta: float) -> void:
 
 	var normal_focus := ground_position + camera_aim_offset * (1.0 - phone_camera_weight)
 	var composed_focus := normal_focus.lerp(DIALOGUE_FOCUS_TARGET_3D, dialogue_camera_weight)
+	if is_instance_valid(entry_cab) and entry_ride_started_usec > 0:
+		composed_focus = composed_focus.lerp(entry_cab.get_camera_focus_world(), entry_camera_weight)
 	var phone_fov: float = authoritative_camera_fov * PHONE_CAMERA.zoom_factor(phone_camera_weight)
+	phone_fov = lerpf(phone_fov, 24.0, entry_camera_weight)
 	composed_focus += PHONE_CAMERA.focus_offset(camera_3d, phone_camera_weight, phone_fov)
 	camera_rig.position = composed_focus
 
@@ -785,16 +795,77 @@ func _start_elevator_entry() -> void:
 
 	await elevator_floor_door.open_doors(0.45)
 
-	# Smoothly walk/tween player into doorway threshold
+	entry_return_position = player.global_position
+	# The existing cab sits physically behind the lobby door, open to its threshold.
+	entry_cab = preload("res://scripts/dream/independent_elevator_cab_3d.gd").new(-1)
+	entry_cab.name = "ReceptionEntryCab"
+	entry_cab.position = ELEVATOR_POS_3D + Vector3(0, 0, -1.3)
+	add_child(entry_cab)
+	entry_cab.setup_gameplay_boundaries(gameplay_world, Vector2(entry_cab.position.x, entry_cab.position.z) * CELL_PIXELS)
+	await entry_cab.open_cab_doors(.30)
+	# Reuse actual locomotion so feet, body and hair receive real walking velocity.
 	var threshold_pos := elevator_floor_door.get_doorway_threshold_position_2d()
-	var walk_tween := create_tween()
-	walk_tween.tween_property(player, "global_position", threshold_pos, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	await walk_tween.finished
+	await _walk_into_elevator(threshold_pos)
+	await _walk_into_elevator(entry_cab.boundary_root_2d.global_position)
 
 	await elevator_floor_door.close_doors(0.45)
+	await entry_cab.close_cab_doors(.30)
+	entry_ride_started_usec = Time.get_ticks_usec()
+	# Move the view inside the actual cab; the closed lobby facade must not
+	# remain between the camera and the passenger. Blend real scene pixels.
+	var layer := CanvasLayer.new()
+	layer.layer = 37
+	var picture := TextureRect.new()
+	if DisplayServer.get_name() != "headless":
+		picture.texture = ImageTexture.create_from_image(get_tree().root.get_texture().get_image())
+	picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	layer.add_child(picture)
+	add_child(layer)
+	picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	geometry_3d.hide()
+	actor_depth_bridges_root.hide()
+	waitress_npc.hide()
+	var reveal := create_tween().set_parallel(true)
+	reveal.tween_property(self, "entry_camera_weight", 1.0, .4).set_trans(Tween.TRANS_SINE)
+	reveal.tween_property(picture, "modulate:a", 0.0, .4)
+	await reveal.finished
+	layer.queue_free()
+	player.movement_enabled = true
+	SFX.play_elevator_music(get_instance_id())
+	SFX.play_elevator_rumble()
 
 	# Transition authority is delegated to global TransitionDirector in main.gd
 	elevator_entered.emit()
+
+func _walk_into_elevator(target: Vector2) -> void:
+	var elapsed := 0.0
+	while is_instance_valid(player) and player.global_position.distance_to(target) > 3.0 and elapsed < 4.0:
+		player.set_scripted_locomotion(player.global_position.direction_to(target), 110.0)
+		await get_tree().physics_frame
+		elapsed += get_physics_process_delta_time()
+	if is_instance_valid(player): player.clear_scripted_locomotion()
+
+func rollback_elevator_entry() -> void:
+	player.clear_scripted_locomotion()
+	player.global_position = entry_return_position
+	player.movement_enabled = true
+	player.set_dash_enabled(true)
+	entry_ride_started_usec = 0
+	entry_camera_weight = 0.0
+	geometry_3d.show()
+	actor_depth_bridges_root.show()
+	waitress_npc.show()
+	if is_instance_valid(entry_cab):
+		entry_cab.cleanup_gameplay()
+		entry_cab.queue_free()
+		entry_cab = null
+	elevator_transition_in_progress = false
+	SFX.stop_elevator_music()
+	SFX.stop_elevator_rumble()
+	SFX.play_safe_music(get_instance_id())
+	_enter_dream_time_mode()
+	_update_camera_and_projection(0.0)
 
 
 # =============================================================================

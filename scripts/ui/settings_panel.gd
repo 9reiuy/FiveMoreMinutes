@@ -51,7 +51,8 @@ func _ready() -> void:
 	palette_option.mouse_entered.connect(_play_hover)
 	palette_option.clear()
 	palette_option.add_item("方案 1", 0)
-	palette_option.add_item("关闭", 1)
+	palette_option.add_item("方案 2", 1)
+	palette_option.add_item("关闭", 2)
 	palette_option.item_selected.connect(_on_palette_selected)
 	shadow_quality_option.focus_mode = Control.FOCUS_NONE
 	shadow_quality_option.mouse_entered.connect(_play_hover)
@@ -158,7 +159,7 @@ func _sync_all() -> void:
 		music_slider.value = sm.call("get_volume", &"music_volume")
 		sfx_slider.value = sm.call("get_volume", &"sfx_volume")
 		pixelation_check.set_pressed_no_signal(bool(sm.call("get_setting", &"pixelation_enabled", true)))
-		palette_option.select(0 if bool(sm.call("get_palette_enabled")) else 1)
+		palette_option.select((1 if int(sm.call("get_palette_scheme")) == 2 else 0) if bool(sm.call("get_palette_enabled")) else 2)
 		var quality_index := SHADOW_QUALITIES.find(String(sm.call("get_setting", &"shadow_quality", "standard")))
 		shadow_quality_option.select(quality_index if quality_index >= 0 else 1)
 		auto_vault_check.set_pressed_no_signal(bool(sm.get_setting(&"auto_vault_enabled", true)))
@@ -201,7 +202,8 @@ func _on_palette_selected(index: int) -> void:
 		return
 	var sm := _get_sm()
 	if sm != null:
-		sm.call("set_setting", &"palette_enabled", index == 0)
+		if index < 2: sm.call("set_setting", &"palette_scheme", index + 1)
+		sm.call("set_setting", &"palette_enabled", index < 2)
 	_refresh_one_cycle_caption(palette_option)
 	SFX.play_event(&"confirm")
 

@@ -11,6 +11,7 @@ render_mode unshaded;
 
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
 uniform bool palette_enabled = true;
+uniform int palette_scheme = 1;
 
 const vec3 PALETTE_00 = vec3(0.0196078, 0.0235294, 0.0392157); // 01 #05060A Void / 绝对暗部
 const vec3 PALETTE_01 = vec3(0.0509804, 0.0627451, 0.1254902); // 02 #0D1020 极深蓝黑
@@ -92,6 +93,13 @@ vec3 nearest_palette_color(vec3 source) {
 	consider_palette(source, PALETTE_13, best, best_distance);
 	consider_palette(source, PALETTE_14, best, best_distance);
 	consider_palette(source, PALETTE_15, best, best_distance);
+	// The alternative extends the original palette with selected reference hues.
+	if (palette_scheme == 2) {
+		consider_palette(source, vec3(.25,.24,.58), best, best_distance);
+		consider_palette(source, vec3(0.2078431, 0.2117647, 0.8431373), best, best_distance); // #3536D7
+		consider_palette(source, vec3(.48,.20,.27), best, best_distance);
+		consider_palette(source, vec3(.59,.34,.55), best, best_distance);
+	}
 	return best;
 }
 

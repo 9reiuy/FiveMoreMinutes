@@ -68,6 +68,7 @@ var emitted := 0
 var enabled := true
 ## True while any pool sprite may still be visible from the last refresh.
 var _pool_drawn := false
+var _overlay_enabled := true
 
 
 ## Authored cooling ramp. The plume bypasses the palette, so these are literal
@@ -113,6 +114,7 @@ func _build_overlay() -> void:
 	overlay = CanvasLayer.new()
 	overlay.name = "MuzzleSmokeOverlay"
 	overlay.layer = 19
+	overlay.visible = _overlay_enabled
 	# SelectivePixelPreview._retarget_canvas_layers() scans the world for CanvasLayers
 	# and reparents every one of them onto the root Window canvas, skipping only the
 	# ones flagged world_post_effect. Without this flag the overlay gets pulled out of
@@ -154,9 +156,24 @@ func _build_overlay() -> void:
 func clear() -> void:
 	puffs.clear()
 	for sprite in fills:
-		sprite.visible = false
+		if is_instance_valid(sprite):
+			sprite.visible = false
 	for sprite in backs:
-		sprite.visible = false
+		if is_instance_valid(sprite):
+			sprite.visible = false
+	_pool_drawn = false
+
+
+func set_overlay_visible(val: bool) -> void:
+	_overlay_enabled = val
+	if overlay != null and is_instance_valid(overlay):
+		overlay.visible = val
+	if not val:
+		clear()
+
+
+func is_overlay_visible() -> bool:
+	return _overlay_enabled and (overlay == null or not is_instance_valid(overlay) or overlay.visible)
 
 
 ## Belt and braces for the overlay: if anything ever reparents it out of the world
@@ -179,7 +196,9 @@ func _exit_tree() -> void:
 
 
 func burst(world_position: Vector3, spread: Vector3, count: int = 5) -> void:
-	if not enabled or not is_visible_in_tree(): return
+	if not enabled or not is_visible_in_tree() or not _overlay_enabled: return
+	if overlay != null and is_instance_valid(overlay) and not overlay.visible:
+		return
 	if overlay == null or not is_instance_valid(overlay):
 		# Dropped by an earlier tree exit (floor stash/rollback): rebuild once.
 		_build_overlay()
@@ -276,6 +295,10 @@ func _refresh() -> void:
 		# calls in afterwards should stop quietly rather than touch freed sprites.
 		puffs.clear()
 		return
+	if not _overlay_enabled or not overlay.visible:
+		if _pool_drawn or not puffs.is_empty():
+			clear()
+		return
 	# Idle floors (no live puffs, pool already hidden) skip the 96-sprite sweep.
 	if puffs.is_empty() and not _pool_drawn:
 		return
@@ -342,6 +365,10 @@ func _to_screen(world_point: Vector3, size: float) -> Array:
 
 
 func _physics_process(delta: float) -> void:
+	if not _overlay_enabled or (overlay != null and is_instance_valid(overlay) and not overlay.visible):
+		if not puffs.is_empty() or _pool_drawn:
+			clear()
+		return
 	for i in range(puffs.size() - 1, -1, -1):
 		var puff: Dictionary = puffs[i]
 		puff["age"] = float(puff["age"]) + delta

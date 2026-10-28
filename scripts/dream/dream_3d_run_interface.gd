@@ -3,6 +3,7 @@ extends Node
 const SAVE = preload("res://scripts/app/game_save_store.gd")
 const CONFIG = preload("res://resources/demo_config.tres")
 const SFX = preload("res://scripts/audio/sfx_manager.gd")
+const PERF=preload("res://scripts/app/performance_markers.gd")
 var world: Node3D
 var player: Node
 var hud: Control
@@ -219,9 +220,14 @@ func complete_boss_layer(layer_id: int) -> void:
 	_save()
 
 func _on_death() -> void:
+	var diagnostic_started:=PERF.begin(self)
 	_clear_death_presentation()
 	death_transition_finished = false
+	PERF.end(self,"death_actor_cleanup",diagnostic_started)
+	diagnostic_started=PERF.begin(self)
 	SFX.finish_player_death_music()
+	PERF.end(self,"death_audio_ctrl",diagnostic_started)
+	diagnostic_started=PERF.begin(self)
 	world.reset_hit_stop()
 	var time_controller := get_node_or_null("/root/DreamTimeController")
 	if time_controller != null:
@@ -234,7 +240,11 @@ func _on_death() -> void:
 		_close_card()
 	if is_instance_valid(crosshair):
 		crosshair.hide()
+	PERF.end(self,"death_actor_cleanup",diagnostic_started)
+	diagnostic_started=PERF.begin(self)
 	_save()
+	PERF.end(self,"death_save_io",diagnostic_started)
+	diagnostic_started=PERF.begin(self)
 	if hud != null:
 		hud.set_flashlight_available(false)
 	player.set_attacking_enabled(false)
@@ -244,6 +254,7 @@ func _on_death() -> void:
 		damage_flash.color.a = 0.0
 	death_sequence_generation += 1
 	var current_gen := death_sequence_generation
+	PERF.end(self,"death_actor_cleanup",diagnostic_started)
 	if player.last_damage_source == &"exterior_fall" and player.get_meta(&"exterior_fall_wilhelm", false):
 		var start_msec: int = int(player.get_meta(&"wilhelm_scream_start_msec", 0))
 		var elapsed := float(Time.get_ticks_msec() - start_msec) / 1000.0 if start_msec > 0 else 0.5
@@ -252,11 +263,13 @@ func _on_death() -> void:
 			await get_tree().create_timer(remaining, true, false, true).timeout
 			if current_gen != death_sequence_generation or not is_instance_valid(player) or not player.dead or death_transition_finished:
 				return
+	diagnostic_started=PERF.begin(self)
 	var crt := preload("res://scenes/ui/death_crt_effect.tscn").instantiate()
 	death_effect = crt
 	world.add_child(crt)
 	crt.finished.connect(_finish_death_transition, CONNECT_ONE_SHOT)
 	crt.play(CONFIG.death_crt_effect_seconds)
+	PERF.end(self,"death_crt_init",diagnostic_started)
 
 func _finish_death_transition() -> void:
 	death_transition_finished = true

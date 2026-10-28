@@ -29,7 +29,7 @@ var elevator_prompt_active := false
 ## legacy 2D label is hidden with GameplayCanvas in this 3D presentation, so
 ## this one follows the authoritative Player ground point through the active
 ## Camera3D without becoming a second gameplay/UI authority.
-var weapon_name_popup: Label
+var weapon_name_popup: Control
 var weapon_name_popup_time_left := 0.0
 var weapon_name_popup_last_id := ""
 var weapon_name_popup_last_usec := -1000000000
@@ -1165,19 +1165,10 @@ func _ready() -> void:
 	interaction_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	interaction_prompt.size = INTERACTION_PROMPT_SIZE
 	ui.add_child(interaction_prompt)
-	weapon_name_popup = Label.new()
+	weapon_name_popup = preload("res://scripts/ui/world_status_word.gd").new()
 	weapon_name_popup.name = "WeaponNamePopup"
 	weapon_name_popup.visible = false
 	weapon_name_popup.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	weapon_name_popup.theme = load("res://assets/fonts/pixel_theme.tres")
-	weapon_name_popup.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
-	weapon_name_popup.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.03, 0.95))
-	weapon_name_popup.add_theme_constant_override("outline_size", 2)
-	weapon_name_popup.add_theme_font_override(&"font", CRISP_INTERACTION_FONT.get_font())
-	weapon_name_popup.add_theme_font_size_override("font_size", 12)
-	weapon_name_popup.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	weapon_name_popup.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	weapon_name_popup.size = WEAPON_NAME_POPUP_SIZE
 	weapon_name_popup.z_index = 20
 	ui.add_child(weapon_name_popup)
 	if player != null and is_instance_valid(player):
@@ -1416,7 +1407,8 @@ func _on_player_ammo_changed_for_popup(_current: int, _capacity: int, reloading:
 func _show_reload_status_popup() -> void:
 	if not is_instance_valid(weapon_name_popup):
 		return
-	weapon_name_popup.text = "正在换弹"
+	if not weapon_name_popup.visible or weapon_name_popup.text != "正在换弹":
+		weapon_name_popup.present(self, "正在换弹")
 	weapon_name_popup_time_left = 0.0
 	weapon_name_popup_last_id = ""
 	weapon_name_popup.modulate = Color.WHITE
@@ -1438,7 +1430,7 @@ func _show_weapon_name_popup(weapon_id: String) -> void:
 		return
 	weapon_name_popup_last_id = display_id
 	weapon_name_popup_last_usec = now_usec
-	weapon_name_popup.text = DreamGunAtlas.get_display_name(display_id)
+	weapon_name_popup.present(self, DreamGunAtlas.get_display_name(display_id))
 	weapon_name_popup_time_left = WEAPON_NAME_POPUP_DURATION
 	weapon_name_popup.modulate = Color.WHITE
 	weapon_name_popup.visible = true
@@ -1459,8 +1451,7 @@ func _update_weapon_name_popup(real_delta: float) -> void:
 			_hide_weapon_name_popup()
 			return
 		_show_reload_status_popup()
-		var reload_anchor := get_gameplay_world_position(_player_ground_anchor_position(), 1.15)
-		weapon_name_popup.position = (player.get_presentation_hud_position(camera_3d.unproject_position(reload_anchor)) + WEAPON_NAME_POPUP_OFFSET).round()
+		weapon_name_popup.advance(real_delta)
 		return
 	if weapon_name_popup_time_left <= 0.0 or player == null or not is_instance_valid(player) or camera_3d == null:
 		_hide_weapon_name_popup()
@@ -1469,8 +1460,7 @@ func _update_weapon_name_popup(real_delta: float) -> void:
 	if weapon_name_popup_time_left <= 0.0:
 		_hide_weapon_name_popup()
 		return
-	var anchor := get_gameplay_world_position(_player_ground_anchor_position(), 1.15)
-	weapon_name_popup.position = (player.get_presentation_hud_position(camera_3d.unproject_position(anchor)) + WEAPON_NAME_POPUP_OFFSET).round()
+	weapon_name_popup.advance(real_delta)
 	var fade_start := WEAPON_NAME_POPUP_FADE_DURATION
 	var alpha := 1.0 if weapon_name_popup_time_left > fade_start else weapon_name_popup_time_left / fade_start
 	weapon_name_popup.modulate = Color(1.0, 1.0, 1.0, clampf(alpha, 0.0, 1.0))
@@ -2264,6 +2254,7 @@ func begin_firearm_render_preparation() -> bool:
 
 func complete_firearm_render_preparation(report: Dictionary) -> void:
 	last_firearm_render_preparation=report
+	_clear_muzzle_and_burning_vfx()
 	firearm_render_preparation_finished.emit(last_firearm_render_preparation)
 
 
@@ -6185,6 +6176,11 @@ func _occlusion_cutout_param_name(index: int) -> StringName:
 
 
 func _update_occlusion_cutouts() -> void:
+	var started:=preload("res://scripts/app/performance_markers.gd").begin(self)
+	_update_occlusion_cutouts_profiled()
+	preload("res://scripts/app/performance_markers.gd").end(self,"occlusion_physics" if Engine.is_in_physics_frame() else "occlusion_process",started)
+
+func _update_occlusion_cutouts_profiled()->void:
 	if not bool(get_meta(&"test_legacy_occlusion_query",false)):
 		_begin_cutout_query_snapshot()
 	# The manager is the only Actor -> Cutout authority. Slots contain a
@@ -8971,6 +8967,8 @@ func _begin_elevator_entry_transition() -> void:
 		player.set("movement_enabled", false)
 		if player.has_method("set_attacking_enabled"):
 			player.call("set_attacking_enabled", false)
+	_clear_muzzle_and_burning_vfx()
+	_set_muzzle_smoke_visible(false)
 
 	# 2. Open floor sliding doors (music starts immediately upon door opening)
 	SFX.play_elevator_music(get_instance_id())
@@ -9042,6 +9040,8 @@ func _load_floor_behind_cover(token: int) -> Dictionary:
 	# _commit_staged_transition_exit.  The other EXITING entry point,
 	# _perform_game_start_cab_exit, deliberately does NOT start it: the player
 	# already begins inside the cab, so there is no ride to score.
+	_clear_muzzle_and_burning_vfx()
+	_set_muzzle_smoke_visible(false)
 	_set_elevator_ride_rumbling(true)
 	SFX.play_elevator_music(get_instance_id())
 
@@ -9232,6 +9232,8 @@ func _commit_staged_transition_exit(token: int) -> void:
 	elevator_state = &"LOCKED"
 	transition_phase = &"IDLE"
 	player_has_left_elevator_cab = true
+	_clear_muzzle_and_burning_vfx()
+	_set_muzzle_smoke_visible(true)
 
 	if is_instance_valid(objective_guidance):
 		objective_guidance.reset_floor()
@@ -9479,6 +9481,8 @@ func _rollback_failed_transition(token: int, old_floor_idx: int) -> void:
 	elevator_state = &"READY" if has_floor_badge else &"LOCKED"
 	transition_phase = &"IDLE"
 	player_has_left_elevator_cab = true
+	_clear_muzzle_and_burning_vfx()
+	_set_muzzle_smoke_visible(true)
 	preload("res://scripts/dream/floor_reflections.gd").install(self)
 
 
@@ -9518,6 +9522,8 @@ func _regenerate_staged(requested_seed: int, target_floor: int, token: int,retai
 	if trace_stages: stage_started=Time.get_ticks_usec()
 	_validate_rendered_edge_nodes()
 	if trace_stages: _trace_floor_generation_stage("edge_validation",stage_started)
+	if target_floor == 0 and bool(get_meta(&"reception_elevator_journey", false)):
+		_place_player()
 
 	# Frame 4: Content Spawning (Furniture & Enemies)
 	await get_tree().process_frame
@@ -9563,8 +9569,10 @@ func _regenerate_staged(requested_seed: int, target_floor: int, token: int,retai
 	if trace_stages:
 		_trace_floor_generation_stage("path_adjacency",stage_started)
 		stage_started=Time.get_ticks_usec()
-	if room_visibility != null and is_instance_valid(room_visibility):
-		room_visibility.configure(self)
+	if room_visibility == null:
+		room_visibility = preload("res://scripts/dream/dream_3d_room_visibility.gd").new()
+		add_child(room_visibility)
+	room_visibility.configure(self)
 	if trace_stages:
 		_trace_floor_generation_stage("room_visibility",stage_started)
 		stage_started=Time.get_ticks_usec()
@@ -9598,6 +9606,8 @@ func _perform_game_start_cab_exit() -> void:
 		return
 	floor_transition_in_progress = true
 	transition_phase = &"EXITING"
+	_clear_muzzle_and_burning_vfx()
+	_set_muzzle_smoke_visible(true)
 	player.cancel_dash()
 	player.set("movement_enabled", false)
 	if player.has_method("set_attacking_enabled"):
@@ -9632,6 +9642,7 @@ func _perform_game_start_cab_exit() -> void:
 	floor_transition_in_progress = false
 	transition_phase = &"IDLE"
 	player_has_left_elevator_cab = true
+	SFX.play_battle_music(false, get_instance_id())
 
 
 func _spawn_ambient_debris() -> void:
@@ -11301,6 +11312,7 @@ func _update_native_damage_number_projections() -> void:
 
 
 func _on_enemy_defeated(at_position: Vector2, _legacy_drop_count: int = 1) -> void:
+	preload("res://scripts/app/performance_markers.gd").event(self,"enemy_defeated",{"x":at_position.x,"y":at_position.y})
 	var kill_dir := (at_position - player.global_position).normalized() if (player != null and is_instance_valid(player) and player.global_position.distance_squared_to(at_position) > 0.01) else Vector2.RIGHT
 	request_camera_impulse(&"heavy", kill_dir)
 	var defeated_room_id := _room_id_at_position(at_position)
@@ -12299,6 +12311,7 @@ func _room_inward_vector(direction: StringName) -> Vector2:
 
 
 func _register_black_blood_stain(blood: Node) -> void:
+	preload("res://scripts/app/performance_markers.gd").event(self,"blood_registered",{"node_id":blood.get_instance_id() if is_instance_valid(blood) else -1})
 	if blood == null or not is_instance_valid(blood):
 		return
 	blood.add_to_group(&"black_blood_stains")
@@ -12739,6 +12752,7 @@ func spawn_corpse_blood_emitter(
 		source
 	)
 	_owned_corpse_blood_emitters.append(emitter)
+	preload("res://scripts/app/performance_markers.gd").event(self,"corpse_bleed_started",{"node_id":emitter.get_instance_id(),"x":at_position.x,"y":at_position.y,"room":room_id})
 	return true
 
 
@@ -13139,6 +13153,33 @@ func _muzzle_smoke() -> Node3D:
 	return smoke
 
 
+func _clear_muzzle_and_burning_vfx() -> void:
+	var host: Node = floor_root if floor_root != null else self
+	if is_instance_valid(host):
+		var burning_node: Node = host.get_node_or_null("BurningEffects")
+		if is_instance_valid(burning_node) and burning_node.has_method("clear"):
+			burning_node.clear()
+		var smoke_node: Node = host.get_node_or_null("MuzzleSmoke")
+		if is_instance_valid(smoke_node) and smoke_node.has_method("clear"):
+			smoke_node.clear()
+	if host != self and is_instance_valid(self):
+		var self_burning: Node = get_node_or_null("BurningEffects")
+		if is_instance_valid(self_burning) and self_burning.has_method("clear"):
+			self_burning.clear()
+		var self_smoke: Node = get_node_or_null("MuzzleSmoke")
+		if is_instance_valid(self_smoke) and self_smoke.has_method("clear"):
+			self_smoke.clear()
+
+
+func _set_muzzle_smoke_visible(visible_state: bool) -> void:
+	var host: Node = floor_root if floor_root != null else self
+	var smoke: Node = host.get_node_or_null("MuzzleSmoke") if is_instance_valid(host) else null
+	if smoke == null and host != self and is_instance_valid(self):
+		smoke = get_node_or_null("MuzzleSmoke")
+	if is_instance_valid(smoke) and smoke.has_method("set_overlay_visible"):
+		smoke.set_overlay_visible(visible_state)
+
+
 func spawn_firearm_impact_visual(hit_position: Vector2, hit_normal: Vector2, collider: Node, shot_height_pixels: float) -> void:	# The formal 2D swept hit alone decides whether an impact happened. These
 	# short-lived 3D pixels never collide, damage, or affect line of sight.
 	if collider == null or floor_root == null or FIREARM_IMPACT_SCENE == null:
@@ -13400,6 +13441,7 @@ func _get_feedback_capture_pool() -> Node3D:
 func _get_blood_ground_capture_pool() -> Node3D:
 	var pool := actor_depth_bridges_root.get_node_or_null(^"BloodGroundCapturePool") as Node3D
 	if pool==null:
+		preload("res://scripts/app/performance_markers.gd").event(self,"capture_pool_created",{"kind":"blood_ground"})
 		pool=BLOOD_GROUND_CAPTURE_POOL.new(); pool.name="BloodGroundCapturePool"
 		actor_depth_bridges_root.add_child(pool)
 	return pool
@@ -13413,6 +13455,7 @@ func _get_floor_object_capture_pool() -> Node3D:
 
 func add_projectile(projectile: Node2D, source_actor: Node2D = null) -> void:
 	if projectile != null and gameplay_world != null:
+		preload("res://scripts/app/performance_markers.gd").event(self,"projectile_added",{"player_shot":is_instance_valid(source_actor) and source_actor.is_in_group(&"dream_player")})
 		if projectile.has_method("enable_office_ballistics"):
 			projectile.call("enable_office_ballistics")
 		if not projectile.is_in_group(&"dream_projectiles"):

@@ -41,6 +41,7 @@ func acquire(source: Node2D,camera: Camera3D,height: float) -> Node3D:
 		var candidate: Node3D = slots.pop_front()
 		if is_instance_valid(candidate) and not candidate.is_queued_for_deletion(): bridge=candidate; break
 	if bridge==null: bridge=_create(camera,height,extent)
+	preload("res://scripts/app/performance_markers.gd").event(self,"blood_capture_acquired",{"source_id":source.get_instance_id(),"bridge_id":bridge.get_instance_id(),"extent":extent})
 	bridge.rebind_blood_ground(source,camera,height)
 	source.set_meta(&"depth_visual_bridge",weakref(bridge))
 	bridge.set_meta(&"dream_room_id",int(source.get_meta(&"dream_room_id",-1)))

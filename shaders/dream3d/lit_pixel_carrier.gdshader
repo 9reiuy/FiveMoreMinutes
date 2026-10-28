@@ -11,6 +11,12 @@ uniform sampler2D capture_texture : filter_nearest, repeat_disable;
 // The bridge leaves this at zero for furniture, weapons, blood, and effects.
 uniform float character_emission_strength = 0.0;
 uniform float hurt_flash_amount = 0.0;
+// Opt-in authored screen light, restricted to the phone pose's original mask.
+uniform bool phone_glow_enabled = false;
+uniform sampler2D phone_glow_mask : filter_nearest, repeat_disable;
+uniform vec2 phone_glow_origin = vec2(0.0);
+uniform vec4 phone_glow_inverse = vec4(1.0,0.0,0.0,1.0);
+uniform float phone_glow_strength = 0.0;
 uniform bool smoke_silhouette = false;
 // Multiplier on 3D diffuse lighting (e.g. 0.50 for characters, 1.0 for props)
 uniform float character_light_scale : hint_range(0.0, 2.0) = 1.0;
@@ -100,6 +106,13 @@ void fragment() {
 	ALBEDO = vec3(_srgb_encode(pixel.r), _srgb_encode(pixel.g), _srgb_encode(pixel.b));
 	ALPHA = pixel.a;
 	EMISSION = ALBEDO * max(character_emission_strength, 0.0);
+	if (phone_glow_enabled) {
+		vec2 p = mat2(phone_glow_inverse.xy,phone_glow_inverse.zw) * (UV*vec2(textureSize(capture_texture,0))-phone_glow_origin) / 32.0;
+		if (all(greaterThanEqual(p,vec2(0.0))) && all(lessThan(p,vec2(1.0)))) {
+			vec4 glow = texture(phone_glow_mask,p);
+			EMISSION += ALBEDO * glow.rgb * glow.a * phone_glow_strength;
+		}
+	}
 	if (hurt_flash_amount > 0.5 && pixel.a > 0.05) {
 		ALBEDO = vec3(1.0);
 		EMISSION = vec3(1.0);

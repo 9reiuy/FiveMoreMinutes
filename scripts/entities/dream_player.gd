@@ -1,4 +1,5 @@
 extends CharacterBody2D
+const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
 
 @export var prop_push_force: float = 250.0
 
@@ -1174,7 +1175,9 @@ func _sync_heal_part_positions() -> void:
 func _update_hands_visibility() -> void:
 	## Armed state is derived from the real selected weapon slot, so Pickup/Throw/Break
 	## cannot leave stale hands visible or hidden for a frame.
-	var hands_visible := selected_weapon_id.is_empty() and not dead
+	# Safe rooms/cabs hide the equipped gun when attacks are disabled. In that
+	# state show the existing empty-hand sprites, rather than hiding both sets.
+	var hands_visible := (selected_weapon_id.is_empty() or not attacking_enabled) and not dead
 	for root in [visual, heal_overlay]:
 		for part_name in ["BodyPivot/LeftHand", "BodyPivot/RightHand"]:
 			var hand := root.get_node_or_null(part_name) as Sprite2D
@@ -1239,6 +1242,7 @@ func _start_punch() -> bool:
 		return false
 
 	punch_active = true
+	preload("res://scripts/app/performance_markers.gd").event(self,"player_melee",{"weapon":"fist"})
 	punch_elapsed = 0.0
 	punch_hit_applied = false
 	punch_left_hand = next_punch_left_hand
@@ -1546,6 +1550,11 @@ func _read_gameplay_movement_input() -> Vector2:
 
 
 func _physics_process(delta: float) -> void:
+	var started:=PERF_TRACE.begin(self)
+	_physics_process_profiled(delta)
+	PERF_TRACE.end(self,"player_physics",started)
+
+func _physics_process_profiled(delta:float)->void:
 	delta = combat_action_delta(delta)
 	_auto_vault_cooldown_left=maxf(0.0,_auto_vault_cooldown_left-delta)
 	# This sample is rebuilt only by the normal locomotion branch below.  Any
@@ -1660,7 +1669,15 @@ func _physics_process(delta: float) -> void:
 		and Input.is_action_just_pressed("dash")
 		and _presentation_pointer_input_allowed()
 	):
-		try_start_phase_dash()
+		var dash_dir := input_vector
+		if dash_dir.length_squared() <= 0.0001:
+			var mouse_pos := get_constrained_aim_position()
+			var mouse_dir := global_position.direction_to(mouse_pos)
+			if mouse_dir.length_squared() > 0.0001:
+				dash_dir = mouse_dir
+			else:
+				dash_dir = get_aim_direction().normalized()
+		try_start_phase_dash(dash_dir)
 
 	# Tactical Planning Mode (Hold Space with tactical CD ready)
 	if dash_input_state == DashInputState.TACTICAL_PLAN or tactical_plan_active:
@@ -5795,6 +5812,7 @@ func _request_combat_camera_impulse(level: StringName, direction: Vector2) -> vo
 
 
 func _play_melee_swing_visual() -> void:
+	preload("res://scripts/app/performance_markers.gd").event(self,"player_melee",{"weapon":selected_weapon_id})
 	# The weapon's physics clock publishes pose and sweep together. The old
 	# capture-space Line2D must not coexist with the world-space wide arc.
 	lucille_trail.hide()
@@ -6264,13 +6282,13 @@ func get_time_locomotion_speed() -> float:
 func is_phase_dash_active() -> bool:
 	return is_instance_valid(phase_dash) and phase_dash.active
 
-func try_start_phase_dash() -> bool:
+func try_start_phase_dash(target_direction: Vector2 = Vector2.ZERO) -> bool:
 	if not is_instance_valid(phase_dash):
 		phase_dash = preload("res://scripts/entities/player_phase_dash.gd").new()
 		phase_dash.name = "PhaseDash"
 		add_child(phase_dash)
 		phase_dash.configure(self)
-	return phase_dash.try_start()
+	return phase_dash.try_start(target_direction)
 
 
 func is_time_activity_active() -> bool:

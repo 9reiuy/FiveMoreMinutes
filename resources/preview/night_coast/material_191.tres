@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/coast_distant_signal.gdshader" id="1_5q0hg"]
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_5q0hg")
+shader_parameter/signal_color = Color(0.91, 0.94, 0.79, 1)
+shader_parameter/power = 0.9096557716258847
+shader_parameter/long_signal = true

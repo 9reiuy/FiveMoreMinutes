@@ -6,6 +6,8 @@ const UPDATE_SECONDS := 0.1
 const HOLD_SECONDS := 0.8
 const FADE_SECONDS := 0.25
 const PLAYER_CASTER_LAYER := 4
+const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
+var _diagnostic_light_signature:=""
 
 var world: Node3D
 var quality := "standard"
@@ -206,6 +208,14 @@ func _process(delta: float) -> void:
 			light.shadow_enabled = true
 			light.shadow_opacity = 0.0
 	_update_player_shadow_light()
+	if PERF_TRACE.current(self)!=null:
+		var state:Array=[]
+		for light in active:
+			if is_instance_valid(light):state.append([light.get_instance_id(),light.shadow_enabled,light.shadow_opacity>0.0,light.shadow_caster_mask])
+		var signature:=String(quality)+str(state)
+		if signature!=_diagnostic_light_signature:
+			_diagnostic_light_signature=signature
+			PERF_TRACE.lighting_event(world,"live_selection")
 
 func _set_player_caster(light: Light3D, enabled: bool) -> void:
 	var next_mask := light.shadow_caster_mask | PLAYER_CASTER_LAYER if enabled else light.shadow_caster_mask & ~PLAYER_CASTER_LAYER

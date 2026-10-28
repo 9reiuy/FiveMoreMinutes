@@ -1,5 +1,6 @@
 class_name EmployeeEnemy
 extends CharacterBody2D
+const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const CONFIG := preload("res://resources/demo_config.tres")
@@ -780,6 +781,11 @@ func _can_use_flee_behavior() -> bool:
 
 
 func _process(delta: float) -> void:
+	var started:=PERF_TRACE.begin(self)
+	_process_profiled(delta)
+	PERF_TRACE.end(self,"enemy_process",started)
+
+func _process_profiled(delta:float)->void:
 	if dead:
 		_cancel_ranged_attack_windup()
 		_update_death_presentation(delta, false)
@@ -951,6 +957,11 @@ func _update_bleeding_trail(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	var started:=PERF_TRACE.begin(self)
+	_physics_process_profiled(delta)
+	PERF_TRACE.end(self,"enemy_physics",started)
+
+func _physics_process_profiled(delta:float)->void:
 	if dead:
 		_update_death_motion(delta)
 		return

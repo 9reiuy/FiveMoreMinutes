@@ -2,6 +2,7 @@ extends Node3D
 ## Floor-local gas coverage is authoritative. Whole smoke cards fit within
 ## boundary clearance instead of getting cut off by a fragment mask.
 const TANK=preload("res://scripts/dream/fire_extinguisher.gd")
+const PERF=preload("res://scripts/app/performance_markers.gd")
 const SMOKE_SHADER=preload("res://shaders/dream3d/extinguisher_smoke.gdshader")
 const OUTER_SHADER=preload("res://shaders/dream3d/extinguisher_smoke_outline.gdshader")
 const MAX_PUFFS:=192
@@ -35,6 +36,13 @@ var mask_size:=Vector2i.ONE
 var refresh_left:=0.0
 var rng:=RandomNumberGenerator.new()
 var static_links: Dictionary={}
+var _potential_links: Dictionary={}
+var _edge_cells: Dictionary={}
+var _cached_blockers: Dictionary={}
+var _cached_pits: Dictionary={}
+var _links_force_refresh:=false
+var link_full_rebuilds:=0
+var link_cell_updates:=0
 var links_signature:=""
 var smallest_room_cells:=MAX_CELLS
 var coverage_radius:=1
@@ -42,9 +50,43 @@ var visual_edges: Array=[]
 var visual_cells: Dictionary={}
 var visual_structure:=""
 var visual_strengths: Dictionary={}
+var visual_path_cells:Dictionary={}
+var trail_width_scale:=1.25
+var trail_visual_scale:=1.25
+var trail_core_strength:=.90
 var emission_revision:=0
 var source_serial:=0
 var hidden_enemies: Dictionary={}
+# Gameplay and the fusion gate still advance on every physics tick. Only
+# the final presentation upload is shared by catch-up ticks in one frame.
+var coalesce_presentation_enabled:=true
+var coalesce_fusion_calculation_enabled:=true
+var fusion_gate_passes:=0
+var fusion_calculations:=0
+var _fusion_calculation_pending:=false
+var _fusion_snapshot_rendered:Array[Dictionary]=[]
+var _fusion_snapshot_basis:=Basis.IDENTITY
+var _fusion_snapshot_connectivity:Dictionary={}
+var _presentation_pending:=false
+var _prepared_rendered:Array[Dictionary]=[]
+var _prepared_ready:=false
+var _fusion_texture_pending:=false
+var _camera_valid:=false
+var _camera_position:=Vector3.ZERO
+var _camera_basis:=Basis.IDENTITY
+
+func _enter_tree()->void:
+	if not RenderingServer.frame_pre_draw.is_connected(_flush_before_draw):
+		RenderingServer.frame_pre_draw.connect(_flush_before_draw)
+
+func _flush_before_draw()->void:
+	flush_presentation()
+
+func flush_presentation(force:=false)->void:
+	if not _presentation_pending or not is_instance_valid(world):return
+	if not force and (not can_process() or world.floor_transition_in_progress):return
+	_presentation_pending=false
+	upload_puffs()
 
 static func install(owner_world: Node3D) -> Node3D:
 	var existing: Node=owner_world.floor_root.get_node_or_null("FireExtinguisherSystem")
@@ -167,6 +209,7 @@ func discharge(point: Vector2) -> int:
 	sources.append({"id":source_serial,"cell":world._cell_for_gameplay_position(point),"point":point/32.0,"age":0.0,"trail":[],"cleared":{}})
 	emission_revision+=1
 	refresh_left=0
+	PERF.event(self,"extinguisher_broken",{"source":source_serial,"x":point.x,"y":point.y,"sources":sources.size()})
 	return source_serial
 
 func emit_trail(from: Vector2,to: Vector2,id: int) -> void:
@@ -184,20 +227,27 @@ func emit_trail(from: Vector2,to: Vector2,id: int) -> void:
 		return
 
 func disperse_segment(from: Vector2,to: Vector2) -> void:
-	if cells.is_empty():return
+	var started:=PERF.begin(self)
+	var removed:=_disperse_segment_cells(from,to)
+	PERF.end(self,"smoke_disperse",started)
+	if removed>0:PERF.event(self,"smoke_dispersed",{"cells":removed,"sources":sources.size()})
+
+func _disperse_segment_cells(from: Vector2,to: Vector2)->int:
+	if cells.is_empty():return 0
 	# Traverse only the segment actually travelled, nudging the endpoint back
 	# inside its hit side so a bullet stopped at a wall cannot clear behind it.
 	var direction:=from.direction_to(to)
 	var start:=from+direction*.01
 	var finish:=to-direction*.01 if from.distance_to(to)>.02 else from
 	var steps:=maxi(1,ceili(start.distance_to(finish)/4.0))
-	var changed:=false
+	var changed:=0
 	for index in range(steps+1):
 		var cell: Vector2i=world._cell_for_gameplay_position(start.lerp(finish,float(index)/steps))
 		if not cells.has(cell):continue
 		for source in sources:source.cleared[cell]=float(source.age)
-		cells.erase(cell);changed=true
-	if changed:refresh_left=0.0
+		cells.erase(cell);changed+=1
+	if changed>0:refresh_left=0.0
+	return changed
 
 func emit_jet(point: Vector2,direction: Vector2) -> void:
 	if puffs.size()>=24:return
@@ -206,9 +256,11 @@ func emit_jet(point: Vector2,direction: Vector2) -> void:
 	puffs.append({"cell":cell,"offset":mapped-Vector2(cell),"kind":rng.randi_range(0,5),"height":.40,"size":rng.randf_range(.45,.70),"age":0.0,"life":.25,"jet":direction})
 
 func _physics_process(delta: float) -> void:
-	advance(delta)
+	var diagnostic_started:=PERF.begin(self)
+	advance(delta,not coalesce_presentation_enabled)
+	PERF.end(self,"smoke_physics",diagnostic_started)
 
-func advance(delta: float) -> void:
+func advance(delta: float,immediate_present:=true) -> void:
 	if not is_instance_valid(world) or world.floor_transition_in_progress:return
 	clock+=delta
 	for index in range(sources.size()-1,-1,-1):
@@ -218,16 +270,39 @@ func advance(delta: float) -> void:
 	refresh_left-=delta
 	if refresh_left<=0:
 		refresh_left=.1
+		var diagnostic_started:=PERF.begin(self)
 		rebuild_field()
+		PERF.end(self,"smoke_rebuild",diagnostic_started)
+		diagnostic_started=PERF.begin(self)
 		apply_coverage()
+		PERF.end(self,"smoke_coverage",diagnostic_started)
 	else:
 		# Moving across the cloud edge must not wait for the slower emission
 		# refresh to hide/reveal enemies. Gameplay vision already tests each tick.
+		var diagnostic_started:=PERF.begin(self)
 		update_enemy_visibility()
+		PERF.end(self,"smoke_visibility",diagnostic_started)
 	for index in range(puffs.size()-1,-1,-1):
 		puffs[index].age+=delta
 		if float(puffs[index].age)>=float(puffs[index].life):puffs.remove_at(index)
-	upload_puffs()
+	if immediate_present:
+		_presentation_pending=false;_prepared_ready=false
+		upload_puffs()
+	else:
+		_presentation_pending=true
+		var diagnostic_started:=PERF.begin(self)
+		_prepared_rendered=_prepare_puffs()
+		PERF.end(self,"smoke_prepare",diagnostic_started)
+		var camera:Camera3D=world.get("camera_3d")
+		_camera_valid=is_instance_valid(camera)
+		_camera_position=camera.global_position if _camera_valid else Vector3.ZERO
+		_camera_basis=camera.global_basis if _camera_valid else Basis.IDENTITY
+		# Retain the original per-physics gate clock and camera basis. A camera
+		# moving later in _process must not change this tick's presentation.
+		diagnostic_started=PERF.begin(self)
+		build_collective_field(_prepared_rendered,camera)
+		PERF.end(self,"smoke_fusion",diagnostic_started)
+		_prepared_ready=true
 
 func refresh_doors() -> void:
 	blocked_doors.clear()
@@ -243,17 +318,58 @@ func refresh_doors() -> void:
 
 func cache_links() -> void:
 	var signature:="%d/%d/%d/%d/%d" % [world.floor_cells.size(),world.wall_edges.size(),world.glass_wall_edges.size(),world.window_wall_edges.size(),world.pit_cells.size()]
-	if signature==links_signature:return
-	links_signature=signature;static_links.clear()
-	for cell: Vector2i in world.floor_cells:
-		var links: Array=[]
-		for direction: Vector2i in DIRECTIONS:
-			var to:=cell+direction
-			if not world.floor_cells.has(to) or world.pit_cells.has(to):continue
-			var key: String=world._edge_key(world._edge_from_cell_direction(cell,direction))
-			if world.wall_edges.has(key) or world.glass_wall_edges.has(key) or world.window_wall_edges.has(key):continue
-			links.append([to,key])
+	if signature==links_signature and not _links_force_refresh:return
+	_links_force_refresh=false
+	links_signature=signature
+	var blockers:Dictionary=world.wall_edges.duplicate()
+	blockers.merge(world.glass_wall_edges,true)
+	blockers.merge(world.window_wall_edges,true)
+	var full:bool=_potential_links.size()!=world.floor_cells.size() or _potential_links.is_empty()
+	var affected:Dictionary={}
+	if full:
+		link_full_rebuilds+=1
+		_potential_links.clear();_edge_cells.clear();static_links.clear()
+		for cell:Vector2i in world.floor_cells:
+			var candidates:Array=[]
+			for direction:Vector2i in DIRECTIONS:
+				var to:=cell+direction
+				if not world.floor_cells.has(to):continue
+				var key:String=world._edge_key(world._edge_from_cell_direction(cell,direction))
+				candidates.append([to,key])
+				if not _edge_cells.has(key):_edge_cells[key]=[]
+				_edge_cells[key].append(cell)
+			_potential_links[cell]=candidates
+			affected[cell]=true
+	else:
+		# Compare blocker keys only when topology changes. Reuse all precomputed
+		# edge keys; do not allocate four edge Dictionaries/Strings per floor cell.
+		for key in _cached_blockers:
+			if not blockers.has(key):
+				for cell in _edge_cells.get(key,[]):affected[cell]=true
+		for key in blockers:
+			if not _cached_blockers.has(key):
+				for cell in _edge_cells.get(key,[]):affected[cell]=true
+		for cell in _cached_pits:
+			if not world.pit_cells.has(cell):_affect_pit_neighbors(cell,affected)
+		for cell in world.pit_cells:
+			if not _cached_pits.has(cell):_affect_pit_neighbors(cell,affected)
+	for cell:Vector2i in affected:
+		var links:Array=[]
+		for link in _potential_links.get(cell,[]):
+			if not world.pit_cells.has(link[0]) and not blockers.has(link[1]):links.append(link)
 		static_links[cell]=links
+		link_cell_updates+=1
+	_cached_blockers=blockers
+	_cached_pits=world.pit_cells.duplicate()
+
+func _affect_pit_neighbors(cell:Vector2i,affected:Dictionary)->void:
+	if world.floor_cells.has(cell):affected[cell]=true
+	for direction:Vector2i in DIRECTIONS:
+		if world.floor_cells.has(cell+direction):affected[cell+direction]=true
+
+func invalidate_topology(floor_layout_changed:=false)->void:
+	_links_force_refresh=true
+	if floor_layout_changed:_potential_links.clear()
 
 func can_cross(from: Vector2i,to: Vector2i) -> bool:
 	if not world.floor_cells.has(to) or world.pit_cells.has(to):return false
@@ -262,10 +378,16 @@ func can_cross(from: Vector2i,to: Vector2i) -> bool:
 	return not world.wall_edges.has(key) and not world.glass_wall_edges.has(key) and not world.window_wall_edges.has(key) and not blocked_doors.has(key)
 
 func rebuild_field() -> void:
+	var rebuild_started:=PERF.begin(self)
 	refresh_doors()
+	PERF.end(self,"smoke_rebuild_doors",rebuild_started)
+	rebuild_started=PERF.begin(self)
 	cache_links()
+	PERF.end(self,"smoke_rebuild_links",rebuild_started)
+	rebuild_started=PERF.begin(self)
 	cells.clear()
 	visual_strengths.clear()
+	visual_path_cells.clear()
 	for source_index in range(sources.size()-1,-1,-1):
 		var source: Dictionary=sources[source_index]
 		var origin: Vector2i=source.cell
@@ -296,20 +418,26 @@ func rebuild_field() -> void:
 					var main_core:=1.0-smoothstep(0.0,radius,Vector2(cell).distance_to(Vector2(source.get("point",origin))))
 					var trail_core:=0.0
 					if Vector2i(point.origin)!=origin:
-						trail_core=.65*(1.0-smoothstep(0.0,maxf(1.5,radius*.55),float(point.distance)))
+						trail_core=trail_core_strength*(1.0-smoothstep(0.0,maxf(1.5,radius*.55*trail_width_scale),float(point.distance)))
+						visual_path_cells[cell]=true
 					visual_strengths[cell]=maxf(float(visual_strengths.get(cell,0.0)),maxf(main_core,trail_core))
 			if int(point.distance)>=max_distance:continue
 			for link in static_links[cell]:
 				var neighbor: Vector2i=link[0]
 				if distances.has(neighbor) or blocked_doors.has(link[1]):continue
-				if Vector2(neighbor-Vector2i(point.origin)).length_squared()>float(coverage_radius*coverage_radius):continue
+				var spread_radius:float=float(coverage_radius)*(trail_width_scale if Vector2i(point.origin)!=origin else 1.0)
+				if Vector2(neighbor-Vector2i(point.origin)).length_squared()>spread_radius*spread_radius:continue
 				distances[neighbor]=int(point.distance)+1
 				queue.append({"cell":neighbor,"origin":point.origin,"born":point.born,"distance":int(point.distance)+1})
 	mask_image.fill(Color.BLACK)
 	for cell: Vector2i in cells:
 		var pixel:=cell-mask_origin
 		if pixel.x>=0 and pixel.y>=0 and pixel.x<mask_size.x and pixel.y<mask_size.y:mask_image.set_pixelv(pixel,Color(float(cells[cell]),0,0))
+	var mask_submit_started:=PERF.begin(self)
 	mask_texture.update(mask_image)
+	PERF.end(self,"smoke_mask_upload",mask_submit_started)
+	PERF.end(self,"smoke_rebuild_bfs_mask",rebuild_started)
+	rebuild_started=PERF.begin(self)
 	# Coverage alpha can change without changing its outline. Keep fitted
 	# centers and clearance until the cell layout actually changes.
 	var structure:=links_signature+str(hash(blocked_doors))+"/%d/%d" % [sources.size(),emission_revision]
@@ -317,7 +445,9 @@ func rebuild_field() -> void:
 	if same_layout:
 		for cell: Vector2i in cells:
 			if not visual_cells.has(cell):same_layout=false;break
-	if same_layout:return
+	if same_layout:
+		PERF.end(self,"smoke_rebuild_edges",rebuild_started)
+		return
 	visual_revision+=1
 	visual_structure=structure
 	visual_cells=cells.duplicate()
@@ -344,9 +474,13 @@ func rebuild_field() -> void:
 		for distance in distances:
 			keys.append_array(buckets[distance])
 			if keys.size()>=(MAX_PUFFS-24)/2:break
+	PERF.end(self,"smoke_rebuild_edges",rebuild_started)
+	rebuild_started=PERF.begin(self)
 	clouds.clear()
 	fringe_clouds.clear()
-	if keys.is_empty():return
+	if keys.is_empty():
+		PERF.end(self,"smoke_rebuild_clouds",rebuild_started)
+		return
 	# Fixed release budget, redistributed over reachable cells when walls take
 	# space away. Empty/cut cells never receive a replacement cloud.
 	var target_count:=mini(MAX_PUFFS-24,smallest_room_cells*2*maxi(1,sources.size()))
@@ -357,6 +491,7 @@ func rebuild_field() -> void:
 		total_weight+=.25+core*core*4.0
 		cumulative.append(total_weight)
 	var occurrences: Dictionary={}
+	var geometry_by_cell:Dictionary={}
 	for index in target_count:
 		# Keep one small fringe group on each represented cell, then allocate
 		# the remaining fixed budget by smooth emission-centre weights.
@@ -367,15 +502,23 @@ func rebuild_field() -> void:
 			while selected<cumulative.size()-1 and sample>cumulative[selected]:selected+=1
 		var cell: Vector2i=keys[selected]
 		var core:=float(visual_strengths.get(cell,0.0))
-		var inward:=Vector2.ZERO
-		for direction: Vector2i in DIRECTIONS:
-			if not cells.has(cell+direction) or not can_cross(cell,cell+direction):inward-=Vector2(direction)
-		var center:=Vector2(cell)+inward.normalized()*.28
-		var clearance:=card_clearance(center,cell)
+		if not geometry_by_cell.has(cell):
+			var inward:=Vector2.ZERO
+			for direction: Vector2i in DIRECTIONS:
+				if not cells.has(cell+direction) or not can_cross(cell,cell+direction):inward-=Vector2(direction)
+			var cached_center:=Vector2(cell)+inward.normalized()*.28
+			geometry_by_cell[cell]={"center":cached_center,"clearance":card_clearance(cached_center,cell)}
+		var center:Vector2=geometry_by_cell[cell].center
+		var clearance:float=geometry_by_cell[cell].clearance
 		var layer:=int(occurrences.get(cell,0))
 		occurrences[cell]=layer+1
 		var seed_value:=float(posmod(cell.x*37+cell.y*71+layer*193,997))
-		clouds.append({"cell":cell,"center":center,"layer":layer,"seed":seed_value,"clearance":clearance,"core":core,"opacity":lerpf(.80,1.0,core),"height":.15+pow(fposmod(seed_value*.371,1.0),1.5)*lerpf(.40,1.50,core),"size":(.70+pow(fposmod(seed_value*.573,1.0),2.0)*1.55)*lerpf(.75,1.8,core),"life":4.0+2.0*fposmod(seed_value*.293,1.0)})
+		var cloud:Dictionary={"cell":cell,"center":center,"layer":layer,"seed":seed_value,"clearance":clearance,"core":core,"opacity":lerpf(.80,1.0,core),"height":.15+pow(fposmod(seed_value*.371,1.0),1.5)*lerpf(.40,1.50,core),"size":(.70+pow(fposmod(seed_value*.573,1.0),2.0)*1.55)*lerpf(.75,1.8,core),"life":4.0+2.0*fposmod(seed_value*.293,1.0)}
+		if visual_path_cells.has(cell) and trail_visual_scale!=1.0:
+			cloud.path_scale=trail_visual_scale
+			cloud.size*=trail_visual_scale
+			cloud.height*=trail_visual_scale
+		clouds.append(cloud)
 	# Sparse decorative wisps are OUTSIDE the authoritative silhouette field.
 	# Never place them in a shot-cleared lane, across a wall, in a pit or void.
 	var used_fringe: Dictionary={}
@@ -391,6 +534,7 @@ func rebuild_field() -> void:
 			used_fringe[outside]=true
 			var seed_value:=float(posmod(outside.x*137+outside.y*71,997))
 			fringe_clouds.append({"cell":outside,"seed":seed_value,"size":.32+fposmod(seed_value*.37,1.0)*.30})
+	PERF.end(self,"smoke_rebuild_clouds",rebuild_started)
 
 func card_clearance(point: Vector2,origin: Vector2i) -> float:
 	var clearance:=2.5
@@ -492,7 +636,24 @@ func set_silhouette(actor: Node2D,enabled: bool) -> void:
 	if is_instance_valid(bridge) and bridge.has_method("set_smoke_silhouette"):bridge.set_smoke_silhouette(enabled)
 
 func upload_puffs() -> void:
+	var diagnostic_started:=PERF.begin(self)
+	_presentation_pending=false
 	for material in materials:material.set_shader_parameter("smoke_clock",clock*.5)
+	var rendered:Array[Dictionary]=_prepared_rendered if _prepared_ready else _prepare_puffs()
+	var camera:Camera3D=world.get("camera_3d")
+	var valid:bool=_camera_valid if _prepared_ready else is_instance_valid(camera)
+	var eye:Vector3=_camera_position if _prepared_ready else (camera.global_position if valid else Vector3.ZERO)
+	var basis:Basis=_camera_basis if _prepared_ready else (camera.global_basis if valid else Basis.IDENTITY)
+	if not _prepared_ready:build_collective_field(rendered,camera)
+	_prepared_ready=false
+	_flush_fusion_calculation()
+	if _fusion_texture_pending:
+		fusion_field_texture.update(fusion_field_image)
+		_fusion_texture_pending=false
+	_commit_puffs(rendered,valid,eye,basis)
+	PERF.end(self,"smoke_upload",diagnostic_started)
+
+func _prepare_puffs()->Array[Dictionary]:
 	var rendered: Array[Dictionary]=[]
 	for cloud in clouds:
 		var cell: Vector2i=cloud.cell
@@ -518,7 +679,7 @@ func upload_puffs() -> void:
 		if int(cloud.layer)==0:
 			size/=maxf(.01,envelope)
 			alpha=1.0
-			at=world.get_gameplay_world_position((Vector2(cloud.center)+offset)*32,maxf(.62,float(cloud.height))*1.5)
+			at=world.get_gameplay_world_position((Vector2(cloud.center)+offset)*32,maxf(.62*float(cloud.get("path_scale",1.0)),float(cloud.height))*1.5)
 		else:at=world.get_gameplay_world_position((Vector2(cloud.center)+offset)*32,(float(cloud.height)+age*.12)*1.5)
 		rendered.append({"at":at,"cell":cell,"size":size,"alpha":alpha*fade,"seed":fposmod(seed_value*.37+(0.0 if int(cloud.layer)==0 else cycle*.618),1)})
 	for puff in puffs:
@@ -540,15 +701,15 @@ func upload_puffs() -> void:
 		var at: Vector3=world.get_gameplay_world_position(position*32,.35+age*.25)
 		var size:=float(fringe_cloud.size)*release_fade*(.65+.35*sin(age*PI))
 		rendered.append({"at":at,"cell":fringe_cloud.cell,"size":size,"alpha":release_fade*.55*sin(age*PI),"seed":fposmod(seed_value*.37,1),"fringe":true})
-	var camera: Camera3D=world.get("camera_3d")
 	for index in rendered.size():rendered[index].field_row=index
-	build_collective_field(rendered,camera)
-	if is_instance_valid(camera):
-		var eye:=camera.global_position
-		var forward:=-camera.global_basis.z
+	return rendered
+
+func _commit_puffs(rendered:Array[Dictionary],camera_valid:bool,eye:Vector3,camera_basis:Basis)->void:
+	if camera_valid:
+		var forward:=-camera_basis.z
 		for cloud in rendered:cloud.depth=(Vector3(cloud.at)-eye).dot(forward)
 		rendered.sort_custom(func(a: Dictionary,b: Dictionary)->bool:return float(a.depth)>float(b.depth))
-	var facing:=global_basis.inverse()*camera.global_basis if is_instance_valid(camera) else Basis.IDENTITY
+	var facing:=global_basis.inverse()*camera_basis if camera_valid else Basis.IDENTITY
 	for index in rendered.size():
 		var cloud: Dictionary=rendered[index]
 		var size:=float(cloud.size)
@@ -570,11 +731,49 @@ func build_collective_field(rendered: Array[Dictionary],camera: Camera3D,force_u
 	# assigned BEFORE transparent sorting, so cached rows cannot swap clouds.
 	if not force_update and layout==field_layout and camera_basis.is_equal_approx(field_camera_basis) and clock>=field_updated_at and clock-field_updated_at<.08:return
 	field_updated_at=clock;field_layout=layout;field_camera_basis=camera_basis
+	fusion_gate_passes+=1
+	if _presentation_pending and coalesce_fusion_calculation_enabled:
+		var started:=PERF.begin(self)
+		# The last gate step and last presentation step are NOT interchangeable.
+		# Keep independent immutable input, including topology decisions made at
+		# this gate. Later bullets, doors and windows cannot change these decisions.
+		_fusion_snapshot_rendered=rendered.duplicate(true)
+		_fusion_snapshot_basis=camera_basis
+		_fusion_snapshot_connectivity=_capture_fusion_connectivity(rendered)
+		_fusion_calculation_pending=true
+		PERF.end(self,"smoke_fusion_snapshot",started)
+	else:
+		_fusion_calculation_pending=false
+		_fusion_snapshot_rendered.clear();_fusion_snapshot_connectivity.clear()
+		_calculate_fusion_field(rendered,camera_basis,{},_presentation_pending)
+
+func _capture_fusion_connectivity(rendered:Array[Dictionary])->Dictionary:
+	var occupied:Dictionary={}
+	for cloud in rendered:occupied[cloud.cell]=true
+	var connectivity:Dictionary={}
+	for cell:Vector2i in occupied:
+		var mask:=0
+		for dy in range(-1,2):
+			for dx in range(-1,2):
+				var neighbor:=cell+Vector2i(dx,dy)
+				if occupied.has(neighbor) and fusion_can_cross(cell,neighbor):mask|=1<<((dy+1)*3+dx+1)
+		connectivity[cell]=mask
+	return connectivity
+
+func _flush_fusion_calculation()->void:
+	if not _fusion_calculation_pending:return
+	_fusion_calculation_pending=false
+	_calculate_fusion_field(_fusion_snapshot_rendered,_fusion_snapshot_basis,_fusion_snapshot_connectivity,true)
+	_fusion_snapshot_rendered.clear();_fusion_snapshot_connectivity.clear()
+
+func _calculate_fusion_field(rendered:Array[Dictionary],camera_basis:Basis,connectivity:Dictionary,defer_upload:bool)->void:
+	var started:=PERF.begin(self)
+	fusion_calculations+=1
 	fusion_pairs=0
 	fusion_field_image.fill(Color(0,0,0,0))
-	var right:=camera.global_basis.x if is_instance_valid(camera) else Vector3.RIGHT
-	var up:=camera.global_basis.y if is_instance_valid(camera) else Vector3.UP
-	var forward:=camera.global_basis.z if is_instance_valid(camera) else Vector3.BACK
+	var right:=camera_basis.x
+	var up:=camera_basis.y
+	var forward:=camera_basis.z
 	var buckets: Dictionary={}
 	for index in rendered.size():
 		var at: Vector3=rendered[index].at
@@ -588,7 +787,10 @@ func build_collective_field(rendered: Array[Dictionary],camera: Camera3D,force_u
 		for y in range(cell.y-1,cell.y+2):
 			for x in range(cell.x-1,cell.x+2):
 				var other_cell:=Vector2i(x,y)
-				if buckets.has(other_cell) and fusion_can_cross(cell,other_cell):candidates.append_array(buckets[other_cell])
+				if not buckets.has(other_cell):continue
+				var offset:=other_cell-cell
+				var allowed:bool=(int(connectivity.get(cell,0)) & (1<<((offset.y+1)*3+offset.x+1)))!=0 if not connectivity.is_empty() else fusion_can_cross(cell,other_cell)
+				if allowed:candidates.append_array(buckets[other_cell])
 		connected[cell]=candidates
 	for index in rendered.size():
 		var cloud:=rendered[index]
@@ -619,7 +821,9 @@ func build_collective_field(rendered: Array[Dictionary],camera: Camera3D,force_u
 			fusion_field_image.set_pixel(slot*2,index,Color(offset.dot(right)/float(cloud.size),-offset.dot(up)/float(cloud.size),float(other.size)/float(cloud.size),float(other.seed)))
 			fusion_field_image.set_pixel(slot*2+1,index,Color(strength,0,0,0))
 			if strength>.01:fusion_pairs+=1
-	fusion_field_texture.update(fusion_field_image)
+	if defer_upload:_fusion_texture_pending=true
+	else:fusion_field_texture.update(fusion_field_image)
+	PERF.end(self,"smoke_fusion_calculate",started)
 
 func fusion_can_cross(a: Vector2i,b: Vector2i) -> bool:
 	if a==b:return true
@@ -683,6 +887,8 @@ func link_fusion(rendered: Array[Dictionary],camera: Camera3D) -> void:
 		available.erase(index);available.erase(best);fusion_pairs+=1
 
 func _exit_tree() -> void:
+	if RenderingServer.frame_pre_draw.is_connected(_flush_before_draw):
+		RenderingServer.frame_pre_draw.disconnect(_flush_before_draw)
 	for record in hidden_enemies.values():restore_enemy(record)
 	hidden_enemies.clear()
 	if is_instance_valid(world):

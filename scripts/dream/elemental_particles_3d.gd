@@ -112,6 +112,7 @@ func emit_smoke(at: Vector3, count: int=12, strength: float=1.0) -> void:
 
 func explode(at: Vector3, strength: float=1.0) -> void:
 	if not at.is_finite(): return
+	preload("res://scripts/app/performance_markers.gd").event(self,"explosion",{"x":at.x,"y":at.y,"z":at.z,"strength":strength})
 	strength=clampf(strength,.25,3.0)
 	_emit_shockwave(at,strength)
 	for index in 44:

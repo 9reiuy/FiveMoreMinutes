@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/night_coast_sand.gdshader" id="1_i6ixv"]
+[ext_resource type="Texture2D" path="res://resources/preview/night_coast/texture_002.res" id="2_x6n7i"]
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_i6ixv")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/scene_time = 9.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/coast_shape = ExtResource("2_x6n7i")

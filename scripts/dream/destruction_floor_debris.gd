@@ -1,6 +1,7 @@
 extends Node3D
 ## Source-mesh fracture, tumbling panels, then brief impact crumbs. No bodies.
 const MAX_BURSTS := 32
+const PERF=preload("res://scripts/app/performance_markers.gd")
 const CRUMB_DURATION := .4
 const MAX_LIFETIME := 2.5
 var pieces: Array[Dictionary] = []
@@ -17,6 +18,20 @@ var glass_edge_material: StandardMaterial3D
 const SLICE_CACHE_LIMIT := 1024
 static var _slice_cache: Dictionary = {}
 static var _outline_cache: Dictionary = {}
+static var _geometry_cache:Dictionary={}
+static var _door_geometry_keys:Dictionary={}
+var audit_slice_hits:=0
+var audit_slice_misses:=0
+var audit_geometry_hits:=0
+var audit_geometry_misses:=0
+var audit_nodes:=0
+var audit_unique_nodes:=0
+var audit_slice_usec:=0
+var audit_node_usec:=0
+var audit_outline_hits:=0
+var audit_outline_misses:=0
+var audit_outline_usec:=0
+const MAX_PREFILL_SPECS:=32
 ## One cutaway-disabled copy per source material (was one duplicate per fragment).
 ## Sharing also lets OfficeDitherLighting reuse its dither copy instead of
 ## compiling a fresh material for every short-lived panel.
@@ -30,6 +45,7 @@ static func spawn(source: Node3D, direction: Vector2, glass: bool) -> bool:
 	while owner_world != null and not owner_world.has_method("_cell_for_gameplay_position"):
 		owner_world = owner_world.get_parent()
 	if owner_world == null: return false
+	var diagnostic_started:=PERF.begin(owner_world)
 	var burst: Node3D = load("res://scripts/dream/destruction_floor_debris.gd").new()
 	burst.world = owner_world
 	owner_world.floor_root.add_child(burst)
@@ -37,6 +53,8 @@ static func spawn(source: Node3D, direction: Vector2, glass: bool) -> bool:
 	burst.build_from_source(source,direction,glass)
 	var live: Array = source.get_tree().get_nodes_in_group(&"persistent_destruction_debris").filter(func(n: Node) -> bool: return n.get_parent()==burst.get_parent() and not n.retiring)
 	if live.size()>MAX_BURSTS: live[0].retire()
+	PERF.end(owner_world,"fracture_build",diagnostic_started)
+	PERF.event(owner_world,"glass_break" if glass else "door_break",{"pieces":burst.pieces.size(),"source":String(source.name),"nodes":burst.audit_nodes,"unique_nodes":burst.audit_unique_nodes,"slice_hits":burst.audit_slice_hits,"slice_misses":burst.audit_slice_misses,"geometry_hits":burst.audit_geometry_hits,"geometry_misses":burst.audit_geometry_misses,"outline_hits":burst.audit_outline_hits,"outline_misses":burst.audit_outline_misses,"slice_us":burst.audit_slice_usec,"node_us":burst.audit_node_usec,"outline_us":burst.audit_outline_usec})
 	return true
 
 func build_from_source(source: Node3D, direction: Vector2, glass: bool) -> void:
@@ -56,11 +74,22 @@ func build_from_source(source: Node3D, direction: Vector2, glass: bool) -> void:
 				if child.cast_shadow!=GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY: nodes.append(child)
 		for handle in source._handle_visuals:
 			if is_instance_valid(handle) and not nodes.has(handle): nodes.append(handle)
+	audit_nodes=nodes.size()
+	var distinct:Dictionary={}
+	for node in nodes:distinct[node.get_instance_id()]=true
+	audit_unique_nodes=distinct.size()
 	for node in nodes: _fracture(node,direction)
+	var started:=PERF.begin(self)
 	_make_crumb_batch()
+	PERF.end(self,"fracture_crumbs",started)
+	if PERF.current(self)!=null:
+		PERF.current(self).record_stage("fracture_slice",audit_slice_usec/1000.0)
+		PERF.current(self).record_stage("fracture_nodes",audit_node_usec/1000.0)
+		PERF.current(self).record_stage("fracture_outline",audit_outline_usec/1000.0)
 
 func _fracture(source: MeshInstance3D, direction: Vector2) -> void:
 	if source.mesh==null: return
+	var diagnostic_active:bool=PERF.current(self)!=null
 	var bounds := source.mesh.get_aabb()
 	var is_glass := String(source.name) in ["GlassPane","WindowGlassVisual","ReviewPixelGlass"]
 	var columns := 3 if is_glass else 2
@@ -73,8 +102,11 @@ func _fracture(source: MeshInstance3D, direction: Vector2) -> void:
 			var high := low+Vector2(bounds.size.x/columns,bounds.size.y/rows)
 			var sides: Array = [-1,1] if is_glass and columns>1 else [0]
 			for side: int in sides:
+				var diagnostic_started:int=Time.get_ticks_usec() if diagnostic_active else 0
 				var fractured := _cached_slice(source,low,high,side)
+				if diagnostic_active:audit_slice_usec+=Time.get_ticks_usec()-diagnostic_started
 				if fractured.get_surface_count()==0: continue
+				diagnostic_started=Time.get_ticks_usec() if diagnostic_active else 0
 				var pivot := Vector3((low.x+high.x)*.5,(low.y+high.y)*.5,bounds.get_center().z)
 				var piece := Node3D.new()
 				add_child(piece)
@@ -86,7 +118,9 @@ func _fracture(source: MeshInstance3D, direction: Vector2) -> void:
 				piece.add_child(visual)
 				if is_glass:
 					var rim := MeshInstance3D.new()
+					var outline_started:int=Time.get_ticks_usec() if diagnostic_active else 0
 					rim.mesh = _cached_outline(fractured)
+					if diagnostic_active:audit_outline_usec+=Time.get_ticks_usec()-outline_started
 					rim.position = -pivot
 					rim.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 					piece.add_child(rim)
@@ -95,27 +129,179 @@ func _fracture(source: MeshInstance3D, direction: Vector2) -> void:
 				var heading := direction.normalized() if direction.length_squared()>.0001 else Vector2.RIGHT.rotated(random.randf_range(-PI,PI))
 				var scatter := heading.rotated(random.randf_range(-.18,.18))*random.randf_range(4.0,6.0)
 				pieces.append({"node":piece,"visual":visual,"velocity":Vector3(scatter.x,random.randf_range(.2,1.4),scatter.y),"spin":Vector3(random.randf_range(-10,10),random.randf_range(-4,4),random.randf_range(-7,7)),"settled":false,"impact_age":0.0,"crumb_origin":Vector3.ZERO,"crumbs":[]})
+				if diagnostic_active:audit_node_usec+=Time.get_ticks_usec()-diagnostic_started
 
 func _cached_slice(source: MeshInstance3D, low: Vector2, high: Vector2, diagonal_side: int) -> ArrayMesh:
 	var signature := "%d|%d" % [source.mesh.get_instance_id(), source.material_override.get_instance_id() if source.material_override!=null else 0]
 	for surface in source.mesh.get_surface_count():
 		var override := source.get_surface_override_material(surface)
 		signature += "|%d" % (override.get_instance_id() if override!=null else 0)
-	var key := "%s|%s|%s|%d" % [signature, low, high, diagonal_side]
+	var geometry_key:=_geometry_key(source,low,high,diagonal_side)
+	var key := signature+"|"+geometry_key
 	var cached: Variant = _slice_cache.get(key)
-	if cached is ArrayMesh: return cached
+	if cached is ArrayMesh:
+		audit_slice_hits+=1
+		return cached
+	audit_slice_misses+=1
 	if _slice_cache.size()>=SLICE_CACHE_LIMIT:
 		_slice_cache.clear()
 		_outline_cache.clear()
-	var output := _slice_mesh(source,low,high,diagonal_side)
+	# Geometry is immutable and shared across door leaves; material bindings are
+	# not. Keep their cache keys separate so unique per-door tints/mirrors do not
+	# force us to re-clip the same triangles, or leak one door's paint to another.
+	var output:ArrayMesh
+	if _geometry_cache.has(geometry_key):
+		audit_geometry_hits+=1
+		output=ArrayMesh.new()
+		for surface_data in _geometry_cache[geometry_key]:
+			output.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,surface_data.arrays)
+			var material:=_slice_material(source,int(surface_data.source_surface))
+			if material!=null:output.surface_set_material(output.get_surface_count()-1,material)
+	else:
+		audit_geometry_misses+=1
+		output=_slice_mesh(source,low,high,diagonal_side)
+		if _geometry_cache.size()>=SLICE_CACHE_LIMIT:_geometry_cache.clear()
+		var surfaces:Array=[]
+		var original_surfaces:PackedInt32Array=output.get_meta(&"fragment_source_surfaces",PackedInt32Array())
+		var original_arrays:Array=output.get_meta(&"fragment_source_arrays",[])
+		for index in output.get_surface_count():
+			# Cache BEFORE ArrayMesh packs the normals. Reading packed normals back
+			# then repacking them introduces tiny second-generation rounding changes.
+			surfaces.append({"source_surface":int(original_surfaces[index]),"arrays":original_arrays[index]})
+		_geometry_cache[geometry_key]=surfaces
+		output.remove_meta(&"fragment_source_arrays")
+	output.set_meta(&"fragment_geometry_key",geometry_key)
 	_slice_cache[key] = output
 	return output
 
+static func _standard_glass_spec(source:MeshInstance3D)->String:
+	# Deliberately limited to our two controlled window factories. Read FINAL
+	# parameters at use time; continuous windows mutate size after base creation.
+	if source.mesh==null or source.mesh.get_script()!=null:return ""
+	var door:Node=source.get_parent()
+	while door!=null and not door is PhysicalDoor3D:door=door.get_parent()
+	if door is PhysicalDoor3D and door.get_script().resource_path=="res://scripts/dream/physical_door_3d.gd":
+		# Some live leaves are rebuilt by PhysicalDoor after the dressing pass.
+		# Canonicalize ONLY final geometry inside this controlled door factory.
+		if source.mesh is BoxMesh:return _box_spec(source.mesh)
+		if source.mesh is QuadMesh:return _quad_spec(source.mesh)
+		if source.mesh is ArrayMesh and source.mesh.get_blend_shape_count()==0:
+			return _door_array_spec(source.mesh)
+	var window:Node=source.get_parent()
+	if window!=null and window.name==&"WindowFrame":window=window.get_parent()
+	if window==null or window.get_script()==null:return ""
+	if window.get_script().resource_path=="res://scripts/dream/wall_segment_3d.gd" and source==window.window_pane:
+		if source.mesh is BoxMesh:return _box_spec(source.mesh)
+		if source.mesh is QuadMesh:return _quad_spec(source.mesh)
+	if window.get_script().resource_path not in ["res://scripts/dream/breakable_glass_window_3d.gd","res://scripts/dream/continuous_office_glass.gd"]:return ""
+	if source!=window.glass_pane and source.get_parent()!=window.frame_root:return ""
+	if source.mesh is BoxMesh:
+		return _box_spec(source.mesh)
+	if source.mesh is QuadMesh:
+		return _quad_spec(source.mesh)
+	return ""
+
+static func _box_spec(box:BoxMesh)->String:
+	return "standard_glass_box_v1/"+var_to_bytes([box.size,box.subdivide_width,box.subdivide_height,box.subdivide_depth,box.flip_faces,box.add_uv2,box.uv2_padding,box.get_aabb()]).hex_encode()
+
+static func _quad_spec(quad:QuadMesh)->String:
+	return "standard_glass_quad_v1/"+var_to_bytes([quad.size,quad.center_offset,quad.orientation,quad.flip_faces,quad.add_uv2,quad.uv2_padding,quad.get_aabb()]).hex_encode()
+
+static func _door_array_spec(mesh:ArrayMesh)->String:
+	if _door_geometry_keys.has(mesh):return _door_geometry_keys[mesh]
+	var data:Array=[mesh.get_aabb()]
+	for surface in mesh.get_surface_count():data.append([mesh.surface_get_primitive_type(surface),mesh.surface_get_format(surface),mesh.surface_get_arrays(surface)])
+	var digest:=HashingContext.new();digest.start(HashingContext.HASH_SHA256);digest.update(var_to_bytes(data))
+	var key:="controlled_door_array_v1/"+digest.finish().hex_encode()
+	if _door_geometry_keys.size()>=128:_door_geometry_keys.clear()
+	_door_geometry_keys[mesh]=key
+	if mesh.get_meta(&"fracture_geometry_watched",0)!=mesh.get_instance_id():
+		mesh.set_meta(&"fracture_geometry_watched",mesh.get_instance_id())
+		var reference:WeakRef=weakref(mesh)
+		mesh.changed.connect(func()->void:
+			var value:Resource=reference.get_ref()
+			if value!=null:_door_geometry_keys.erase(value))
+	return key
+
+static func _geometry_key(source:MeshInstance3D,low:Vector2,high:Vector2,side:int)->String:
+	var spec:=_standard_glass_spec(source)
+	if spec.is_empty():spec="mesh/"+str(source.mesh.get_instance_id())
+	return spec+"/"+var_to_bytes([low,high,side]).hex_encode()
+
+static func prefill_standard_glass(owner_world:Node)->Dictionary:
+	# Loading only. No pieces, RNG, health, signals, collision or transforms change.
+	var started:=Time.get_ticks_usec()
+	var worker=load("res://scripts/dream/destruction_floor_debris.gd").new()
+	var specs:Dictionary={}
+	var windows:=0
+	var current_root:Node=owner_world.get("generated_root")
+	if not is_instance_valid(current_root):current_root=owner_world.floor_root
+	for window in owner_world.get_tree().get_nodes_in_group(&"breakable_glass_windows"):
+		if not current_root.is_ancestor_of(window) or window.is_shattered:continue
+		var sources:Array=[]
+		if is_instance_valid(window.glass_pane):sources.append(window.glass_pane)
+		if is_instance_valid(window.frame_root):
+			for child in window.frame_root.find_children("*","MeshInstance3D",true,false):
+				if child.cast_shadow!=GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:sources.append(child)
+		windows+=1
+		worker._prefill_sources(sources,specs)
+	var doors:=0
+	if is_instance_valid(owner_world.get("door_root")):
+		for door in owner_world.door_root.get_children():
+			if not door is PhysicalDoor3D:continue
+			var sources:Array=[]
+			for visual in door._visuals:
+				if not is_instance_valid(visual):continue
+				sources.append(visual)
+				for child in visual.find_children("*","MeshInstance3D",true,false):
+					if child.cast_shadow!=GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:sources.append(child)
+			for handle in door._handle_visuals:
+				if is_instance_valid(handle) and not sources.has(handle):sources.append(handle)
+			doors+=1
+			worker._prefill_sources(sources,specs)
+	var result:Dictionary={"windows":windows,"doors":doors,"specs":specs.size(),"geometry_misses":worker.audit_geometry_misses,"outline_misses":worker.audit_outline_misses,"cpu_ms":(Time.get_ticks_usec()-started)/1000.0}
+	worker.free()
+	PERF.event(owner_world,"glass_geometry_prefilled",result)
+	return result
+
+func _prefill_sources(sources:Array,specs:Dictionary)->void:
+		for source:MeshInstance3D in sources:
+			var pane:bool=String(source.name) in ["GlassPane","WindowGlassVisual","ReviewPixelGlass"]
+			var spec:=_standard_glass_spec(source)
+			if not spec.is_empty():spec+="/pane" if pane else "/frame"
+			if spec.is_empty() or specs.has(spec) or specs.size()>=MAX_PREFILL_SPECS:continue
+			specs[spec]=true
+			var bounds:=source.mesh.get_aabb()
+			var columns:=3 if pane else 2
+			var rows:=2 if pane else 3
+			if bounds.size.x<.18 or bounds.size.y<.18:columns=1;rows=1
+			for row in rows:
+				for column in columns:
+					var low:=Vector2(bounds.position.x+bounds.size.x*column/columns,bounds.position.y+bounds.size.y*row/rows)
+					var high:=low+Vector2(bounds.size.x/columns,bounds.size.y/rows)
+					for side:int in ([-1,1] if pane and columns>1 else [0]):
+						var fragment:ArrayMesh=_cached_slice(source,low,high,side)
+						if pane and fragment.get_surface_count()>0:_cached_outline(fragment)
+
+func _slice_material(source:MeshInstance3D,surface:int)->Material:
+	var material:Material=source.material_override if source.material_override!=null else source.get_surface_override_material(surface)
+	if material==null:material=source.mesh.surface_get_material(surface)
+	if material==null:return null
+	if not _fragment_materials.has(material):PERF.event(self,"fragment_material_clone",{"source_id":material.get_instance_id(),"type":material.get_class()})
+	return _fragment_material(material)
+
 func _cached_outline(mesh: ArrayMesh) -> ArrayMesh:
-	var cached: Variant = _outline_cache.get(mesh)
-	if cached is ArrayMesh: return cached
+	var geometry:Variant=mesh.get_meta(&"fragment_geometry_key",mesh)
+	# Default edge paint is shared. Explicit custom paint must keep its identity.
+	var edge_id:=glass_edge_material.get_instance_id() if glass_edge_material!=null and glass_edge_material!=_shared_edge_material else 0
+	var key:Variant=geometry+"/edge/"+str(edge_id) if geometry is String else mesh
+	var cached: Variant = _outline_cache.get(key)
+	if cached is ArrayMesh:
+		audit_outline_hits+=1
+		return cached
+	audit_outline_misses+=1
 	var output := _glass_outline(mesh)
-	_outline_cache[mesh] = output
+	_outline_cache[key] = output
 	return output
 
 static func _fragment_material(source: Material) -> Material:
@@ -129,6 +315,8 @@ static func _fragment_material(source: Material) -> Material:
 
 func _slice_mesh(source: MeshInstance3D, low: Vector2, high: Vector2, diagonal_side: int = 0) -> ArrayMesh:
 	var output := ArrayMesh.new()
+	var original_surfaces:=PackedInt32Array()
+	var original_arrays:Array=[]
 	for surface in source.mesh.get_surface_count():
 		if source.mesh is ArrayMesh and source.mesh.surface_get_primitive_type(surface)!=Mesh.PRIMITIVE_TRIANGLES: continue
 		var arrays := source.mesh.surface_get_arrays(surface)
@@ -159,11 +347,14 @@ func _slice_mesh(source: MeshInstance3D, low: Vector2, high: Vector2, diagonal_s
 					builder.add_vertex(corner.v)
 					added += 1
 		if added==0: continue
-		var material: Material = source.material_override if source.material_override!=null else source.get_surface_override_material(surface)
-		if material==null: material=source.mesh.surface_get_material(surface)
+		var material:Material=_slice_material(source,surface)
 		if material!=null:
-			builder.set_material(_fragment_material(material))
+			builder.set_material(material)
+		original_arrays.append(builder.commit_to_arrays())
 		builder.commit(output)
+		original_surfaces.append(surface)
+	output.set_meta(&"fragment_source_surfaces",original_surfaces)
+	output.set_meta(&"fragment_source_arrays",original_arrays)
 	return output
 
 func _glass_outline(mesh: ArrayMesh) -> ArrayMesh:
