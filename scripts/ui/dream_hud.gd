@@ -185,9 +185,7 @@ func set_skill_state(has_shield: bool, revive_ready: bool) -> void:
 
 func _draw() -> void:
 	var font := PixelFont.get_font()
-	# The HUD draws the clock, shared time multiplier, and non-progression status.
-	if not endless_mode:
-		draw_string(font, Vector2(0, 66), time_text, HORIZONTAL_ALIGNMENT_CENTER, 640, 19, Color("d2ced6"))
+	# Elapsed time remains in gameplay/save state; no top-screen clock is drawn.
 	if shielded:
 		draw_string(font, Vector2(510, 80), "护盾 ◆", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("8ebad0"))
 	if dissociation_ready:

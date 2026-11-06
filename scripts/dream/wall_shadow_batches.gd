@@ -11,6 +11,9 @@ var original_visibility: Array[bool] = []
 var batches: Array[MultiMeshInstance3D] = []
 var geometry_cache: Dictionary = {}
 var mesh_cache: Dictionary = {}
+## Runtime destruction needs to remove the copied caster as well as its source.
+var edge_instances: Dictionary = {}
+var local_originals: Dictionary = {}
 
 func shadow_geometry(mesh: Mesh) -> Mesh:
 	if mesh_cache.has(mesh):
@@ -60,7 +63,7 @@ func build(walls: Node3D) -> void:
 		var key := "%s:%s:%s" % [chunk, geometry.get_instance_id(), mesh.layers]
 		if not groups.has(key):
 			groups[key] = {"chunk": chunk, "mesh": geometry, "layers": mesh.layers, "instances": []}
-		groups[key].instances.append({"transform": local, "visible": mesh.visible})
+		groups[key].instances.append({"transform": local, "visible": mesh.visible, "edge_key": String(wall.get_meta(&"edge_key", ""))})
 		originals.append(mesh)
 		original_visibility.append(mesh.visible)
 	var material := StandardMaterial3D.new()
@@ -69,6 +72,7 @@ func build(walls: Node3D) -> void:
 		var batch := MultiMeshInstance3D.new()
 		batch.position = Vector3((data.chunk.x + 0.5) * CHUNK, 0, (data.chunk.y + 0.5) * CHUNK)
 		batch.layers = data.layers
+		batch.layers |= 1 << 12 # Architectural indirect-light caster.
 		batch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 		batch.material_override = material
 		var multi := MultiMesh.new()
@@ -81,14 +85,33 @@ func build(walls: Node3D) -> void:
 			if not data.instances[index].visible:
 				pose.basis = Basis.from_scale(Vector3.ZERO)
 			multi.set_instance_transform(index, pose)
+			var edge_key: String = data.instances[index].edge_key
+			if not edge_key.is_empty(): edge_instances[edge_key] = {"multi": multi, "index": index}
 		batch.multimesh = multi
 		add_child(batch)
 		batches.append(batch)
 	set_batched(true)
 
+func remove_edge(key: String) -> void:
+	if not edge_instances.has(key): return
+	var record: Dictionary = edge_instances[key]
+	var pose: Transform3D = record.multi.get_instance_transform(int(record.index))
+	pose.basis = Basis.from_scale(Vector3.ZERO)
+	record.multi.set_instance_transform(int(record.index), pose)
+	edge_instances.erase(key)
+
+func restore_local_edge(key: String, wall: Node3D) -> void:
+	# A changed joint gets its immutable copied caster retired. Its existing
+	# source mesh now owns the locally rebuilt full profile, without a floor upload.
+	remove_edge(key)
+	var mesh := wall.get("shadow_mesh") as MeshInstance3D
+	if not is_instance_valid(mesh): return
+	local_originals[mesh.get_instance_id()] = true
+	mesh.visible = bool(wall.get("wall_shadow_visible"))
+
 func set_batched(enabled: bool) -> void:
 	for index in originals.size():
 		if is_instance_valid(originals[index]):
-			originals[index].visible = false if enabled else original_visibility[index]
+			originals[index].visible = false if enabled and not local_originals.has(originals[index].get_instance_id()) else original_visibility[index]
 	for batch in batches:
 		batch.visible = enabled

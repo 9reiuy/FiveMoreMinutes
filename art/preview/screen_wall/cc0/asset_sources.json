@@ -1,0 +1,36 @@
+[
+  {
+    "name": "televisionantenna.glb",
+    "author": "Kenney",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/furniture-kit",
+    "download": "https://raw.githubusercontent.com/Hidencod/tge-assets/main/packs/furniture-kit/televisionantenna.glb",
+    "sha256": "00eea4123b3efc7f8050fd3eaac0a83de3053c9e6cead18dc739260a429b2bb7"
+  },
+  {
+    "name": "televisionmodern.glb",
+    "author": "Kenney",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/furniture-kit",
+    "download": "https://raw.githubusercontent.com/Hidencod/tge-assets/main/packs/furniture-kit/televisionmodern.glb",
+    "sha256": "d89519ad0a5f28b5b0dccb0d83209dccf610cda959578238dd21bbf9e219cfc6"
+  },
+  {
+    "name": "televisionvintage.glb",
+    "author": "Kenney",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/furniture-kit",
+    "download": "https://raw.githubusercontent.com/Hidencod/tge-assets/main/packs/furniture-kit/televisionvintage.glb",
+    "sha256": "eb144cc8fb1e7f761e3665226e4266c8868679421d21d6548f24d2abad7c67cf"
+  },
+  {
+    "name": "server_rack.glb",
+    "author": "3D Assets",
+    "license": "CC0-1.0",
+    "source": "https://3dassets.dev/assets/pixel-modern-office-server-rack-477c84f8",
+    "download": "https://cdn.3dassets.dev/assets/27930/v1/model.glb",
+    "sha256": "0ed4650a728f7bed6cfc6003823f8f3e7136f69cef0096ab1981f4f184b1bd5f",
+    "converted_sha256": "bc052e4db401b17e2b489917f1e6ca5943066de98c73e53b2690ae9d178e41e5",
+    "conversion": "Normalized geometry attributes expanded to float; embedded WebP decoded to PNG. See tools/prepare_screen_wall_assets.py."
+  }
+]

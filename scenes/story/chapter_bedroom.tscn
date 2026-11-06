@@ -1,0 +1,696 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_bed.obj" id="mesh_0"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_bed.tres" id="mat_0"]
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_nightstand.obj" id="mesh_1"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_nightstand.tres" id="mat_1"]
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_desk.obj" id="mesh_2"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_desk.tres" id="mat_2"]
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_chair.obj" id="mesh_3"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_chair.tres" id="mat_3"]
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_wardrobe.obj" id="mesh_4"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_wardrobe.tres" id="mat_4"]
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_rug.obj" id="mesh_5"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_rug.tres" id="mat_5"]
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_shelf.obj" id="mesh_6"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_shelf.tres" id="mat_6"]
+
+[ext_resource type="Script" path="res://scripts/story/chapter_wake_room.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/entities/dream_player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/dream/3d/ActorDepthBridge3D.tscn" id="3_bridge"]
+[ext_resource type="PackedScene" path="res://scenes/ui/computer_overlay.tscn" id="4_computer"]
+[ext_resource type="PackedScene" path="res://scenes/ui/melatonin_interaction.tscn" id="5_med"]
+[ext_resource type="PackedScene" path="res://scenes/ui/bedroom_phone.tscn" id="6_phone"]
+
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_entry_frame.obj" id="mesh_entry_frame"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_entry_frame.tres" id="mat_entry_frame"]
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_entry_leaf.obj" id="mesh_entry_leaf"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_entry_leaf.tres" id="mat_entry_leaf"]
+
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/bedroom_washbasin.obj" id="mesh_washbasin"]
+[ext_resource type="Material" path="res://art/story/chapter1/bedroom_washbasin.tres" id="mat_washbasin"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+albedo_color = Color(0.38, 0.42, 0.48, 1)
+roughness = 0.9
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="Mat_trim"]
+albedo_color = Color(0.49, 0.55, 0.62, 1)
+roughness = 0.9
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="Mat_wood"]
+albedo_color = Color(0.40, 0.34, 0.32, 1)
+roughness = 0.9
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="Mat_floor"]
+albedo_color = Color(0.39, 0.42, 0.47, 1)
+roughness = 0.9
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="Mat_blanket"]
+albedo_color = Color(0.34, 0.42, 0.53, 1)
+roughness = 0.9
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="Mat_metal"]
+albedo_color = Color(0.32, 0.37, 0.43, 1)
+roughness = 0.9
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="Mat_glass"]
+albedo_color = Color(0.055, 0.1, 0.18, 1)
+roughness = 0.9
+texture_filter = 0
+
+[sub_resource type="BoxMesh" id="Box_1"]
+size = Vector3(11, 0.18, 9)
+
+[sub_resource type="BoxMesh" id="Box_2"]
+size = Vector3(11, 2.7, 0.14)
+
+[sub_resource type="BoxMesh" id="Box_3"]
+size = Vector3(0.14, 2.7, 9)
+
+[sub_resource type="BoxMesh" id="Box_4"]
+size = Vector3(0.14, 0.4, 9)
+
+[sub_resource type="BoxMesh" id="Box_5"]
+size = Vector3(7.45, 0.4, 0.14)
+
+[sub_resource type="BoxMesh" id="Box_6"]
+size = Vector3(11, 0.05, 0.16)
+
+[sub_resource type="BoxMesh" id="Box_7"]
+size = Vector3(0.16, 0.05, 9)
+
+[sub_resource type="BoxMesh" id="Box_8"]
+size = Vector3(7.45, 0.04, 0.16)
+
+[sub_resource type="BoxMesh" id="Box_9"]
+size = Vector3(0.16, 0.04, 9)
+
+[sub_resource type="BoxMesh" id="Box_10"]
+size = Vector3(11, 0.18, 0.07)
+
+[sub_resource type="BoxMesh" id="Box_11"]
+size = Vector3(0.07, 0.18, 9)
+
+[sub_resource type="BoxMesh" id="Box_53"]
+size = Vector3(2.15, 1.25, 0.04)
+
+[sub_resource type="BoxMesh" id="Box_54"]
+size = Vector3(0.07, 1.42, 0.08)
+
+[sub_resource type="BoxMesh" id="Box_55"]
+size = Vector3(0.07, 1.42, 0.08)
+
+[sub_resource type="BoxMesh" id="Box_56"]
+size = Vector3(0.07, 1.42, 0.08)
+
+[sub_resource type="BoxMesh" id="Box_57"]
+size = Vector3(2.3, 0.08, 0.08)
+
+[sub_resource type="BoxMesh" id="Box_58"]
+size = Vector3(2.3, 0.08, 0.08)
+
+[sub_resource type="BoxMesh" id="Box_59"]
+size = Vector3(2.5, 0.08, 0.1)
+
+[sub_resource type="BoxMesh" id="Box_60"]
+size = Vector3(0.3, 1.5, 0.14)
+
+[sub_resource type="BoxMesh" id="Box_61"]
+size = Vector3(0.3, 1.5, 0.14)
+
+[sub_resource type="Environment" id="Environment_room"]
+background_mode = 1
+background_color = Color(0.008, 0.01, 0.019, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.52, 0.57, 0.64, 1)
+ambient_light_energy = 0.26
+
+[sub_resource type="BoxMesh" id="EntryFloor"]
+size = Vector3(1.7, 0.18, 1.2)
+[sub_resource type="BoxMesh" id="SouthRight"]
+size = Vector3(1.85, 0.4, 0.14)
+[sub_resource type="BoxMesh" id="SouthRightCap"]
+size = Vector3(1.85, 0.04, 0.16)
+
+[sub_resource type="BoxMesh" id="EntryBase"]
+size = Vector3(1.9, 0.42, 1.5)
+[sub_resource type="BoxMesh" id="EntrySide"]
+size = Vector3(0.14, 0.35, 1.2)
+[sub_resource type="BoxMesh" id="EntryBack"]
+size = Vector3(1.9, 0.35, 0.14)
+[sub_resource type="BoxMesh" id="WindowSlat"]
+size = Vector3(2.1, 0.045, 0.09)
+[sub_resource type="StandardMaterial3D" id="WindowGlow"]
+albedo_color = Color(0.11, 0.19, 0.27, 1)
+emission_enabled = true
+emission = Color(0.1, 0.19, 0.28, 1)
+emission_energy_multiplier = 0.22
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox1"]
+size = Vector3(0.12, 2.7, 0.15)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox2"]
+size = Vector3(0.12, 2.7, 0.15)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox3"]
+size = Vector3(0.12, 2.7, 0.15)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox4"]
+size = Vector3(0.12, 2.7, 0.15)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox5"]
+size = Vector3(0.12, 2.7, 0.15)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox6"]
+size = Vector3(0.15, 2.7, 0.12)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox7"]
+size = Vector3(0.15, 2.7, 0.12)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox8"]
+size = Vector3(0.15, 2.7, 0.12)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox9"]
+size = Vector3(0.15, 2.7, 0.12)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox10"]
+size = Vector3(1.25, 0.6, 0.07)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox11"]
+size = Vector3(1.2, 0.04, 0.09)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox12"]
+size = Vector3(1.2, 0.04, 0.09)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox13"]
+size = Vector3(1.2, 0.04, 0.09)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox14"]
+size = Vector3(1.2, 0.04, 0.09)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox15"]
+size = Vector3(1.2, 0.04, 0.09)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox16"]
+size = Vector3(1.2, 0.04, 0.09)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox17"]
+size = Vector3(0.07, 0.6, 1.1)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox18"]
+size = Vector3(0.09, 0.04, 1.05)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox19"]
+size = Vector3(0.09, 0.04, 1.05)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox20"]
+size = Vector3(0.09, 0.04, 1.05)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox21"]
+size = Vector3(0.09, 0.04, 1.05)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox22"]
+size = Vector3(0.09, 0.04, 1.05)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox23"]
+size = Vector3(0.09, 0.04, 1.05)
+
+[sub_resource type="BoxMesh" id="ArtRevisionBox24"]
+size = Vector3(0.12, 0.035, 5.1)
+
+[node name="ChapterBedroom" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.09, 0)
+mesh = SubResource("Box_1")
+material_override = SubResource("Mat_floor")
+metadata/pixel_swatch = "wood"
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="North" type="MeshInstance3D" parent="Walls"]
+position = Vector3(0, 1.35, -4.5)
+mesh = SubResource("Box_2")
+material_override = SubResource("Mat_wall")
+metadata/pixel_swatch = "paint"
+
+[node name="West" type="MeshInstance3D" parent="Walls"]
+position = Vector3(-5.5, 1.35, 0)
+mesh = SubResource("Box_3")
+material_override = SubResource("Mat_wall")
+metadata/pixel_swatch = "paint"
+
+[node name="EastCutaway" type="MeshInstance3D" parent="Walls"]
+position = Vector3(5.5, 0.2, 0)
+mesh = SubResource("Box_4")
+material_override = SubResource("Mat_wall")
+metadata/pixel_swatch = "paint"
+
+[node name="SouthCutaway" type="MeshInstance3D" parent="Walls"]
+position = Vector3(-1.775, 0.2, 4.5)
+mesh = SubResource("Box_5")
+material_override = SubResource("Mat_wall")
+metadata/pixel_swatch = "paint"
+
+[node name="NorthCap" type="MeshInstance3D" parent="Walls"]
+position = Vector3(0, 2.71, -4.5)
+mesh = SubResource("Box_6")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "paint"
+
+[node name="WestCap" type="MeshInstance3D" parent="Walls"]
+position = Vector3(-5.5, 2.71, 0)
+mesh = SubResource("Box_7")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "paint"
+
+[node name="SouthCap" type="MeshInstance3D" parent="Walls"]
+position = Vector3(-1.775, 0.41, 4.5)
+mesh = SubResource("Box_8")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "paint"
+
+[node name="EastCap" type="MeshInstance3D" parent="Walls"]
+position = Vector3(5.5, 0.41, 0)
+mesh = SubResource("Box_9")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "paint"
+
+[node name="SkirtingNorth" type="MeshInstance3D" parent="Walls"]
+position = Vector3(0, 0.09, -4.4)
+mesh = SubResource("Box_10")
+material_override = SubResource("Mat_wood")
+metadata/pixel_swatch = "wood"
+
+[node name="SkirtingWest" type="MeshInstance3D" parent="Walls"]
+position = Vector3(-5.4, 0.09, 0)
+mesh = SubResource("Box_11")
+material_override = SubResource("Mat_wood")
+metadata/pixel_swatch = "wood"
+
+[node name="Furniture" type="Node3D" parent="."]
+
+[node name="Bed" type="Node3D" parent="Furniture"]
+position = Vector3(-3.8, 0, -3.3)
+metadata/solid_size = Vector2(2.2212, 1.56)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="Nightstand" type="Node3D" parent="Furniture"]
+position = Vector3(-2.0, 0, -3.75)
+metadata/solid_size = Vector2(0.8, 0.65)
+
+[node name="Desk" type="Node3D" parent="Furniture"]
+position = Vector3(-4.6,0,-1.0)
+metadata/solid_size = Vector2(1.05, 2.2)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="Chair" type="Node3D" parent="Furniture"]
+position = Vector3(-3.25,0,-1.0)
+metadata/solid_size = Vector2(0.62, 0.62)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="Wardrobe" type="Node3D" parent="Furniture"]
+position = Vector3(0.4,0,3.75)
+metadata/solid_size = Vector2(1.75, 0.85)
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Rug" type="Node3D" parent="Furniture"]
+position = Vector3(-3.7, 0, -2.8)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="Shelf" type="Node3D" parent="Furniture"]
+position = Vector3(4.7, 0, -2.6)
+metadata/solid_size = Vector2(0.65, 1.8)
+
+[node name="Window" type="Node3D" parent="."]
+position = Vector3(-2.55, 1.96, -4.36)
+scale = Vector3(1.25,0.78,1)
+
+[node name="DarkGlass" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, 0, 0)
+mesh = SubResource("Box_53")
+material_override = SubResource("WindowGlow")
+
+[node name="Frame_-1.1" type="MeshInstance3D" parent="Window"]
+position = Vector3(-1.1, 0, 0.025)
+mesh = SubResource("Box_54")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "paint"
+
+[node name="Frame_0" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, 0, 0.025)
+mesh = SubResource("Box_55")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "paint"
+
+[node name="Frame_1.1" type="MeshInstance3D" parent="Window"]
+position = Vector3(1.1, 0, 0.025)
+mesh = SubResource("Box_56")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "paint"
+
+[node name="FrameH_-0.67" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, -0.67, 0.025)
+mesh = SubResource("Box_57")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "paint"
+
+[node name="FrameH_0.67" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, 0.67, 0.025)
+mesh = SubResource("Box_58")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "paint"
+
+[node name="Rail" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, 0.81, 0.08)
+mesh = SubResource("Box_59")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "paint"
+
+[node name="Curtain_-1.2" type="MeshInstance3D" parent="Window"]
+position = Vector3(-1.2, 0.02, 0.16)
+mesh = SubResource("Box_60")
+material_override = SubResource("Mat_blanket")
+metadata/pixel_swatch = "fabric"
+
+[node name="Curtain_1.2" type="MeshInstance3D" parent="Window"]
+position = Vector3(1.2, 0.02, 0.16)
+mesh = SubResource("Box_61")
+material_override = SubResource("Mat_blanket")
+metadata/pixel_swatch = "fabric"
+
+[node name="Interactions" type="Node3D" parent="."]
+
+[node name="Bed" type="Marker3D" parent="Interactions"]
+position = Vector3(-2.25, 0, -2.7)
+
+[node name="Computer" type="Marker3D" parent="Interactions"]
+position = Vector3(-3.2,0,-1.0)
+
+[node name="Medicine" type="Marker3D" parent="Interactions"]
+position = Vector3(-1.45, 0, -3.1)
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(2.8, 0, 4.9)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_room")
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(9, 14, 14)
+rotation_degrees = Vector3(-40.06, 32.735, 0)
+projection = 1
+size = 13.2
+current = true
+far = 100.0
+[node name="MoonFill" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-55, -25, 0)
+light_color = Color(0.62, 0.70, 0.80, 1)
+light_energy = 0.48
+shadow_enabled = true
+[node name="DeskLight" type="OmniLight3D" parent="."]
+position = Vector3(-4.0,1.6,-1.0)
+light_color = Color(0.73, 0.82, 0.93, 1)
+light_energy = 1.1
+omni_range = 4.5
+shadow_enabled = true
+[node name="GameplayCanvas" type="CanvasLayer" parent="."]
+layer = -1
+[node name="GameplayWorld" type="Node2D" parent="GameplayCanvas"]
+[node name="DreamPlayer" parent="GameplayCanvas/GameplayWorld" instance=ExtResource("2_player")]
+[node name="PlayerDepthVisual3D" parent="." instance=ExtResource("3_bridge")]
+[node name="SleepingSelf" type="Sprite3D" parent="."]
+position = Vector3(-3.8, 0.88, -3.3)
+rotation_degrees = Vector3(-90, 90, 0)
+pixel_size = 0.04
+offset = Vector2(0, 17)
+shaded = true
+alpha_cut = 1
+texture_filter = 0
+[node name="ComputerLayer" type="CanvasLayer" parent="."]
+layer = 60
+[node name="ComputerOverlay" parent="ComputerLayer" instance=ExtResource("4_computer")]
+[node name="MelatoninInteraction" parent="ComputerLayer" instance=ExtResource("5_med")]
+[node name="PhoneLayer" type="CanvasLayer" parent="."]
+layer = 70
+[node name="BedroomPhone" parent="PhoneLayer" instance=ExtResource("6_phone")]
+
+[node name="PixelAsset" type="MeshInstance3D" parent="Furniture/Bed"]
+mesh = ExtResource("mesh_0")
+material_override = ExtResource("mat_0")
+
+[node name="PixelAsset" type="MeshInstance3D" parent="Furniture/Nightstand"]
+mesh = ExtResource("mesh_1")
+material_override = ExtResource("mat_1")
+
+[node name="PixelAsset" type="MeshInstance3D" parent="Furniture/Desk"]
+mesh = ExtResource("mesh_2")
+material_override = ExtResource("mat_2")
+
+[node name="PixelAsset" type="MeshInstance3D" parent="Furniture/Chair"]
+mesh = ExtResource("mesh_3")
+material_override = ExtResource("mat_3")
+
+[node name="PixelAsset" type="MeshInstance3D" parent="Furniture/Wardrobe"]
+mesh = ExtResource("mesh_4")
+material_override = ExtResource("mat_4")
+
+[node name="PixelAsset" type="MeshInstance3D" parent="Furniture/Rug"]
+mesh = ExtResource("mesh_5")
+material_override = ExtResource("mat_5")
+
+[node name="PixelAsset" type="MeshInstance3D" parent="Furniture/Shelf"]
+mesh = ExtResource("mesh_6")
+material_override = ExtResource("mat_6")
+
+[node name="SouthRight" type="MeshInstance3D" parent="Walls"]
+position = Vector3(4.575, 0.2, 4.5)
+mesh = SubResource("SouthRight")
+material_override = SubResource("Mat_wall")
+metadata/pixel_swatch = "paint"
+[node name="SouthRightCap" type="MeshInstance3D" parent="Walls"]
+position = Vector3(4.575, 0.41, 4.5)
+mesh = SubResource("SouthRightCap")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "paint"
+[node name="EntryLanding" type="MeshInstance3D" parent="."]
+position = Vector3(2.8, -0.09, 5.1)
+mesh = SubResource("EntryFloor")
+material_override = SubResource("Mat_floor")
+metadata/pixel_swatch = "wood"
+[node name="EntryDoor" type="Node3D" parent="."]
+position = Vector3(2.8, 0, 4.5)
+[node name="Frame" type="MeshInstance3D" parent="EntryDoor"]
+mesh = ExtResource("mesh_entry_frame")
+material_override = ExtResource("mat_entry_frame")
+[node name="Hinge" type="Node3D" parent="EntryDoor"]
+position = Vector3(0.7, 0, 0)
+rotation_degrees = Vector3(0, 90, 0)
+[node name="Leaf" type="MeshInstance3D" parent="EntryDoor/Hinge"]
+position = Vector3(-0.7, 0, 0)
+mesh = ExtResource("mesh_entry_leaf")
+material_override = ExtResource("mat_entry_leaf")
+[node name="Entry" type="Marker3D" parent="Interactions"]
+position = Vector3(2.8, 0, 3.75)
+
+[node name="Vestibule" type="Node3D" parent="."]
+[node name="Base" type="MeshInstance3D" parent="Vestibule"]
+position = Vector3(2.8, -0.39, 5.15)
+mesh = SubResource("EntryBase")
+material_override = SubResource("Mat_wall")
+metadata/pixel_swatch = "paint"
+[node name="Left" type="MeshInstance3D" parent="Vestibule"]
+position = Vector3(1.9, 0.175, 5.1)
+mesh = SubResource("EntrySide")
+material_override = SubResource("Mat_wall")
+metadata/pixel_swatch = "paint"
+[node name="Right" type="MeshInstance3D" parent="Vestibule"]
+position = Vector3(3.7, 0.175, 5.1)
+mesh = SubResource("EntrySide")
+material_override = SubResource("Mat_wall")
+metadata/pixel_swatch = "paint"
+[node name="End" type="MeshInstance3D" parent="Vestibule"]
+position = Vector3(2.8, 0.175, 5.7)
+mesh = SubResource("EntryBack")
+material_override = SubResource("Mat_wall")
+metadata/pixel_swatch = "paint"
+[node name="EntryLight" type="OmniLight3D" parent="Vestibule"]
+position = Vector3(2.8, 1.9, 4.8)
+light_color = Color(0.55, 0.65, 0.76, 1)
+light_energy = 0.4
+omni_range = 2.5
+
+[node name="Slat0" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, -0.4, 0.06)
+mesh = SubResource("WindowSlat")
+material_override = SubResource("Mat_metal")
+[node name="Slat1" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, -0.2, 0.06)
+mesh = SubResource("WindowSlat")
+material_override = SubResource("Mat_metal")
+[node name="Slat2" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, 0, 0.06)
+mesh = SubResource("WindowSlat")
+material_override = SubResource("Mat_metal")
+[node name="Slat3" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, 0.2, 0.06)
+mesh = SubResource("WindowSlat")
+material_override = SubResource("Mat_metal")
+[node name="Slat4" type="MeshInstance3D" parent="Window"]
+position = Vector3(0, 0.4, 0.06)
+mesh = SubResource("WindowSlat")
+material_override = SubResource("Mat_metal")
+
+[node name="ArtRevisionRibs" type="Node3D" parent="."]
+[node name="NorthRib0" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.05, 1.35, -4.37)
+mesh = SubResource("ArtRevisionBox1")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthRib1" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-0.5, 1.35, -4.37)
+mesh = SubResource("ArtRevisionBox2")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthRib2" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(2.45,1.35,-4.37)
+mesh = SubResource("ArtRevisionBox3")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthRib4" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(5.05, 1.35, -4.37)
+mesh = SubResource("ArtRevisionBox5")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "metal"
+
+[node name="WestRib0" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.37, 1.35, -3.8)
+mesh = SubResource("ArtRevisionBox6")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "metal"
+
+[node name="WestRib1" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.37, 1.35, -1.3)
+mesh = SubResource("ArtRevisionBox7")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "metal"
+
+[node name="WestRib2" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.37, 1.35, 1.95)
+mesh = SubResource("ArtRevisionBox8")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "metal"
+
+[node name="WestRib3" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.37, 1.35, 3.85)
+mesh = SubResource("ArtRevisionBox9")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthVentBack" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(4.0,1.95,-4.35)
+mesh = SubResource("ArtRevisionBox10")
+material_override = SubResource("Mat_glass")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthVentSlat0" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(4.0,1.720,-4.28)
+mesh = SubResource("ArtRevisionBox11")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthVentSlat1" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(4.0,1.805,-4.28)
+mesh = SubResource("ArtRevisionBox12")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthVentSlat2" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(4.0,1.890,-4.28)
+mesh = SubResource("ArtRevisionBox13")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthVentSlat3" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(4.0,1.975,-4.28)
+mesh = SubResource("ArtRevisionBox14")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthVentSlat4" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(4.0,2.060,-4.28)
+mesh = SubResource("ArtRevisionBox15")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="NorthVentSlat5" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(4.0,2.145,-4.28)
+mesh = SubResource("ArtRevisionBox16")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="WestVentBack" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.34, 1.85, 2.85)
+mesh = SubResource("ArtRevisionBox17")
+material_override = SubResource("Mat_glass")
+metadata/pixel_swatch = "metal"
+
+[node name="WestVentSlat0" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.27, 1.62, 2.85)
+mesh = SubResource("ArtRevisionBox18")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="WestVentSlat1" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.27, 1.705, 2.85)
+mesh = SubResource("ArtRevisionBox19")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="WestVentSlat2" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.27, 1.79, 2.85)
+mesh = SubResource("ArtRevisionBox20")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="WestVentSlat3" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.27, 1.875, 2.85)
+mesh = SubResource("ArtRevisionBox21")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="WestVentSlat4" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.27, 1.9600000000000002, 2.85)
+mesh = SubResource("ArtRevisionBox22")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="WestVentSlat5" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(-5.27, 2.045, 2.85)
+mesh = SubResource("ArtRevisionBox23")
+material_override = SubResource("Mat_trim")
+metadata/pixel_swatch = "metal"
+
+[node name="ServiceCableTray" type="MeshInstance3D" parent="ArtRevisionRibs"]
+position = Vector3(5.22, 0.028, 0.1)
+mesh = SubResource("ArtRevisionBox24")
+material_override = SubResource("Mat_metal")
+metadata/pixel_swatch = "metal"
+
+[node name="Washbasin" type="Node3D" parent="Furniture"]
+position = Vector3(4.55,0,2.15)
+metadata/solid_size = Vector2(1.3,0.82)
+[node name="Mesh" type="MeshInstance3D" parent="Furniture/Washbasin"]
+mesh = ExtResource("mesh_washbasin")
+material_override = ExtResource("mat_washbasin")

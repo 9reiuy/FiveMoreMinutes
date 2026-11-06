@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://0c11ucx7x47s"
+path="res://.godot/imported/bedroom_chair.obj-2cd11e1d21d65d4a1626fc9c48ab38aa.mesh"
+
+[deps]
+
+files=["res://.godot/imported/bedroom_chair.obj-2cd11e1d21d65d4a1626fc9c48ab38aa.mesh"]
+
+source_file="res://art/story/chapter1/bedroom_chair.obj"
+dest_files=["res://.godot/imported/bedroom_chair.obj-2cd11e1d21d65d4a1626fc9c48ab38aa.mesh", "res://.godot/imported/bedroom_chair.obj-2cd11e1d21d65d4a1626fc9c48ab38aa.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

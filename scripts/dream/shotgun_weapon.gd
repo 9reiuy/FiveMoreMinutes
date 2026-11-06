@@ -15,7 +15,7 @@ var spread_degrees := 30.0
 var projectile_speed := 155.0
 var active := false
 var cooldown_left := 0.0
-var recoil_multiplier := 1.8
+var recoil_multiplier := 2.8
 var extra_attack_chance := 0.0
 var extra_attack_delay := 0.08
 
@@ -81,6 +81,8 @@ func _fire_full_volley(direction: Vector2, allow_extra: bool) -> void:
 		if world.has_method("spawn_shell_ejection"):
 			world.spawn_shell_ejection(get_parent().get_projectile_origin(), direction, &"shotgun")
 	if volley_spawned:
+		if get_parent().has_method("apply_firearm_body_recoil"):
+			get_parent().apply_firearm_body_recoil(&"shotgun", direction, recoil_multiplier)
 		SFX.play_weapon_fire()
 	if allow_extra and randf() < extra_attack_chance:
 		await get_tree().create_timer(extra_attack_delay, false).timeout

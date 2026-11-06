@@ -20,7 +20,7 @@ const EYE_COLOR := Color("e2453a")
 const MUZZLE_LOCAL := Vector3(0.0, -0.17, -0.85)
 
 
-static func build() -> Node3D:
+static func build(gameplay_matte := false) -> Node3D:
 	var root := Node3D.new()
 	root.name = "Drone3D"
 
@@ -99,6 +99,16 @@ static func build() -> Node3D:
 	box(root, "SensorEye", Vector3(0.15, 0.06, 0.022), Vector3(0.0, 0.14, -0.414), eye_material)
 
 	apply_outline(root)
+	if gameplay_matte:
+		# Keep the authored swatches/panels. Near-perfect metals require a bright
+		# reflection environment and lost almost all diffuse color in night rooms.
+		# Formal gameplay uses the same matte material rule as the office assets.
+		for part in root.find_children("*","MeshInstance3D",true,false):
+			var material: ShaderMaterial = part.material_override
+			material.set_shader_parameter("metallic_amount",0.04)
+			material.set_shader_parameter("roughness_amount",0.86)
+			material.set_shader_parameter("specular_amount",0.08)
+			material.set_shader_parameter("face_hierarchy",false)
 	return root
 
 

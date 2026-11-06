@@ -1,0 +1,180 @@
+{
+  "candidate": "C7",
+  "status": "static review only; motion, combat, performance and launcher switch pending",
+  "receipt": {
+    "state": "released",
+    "exit_code": 0,
+    "source_drift": [],
+    "engine_errors": [],
+    "private_master": 0
+  },
+  "configuration": {
+    "office_spots": 20,
+    "indoor_shadows": 20,
+    "declared_architectural_shadow_sources": 21,
+    "architectural_shadow_budget": 2,
+    "ambient_energy": 0.18,
+    "persistent": true
+  },
+  "views": [
+    {
+      "room": 0,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_00_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "61f0bad5c98b308c92a2fd26595e56204313ced98ac3d72be6a5d960e57d1ca0",
+      "power": true
+    },
+    {
+      "room": 1,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_01_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "e481f2c43e0c3d5c8c631ed96a9682d46dc3eba8ab6e38f2719df8007c519cad",
+      "power": true
+    },
+    {
+      "room": 2,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_02_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "ea3a73404619817cb224fc2a24fcda7f5ae5c1964a9d0fc410361e76d8a883eb",
+      "power": true
+    },
+    {
+      "room": 3,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_03_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "8bc49e1f6fe35ae3d201caa8227e5228e305d469904de4bc701e7510cd0b2363",
+      "power": true
+    },
+    {
+      "room": 4,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_04_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "0217c7cd2f1f7f107e896ed998b0d8646b8891857eb9eba78a29c3c57bc29e77",
+      "power": true
+    },
+    {
+      "room": 5,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_05_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "f0130e1adda714ac115c44fb476d9a97188e139ad5f816907e43edfba05bc456",
+      "power": true
+    },
+    {
+      "room": 6,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_06_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "e98206cb1c58b3ebf6f4b689eec9c5ac1a7c86a8b0e71f6846c344ca74d67dc6",
+      "power": true
+    },
+    {
+      "room": 7,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_07_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "232d45307dcae789e94adff84c2e2b746b2567dba0dff7aa137510ee911f680b",
+      "power": true
+    },
+    {
+      "room": 8,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_08_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "45c59d7dcd036874621ebebb799a4c2af6e68652322ad13c3041b1a882c1bbf6",
+      "power": true
+    },
+    {
+      "room": 9,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_09_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "85acb4b331249ea29f9498ae8690f7aff4f0f30b28717dfdbdb441d5b38cf658",
+      "power": true
+    },
+    {
+      "room": 10,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_10_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "f89d4a2d22ad96997e9129b89bc47e0dda6f1b9ecdea830bd8baa9bafff3cd32",
+      "power": true
+    },
+    {
+      "room": 11,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_11_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "728d1deab167f5e78e7eb0ca13d1affd4a69fa0568e7a8cbcfbb871c111246d1",
+      "power": true
+    },
+    {
+      "room": 12,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_12_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "d078893338a6f761fe995b2161e9b3dedf7381f0c8789295d0b1d9d55798e996",
+      "power": true
+    },
+    {
+      "room": 13,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_13_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "542a304f6885a5acbddfe03ebbbc9ecb902d5bff9b5ee363b13d639411e18798",
+      "power": true
+    },
+    {
+      "room": 14,
+      "image": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C7_rooms36\\room_14_center.png",
+      "size": [
+        640,
+        360
+      ],
+      "sha256": "6ed8270865519917c803f2d504bce85c960c71fa90ddda4580144c038cac695e",
+      "power": true
+    }
+  ],
+  "patch_count": 14,
+  "staged_hashes_ok": true,
+  "visual_observations": [
+    "Central broad ceiling coverage replaces focused pools.",
+    "C7 guards linear floor accumulation from the legacy corridor override; C6 still showed corridor overbrightness.",
+    "Room-centre captures show floor and furniture readability; this is not exhaustive every-pixel proof.",
+    "20 indoor shadow lights versus prior 15 requires measured budget review.",
+    "Raw room views are actual Camera images; images are not retouched."
+  ]
+}

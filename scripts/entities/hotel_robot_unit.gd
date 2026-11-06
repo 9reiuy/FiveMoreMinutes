@@ -221,9 +221,9 @@ func firearm_parameters() -> Dictionary:
 func get_ranged_telegraph_state() -> Dictionary:
 	if _smoke_blocks_player():return {}
 	if dead or not _aiming or _magazine_primed or _reload_left>0.0: return {}
-	var start:=global_position+facing*20.0
-	if is_instance_valid(visual): start=visual.gameplay_muzzle(-1.0 if shot_serial%2==0 else 1.0)
-	return {"start":start,"target":_aim_target,"progress":_aim_elapsed/.5}
+	var center: Vector3 = world.get_gameplay_world_position(global_position, VISUAL_SCALE * 0.5)
+	return {"start": global_position, "center_world": center, "target": _aim_target,
+		"progress": _aim_elapsed / 0.5, "shot_range": float(firearm_parameters().range)}
 
 func _move_toward(goal: Vector2, speed_value: float) -> void:
 	goal=goal.clamp(bounds.position+Vector2.ONE*2,bounds.end-Vector2.ONE*2)
@@ -273,6 +273,8 @@ func _fire(direction: Vector2) -> void:
 	# Converge on the target from the selected side barrel; parallel offset
 	# trajectories otherwise miss a stationary player between the two guns.
 	var aim_target:=_aim_target if _aiming else (player.global_position if is_instance_valid(player) else origin+direction)
+	# Projectile presentation now samples the barrel that actually fired.
+	_aiming = false
 	var shot_direction:=origin.direction_to(aim_target)
 	var rules:=firearm_parameters()
 	var projectile := PROJECTILE_SCENE.instantiate()
@@ -295,7 +297,6 @@ func _fire(direction: Vector2) -> void:
 		projectile.queue_free()
 	_magazine_left-=1
 	_magazine_primed=true
-	_aiming=false
 	if _magazine_left==0:
 		_reload_left=float(world.config.weapon_reload_duration)
 		deploy=0.0

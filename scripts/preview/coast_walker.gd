@@ -1,10 +1,12 @@
 extends Node2D
-## Presentation only. Original player atlas/part layout; no gameplay authority.
+## Presentation only. Shares the eight-way authored atlas with the real player.
+const ATLAS=preload("res://scripts/data/player_character_atlas.gd")
 var phase:=0.0
 var elapsed:=0.0
 var moving:=false
 var facing_back:=true
 var facing_right:=false
+var facing_index:=ATLAS.Facing.UP
 @onready var left: Sprite2D=$LeftFoot
 @onready var right: Sprite2D=$RightFoot
 @onready var body: Node2D=$BodyPivot
@@ -22,24 +24,29 @@ func advance(delta: float,distance: float,direction: Vector2) -> void:
  moving=distance>.0001
  if moving:
   phase=fposmod(phase+distance/.68*TAU,TAU)
-  facing_back=direction.y<0 and absf(direction.y)>absf(direction.x)*.4
-  if absf(direction.x)>.01: facing_right=direction.x>0
+  facing_index=ATLAS.facing(direction)
+  facing_back=ATLAS.is_back(facing_index)
+  facing_right=direction.x>0
  else: phase=0
  pose()
 
 func pose() -> void:
  var stride: float=sin(phase) if moving else 0.
- left.position=Vector2(-5+roundf(stride*2),-9-roundf(maxf(stride,0)*2))
- right.position=Vector2(roundf(-stride*2),-9-roundf(maxf(-stride,0)*2))
+ var leg_offset:=ATLAS.foot_offset(facing_index)
+ left.position=Vector2(-6+roundf(stride*2),-9-roundf(maxf(stride,0)*2))+leg_offset
+ right.position=Vector2(-1+roundf(-stride*2),-9-roundf(maxf(-stride,0)*2))+leg_offset
  body.position=Vector2(0,-16-roundf(absf(stride)*2))
- left_hand.position=Vector2(-11+roundf(-stride),8+roundf(stride))
- right_hand.position=Vector2(4+roundf(stride),8-roundf(stride))
- var row:=128 if facing_back else 0
- var blink:=32 if fmod(elapsed,4.7)>.0 and fmod(elapsed,4.7)<.11 else 0
- head.region_rect=Rect2(64 if facing_back or not facing_right else 96,row if facing_back else blink,32,32)
- coat.region_rect=Rect2(128,row,32,32)
- left.region_rect=Rect2(171,row+12,4,9)
- right.region_rect=Rect2(176,row+12,4,9)
- fringe.visible=not facing_back
- fringe.position=Vector2(8 if facing_right else 21,17)
- fringe.flip_h=facing_right
+ left_hand.position=Vector2(-12+roundf(-stride),8+roundf(stride))
+ right_hand.position=Vector2(3+roundf(stride),8-roundf(stride))
+ var blink:=1 if fmod(elapsed,4.7)<.11 else 0
+ head.region_rect=ATLAS.upper_region(facing_index,blink)
+ head.position=ATLAS.UPPER_ORIGIN
+ coat.visible=false
+ left.region_rect=ATLAS.foot_region(facing_back,true)
+ right.region_rect=ATLAS.foot_region(facing_back,false)
+ fringe.region_rect=ATLAS.BANGS_REGION
+ fringe.visible=ATLAS.has_bangs(facing_index)
+ var mirror:=ATLAS.bangs_mirrored(facing_index)
+ fringe.position=ATLAS.bangs_root(facing_index)+Vector2(-3 if mirror else -1,0)
+ fringe.flip_h=mirror
+ fringe.z_index=ATLAS.bangs_layer(facing_index)

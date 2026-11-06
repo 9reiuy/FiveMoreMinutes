@@ -34,6 +34,26 @@ const WORLD_WALL_LAYER := 4
 @export var current_floor_index: int = 0
 @export var total_indicator_floors: int = 10
 
+var _reference_arrival_layer: CanvasLayer
+
+func show_reference_arrival() -> void:
+	if is_instance_valid(_reference_arrival_layer):
+		_reference_arrival_layer.queue_free()
+	var layer := CanvasLayer.new()
+	layer.name = "ElevatorArrivalDisplay"
+	layer.layer = 30
+	add_child(layer)
+	_reference_arrival_layer = layer
+	var display := preload("res://scripts/ui/elevator_floor_indicator.gd").new()
+	display.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(display)
+	display.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	display.present(current_floor_index, current_floor_index, total_indicator_floors, false, false)
+	var fade := display.create_tween()
+	fade.tween_interval(.55)
+	fade.tween_property(display, "modulate:a", 0.0, .24)
+	fade.tween_callback(layer.queue_free)
+
 var current_state: State = State.LOCKED
 var doors_open := false
 var doorway_inward_2d := Vector2.UP

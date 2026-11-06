@@ -1,0 +1,598 @@
+{
+  "actual_camera_images": [
+    {
+      "label": "office_on",
+      "view": "main",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_on",
+      "view": "main",
+      "comparison": "baseline_repeat",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_on",
+      "view": "main",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_on",
+      "view": "mirror",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_on",
+      "view": "mirror",
+      "comparison": "baseline_repeat",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_on",
+      "view": "mirror",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_off",
+      "view": "main",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_off",
+      "view": "main",
+      "comparison": "baseline_repeat",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_off",
+      "view": "main",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_off",
+      "view": "mirror",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_off",
+      "view": "mirror",
+      "comparison": "baseline_repeat",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_off",
+      "view": "mirror",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_restored",
+      "view": "main",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_restored",
+      "view": "main",
+      "comparison": "baseline_repeat",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_restored",
+      "view": "main",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_restored",
+      "view": "mirror",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_restored",
+      "view": "mirror",
+      "comparison": "baseline_repeat",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "office_restored",
+      "view": "mirror",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "meeting_on",
+      "view": "main",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "meeting_on",
+      "view": "main",
+      "comparison": "baseline_repeat",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "meeting_on",
+      "view": "main",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "meeting_on",
+      "view": "mirror",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "meeting_on",
+      "view": "mirror",
+      "comparison": "baseline_repeat",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "meeting_on",
+      "view": "mirror",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "new_enemy",
+      "view": "main",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "new_enemy",
+      "view": "main",
+      "comparison": "baseline_repeat",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "new_enemy",
+      "view": "main",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "new_enemy",
+      "view": "mirror",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "new_enemy",
+      "view": "mirror",
+      "comparison": "baseline_repeat",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "new_enemy",
+      "view": "mirror",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "door_moved",
+      "view": "main",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "door_moved",
+      "view": "main",
+      "comparison": "baseline_repeat",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "door_moved",
+      "view": "main",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "door_moved",
+      "view": "mirror",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "door_moved",
+      "view": "mirror",
+      "comparison": "baseline_repeat",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "door_moved",
+      "view": "mirror",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "mode_reentered",
+      "view": "main",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 2,
+      "max_channel_difference": 1
+    },
+    {
+      "label": "mode_reentered",
+      "view": "main",
+      "comparison": "baseline_repeat",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 2,
+      "max_channel_difference": 1
+    },
+    {
+      "label": "mode_reentered",
+      "view": "main",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        640,
+        360
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "mode_reentered",
+      "view": "mirror",
+      "comparison": "C7_before_to_R4",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "mode_reentered",
+      "view": "mirror",
+      "comparison": "baseline_repeat",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    },
+    {
+      "label": "mode_reentered",
+      "view": "mirror",
+      "comparison": "R4_to_C7_after",
+      "size": [
+        320,
+        180
+      ],
+      "different_pixels": 0,
+      "max_channel_difference": 0
+    }
+  ],
+  "same_state_semantics": [
+    {
+      "label": "office_on",
+      "main_camera_equal": true,
+      "mirror_camera_equal": true,
+      "geometry_count": [
+        62,
+        62
+      ],
+      "light_count": [
+        196,
+        196
+      ],
+      "problems": []
+    },
+    {
+      "label": "office_off",
+      "main_camera_equal": true,
+      "mirror_camera_equal": true,
+      "geometry_count": [
+        62,
+        62
+      ],
+      "light_count": [
+        196,
+        196
+      ],
+      "problems": []
+    },
+    {
+      "label": "office_restored",
+      "main_camera_equal": true,
+      "mirror_camera_equal": true,
+      "geometry_count": [
+        62,
+        62
+      ],
+      "light_count": [
+        196,
+        196
+      ],
+      "problems": []
+    },
+    {
+      "label": "meeting_on",
+      "main_camera_equal": true,
+      "mirror_camera_equal": true,
+      "geometry_count": [
+        62,
+        62
+      ],
+      "light_count": [
+        196,
+        196
+      ],
+      "problems": []
+    },
+    {
+      "label": "new_enemy",
+      "main_camera_equal": true,
+      "mirror_camera_equal": true,
+      "geometry_count": [
+        69,
+        69
+      ],
+      "light_count": [
+        196,
+        196
+      ],
+      "problems": []
+    },
+    {
+      "label": "door_moved",
+      "main_camera_equal": true,
+      "mirror_camera_equal": true,
+      "geometry_count": [
+        62,
+        62
+      ],
+      "light_count": [
+        196,
+        196
+      ],
+      "problems": []
+    },
+    {
+      "label": "mode_reentered",
+      "main_camera_equal": true,
+      "mirror_camera_equal": true,
+      "geometry_count": [
+        62,
+        62
+      ],
+      "light_count": [
+        198,
+        198
+      ],
+      "problems": []
+    }
+  ],
+  "visual05_original_ok": false,
+  "original_failure_note": "Spawn probe also counted one non-ActorVolumeShadow shadow carrier. Lifecycle06 independently checked actual seven volume nodes before any variant toggle. Original failed result is preserved.",
+  "lifecycle06": {
+    "applied_settings_reload_private_audio": true,
+    "spawn_bridge_freed": true,
+    "spawn_freed": true,
+    "spawn_path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/GameplayCanvas/GameplayWorld/EnemyRoot/@CharacterBody2D@2504",
+    "spawn_proxy_count": 7,
+    "spawn_proxy_remapped": true
+  },
+  "door08": {
+    "main": {
+      "native_update": {
+        "different_pixels": 29216,
+        "maximum_channel": 247
+      },
+      "updated_R4_to_C7": {
+        "different_pixels": 0,
+        "maximum_channel": 0
+      }
+    },
+    "mirror": {
+      "native_update": {
+        "different_pixels": 1870,
+        "maximum_channel": 255
+      },
+      "updated_R4_to_C7": {
+        "different_pixels": 0,
+        "maximum_channel": 0
+      }
+    }
+  }
+}

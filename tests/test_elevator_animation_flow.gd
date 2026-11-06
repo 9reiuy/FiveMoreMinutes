@@ -40,7 +40,7 @@ func _run() -> void:
 	world.player.global_position = world.elevator_floor_door.get_corridor_approach_position_2d()
 	world._on_elevator_approach_entered(world.player)
 	_check(world.transition_phase == &"ENTERING", "Badge starts scripted entry")
-	var reached_cab := false
+	var reached_ready_exit := false
 	var deadline:=Time.get_ticks_msec()+20000
 	var loading_seen:=false
 	while Time.get_ticks_msec()<deadline:
@@ -48,36 +48,18 @@ func _run() -> void:
 		if world.transition_phase==&"LOADING" and root.has_node("ElevatorLoadingCover"):
 			loading_seen=true
 			_check(paused and not world.player.movement_enabled,"Loading is covered and player frozen")
-		if world.transition_phase == &"CAB_RIDE" and not paused:
-			reached_cab = true
+		if world.transition_phase == &"EXITING" and not paused:
+			reached_ready_exit = true
 			break
-	_check(reached_cab, "Player reaches independent loading cab")
+	_check(reached_ready_exit, "Ready floor proceeds directly to exit")
 	_check(loading_seen,"Heavy generation happens in a separate black loading phase")
-	var ride_start:=Time.get_ticks_msec()
-	var actual_pause_ms:=0
-	if reached_cab:
-		_check(world.player.left_hand_part.visible and world.player.right_hand_part.visible, "Later-floor cab preserves both stowed-weapon hands")
-		var cab: IndependentElevatorCab3D = world.active_transition_cab
-		_check(cab != null, "Loading cab exists during ride")
-		_check(absf(cab.global_rotation.y) < 0.001, "Loading cab stays screen-aligned")
-		_check(cab.boundary_root_2d != null, "Rotated gameplay boundary follows cab")
-		_check(world.player.movement_enabled and world._next_floor_render_ready, "Player can move after floor completely prepared")
-		_check(not world.wall_root.visible, "Old floor hidden during ride")
-		paused=true
-		var pause_start:=Time.get_ticks_msec()
-		await create_timer(.2,true).timeout
-		actual_pause_ms=Time.get_ticks_msec()-pause_start
-		_check(world.transition_phase==&"CAB_RIDE","Pause does not advance ready-cab ride timer")
-		paused=false
+	if reached_ready_exit:
+		_check(world.is_loading_render_ready() and world._next_floor_render_ready,"Actual current-floor receipt precedes exit")
+		_check(world.active_transition_cab==null and not world.player.movement_enabled,"Loading cab removed; input still locked through exit animation")
 	var completed := false
 	deadline=Time.get_ticks_msec()+15000
 	while Time.get_ticks_msec()<deadline:
 		await process_frame
-		if ride_start>0 and world.transition_phase!=&"CAB_RIDE":
-			var visible_ms:=Time.get_ticks_msec()-ride_start
-			print("CAB_RIDE_DURATION ",JSON.stringify({"visible_ms":visible_ms,"actual_pause_ms":actual_pause_ms}))
-			_check(visible_ms-actual_pause_ms>=2990,"Visible cab lasts at least three unpaused seconds")
-			ride_start=0
 		if world.floor_index == 1 and world.transition_phase == &"IDLE":
 			completed = true
 			break

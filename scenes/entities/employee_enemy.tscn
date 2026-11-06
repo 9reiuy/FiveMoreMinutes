@@ -16,11 +16,11 @@ region = Rect2(113, 12, 4, 9)
 
 [sub_resource type="AtlasTexture" id="Atlas_employee_head_open"]
 atlas = ExtResource("2_employee_atlas")
-region = Rect2(32, 0, 28, 32)
+region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="Atlas_employee_body"]
 atlas = ExtResource("2_employee_atlas")
-region = Rect2(64, 0, 32, 32)
+region = Rect2(32, 23, 32, 9)
 
 [sub_resource type="AtlasTexture" id="Atlas_employee_left_hand"]
 atlas = ExtResource("2_employee_atlas")
@@ -72,25 +72,26 @@ position = Vector2(0, -16)
 
 [node name="Head" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=12791404]
 texture_filter = 1
-position = Vector2(-16, -20)
+position = Vector2(-16, -17)
 texture = SubResource("Atlas_employee_head_open")
 centered = false
 
 [node name="Body" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=770622389]
+visible = false
 texture_filter = 1
-position = Vector2(-16, -8)
+position = Vector2(-16, 6)
 texture = SubResource("Atlas_employee_body")
 centered = false
 
 [node name="LeftHand" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=1305427289]
 texture_filter = 1
-position = Vector2(-11, 7)
+position = Vector2(-11, 6)
 texture = SubResource("Atlas_employee_left_hand")
 centered = false
 
 [node name="RightHand" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=2059038695]
 texture_filter = 1
-position = Vector2(4, 7)
+position = Vector2(4, 6)
 texture = SubResource("Atlas_employee_right_hand")
 centered = false
 

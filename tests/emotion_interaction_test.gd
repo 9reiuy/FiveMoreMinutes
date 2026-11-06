@@ -8,11 +8,16 @@ func check(ok: bool,label: String) -> void:
 func run() -> void:
 	var diag:=root.get_node_or_null("_DroneGameDiag")
 	if diag!=null: diag.free()
-	AudioServer.set_bus_mute(0,true); root.size=Vector2i(640,360)
+	print("EMOTION_INTERACTION PID=",OS.get_process_id()," audio=",AudioServer.get_driver_name())
+	if AudioServer.get_driver_name()!="Dummy" or not AudioServer.is_bus_mute(AudioServer.get_bus_index(&"Master")):
+		AudioServer.set_bus_mute(AudioServer.get_bus_index(&"Master"),true)
+		push_error("Private muted settings were not active before scene entry")
+		quit(2); return
+	root.size=Vector2i(640,360)
 	var prompt:=preload("res://scripts/ui/compact_interaction_prompt.gd").new()
 	root.add_child(prompt); prompt.size=Vector2(128,18)
-	check(prompt.FRAME_COLOR==Color("396FE2"),"Requested frame color is exact")
-	for word in ["拾取","替换","进入","交流"]:
+	check(absf(prompt.FRAME_COLOR.s-Color("396FE2").s*.5)<0.0001,"Interaction frame has half its previous saturation")
+	for word in ["替换","进入","交流"]:
 		prompt.present(word,Vector2(80,80),word.hash()); prompt._process(prompt.DURATION*.75)
 		check(prompt.frame_expansion()>1,"Frame overshoots slightly for "+word)
 		check(prompt.scale==Vector2.ONE and prompt.position==prompt.position.round(),"Glyphs stay unscaled on integer pixels")
@@ -37,6 +42,8 @@ func run() -> void:
 	room.player.global_position=room.RECEPTION_DESK_POS_2D+Vector2(0,45)
 	room.interaction_resolver.update_target(); room._update_camera_and_projection(0); room._update_interaction_prompt()
 	check(room.interaction_prompt.text=="交流" and room.interaction_prompt.wanted,"Real reception exposes talk action without key glyph")
+	check(room.interaction_prompt.get_theme_font(&"font").resource_path.ends_with("BoutiqueBitmap9x9_Bold_1.9.ttf"),"Real reception uses bold pixel font")
+	check(room.interaction_prompt.get_theme_font_size(&"font_size")==14 and room.interaction_prompt.vertical_alignment==VERTICAL_ALIGNMENT_CENTER,"Real reception keeps enlarged centered text")
 	check(not room.dialogue_controller.is_active(),"Proximity still does not auto-start passive conversation")
 	for mood in room.npc_hint_bubble.EMOTIONS:
 		room.waitress_npc.hint_emotion=str(mood); room._update_interaction_prompt()

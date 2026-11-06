@@ -88,7 +88,7 @@ func run() -> void:
 					var light := holder.get_node_or_null("WallLight") as SpotLight3D
 					if light != null:
 						check(light.shadow_enabled, "Sconce lacks wall shadows")
-						check(is_equal_approx(light.light_energy, 0.25), "Sconce energy increased")
+						check(is_equal_approx(light.light_energy, manager.light_energy * 0.5), "Sconce retains configured energy ratio")
 						var beam: Vector3 = -light.global_basis.z
 						check(beam.y < 0.0 and -light.global_position.y / beam.y < light.spot_range, "Center beam misses local floor range")
 						var inward: Vector2 = holder.get_meta("light_plan")["inward"]
@@ -96,7 +96,7 @@ func run() -> void:
 						check(Vector2(facing.x, facing.z).dot(inward) > 0.99, "Sconce faces wrong room")
 					var top := holder.get_node_or_null("RoomLight") as SpotLight3D
 					if top != null:
-						check(is_equal_approx(top.light_energy, 0.50), "Ceiling energy increased")
+						check(is_equal_approx(top.light_energy, manager.light_energy), "Ceiling retains configured energy")
 						check(top.spot_range < 28.0 and top.spot_angle < 90.0, "Whole-room legacy range leaked")
 						check(not top.shadow_enabled, "Ceiling shadow regression")
 					for mesh in holder.find_children("*", "MeshInstance3D", true, false):

@@ -65,7 +65,7 @@ func run() -> void:
 			check(world.shadow_manager.selected==selected and world.shadow_manager.active==active,"Shadow schedule restored without consuming time")
 		await settle()
 		check(not report.cancelled,"Preparation on each floor succeeds")
-		check(report.destruction.viewport_released and report.destruction.states==16 and report.destruction.material_families==5,"Real destruction preparation completed and private viewport released")
+		check(report.destruction.viewport_released and report.destruction.states==16 and report.destruction.material_families>=5,"Real destruction and registered room preparation completed and private viewport released")
 		check(root.find_children("*","SubViewport",true,false).size()==viewport_count,"No private viewport accumulation across floors")
 		check(world._content_rng.state==rng_state,"Content RNG unchanged")
 		check(smoke.rng.state==smoke_rng and smoke.emitted==0 and smoke.tracked.is_empty(),"Preparation preserves smoke RNG, triggers and counters")

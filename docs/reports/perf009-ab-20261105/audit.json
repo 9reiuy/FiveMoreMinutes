@@ -1,0 +1,262 @@
+{
+  "configuration_match": {
+    "seed": {
+      "match": true,
+      "values": [
+        42001,
+        42001,
+        42001,
+        42001
+      ]
+    },
+    "rooms": {
+      "match": true,
+      "values": [
+        15,
+        15,
+        15,
+        15
+      ]
+    },
+    "furniture_actual": {
+      "match": true,
+      "values": [
+        104,
+        104,
+        104,
+        104
+      ]
+    },
+    "enemy_roots_actual": {
+      "match": true,
+      "values": [
+        13,
+        13,
+        13,
+        13
+      ]
+    },
+    "requested_enemies": {
+      "match": true,
+      "values": [
+        8,
+        8,
+        8,
+        8
+      ]
+    },
+    "office_spots": {
+      "match": true,
+      "values": [
+        25,
+        25,
+        25,
+        25
+      ]
+    },
+    "indoor_shadows": {
+      "match": true,
+      "values": [
+        15,
+        15,
+        15,
+        15
+      ]
+    },
+    "world_viewport": {
+      "match": true,
+      "values": [
+        "(640, 360)",
+        "(640, 360)",
+        "(640, 360)",
+        "(640, 360)"
+      ]
+    },
+    "reflection_resolution": {
+      "match": true,
+      "values": [
+        "(320, 180)",
+        "(320, 180)",
+        "(320, 180)",
+        "(320, 180)"
+      ]
+    },
+    "reflection_every_draw": {
+      "match": true,
+      "values": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "fps_cap": {
+      "match": true,
+      "values": [
+        60,
+        60,
+        60,
+        60
+      ]
+    },
+    "audio_driver": {
+      "match": true,
+      "values": [
+        "WASAPI",
+        "WASAPI",
+        "WASAPI",
+        "WASAPI"
+      ]
+    },
+    "test_master_bus_muted": {
+      "match": true,
+      "values": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "video_adapter": {
+      "match": true,
+      "values": [
+        "NVIDIA GeForce RTX 5070 Ti",
+        "NVIDIA GeForce RTX 5070 Ti",
+        "NVIDIA GeForce RTX 5070 Ti",
+        "NVIDIA GeForce RTX 5070 Ti"
+      ]
+    },
+    "enemy_ai": {
+      "match": true,
+      "values": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "weapon": {
+      "match": true,
+      "values": [
+        "assault_rifle",
+        "assault_rifle",
+        "assault_rifle",
+        "assault_rifle"
+      ]
+    },
+    "vsync_mode": {
+      "match": true,
+      "values": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "runs": [
+    {
+      "id": "A1",
+      "route_complete": true,
+      "route_points": 83,
+      "physics_steps": 840,
+      "shots": 90,
+      "player_damage": 1,
+      "errors": [],
+      "drift": [],
+      "unfocused": 0,
+      "background_before": [
+        {
+          "Id": 468,
+          "ProcessName": "Endfield",
+          "MainWindowTitle": "Endfield"
+        }
+      ],
+      "background_after": [
+        {
+          "Id": 468,
+          "ProcessName": "Endfield",
+          "MainWindowTitle": "Endfield"
+        }
+      ]
+    },
+    {
+      "id": "B1",
+      "route_complete": true,
+      "route_points": 83,
+      "physics_steps": 840,
+      "shots": 89,
+      "player_damage": 1,
+      "errors": [],
+      "drift": [],
+      "unfocused": 0,
+      "background_before": [
+        {
+          "Id": 468,
+          "ProcessName": "Endfield",
+          "MainWindowTitle": "Endfield"
+        }
+      ],
+      "background_after": [
+        {
+          "Id": 468,
+          "ProcessName": "Endfield",
+          "MainWindowTitle": "Endfield"
+        }
+      ]
+    },
+    {
+      "id": "B2",
+      "route_complete": true,
+      "route_points": 83,
+      "physics_steps": 840,
+      "shots": 77,
+      "player_damage": 1,
+      "errors": [],
+      "drift": [],
+      "unfocused": 0,
+      "background_before": [
+        {
+          "Id": 468,
+          "ProcessName": "Endfield",
+          "MainWindowTitle": "Endfield"
+        }
+      ],
+      "background_after": [
+        {
+          "Id": 468,
+          "ProcessName": "Endfield",
+          "MainWindowTitle": "Endfield"
+        }
+      ]
+    },
+    {
+      "id": "A2",
+      "route_complete": true,
+      "route_points": 83,
+      "physics_steps": 840,
+      "shots": 96,
+      "player_damage": 1,
+      "errors": [],
+      "drift": [],
+      "unfocused": 0,
+      "background_before": [
+        {
+          "Id": 468,
+          "ProcessName": "Endfield",
+          "MainWindowTitle": "Endfield"
+        }
+      ],
+      "background_after": [
+        {
+          "Id": 468,
+          "ProcessName": "Endfield",
+          "MainWindowTitle": "Endfield"
+        }
+      ]
+    }
+  ],
+  "unique_timing_manifest_hashes": [
+    "32BD71A8394C3FAE8F5C5B11C17558103A0D1CB28850F0637645B2226F83C19D"
+  ]
+}

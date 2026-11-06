@@ -1,0 +1,52 @@
+{
+  "status": "Historical intermediate rework review; superseded by advisor_r3_final_audit.json and final_review.md",
+  "review_date": "2026-11-06",
+  "source_root": ".runtime/visual004_roles_20261104/performance_r2/rendering_path_v1/options_research_20261105/PlaySessions",
+  "active_enemy_proof": {
+    "run": "R3_C2_active_validation04",
+    "receipt_state": "released",
+    "exit_code": 0,
+    "engine_errors": [],
+    "source_drift": [],
+    "nonempty_source_pixels": [528, 524],
+    "hidden_shown_changed_main_pixels": [1353, 1559],
+    "review": "Actual main Camera shows active enemies on power. Blackout player readability remains inadequate."
+  },
+  "colour_transfer": {
+    "actor_run": "R3_C2_colour05",
+    "actor_opaque_pixels": 610,
+    "actor_raw_rgb_mae_255": 42.2973,
+    "actor_decoded_rgb_mae_255": 0.0,
+    "lifecycle_errors": ["geom->softshadow_count==0 - BUG! twice in player_shadow_receiver _restore/_exit_tree"],
+    "mirror_run": "R3_C2_shadow06",
+    "mirror_opaque_pixels": 14925,
+    "mirror_raw_rgb_mae_255": 52.0560,
+    "mirror_decoded_rgb_mae_255": 5.8324,
+    "scope": "Native diagnostic quads only. Mirror decoded result is not exact parity."
+  },
+  "shadow_diagnosis": {
+    "run": "R3_C2_shadow06",
+    "receipt_errors": [],
+    "visual_review": "PCF plus cube/atlas changes reduce visible sand but leave hard dark silhouettes. This is attribution, not an acceptable final appearance.",
+    "contact_shader": "unshaded blend_mix with fixed nonzero gray ALBEDO can brighten a black floor",
+    "office_off_contact_removal": {"base_brighter_pixels_gt1": 3616, "mean_positive_gray_delta_255": 11.892},
+    "reception_off_contact_removal": {"base_brighter_pixels_gt1": 758, "mean_positive_gray_delta_255": 7.662},
+    "limits": "Full image deltas include animation changes. Probe atlas/filter and lowered lamp height persist between room probes; cross-room images are not configuration-matched."
+  },
+  "subsequent_review": {
+    "C3_shadow07": "Nine runtime global_shader_parameter_get errors; noise null cannot prove actual state. Hint source was captured before power-on redraw, invalid for source MAE. Hint and explicit-decode pictures agree; do not add a second decode to an existing source_color sampler.",
+    "C4_review08": "Released exit 0, engine_errors empty, source_drift empty. Visible employee source pixels 528/532 and main changes 1143/1298. Contact gray and harsh wall cuts improved, but cabinet and edge-furniture shadows remain overly dark; visual rework continues.",
+    "C4_layout": "Office 31x24 split into only two 15.5x24 ceiling spans; meeting room 12x14 one ceiling source; corridor spans 21-24 at height 2.43. Original 20 main-light count is not a user constraint. Local inscribed-sphere bounce undercovers room edges.",
+    "C5_review09": "Exit 8; WallSegment3D unregistered class parse failure. No valid visual evidence. Retained failed run.",
+    "C6_review10": "Released exit 0, no engine errors or source drift. Office, meeting, reception real Camera images independently reviewed. Dark furniture shadows now retain floor detail; no visible sandy edge pattern or prior straight wall cut at these views. Same-position reception blackout has no bright furniture contact patches. 727 architectural casters recorded. Isolated indirect light is blocked by opaque walls; openings still transmit. Static candidate acceptable for final checks; does not yet certify motion moire, full primary-light attribution or final timing."
+  },
+  "open_acceptance": [
+    "natural shadows without sand or black blobs",
+    "wall lighting with room occlusion preserved",
+    "blackout without artificial gray under-furniture patches",
+    "moving and stationary Camera moire proof",
+    "player and enemy legibility with original colors",
+    "no lifecycle engine errors",
+    "bounded final timing under user gate: most frames <=80ms"
+  ]
+}

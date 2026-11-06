@@ -1,0 +1,3701 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/preview/night_coast.gd" id="1_ekl5d"]
+[ext_resource type="Shader" path="res://shaders/preview/night_coast_sky.gdshader" id="2_utn1j"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_cliff_rock.gdshader" id="3_3tp60"]
+[ext_resource type="Texture2D" path="res://resources/preview/night_coast/texture_002.res" id="4_5vlfq"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/coast_city_cliff/cliff_platform.res" id="5_mues5"]
+[ext_resource type="Shader" path="res://shaders/preview/night_coast_water.gdshader" id="6_05sb1"]
+[ext_resource type="Texture2D" path="res://resources/preview/night_coast/texture_005.res" id="7_j7s88"]
+[ext_resource type="PlaneMesh" path="res://resources/preview/night_coast/mesh_004.res" id="8_pswg4"]
+[ext_resource type="PlaneMesh" path="res://resources/preview/night_coast/mesh_007.res" id="9_es7qy"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_pixel_prop.gdshader" id="10_x652p"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_008.res" id="11_xqt26"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_grey_outline.gdshader" id="12_j0oe4"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_011.res" id="13_mkuvu"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_012.res" id="14_yxpka"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_013.res" id="15_1sbjg"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_014.res" id="16_b0eyo"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_015.res" id="17_6o8r5"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_016.res" id="18_eg7wv"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_017.res" id="19_7o8nq"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_018.res" id="20_2i0hw"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_019.res" id="21_fo0it"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_020.res" id="22_dxt1i"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_022.res" id="23_biqt0"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_023.res" id="24_185yb"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_024.res" id="25_egyom"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_025.res" id="26_hx1vh"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_026.res" id="27_cjw3w"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_027.res" id="28_nbam7"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_028.res" id="29_sos4d"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_029.res" id="30_8o3i8"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_030.res" id="31_5mfh6"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_031.res" id="32_cjq42"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_032.res" id="33_be4qs"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_033.res" id="34_v3kju"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_034.res" id="35_jcmg0"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_035.res" id="36_77w5e"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_036.res" id="37_5c1n8"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_037.res" id="38_x1fv4"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_038.res" id="39_n0pi2"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_039.res" id="40_qq4gg"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_040.res" id="41_24eng"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_041.res" id="42_q0mw0"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_042.res" id="43_ip5xk"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_043.res" id="44_mypqc"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_044.res" id="45_eqlt8"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_045.res" id="46_sv12g"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_046.res" id="47_x7w4k"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_047.res" id="48_b7h6e"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_048.res" id="49_6ltu6"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_049.res" id="50_vc2a3"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_050.res" id="51_52wkm"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_051.res" id="52_1wsus"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_052.res" id="53_nk8y8"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_053.res" id="54_p77u3"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_054.res" id="55_dgdnc"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_055.res" id="56_rn58r"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_056.res" id="57_alpc8"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_057.res" id="58_d1538"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_058.res" id="59_d15m7"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_059.res" id="60_ugjht"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_060.res" id="61_y5d5y"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_061.res" id="62_bi73r"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_062.res" id="63_g58uo"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_063.res" id="64_6bpvn"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_064.res" id="65_32jsq"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_065.res" id="66_nasp8"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_066.res" id="67_r04oa"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_067.res" id="68_2ojdf"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_068.res" id="69_wygmi"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_069.res" id="70_yrbln"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_070.res" id="71_mqj2d"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_071.res" id="72_j8513"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_072.res" id="73_mma0q"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_073.res" id="74_17yx4"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_074.res" id="75_a6cs2"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_075.res" id="76_6o4qv"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_076.res" id="77_fahq8"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_077.res" id="78_wpy84"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_078.res" id="79_8feel"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_079.res" id="80_a6nt4"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_080.res" id="81_c5x6y"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_081.res" id="82_or8oi"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_082.res" id="83_5hcx4"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_083.res" id="84_bg3cm"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_084.res" id="85_mnrg2"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_085.res" id="86_1db86"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_086.res" id="87_cjje4"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_087.res" id="88_w1kq1"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_088.res" id="89_w7gcv"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_089.res" id="90_n17xc"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_090.res" id="91_30klu"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_091.res" id="92_i3qup"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_092.res" id="93_f83ww"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_093.res" id="94_j0cbm"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_094.res" id="95_unkxs"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_095.res" id="96_xivc5"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_096.res" id="97_gpqrh"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_097.res" id="98_0geon"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_098.res" id="99_fa84o"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_099.res" id="100_6oy68"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_100.res" id="101_fb6l4"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_101.res" id="102_6fjhv"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_102.res" id="103_2qkv2"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_103.res" id="104_1apvy"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_104.res" id="105_3f2u2"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_105.res" id="106_vypgr"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_106.res" id="107_8vyve"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_107.res" id="108_17p7a"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_108.res" id="109_gjvw6"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_rusted_crane.gdshader" id="110_hlwgq"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/coast_crane/mast.res" id="111_tdcmp"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/coast_crane/long_jib.res" id="112_i5ech"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/coast_crane/cables.res" id="113_dtdfe"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/coast_crane/hook.res" id="114_1m64x"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_109.res" id="115_swc13"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_111.res" id="116_fuy8d"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_112.res" id="117_7vt8x"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_113.res" id="118_c1tcl"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_114.res" id="119_2sdhl"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_115.res" id="120_1gcuc"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_116.res" id="121_2ypcd"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_117.res" id="122_43c2a"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_118.res" id="123_1je1m"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_119.res" id="124_20xqu"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_120.res" id="125_p01ib"]
+[ext_resource type="SphereMesh" path="res://resources/preview/night_coast/mesh_121.res" id="126_ir1ac"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_122.res" id="127_10mgn"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_124.res" id="128_mu7jg"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_125.res" id="129_rkis2"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_126.res" id="130_np5cg"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_turbine.gdshader" id="131_xircv"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_127.res" id="132_n6t5d"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_turbine_outline.gdshader" id="133_shaq4"]
+[ext_resource type="BoxMesh" path="res://resources/preview/night_coast/mesh_130.res" id="134_t0rpw"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_131.res" id="135_m0gbk"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_132.res" id="136_xy6o6"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_133.res" id="137_y7pm5"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_134.res" id="138_x4mqy"]
+[ext_resource type="BoxMesh" path="res://resources/preview/night_coast/mesh_135.res" id="139_owgpt"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_136.res" id="140_4q1fs"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_137.res" id="141_ibeuy"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_138.res" id="142_1sjo8"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_139.res" id="143_gg2h1"]
+[ext_resource type="BoxMesh" path="res://resources/preview/night_coast/mesh_140.res" id="144_jlydx"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_141.res" id="145_027v4"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_142.res" id="146_03hxy"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_143.res" id="147_dsquf"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_144.res" id="148_81p00"]
+[ext_resource type="BoxMesh" path="res://resources/preview/night_coast/mesh_145.res" id="149_dmr6l"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_146.res" id="150_dnx5h"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_147.res" id="151_rn831"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_148.res" id="152_6nslj"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_149.res" id="153_o5fse"]
+[ext_resource type="BoxMesh" path="res://resources/preview/night_coast/mesh_150.res" id="154_l8bnl"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_151.res" id="155_xj8d4"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_152.res" id="156_gallk"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_153.res" id="157_32lt0"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_154.res" id="158_cafgf"]
+[ext_resource type="BoxMesh" path="res://resources/preview/night_coast/mesh_155.res" id="159_4hf7v"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_156.res" id="160_oc5dp"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_157.res" id="161_oiweu"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_158.res" id="162_k7oru"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_159.res" id="163_8nqvg"]
+[ext_resource type="BoxMesh" path="res://resources/preview/night_coast/mesh_160.res" id="164_0hwq7"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_161.res" id="165_b7g0p"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_162.res" id="166_5d08d"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_163.res" id="167_id8bn"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_164.res" id="168_fhui4"]
+[ext_resource type="BoxMesh" path="res://resources/preview/night_coast/mesh_165.res" id="169_v30c6"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_166.res" id="170_k1uoh"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_167.res" id="171_s41ai"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_168.res" id="172_xakx2"]
+[ext_resource type="CylinderMesh" path="res://resources/preview/night_coast/mesh_169.res" id="173_msg5a"]
+[ext_resource type="BoxMesh" path="res://resources/preview/night_coast/mesh_170.res" id="174_3d3ic"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_171.res" id="175_sc6fx"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_172.res" id="176_2bre2"]
+[ext_resource type="ArrayMesh" path="res://resources/preview/night_coast/mesh_173.res" id="177_s6b2i"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_fog_ribbon.gdshader" id="178_bd04l"]
+[ext_resource type="QuadMesh" path="res://resources/preview/night_coast/mesh_174.res" id="179_vhvbg"]
+[ext_resource type="QuadMesh" path="res://resources/preview/night_coast/mesh_176.res" id="180_w1qmj"]
+[ext_resource type="QuadMesh" path="res://resources/preview/night_coast/mesh_177.res" id="181_m54pg"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_city_silhouette.gdshader" id="182_58qnx"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_aviation_beacon.gdshader" id="183_xj62e"]
+[ext_resource type="Texture2D" path="res://art/Dream/dream_chr_32x32.png" id="184_jx54v"]
+[ext_resource type="Script" path="res://scripts/preview/coast_walker.gd" id="185_08yop"]
+[ext_resource type="Script" path="res://scripts/preview/coast_spatial_lighting.gd" id="186_wp0dq"]
+[ext_resource type="Shader" path="res://shaders/preview/coast_local_light_volume.gdshader" id="187_7nko2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_648ps"]
+resource_local_to_scene = true
+shader = ExtResource("2_utn1j")
+shader_parameter/scene_time = 9.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/reveal = 1.0
+shader_parameter/horizon_y = 0.0
+shader_parameter/sky_inverse_projection = Projection(0.9452613, 0, 0, 0, 0, 0.5317095, 0, 0, 0, 0, -5.9598683e-08, -9.999499, 0, 0, -1, 10.0005)
+shader_parameter/sky_camera_to_world = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+shader_parameter/moon_direction = Vector3(0.35693917, 0.15101647, -0.92183965)
+shader_parameter/zenith_tint = Color(0.075, 0.078, 0.18, 1)
+shader_parameter/middle_sky_tint = Color(0.13, 0.075, 0.22, 1)
+shader_parameter/horizon_tint = Color(0.3, 0.1, 0.325, 1)
+
+[sub_resource type="Environment" id="Environment_dmm1o"]
+background_mode = 3
+background_canvas_max_layer = -1
+ambient_light_source = 2
+ambient_light_color = Color(0.18, 0.24, 0.4, 1)
+ambient_light_energy = 0.24
+glow_enabled = true
+glow_intensity = 0.08
+glow_hdr_threshold = 0.98
+glow_hdr_scale = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4wa5l"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("3_3tp60")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/office_tonal_sample = true
+shader_parameter/scene_time = 9.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/sand_lit_tint = Color(0.72, 0.57, 0.42, 1)
+shader_parameter/sand_cool_tint = Color(0.46, 0.35, 0.29, 1)
+shader_parameter/coast_shape = ExtResource("4_5vlfq")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ets6t"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("6_05sb1")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/office_tonal_sample = true
+shader_parameter/flow_state = ExtResource("7_j7s88")
+shader_parameter/near_origin = Vector2(-120, -112)
+shader_parameter/near_size = Vector2(240, 210)
+shader_parameter/near_grid = Vector2(64, 56)
+shader_parameter/scene_time = 9.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/ripples_enabled = true
+shader_parameter/whitecap_strength = 0.9
+shader_parameter/coast_shape = ExtResource("4_5vlfq")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3p6xp"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("10_x652p")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/office_tonal_sample = true
+shader_parameter/base_color = Color(0.16, 0.2, 0.23, 1)
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3x5oi"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("12_j0oe4")
+shader_parameter/outline_color = Color(0.36, 0.37, 0.38, 1)
+shader_parameter/outline_pixels = 1.1
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jamcw"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("10_x652p")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/office_tonal_sample = true
+shader_parameter/base_color = Color(0.33, 0.36, 0.38, 1)
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6sub3"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("110_hlwgq")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/office_tonal_sample = true
+shader_parameter/moon_visibility = 1.0
+shader_parameter/painted_steel = Color(0.46, 0.3, 0.15, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rt5mu"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("12_j0oe4")
+shader_parameter/outline_color = Color(0.32, 0.33, 0.34, 1)
+shader_parameter/outline_pixels = 0.42
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xvwwg"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("10_x652p")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/office_tonal_sample = true
+shader_parameter/base_color = Color(0.055, 0.075, 0.09, 1)
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_uqd8k"]
+size = Vector3(1.8, 1.5, 1.7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_nifvi"]
+size = Vector3(1.4, 1.4, 1.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rykin"]
+size = Vector3(1.43, 0.73, 1.63)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bj4pe"]
+size = Vector3(0.9, 0.35, 1.2)
+
+[sub_resource type="StandardMaterial3D" id="SpatialWarmEmitter"]
+shading_mode = 0
+albedo_color = Color(1, 0.7, 0.35, 1)
+
+[sub_resource type="BoxMesh" id="SpatialLampCoreMesh"]
+size = Vector3(0.25, 0.045, 0.16)
+
+[sub_resource type="StandardMaterial3D" id="SpatialWarningEmitter"]
+shading_mode = 0
+albedo_color = Color(1, 0.24, 0.09, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_feke6"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("10_x652p")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/office_tonal_sample = true
+shader_parameter/base_color = Color(0.2, 0.23, 0.25, 1)
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_00011"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("10_x652p")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/office_tonal_sample = true
+shader_parameter/base_color = Color(0.3, 0.33, 0.35, 1)
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qer20"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("131_xircv")
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cypdh"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("133_shaq4")
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_clsjv"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("178_bd04l")
+shader_parameter/scene_time = 9.0
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sb1c5"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("182_58qnx")
+shader_parameter/moon_visibility = 1.0
+shader_parameter/city_tint = Color(0.04, 0.055, 0.09, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xvdvu"]
+size = Vector3(22, 34, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_khaqg"]
+size = Vector3(29, 51, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rlj8s"]
+size = Vector3(36, 49, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dcenn"]
+size = Vector3(43, 81, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_icvqe"]
+size = Vector3(22, 41, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_86h8v"]
+size = Vector3(29, 35, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kln8f"]
+size = Vector3(36, 63, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vmaje"]
+size = Vector3(43, 72, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fguvj"]
+size = Vector3(22, 62, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_uww5r"]
+size = Vector3(29, 86, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2ourk"]
+size = Vector3(36, 38, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cpdue"]
+size = Vector3(43, 77, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_g4s42"]
+size = Vector3(22, 44, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_uhck7"]
+size = Vector3(29, 45, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ekbwi"]
+size = Vector3(36, 80, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sajrb"]
+size = Vector3(43, 43, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4db75"]
+size = Vector3(22, 40, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_k53od"]
+size = Vector3(29, 71, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qh8oo"]
+size = Vector3(36, 83, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_haglf"]
+size = Vector3(43, 76, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5lbf4"]
+size = Vector3(22, 50, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dgikg"]
+size = Vector3(29, 58, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_g64vk"]
+size = Vector3(36, 47, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_40rxv"]
+size = Vector3(43, 70, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7037k"]
+size = Vector3(22, 74, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ldl81"]
+size = Vector3(29, 59, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_q74jd"]
+size = Vector3(36, 78, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_p5xbv"]
+size = Vector3(43, 78, 22)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ca6ff"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("182_58qnx")
+shader_parameter/moon_visibility = 1.0
+shader_parameter/city_tint = Color(0.04, 0.055, 0.09, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sn3me"]
+size = Vector3(55.2, 18, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bor0k"]
+size = Vector3(48, 42, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_smwk1"]
+size = Vector3(32.64, 15, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_l7sb7"]
+size = Vector3(14.4, 3, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_s4ewm"]
+size = Vector3(73.6, 21.12, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_r4713"]
+size = Vector3(64, 49.28, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fab7y"]
+size = Vector3(43.52, 17.6, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_e1usd"]
+size = Vector3(19.2, 3, 18)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t7iip"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("183_xj62e")
+shader_parameter/signal_color = Color(1, 0.15, 0.065, 1)
+shader_parameter/power = 0.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/story_signal = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_0c6di"]
+size = Vector2(14, 14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_j1gbj"]
+size = Vector3(0.9, 3, 0.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ebbfh"]
+size = Vector3(92, 30, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_iueo6"]
+size = Vector3(80, 70, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bsca4"]
+size = Vector3(54.4, 25, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8uu5x"]
+size = Vector3(24, 3, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2qsxy"]
+size = Vector3(55.2, 37.44, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7ut1f"]
+size = Vector3(48, 87.36, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d5e8j"]
+size = Vector3(32.64, 31.2, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_33nwr"]
+size = Vector3(14.4, 3, 18)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_02n52"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("183_xj62e")
+shader_parameter/signal_color = Color(1, 0.15, 0.065, 1)
+shader_parameter/power = 0.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/story_signal = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_v132d"]
+size = Vector2(14, 14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v55ye"]
+size = Vector3(0.9, 3, 0.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_u86be"]
+size = Vector3(73.6, 25.2, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rmt8n"]
+size = Vector3(64, 58.8, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2hbx0"]
+size = Vector3(43.52, 21, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3sabq"]
+size = Vector3(19.2, 3, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_c14p8"]
+size = Vector3(92, 23.52, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_re4bx"]
+size = Vector3(80, 54.88, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6bb5b"]
+size = Vector3(54.4, 19.6, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7t4os"]
+size = Vector3(24, 3, 18)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c5111"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("183_xj62e")
+shader_parameter/signal_color = Color(1, 0.15, 0.065, 1)
+shader_parameter/power = 0.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/story_signal = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_4cpd5"]
+size = Vector2(14, 14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0eypj"]
+size = Vector3(0.9, 3, 0.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yhncy"]
+size = Vector3(55.2, 45.6, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_81pei"]
+size = Vector3(48, 106.4, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xxmnx"]
+size = Vector3(32.64, 38, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_i5slo"]
+size = Vector3(14.4, 3, 18)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ia8ck"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("183_xj62e")
+shader_parameter/signal_color = Color(1, 0.15, 0.065, 1)
+shader_parameter/power = 0.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/story_signal = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_84i3s"]
+size = Vector2(14, 14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_e53vi"]
+size = Vector3(0.9, 3, 0.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tsg2t"]
+size = Vector3(73.6, 22.56, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_uajbk"]
+size = Vector3(64, 52.64, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dsecg"]
+size = Vector3(43.52, 18.8, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cs3jw"]
+size = Vector3(19.2, 3, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_p7k7k"]
+size = Vector3(92, 27.6, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3vs6j"]
+size = Vector3(80, 64.4, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ejuy8"]
+size = Vector3(54.4, 23, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mv44x"]
+size = Vector3(24, 3, 18)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ulqvd"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("183_xj62e")
+shader_parameter/signal_color = Color(1, 0.15, 0.065, 1)
+shader_parameter/power = 0.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/story_signal = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_dmp7s"]
+size = Vector2(14, 14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mpb8g"]
+size = Vector3(0.9, 3, 0.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jdsv6"]
+size = Vector3(55.2, 32.4, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6c4wh"]
+size = Vector3(48, 75.6, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8uhau"]
+size = Vector3(32.64, 27, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pkdjt"]
+size = Vector3(14.4, 3, 18)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gki3s"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("183_xj62e")
+shader_parameter/signal_color = Color(1, 0.15, 0.065, 1)
+shader_parameter/power = 0.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/story_signal = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_0s0hv"]
+size = Vector2(14, 14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6sudg"]
+size = Vector3(0.9, 3, 0.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jxslk"]
+size = Vector3(73.6, 18, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5kicw"]
+size = Vector3(64, 42, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_aqs3m"]
+size = Vector3(43.52, 15, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sk2ko"]
+size = Vector3(19.2, 3, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bwchf"]
+size = Vector3(92, 25.2, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0ngks"]
+size = Vector3(80, 58.8, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kbvj2"]
+size = Vector3(54.4, 21, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ebmk7"]
+size = Vector3(24, 3, 18)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ha0x1"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("183_xj62e")
+shader_parameter/signal_color = Color(1, 0.15, 0.065, 1)
+shader_parameter/power = 0.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/story_signal = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_imjjy"]
+size = Vector2(14, 14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_irisj"]
+size = Vector3(0.9, 3, 0.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_abpwl"]
+size = Vector3(55.2, 15.6, 46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7km2c"]
+size = Vector3(48, 36.4, 39)
+
+[sub_resource type="BoxMesh" id="BoxMesh_nkjww"]
+size = Vector3(32.64, 13, 31)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5xgaq"]
+size = Vector3(14.4, 3, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_paqp8"]
+size = Vector3(70, 4.5, 8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8h8iq"]
+size = Vector3(90, 4.5, 8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gaicl"]
+size = Vector3(90, 4.5, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_niq6k"]
+resource_local_to_scene = true
+atlas = ExtResource("184_jx54v")
+region = Rect2(0, 128, 32, 32)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qh8xp"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("10_x652p")
+shader_parameter/office_dither_enabled = true
+shader_parameter/office_dither_step = 0.03125
+shader_parameter/office_tonal_sample = true
+shader_parameter/base_color = Color(0.14, 0.17, 0.23, 1)
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="BoxMesh" id="SpatialLampPostMesh"]
+size = Vector3(0.08, 1.6, 0.08)
+
+[sub_resource type="BoxMesh" id="SpatialLampHousingMesh"]
+size = Vector3(0.36, 0.19, 0.27)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1frvi"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("187_7nko2")
+shader_parameter/light_tint = Color(0.95, 0.65, 0.32, 1)
+shader_parameter/beam_height = 1.8
+shader_parameter/beam_radius = 1.8
+shader_parameter/density = 0.055
+shader_parameter/scene_time = 0.0
+shader_parameter/moon_visibility = 1.0
+
+[sub_resource type="BoxMesh" id="SpatialVolumeBox"]
+size = Vector3(3.6, 1.8, 3.6)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_oiv2a"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("187_7nko2")
+shader_parameter/light_tint = Color(0.95, 0.65, 0.32, 1)
+shader_parameter/beam_height = 1.8
+shader_parameter/beam_radius = 1.8
+shader_parameter/density = 0.055
+shader_parameter/scene_time = 0.0
+shader_parameter/moon_visibility = 1.0
+
+[node name="NightCoast" type="Node3D" unique_id=1818072552]
+editor_description = "海崖平台＋低处沙滩＋远处城市航空灯摩斯码，独立待验收小样。"
+script = ExtResource("1_ekl5d")
+metadata/surf_crane_walk_revision = 1
+metadata/cliff_platform_sample = true
+
+[node name="SkyBackdrop" type="CanvasLayer" parent="." unique_id=1908138883]
+layer = -10
+
+[node name="Sky" type="ColorRect" parent="SkyBackdrop" unique_id=1588131694]
+material = SubResource("ShaderMaterial_648ps")
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+
+[node name="CoastEnvironment" type="WorldEnvironment" parent="." unique_id=374017267]
+environment = SubResource("Environment_dmm1o")
+
+[node name="MoonLight" type="DirectionalLight3D" parent="." unique_id=792715988]
+transform = Transform3D(-0.9284767, -0.061219897, 0.36631024, 0, 0.9863204, 0.1648396, -0.37139073, 0.15304972, -0.9157755, 0, 0, 0)
+light_color = Color(0.58, 0.72, 0.9, 1)
+light_energy = 1.9
+light_angular_distance = 0.35
+shadow_enabled = true
+shadow_bias = 0.035
+shadow_normal_bias = 0.35
+
+[node name="WorldMoon" type="Marker3D" parent="." unique_id=46031489]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 400, 180, -1000)
+
+[node name="CoastCamera" type="Camera3D" parent="." unique_id=219656497]
+transform = Transform3D(0.9325681, -0.25302532, 0.25747806, 0, 0.71324724, 0.70091254, -0.36099413, -0.6536487, 0.6651516, 0.5999999, 11.018884, 31.5)
+current = true
+fov = 56.0
+far = 1000.0
+metadata/reference_transform = Transform3D(0.9325681, -0.25302532, 0.25747806, 0, 0.71324724, 0.70091254, -0.36099413, -0.6536487, 0.6651516, 0.5999999, 11.018884, 31.5)
+
+[node name="SandRidge" type="MeshInstance3D" parent="." unique_id=1710501762]
+material_override = SubResource("ShaderMaterial_4wa5l")
+mesh = ExtResource("5_mues5")
+
+[node name="Water" type="MeshInstance3D" parent="." unique_id=1518256025]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -36)
+material_override = SubResource("ShaderMaterial_ets6t")
+cast_shadow = 0
+mesh = ExtResource("8_pswg4")
+
+[node name="FarWater" type="MeshInstance3D" parent="." unique_id=815648583]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -536)
+material_override = SubResource("ShaderMaterial_ets6t")
+cast_shadow = 0
+mesh = ExtResource("9_es7qy")
+
+[node name="WaveBreakers" type="Node3D" parent="." unique_id=382294461]
+
+[node name="CoastalRock" type="MeshInstance3D" parent="WaveBreakers" unique_id=467324141]
+transform = Transform3D(1.1, 0, 0, 0, 0.6, 0, 0, 0, 0.85, -5, 0, -1)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("11_xqt26")
+metadata/flow_obstacle_radius = 0.58
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock" unique_id=346224257]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("11_xqt26")
+
+[node name="CoastalRock_01" type="MeshInstance3D" parent="WaveBreakers" unique_id=223066168]
+transform = Transform3D(0.2836351, 0, 0.8212572, 0, 0.81, 0, -1.0628034, 0, 0.21917258, 6, 0, 0.5)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("13_mkuvu")
+metadata/flow_obstacle_radius = 0.95
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_01" unique_id=380535155]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("13_mkuvu")
+
+[node name="CoastalRock_02" type="MeshInstance3D" parent="WaveBreakers" unique_id=969743373]
+transform = Transform3D(-0.9537294, 0, 0.4235225, 0, 0.62, 0, -0.54808795, 0, -0.7369727, -7.3, 0, -0.5)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("14_yxpka")
+metadata/flow_obstacle_radius = 0.84
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_02" unique_id=1339252391]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("14_yxpka")
+
+[node name="CoastalRock_03" type="MeshInstance3D" parent="WaveBreakers" unique_id=170620067]
+transform = Transform3D(-0.7754733, 0, -0.60284674, 0, 0.83, 0, 0.7801546, 0, -0.5992294, -8.8, 0, 0.6)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("15_1sbjg")
+metadata/flow_obstacle_radius = 0.7299999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_03" unique_id=343224441]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("15_1sbjg")
+
+[node name="CoastalRock_04" type="MeshInstance3D" parent="WaveBreakers" unique_id=840417693]
+transform = Transform3D(0.5538176, 0, -0.7344106, 0, 0.64, 0, 0.9504137, 0, 0.42794994, -10.3, 0, 1.5)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("16_b0eyo")
+metadata/flow_obstacle_radius = 0.62
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_04" unique_id=382073549]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("16_b0eyo")
+
+[node name="CoastalRock_05" type="MeshInstance3D" parent="WaveBreakers" unique_id=1445735855]
+transform = Transform3D(1.0610771, 0, 0.22411132, 0, 0.85, 0, -0.29002643, 0, 0.8199233, -11, 0, 3.2)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("17_6o8r5")
+metadata/flow_obstacle_radius = 0.99
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_05" unique_id=53453334]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("17_6o8r5")
+
+[node name="CoastalRock_06" type="MeshInstance3D" parent="WaveBreakers" unique_id=1341201648]
+transform = Transform3D(-0.0066203093, 0, 0.84998465, 0, 0.66, 0, -1.0999801, 0, -0.005115694, 4.7, 0, -1.6)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("18_eg7wv")
+metadata/flow_obstacle_radius = 0.8799999999999998
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_06" unique_id=1626945598]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("18_eg7wv")
+
+[node name="CoastalRock_07" type="MeshInstance3D" parent="WaveBreakers" unique_id=969492288]
+transform = Transform3D(-1.0644913, 0, 0.2142259, 0, 0.87, 0, -0.2772335, 0, -0.82256144, 7.7, 0, 1.9)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("19_7o8nq")
+metadata/flow_obstacle_radius = 0.7699999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_07" unique_id=164801175]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("19_7o8nq")
+
+[node name="CoastalRock_08" type="MeshInstance3D" parent="WaveBreakers" unique_id=2029988287]
+transform = Transform3D(-0.5423385, 0, -0.7395081, 0, 0.68, 0, 0.95701045, 0, -0.41907972, 9.4, 0, 2.4)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("20_2i0hw")
+metadata/flow_obstacle_radius = 0.66
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_08" unique_id=358305999]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("20_2i0hw")
+
+[node name="CoastalRock_09" type="MeshInstance3D" parent="WaveBreakers" unique_id=614169306]
+transform = Transform3D(0.78480744, 0, -0.5955905, 0, 0.89, 0, 0.7707641, 0, 0.6064421, 10.8, 0, 3.4)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("21_fo0it")
+metadata/flow_obstacle_radius = 1.0300000000000002
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_09" unique_id=1934600174]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("21_fo0it")
+
+[node name="ConcreteCrossBlock_10" type="Node3D" parent="WaveBreakers" unique_id=676556608]
+transform = Transform3D(0.81027967, -0.16635269, 0.56193745, 0.13463816, 0.9860599, 0.097767375, -0.5703679, -0.0035606846, 0.8213817, -7, 0, 2.2)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_10" unique_id=1716655724]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("22_dxt1i")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_10/Arm_00" unique_id=758173658]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("22_dxt1i")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_10" unique_id=937703348]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("23_biqt0")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_10/Arm_01" unique_id=1252064395]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("23_biqt0")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_10" unique_id=453526395]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("24_185yb")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_10/Arm_02" unique_id=955134831]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("24_185yb")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_10" unique_id=566682868]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("25_egyom")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_10/Arm_03" unique_id=729795925]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("25_egyom")
+
+[node name="ConcreteCrossBlock_11" type="Node3D" parent="WaveBreakers" unique_id=106160624]
+transform = Transform3D(-0.74045086, -0.10052577, 0.66455036, 0.02715782, 0.98346907, 0.17902784, -0.67156166, 0.15060906, -0.72548044, 6.2, 0, 3)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_11" unique_id=2025625809]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("26_hx1vh")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_11/Arm_00" unique_id=1824940471]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("26_hx1vh")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_11" unique_id=703319642]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("27_cjw3w")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_11/Arm_01" unique_id=596739727]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("27_cjw3w")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_11" unique_id=1634223098]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("28_nbam7")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_11/Arm_02" unique_id=1856669151]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("28_nbam7")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_11" unique_id=1051689443]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("29_sos4d")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_11/Arm_03" unique_id=1416021522]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("29_sos4d")
+
+[node name="CoastalRock_12" type="MeshInstance3D" parent="WaveBreakers" unique_id=1745991593]
+transform = Transform3D(1.1, 0, 0, 0, 0.72, 0, 0, 0, 0.85, -11.73115, 0, 5.375)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("30_8o3i8")
+metadata/flow_obstacle_radius = 0.48
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_12" unique_id=1718725658]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("30_8o3i8")
+
+[node name="CoastalRock_13" type="MeshInstance3D" parent="WaveBreakers" unique_id=1838074874]
+transform = Transform3D(0.43927354, 0, 0.7792827, 0, 0.93, 0, -1.0084834, 0, 0.33943865, -11.176706, 0, 7.125)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("31_5mfh6")
+metadata/flow_obstacle_radius = 0.77
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_13" unique_id=1777188371]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("31_5mfh6")
+
+[node name="ConcreteCrossBlock_14" type="Node3D" parent="WaveBreakers" unique_id=331291350]
+transform = Transform3D(0.47359905, -0.08024606, -0.8770773, -0.16405196, 0.97037536, -0.17736596, 0.86532706, 0.22788659, 0.4464043, -11.353609, 0, 7.3)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_14" unique_id=1050415451]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("32_cjq42")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_14/Arm_00" unique_id=52161591]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("32_cjq42")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_14" unique_id=949898614]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("33_be4qs")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_14/Arm_01" unique_id=1069522992]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("33_be4qs")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_14" unique_id=280596134]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("34_v3kju")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_14/Arm_02" unique_id=1728768620]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("34_v3kju")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_14" unique_id=877771468]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("35_jcmg0")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_14/Arm_03" unique_id=1228643548]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("35_jcmg0")
+
+[node name="CoastalRock_15" type="MeshInstance3D" parent="WaveBreakers" unique_id=1234504538]
+transform = Transform3D(0.43927354, 0, 0.7792827, 0, 0.95, 0, -1.0084834, 0, 0.33943865, -7.5978494, 0, 9.375)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("36_77w5e")
+metadata/flow_obstacle_radius = 0.69
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_15" unique_id=1516977572]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("36_77w5e")
+
+[node name="CoastalRock_16" type="MeshInstance3D" parent="WaveBreakers" unique_id=1759555095]
+transform = Transform3D(-0.7491614, 0, 0.62239677, 0, 0.76, 0, -0.8054547, 0, -0.5788975, -7.630226, 0, 11.125)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("37_5c1n8")
+metadata/flow_obstacle_radius = 0.6099999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_16" unique_id=896377647]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("37_5c1n8")
+
+[node name="ConcreteCrossBlock_17" type="Node3D" parent="WaveBreakers" unique_id=1478284366]
+transform = Transform3D(0.9900066, -0.141021, 0, 0.13891469, 0.9752198, 0.17218912, -0.02428228, -0.17046836, 0.9850639, -8.032725, 0, 11.3)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_17" unique_id=1187975490]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("38_x1fv4")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_17/Arm_00" unique_id=1901954897]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("38_x1fv4")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_17" unique_id=323386040]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("39_n0pi2")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_17/Arm_01" unique_id=1204340417]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("39_n0pi2")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_17" unique_id=1881189280]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("40_qq4gg")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_17/Arm_02" unique_id=822037774]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("40_qq4gg")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_17" unique_id=171468208]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("41_24eng")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_17/Arm_03" unique_id=359543962]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("41_24eng")
+
+[node name="CoastalRock_18" type="MeshInstance3D" parent="WaveBreakers" unique_id=1153538037]
+transform = Transform3D(-0.7491614, 0, 0.62239677, 0, 0.78, 0, -0.8054547, 0, -0.5788975, -8.56633, 0, 13.875)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("42_q0mw0")
+metadata/flow_obstacle_radius = 0.5299999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_18" unique_id=783356303]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("42_q0mw0")
+
+[node name="CoastalRock_19" type="MeshInstance3D" parent="WaveBreakers" unique_id=824668697]
+transform = Transform3D(-1.037613, 0, -0.28218743, 0, 0.99, 0, 0.36518374, 0, -0.8017919, -12.302887, 0, 15.625)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("43_ip5xk")
+metadata/flow_obstacle_radius = 0.82
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_19" unique_id=1860953201]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("43_ip5xk")
+
+[node name="ConcreteCrossBlock_20" type="Node3D" parent="WaveBreakers" unique_id=523529528]
+transform = Transform3D(0.45704675, 0.13458674, 0.8792012, 0.024278669, 0.98622936, -0.16359153, -0.88911134, 0.096114814, 0.4474853, -12.819695, 0, 15.8)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_20" unique_id=836654585]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("44_mypqc")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_20/Arm_00" unique_id=141960530]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("44_mypqc")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_20" unique_id=1213088357]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("45_eqlt8")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_20/Arm_01" unique_id=4112366]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("45_eqlt8")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_20" unique_id=1253490768]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("46_sv12g")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_20/Arm_02" unique_id=303101600]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("46_sv12g")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_20" unique_id=2082857769]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("47_x7w4k")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_20/Arm_03" unique_id=1210703074]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("47_x7w4k")
+
+[node name="CoastalRock_21" type="MeshInstance3D" parent="WaveBreakers" unique_id=1220761625]
+transform = Transform3D(-1.037613, 0, -0.28218743, 0, 0.61, 0, 0.36518374, 0, -0.8017919, -11.892931, 0, 18.375)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("48_b7h6e")
+metadata/flow_obstacle_radius = 0.7399999999999998
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_21" unique_id=1844766768]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("48_b7h6e")
+
+[node name="CoastalRock_22" type="MeshInstance3D" parent="WaveBreakers" unique_id=187233464]
+transform = Transform3D(-0.0795585, 0, -0.8477739, 0, 0.82, 0, 1.0971192, 0, -0.061477024, -12.001322, 0, 20.125)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("49_6ltu6")
+metadata/flow_obstacle_radius = 0.6599999999999998
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_22" unique_id=2123769878]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("49_6ltu6")
+
+[node name="ConcreteCrossBlock_23" type="Node3D" parent="WaveBreakers" unique_id=597329574]
+transform = Transform3D(-0.56006575, -0.2184237, 0.79913545, -0.16366073, 0.9747783, 0.15173136, -0.81212157, -0.04580754, -0.5816874, -12.418545, 0, 20.3)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_23" unique_id=488347315]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("50_vc2a3")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_23/Arm_00" unique_id=2016922030]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("50_vc2a3")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_23" unique_id=1306704472]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("51_52wkm")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_23/Arm_01" unique_id=645406187]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("51_52wkm")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_23" unique_id=519071081]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("52_1wsus")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_23/Arm_02" unique_id=1372494143]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("52_1wsus")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_23" unique_id=903047735]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("53_nk8y8")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_23/Arm_03" unique_id=1213329207]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("53_nk8y8")
+
+[node name="CoastalRock_24" type="MeshInstance3D" parent="WaveBreakers" unique_id=2011474964]
+transform = Transform3D(-0.0795585, 0, -0.8477739, 0, 0.84, 0, 1.0971192, 0, -0.061477024, -10.642165, 0, 23.375)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("54_p77u3")
+metadata/flow_obstacle_radius = 0.5799999999999998
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_24" unique_id=120583878]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("54_p77u3")
+
+[node name="CoastalRock_25" type="MeshInstance3D" parent="WaveBreakers" unique_id=669268882]
+transform = Transform3D(0.9740716, 0, -0.39491174, 0, 0.65, 0, 0.51106226, 0, 0.7526917, -10.942165, 0, 25.125)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("55_dgdnc")
+metadata/flow_obstacle_radius = 0.4999999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_25" unique_id=1119067941]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("55_dgdnc")
+
+[node name="ConcreteCrossBlock_26" type="Node3D" parent="WaveBreakers" unique_id=1275981598]
+transform = Transform3D(-0.9804355, 0.11970157, -0.15626198, 0.14150947, 0.9804349, -0.13682993, 0.13682593, -0.15626545, -0.97819215, -11.472905, 0, 25.3)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_26" unique_id=813037053]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("56_rn58r")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_26/Arm_00" unique_id=1017765414]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("56_rn58r")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_26" unique_id=1621216296]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("57_alpc8")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_26/Arm_01" unique_id=585321287]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("57_alpc8")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_26" unique_id=1348835831]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("58_d1538")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_26/Arm_02" unique_id=1694088034]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("58_d1538")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_26" unique_id=2133273682]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("59_d15m7")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_26/Arm_03" unique_id=1052398813]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("59_d15m7")
+
+[node name="CoastalRock_27" type="MeshInstance3D" parent="WaveBreakers" unique_id=1240516437]
+transform = Transform3D(0.9740716, 0, -0.39491174, 0, 0.67, 0, 0.51106226, 0, 0.7526917, -12.401211, 0, 27.875)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("60_ugjht")
+metadata/flow_obstacle_radius = 0.7899999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_27" unique_id=402779266]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("60_ugjht")
+
+[node name="CoastalRock_28" type="MeshInstance3D" parent="WaveBreakers" unique_id=933977666]
+transform = Transform3D(0.85752887, 0, 0.5323661, 0, 0.88, 0, -0.68894434, 0, 0.6626359, -13.048312, 0, 29.625)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("61_y5d5y")
+metadata/flow_obstacle_radius = 0.71
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_28" unique_id=439627884]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("61_y5d5y")
+
+[node name="ConcreteCrossBlock_29" type="Node3D" parent="WaveBreakers" unique_id=831040616]
+transform = Transform3D(-0.30481046, 0.12001745, -0.9448208, 0.02145547, 0.992642, 0.11917022, 0.9521713, 0.016052753, -0.30514267, -13.487363, 0, 29.8)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_29" unique_id=668784732]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("62_bi73r")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_29/Arm_00" unique_id=1057273354]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("62_bi73r")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_29" unique_id=473370308]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("63_g58uo")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_29/Arm_01" unique_id=966054186]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("63_g58uo")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_29" unique_id=111506000]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("64_6bpvn")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_29/Arm_02" unique_id=1241765409]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("64_6bpvn")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_29" unique_id=1148814589]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("65_32jsq")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_29/Arm_03" unique_id=1019378634]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("65_32jsq")
+
+[node name="CoastalRock_30" type="MeshInstance3D" parent="WaveBreakers" unique_id=1755290858]
+transform = Transform3D(1.1, 0, 0, 0, 0.9, 0, 0, 0, 0.85, 5.1986394, 0, 5.875)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("66_nasp8")
+metadata/flow_obstacle_radius = 0.48
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_30" unique_id=408957885]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("66_nasp8")
+
+[node name="CoastalRock_31" type="MeshInstance3D" parent="WaveBreakers" unique_id=1273314641]
+transform = Transform3D(0.43927354, 0, 0.7792827, 0, 0.71, 0, -1.0084834, 0, 0.33943865, 3.292155, 0, 7.625)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("67_r04oa")
+metadata/flow_obstacle_radius = 0.77
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_31" unique_id=1624376335]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("67_r04oa")
+
+[node name="ConcreteCrossBlock_32" type="Node3D" parent="WaveBreakers" unique_id=561160049]
+transform = Transform3D(0.43290335, 0.16168901, 0.886821, -0.16360492, 0.9815365, -0.09909391, -0.88646954, -0.10219019, 0.45136353, 3.8463907, 0, 7.3)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_32" unique_id=549315729]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("68_2ojdf")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_32/Arm_00" unique_id=917025133]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("68_2ojdf")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_32" unique_id=1926607805]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("69_wygmi")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_32/Arm_01" unique_id=1462494842]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("69_wygmi")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_32" unique_id=44127241]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("70_yrbln")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_32/Arm_02" unique_id=1855920036]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("70_yrbln")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_32" unique_id=607440190]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("71_mqj2d")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_32/Arm_03" unique_id=1913963939]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("71_mqj2d")
+
+[node name="CoastalRock_33" type="MeshInstance3D" parent="WaveBreakers" unique_id=1129522818]
+transform = Transform3D(0.43927354, 0, 0.7792827, 0, 0.73, 0, -1.0084834, 0, 0.33943865, 2.8093119, 0, 9.875)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("72_j8513")
+metadata/flow_obstacle_radius = 0.69
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_33" unique_id=1435077255]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("72_j8513")
+
+[node name="CoastalRock_34" type="MeshInstance3D" parent="WaveBreakers" unique_id=1113670106]
+transform = Transform3D(-0.7491614, 0, 0.62239677, 0, 0.94, 0, -0.8054547, 0, -0.5788975, 4.20537, 0, 11.625)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("73_mma0q")
+metadata/flow_obstacle_radius = 0.6099999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_34" unique_id=1613398867]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("73_mma0q")
+
+[node name="ConcreteCrossBlock_35" type="Node3D" parent="WaveBreakers" unique_id=2032713489]
+transform = Transform3D(-0.59131664, 0.023526657, 0.8060962, 0.14421512, 0.9865462, 0.0769966, -0.7934397, 0.16178064, -0.5867541, 4.317274, 0, 11.3)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_35" unique_id=110665473]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("74_17yx4")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_35/Arm_00" unique_id=1554847377]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("74_17yx4")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_35" unique_id=1593250188]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("75_a6cs2")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_35/Arm_01" unique_id=1041390670]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("75_a6cs2")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_35" unique_id=1403848062]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("76_6o4qv")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_35/Arm_02" unique_id=1610384350]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("76_6o4qv")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_35" unique_id=155626016]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("77_fahq8")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_35/Arm_03" unique_id=1356373628]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("77_fahq8")
+
+[node name="CoastalRock_36" type="MeshInstance3D" parent="WaveBreakers" unique_id=1337422438]
+transform = Transform3D(-0.7491614, 0, 0.62239677, 0, 0.96, 0, -0.8054547, 0, -0.5788975, 7.706785, 0, 14.375)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("78_wpy84")
+metadata/flow_obstacle_radius = 0.5299999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_36" unique_id=1617936687]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("78_wpy84")
+
+[node name="CoastalRock_37" type="MeshInstance3D" parent="WaveBreakers" unique_id=533404032]
+transform = Transform3D(-1.037613, 0, -0.28218743, 0, 0.77, 0, 0.36518374, 0, -0.8017919, 6.603049, 0, 16.125)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("79_8feel")
+metadata/flow_obstacle_radius = 0.82
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_37" unique_id=65892821]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("79_8feel")
+
+[node name="ConcreteCrossBlock_38" type="Node3D" parent="WaveBreakers" unique_id=97464104]
+transform = Transform3D(-0.9874654, 0.009959795, -0.15752123, 0.018575944, 0.9984046, -0.053321045, 0.15673886, -0.05557879, -0.98607504, 7.030304, 0, 15.8)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_38" unique_id=228083098]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("80_a6nt4")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_38/Arm_00" unique_id=1216894814]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("80_a6nt4")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_38" unique_id=987884999]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("81_c5x6y")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_38/Arm_01" unique_id=202858531]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("81_c5x6y")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_38" unique_id=387764008]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("82_or8oi")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_38/Arm_02" unique_id=1140061988]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("82_or8oi")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_38" unique_id=1544480506]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("83_5hcx4")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_38/Arm_03" unique_id=133130556]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("83_5hcx4")
+
+[node name="CoastalRock_39" type="MeshInstance3D" parent="WaveBreakers" unique_id=1985616975]
+transform = Transform3D(-1.037613, 0, -0.28218743, 0, 0.79, 0, 0.36518374, 0, -0.8017919, 5.686791, 0, 18.875)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("84_bg3cm")
+metadata/flow_obstacle_radius = 0.7399999999999998
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_39" unique_id=37362666]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("84_bg3cm")
+
+[node name="CoastalRock_40" type="MeshInstance3D" parent="WaveBreakers" unique_id=707476864]
+transform = Transform3D(-0.0795585, 0, -0.8477739, 0, 1, 0, 1.0971192, 0, -0.061477024, 6.046661, 0, 20.625)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("85_mnrg2")
+metadata/flow_obstacle_radius = 0.6599999999999998
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_40" unique_id=1752436948]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("85_mnrg2")
+
+[node name="ConcreteCrossBlock_41" type="Node3D" parent="WaveBreakers" unique_id=1974824517]
+transform = Transform3D(-0.30764586, -0.023355704, -0.95121425, -0.16313764, 0.9861902, 0.0285482, 0.93741137, 0.16396159, -0.30720752, 6.4314556, 0, 20.3)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_41" unique_id=1563644048]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("86_1db86")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_41/Arm_00" unique_id=1055724667]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("86_1db86")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_41" unique_id=1336745431]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("87_cjje4")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_41/Arm_01" unique_id=1373538591]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("87_cjje4")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_41" unique_id=556624871]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("88_w1kq1")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_41/Arm_02" unique_id=571706663]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("88_w1kq1")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_41" unique_id=1634180094]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("89_w7gcv")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_41/Arm_03" unique_id=2015786509]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("89_w7gcv")
+
+[node name="CoastalRock_42" type="MeshInstance3D" parent="WaveBreakers" unique_id=678107249]
+transform = Transform3D(-0.0795585, 0, -0.8477739, 0, 0.62, 0, 1.0971192, 0, -0.061477024, 4.4449167, 0, 23.875)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("90_n17xc")
+metadata/flow_obstacle_radius = 0.5799999999999998
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_42" unique_id=1477643759]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("90_n17xc")
+
+[node name="CoastalRock_43" type="MeshInstance3D" parent="WaveBreakers" unique_id=1632744287]
+transform = Transform3D(0.9740716, 0, -0.39491174, 0, 0.83, 0, 0.51106226, 0, 0.7526917, 5.2686167, 0, 25.625)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("91_30klu")
+metadata/flow_obstacle_radius = 0.4999999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_43" unique_id=1109475634]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("91_30klu")
+
+[node name="ConcreteCrossBlock_44" type="Node3D" parent="WaveBreakers" unique_id=603299435]
+transform = Transform3D(0.7007056, -0.10596952, -0.7055367, 0.14639416, 0.9892212, -0.0031863411, 0.69826955, -0.101053774, 0.7086662, 5.4270945, 0, 25.3)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_44" unique_id=363905365]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("92_i3qup")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_44/Arm_00" unique_id=2136309353]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("92_i3qup")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_44" unique_id=769518673]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("93_f83ww")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_44/Arm_01" unique_id=797840451]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("93_f83ww")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_44" unique_id=1680878230]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("94_j0cbm")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_44/Arm_02" unique_id=527661486]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("94_j0cbm")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_44" unique_id=232589203]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("95_unkxs")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_44/Arm_03" unique_id=1389427824]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("95_unkxs")
+
+[node name="CoastalRock_45" type="MeshInstance3D" parent="WaveBreakers" unique_id=64437398]
+transform = Transform3D(0.9740716, 0, -0.39491174, 0, 0.85, 0, 0.51106226, 0, 0.7526917, 6.523613, 0, 28.375)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("96_xivc5")
+metadata/flow_obstacle_radius = 0.7899999999999999
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_45" unique_id=281212361]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("96_xivc5")
+
+[node name="CoastalRock_46" type="MeshInstance3D" parent="WaveBreakers" unique_id=1563820383]
+transform = Transform3D(0.85752887, 0, 0.5323661, 0, 0.66, 0, -0.68894434, 0, 0.6626359, 7.2290273, 0, 30.125)
+material_override = SubResource("ShaderMaterial_3p6xp")
+mesh = ExtResource("97_gpqrh")
+metadata/flow_obstacle_radius = 0.71
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/CoastalRock_46" unique_id=1835036505]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("97_gpqrh")
+
+[node name="ConcreteCrossBlock_47" type="Node3D" parent="WaveBreakers" unique_id=649124525]
+transform = Transform3D(0.9502251, -0.007885805, 0.3114642, 0.015586068, 0.99963117, -0.022241328, -0.31117392, 0.025988773, 0.9499976, 7.5126376, 0, 29.8)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_47" unique_id=1934646171]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("98_0geon")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_47/Arm_00" unique_id=247576219]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("98_0geon")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_47" unique_id=1145273491]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("99_fa84o")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_47/Arm_01" unique_id=1347674650]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("99_fa84o")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_47" unique_id=269419108]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("100_6oy68")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_47/Arm_02" unique_id=1472791296]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("100_6oy68")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_47" unique_id=502943695]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("101_fb6l4")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_47/Arm_03" unique_id=2087069838]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("101_fb6l4")
+
+[node name="ConcreteCrossBlock_48" type="Node3D" parent="WaveBreakers" unique_id=1981646843]
+transform = Transform3D(0.6827452, 0.17040327, -0.710508, -0.10242665, 0.9851433, 0.13784553, 0.72344154, -0.021338426, 0.6900557, -8, 0, -2.8)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_48" unique_id=2095992080]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("102_6fjhv")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_48/Arm_00" unique_id=841081055]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("102_6fjhv")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_48" unique_id=1184107811]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("103_2qkv2")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_48/Arm_01" unique_id=2061443343]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("103_2qkv2")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_48" unique_id=833527273]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("104_1apvy")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_48/Arm_02" unique_id=2138635654]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("104_1apvy")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_48" unique_id=766463000]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("105_3f2u2")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_48/Arm_03" unique_id=737477799]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("105_3f2u2")
+
+[node name="ConcreteCrossBlock_49" type="Node3D" parent="WaveBreakers" unique_id=1217661051]
+transform = Transform3D(0.7074025, -3.616512e-05, 0.7068109, -0.17064096, 0.97041106, 0.17083344, -0.68590325, -0.2414589, 0.6864651, 8, 0, -2.8)
+metadata/flow_obstacle_radius = 0.9
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_49" unique_id=1264214803]
+transform = Transform3D(0.099503756, 0.9950372, 0, -0.9950372, 0.099503756, 0, 0, 0, 1, 0.42, 0.262, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("106_vypgr")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_49/Arm_00" unique_id=193261111]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("106_vypgr")
+
+[node name="Arm_01" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_49" unique_id=46161359]
+transform = Transform3D(-0.099503756, -0.99503726, 0, 0.99503726, -0.099503756, 0, 0, 0, 1, -0.42, 0.178, 0)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("107_8vyve")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_49/Arm_01" unique_id=1954945794]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("107_8vyve")
+
+[node name="Arm_02" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_49" unique_id=1873550529]
+transform = Transform3D(1, 0, 0, 0, 0.099503756, -0.9950372, 0, 0.9950372, 0.099503756, 0, 0.262, 0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("108_17p7a")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_49/Arm_02" unique_id=67089156]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("108_17p7a")
+
+[node name="Arm_03" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_49" unique_id=965526694]
+transform = Transform3D(1, 0, 0, 0, -0.099503756, 0.99503726, 0, -0.99503726, -0.099503756, 0, 0.178, -0.42)
+material_override = SubResource("ShaderMaterial_jamcw")
+mesh = ExtResource("109_gjvw6")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/ConcreteCrossBlock_49/Arm_03" unique_id=2015731149]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("109_gjvw6")
+
+[node name="TowerCrane" type="Node3D" parent="WaveBreakers" unique_id=1125150853]
+editor_description = "单座水中锈蚀吊塔。移动整个节点；Mast/LongJib/Cables/Cabin/Hook 为可编辑组件。"
+transform = Transform3D(-1.9321067, 0.661605, 0.81807256, 0.43911266, 2.061567, -0.63017666, -0.956109, -0.39015567, -1.9425843, 33.72601, -6, -34.20629)
+metadata/flow_obstacle_radius = 1.5
+metadata/concrete = false
+
+[node name="Mast" type="MeshInstance3D" parent="WaveBreakers/TowerCrane" unique_id=88183180]
+material_override = SubResource("ShaderMaterial_6sub3")
+cast_shadow = 0
+mesh = ExtResource("111_tdcmp")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/Mast" unique_id=274146409]
+material_override = SubResource("ShaderMaterial_rt5mu")
+cast_shadow = 0
+mesh = ExtResource("111_tdcmp")
+
+[node name="LongJib" type="MeshInstance3D" parent="WaveBreakers/TowerCrane" unique_id=389301423]
+material_override = SubResource("ShaderMaterial_6sub3")
+cast_shadow = 0
+mesh = ExtResource("112_i5ech")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/LongJib" unique_id=1870035274]
+material_override = SubResource("ShaderMaterial_rt5mu")
+cast_shadow = 0
+mesh = ExtResource("112_i5ech")
+
+[node name="Cables" type="MeshInstance3D" parent="WaveBreakers/TowerCrane" unique_id=361943912]
+material_override = SubResource("ShaderMaterial_xvwwg")
+cast_shadow = 0
+mesh = ExtResource("113_dtdfe")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/Cables" unique_id=267483795]
+material_override = SubResource("ShaderMaterial_rt5mu")
+cast_shadow = 0
+mesh = ExtResource("113_dtdfe")
+
+[node name="Counterweight" type="MeshInstance3D" parent="WaveBreakers/TowerCrane" unique_id=1678414975]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 10.8, 0)
+material_override = SubResource("ShaderMaterial_xvwwg")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_uqd8k")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/Counterweight" unique_id=1573417732]
+material_override = SubResource("ShaderMaterial_rt5mu")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_uqd8k")
+
+[node name="Cabin" type="MeshInstance3D" parent="WaveBreakers/TowerCrane" unique_id=776602677]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15, 9.4, 0.5)
+material_override = SubResource("ShaderMaterial_6sub3")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_nifvi")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/Cabin" unique_id=1913443445]
+material_override = SubResource("ShaderMaterial_rt5mu")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_nifvi")
+
+[node name="CabinWindows" type="MeshInstance3D" parent="WaveBreakers/TowerCrane" unique_id=1918590288]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15, 9.65, 0.5)
+material_override = SubResource("ShaderMaterial_xvwwg")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_rykin")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/CabinWindows" unique_id=593140909]
+material_override = SubResource("ShaderMaterial_rt5mu")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_rykin")
+
+[node name="Trolley" type="MeshInstance3D" parent="WaveBreakers/TowerCrane" unique_id=2035614616]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 10, 0)
+material_override = SubResource("ShaderMaterial_xvwwg")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bj4pe")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/Trolley" unique_id=1374727838]
+material_override = SubResource("ShaderMaterial_rt5mu")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bj4pe")
+
+[node name="Hook" type="MeshInstance3D" parent="WaveBreakers/TowerCrane" unique_id=303141187]
+material_override = SubResource("ShaderMaterial_6sub3")
+cast_shadow = 0
+mesh = ExtResource("114_1m64x")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/Hook" unique_id=509742967]
+material_override = SubResource("ShaderMaterial_rt5mu")
+cast_shadow = 0
+mesh = ExtResource("114_1m64x")
+
+[node name="CabinPractical" type="OmniLight3D" parent="WaveBreakers/TowerCrane" unique_id=338267714]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 10, 1)
+light_color = Color(1, 0.6, 0.27, 1)
+light_energy = 1.3
+omni_range = 4.5
+omni_attenuation = 1.2
+metadata/coast_base_energy = 1.3
+metadata/coast_cloud_scale = 0.75
+
+[node name="CabinLightCore" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/CabinPractical" unique_id=750476542]
+material_override = SubResource("SpatialWarmEmitter")
+cast_shadow = 0
+mesh = SubResource("SpatialLampCoreMesh")
+
+[node name="CraneWarning" type="OmniLight3D" parent="WaveBreakers/TowerCrane" unique_id=176711720]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 12.4, 0)
+light_color = Color(1, 0.18, 0.07, 1)
+light_energy = 0.55
+omni_range = 3.0
+omni_attenuation = 1.3
+metadata/coast_base_energy = 0.55
+metadata/coast_cloud_scale = 0.65
+metadata/coast_pulse = 0.1
+
+[node name="WarningCore" type="MeshInstance3D" parent="WaveBreakers/TowerCrane/CraneWarning" unique_id=377865238]
+material_override = SubResource("SpatialWarningEmitter")
+cast_shadow = 0
+mesh = SubResource("SpatialLampCoreMesh")
+
+[node name="DuneDressing" type="Node3D" parent="." unique_id=1997116821]
+
+[node name="SlopeBoulder" type="MeshInstance3D" parent="DuneDressing" unique_id=2120763890]
+transform = Transform3D(1.2, 0, 0, 0, 0.65, 0, 0, 0, 0.85, -7.4, 2.6165688, 26)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("115_swc13")
+metadata/walk_obstacle_radius = 0.3833333250549108
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder" unique_id=585721635]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("115_swc13")
+
+[node name="SlopeBoulder_01" type="MeshInstance3D" parent="DuneDressing" unique_id=25075136]
+transform = Transform3D(-0.7995312, 0, 0.6338495, 0, 0.65, 0, -0.8948463, 0, -0.5663346, -7.9996486, 2.6651607, 26.671135)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("116_fuy8d")
+metadata/walk_obstacle_radius = 0.6133333101537501
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_01" unique_id=1446418241]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("116_fuy8d")
+
+[node name="SlopeBoulder_02" type="MeshInstance3D" parent="DuneDressing" unique_id=1277575690]
+transform = Transform3D(0.83604807, 0, 0.6097527, 0, 0.92, 0, -0.8608273, 0, 0.5922007, 0.8, 2.6919947, 24.8)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("117_7vt8x")
+metadata/walk_obstacle_radius = 0.5933333200878572
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_02" unique_id=1291652870]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("117_7vt8x")
+
+[node name="SlopeBoulder_03" type="MeshInstance3D" parent="DuneDressing" unique_id=2121668753]
+transform = Transform3D(-1.1989622, 0, 0.035343647, 0, 0.92, 0, -0.049896915, 0, -0.84926486, -0.099221624, 2.7163098, 24.837421)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("118_c1tcl")
+metadata/walk_obstacle_radius = 0.8233332803514289
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_03" unique_id=65214742]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("118_c1tcl")
+
+[node name="SlopeBoulder_04" type="MeshInstance3D" parent="DuneDressing" unique_id=17726881]
+transform = Transform3D(-0.03503946, 0, 0.84963757, 0, 0.89, 0, -1.1994884, 0, -0.024819614, -7.6, 2.8557076, 20.4)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("119_2sdhl")
+metadata/walk_obstacle_radius = 0.803333290285536
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_04" unique_id=733510886]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("119_2sdhl")
+
+[node name="SlopeBoulder_05" type="MeshInstance3D" parent="DuneDressing" unique_id=1914863063]
+transform = Transform3D(-0.8711187, 0, -0.58460134, 0, 0.89, 0, 0.8253195, 0, -0.6170424, -8.253339, 2.5883245, 19.78101)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("120_1gcuc")
+metadata/walk_obstacle_radius = 0.553333290285536
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_05" unique_id=574462128]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("120_1gcuc")
+
+[node name="SlopeBoulder_06" type="MeshInstance3D" parent="DuneDressing" unique_id=1400045619]
+transform = Transform3D(-0.8848726, 0, 0.5741437, 0, 0.86, 0, -0.8105558, 0, -0.62678474, 1.3, 2.6139872, 18.5)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("121_2ypcd")
+metadata/walk_obstacle_radius = 0.5333333002196431
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_06" unique_id=2013657130]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("121_2ypcd")
+
+[node name="SlopeBoulder_07" type="MeshInstance3D" parent="DuneDressing" unique_id=119228236]
+transform = Transform3D(-0.014866626, 0, -0.84993476, 0, 0.86, 0, 1.1999079, 0, -0.010530527, 1.2888502, 2.859973, 17.600069)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("122_43c2a")
+metadata/walk_obstacle_radius = 0.7633333101537502
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_07" unique_id=1562865953]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("122_43c2a")
+
+[node name="SlopeBoulder_08" type="MeshInstance3D" parent="DuneDressing" unique_id=2112549258]
+transform = Transform3D(-1.1979538, 0, -0.049618065, 0, 0.83, 0, 0.07004903, 0, -0.84855056, -6.6, 2.9213712, 15.2)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("123_1je1m")
+metadata/walk_obstacle_radius = 0.7433333200878572
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_08" unique_id=1712829681]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("123_1je1m")
+
+[node name="SlopeBoulder_09" type="MeshInstance3D" parent="DuneDressing" unique_id=1693198330]
+transform = Transform3D(0.8504038, 0, -0.5997093, 0, 0.83, 0, 0.8466484, 0, 0.6023693, -5.9621973, 2.8714921, 14.565014)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("124_20xqu")
+metadata/walk_obstacle_radius = 0.4933333200878573
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_09" unique_id=1714893921]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("124_20xqu")
+
+[node name="SlopeBoulder_10" type="MeshInstance3D" parent="DuneDressing" unique_id=851350582]
+transform = Transform3D(-0.7843724, 0, -0.6432821, 0, 0.8, 0, 0.908163, 0, -0.55559707, 0.2, 2.6379156, 30)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("125_p01ib")
+metadata/walk_obstacle_radius = 0.4733333300219643
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_10" unique_id=1398708832]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("125_p01ib")
+
+[node name="SlopeBoulder_11" type="MeshInstance3D" parent="DuneDressing" unique_id=135423619]
+transform = Transform3D(1.1998304, 0, 0.0142919775, 0, 0.8, 0, -0.02017691, 0, 0.84987986, 1.0998728, 2.665769, 30.015133)
+material_override = SubResource("ShaderMaterial_feke6")
+mesh = ExtResource("126_ir1ac")
+metadata/walk_obstacle_radius = 0.703333290285536
+metadata/concrete = false
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/SlopeBoulder_11" unique_id=1529068626]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("126_ir1ac")
+
+[node name="WeatheredTetrapod" type="Node3D" parent="DuneDressing" unique_id=414633661]
+transform = Transform3D(0.9915619, -0.12963414, 0, 0.12817849, 0.98042774, -0.14943814, 0.019372286, 0.14817716, 0.9887711, 0.35, 2.7886748, 27.5)
+metadata/walk_obstacle_radius = 0.72
+metadata/concrete = true
+
+[node name="Arm_00" type="MeshInstance3D" parent="DuneDressing/WeatheredTetrapod" unique_id=808236627]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+material_override = SubResource("ShaderMaterial_00011")
+mesh = ExtResource("127_10mgn")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/WeatheredTetrapod/Arm_00" unique_id=2073117552]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("127_10mgn")
+
+[node name="Arm_01" type="MeshInstance3D" parent="DuneDressing/WeatheredTetrapod" unique_id=240105649]
+transform = Transform3D(-0.33124447, 0.94354486, 0, -0.94354486, -0.33124447, 0, 0, 0, 1, 0.282, -0.09900001, 0)
+material_override = SubResource("ShaderMaterial_00011")
+mesh = ExtResource("128_mu7jg")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/WeatheredTetrapod/Arm_01" unique_id=1767381212]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("128_mu7jg")
+
+[node name="Arm_02" type="MeshInstance3D" parent="DuneDressing/WeatheredTetrapod" unique_id=1612394401]
+transform = Transform3D(0.66440547, -0.47334895, 0.5783651, 0.47334895, -0.33235133, -0.8157716, 0.5783651, 0.8157716, 0.003243208, -0.141, -0.09900001, 0.24300002)
+material_override = SubResource("ShaderMaterial_00011")
+mesh = ExtResource("129_rkis2")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/WeatheredTetrapod/Arm_02" unique_id=2130937929]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("129_rkis2")
+
+[node name="Arm_03" type="MeshInstance3D" parent="DuneDressing/WeatheredTetrapod" unique_id=1129882968]
+transform = Transform3D(0.66440547, -0.47334895, -0.5783651, 0.47334895, -0.33235133, 0.8157716, -0.5783651, -0.8157716, 0.003243208, -0.141, -0.09900001, -0.24300002)
+material_override = SubResource("ShaderMaterial_00011")
+mesh = ExtResource("130_np5cg")
+
+[node name="GreyOutline" type="MeshInstance3D" parent="DuneDressing/WeatheredTetrapod/Arm_03" unique_id=1334619284]
+material_override = SubResource("ShaderMaterial_3x5oi")
+cast_shadow = 0
+mesh = ExtResource("130_np5cg")
+
+[node name="OffshoreAtmosphere" type="Node3D" parent="." unique_id=1436753224]
+
+[node name="Turbine_00" type="Node3D" parent="OffshoreAtmosphere" unique_id=711441809]
+transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, -52, 0, -72)
+
+[node name="Tower_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00" unique_id=364352406]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.5, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("132_n6t5d")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00/Tower_00" unique_id=376701131]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("132_n6t5d")
+
+[node name="Nacelle_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00" unique_id=1097913644]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, 0.05)
+material_override = SubResource("ShaderMaterial_qer20")
+mesh = ExtResource("134_t0rpw")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00/Nacelle_01" unique_id=1888385733]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("134_t0rpw")
+
+[node name="Rotor" type="Node3D" parent="OffshoreAtmosphere/Turbine_00" unique_id=535385618]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 17, 1.105)
+metadata/angular_speed = 0.065
+metadata/phase = 0.0
+
+[node name="Blade_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00/Rotor" unique_id=445541416]
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("135_m0gbk")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00/Rotor/Blade_00" unique_id=945701260]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("135_m0gbk")
+
+[node name="Blade_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00/Rotor" unique_id=264998499]
+transform = Transform3D(-0.50000006, -0.8660254, 0, 0.8660254, -0.50000006, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("136_xy6o6")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00/Rotor/Blade_01" unique_id=681482146]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("136_xy6o6")
+
+[node name="Blade_02" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00/Rotor" unique_id=1269509841]
+transform = Transform3D(-0.4999999, 0.86602545, 0, -0.86602545, -0.4999999, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("137_y7pm5")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_00/Rotor/Blade_02" unique_id=649070455]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("137_y7pm5")
+
+[node name="Turbine_01" type="Node3D" parent="OffshoreAtmosphere" unique_id=1915673589]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, -88, 0, -128)
+
+[node name="Tower_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01" unique_id=1455895663]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.25, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("138_x4mqy")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01/Tower_00" unique_id=1736410191]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("138_x4mqy")
+
+[node name="Nacelle_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01" unique_id=272904074]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.5, 0.05)
+material_override = SubResource("ShaderMaterial_qer20")
+mesh = ExtResource("139_owgpt")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01/Nacelle_01" unique_id=1028756861]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("139_owgpt")
+
+[node name="Rotor" type="Node3D" parent="OffshoreAtmosphere/Turbine_01" unique_id=2138529553]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 18.5, 1.2025)
+metadata/angular_speed = 0.077
+metadata/phase = 0.9
+
+[node name="Blade_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01/Rotor" unique_id=1663821726]
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("140_4q1fs")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01/Rotor/Blade_00" unique_id=223995392]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("140_4q1fs")
+
+[node name="Blade_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01/Rotor" unique_id=442127594]
+transform = Transform3D(-0.50000006, -0.8660254, 0, 0.8660254, -0.50000006, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("141_ibeuy")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01/Rotor/Blade_01" unique_id=1028772643]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("141_ibeuy")
+
+[node name="Blade_02" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01/Rotor" unique_id=1732782617]
+transform = Transform3D(-0.4999999, 0.86602545, 0, -0.86602545, -0.4999999, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("142_1sjo8")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_01/Rotor/Blade_02" unique_id=1552047816]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("142_1sjo8")
+
+[node name="Turbine_02" type="Node3D" parent="OffshoreAtmosphere" unique_id=700433442]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, -102, 0, -170)
+
+[node name="Tower_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02" unique_id=1890730006]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("143_gg2h1")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02/Tower_00" unique_id=1915174816]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("143_gg2h1")
+
+[node name="Nacelle_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02" unique_id=1411698232]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18, 0.05)
+material_override = SubResource("ShaderMaterial_qer20")
+mesh = ExtResource("144_jlydx")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02/Nacelle_01" unique_id=583825251]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("144_jlydx")
+
+[node name="Rotor" type="Node3D" parent="OffshoreAtmosphere/Turbine_02" unique_id=156092504]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 18, 1.17)
+metadata/angular_speed = 0.089
+metadata/phase = 1.8
+
+[node name="Blade_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02/Rotor" unique_id=1493310574]
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("145_027v4")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02/Rotor/Blade_00" unique_id=1668877657]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("145_027v4")
+
+[node name="Blade_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02/Rotor" unique_id=1863289057]
+transform = Transform3D(-0.50000006, -0.8660254, 0, 0.8660254, -0.50000006, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("146_03hxy")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02/Rotor/Blade_01" unique_id=981372945]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("146_03hxy")
+
+[node name="Blade_02" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02/Rotor" unique_id=1225732184]
+transform = Transform3D(-0.4999999, 0.86602545, 0, -0.86602545, -0.4999999, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("147_dsquf")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_02/Rotor/Blade_02" unique_id=1252043477]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("147_dsquf")
+
+[node name="Turbine_03" type="Node3D" parent="OffshoreAtmosphere" unique_id=108524135]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, -162, 0, -224)
+
+[node name="Tower_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03" unique_id=1888255840]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("148_81p00")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03/Tower_00" unique_id=37825812]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("148_81p00")
+
+[node name="Nacelle_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03" unique_id=2018858230]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19, 0.05)
+material_override = SubResource("ShaderMaterial_qer20")
+mesh = ExtResource("149_dmr6l")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03/Nacelle_01" unique_id=1742562420]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("149_dmr6l")
+
+[node name="Rotor" type="Node3D" parent="OffshoreAtmosphere/Turbine_03" unique_id=901776177]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 19, 1.235)
+metadata/angular_speed = 0.065
+metadata/phase = 2.7
+
+[node name="Blade_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03/Rotor" unique_id=1106522461]
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("150_dnx5h")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03/Rotor/Blade_00" unique_id=617862430]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("150_dnx5h")
+
+[node name="Blade_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03/Rotor" unique_id=1950770813]
+transform = Transform3D(-0.50000006, -0.8660254, 0, 0.8660254, -0.50000006, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("151_rn831")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03/Rotor/Blade_01" unique_id=890122536]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("151_rn831")
+
+[node name="Blade_02" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03/Rotor" unique_id=1112611548]
+transform = Transform3D(-0.4999999, 0.86602545, 0, -0.86602545, -0.4999999, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("152_6nslj")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_03/Rotor/Blade_02" unique_id=613164732]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("152_6nslj")
+
+[node name="Turbine_04" type="Node3D" parent="OffshoreAtmosphere" unique_id=1696605382]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, -165, 0, -290)
+
+[node name="Tower_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04" unique_id=1724013360]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("153_o5fse")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04/Tower_00" unique_id=1079426866]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("153_o5fse")
+
+[node name="Nacelle_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04" unique_id=2124244252]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18, 0.05)
+material_override = SubResource("ShaderMaterial_qer20")
+mesh = ExtResource("154_l8bnl")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04/Nacelle_01" unique_id=766878586]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("154_l8bnl")
+
+[node name="Rotor" type="Node3D" parent="OffshoreAtmosphere/Turbine_04" unique_id=388644620]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 18, 1.17)
+metadata/angular_speed = 0.077
+metadata/phase = 3.6
+
+[node name="Blade_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04/Rotor" unique_id=1084104231]
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("155_xj8d4")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04/Rotor/Blade_00" unique_id=562873283]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("155_xj8d4")
+
+[node name="Blade_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04/Rotor" unique_id=562653037]
+transform = Transform3D(-0.50000006, -0.8660254, 0, 0.8660254, -0.50000006, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("156_gallk")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04/Rotor/Blade_01" unique_id=1690302673]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("156_gallk")
+
+[node name="Blade_02" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04/Rotor" unique_id=779997015]
+transform = Transform3D(-0.4999999, 0.86602545, 0, -0.86602545, -0.4999999, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("157_32lt0")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_04/Rotor/Blade_02" unique_id=1284155989]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("157_32lt0")
+
+[node name="Turbine_05" type="Node3D" parent="OffshoreAtmosphere" unique_id=1268788477]
+transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 56, 0, -76)
+
+[node name="Tower_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05" unique_id=83280218]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.5, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("158_cafgf")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05/Tower_00" unique_id=52567362]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("158_cafgf")
+
+[node name="Nacelle_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05" unique_id=1116733419]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, 0.05)
+material_override = SubResource("ShaderMaterial_qer20")
+mesh = ExtResource("159_4hf7v")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05/Nacelle_01" unique_id=1378800659]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("159_4hf7v")
+
+[node name="Rotor" type="Node3D" parent="OffshoreAtmosphere/Turbine_05" unique_id=1992534231]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 17, 1.105)
+metadata/angular_speed = 0.089
+metadata/phase = 4.5
+
+[node name="Blade_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05/Rotor" unique_id=39755468]
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("160_oc5dp")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05/Rotor/Blade_00" unique_id=150055912]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("160_oc5dp")
+
+[node name="Blade_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05/Rotor" unique_id=926850885]
+transform = Transform3D(-0.50000006, -0.8660254, 0, 0.8660254, -0.50000006, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("161_oiweu")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05/Rotor/Blade_01" unique_id=691388954]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("161_oiweu")
+
+[node name="Blade_02" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05/Rotor" unique_id=1576263508]
+transform = Transform3D(-0.4999999, 0.86602545, 0, -0.86602545, -0.4999999, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("162_k7oru")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_05/Rotor/Blade_02" unique_id=210755711]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("162_k7oru")
+
+[node name="Turbine_06" type="Node3D" parent="OffshoreAtmosphere" unique_id=184533887]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, 94, 0, -140)
+
+[node name="Tower_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06" unique_id=434018230]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("163_8nqvg")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06/Tower_00" unique_id=965598715]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("163_8nqvg")
+
+[node name="Nacelle_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06" unique_id=1203750374]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18, 0.05)
+material_override = SubResource("ShaderMaterial_qer20")
+mesh = ExtResource("164_0hwq7")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06/Nacelle_01" unique_id=787246387]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("164_0hwq7")
+
+[node name="Rotor" type="Node3D" parent="OffshoreAtmosphere/Turbine_06" unique_id=386787032]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 18, 1.17)
+metadata/angular_speed = 0.065
+metadata/phase = 5.4
+
+[node name="Blade_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06/Rotor" unique_id=51436881]
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("165_b7g0p")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06/Rotor/Blade_00" unique_id=1682442040]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("165_b7g0p")
+
+[node name="Blade_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06/Rotor" unique_id=1676483459]
+transform = Transform3D(-0.50000006, -0.8660254, 0, 0.8660254, -0.50000006, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("166_5d08d")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06/Rotor/Blade_01" unique_id=2110879778]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("166_5d08d")
+
+[node name="Blade_02" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06/Rotor" unique_id=1963905913]
+transform = Transform3D(-0.4999999, 0.86602545, 0, -0.86602545, -0.4999999, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("167_id8bn")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_06/Rotor/Blade_02" unique_id=586138430]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("167_id8bn")
+
+[node name="Turbine_07" type="Node3D" parent="OffshoreAtmosphere" unique_id=1648296868]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, 110, 0, -190)
+
+[node name="Tower_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07" unique_id=1643249827]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("168_fhui4")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07/Tower_00" unique_id=1594291518]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("168_fhui4")
+
+[node name="Nacelle_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07" unique_id=1669720313]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19, 0.05)
+material_override = SubResource("ShaderMaterial_qer20")
+mesh = ExtResource("169_v30c6")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07/Nacelle_01" unique_id=1570956016]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("169_v30c6")
+
+[node name="Rotor" type="Node3D" parent="OffshoreAtmosphere/Turbine_07" unique_id=1283720446]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 19, 1.235)
+metadata/angular_speed = 0.077
+metadata/phase = 6.3
+
+[node name="Blade_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07/Rotor" unique_id=609765563]
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("170_k1uoh")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07/Rotor/Blade_00" unique_id=5454003]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("170_k1uoh")
+
+[node name="Blade_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07/Rotor" unique_id=207931112]
+transform = Transform3D(-0.50000006, -0.8660254, 0, 0.8660254, -0.50000006, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("171_s41ai")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07/Rotor/Blade_01" unique_id=1866006067]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("171_s41ai")
+
+[node name="Blade_02" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07/Rotor" unique_id=1781596254]
+transform = Transform3D(-0.4999999, 0.86602545, 0, -0.86602545, -0.4999999, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("172_xakx2")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_07/Rotor/Blade_02" unique_id=1689992996]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("172_xakx2")
+
+[node name="Turbine_08" type="Node3D" parent="OffshoreAtmosphere" unique_id=117162171]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, 182, 0, -268)
+
+[node name="Tower_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08" unique_id=1350080963]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.25, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("173_msg5a")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08/Tower_00" unique_id=521705073]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("173_msg5a")
+
+[node name="Nacelle_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08" unique_id=507691917]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.5, 0.05)
+material_override = SubResource("ShaderMaterial_qer20")
+mesh = ExtResource("174_3d3ic")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08/Nacelle_01" unique_id=627977402]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("174_3d3ic")
+
+[node name="Rotor" type="Node3D" parent="OffshoreAtmosphere/Turbine_08" unique_id=1211056156]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 18.5, 1.2025)
+metadata/angular_speed = 0.089
+metadata/phase = 7.2
+
+[node name="Blade_00" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08/Rotor" unique_id=1334195930]
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("175_sc6fx")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08/Rotor/Blade_00" unique_id=1549675121]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("175_sc6fx")
+
+[node name="Blade_01" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08/Rotor" unique_id=1283998824]
+transform = Transform3D(-0.50000006, -0.8660254, 0, 0.8660254, -0.50000006, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("176_2bre2")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08/Rotor/Blade_01" unique_id=1305369866]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("176_2bre2")
+
+[node name="Blade_02" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08/Rotor" unique_id=341187021]
+transform = Transform3D(-0.4999999, 0.86602545, 0, -0.86602545, -0.4999999, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_qer20")
+cast_shadow = 0
+mesh = ExtResource("177_s6b2i")
+
+[node name="TurbineGreyOutline" type="MeshInstance3D" parent="OffshoreAtmosphere/Turbine_08/Rotor/Blade_02" unique_id=453040828]
+material_override = SubResource("ShaderMaterial_cypdh")
+cast_shadow = 0
+mesh = ExtResource("177_s6b2i")
+
+[node name="SeaFog_0" type="MeshInstance3D" parent="OffshoreAtmosphere" unique_id=1263693762]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1, -36)
+material_override = SubResource("ShaderMaterial_clsjv")
+cast_shadow = 0
+mesh = ExtResource("179_vhvbg")
+
+[node name="SeaFog_1" type="MeshInstance3D" parent="OffshoreAtmosphere" unique_id=1093124882]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.5, -74)
+material_override = SubResource("ShaderMaterial_clsjv")
+cast_shadow = 0
+mesh = ExtResource("180_w1qmj")
+
+[node name="SeaFog_2" type="MeshInstance3D" parent="OffshoreAtmosphere" unique_id=1249856771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2, -112)
+material_override = SubResource("ShaderMaterial_clsjv")
+cast_shadow = 0
+mesh = ExtResource("181_m54pg")
+
+[node name="DistantCity" type="Node3D" parent="OffshoreAtmosphere" unique_id=620372652]
+editor_description = "远处城市：所有楼体、空中连廊、屋顶航空障碍灯均为可编辑3D节点。"
+
+[node name="FarBlock_00" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1768920514]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -560, 17, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_xvdvu")
+
+[node name="FarBlock_01" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=169350150]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -519, 25.5, -842)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_khaqg")
+
+[node name="FarBlock_02" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=815318250]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -478, 24.5, -854)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_rlj8s")
+
+[node name="FarBlock_03" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1842208871]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -437, 40.5, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_dcenn")
+
+[node name="FarBlock_04" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=941221202]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -396, 20.5, -842)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_icvqe")
+
+[node name="FarBlock_05" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1298135199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -355, 17.5, -854)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_86h8v")
+
+[node name="FarBlock_06" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=694286627]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -314, 31.5, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_kln8f")
+
+[node name="FarBlock_07" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=2012518934]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -273, 36, -842)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_vmaje")
+
+[node name="FarBlock_08" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1879001461]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -232, 31, -854)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_fguvj")
+
+[node name="FarBlock_09" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=373501665]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -191, 43, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_uww5r")
+
+[node name="FarBlock_10" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1470289544]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -150, 19, -842)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_2ourk")
+
+[node name="FarBlock_11" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=115715117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -109, 38.5, -854)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_cpdue")
+
+[node name="FarBlock_12" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=2033211814]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 22, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_g4s42")
+
+[node name="FarBlock_13" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=537641838]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 22.5, -842)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_uhck7")
+
+[node name="FarBlock_14" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1696863697]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 40, -854)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ekbwi")
+
+[node name="FarBlock_15" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1239068517]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 21.5, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_sajrb")
+
+[node name="FarBlock_16" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=555733705]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96, 20, -842)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_4db75")
+
+[node name="FarBlock_17" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1139654740]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 137, 35.5, -854)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_k53od")
+
+[node name="FarBlock_18" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1179839954]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 178, 41.5, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_qh8oo")
+
+[node name="FarBlock_19" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=718673451]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 219, 38, -842)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_haglf")
+
+[node name="FarBlock_20" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=849546946]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 260, 25, -854)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_5lbf4")
+
+[node name="FarBlock_21" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=412242699]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 301, 29, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_dgikg")
+
+[node name="FarBlock_22" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1852088678]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 342, 23.5, -842)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_g64vk")
+
+[node name="FarBlock_23" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1639519638]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 383, 35, -854)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_40rxv")
+
+[node name="FarBlock_24" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=468222941]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 424, 37, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_7037k")
+
+[node name="FarBlock_25" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1130378597]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 465, 29.5, -842)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ldl81")
+
+[node name="FarBlock_26" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=824393745]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 506, 39, -854)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_q74jd")
+
+[node name="FarBlock_27" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1600679177]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 547, 39, -830)
+material_override = SubResource("ShaderMaterial_sb1c5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_p5xbv")
+
+[node name="Megastructure_00" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1067904469]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -480, 0, -740)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_00" unique_id=1355110178]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_sn3me")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_00" unique_id=1995557950]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 39, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bor0k")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_00" unique_id=1367137497]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 67.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_smwk1")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_00" unique_id=449856275]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 76.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_l7sb7")
+
+[node name="Megastructure_01" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1596305071]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -410, 0, -690)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_01" unique_id=339617670]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.56, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_s4ewm")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_01" unique_id=2036916]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 45.76, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_r4713")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_01" unique_id=363619196]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 79.2, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_fab7y")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_01" unique_id=1265278238]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 89.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_e1usd")
+
+[node name="RoofAviationBeacon" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_01" unique_id=1878085483]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 92.5, 1)
+material_override = SubResource("ShaderMaterial_t7iip")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_0c6di")
+metadata/chapter_signal = false
+
+[node name="BeaconMast" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_01" unique_id=1089256452]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 92.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_j1gbj")
+
+[node name="Megastructure_02" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1445119798]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -335, 0, -720)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_02" unique_id=1465783270]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ebbfh")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_02" unique_id=198220614]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 65, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_iueo6")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_02" unique_id=437620921]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 112.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bsca4")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_02" unique_id=1307909302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 126.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_8uu5x")
+
+[node name="Megastructure_03" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1252935568]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -270, 0, -630)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_03" unique_id=510588753]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.72, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_2qsxy")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_03" unique_id=1543482174]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 81.12, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_7ut1f")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_03" unique_id=1685154748]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 140.4, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_d5e8j")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_03" unique_id=1211805342]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 157.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_33nwr")
+
+[node name="RoofAviationBeacon" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_03" unique_id=810068659]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 160.5, 1)
+material_override = SubResource("ShaderMaterial_02n52")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_v132d")
+metadata/chapter_signal = true
+
+[node name="BeaconMast" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_03" unique_id=704151474]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 160.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_v55ye")
+
+[node name="Megastructure_04" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=678585423]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, -680)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_04" unique_id=529291623]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.6, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_u86be")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_04" unique_id=1925325199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 54.6, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_rmt8n")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_04" unique_id=534627065]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 94.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_2hbx0")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_04" unique_id=491973942]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 106.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_3sabq")
+
+[node name="Megastructure_05" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=456873914]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -125, 0, -710)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_05" unique_id=576284214]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.76, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_c14p8")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_05" unique_id=105680435]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50.96, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_re4bx")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_05" unique_id=1163897310]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 88.2, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_6bb5b")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_05" unique_id=1430384488]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 99.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_7t4os")
+
+[node name="RoofAviationBeacon" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_05" unique_id=1847901085]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 102.5, 1)
+material_override = SubResource("ShaderMaterial_c5111")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_4cpd5")
+metadata/chapter_signal = false
+
+[node name="BeaconMast" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_05" unique_id=1348505490]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 102.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_0eypj")
+
+[node name="Megastructure_06" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1759053619]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0, -650)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_06" unique_id=39612910]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 22.8, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_yhncy")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_06" unique_id=1855279706]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 98.8, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_81pei")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_06" unique_id=1756438642]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 171, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_xxmnx")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_06" unique_id=132463232]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 191.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_i5slo")
+
+[node name="RoofAviationBeacon" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_06" unique_id=399681831]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 194.5, 1)
+material_override = SubResource("ShaderMaterial_ia8ck")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_84i3s")
+metadata/chapter_signal = true
+
+[node name="BeaconMast" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_06" unique_id=1349370351]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 194.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_e53vi")
+
+[node name="Megastructure_07" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=406658492]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, -730)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_07" unique_id=1302699054]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.28, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_tsg2t")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_07" unique_id=313683128]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 48.88, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_uajbk")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_07" unique_id=2057516806]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 84.6, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_dsecg")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_07" unique_id=2134334312]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 95.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_cs3jw")
+
+[node name="Megastructure_08" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1431801014]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135, 0, -680)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_08" unique_id=1319899816]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.8, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_p7k7k")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_08" unique_id=987109432]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 59.8, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_3vs6j")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_08" unique_id=232562088]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 103.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ejuy8")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_08" unique_id=1025247547]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 116.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_mv44x")
+
+[node name="RoofAviationBeacon" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_08" unique_id=245284578]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 119.5, 1)
+material_override = SubResource("ShaderMaterial_ulqvd")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_dmp7s")
+metadata/chapter_signal = false
+
+[node name="BeaconMast" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_08" unique_id=1339861603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 119.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_mpb8g")
+
+[node name="Megastructure_09" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1353118432]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 225, 0, -650)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_09" unique_id=2037911515]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.2, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_jdsv6")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_09" unique_id=809019158]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 70.2, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_6c4wh")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_09" unique_id=1832848623]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 121.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_8uhau")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_09" unique_id=979329626]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 136.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_pkdjt")
+
+[node name="RoofAviationBeacon" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_09" unique_id=1432760513]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 139.5, 1)
+material_override = SubResource("ShaderMaterial_gki3s")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_0s0hv")
+metadata/chapter_signal = true
+
+[node name="BeaconMast" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_09" unique_id=2081515770]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 139.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_6sudg")
+
+[node name="Megastructure_10" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1550751044]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 320, 0, -780)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_10" unique_id=1098077062]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_jxslk")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_10" unique_id=411256585]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 39, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_5kicw")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_10" unique_id=280513804]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 67.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_aqs3m")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_10" unique_id=1451503752]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 76.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_sk2ko")
+
+[node name="Megastructure_11" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=2124960094]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 410, 0, -760)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_11" unique_id=1628038062]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.6, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bwchf")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_11" unique_id=62652703]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 54.6, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_0ngks")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_11" unique_id=1823077213]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 94.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_kbvj2")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_11" unique_id=464254250]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 106.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ebmk7")
+
+[node name="RoofAviationBeacon" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_11" unique_id=1773205046]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 109.5, 1)
+material_override = SubResource("ShaderMaterial_ha0x1")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_imjjy")
+metadata/chapter_signal = false
+
+[node name="BeaconMast" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_11" unique_id=18778906]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 109.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_irisj")
+
+[node name="Megastructure_12" type="Node3D" parent="OffshoreAtmosphere/DistantCity" unique_id=277976913]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 480, 0, -800)
+
+[node name="LowerPodium" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_12" unique_id=2015169625]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.8, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_abpwl")
+
+[node name="MainShaft" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_12" unique_id=540955484]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 33.8, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_7km2c")
+
+[node name="UpperTerrace" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_12" unique_id=1533308083]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 58.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_nkjww")
+
+[node name="ServiceCrown" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity/Megastructure_12" unique_id=1249792609]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 66.5, 0)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_5xgaq")
+
+[node name="SkyBridge_03" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=1674908418]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -235, 57.75, -655)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_paqp8")
+
+[node name="SkyBridge_06" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=467178204]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 51.7, -690)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_8h8iq")
+
+[node name="SkyBridge_08" type="MeshInstance3D" parent="OffshoreAtmosphere/DistantCity" unique_id=88390471]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 63.25, -665)
+material_override = SubResource("ShaderMaterial_ca6ff")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_gaicl")
+
+[node name="Player" type="Sprite3D" parent="." unique_id=942483121]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.6988838, 23)
+modulate = Color(0.83, 0.88, 0.96, 1)
+pixel_size = 0.045
+billboard = 1
+texture_filter = 0
+texture = SubResource("AtlasTexture_niq6k")
+
+[node name="CoastHUD" type="CanvasLayer" parent="." unique_id=1710644593]
+
+[node name="Label_00" type="Label" parent="CoastHUD" unique_id=1626073892]
+modulate = Color(0.55, 0.64, 0.76, 0.8)
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 20.0
+offset_bottom = 16.0
+theme_override_font_sizes/font_size = 13
+text = "NIGHT SIGNAL / 夜潮信号"
+
+[node name="Status" type="Label" parent="CoastHUD" unique_id=1840789892]
+visible = false
+modulate = Color(0.53, 0.61, 0.72, 0.85)
+offset_left = 20.0
+offset_top = 329.0
+offset_right = 20.0
+offset_bottom = 329.0
+theme_override_font_sizes/font_size = 10
+text = "月光 100%  /  地表流动 48×40  /  染色水 0.00 m³"
+
+[node name="Label_02" type="Label" parent="CoastHUD" unique_id=1669892266]
+modulate = Color(0.42, 0.49, 0.58, 0.85)
+offset_left = 20.0
+offset_top = 345.0
+offset_right = 20.0
+offset_bottom = 345.0
+theme_override_font_sizes/font_size = 9
+text = "WASD 移动 · 左键染色 · 空格暂停 · R 重置 · F1 状态"
+
+[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=772387045]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.5810733, 23)
+
+[node name="CameraRig" type="Node3D" parent="." unique_id=1966391957]
+
+[node name="HighOffset" type="Marker3D" parent="CameraRig" unique_id=1023751329]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 10, 8.5)
+
+[node name="LowOffset" type="Marker3D" parent="CameraRig" unique_id=1109099793]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 4.5, 10.5)
+
+[node name="SeaLookTarget" type="Marker3D" parent="CameraRig" unique_id=1929342329]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -23)
+
+[node name="WalkerCapture" type="SubViewport" parent="." unique_id=1379416629]
+disable_3d = true
+transparent_bg = true
+size = Vector2i(48, 56)
+render_target_update_mode = 4
+
+[node name="CoastWalker" type="Node2D" parent="WalkerCapture" unique_id=1312739268]
+position = Vector2(24, 44)
+script = ExtResource("185_08yop")
+
+[node name="LeftFoot" type="Sprite2D" parent="WalkerCapture/CoastWalker" unique_id=1006886060]
+texture_filter = 1
+position = Vector2(-4, -9)
+texture = ExtResource("184_jx54v")
+centered = false
+region_enabled = true
+region_rect = Rect2(43, 140, 4, 9)
+
+[node name="RightFoot" type="Sprite2D" parent="WalkerCapture/CoastWalker" unique_id=117015532]
+texture_filter = 1
+position = Vector2(1, -9)
+texture = ExtResource("184_jx54v")
+centered = false
+region_enabled = true
+region_rect = Rect2(48, 140, 4, 9)
+
+[node name="BodyPivot" type="Node2D" parent="WalkerCapture/CoastWalker" unique_id=2022277961]
+position = Vector2(0, -16)
+
+[node name="Head" type="Sprite2D" parent="WalkerCapture/CoastWalker/BodyPivot" unique_id=651311085]
+texture_filter = 1
+position = Vector2(-16, -17)
+texture = ExtResource("184_jx54v")
+centered = false
+region_enabled = true
+region_rect = Rect2(128, 128, 32, 32)
+
+[node name="SideBangs" type="Sprite2D" parent="WalkerCapture/CoastWalker/BodyPivot/Head" unique_id=1170910667]
+z_index = -1
+texture_filter = 1
+position = Vector2(23, 15)
+texture = ExtResource("184_jx54v")
+centered = false
+region_enabled = true
+region_rect = Rect2(46, 43, 4, 11)
+
+[node name="Body" type="Sprite2D" parent="WalkerCapture/CoastWalker/BodyPivot" unique_id=1706044540]
+visible = false
+texture_filter = 1
+position = Vector2(-16, -8)
+texture = ExtResource("184_jx54v")
+centered = false
+region_enabled = true
+region_rect = Rect2(128, 128, 32, 32)
+
+[node name="LeftHand" type="Sprite2D" parent="WalkerCapture/CoastWalker/BodyPivot" unique_id=153727674]
+texture_filter = 1
+position = Vector2(-12, 8)
+texture = ExtResource("184_jx54v")
+centered = false
+region_enabled = true
+region_rect = Rect2(37, 16, 5, 4)
+
+[node name="RightHand" type="Sprite2D" parent="WalkerCapture/CoastWalker/BodyPivot" unique_id=936074836]
+texture_filter = 1
+position = Vector2(3, 8)
+texture = ExtResource("184_jx54v")
+centered = false
+region_enabled = true
+region_rect = Rect2(52, 16, 5, 4)
+
+[node name="SpatialLighting" type="Node3D" parent="." unique_id=987602770]
+editor_description = "冷色天光与柔和反弹补光；两处实体工作灯、深度裁切局部雾束。均可在3D编辑器调整。"
+script = ExtResource("186_wp0dq")
+
+[node name="CoolSkyBounce" type="DirectionalLight3D" parent="SpatialLighting" unique_id=233174498]
+transform = Transform3D(0.7960838, 0.49226803, -0.3520267, 0, 0.5816831, 0.8134155, 0.6051864, -0.64754695, 0.4630685, 0, 0, 0)
+light_color = Color(0.35, 0.48, 0.76, 1)
+light_energy = 0.28
+metadata/coast_base_energy = 0.28
+metadata/coast_cloud_scale = 0.08
+
+[node name="ShoreWorklight0" type="Node3D" parent="SpatialLighting" unique_id=2144740206]
+editor_description = "暖色实体工作灯。移动整个节点可同时调整灯具、投影与空气散射范围。"
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2, 2.6731932, 21)
+
+[node name="Post" type="MeshInstance3D" parent="SpatialLighting/ShoreWorklight0" unique_id=89876684]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+material_override = SubResource("ShaderMaterial_qh8xp")
+mesh = SubResource("SpatialLampPostMesh")
+
+[node name="Housing" type="MeshInstance3D" parent="SpatialLighting/ShoreWorklight0" unique_id=1848663021]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.71, 0)
+material_override = SubResource("ShaderMaterial_qh8xp")
+mesh = SubResource("SpatialLampHousingMesh")
+
+[node name="Emitter" type="MeshInstance3D" parent="SpatialLighting/ShoreWorklight0" unique_id=1677334638]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.59, 0)
+material_override = SubResource("SpatialWarmEmitter")
+cast_shadow = 0
+mesh = SubResource("SpatialLampCoreMesh")
+
+[node name="WarmSpot" type="SpotLight3D" parent="SpatialLighting/ShoreWorklight0" unique_id=2142346952]
+transform = Transform3D(1, 0, 0, 0, 7.54979e-08, 1, 0, -1, 7.54979e-08, 0, 1.56, 0)
+light_color = Color(1, 0.66, 0.34, 1)
+light_energy = 0.65
+shadow_enabled = true
+shadow_bias = 0.035
+shadow_normal_bias = 0.2
+spot_range = 5.5
+spot_attenuation = 1.1
+spot_angle = 56.0
+spot_angle_attenuation = 1.4
+metadata/coast_base_energy = 0.65
+metadata/coast_cloud_scale = 0.6
+
+[node name="WarmBounce" type="OmniLight3D" parent="SpatialLighting/ShoreWorklight0" unique_id=1658406819]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+light_color = Color(0.68, 0.49, 0.4, 1)
+light_energy = 0.18
+omni_range = 4.5
+omni_attenuation = 0.7
+metadata/coast_base_energy = 0.18
+metadata/coast_cloud_scale = 0.5
+
+[node name="LocalAirScattering" type="MeshInstance3D" parent="SpatialLighting/ShoreWorklight0" unique_id=843827449]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0)
+material_override = SubResource("ShaderMaterial_1frvi")
+cast_shadow = 0
+mesh = SubResource("SpatialVolumeBox")
+
+[node name="ShoreWorklight1" type="Node3D" parent="SpatialLighting" unique_id=1930791853]
+editor_description = "暖色实体工作灯。移动整个节点可同时调整灯具、投影与空气散射范围。"
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 15)
+
+[node name="Post" type="MeshInstance3D" parent="SpatialLighting/ShoreWorklight1" unique_id=2121526999]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+material_override = SubResource("ShaderMaterial_qh8xp")
+mesh = SubResource("SpatialLampPostMesh")
+
+[node name="Housing" type="MeshInstance3D" parent="SpatialLighting/ShoreWorklight1" unique_id=1088919659]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.71, 0)
+material_override = SubResource("ShaderMaterial_qh8xp")
+mesh = SubResource("SpatialLampHousingMesh")
+
+[node name="Emitter" type="MeshInstance3D" parent="SpatialLighting/ShoreWorklight1" unique_id=238876234]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.59, 0)
+material_override = SubResource("SpatialWarmEmitter")
+cast_shadow = 0
+mesh = SubResource("SpatialLampCoreMesh")
+
+[node name="WarmSpot" type="SpotLight3D" parent="SpatialLighting/ShoreWorklight1" unique_id=1585828244]
+transform = Transform3D(1, 0, 0, 0, 7.54979e-08, 1, 0, -1, 7.54979e-08, 0, 1.56, 0)
+light_color = Color(1, 0.66, 0.34, 1)
+light_energy = 0.65
+shadow_enabled = true
+shadow_bias = 0.035
+shadow_normal_bias = 0.2
+spot_range = 5.5
+spot_attenuation = 1.1
+spot_angle = 56.0
+spot_angle_attenuation = 1.4
+metadata/coast_base_energy = 0.65
+metadata/coast_cloud_scale = 0.6
+
+[node name="WarmBounce" type="OmniLight3D" parent="SpatialLighting/ShoreWorklight1" unique_id=1413139120]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+light_color = Color(0.68, 0.49, 0.4, 1)
+light_energy = 0.18
+omni_range = 4.5
+omni_attenuation = 0.7
+metadata/coast_base_energy = 0.18
+metadata/coast_cloud_scale = 0.5
+
+[node name="LocalAirScattering" type="MeshInstance3D" parent="SpatialLighting/ShoreWorklight1" unique_id=1279585697]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0)
+material_override = SubResource("ShaderMaterial_oiv2a")
+cast_shadow = 0
+mesh = SubResource("SpatialVolumeBox")

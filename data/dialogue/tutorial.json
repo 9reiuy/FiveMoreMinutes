@@ -5,7 +5,7 @@
       "lines": [
         {
           "speaker": "guide",
-          "text": "你能听见我吗？这里是梦的入口。",
+          "text": "入职适应训练。听得到吗？……很好。",
           "expression": "normal",
           "typewriter_speed": 0.035,
           "text_color": "#D3E0E8",
@@ -21,7 +21,7 @@
         },
         {
           "speaker": "guide",
-          "text": "前面的门会带你进入真正的 Dream。故事文本以后还会继续补充。",
+          "text": "取走手枪，完成射击与换弹。检测结束后，前台在北侧等你。",
           "expression": "normal",
           "typewriter_speed": 0.035,
           "text_color": "#D3E0E8",

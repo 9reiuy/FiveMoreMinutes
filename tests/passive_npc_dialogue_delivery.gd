@@ -18,8 +18,8 @@ func run() -> void:
 			room=main._supported_dream_world; break
 	check(room!=null,"Actual Main reception entry")
 	if room==null: quit(1); return
-	check(await move_to(Vector2(12.5,7.2)),"Ordinary input crosses entrance gates")
-	check(await move_to(Vector2(16,5)),"Ordinary input approaches passive NPC")
+	check(await move_to(Vector2(12.5,4.5)),"Ordinary input crosses the lobby aisle")
+	check(await move_to(Vector2(8.,4.4)),"Ordinary input approaches passive NPC")
 	await frames(20); capture("ellipsis")
 	check(not room.dialogue_controller.is_active(),"Proximity displays hint without automatically opening dialogue")
 	check(room.npc_hint_bubble.visible and room.interaction_prompt.text=="交流","Actual Camera shows emotion and short talk action")
@@ -46,7 +46,7 @@ func run() -> void:
 	check(not room.dialogue_controller.is_active() and not room.dialogue_bubble.visible,"Esc closes with fade-out")
 	check(not room.tarot_overlay.visible and not room.tarot_visit_state.selected,"No tarot entry or accidental selection")
 	recording=false
-	for point in [Vector2(12.5,5.5),Vector2(3.5,5.5),Vector2(3.5,1.3)]:
+	for point in [Vector2(5.,4.5),Vector2(room.ELEVATOR_POS_3D.x,4.5),Vector2(room.ELEVATOR_POS_3D.x,1.3)]:
 		check(await move_to(point),"Ordinary movement reaches elevator after dialogue")
 	await tap("pickup_weapon")
 	for i in 1200:

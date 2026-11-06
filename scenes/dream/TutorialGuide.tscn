@@ -6,7 +6,7 @@
 
 [sub_resource type="AtlasTexture" id="Atlas_player_head"]
 atlas = ExtResource("2_player_atlas")
-region = Rect2(64, 0, 32, 32)
+region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="Atlas_player_body"]
 atlas = ExtResource("2_player_atlas")
@@ -14,11 +14,11 @@ region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="Atlas_player_left_foot"]
 atlas = ExtResource("2_player_atlas")
-region = Rect2(171, 12, 4, 9)
+region = Rect2(43, 76, 4, 9)
 
 [sub_resource type="AtlasTexture" id="Atlas_player_right_foot"]
 atlas = ExtResource("2_player_atlas")
-region = Rect2(176, 12, 4, 9)
+region = Rect2(48, 76, 4, 9)
 
 [sub_resource type="AtlasTexture" id="Atlas_player_left_hand"]
 atlas = ExtResource("2_player_atlas")
@@ -38,13 +38,13 @@ scale = Vector2(1, 1)
 
 [node name="LeftFoot" type="Sprite2D" parent="CharacterVisual"]
 texture_filter = 1
-position = Vector2(-5, -9)
+position = Vector2(-6, -9)
 texture = SubResource("Atlas_player_left_foot")
 centered = false
 
 [node name="RightFoot" type="Sprite2D" parent="CharacterVisual"]
 texture_filter = 1
-position = Vector2(0, -9)
+position = Vector2(-1, -9)
 texture = SubResource("Atlas_player_right_foot")
 centered = false
 
@@ -53,11 +53,12 @@ position = Vector2(0, -16)
 
 [node name="Head" type="Sprite2D" parent="CharacterVisual/BodyPivot"]
 texture_filter = 1
-position = Vector2(-16, -20)
+position = Vector2(-16, -17)
 texture = SubResource("Atlas_player_head")
 centered = false
 
 [node name="Body" type="Sprite2D" parent="CharacterVisual/BodyPivot"]
+visible = false
 texture_filter = 1
 position = Vector2(-16, -8)
 texture = SubResource("Atlas_player_body")
@@ -65,13 +66,13 @@ centered = false
 
 [node name="LeftHand" type="Sprite2D" parent="CharacterVisual/BodyPivot"]
 texture_filter = 1
-position = Vector2(-11, 8)
+position = Vector2(-12, 8)
 texture = SubResource("Atlas_player_left_hand")
 centered = false
 
 [node name="RightHand" type="Sprite2D" parent="CharacterVisual/BodyPivot"]
 texture_filter = 1
-position = Vector2(4, 8)
+position = Vector2(3, 8)
 texture = SubResource("Atlas_player_right_hand")
 centered = false
 

@@ -1,8 +1,9 @@
 extends Node2D
 ## Player-only, fixed-root visual spring. No collisions or gameplay updates.
-## Uses the artist's row 2 / column 5 cell; tight opaque rectangle within it.
-const CELL := Rect2(128,32,32,32)
-const STRAND := Rect2(142,43,4,11)
+## Row 2 / column 2 now owns the independent fringe.
+const CELL := Rect2(32,32,32,32)
+const STRAND := Rect2(46,43,4,11)
+const CHARACTER_ATLAS = preload("res://scripts/data/player_character_atlas.gd")
 const MAX_ANGLE := PI * 0.375 # Downward fan: 135 degrees total, +/-67.5.
 # The authored hop/lean is only a few sprite pixels. Amplify that visual-only
 # drive so a short stationary strike reaches the slow tip sections visibly.
@@ -152,7 +153,7 @@ func _ready() -> void:
 	# Child _ready runs before the player's onready muzzle/head references exist.
 	call_deferred("apply_pose")
 
-func step(delta: float, motion: Vector2, aim: float, right: bool, back: bool, rolling: bool, disabled: bool) -> void:
+func step(delta: float, motion: Vector2, aim: float, right: bool, back: bool, rolling: bool, disabled: bool, facing_index: int=-1) -> void:
 	if not initialized:
 		previous_velocity = motion
 		previous_aim = aim
@@ -161,7 +162,8 @@ func step(delta: float, motion: Vector2, aim: float, right: bool, back: bool, ro
 	if dt <= 0.0: return
 	var turn := wrapf(aim-previous_aim,-PI,PI)
 	var velocity_change := motion-previous_velocity
-	var side := -1.0 if right else 1.0
+	var mirror := CHARACTER_ATLAS.bangs_mirrored(facing_index) if facing_index>=0 else right
+	var side := -1.0 if mirror else 1.0
 	# The strand points down (+Y): positive rotation moves its tip left.
 	var target := clampf(side*(motion.x*0.0025+motion.y*0.0015),-MAX_ANGLE,MAX_ANGLE)
 	if rolling or disabled:
@@ -181,17 +183,19 @@ func step(delta: float, motion: Vector2, aim: float, right: bool, back: bool, ro
 		if segmented_enabled: _advance_sections(subdt)
 	previous_velocity = motion
 	previous_aim = aim
-	visible = not back
-	position = Vector2(10,17) if right else Vector2(22,17)
-	scale = Vector2(-1,1) if right else Vector2.ONE
+	visible = CHARACTER_ATLAS.has_bangs(facing_index) if facing_index>=0 else not back
+	position = CHARACTER_ATLAS.bangs_root(facing_index) if facing_index>=0 else (CHARACTER_ATLAS.FRINGE_RIGHT_ROOT if right else CHARACTER_ATLAS.FRINGE_LEFT_ROOT)
+	z_index = CHARACTER_ATLAS.bangs_layer(facing_index) if facing_index>=0 else 1
+	scale = Vector2(-1,1) if mirror else Vector2.ONE
 	_update_strand_pose(side)
 	if is_instance_valid(overlay):
 		overlay.transform = transform
+		overlay.z_index = z_index
 		overlay.visible = visible
 
 func apply_pose() -> void:
 	if not is_instance_valid(actor) or actor.is_queued_for_deletion() or not actor.is_node_ready(): return
-	step(1.0/60.0,actor.velocity,actor.get_aim_direction().angle(),actor.character_facing_right,actor.character_facing_back,actor.dashing,actor.dead)
+	step(1.0/60.0,actor.velocity,actor.get_aim_direction().angle(),actor.character_facing_right,actor.character_facing_back,actor.dashing,actor.dead,actor.character_facing_index)
 
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(actor): return
@@ -206,4 +210,4 @@ func step_actor(delta: float) -> void:
 	var head_offset: Vector2 = actor.lucille_character_offset + Vector2(0,-12).rotated(lean) - Vector2(0,-12)
 	var visual_velocity := ((head_offset - previous_melee_head_offset) / maxf(delta,0.001)).limit_length(600.0)
 	previous_melee_head_offset = head_offset
-	step(delta,actor.velocity + visual_velocity * MELEE_VISUAL_MOTION_GAIN,actor.get_aim_direction().angle(),actor.character_facing_right,actor.character_facing_back,actor.dashing,actor.dead)
+	step(delta,actor.velocity + visual_velocity * MELEE_VISUAL_MOTION_GAIN,actor.get_aim_direction().angle(),actor.character_facing_right,actor.character_facing_back,actor.dashing,actor.dead,actor.character_facing_index)

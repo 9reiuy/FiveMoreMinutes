@@ -162,6 +162,10 @@ func step(delta: float) -> void:
 
 func _advance(dt: float) -> void:
 	clock+=dt
+	# These coefficients depend on the substep, not the individual particle.
+	var smoke_response:=1.0-exp(-2.4*dt)
+	var fire_response:=1.0-exp(-1.5*dt)
+	var burst_damping:=exp(-2.0*dt)
 	for index in range(shockwaves.size()-1,-1,-1):
 		var wave: Dictionary=shockwaves[index]
 		wave.age+=dt
@@ -208,12 +212,12 @@ func _advance(dt: float) -> void:
 			continue
 		var kind:=int(particle.kind)
 		var velocity: Vector3=particle.velocity
-		var response:=2.4 if kind==1 else 1.5
-		velocity.x=lerpf(velocity.x,wind.x,1.0-exp(-response*dt))
-		velocity.z=lerpf(velocity.z,wind.z,1.0-exp(-response*dt))
+		var response:=smoke_response if kind==1 else fire_response
+		velocity.x=lerpf(velocity.x,wind.x,response)
+		velocity.z=lerpf(velocity.z,wind.z,response)
 		velocity.y+=wind.y*dt
 		if kind==2 and bool(particle.burst): velocity.y-=3.5*dt
-		if bool(particle.burst) and kind!=2: velocity*=exp(-2.0*dt)
+		if bool(particle.burst) and kind!=2: velocity*=burst_damping
 		var curl:=Vector3(sin(clock*7.0+float(particle.seed)),0,cos(clock*5.0+float(particle.seed)))*(.13 if kind==1 else .20)
 		particle.at=Vector3(particle.at)+(velocity+curl)*dt
 		particle.velocity=velocity
@@ -244,9 +248,10 @@ func _upload() -> void:
 			if preserve_flame_colors:tint=Color(1,0,.36 if age<.5 else .40)
 			tint.a=clampf((1.0-age)*4.0,0,1)
 		var height_scale:=1.4 if kind==0 and not bool(particle.burst) else 1.0
-		banks[kind].set_instance_transform(counts[kind],Transform3D(Basis.IDENTITY.scaled(Vector3(size,size*height_scale,1)),Vector3(particle.at)))
+		var pose:=Transform3D(Basis.IDENTITY.scaled(Vector3(size,size*height_scale,1)),Vector3(particle.at))
+		banks[kind].set_instance_transform(counts[kind],pose)
 		banks[kind].set_instance_color(counts[kind],tint)
-		outline_banks[kind].set_instance_transform(counts[kind],banks[kind].get_instance_transform(counts[kind]))
+		outline_banks[kind].set_instance_transform(counts[kind],pose)
 		outline_banks[kind].set_instance_color(counts[kind],tint)
 		counts[kind]+=1
 	var camera:=get_viewport().get_camera_3d() if is_inside_tree() else null

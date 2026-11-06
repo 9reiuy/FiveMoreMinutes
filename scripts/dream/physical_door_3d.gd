@@ -252,7 +252,9 @@ func _configure_leaf(index: int) -> void:
 			glass.material_override.set_shader_parameter("metal_glass",true)
 			glass.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			visual.add_child(glass)
-	preload("res://scripts/dream/solid_shadow_caster_3d.gd").attach(visual)
+	var caster := preload("res://scripts/dream/solid_shadow_caster_3d.gd").attach(visual)
+	if caster != null:
+		caster.layers |= 1 << 12 # Architectural indirect-light caster.
 
 
 func _load_authored_door_parts() -> void:
@@ -662,6 +664,13 @@ func set_target_highlight(_enabled: bool) -> void:
 func is_locked() -> bool:
 	return locked
 
+func seal_encounter(value: bool) -> void:
+	set_locked(value)
+	if value:
+		for leaf in _leaves:
+			if is_instance_valid(leaf):
+				var tween:=create_tween(); tween.tween_property(leaf,"rotation:y",0.,.25)
+
 
 func set_locked(value: bool) -> void:
 	locked = value
@@ -950,10 +959,26 @@ func take_damage(amount: float, direction: Vector2 = Vector2.ZERO, force: float 
 		shatter(direction)
 
 
+func shatter_from_dash(impact_direction: Vector2) -> bool:
+	# Actual swept contact is queued by the world, independently of melee damage.
+	# Every PhysicalDoor leaf may break, including locked/boss-marked leaves;
+	# independent elevator/transition controllers do not use this door type.
+	if is_destroyed: return false
+	set_locked(false)
+	if has_meta(&"boss_locked"): set_meta(&"boss_locked",false)
+	current_health = 0.0
+	shatter(impact_direction)
+	return is_destroyed
+
+
 func shatter(impact_direction: Vector2 = Vector2.ZERO) -> void:
 	if is_destroyed:
 		return
 	is_destroyed = true
+	# Snapshot only the leaves/hardware that were actually present before hiding
+	# them, including their current hinge pose. A single door has one live leaf.
+	if is_inside_tree():
+		_spawn_wood_shards(impact_direction)
 
 	door_shattered.emit(self)
 
@@ -1005,10 +1030,6 @@ func shatter(impact_direction: Vector2 = Vector2.ZERO) -> void:
 		right_leaf.freeze = true
 		right_leaf.collision_layer = 0
 		right_leaf.collision_mask = 0
-
-	if is_inside_tree():
-		_spawn_wood_shards(impact_direction)
-
 
 func _spawn_wood_shards(impact_direction: Vector2) -> void:
 	if preload("res://scripts/dream/destruction_floor_debris.gd").spawn(self,impact_direction,false):

@@ -59,17 +59,21 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var next_ground := global_position + spray_velocity * delta
-	if _sweep_query == null:
-		_sweep_query = PhysicsRayQueryParameters2D.new()
-		_sweep_query.collision_mask = 1 | 4
-		_sweep_query.collide_with_bodies = true
-		_sweep_query.collide_with_areas = false
-	_sweep_query.from = global_position
-	_sweep_query.to = next_ground
-	var hit := get_world_2d().direct_space_state.intersect_ray(_sweep_query)
-	if not hit.is_empty():
-		next_ground = Vector2(hit.position) + Vector2(hit.normal) * 2.0
-		spray_velocity = Vector2.ZERO
+	# Drag/wall contact can stop the ground motion while the fragment is still
+	# airborne. Only sweep an actual displacement; vertical integration and the
+	# room/floor checks below must continue for these stationary ground points.
+	if not (next_ground - global_position).is_zero_approx():
+		if _sweep_query == null:
+			_sweep_query = PhysicsRayQueryParameters2D.new()
+			_sweep_query.collision_mask = 1 | 4
+			_sweep_query.collide_with_bodies = true
+			_sweep_query.collide_with_areas = false
+		_sweep_query.from = global_position
+		_sweep_query.to = next_ground
+		var hit := get_world_2d().direct_space_state.intersect_ray(_sweep_query)
+		if not hit.is_empty():
+			next_ground = Vector2(hit.position) + Vector2(hit.normal) * 2.0
+			spray_velocity = Vector2.ZERO
 	if not is_instance_valid(source_prop):
 		source_prop = null
 	var next_room := room_id

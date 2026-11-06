@@ -227,7 +227,8 @@ func _add_window_candidate(tower: Dictionary,index: int) -> void:
 		var tone := window_tone(Vector2i(column,row),seed_value)
 		if tone<5: continue
 		var local := Vector3(inward.x*(size.x*.5+.08),row*2.0+.90625,column+.484375) if side<2 else Vector3(column+.484375,row*2.0+.90625,inward.z*(size.z*.5+.08))
-		var color := Color("edbd87") if tone>=9 else Color("87bbc8")
+		var warm:=posmod(column*11+row*19+seed_value*3,101)<3
+		var color := Color("8f724d") if warm else Color("5a738e")
 		light_candidates.append({"position":at+local,"color":color,"tower":index,"cell":Vector2i(column,row)})
 		break
 
@@ -278,13 +279,15 @@ static func _tower(facade: SurfaceTool,neon: SurfaceTool,at: Vector3,size: Vecto
 	_box(facade,Vector3(size.x*.7,.25,size.z*.7),at+Vector3(0,size.y*.5+.125,0),tint.lightened(.08))
 	_box(facade,Vector3(size.x*.22,.7,size.z*.25),at+Vector3(size.x*.15,size.y*.5+.6,size.z*.13),tint.darkened(.15))
 	if index%2==0:
-		var color := Color("60a7b6") if index%3==0 else Color("b45d91") if index%3==1 else Color("637dcc")
+		var color := Color("726044") if index%37==0 else Color("5a738e") if index%3==0 else Color("2b384e")
 		_box(neon,Vector3(size.x*.55,.18,.06),at+Vector3(0,size.y*.25,size.z*.5+.04),color)
 		_box(neon,Vector3(.07,size.y*.3,.07),at+Vector3(size.x*.5+.035,size.y*.25,size.z*.35),color*.7)
 
 func _scenery_material(neon: bool, own: bool) -> ShaderMaterial:
 	var mat := ShaderMaterial.new(); mat.shader=CITY_SHADER
 	mat.set_shader_parameter("neon_surface",neon); mat.set_shader_parameter("own_facade",own)
+	if world.has_method("uses_office_night_lighting") and world.uses_office_night_lighting():
+		mat.set_shader_parameter("facade_light_gain", .34)
 	mat.set_shader_parameter("city_void",ImageTexture.create_from_image(topology.image))
 	mat.set_shader_parameter("city_clearance",topology.clearance_texture)
 	mat.set_shader_parameter("city_origin",Vector2(topology.bounds.position))

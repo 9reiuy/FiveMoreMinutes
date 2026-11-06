@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TASK-022-A · 常态战斗视觉样板</title>
+<style>
+:root{color-scheme:dark;font:16px/1.7 system-ui,"Microsoft YaHei",sans-serif;background:#080d19;color:#e3e9f3}*{box-sizing:border-box}body{max-width:1440px;margin:auto;padding:32px 24px 48px}h1{font-size:clamp(24px,3vw,36px);line-height:1.25;margin:8px 0 14px}h2{font-size:21px;margin:30px 0 12px}p{max-width:1000px;color:#adbad1}a{color:#bfd5ff}header small{letter-spacing:.08em;color:#91a5c9}.notice{padding:12px 16px;border-left:3px solid #7189b1;background:#141e32;color:#c8d2e4}.compare{--split:50%;position:relative;aspect-ratio:16/9;background:#10162c;overflow:hidden;border:1px solid #34415d;border-radius:8px}.compare img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;image-rendering:pixelated}.compare .target{clip-path:inset(0 calc(100% - var(--split)) 0 0)}.divider{position:absolute;top:0;bottom:0;left:var(--split);width:2px;background:#c1d6ff;pointer-events:none}.tag{position:absolute;top:12px;padding:5px 12px;background:#080d19dc;border:1px solid #7384a4;border-radius:4px;font-size:13px}.tag.left{left:12px}.tag.right{right:12px}.tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:14px 0}.tools label{color:#bfcee4}.tools input{min-width:160px;flex:1;accent-color:#a4b3cc}.tools button{cursor:pointer;background:#1b2b48;color:#e4ecfa;border:1px solid #516788;border-radius:5px;padding:8px 15px;font:inherit}.tools button:hover{background:#2a4064}.tools output{font-variant-numeric:tabular-nums;min-width:42px;text-align:right}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}.card{border:1px solid #2c3a53;border-radius:7px;padding:16px;background:#10192a}.card strong{display:block;font-size:18px}.card p{margin:8px 0 0;font-size:14px}.palette{display:flex;gap:10px;flex-wrap:wrap}.swatch{min-width:125px;flex:1;border:1px solid #3d4b65;border-radius:5px;overflow:hidden}.swatch i{display:block;height:40px;background:var(--ink)}.swatch span{display:block;padding:6px 10px;color:#b7c6dd;font-size:13px}.downloads{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:24px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}.pair img{width:100%;display:block;image-rendering:pixelated}.pair figcaption{color:#a9bbd7;padding:7px 0;font-size:14px}footer{border-top:1px solid #2b3850;margin-top:32px;padding-top:16px;font-size:13px;color:#91a4c3}@media(max-width:700px){body{padding:22px 14px}.cards,.pair{grid-template-columns:1fr}.tools label{width:100%}.tag{font-size:11px;padding:2px 7px;top:6px}.tag.left{left:6px}.tag.right{right:6px}}
+</style>
+<header>
+<small>TASK-022-A · 2026-11-03 · A 方向首张样板</small>
+<h1>冷靛蓝块面，局部印刷感</h1>
+<p>先重画家具表面，让角色从安静的地面和深色块面中显现。保留办公室构图，以压白、接缝和少量半调建立统一视觉。</p>
+<p class="notice">这是基于正式游戏截图生成的目标样板，尚未接入游戏。确认本图后，再进入一个房间的实机试点。</p>
+</header>
+<div class="compare" id="compare" role="img" aria-label="同一办公室原图与A方向概念样板对照，拖动下方滑块调整样板显示范围">
+<img src="current-office.png" alt="正式Main入口的办公室原始Camera截图">
+<img class="target" src="target-overpaint-a-v1.png" alt="A方向概念样板：深色家具块面、局部磨损与半调">
+<div class="divider"></div><span class="tag left">A方向 · 概念样板</span><span class="tag right">正式截图 · 原图</span>
+</div>
+<div class="tools">
+<label for="split">样板显示范围</label><input id="split" type="range" min="0" max="100" value="50" aria-label="样板显示百分比"><output id="percent" for="split">50%</output>
+<button type="button" data-split="0">看原图</button><button type="button" data-split="50">对半比较</button><button type="button" data-split="100">看样板</button>
+</div>
+<div class="cards">
+<article class="card"><strong>家具先有块面</strong><p>中等明度桌面、较深的正面、墨色侧面，亮边和纸张只占小面积。</p></article>
+<article class="card"><strong>印刷感集中使用</strong><p>少量阴影边、板缝磨损与墙面掉漆承担纹理，大面积地面保持安静。</p></article>
+<article class="card"><strong>玩法主体优先</strong><p>保留角色的视觉优先级。血液、完整UI与高速交战将在房间试点中验证。</p></article>
+</div>
+<h2>环境设计锚色</h2>
+<div class="palette">
+<div class="swatch" style="--ink:#060b19"><i></i><span>墨黑 · #060B19</span></div><div class="swatch" style="--ink:#10162c"><i></i><span>午夜蓝 · #10162C</span></div><div class="swatch" style="--ink:#202a4a"><i></i><span>深靛蓝 · #202A4A</span></div><div class="swatch" style="--ink:#3a496c"><i></i><span>石板靛蓝 · #3A496C</span></div><div class="swatch" style="--ink:#62789b"><i></i><span>磨损蓝 · #62789B</span></div><div class="swatch" style="--ink:#a4b3cc"><i></i><span>少量冷亮色 · #A4B3CC</span></div>
+</div>
+<h2>分别查看</h2>
+<div class="pair">
+<figure><a href="current-office.png"><img src="current-office.png" alt="原始办公室截图，可点击查看原文件"></a><figcaption>原图：正式入口实际Camera，原生640×360。</figcaption></figure>
+<figure><a href="target-overpaint-a-v1.png"><img src="target-overpaint-a-v1.png" alt="A方向目标样板，可点击查看原文件"></a><figcaption>样板：内置imagegen绘制，人物与家具局部细节为概念近似。</figcaption></figure>
+</div>
+<nav class="downloads" aria-label="交付文件"><a href="visual-rules.md">简短视觉规则</a><a href="implementation-notes.md">后续工程建议</a><a href="target-overpaint-a-v1.png" download>下载样板PNG</a><a href="imagegen-prompt.txt">完整绘制提示词</a><a href="provenance.json">图像来源记录</a></nav>
+<footer>本次附件仅包含文字任务书，未附图1～图4原图。本版依据文字方向制作。当前底图没有血迹和完整HUD；后续按原游戏血色、角色精灵、UI、模型与碰撞完成实机验证。本目录用于概念审阅。</footer>
+<script>
+const compare=document.getElementById('compare');const slider=document.getElementById('split');const percent=document.getElementById('percent');
+function setSplit(value){slider.value=value;compare.style.setProperty('--split',value+'%');percent.value=value+'%';}
+slider.addEventListener('input',()=>setSplit(slider.value));document.querySelectorAll('[data-split]').forEach(button=>button.addEventListener('click',()=>setSplit(button.dataset.split)));
+</script>
+</html>

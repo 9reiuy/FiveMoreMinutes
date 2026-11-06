@@ -1,0 +1,417 @@
+{
+  "source": "C:\\Users\\Administrator\\Downloads\\QQ20261104-202338-HD.mp4",
+  "source_sha256": "6ca27e605721867815524bdf58d30a1a41c1ebd63d4f3dfa64a7c8e167633918",
+  "frame_count": 93,
+  "frames": [
+    {
+      "frame": 1,
+      "pts_seconds": 0.0
+    },
+    {
+      "frame": 2,
+      "pts_seconds": 0.00338
+    },
+    {
+      "frame": 3,
+      "pts_seconds": 0.02065
+    },
+    {
+      "frame": 4,
+      "pts_seconds": 0.03734
+    },
+    {
+      "frame": 5,
+      "pts_seconds": 0.05399
+    },
+    {
+      "frame": 6,
+      "pts_seconds": 0.0707
+    },
+    {
+      "frame": 7,
+      "pts_seconds": 0.08743
+    },
+    {
+      "frame": 8,
+      "pts_seconds": 0.10421
+    },
+    {
+      "frame": 9,
+      "pts_seconds": 0.12086
+    },
+    {
+      "frame": 10,
+      "pts_seconds": 0.13761
+    },
+    {
+      "frame": 11,
+      "pts_seconds": 0.15436
+    },
+    {
+      "frame": 12,
+      "pts_seconds": 0.17101
+    },
+    {
+      "frame": 13,
+      "pts_seconds": 0.18828
+    },
+    {
+      "frame": 14,
+      "pts_seconds": 0.20508
+    },
+    {
+      "frame": 15,
+      "pts_seconds": 0.22173
+    },
+    {
+      "frame": 16,
+      "pts_seconds": 0.23839
+    },
+    {
+      "frame": 17,
+      "pts_seconds": 0.2551
+    },
+    {
+      "frame": 18,
+      "pts_seconds": 0.27186
+    },
+    {
+      "frame": 19,
+      "pts_seconds": 0.28842
+    },
+    {
+      "frame": 20,
+      "pts_seconds": 0.30507
+    },
+    {
+      "frame": 21,
+      "pts_seconds": 0.3218
+    },
+    {
+      "frame": 22,
+      "pts_seconds": 0.33845
+    },
+    {
+      "frame": 23,
+      "pts_seconds": 0.35524
+    },
+    {
+      "frame": 24,
+      "pts_seconds": 0.372
+    },
+    {
+      "frame": 25,
+      "pts_seconds": 0.38865
+    },
+    {
+      "frame": 26,
+      "pts_seconds": 0.40534
+    },
+    {
+      "frame": 27,
+      "pts_seconds": 0.42227
+    },
+    {
+      "frame": 28,
+      "pts_seconds": 0.43914
+    },
+    {
+      "frame": 29,
+      "pts_seconds": 0.45595
+    },
+    {
+      "frame": 30,
+      "pts_seconds": 0.4726
+    },
+    {
+      "frame": 31,
+      "pts_seconds": 0.48956
+    },
+    {
+      "frame": 32,
+      "pts_seconds": 0.50624
+    },
+    {
+      "frame": 33,
+      "pts_seconds": 0.52289
+    },
+    {
+      "frame": 34,
+      "pts_seconds": 0.54014
+    },
+    {
+      "frame": 35,
+      "pts_seconds": 0.55692
+    },
+    {
+      "frame": 36,
+      "pts_seconds": 0.57365
+    },
+    {
+      "frame": 37,
+      "pts_seconds": 0.59042
+    },
+    {
+      "frame": 38,
+      "pts_seconds": 0.60744
+    },
+    {
+      "frame": 39,
+      "pts_seconds": 0.62428
+    },
+    {
+      "frame": 40,
+      "pts_seconds": 0.64116
+    },
+    {
+      "frame": 41,
+      "pts_seconds": 0.65801
+    },
+    {
+      "frame": 42,
+      "pts_seconds": 0.67497
+    },
+    {
+      "frame": 43,
+      "pts_seconds": 0.69183
+    },
+    {
+      "frame": 44,
+      "pts_seconds": 0.70904
+    },
+    {
+      "frame": 45,
+      "pts_seconds": 0.72578
+    },
+    {
+      "frame": 46,
+      "pts_seconds": 0.74236
+    },
+    {
+      "frame": 47,
+      "pts_seconds": 0.75901
+    },
+    {
+      "frame": 48,
+      "pts_seconds": 0.77566
+    },
+    {
+      "frame": 49,
+      "pts_seconds": 0.79231
+    },
+    {
+      "frame": 50,
+      "pts_seconds": 0.80896
+    },
+    {
+      "frame": 51,
+      "pts_seconds": 0.82561
+    },
+    {
+      "frame": 52,
+      "pts_seconds": 0.84226
+    },
+    {
+      "frame": 53,
+      "pts_seconds": 0.85891
+    },
+    {
+      "frame": 54,
+      "pts_seconds": 0.87556
+    },
+    {
+      "frame": 55,
+      "pts_seconds": 0.89221
+    },
+    {
+      "frame": 56,
+      "pts_seconds": 0.90886
+    },
+    {
+      "frame": 57,
+      "pts_seconds": 0.92551
+    },
+    {
+      "frame": 58,
+      "pts_seconds": 0.94244
+    },
+    {
+      "frame": 59,
+      "pts_seconds": 0.95916
+    },
+    {
+      "frame": 60,
+      "pts_seconds": 0.97581
+    },
+    {
+      "frame": 61,
+      "pts_seconds": 0.99277
+    },
+    {
+      "frame": 62,
+      "pts_seconds": 1.00966
+    },
+    {
+      "frame": 63,
+      "pts_seconds": 1.02631
+    },
+    {
+      "frame": 64,
+      "pts_seconds": 1.04319
+    },
+    {
+      "frame": 65,
+      "pts_seconds": 1.06031
+    },
+    {
+      "frame": 66,
+      "pts_seconds": 1.07724
+    },
+    {
+      "frame": 67,
+      "pts_seconds": 1.09389
+    },
+    {
+      "frame": 68,
+      "pts_seconds": 1.11054
+    },
+    {
+      "frame": 69,
+      "pts_seconds": 1.12719
+    },
+    {
+      "frame": 70,
+      "pts_seconds": 1.14384
+    },
+    {
+      "frame": 71,
+      "pts_seconds": 1.1605
+    },
+    {
+      "frame": 72,
+      "pts_seconds": 1.17715
+    },
+    {
+      "frame": 73,
+      "pts_seconds": 1.1938
+    },
+    {
+      "frame": 74,
+      "pts_seconds": 1.21045
+    },
+    {
+      "frame": 75,
+      "pts_seconds": 1.2271
+    },
+    {
+      "frame": 76,
+      "pts_seconds": 1.24403
+    },
+    {
+      "frame": 77,
+      "pts_seconds": 1.26068
+    },
+    {
+      "frame": 78,
+      "pts_seconds": 1.27734
+    },
+    {
+      "frame": 79,
+      "pts_seconds": 1.29407
+    },
+    {
+      "frame": 80,
+      "pts_seconds": 1.31072
+    },
+    {
+      "frame": 81,
+      "pts_seconds": 1.32742
+    },
+    {
+      "frame": 82,
+      "pts_seconds": 1.34429
+    },
+    {
+      "frame": 83,
+      "pts_seconds": 1.36094
+    },
+    {
+      "frame": 84,
+      "pts_seconds": 1.3778
+    },
+    {
+      "frame": 85,
+      "pts_seconds": 1.39481
+    },
+    {
+      "frame": 86,
+      "pts_seconds": 1.41146
+    },
+    {
+      "frame": 87,
+      "pts_seconds": 1.42811
+    },
+    {
+      "frame": 88,
+      "pts_seconds": 1.44476
+    },
+    {
+      "frame": 89,
+      "pts_seconds": 1.46165
+    },
+    {
+      "frame": 90,
+      "pts_seconds": 1.4786
+    },
+    {
+      "frame": 91,
+      "pts_seconds": 1.49525
+    },
+    {
+      "frame": 92,
+      "pts_seconds": 1.51197
+    },
+    {
+      "frame": 93,
+      "pts_seconds": 1.52889
+    }
+  ],
+  "decoded_resolution": [
+    1174,
+    640
+  ],
+  "container_duration_seconds": 1.55,
+  "time_basis": "decoded video PTS, not game simulation time",
+  "evidence": [
+    {
+      "frame": 26,
+      "file": "frame_026.png",
+      "observation": "红线首次出现"
+    },
+    {
+      "frame": 35,
+      "file": "frame_035.png",
+      "observation": "红线增强，右侧尚未爆发命中特效"
+    },
+    {
+      "frame": 38,
+      "file": "frame_038.png",
+      "observation": "右侧命中：白亮核心和定向喷溅"
+    },
+    {
+      "frame": 56,
+      "file": "frame_056.png",
+      "observation": "另一处大笔刷斩痕出现"
+    },
+    {
+      "frame": 66,
+      "file": "frame_066.png",
+      "observation": "大交叉斩痕；左侧敌人同时开火"
+    },
+    {
+      "frame": 70,
+      "file": "frame_070.png",
+      "observation": "交叉斩痕收缩；弹丸沿独立路径飞行"
+    }
+  ]
+}

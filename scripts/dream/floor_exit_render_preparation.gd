@@ -68,8 +68,9 @@ static func run(tree: SceneTree,world: Node3D,setup: Callable,transition_token: 
 	return report
 
 static func prepare_pools(tree: SceneTree,world: Node3D,floor_token: int,transition_token: int) -> Dictionary:
-	if not tree.paused: return {"cancelled":true,"reason":"gameplay_not_paused"}
 	if not is_instance_valid(world) or not world.is_inside_tree(): return {"cancelled":true}
+	# Reception prepares a disabled target world while its separate cab stays live.
+	if not tree.paused and world.can_process(): return {"cancelled":true,"reason":"gameplay_not_frozen"}
 	if world.get_current_floor_token()!=floor_token or world.transition_generation_token!=transition_token: return {"cancelled":true}
 	var started:=Time.get_ticks_usec()
 	var peak_ms:=0.0

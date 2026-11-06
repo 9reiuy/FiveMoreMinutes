@@ -17,6 +17,7 @@ extends Control
 signal closed
 signal shutdown_requested
 signal balance_changed
+signal state_changed
 signal story_weapon_changed(weapon_id: String)
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
@@ -68,6 +69,7 @@ var app_window_rect := APP_WINDOW_NORMAL_RECT
 var _anim_tween: Tween
 var bedroom_time_minutes := 1260.0
 var persistent_state: Dictionary = {}
+var archive_app: Control
 var notepad_lines: Array = []
 @onready var blackjack_app: BlackjackApp = $BlackjackApp
 @onready var dream_browser_app: DreamBrowserApp = $DreamBrowserApp
@@ -84,6 +86,10 @@ func _ready() -> void:
 
 func configure(state: Dictionary) -> void:
 	persistent_state = state
+	if state.get("chapter_one") is Dictionary and not is_instance_valid(archive_app):
+		archive_app=preload("res://scripts/story/chapter_archive.gd").new(); archive_app.configure(state)
+		archive_app.changed.connect(func(): state_changed.emit())
+		add_child(archive_app); archive_app.hide()
 	blackjack_app.configure(state)
 	dream_browser_app.configure(state)
 	_validate_story_weapon()
@@ -136,6 +142,8 @@ func _finish_close() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
+	if is_instance_valid(archive_app) and event is InputEventMouseButton and event.pressed and event.button_index==MOUSE_BUTTON_LEFT and Rect2(ICON_ORIGIN+Vector2(-4,ICON_SPACING-4),Vector2(48,40)).has_point(event.position):
+		_open_app("archive"); accept_event(); return
 	if event is InputEventMouseMotion:
 		var next_hovered := CLOSE_RECT.has_point(event.position)
 		var next_blackjack := (active_app.is_empty() or app_minimized) and _blackjack_icon_rect().has_point(event.position)
@@ -283,7 +291,8 @@ func _draw_desktop_icons() -> void:
 	for index in ICON_NAMES.size():
 		var origin := ICON_ORIGIN + Vector2(0, index * ICON_SPACING)
 		_draw_pixel_icon(index, origin)
-		draw_string(font, origin + Vector2(-3, ICON_SIZE + 9), ICON_NAMES[index], HORIZONTAL_ALIGNMENT_LEFT, 40, 7, Color("b8c0cc"))
+		var caption: String="匿名档案" if index==1 and is_instance_valid(archive_app) else ICON_NAMES[index]
+		draw_string(font, origin + Vector2(-3, ICON_SIZE + 9), caption, HORIZONTAL_ALIGNMENT_LEFT, 40, 7, Color("b8c0cc"))
 		if index == 3 and hovered_blackjack:
 			draw_rect(Rect2(origin - Vector2(3, 3), Vector2(44, 36)), Color("6c91a5"), false, 1.0)
 		elif index == 2 and hovered_browser:
@@ -407,6 +416,7 @@ func _notepad_icon_rect() -> Rect2:
 
 func _active_app_title() -> String:
 	match active_app:
+		"archive": return "anonymous.7z - 加密档案"
 		"blackjack": return "21点 // BLACKJACK"
 		"browser": return "梦境浏览器 // DREAM BROWSER"
 		_: return "readme.txt - 记事本"
@@ -414,6 +424,7 @@ func _active_app_title() -> String:
 
 func _app_task_name(app_id: String) -> String:
 	match app_id:
+		"archive": return "加密档案"
 		"blackjack": return "21点"
 		"browser": return "梦境浏览器"
 		_: return "readme.txt"
@@ -485,6 +496,9 @@ func _task_at(point: Vector2) -> String:
 
 func _layout_active_app() -> void:
 	var content := WINDOW_SHELL.content_rect(app_window_rect)
+	if is_instance_valid(archive_app):
+		archive_app.position=content.position; archive_app.size=content.size
+		archive_app.visible=active_app=="archive" and not app_minimized
 	blackjack_app.position = content.position
 	blackjack_app.size = content.size
 	dream_browser_app.position = content.position

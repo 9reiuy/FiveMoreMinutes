@@ -30,6 +30,7 @@ var damage_flash_left := 0.0
 var rapid_eye_left := 0.0
 var death_transition_finished := false
 var death_sequence_generation := 0
+var restart_in_progress := false
 var ui_layer: CanvasLayer
 
 func configure(owner_world: Node3D, ui: CanvasLayer, cursor: Control) -> void:
@@ -148,6 +149,9 @@ func _process(delta: float) -> void:
 			_set_enemy_slow(1.0)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if restart_in_progress:
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("skill_menu") and not player.dead:
 		if card.visible and not card.is_closing():
 			_close_card()
@@ -308,7 +312,8 @@ func _clear_death_presentation() -> void:
 	death_label = null
 
 func _restart_after_death() -> void:
-	_clear_death_presentation()
+	if restart_in_progress: return
+	restart_in_progress=true
 	death_transition_finished = false
 	damage_flash_left = 0.0
 	if is_instance_valid(damage_flash):
@@ -316,9 +321,13 @@ func _restart_after_death() -> void:
 	if rapid_eye_left > 0.0:
 		rapid_eye_left = 0.0
 		_set_enemy_slow(1.0)
-	SFX.play_battle_music(false, world.get_instance_id() if is_instance_valid(world) else 0)
 	if is_instance_valid(world) and world.has_method("restart_current_floor_after_death"):
-		world.call("restart_current_floor_after_death")
+		var ok: bool=await world.call("restart_current_floor_after_death")
+		if not is_inside_tree(): return
+		restart_in_progress=false
+		if not ok:
+			_show_restart_failure()
+			return
 		if is_instance_valid(hud) and is_instance_valid(player):
 			hud.set_health(player.current_health, player.maximum_health)
 			hud.set_dash_state(
@@ -340,6 +349,12 @@ func _restart_after_death() -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 		return
 	get_tree().reload_current_scene()
+
+
+func _show_restart_failure() -> void:
+	_clear_death_presentation()
+	_finish_death_transition()
+	death_label.text="楼层准备未完成\n按 R 重试"
 
 func _on_damage(_amount: float) -> void:
 	damage_flash_left = 0.0 if player.has_meta(&"stylized_player_hurt") else CONFIG.player_hurt_screen_flash_seconds

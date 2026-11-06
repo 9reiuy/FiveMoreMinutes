@@ -144,10 +144,14 @@ func _wall_material(room_id: int, wall: Node3D) -> ShaderMaterial:
 	if not wall_materials.has(key):
 		if wall_shader==null:
 			wall_shader=Shader.new()
-			var code := DITHER._shader(LOW).code.replace("filter_nearest_mipmap","filter_nearest")
+			var code := DITHER._shader(LOW).code
 			code=code.replace("varying vec3 world_normal;","varying vec3 world_normal;\nvarying vec3 review_local;\nuniform float review_phase = 0.0;\nuniform float review_height = 3.0;")
 			code=code.replace("void vertex() {","void vertex() {\nreview_local=VERTEX;")
 			code=code.replace("vec2 atlas_uv = UV;","vec2 atlas_uv=vec2(fract((review_local.x+0.5+review_phase)/2.0),clamp(1.0-review_local.y/review_height,0.0,0.999));")
+			# Separate the wall's lighting sample from its coincident shadow caster.
+			# The offset is a small distance along the face normal in view space.
+			code = code.replace("varying vec3 world_normal;", "varying vec3 world_normal;\nuniform float review_wall_light_sample_offset = 0.04;")
+			code = code.replace("void fragment() {", "void fragment() {\n#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS\nLIGHT_VERTEX = VERTEX + normalize(NORMAL) * review_wall_light_sample_offset;\n#endif")
 			wall_shader.code=code
 		var material := ShaderMaterial.new(); material.shader=wall_shader
 		var atlas: Texture2D
@@ -158,10 +162,10 @@ func _wall_material(room_id: int, wall: Node3D) -> ShaderMaterial:
 			if not wall_texture_cache.has(texture_key):
 				if wall_texture_cache.size()>=WALL_TEXTURE_CACHE_LIMIT:
 					wall_texture_cache.erase(wall_texture_cache.keys()[0])
-				wall_texture_cache[texture_key]=ImageTexture.create_from_image(window_frame_image(world.wall_height) if key=="window_frame" else wall_image(key,world.wall_height))
+				wall_texture_cache[texture_key]=_wall_mip_texture(window_frame_image(world.wall_height) if key=="window_frame" else wall_image(key,world.wall_height))
 			atlas=wall_texture_cache[texture_key]
 		else:
-			atlas=ImageTexture.create_from_image(window_frame_image(world.wall_height) if key=="window_frame" else wall_image(key,world.wall_height))
+			atlas=_wall_mip_texture(window_frame_image(world.wall_height) if key=="window_frame" else wall_image(key,world.wall_height))
 		material.set_shader_parameter("atlas",atlas)
 		material.set_shader_parameter("office_dither_enabled",true); material.set_shader_parameter("office_dither_step",1.0/32.0)
 		wall_materials[key]=material
@@ -169,6 +173,7 @@ func _wall_material(room_id: int, wall: Node3D) -> ShaderMaterial:
 	var along := wall.position.x if String(wall.get_meta(&"edge").axis)=="H" else -wall.position.z
 	result.set_shader_parameter("review_phase",along)
 	result.set_shader_parameter("review_height",world.wall_height)
+	result.set_shader_parameter("office_tonal_sample",bool(world.get_meta(&"tonal_enhancement_enabled",false)))
 	return result
 
 func refresh_assets() -> void:
@@ -248,13 +253,13 @@ func _refresh_windows() -> void:
 		var mat := _glass_material(quad.size,use_cache,not use_cache)
 		# Continuous horizontal reflection phase, not a strong border at each logical cell.
 		var image := Image.create(maxi(2,roundi(size.x*32)),maxi(2,roundi(size.y*32)),false,Image.FORMAT_RGBA8)
-		image.fill(Color(.64,.78,.81,.065))
+		image.fill(Color(.59,.63,.69,.032))
 		var edge: Dictionary=wall.edge_data if breakable else wall.get_meta(&"edge")
 		var phase := roundi((wall.position.x if String(edge.axis)=="H" else -wall.position.z)*32)
 		for y in image.get_height():
 			for x in image.get_width():
-				if y==0 or y==image.get_height()-1: image.set_pixel(x,y,Color(.73,.85,.87,.40))
-				elif posmod(x+phase+y,47)==0 and posmod(x+phase,19)<4: image.set_pixel(x,y,Color(.85,.93,.94,.38))
+				if y==0 or y==image.get_height()-1: image.set_pixel(x,y,Color(.71,.76,.83,.23))
+				elif posmod(x+phase+y,47)==0 and posmod(x+phase,19)<4: image.set_pixel(x,y,Color(.80,.85,.91,.17))
 		mat.set_shader_parameter("glass_pixels",ImageTexture.create_from_image(image))
 		var record := {"wall":weakref(wall),"pane":weakref(pane),"old_mesh":pane.mesh,"old_mat":pane.material_override,"new_mesh":quad,"new_mat":mat,"breakable":breakable}
 		windows.append(record); _apply_window(record)
@@ -550,3 +555,9 @@ func _desktop(visual: Node3D, source: Node2D, kind: String) -> void:
 	boxes_mesh.set_meta(&"review_desktop_detail", true)
 	cup.add_child(boxes_mesh)
 	root.visible=enabled
+
+
+static func _wall_mip_texture(image:Image) -> ImageTexture:
+	# Whole style tile with continuous local UVs; no packed-atlas neighbours.
+	image.generate_mipmaps()
+	return ImageTexture.create_from_image(image)

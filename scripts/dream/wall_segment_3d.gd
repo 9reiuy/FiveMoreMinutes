@@ -41,7 +41,7 @@ var window_pane_offset := 0.0
 var window_inward_normal := Vector2.ZERO
 var window_light_enabled := true
 var floor_shadow_lighting_enabled := false
-var window_light_energy := 2.2
+var window_light_energy := 0.75
 var window_light_range := 6.5
 var window_light_angle := 50.0
 var window_light_attenuation := 1.3
@@ -84,6 +84,7 @@ func _ready() -> void:
 		shadow_material.albedo_color = Color.WHITE
 		shadow_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		shadow_mesh.material_override = shadow_material
+		shadow_mesh.layers |= 1 << 12 # Architectural indirect-light caster.
 		shadow_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 		add_child(shadow_mesh)
 	if shadow_mesh != null:
@@ -158,6 +159,7 @@ func set_window_inward_normal(
 ## The office floor opts into shared directional sunlight. Standalone rooms
 ## retain their existing window lights until they explicitly opt in.
 func set_floor_shadow_lighting_enabled(enabled: bool) -> void:
+	if floor_shadow_lighting_enabled == enabled: return
 	floor_shadow_lighting_enabled = enabled
 	_update_window_light()
 
@@ -173,6 +175,10 @@ func set_office_cutaway_profile(full_mesh: Mesh,cut_mesh: Mesh,section: Material
 	if office_full_mesh==full_mesh and office_cut_mesh==cut_mesh and office_section_material==section: return
 	office_full_mesh=full_mesh; office_cut_mesh=cut_mesh; office_section_material=section
 	wall_mesh.mesh=office_cut_mesh if cutaway_mode else office_full_mesh
+	# The blocker keeps the FULL height/apertures, but must share the approved
+	# visible wall's thickness and mitered joints. The old 0.5m blocker enclosed
+	# the 0.25m visible face, so lights treated that face as inside solid masonry.
+	if is_instance_valid(shadow_mesh): shadow_mesh.mesh=office_full_mesh
 	_update_wall_materials()
 	_update_window_pane()
 
@@ -239,6 +245,8 @@ func set_wall_opacity(value: float) -> void:
 func _update_active_mesh() -> void:
 	if wall_mesh == null:
 		return
+	# One opaque shadow-only twin owns wall projection in BOTH cutaway states.
+	wall_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	if office_full_mesh!=null:
 		wall_mesh.mesh=office_cut_mesh if cutaway_mode else office_full_mesh
 	elif cutaway_mode:
@@ -246,10 +254,10 @@ func _update_active_mesh() -> void:
 	else:
 		wall_mesh.mesh = _window_wall_mesh if (window_variant and _window_wall_mesh != null) else _base_wall_mesh
 	_update_wall_materials()
-	# 单一 shadow source：可见墙自身从不???shadow pass，共???twin 是唯一投影者???	wall_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	if shadow_mesh != null:
-		shadow_mesh.mesh = _window_wall_mesh if (window_variant and _window_wall_mesh != null) else _base_wall_mesh
+		shadow_mesh.mesh = office_full_mesh if office_full_mesh!=null else (_window_wall_mesh if (window_variant and _window_wall_mesh != null) else _base_wall_mesh)
 		_update_shadow_mesh_transform()
+		shadow_mesh.layers |= 1 << 12 # Architectural indirect-light caster.
 		shadow_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 		shadow_mesh.visible = wall_shadow_visible
 	wall_mesh.visible = wall_visual_visible
@@ -570,11 +578,9 @@ func _update_window_pane() -> void:
 
 
 func _update_window_light() -> void:
-	if floor_shadow_lighting_enabled or not window_variant or not window_light_enabled or window_inward_normal.length_squared() < 0.001:
+	if not window_variant or not window_light_enabled or window_inward_normal.length_squared() < 0.001:
 		if window_light != null:
 			window_light.visible = false
-		if window_radial_fill != null:
-			window_radial_fill.visible = false
 		if window_radial_fill != null:
 			window_radial_fill.visible = false
 		return
@@ -587,20 +593,22 @@ func _update_window_light() -> void:
 		window_radial_fill.name = "WindowRadialFill"
 		add_child(window_radial_fill)
 
-	# Direct golden-hour sunlight through window aperture casting crisp contact shadows
-	# One soft source per continuous pane run.  Per-cell hard shadow cones made
-	# intersecting triangular bands across entire rooms.
-	window_light.shadow_enabled = false
-	window_light.shadow_blur = 0.8
-	window_light.shadow_bias = 0.03
-	window_light.shadow_normal_bias = 1.0
+	# One city-sky source per continuous pane run. The floor manager limits live
+	# sources separately from ceiling shadows; EVERY enabled window source has
+	# real occlusion. Never leave an unshadowed cone leaking through other rooms.
+	window_light.shadow_enabled = true
+	window_light.shadow_blur = 2.0
+	window_light.shadow_bias = 0.025
+	window_light.shadow_normal_bias = 0.12
 	window_light.shadow_opacity = 0.95
+	window_light.shadow_caster_mask = 1 | 8
 	# Illuminate Layer 1 (floor, walls, furniture, props, enemies), Layer 2 (player visual), Layer 4 (player shadow proxy)
 	window_light.light_cull_mask = 1 | 2 | 4 | 8  # + furniture cutout layer
 	window_light.spot_range = maxf(window_light_range, 0.1)
 	window_light.spot_angle = clampf(window_light_angle, 1.0, 89.0)
 	window_light.spot_attenuation = clampf(window_light_attenuation, 0.0, 2.0)
-	window_light.light_energy = maxf(window_light_energy, 0.0)
+	window_light.set_meta(&"window_source_energy",maxf(window_light_energy,0.0))
+	if not floor_shadow_lighting_enabled: window_light.light_energy = maxf(window_light_energy,0.0)
 	window_light.light_color = window_light_color
 	window_light.light_specular = 0.3
 
@@ -614,19 +622,17 @@ func _update_window_light() -> void:
 	var map_parent := get_parent_node_3d()
 	var map_basis := map_parent.global_basis if map_parent != null else Basis.IDENTITY
 	var inward := (map_basis * inward_local).normalized()
-	var ray := WINDOW_SUN_RAY.normalized()
-	var ray_horizontal := Vector3(ray.x, 0.0, ray.z).normalized()
-	# Facades facing away from the shared sun have sky colour but no impossible
-	# direct beam through the wall from the room side.
-	if inward.dot(ray_horizontal) <= 0.25:
-		window_light.visible = false
-		return
-	var light_pos := global_position - ray_horizontal * 1.05 + Vector3.UP * (wall_height * 0.90)
-	var target := light_pos + ray * 3.0
+	# Night city light arrives from outside each facade. The single directional
+	# moon source still has a common direction; local sky apertures must not be
+	# silently disabled on every facade facing away from that direction.
+	var light_pos := global_position - inward * 1.35 + Vector3.UP * (wall_height * 0.74)
+	var target := global_position + inward * 3.2 + Vector3.UP * 0.12
 
 	window_light.global_position = light_pos
 	window_light.look_at(target, Vector3.UP)
-	window_light.visible = wall_visual_visible
+	# Camera cutaway is presentation only: hiding a wall never switches off its
+	# physical window. In managed floors the controller owns source visibility.
+	if not floor_shadow_lighting_enabled: window_light.visible = true
 
 
 func _update_shadow_mesh_transform() -> void:

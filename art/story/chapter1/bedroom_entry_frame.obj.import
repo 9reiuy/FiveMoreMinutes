@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bpy1fdy40os1q"
+path="res://.godot/imported/bedroom_entry_frame.obj-d6c6a965c7ff82b67ae3ebb17f86db3b.mesh"
+
+[deps]
+
+files=["res://.godot/imported/bedroom_entry_frame.obj-d6c6a965c7ff82b67ae3ebb17f86db3b.mesh"]
+
+source_file="res://art/story/chapter1/bedroom_entry_frame.obj"
+dest_files=["res://.godot/imported/bedroom_entry_frame.obj-d6c6a965c7ff82b67ae3ebb17f86db3b.mesh", "res://.godot/imported/bedroom_entry_frame.obj-d6c6a965c7ff82b67ae3ebb17f86db3b.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

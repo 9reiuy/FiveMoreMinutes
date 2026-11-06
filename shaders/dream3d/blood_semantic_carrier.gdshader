@@ -43,6 +43,16 @@ float bayer4(vec2 p) {
 	return 5.0;
 }
 
+
+#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS
+// These are authored display codes, including reserved effect identities.
+// Decode once before the linear spatial output; keep alpha/depth unchanged.
+vec3 r2_effect_decode(vec3 encoded) {
+    return mix(encoded / 12.92, pow((encoded + vec3(0.055)) / 1.055, vec3(2.4)),
+        step(vec3(0.04045), encoded));
+}
+#endif
+
 void fragment() {
 	vec4 pixel = texture(capture_texture, UV);
 	// Keep fully/partially transparent capture texels out of the depth pass.
@@ -53,6 +63,9 @@ void fragment() {
 		discard;
 	}
 	ALBEDO = semantic_marker;
+#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS
+	ALBEDO = r2_effect_decode(ALBEDO);
+#endif
 	ALPHA = 1.0;
 	ALPHA_SCISSOR_THRESHOLD = 0.05;
 }

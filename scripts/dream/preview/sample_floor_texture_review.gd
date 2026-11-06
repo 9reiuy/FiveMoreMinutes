@@ -17,7 +17,12 @@ var production_mode := false
 static var floor_texture_cache: Dictionary={}
 static var _floor_shader_no_bevel: Shader
 static var _floor_shader_bevel: Shader
+static var _room_floor_shader_no_bevel: Shader
+static var _night_floor_shader_bevel: Shader
+static var _night_floor_shader_no_bevel: Shader
+static var _room_floor_shader_bevel: Shader
 const FLOOR_TEXTURE_CACHE_LIMIT := 32
+const EDITABLE_FLOOR_PNG_DIR := "res://art/Dream/EditableFloorTextures/"
 const STYLE = preload("res://scripts/dream/office_art_room_style.gd")
 
 func _ready() -> void:
@@ -44,25 +49,84 @@ func _material(image: Image, bevel: Image = null) -> ShaderMaterial:
 func _material_from_textures(atlas: Texture2D, bevel: Texture2D = null) -> ShaderMaterial:
 	var mat := ShaderMaterial.new()
 	var shader: Shader
+	# Formal floors (including the independent lab) share this response. Keep
+	# the reception, tutorial and standalone art samples on their authored look.
+	var readable_room := production_mode and world.has_method("get_current_floor_token") and not world.has_node("ChapterTraining")
+	var night: bool = readable_room and world.uses_office_night_lighting()
 	if bevel!=null:
-		if _floor_shader_bevel==null:
-			_floor_shader_bevel=Shader.new()
+		shader=_night_floor_shader_bevel if night else (_room_floor_shader_bevel if readable_room else _floor_shader_bevel)
+		if shader==null:
+			shader=Shader.new()
 			var code := DITHER._shader(LOW).code.replace("filter_nearest_mipmap","filter_nearest")
 			code=code.replace("varying vec3 world_normal;","varying vec3 world_normal;\nuniform sampler2D review_bevel : hint_normal, filter_nearest, repeat_disable;")
 			code=code.replace("ROUGHNESS = 1.0;","NORMAL_MAP = texture(review_bevel, atlas_uv).rgb;\nNORMAL_MAP_DEPTH = 1.0;\nROUGHNESS = 1.0;")
-			_floor_shader_bevel.code=code
-		shader=_floor_shader_bevel
+			shader.code=_bounded_floor_light(code,readable_room,night)
+			if night: _night_floor_shader_bevel=shader
+			elif readable_room: _room_floor_shader_bevel=shader
+			else: _floor_shader_bevel=shader
 	else:
-		if _floor_shader_no_bevel==null:
-			_floor_shader_no_bevel=Shader.new()
-			_floor_shader_no_bevel.code=DITHER._shader(LOW).code.replace("filter_nearest_mipmap","filter_nearest")
-		shader=_floor_shader_no_bevel
+		shader=_night_floor_shader_no_bevel if night else (_room_floor_shader_no_bevel if readable_room else _floor_shader_no_bevel)
+		if shader==null:
+			shader=Shader.new()
+			shader.code=_bounded_floor_light(DITHER._shader(LOW).code.replace("filter_nearest_mipmap","filter_nearest"),readable_room,night)
+			if night: _night_floor_shader_no_bevel=shader
+			elif readable_room: _room_floor_shader_no_bevel=shader
+			else: _floor_shader_no_bevel=shader
 	mat.shader=shader
 	mat.set_shader_parameter("atlas",atlas)
 	if bevel!=null: mat.set_shader_parameter("review_bevel",bevel)
 	mat.set_shader_parameter("office_dither_step",1.0/32.0)
 	mat.set_shader_parameter("office_dither_enabled",true)
 	return mat
+
+static func _bounded_floor_light(code: String, readable_room := false, night := false) -> String:
+	if night:
+		code = _floor_transfer_shader_code(code.replace("ALBEDO = texture(atlas, atlas_uv).rgb;", "ALBEDO = texture(atlas, atlas_uv).rgb * 0.65;"))
+		code = code.replace("void light() {", """void light() {
+float previous_peak = max(DIFFUSE_LIGHT.r, max(DIFFUSE_LIGHT.g, DIFFUSE_LIGHT.b));
+float previous_excess = max(previous_peak - 0.18, 0.0);
+float previous_linear = 0.18 + previous_excess / max(1.0 - previous_excess / 0.12, 0.00001);
+DIFFUSE_LIGHT *= max(1.0, previous_linear / max(previous_peak, 0.000001)) * float(previous_peak > 0.18) + float(previous_peak <= 0.18);
+""")
+		return code.insert(code.rfind("}"), """
+float peak = max(DIFFUSE_LIGHT.r, max(DIFFUSE_LIGHT.g, DIFFUSE_LIGHT.b));
+float excess = max(peak - 0.18, 0.0);
+float shoulder = 0.18 + excess / (1.0 + excess / 0.12);
+DIFFUSE_LIGHT *= min(1.0, shoulder / max(peak, 0.0001));
+""")
+	if readable_room:
+		# Restore the weak authored environment and midtones. Compress only the
+		# upper part of each fixture's response, preserving hue and soft falloff.
+		# Compatibility sums separate light passes; this is a per-light shoulder,
+		# not a promise about the final screen RGB under arbitrary stacked lights.
+		code=code.replace("ALBEDO = texture(atlas, atlas_uv).rgb;","ALBEDO = texture(atlas, atlas_uv).rgb * 0.50;")
+		return code.insert(code.rfind("}"),"""
+float floor_peak = max(DIFFUSE_LIGHT.r, max(DIFFUSE_LIGHT.g, DIFFUSE_LIGHT.b));
+float floor_excess = max(floor_peak - 0.08, 0.0);
+float floor_shoulder = 0.08 + floor_excess / (1.0 + floor_excess / 0.055);
+DIFFUSE_LIGHT *= min(1.0, floor_shoulder / max(floor_peak, 0.0001));
+""")
+	# Compatibility adds separate light passes after light(): DIFFUSE_LIGHT is
+	# not the final frame sum. Reserve a small budget per receiver/light and keep
+	# the floor on real fixtures/window bounce instead of a second ambient wash.
+	code=code.replace("diffuse_lambert;","diffuse_lambert, ambient_light_disabled;")
+	code=code.replace("ALBEDO = texture(atlas, atlas_uv).rgb;","ALBEDO = texture(atlas, atlas_uv).rgb * 0.35;")
+	var end:=code.rfind("}") # DITHER appends light() as the final function.
+	return code.insert(end,"\nDIFFUSE_LIGHT = min(DIFFUSE_LIGHT, vec3(0.13));\n")
+
+static func _floor_transfer_shader_code(code: String) -> String:
+	# The atlas deliberately remains a raw sampler. Compatibility first applies
+	# the local ceiling-floor gain in encoded space; decode that exactly once.
+	# Do that once here in Forward+; source_color would decode before the gain.
+	return code.replace("ALBEDO = texture(atlas, atlas_uv).rgb * 0.65;", """
+vec3 review_floor_authored = texture(atlas, atlas_uv).rgb * 0.65;
+ALBEDO = review_floor_authored;
+#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS
+ALBEDO = mix(review_floor_authored / 12.92,
+	pow((review_floor_authored + vec3(0.055)) / 1.055, vec3(2.4)),
+	step(vec3(0.04045), review_floor_authored));
+#endif
+""".strip_edges())
 
 func floor_material(room: Dictionary) -> Material:
 	var key := STYLE.key(room) if production_mode else String(room.get("sample_key","corridor"))
@@ -71,19 +135,83 @@ func floor_material(room: Dictionary) -> Material:
 	var cache_key := key+str(variant)
 	if not materials.has(cache_key):
 		if production_mode and bool(world.get_meta(&"test_approved_art_texture_cache",true)):
-			var texture_key := "%s:%d" % [key,variant]
+			var texture_key := "%s:%d:%s" % [key,variant,world.uses_office_night_lighting() if world.has_method("uses_office_night_lighting") else false]
 			if not floor_texture_cache.has(texture_key):
 				# Only immutable pixels cross floors. Per-floor uniforms and materials
 				# remain separate, including the retained floor during rollback.
 				if floor_texture_cache.size()>=FLOOR_TEXTURE_CACHE_LIMIT:
 					floor_texture_cache.erase(floor_texture_cache.keys()[0])
-				floor_texture_cache[texture_key]={"atlas":ImageTexture.create_from_image(floor_image(key,variant)),"bevel":ImageTexture.create_from_image(floor_normal_image(key,variant)) if key!="office" else null}
+				floor_texture_cache[texture_key] = _floor_textures(key, variant, world.uses_office_night_lighting() if world.has_method("uses_office_night_lighting") else false)
 			var pixels: Dictionary=floor_texture_cache[texture_key]
 			materials[cache_key]=_material_from_textures(pixels.atlas,pixels.bevel)
 		else:
-			materials[cache_key]=_material(floor_image(key,variant),floor_normal_image(key,variant) if key!="office" else null)
+			var pixels := _floor_textures(key, variant, world.uses_office_night_lighting() if world.has_method("uses_office_night_lighting") else false)
+			materials[cache_key] = _material_from_textures(pixels.atlas, pixels.bevel)
 	materials[cache_key].set_meta(&"floor_surface_style",key)
 	return materials[cache_key]
+
+static func _read_floor_png(filename: String) -> Image:
+	var path := EDITABLE_FLOOR_PNG_DIR + filename
+	if not ResourceLoader.exists(path, "Texture2D"):
+		return null
+	var texture := ResourceLoader.load(path, "Texture2D") as Texture2D
+	var image := texture.get_image() if texture != null else null
+	if image == null or image.is_empty():
+		return null
+	image.convert(Image.FORMAT_RGBA8)
+	return image
+
+static func _floor_png_texture(image: Image, filename: String) -> ImageTexture:
+	var texture := _floor_mip_texture(image, filename.ends_with("_normal.png"))
+	texture.resource_name = filename
+	texture.set_meta(&"floor_png_source", EDITABLE_FLOOR_PNG_DIR + filename)
+	return texture
+
+static func _floor_mip_texture(image: Image, normal := false) -> ImageTexture:
+	image.generate_mipmaps(normal)
+	return ImageTexture.create_from_image(image)
+
+static func _floor_textures(key: String, variant: int, use_editable: bool) -> Dictionary:
+	var prefix := "%s_%d" % [key, variant]
+	var color_png := _read_floor_png(prefix + "_color.png") if use_editable else null
+	var atlas := _floor_png_texture(color_png, prefix + "_color.png") if color_png != null and color_png.get_size() == Vector2i(64,64) else _floor_mip_texture(floor_image(key, variant))
+	var bevel: ImageTexture = null
+	if key != "office":
+		var normal_png := _read_floor_png(prefix + "_normal.png") if use_editable else null
+		bevel = _floor_png_texture(normal_png, prefix + "_normal.png") if normal_png != null and normal_png.get_size() == Vector2i(64,64) else _floor_mip_texture(floor_normal_image(key, variant), true)
+	return {"atlas": atlas, "bevel": bevel}
+
+static func _rug_image(size: Vector2i, color: Color) -> Image:
+	var image := Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
+	image.fill(color)
+	for y in size.y:
+		for x in size.x:
+			var edge := mini(mini(x,size.x-1-x),mini(y,size.y-1-y))
+			if edge < 2: image.set_pixel(x,y,color.darkened(.24))
+			elif edge == 5: image.set_pixel(x,y,color.lightened(.14))
+	return image
+
+static func _fit_rug_image(source: Image, size: Vector2i) -> Image:
+	if source.get_size() == size: return source
+	# For a narrower room, remove the excess from the center without
+	# scaling texels or changing the authored pixel border on any side.
+	var fitted := Image.create(size.x,size.y,false,Image.FORMAT_RGBA8)
+	var half := size / 2
+	var removed := source.get_size() - size
+	for y in 2:
+		for x in 2:
+			var start := Vector2i(half.x*x, half.y*y)
+			var origin := start + Vector2i(removed.x*x, removed.y*y)
+			var extent := Vector2i(half.x if x == 0 else size.x - half.x, half.y if y == 0 else size.y - half.y)
+			fitted.blit_rect(source,Rect2i(origin,extent),start)
+	return fitted
+
+static func _rug_texture(key: String, size: Vector2i, canonical: Vector2i, color: Color) -> ImageTexture:
+	var filename := "rug_" + key + "_color.png"
+	var image := _read_floor_png(filename)
+	if image != null and image.get_size() == canonical and size.x <= canonical.x and size.y <= canonical.y:
+		return _floor_png_texture(_fit_rug_image(image,size),filename)
+	return ImageTexture.create_from_image(_rug_image(size,color))
 
 static func floor_image(key: String, variant: int) -> Image:
 	if key=="office": return _carpet_planks(variant)
@@ -316,15 +444,14 @@ func _build_rugs() -> void:
 				for x in range(floori(bounds.position.x),ceili(bounds.end.x)+1):
 					if int(world.room_cells.get(Vector2i(x,y),-1))!=int(room.id): valid=false
 			if not valid: continue
-		var image := Image.create(roundi(size.x*32),roundi(size.y*32),false,Image.FORMAT_RGBA8)
-		var color := Color(spec[2]); image.fill(color)
-		for y in image.get_height():
-			for x in image.get_width():
-				var edge := mini(mini(x,image.get_width()-1-x),mini(y,image.get_height()-1-y))
-				if edge<2: image.set_pixel(x,y,color.darkened(.24))
-				elif edge==5: image.set_pixel(x,y,color.lightened(.14))
+		var authored_size: Vector2 = spec[1]
+		var canonical := Vector2i((authored_size * 32.0).round())
+		var texels := Vector2i((size * 32.0).round())
+		var use_editable: bool = world.has_method("uses_office_night_lighting") and world.uses_office_night_lighting()
+		var texture := (_rug_texture(key,texels,canonical,Color(spec[2])) if use_editable
+			else ImageTexture.create_from_image(_rug_image(texels,Color(spec[2]))))
 		var mesh := MeshInstance3D.new(); var plane := PlaneMesh.new(); plane.size=size; mesh.mesh=plane
-		mesh.material_override=_material(image); mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mesh.material_override=_material_from_textures(texture); mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mesh.position=Vector3(center.x,.012,center.y); mesh.name="ReviewRug_"+key
 		root.add_child(mesh)
 	root.visible=enabled

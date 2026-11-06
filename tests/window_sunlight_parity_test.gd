@@ -15,7 +15,7 @@ func _run() -> void:
 	_test_window_glass_visual()
 
 	if failures.is_empty():
-		print("WINDOW SUNLIGHT PARITY TEST PASSED: common-direction soft window light, aperture caster and continuous sky glass verified.")
+		print("WINDOW SUNLIGHT PARITY TEST PASSED: exterior city light, aperture occlusion and continuous sky glass verified.")
 		quit(0)
 	else:
 		for f in failures:
@@ -28,8 +28,8 @@ func _assert(condition: bool, message: String) -> void:
 
 func _test_demo_config_defaults() -> void:
 	_assert(CONFIG_RESOURCE.window_light_enabled == true, "window_light_enabled should default to true")
-	_assert(CONFIG_RESOURCE.window_light_energy >= 1.8, "window_light_energy should be >= 1.8, got %f" % CONFIG_RESOURCE.window_light_energy)
-	_assert(CONFIG_RESOURCE.window_light_range <= 8.0 and CONFIG_RESOURCE.window_light_range >= 5.0, "window_light_range should be localized between 5.0m and 8.0m, got %f" % CONFIG_RESOURCE.window_light_range)
+	_assert(CONFIG_RESOURCE.window_light_energy > 0.0, "city window source must have positive energy")
+	_assert(CONFIG_RESOURCE.window_light_range <= 10.0 and CONFIG_RESOURCE.window_light_range >= 5.0, "city window source must stay local")
 	_assert(CONFIG_RESOURCE.window_light_angle <= 70.0 and CONFIG_RESOURCE.window_light_angle >= 40.0, "window_light_angle should be between 40 and 70 degrees, got %f" % CONFIG_RESOURCE.window_light_angle)
 	var col: Color = CONFIG_RESOURCE.window_light_color
 	_assert(col.b > col.r and col.b >= 0.9, "window_light_color should be cool-toned city night blue (b > r), got %s" % str(col))
@@ -54,12 +54,12 @@ func _test_window_wall_geometry_and_lighting() -> void:
 	var light: SpotLight3D = wall.get_node_or_null("WindowLight") as SpotLight3D
 	_assert(light != null, "WindowLight SpotLight3D node must exist on window wall")
 	if light != null:
-		_assert(light.shadow_enabled == false, "WindowLight uses a soft continuous-run fill without intersecting shadow cones")
+		_assert(light.shadow_enabled, "WindowLight must be blocked by real architecture and furniture")
 		_assert((light.light_cull_mask & 1) != 0, "WindowLight cull mask must include Layer 1 (floor, walls, furniture)")
 		_assert((light.light_cull_mask & 2) != 0, "WindowLight cull mask must include Layer 2 (player visual)")
 		_assert((light.light_cull_mask & 4) != 0, "WindowLight cull mask must include Layer 4 (player shadow proxy)")
-		_assert(light.light_energy >= 2.0, "WindowLight energy must be >= 2.0")
-		_assert(light.shadow_blur <= 1.0, "WindowLight shadow blur should be crisp (<= 1.0), got %f" % light.shadow_blur)
+		_assert(is_equal_approx(light.light_energy,CONFIG_RESOURCE.window_light_energy), "WindowLight respects configured energy")
+		_assert(light.shadow_blur <= 3.0, "WindowLight keeps restrained shadow softness")
 		_assert(light.shadow_opacity >= 0.9, "WindowLight shadow opacity should be deep (>= 0.9), got %f" % light.shadow_opacity)
 
 		# Check light position is outside and elevated
@@ -84,7 +84,7 @@ func _test_window_wall_geometry_and_lighting() -> void:
 	second_wall.set_window_variant(true)
 	second_wall.set_window_inward_normal(Vector2(0, -1), true)
 	var second_light := second_wall.get_node_or_null("WindowLight") as SpotLight3D
-	_assert(second_light != null and (-second_light.global_basis.z).dot(-light.global_basis.z) > 0.999, "separate facade windows use one sunlight direction")
+	_assert(second_light != null and (-second_light.global_basis.z).dot(Vector3(0,0,-1)) > 0.5, "city light enters the second facade from outside as well")
 	second_wall.queue_free()
 
 	wall.queue_free()

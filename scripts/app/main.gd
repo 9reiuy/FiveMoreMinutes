@@ -32,6 +32,7 @@ const GAME_PHONE_SCRIPT := preload("res://scripts/ui/game_phone.gd")
 var current_screen: Node
 var _supported_dream_world: Node3D
 var game_phone: Node
+var chapter_one: Node
 var last_summary: Dictionary = {}
 var persistent_day_state: Dictionary = {}
 var day_start_snapshot = DAY_START_SNAPSHOT.new()
@@ -74,6 +75,9 @@ func _ready() -> void:
 	game_phone.name = "GamePhone"
 	add_child(game_phone)
 	game_phone.call("configure", self)
+	chapter_one=preload("res://scripts/story/chapter_one.gd").new()
+	chapter_one.main=self
+	add_child(chapter_one)
 	debug_console.configure(persistent_day_state, _on_debug_ram_changed)
 	if not debug_console.dream_jump_requested.is_connected(_on_debug_dream_jump_requested):
 		debug_console.dream_jump_requested.connect(_on_debug_dream_jump_requested)
@@ -137,6 +141,9 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if not pause_allowed:
+		return
+	if is_instance_valid(_supported_dream_world) and _supported_dream_world.has_method("consume_escape") and _supported_dream_world.consume_escape():
+		get_viewport().set_input_as_handled()
 		return
 	if pause_menu.is_open():
 		pause_menu.handle_escape()
@@ -248,6 +255,7 @@ func _on_global_progress_changed() -> void:
 
 func _start_new_game() -> void:
 	persistent_day_state = _create_initial_state()
+	chapter_one.start_new()
 	# 新开存档继承历史解锁的武器（全局记录），避免已解锁武器被重新锁上。
 	UNLOCK_STORE.apply_to(persistent_day_state)
 	last_summary.clear()
@@ -270,7 +278,8 @@ func _continue_game() -> void:
 	persistent_day_state.has_entered_dream = false
 	day_start_snapshot.capture(persistent_day_state)
 	debug_console.configure(persistent_day_state, _on_debug_ram_changed)
-	_show_bedroom(false)
+	if chapter_one.enabled(): chapter_one.resume()
+	else: _show_bedroom(false)
 
 
 func _merge_with_defaults(loaded: Dictionary) -> Dictionary:
@@ -329,11 +338,11 @@ func _reset_daily_state() -> void:
 	persistent_day_state.computer_opened_today = false
 
 
-func _save_progress() -> void:
+func _save_progress() -> bool:
 	persistent_day_state.save_version = CONFIG.save_compatibility_version
 	# 存档时把当前已解锁的武器同步到全局（跨存档继承）。
 	UNLOCK_STORE.sync_from(persistent_day_state)
-	SAVE_STORE.save_game(persistent_day_state)
+	return SAVE_STORE.save_game(persistent_day_state)
 
 
 func _load_current_version_progress() -> Dictionary:
@@ -378,6 +387,9 @@ func _reset_state_to_bedroom_start() -> void:
 
 
 func _restore_day_start_snapshot() -> void:
+	if chapter_one.enabled():
+		_save_progress()
+		return
 	persistent_day_state = day_start_snapshot.restore(persistent_day_state)
 	last_summary.clear()
 	night_state = _fresh_night_state()
@@ -397,7 +409,11 @@ func _show_opening() -> void:
 	last_summary.clear()
 	var opening := OPENING_SCENE.instantiate()
 	opening.text_event_id = &"opening_first_night"
-	opening.opening_finished.connect(_show_bedroom.bind(false))
+	if chapter_one.enabled():
+		opening.setup_paragraphs(["公司体检结果：适岗。\n休息建议：按时服药。","Rei，您的睡眠质量已纳入考核。","地下校准设施。\n请先完成入职训练。"])
+	opening.opening_finished.connect(func():
+		if chapter_one.enabled(): chapter_one.resume()
+		else: _show_bedroom(false))
 	_transition_to(opening)
 
 
@@ -437,6 +453,10 @@ func _play_game_phone_story_effect(effect: StringName) -> void:
 
 
 func _start_story_dream(melatonin_count: int = 0, is_hungry_run: bool = false) -> void:
+	if chapter_one.enabled():
+		night_state.melatonin_count=melatonin_count
+		chapter_one.sleep()
+		return
 	if _register_hunger_sleep_for_day():
 		_show_starvation_ending()
 		return
@@ -460,11 +480,15 @@ func _show_tutorial(weapon_id: String) -> void:
 	var tutorial := TUTORIAL_SCENE.instantiate()
 	if tutorial.has_method("configure_tutorial"):
 		tutorial.call("configure_tutorial", weapon_id, persistent_day_state)
+	if chapter_one.enabled(): chapter_one.prepare_tutorial(tutorial)
 	tutorial.connect("tutorial_finished", Callable(self, "_on_tutorial_finished").bind(weapon_id), CONNECT_ONE_SHOT)
 	_transition_to(tutorial, 0.65)
 
 
 func _on_tutorial_finished(weapon_id: String) -> void:
+	if chapter_one.enabled():
+		chapter_one.tutorial_finished()
+		return
 	if bool(persistent_day_state.get("tutorial_completed", false)):
 		return
 	# Completion is committed only after the authored exit sequence.  Mirror the
@@ -479,6 +503,7 @@ func _show_reception(weapon_id: String) -> void:
 	var reception := RECEPTION_SCENE.instantiate()
 	if reception.has_method("configure_reception"):
 		reception.call("configure_reception", weapon_id, persistent_day_state, night_state)
+	if chapter_one.enabled(): chapter_one.prepare_reception(reception)
 	# Keep the connection alive when a failed preparation returns to this lobby.
 	reception.connect("elevator_entered", Callable(self, "_on_reception_elevator_entered").bind(weapon_id))
 	if reception.has_signal("weapon_equipped"):
@@ -487,6 +512,7 @@ func _show_reception(weapon_id: String) -> void:
 
 
 func _on_reception_elevator_entered(weapon_id: String) -> void:
+	if chapter_one.enabled() and not chapter_one.depart(): return
 	_show_dream(weapon_id, true)
 
 
@@ -529,6 +555,7 @@ func _show_dream(weapon_id: String, from_reception: bool = false) -> void:
 			int(night_state.get("run_stress_value", CONFIG.stress_default))
 		)
 		dream.weapon_equipped.connect(_on_story_weapon_equipped)
+		if chapter_one.enabled(): chapter_one.prepare_world(dream)
 		dream.profile_changed.connect(_on_dream_profile_changed)
 		dream.dream_finished.connect(_show_results)
 		_transition_to_dream(dream)
@@ -539,6 +566,10 @@ func _show_dream(weapon_id: String, from_reception: bool = false) -> void:
 
 
 func _show_results(summary: Dictionary) -> void:
+	if chapter_one.enabled():
+		# The new chapter returns through its actual elevator, not legacy wages/endings.
+		chapter_one.resume()
+		return
 	last_summary = RunSettlement.settle(summary.duplicate(true), persistent_day_state, CONFIG)
 	day_start_snapshot.capture(persistent_day_state)
 	_save_progress()
@@ -680,7 +711,7 @@ func _active_pixelation_screen() -> Node:
 
 
 func _is_supported_dream_world(screen: Node) -> bool:
-	return screen is Node3D and screen.scene_file_path in [TUTORIAL_SCENE.resource_path, DREAM_SCENE.resource_path, RECEPTION_SCENE.resource_path]
+	return screen is Node3D and screen.scene_file_path in [TUTORIAL_SCENE.resource_path, DREAM_SCENE.resource_path, RECEPTION_SCENE.resource_path,"res://scenes/story/chapter_bedroom.tscn"]
 
 
 func _open_pause_menu() -> void:
@@ -921,14 +952,16 @@ func _run_dream_transition(dream: Node, duration: float) -> void:
 		for frame in 2: await get_tree().process_frame
 		if is_instance_valid(dream) and dream.is_inside_tree():
 			if loading_overlay!=null: loading_overlay.set_progress(0.98,"正在准备战斗光效...")
-			var preparation: Dictionary={"skipped":"diagnostic_baseline","cancelled":false,"temporary_sources":0}
-			if bool(dream.call("begin_firearm_render_preparation")):
-				# The coroutine belongs to a RefCounted worker, not a scene that
-				# may be removed during loading. Never resume on a freed Dream.
-				preparation=await preload("res://scripts/dream/firearm_render_preparation.gd").run(get_tree(),dream)
-			if is_instance_valid(dream) and dream.is_inside_tree(): dream.call("complete_firearm_render_preparation",preparation)
+			# Same transaction as reception and cross-floor elevators. Its receipt
+			# requires actual rendered work, cleanup and the current floor token.
+			await preload("res://scripts/dream/elevator_render_readiness.gd").run(get_tree(),dream)
 		get_tree().paused=was_paused
-		if is_instance_valid(dream) and dream.is_inside_tree(): dream.call("finish_loading_render_preparation")
+		if is_instance_valid(dream) and dream.is_inside_tree():
+			if not bool(dream.call("finish_loading_render_preparation")):
+				# No old screen survives _set_screen. Return to a usable menu rather
+				# than revealing an unprepared floor or stranding locked controls.
+				set_meta(&"last_elevator_preparation_failure",dream.last_firearm_render_preparation.duplicate())
+				_show_main_menu()
 
 	if loading_overlay != null:
 		loading_overlay.set_progress(1.0, "神经同步完成")

@@ -242,7 +242,7 @@ func _push_page(page: StringName) -> void:
 func _activate_selection() -> void:
 	if _page == &"home": _push_page(HOME_APPS[get_selected_index()])
 	elif _page == &"shop":
-		_note = "" if apps_model.purchase(get_selected_index()) else "请回卧室购买"
+		_note = "" if apps_model.purchase(get_selected_index()) else apps_model.purchase_hint()
 		_refresh_content()
 	elif _page == &"music" and get_selected_index() == 0: apps_model.toggle_music(get_tree())
 	elif _page in [&"graphics",&"assistance"]:
@@ -325,7 +325,7 @@ func _refresh_content() -> void:
 			body.add_child(_new_label(product.title + "  " + str(product.price)))
 			body.add_child(_new_label(product.description, MUTED))
 			body.add_child(_new_label(product.status, MUTED))
-			body.add_child(_new_label("购买" if apps_model.can_purchase() else "回卧室购买"))
+			body.add_child(_new_label("购买" if apps_model.can_purchase() else apps_model.purchase_hint()))
 	_scroll.set_deferred("scroll_vertical", saved_scroll)
 	_refresh_card_selection()
 

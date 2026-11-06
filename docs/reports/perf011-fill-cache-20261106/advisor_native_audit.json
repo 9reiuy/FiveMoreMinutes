@@ -1,0 +1,1252 @@
+[
+  {
+    "case": "R3_C7_timing12",
+    "trace_sha256": "6454E1B7C5F0A003DCEAF20FBA18858DC630B0D86B824C24ED42F7F4BEAB2F4C",
+    "definition": "All intervals classified firstuse_reveal or later, including first reveal and all subsequent stage boundaries. Covered loading retained in raw, not gameplay FPS. Matches original C7 acceptance scope.",
+    "all_revealed": {
+      "n": 1360,
+      "mean_ms": 25.523630147058824,
+      "mean_fps": 39.179379823258934,
+      "p50_ms": 23.7105,
+      "p95_ms": 40.04555,
+      "p99_ms": 50.342200000000005,
+      "max_ms": 142.721,
+      "over80": 2,
+      "percentile_method": "linear interpolation at (n-1)*p"
+    },
+    "focused": 1360,
+    "coverage": {
+      "dynamic": {
+        "damaged_or_missing_enemy_nodes": 2,
+        "effective_player_damage_events": 1,
+        "enemy_nodes_after": 8,
+        "enemy_nodes_before": 8,
+        "native_player_shots": 84,
+        "physics_ticks": 840,
+        "power_final": true,
+        "power_initial": true
+      },
+      "movement": {
+        "body_at_stop": [
+          1724.861328125,
+          812.790222167969
+        ],
+        "complete": true,
+        "contacts": [],
+        "detours": [
+          {
+            "attempt": 0,
+            "legs": 3,
+            "portal": "H:25:29",
+            "rejoin": 21,
+            "result": {
+              "complete": true,
+              "distance_px": 141.901867091656
+            }
+          },
+          {
+            "attempt": 0,
+            "legs": 3,
+            "portal": "H:51:29",
+            "rejoin": 75,
+            "result": {
+              "complete": true,
+              "distance_px": 78.6065130233765
+            }
+          }
+        ],
+        "distance_px": 1390.7931368947,
+        "doors": [
+          {
+            "edge": "H:25:29",
+            "id": 5,
+            "locked": false,
+            "opened": true
+          },
+          {
+            "edge": "H:51:29",
+            "id": 6,
+            "locked": false,
+            "opened": true
+          }
+        ],
+        "engagements": [],
+        "reached": 83,
+        "regions": [
+          9,
+          2,
+          3
+        ],
+        "stopped_at": null,
+        "total": 83
+      },
+      "stationary": true
+    },
+    "stages": [
+      {
+        "name": "firstuse_reveal",
+        "timing": {
+          "n": 1,
+          "mean_ms": 14.918,
+          "mean_fps": 67.0331143584931,
+          "p50_ms": 14.918,
+          "p95_ms": 14.918,
+          "p99_ms": 14.918,
+          "max_ms": 14.918,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 1.20899999141693,
+            "gpu_ms_delayed": 4.86999988555908,
+            "visible_draw_calls_raw": 241,
+            "shadow_primitives_raw": 10596,
+            "shadow_draw_calls_raw": 297
+          },
+          "mirror_new_request_readback": {}
+        }
+      },
+      {
+        "name": "firstuse_control_released",
+        "timing": {
+          "n": 42,
+          "mean_ms": 28.854238095238095,
+          "mean_fps": 34.656953917803605,
+          "p50_ms": 25.524,
+          "p95_ms": 44.598449999999964,
+          "p99_ms": 65.45262999999994,
+          "max_ms": 71.708,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 8.385690439315068,
+            "gpu_ms_delayed": 5.549261921928043,
+            "visible_draw_calls_raw": 239.54761904761904,
+            "shadow_primitives_raw": 382335.5714285714,
+            "shadow_draw_calls_raw": 10014.52380952381
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.109190489564623,
+            "gpu_ms_delayed": 2.4373095205851962,
+            "visible_draw_calls_raw": 226.54761904761904,
+            "shadow_primitives_raw": 354075.6666666667,
+            "shadow_draw_calls_raw": 9381.619047619048
+          }
+        }
+      },
+      {
+        "name": "live_stationary",
+        "timing": {
+          "n": 369,
+          "mean_ms": 21.764040650406503,
+          "mean_fps": 45.947350313431905,
+          "p50_ms": 21.425,
+          "p95_ms": 24.763,
+          "p99_ms": 27.377,
+          "max_ms": 28.765,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 6.379704591704578,
+            "gpu_ms_delayed": 5.31209755977641,
+            "visible_draw_calls_raw": 244.6449864498645,
+            "shadow_primitives_raw": 378501.5447154472,
+            "shadow_draw_calls_raw": 9942.623306233063
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 6.381680222384652,
+            "gpu_ms_delayed": 2.3065880682410262,
+            "visible_draw_calls_raw": 228.0840108401084,
+            "shadow_primitives_raw": 354852.6666666667,
+            "shadow_draw_calls_raw": 9409.50135501355
+          }
+        }
+      },
+      {
+        "name": "live_native_movement",
+        "timing": {
+          "n": 420,
+          "mean_ms": 24.95744285714286,
+          "mean_fps": 40.068207537287755,
+          "p50_ms": 24.764499999999998,
+          "p95_ms": 29.1713,
+          "p99_ms": 35.073389999999996,
+          "max_ms": 142.721,
+          "over80": 1
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.2504857108706515,
+            "gpu_ms_delayed": 6.138176199368068,
+            "visible_draw_calls_raw": 304.7809523809524,
+            "shadow_primitives_raw": 411103.95714285714,
+            "shadow_draw_calls_raw": 11341.988095238095
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.2234904697963165,
+            "gpu_ms_delayed": 2.660390475250426,
+            "visible_draw_calls_raw": 311.85,
+            "shadow_primitives_raw": 399823.5523809524,
+            "shadow_draw_calls_raw": 11018.65
+          }
+        }
+      },
+      {
+        "name": "dynamic_meeting_setup",
+        "timing": {
+          "n": 27,
+          "mean_ms": 23.04011111111111,
+          "mean_fps": 43.40256846755176,
+          "p50_ms": 21.938,
+          "p95_ms": 27.2946,
+          "p99_ms": 39.103159999999974,
+          "max_ms": 43.168,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 6.157592561509875,
+            "gpu_ms_delayed": 5.151518521485505,
+            "visible_draw_calls_raw": 268.8888888888889,
+            "shadow_primitives_raw": 389374.3703703704,
+            "shadow_draw_calls_raw": 11071.851851851852
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 6.23566668121903,
+            "gpu_ms_delayed": 2.1742222220809366,
+            "visible_draw_calls_raw": 230.92592592592592,
+            "shadow_primitives_raw": 363471.3333333333,
+            "shadow_draw_calls_raw": 10570.888888888889
+          }
+        }
+      },
+      {
+        "name": "live_combat_initial_powered",
+        "timing": {
+          "n": 199,
+          "mean_ms": 32.8024824120603,
+          "mean_fps": 30.48549763515263,
+          "p50_ms": 32.125,
+          "p95_ms": 42.1861,
+          "p99_ms": 51.86868000000006,
+          "max_ms": 91.945,
+          "over80": 1
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.079211079295556,
+            "gpu_ms_delayed": 6.029492471685361,
+            "visible_draw_calls_raw": 331.95477386934675,
+            "shadow_primitives_raw": 387294.5226130653,
+            "shadow_draw_calls_raw": 10977.366834170854
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.126849232007511,
+            "gpu_ms_delayed": 2.6477738762620704,
+            "visible_draw_calls_raw": 268.36180904522615,
+            "shadow_primitives_raw": 362394.2814070352,
+            "shadow_draw_calls_raw": 10489.743718592965
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweroff_first",
+        "timing": {
+          "n": 115,
+          "mean_ms": 16.98615652173913,
+          "mean_fps": 58.87146975951773,
+          "p50_ms": 16.137,
+          "p95_ms": 23.9696,
+          "p99_ms": 28.803359999999998,
+          "max_ms": 30.752,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 0.8829217371733293,
+            "gpu_ms_delayed": 0.6568086971407351,
+            "visible_draw_calls_raw": 336.4695652173913,
+            "shadow_primitives_raw": 10234.539130434783,
+            "shadow_draw_calls_raw": 326.9304347826087
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 0.751626088567402,
+            "gpu_ms_delayed": 0.2898782599231472,
+            "visible_draw_calls_raw": 258.5826086956522,
+            "shadow_primitives_raw": 8896.55652173913,
+            "shadow_draw_calls_raw": 272.5652173913044
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweron_first",
+        "timing": {
+          "n": 59,
+          "mean_ms": 34.17650847457627,
+          "mean_fps": 29.259864293741263,
+          "p50_ms": 33.681,
+          "p95_ms": 39.631999999999984,
+          "p99_ms": 46.086000000000006,
+          "max_ms": 46.956,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 6.913661034430487,
+            "gpu_ms_delayed": 5.945542367838196,
+            "visible_draw_calls_raw": 320.96610169491527,
+            "shadow_primitives_raw": 384660.9152542373,
+            "shadow_draw_calls_raw": 10876.152542372882
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 6.891762742046582,
+            "gpu_ms_delayed": 2.516847453885159,
+            "visible_draw_calls_raw": 252.28813559322035,
+            "shadow_primitives_raw": 359755.69491525425,
+            "shadow_draw_calls_raw": 10390.169491525423
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweroff_repeat",
+        "timing": {
+          "n": 59,
+          "mean_ms": 16.960389830508475,
+          "mean_fps": 58.96090891738777,
+          "p50_ms": 16.107,
+          "p95_ms": 21.748299999999997,
+          "p99_ms": 28.557740000000013,
+          "max_ms": 33.66,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 1.0106440701727137,
+            "gpu_ms_delayed": 0.777067799689406,
+            "visible_draw_calls_raw": 333.89830508474574,
+            "shadow_primitives_raw": 10075.728813559323,
+            "shadow_draw_calls_raw": 329
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 0.8604237361479612,
+            "gpu_ms_delayed": 0.32722033636044656,
+            "visible_draw_calls_raw": 253.71186440677965,
+            "shadow_primitives_raw": 8812.338983050848,
+            "shadow_draw_calls_raw": 271.5762711864407
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweron_repeat",
+        "timing": {
+          "n": 60,
+          "mean_ms": 41.82678333333333,
+          "mean_fps": 23.90812585396837,
+          "p50_ms": 41.961,
+          "p95_ms": 50.7403,
+          "p99_ms": 51.70392,
+          "max_ms": 51.829,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.44356665511926,
+            "gpu_ms_delayed": 6.109033331274986,
+            "visible_draw_calls_raw": 342.51666666666665,
+            "shadow_primitives_raw": 382501.36666666664,
+            "shadow_draw_calls_raw": 10836.566666666668
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.524650037288667,
+            "gpu_ms_delayed": 2.3670833336810273,
+            "visible_draw_calls_raw": 249.5,
+            "shadow_primitives_raw": 357798.56666666665,
+            "shadow_draw_calls_raw": 10348.95
+          }
+        }
+      },
+      {
+        "name": "exit_visible_tail",
+        "timing": {
+          "n": 9,
+          "mean_ms": 38.04611111111111,
+          "mean_fps": 26.2838952732795,
+          "p50_ms": 36.781,
+          "p95_ms": 46.5164,
+          "p99_ms": 47.14488,
+          "max_ms": 47.302,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.34677775700887,
+            "gpu_ms_delayed": 6.3472221692403155,
+            "visible_draw_calls_raw": 346.6666666666667,
+            "shadow_primitives_raw": 378578,
+            "shadow_draw_calls_raw": 10767.555555555555
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.3253333303663455,
+            "gpu_ms_delayed": 2.647777769300672,
+            "visible_draw_calls_raw": 251.88888888888889,
+            "shadow_primitives_raw": 353834,
+            "shadow_draw_calls_raw": 10260.888888888889
+          }
+        }
+      }
+    ],
+    "spikes": [
+      {
+        "frame": 596,
+        "stage": "live_native_movement",
+        "ms": 142.721
+      },
+      {
+        "frame": 976,
+        "stage": "live_combat_initial_powered",
+        "ms": 91.945
+      }
+    ],
+    "nearest_rank": {
+      "p50_ms": 23.685,
+      "p95_ms": 40.042,
+      "p99_ms": 50.413,
+      "method": "nearest rank, sorted_values[ceil(n*p)-1]"
+    }
+  },
+  {
+    "case": "PERF011_C7_native04",
+    "trace_sha256": "B385C2938028DBAB2AB8CDF3CA66DF6EF13A5330DF9834CAF025558C8C5B9A13",
+    "definition": "All intervals classified firstuse_reveal or later, including first reveal and all subsequent stage boundaries. Covered loading retained in raw, not gameplay FPS. Matches original C7 acceptance scope.",
+    "all_revealed": {
+      "n": 1204,
+      "mean_ms": 28.945911129568106,
+      "mean_fps": 34.54719374780726,
+      "p50_ms": 26.363500000000002,
+      "p95_ms": 50.04989999999999,
+      "p99_ms": 67.82815000000002,
+      "max_ms": 93.468,
+      "over80": 4,
+      "percentile_method": "linear interpolation at (n-1)*p"
+    },
+    "focused": 1204,
+    "coverage": {
+      "dynamic": {
+        "damaged_or_missing_enemy_nodes": 4,
+        "effective_player_damage_events": 1,
+        "enemy_nodes_after": 8,
+        "enemy_nodes_before": 8,
+        "native_player_shots": 82,
+        "physics_ticks": 840,
+        "power_final": true,
+        "power_initial": true
+      },
+      "movement": {
+        "body_at_stop": [
+          1725.63977050781,
+          812.907531738281
+        ],
+        "complete": true,
+        "contacts": [],
+        "detours": [
+          {
+            "attempt": 0,
+            "legs": 3,
+            "portal": "H:25:29",
+            "rejoin": 21,
+            "result": {
+              "complete": true,
+              "distance_px": 141.901867091656
+            }
+          },
+          {
+            "attempt": 0,
+            "legs": 3,
+            "portal": "H:51:29",
+            "rejoin": 75,
+            "result": {
+              "complete": true,
+              "distance_px": 85.0660525262356
+            }
+          }
+        ],
+        "distance_px": 1394.5253700912,
+        "doors": [
+          {
+            "edge": "H:25:29",
+            "id": 5,
+            "locked": false,
+            "opened": true
+          },
+          {
+            "edge": "H:51:29",
+            "id": 6,
+            "locked": false,
+            "opened": true
+          }
+        ],
+        "engagements": [],
+        "reached": 83,
+        "regions": [
+          9,
+          2,
+          3
+        ],
+        "stopped_at": null,
+        "total": 83
+      },
+      "stationary": true
+    },
+    "stages": [
+      {
+        "name": "firstuse_reveal",
+        "timing": {
+          "n": 1,
+          "mean_ms": 14.575,
+          "mean_fps": 68.6106346483705,
+          "p50_ms": 14.575,
+          "p95_ms": 14.575,
+          "p99_ms": 14.575,
+          "max_ms": 14.575,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 0.351999998092651,
+            "gpu_ms_delayed": 3.98799991607666,
+            "visible_draw_calls_raw": 241,
+            "shadow_primitives_raw": 10596,
+            "shadow_draw_calls_raw": 297
+          },
+          "mirror_new_request_readback": {}
+        }
+      },
+      {
+        "name": "firstuse_control_released",
+        "timing": {
+          "n": 55,
+          "mean_ms": 22.15970909090909,
+          "mean_fps": 45.12694620211621,
+          "p50_ms": 21.265,
+          "p95_ms": 27.395699999999998,
+          "p99_ms": 36.25650000000001,
+          "max_ms": 45.288,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 6.268690911206332,
+            "gpu_ms_delayed": 5.1496908924796365,
+            "visible_draw_calls_raw": 239.4909090909091,
+            "shadow_primitives_raw": 382468.7272727273,
+            "shadow_draw_calls_raw": 10017.127272727274
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 6.119109119068493,
+            "gpu_ms_delayed": 2.2737818197770547,
+            "visible_draw_calls_raw": 226.4909090909091,
+            "shadow_primitives_raw": 354208.8,
+            "shadow_draw_calls_raw": 9384.2
+          }
+        }
+      },
+      {
+        "name": "live_stationary",
+        "timing": {
+          "n": 332,
+          "mean_ms": 24.096789156626507,
+          "mean_fps": 41.499304886643145,
+          "p50_ms": 23.773,
+          "p95_ms": 29.2166,
+          "p99_ms": 31.65453,
+          "max_ms": 36.144,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 6.932870490005217,
+            "gpu_ms_delayed": 7.6935030279389345,
+            "visible_draw_calls_raw": 244.92168674698794,
+            "shadow_primitives_raw": 367890.9698795181,
+            "shadow_draw_calls_raw": 9706.25
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 6.8556596356702135,
+            "gpu_ms_delayed": 3.3973463931715635,
+            "visible_draw_calls_raw": 228.1656626506024,
+            "shadow_primitives_raw": 347603.2108433735,
+            "shadow_draw_calls_raw": 9245.930722891566
+          }
+        }
+      },
+      {
+        "name": "live_native_movement",
+        "timing": {
+          "n": 360,
+          "mean_ms": 29.61406388888889,
+          "mean_fps": 33.76773967098778,
+          "p50_ms": 28.907,
+          "p95_ms": 37.9712,
+          "p99_ms": 46.2060100000001,
+          "max_ms": 54.556,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 8.29638889895545,
+            "gpu_ms_delayed": 9.78226113716761,
+            "visible_draw_calls_raw": 318.7,
+            "shadow_primitives_raw": 417270.4666666667,
+            "shadow_draw_calls_raw": 11464.652777777777
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 8.255963904327816,
+            "gpu_ms_delayed": 4.249416650997268,
+            "visible_draw_calls_raw": 313.43611111111113,
+            "shadow_primitives_raw": 406114.5111111111,
+            "shadow_draw_calls_raw": 11145.013888888889
+          }
+        }
+      },
+      {
+        "name": "dynamic_meeting_setup",
+        "timing": {
+          "n": 23,
+          "mean_ms": 27.44578260869565,
+          "mean_fps": 36.4354704056852,
+          "p50_ms": 26.19,
+          "p95_ms": 32.26899999999999,
+          "p99_ms": 46.75394000000002,
+          "max_ms": 50.708,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.380695653998335,
+            "gpu_ms_delayed": 8.887608714725655,
+            "visible_draw_calls_raw": 243.82608695652175,
+            "shadow_primitives_raw": 390292.6956521739,
+            "shadow_draw_calls_raw": 11087.08695652174
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.238173899443254,
+            "gpu_ms_delayed": 3.6639999876851617,
+            "visible_draw_calls_raw": 224.2608695652174,
+            "shadow_primitives_raw": 364184.0869565217,
+            "shadow_draw_calls_raw": 10581.347826086956
+          }
+        }
+      },
+      {
+        "name": "live_combat_initial_powered",
+        "timing": {
+          "n": 171,
+          "mean_ms": 38.0663216374269,
+          "mean_fps": 26.26994038259787,
+          "p50_ms": 36.588,
+          "p95_ms": 53.236000000000004,
+          "p99_ms": 63.06580000000003,
+          "max_ms": 69.537,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 8.081970750239858,
+            "gpu_ms_delayed": 9.661380081846005,
+            "visible_draw_calls_raw": 322.1111111111111,
+            "shadow_primitives_raw": 388444.7134502924,
+            "shadow_draw_calls_raw": 10995.701754385966
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 8.011333337304187,
+            "gpu_ms_delayed": 4.440134490442555,
+            "visible_draw_calls_raw": 268.89473684210526,
+            "shadow_primitives_raw": 365172.3976608187,
+            "shadow_draw_calls_raw": 10540.187134502923
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweroff_first",
+        "timing": {
+          "n": 110,
+          "mean_ms": 18.068472727272727,
+          "mean_fps": 55.3450208600415,
+          "p50_ms": 16.898000000000003,
+          "p95_ms": 26.84385,
+          "p99_ms": 43.19626999999998,
+          "max_ms": 44.889,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 0.9855090908028867,
+            "gpu_ms_delayed": 0.751400003649972,
+            "visible_draw_calls_raw": 401.8272727272727,
+            "shadow_primitives_raw": 11734.8,
+            "shadow_draw_calls_raw": 344.8545454545455
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 0.8274545428427782,
+            "gpu_ms_delayed": 0.34922727210955185,
+            "visible_draw_calls_raw": 308.74545454545455,
+            "shadow_primitives_raw": 10618.10909090909,
+            "shadow_draw_calls_raw": 324.23636363636365
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweron_first",
+        "timing": {
+          "n": 40,
+          "mean_ms": 50.4658,
+          "mean_fps": 19.815399736058875,
+          "p50_ms": 48.254,
+          "p95_ms": 69.54574999999998,
+          "p99_ms": 73.76089,
+          "max_ms": 74.989,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 9.180100014805792,
+            "gpu_ms_delayed": 8.596450017392634,
+            "visible_draw_calls_raw": 383.45,
+            "shadow_primitives_raw": 427930.3,
+            "shadow_draw_calls_raw": 11805.5
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 9.110624951124196,
+            "gpu_ms_delayed": 3.752550004422665,
+            "visible_draw_calls_raw": 310.625,
+            "shadow_primitives_raw": 426008.7,
+            "shadow_draw_calls_raw": 11774.925
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweroff_repeat",
+        "timing": {
+          "n": 59,
+          "mean_ms": 16.704525423728814,
+          "mean_fps": 59.864017362594325,
+          "p50_ms": 15.815,
+          "p95_ms": 21.8188,
+          "p99_ms": 27.307840000000013,
+          "max_ms": 32.616,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 0.995389838845043,
+            "gpu_ms_delayed": 0.7800678029908972,
+            "visible_draw_calls_raw": 390.76271186440675,
+            "shadow_primitives_raw": 11817.762711864407,
+            "shadow_draw_calls_raw": 349.03389830508473
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 0.883762711690644,
+            "gpu_ms_delayed": 0.4328813542753962,
+            "visible_draw_calls_raw": 309.3898305084746,
+            "shadow_primitives_raw": 10494.033898305084,
+            "shadow_draw_calls_raw": 330.66101694915255
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweron_repeat",
+        "timing": {
+          "n": 47,
+          "mean_ms": 53.36359574468085,
+          "mean_fps": 18.73936690444398,
+          "p50_ms": 49.003,
+          "p95_ms": 81.9631,
+          "p99_ms": 90.40393999999999,
+          "max_ms": 93.468,
+          "over80": 4
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 9.72663830188995,
+            "gpu_ms_delayed": 9.174425522063641,
+            "visible_draw_calls_raw": 392.468085106383,
+            "shadow_primitives_raw": 427251.44680851063,
+            "shadow_draw_calls_raw": 11824.106382978724
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 9.568106435714883,
+            "gpu_ms_delayed": 4.608872333105573,
+            "visible_draw_calls_raw": 310.3829787234043,
+            "shadow_primitives_raw": 426151.7021276596,
+            "shadow_draw_calls_raw": 11809.127659574468
+          }
+        }
+      },
+      {
+        "name": "exit_visible_tail",
+        "timing": {
+          "n": 6,
+          "mean_ms": 52.65116666666667,
+          "mean_fps": 18.992931464006812,
+          "p50_ms": 51.5665,
+          "p95_ms": 60.6635,
+          "p99_ms": 60.8591,
+          "max_ms": 60.908,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 10.121166547139467,
+            "gpu_ms_delayed": 9.896999994913742,
+            "visible_draw_calls_raw": 407.6666666666667,
+            "shadow_primitives_raw": 400562,
+            "shadow_draw_calls_raw": 11225.333333333334
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 10.053500016530359,
+            "gpu_ms_delayed": 3.7034999529520682,
+            "visible_draw_calls_raw": 308.8333333333333,
+            "shadow_primitives_raw": 399604,
+            "shadow_draw_calls_raw": 11209
+          }
+        }
+      }
+    ],
+    "spikes": [
+      {
+        "frame": 1246,
+        "stage": "live_combat_poweron_repeat",
+        "ms": 86.807
+      },
+      {
+        "frame": 1247,
+        "stage": "live_combat_poweron_repeat",
+        "ms": 93.468
+      },
+      {
+        "frame": 1249,
+        "stage": "live_combat_poweron_repeat",
+        "ms": 81.163
+      },
+      {
+        "frame": 1252,
+        "stage": "live_combat_poweron_repeat",
+        "ms": 82.306
+      }
+    ],
+    "nearest_rank": {
+      "p50_ms": 26.36,
+      "p95_ms": 50.07,
+      "p99_ms": 67.855,
+      "method": "nearest rank, sorted_values[ceil(n*p)-1]"
+    }
+  },
+  {
+    "case": "PERF011_R4_native07",
+    "trace_sha256": "235DC38CA55D567B497EA42BA706575E1D0E72D8CE85B5B4CD1E33FD9782DE8E",
+    "definition": "All intervals classified firstuse_reveal or later, including first reveal and all subsequent stage boundaries. Covered loading retained in raw, not gameplay FPS. Matches original C7 acceptance scope.",
+    "all_revealed": {
+      "n": 1386,
+      "mean_ms": 25.002704184704186,
+      "mean_fps": 39.99567377243004,
+      "p50_ms": 23.3815,
+      "p95_ms": 38.97025,
+      "p99_ms": 46.67325000000001,
+      "max_ms": 72.189,
+      "over80": 0,
+      "percentile_method": "linear interpolation at (n-1)*p"
+    },
+    "focused": 1386,
+    "coverage": {
+      "dynamic": {
+        "damaged_or_missing_enemy_nodes": 1,
+        "effective_player_damage_events": 1,
+        "enemy_nodes_after": 8,
+        "enemy_nodes_before": 8,
+        "native_player_shots": 93,
+        "physics_ticks": 840,
+        "power_final": true,
+        "power_initial": true
+      },
+      "movement": {
+        "body_at_stop": [
+          1724.861328125,
+          812.790222167969
+        ],
+        "complete": true,
+        "contacts": [],
+        "detours": [
+          {
+            "attempt": 0,
+            "legs": 3,
+            "portal": "H:25:29",
+            "rejoin": 21,
+            "result": {
+              "complete": true,
+              "distance_px": 141.901867091656
+            }
+          },
+          {
+            "attempt": 0,
+            "legs": 3,
+            "portal": "H:51:29",
+            "rejoin": 75,
+            "result": {
+              "complete": true,
+              "distance_px": 78.6065130233765
+            }
+          }
+        ],
+        "distance_px": 1390.7931368947,
+        "doors": [
+          {
+            "edge": "H:25:29",
+            "id": 5,
+            "locked": false,
+            "opened": true
+          },
+          {
+            "edge": "H:51:29",
+            "id": 6,
+            "locked": false,
+            "opened": true
+          }
+        ],
+        "engagements": [],
+        "reached": 83,
+        "regions": [
+          9,
+          2,
+          3
+        ],
+        "stopped_at": null,
+        "total": 83
+      },
+      "stationary": true
+    },
+    "stages": [
+      {
+        "name": "firstuse_reveal",
+        "timing": {
+          "n": 1,
+          "mean_ms": 19.303,
+          "mean_fps": 51.80541884681137,
+          "p50_ms": 19.303,
+          "p95_ms": 19.303,
+          "p99_ms": 19.303,
+          "max_ms": 19.303,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 0.699999988079071,
+            "gpu_ms_delayed": 10.4540004730225,
+            "visible_draw_calls_raw": 241,
+            "shadow_primitives_raw": 10596,
+            "shadow_draw_calls_raw": 297
+          },
+          "mirror_new_request_readback": {}
+        }
+      },
+      {
+        "name": "firstuse_control_released",
+        "timing": {
+          "n": 61,
+          "mean_ms": 19.31749180327869,
+          "mean_fps": 51.766554901826005,
+          "p50_ms": 18.883,
+          "p95_ms": 21.38,
+          "p99_ms": 30.695799999999984,
+          "max_ms": 38.584,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 4.49927868510856,
+            "gpu_ms_delayed": 8.04711477092055,
+            "visible_draw_calls_raw": 239.50819672131146,
+            "shadow_primitives_raw": 237145.60655737706,
+            "shadow_draw_calls_raw": 6281.3442622950815
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 4.778360669730139,
+            "gpu_ms_delayed": 2.2967213060035077,
+            "visible_draw_calls_raw": 226.50819672131146,
+            "shadow_primitives_raw": 235893.0819672131,
+            "shadow_draw_calls_raw": 6233.360655737705
+          }
+        }
+      },
+      {
+        "name": "live_stationary",
+        "timing": {
+          "n": 410,
+          "mean_ms": 19.538178048780487,
+          "mean_fps": 51.18184497568426,
+          "p50_ms": 18.799999999999997,
+          "p95_ms": 25.408249999999995,
+          "p99_ms": 28.044269999999997,
+          "max_ms": 33.86,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 4.773036588110575,
+            "gpu_ms_delayed": 8.975468305262124,
+            "visible_draw_calls_raw": 244.4268292682927,
+            "shadow_primitives_raw": 244463.91219512196,
+            "shadow_draw_calls_raw": 6498.180487804878
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 5.139668289626517,
+            "gpu_ms_delayed": 2.5607463441243987,
+            "visible_draw_calls_raw": 228.3,
+            "shadow_primitives_raw": 243211.91219512196,
+            "shadow_draw_calls_raw": 6450.180487804878
+          }
+        }
+      },
+      {
+        "name": "live_native_movement",
+        "timing": {
+          "n": 401,
+          "mean_ms": 26.22820199501247,
+          "mean_fps": 38.12689867914541,
+          "p50_ms": 26.407,
+          "p95_ms": 31.606,
+          "p99_ms": 35.782,
+          "max_ms": 47.874,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 6.9611795560974725,
+            "gpu_ms_delayed": 10.048461339717493,
+            "visible_draw_calls_raw": 321.6633416458853,
+            "shadow_primitives_raw": 344109.5012468828,
+            "shadow_draw_calls_raw": 9618.758104738155
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.204798000411797,
+            "gpu_ms_delayed": 4.467154619402422,
+            "visible_draw_calls_raw": 311.2194513715711,
+            "shadow_primitives_raw": 345752.0847880299,
+            "shadow_draw_calls_raw": 9599.990024937655
+          }
+        }
+      },
+      {
+        "name": "dynamic_meeting_setup",
+        "timing": {
+          "n": 21,
+          "mean_ms": 29.11352380952381,
+          "mean_fps": 34.34829828716486,
+          "p50_ms": 27.608,
+          "p95_ms": 34.059,
+          "p99_ms": 49.799000000000014,
+          "max_ms": 53.734,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.583333356039865,
+            "gpu_ms_delayed": 6.73452379589989,
+            "visible_draw_calls_raw": 250.47619047619048,
+            "shadow_primitives_raw": 366996,
+            "shadow_draw_calls_raw": 10606.761904761905
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.350285734449114,
+            "gpu_ms_delayed": 3.4436190468924384,
+            "visible_draw_calls_raw": 227.66666666666666,
+            "shadow_primitives_raw": 340780.4761904762,
+            "shadow_draw_calls_raw": 10098.952380952382
+          }
+        }
+      },
+      {
+        "name": "live_combat_initial_powered",
+        "timing": {
+          "n": 170,
+          "mean_ms": 38.14964117647059,
+          "mean_fps": 26.21256633513938,
+          "p50_ms": 36.976,
+          "p95_ms": 47.135349999999995,
+          "p99_ms": 56.275220000000026,
+          "max_ms": 72.189,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.97499410685371,
+            "gpu_ms_delayed": 8.51787647079019,
+            "visible_draw_calls_raw": 318.17058823529413,
+            "shadow_primitives_raw": 388360.02352941176,
+            "shadow_draw_calls_raw": 11034.24705882353
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 8.10031177857343,
+            "gpu_ms_delayed": 3.882741184094373,
+            "visible_draw_calls_raw": 280.1941176470588,
+            "shadow_primitives_raw": 378198.3294117647,
+            "shadow_draw_calls_raw": 10827.229411764705
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweroff_first",
+        "timing": {
+          "n": 120,
+          "mean_ms": 16.627291666666668,
+          "mean_fps": 60.14208567741288,
+          "p50_ms": 16.967,
+          "p95_ms": 20.4096,
+          "p99_ms": 22.06585,
+          "max_ms": 30.042,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 0.81639166350166,
+            "gpu_ms_delayed": 0.580674996972084,
+            "visible_draw_calls_raw": 344.55,
+            "shadow_primitives_raw": 10532.3,
+            "shadow_draw_calls_raw": 312.98333333333335
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 0.6733333344260852,
+            "gpu_ms_delayed": 0.2838749992350738,
+            "visible_draw_calls_raw": 289.1166666666667,
+            "shadow_primitives_raw": 9654.866666666667,
+            "shadow_draw_calls_raw": 287.2
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweron_first",
+        "timing": {
+          "n": 60,
+          "mean_ms": 33.934083333333334,
+          "mean_fps": 29.468896807290605,
+          "p50_ms": 33.155,
+          "p95_ms": 39.9126,
+          "p99_ms": 43.78063999999999,
+          "max_ms": 45.317,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.147749985257785,
+            "gpu_ms_delayed": 5.842766675849756,
+            "visible_draw_calls_raw": 369.0833333333333,
+            "shadow_primitives_raw": 402232.6,
+            "shadow_draw_calls_raw": 11241.733333333334
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.534449983139834,
+            "gpu_ms_delayed": 2.6590999873975916,
+            "visible_draw_calls_raw": 314.76666666666665,
+            "shadow_primitives_raw": 400540.6666666667,
+            "shadow_draw_calls_raw": 11192.75
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweroff_repeat",
+        "timing": {
+          "n": 59,
+          "mean_ms": 16.505881355932203,
+          "mean_fps": 60.58446552692569,
+          "p50_ms": 16.657,
+          "p95_ms": 20.6232,
+          "p99_ms": 24.695200000000007,
+          "max_ms": 26.789,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 0.9704576341782589,
+            "gpu_ms_delayed": 0.7317288164365089,
+            "visible_draw_calls_raw": 415.9491525423729,
+            "shadow_primitives_raw": 12088.474576271186,
+            "shadow_draw_calls_raw": 442.4237288135593
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 0.8807457589497002,
+            "gpu_ms_delayed": 0.3560338934599344,
+            "visible_draw_calls_raw": 374.50847457627117,
+            "shadow_primitives_raw": 11745.694915254237,
+            "shadow_draw_calls_raw": 409.8813559322034
+          }
+        }
+      },
+      {
+        "name": "live_combat_poweron_repeat",
+        "timing": {
+          "n": 73,
+          "mean_ms": 34.3621095890411,
+          "mean_fps": 29.1018220929871,
+          "p50_ms": 33.951,
+          "p95_ms": 38.4004,
+          "p99_ms": 41.882720000000006,
+          "max_ms": 47.696,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.350726041075301,
+            "gpu_ms_delayed": 5.959698625623363,
+            "visible_draw_calls_raw": 406.4109589041096,
+            "shadow_primitives_raw": 423011.5342465753,
+            "shadow_draw_calls_raw": 11771.438356164384
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.689506832867453,
+            "gpu_ms_delayed": 2.6704383712925326,
+            "visible_draw_calls_raw": 365.52054794520546,
+            "shadow_primitives_raw": 423024.1369863014,
+            "shadow_draw_calls_raw": 11741.972602739726
+          }
+        }
+      },
+      {
+        "name": "exit_visible_tail",
+        "timing": {
+          "n": 10,
+          "mean_ms": 31.7492,
+          "mean_fps": 31.496856613709955,
+          "p50_ms": 31.5935,
+          "p95_ms": 33.12925,
+          "p99_ms": 33.25705,
+          "max_ms": 33.289,
+          "over80": 0
+        },
+        "views": {
+          "main": {
+            "cpu_ms_delayed": 7.567299938201904,
+            "gpu_ms_delayed": 5.955499982833861,
+            "visible_draw_calls_raw": 402.7,
+            "shadow_primitives_raw": 422443.6,
+            "shadow_draw_calls_raw": 11723.6
+          },
+          "mirror_new_request_readback": {
+            "cpu_ms_delayed": 7.865200042724612,
+            "gpu_ms_delayed": 2.676599979400635,
+            "visible_draw_calls_raw": 360.6,
+            "shadow_primitives_raw": 421950,
+            "shadow_draw_calls_raw": 11676.8
+          }
+        }
+      }
+    ],
+    "spikes": [],
+    "nearest_rank": {
+      "p50_ms": 23.374,
+      "p95_ms": 38.974,
+      "p99_ms": 46.754,
+      "method": "nearest rank, sorted_values[ceil(n*p)-1]"
+    }
+  }
+]

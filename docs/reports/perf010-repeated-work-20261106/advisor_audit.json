@@ -1,0 +1,1487 @@
+{
+  "generated_at": "2026-11-06T04:50:50.393556+08:00",
+  "scope": "Independent advisor read-only verification; no GPU runs by advisor",
+  "baseline_manifest_sha256": "04827E2A97429CED7562FFA5D32247D5377715CB5BDEB1AEE548E61E6AA95159",
+  "source_count": 237,
+  "source_mismatches": [],
+  "patch_count": 17,
+  "patch_original_mismatches": [],
+  "staged_mismatches": [],
+  "immutable_count": 84,
+  "immutable_mismatches": [],
+  "entry_sha256": "812192D75C3C6BE10988C0EB7CF18109D5E26556FCF955C800C324905E85BCFE",
+  "runs": {
+    "attribution01": {
+      "trace_sha256": "9594BE11F441B65F0A73B4B30FDCC0B8B426FF84FA1595601B3C261567780082",
+      "receipt_sha256": "9C22D4888E21CBC0F804D0B8D1F0218468892D1D80F168584AB4A1D2D7ADBF62",
+      "outcome": "complete",
+      "rows": 3300,
+      "receipt": {
+        "state": "released",
+        "exit_code": 0,
+        "engine_errors": [],
+        "source_drift": [],
+        "private_master": 0,
+        "audio": "WASAPI"
+      },
+      "restored_count": 17,
+      "config": {
+        "renderer": "forward_plus",
+        "driver": "vulkan",
+        "adapter": "NVIDIA GeForce RTX 5070 Ti",
+        "fps_cap": 60,
+        "vsync": 1,
+        "main_size": "(640, 360)",
+        "mirror_size": "(320, 180)",
+        "private_master_zero": true,
+        "controlled_camera_interpolation_disabled": null,
+        "moving_caster": null
+      },
+      "stages": [
+        {
+          "stage": "static_baseline_before",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 16.76021666666667,
+          "full_max_ms": 50.497,
+          "full_over80": [],
+          "focused_rows": 180,
+          "main": [
+            0.6619999988211527,
+            7.403333328829871,
+            220,
+            21828,
+            441
+          ],
+          "mirror_if_requested": [
+            0.6078333319889175,
+            2.218538888957766,
+            239,
+            15080,
+            173
+          ],
+          "render_cpu_sum_ms": 1.2698333308100702,
+          "render_gpu_sum_ms": 9.621872217787637,
+          "camera_unique": {
+            "camera": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "static_mirror_held",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 16.758466666666667,
+          "full_max_ms": 49.024,
+          "full_over80": [],
+          "focused_rows": 180,
+          "main": [
+            0.7766055549184482,
+            6.63583888080385,
+            220,
+            21828,
+            441
+          ],
+          "mirror_if_requested": null,
+          "render_cpu_sum_ms": 0.7766055549184482,
+          "render_gpu_sum_ms": 6.63583888080385,
+          "camera_unique": {
+            "camera": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "static_main_shadows_off_coupled",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 16.81351666666667,
+          "full_max_ms": 61.895,
+          "full_over80": [],
+          "focused_rows": 180,
+          "main": [
+            0.6327722231547038,
+            4.206694439384672,
+            220,
+            21828,
+            441
+          ],
+          "mirror_if_requested": [
+            0.6123666668931643,
+            1.061777781777912,
+            239,
+            15080,
+            173
+          ],
+          "render_cpu_sum_ms": 1.2451388900478682,
+          "render_gpu_sum_ms": 5.268472221162584,
+          "camera_unique": {
+            "camera": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              1,
+              1
+            ],
+            "receiver_pool": [
+              6,
+              6
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "static_fill_shadows_off",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 16.761283333333335,
+          "full_max_ms": 51.106,
+          "full_over80": [],
+          "focused_rows": 180,
+          "main": [
+            0.6109833341505791,
+            4.545861118369632,
+            220,
+            21828,
+            441
+          ],
+          "mirror_if_requested": [
+            0.5975833321611087,
+            1.3276444481478797,
+            239,
+            15080,
+            173
+          ],
+          "render_cpu_sum_ms": 1.2085666663116879,
+          "render_gpu_sum_ms": 5.873505566517512,
+          "camera_unique": {
+            "camera": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "static_receiver_shadows_off",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 16.77788333333333,
+          "full_max_ms": 54.549,
+          "full_over80": [],
+          "focused_rows": 180,
+          "main": [
+            0.5612722218036651,
+            7.421638872888353,
+            220,
+            11024,
+            222
+          ],
+          "mirror_if_requested": [
+            0.5800777756505543,
+            2.087833325730429,
+            239,
+            7650,
+            88
+          ],
+          "render_cpu_sum_ms": 1.1413499974542194,
+          "render_gpu_sum_ms": 9.509472198618782,
+          "camera_unique": {
+            "camera": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "static_baseline_after",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 16.757638888888888,
+          "full_max_ms": 50.336,
+          "full_over80": [],
+          "focused_rows": 180,
+          "main": [
+            0.6346000000834465,
+            7.828299979368846,
+            220,
+            21828,
+            441
+          ],
+          "mirror_if_requested": [
+            0.6008888906902737,
+            2.098522223366632,
+            239,
+            15080,
+            173
+          ],
+          "render_cpu_sum_ms": 1.2354888907737203,
+          "render_gpu_sum_ms": 9.926822202735478,
+          "camera_unique": {
+            "camera": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "camera_only_baseline",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 16.758933333333335,
+          "full_max_ms": 50.631,
+          "full_over80": [],
+          "focused_rows": 180,
+          "main": [
+            0.6569499992662007,
+            6.366133332252502,
+            222.57222222222222,
+            22415.6,
+            444.15555555555557
+          ],
+          "mirror_if_requested": [
+            0.6146777770585483,
+            3.338238889641232,
+            240.7277777777778,
+            15176.466666666667,
+            172.53333333333333
+          ],
+          "render_cpu_sum_ms": 1.271627776324749,
+          "render_gpu_sum_ms": 9.704372221893735,
+          "camera_unique": {
+            "camera": 91
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "static_after_camera",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 16.757594444444443,
+          "full_max_ms": 49.265,
+          "full_over80": [],
+          "focused_rows": 180,
+          "main": [
+            0.6218833299146758,
+            8.430983343389299,
+            220,
+            21828,
+            441
+          ],
+          "mirror_if_requested": [
+            0.6330888880623712,
+            2.0874444484710697,
+            239,
+            15080,
+            173
+          ],
+          "render_cpu_sum_ms": 1.254972217977047,
+          "render_gpu_sum_ms": 10.518427791860368,
+          "camera_unique": {
+            "camera": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "live_baseline_before",
+          "full_rows": 150,
+          "analysis_rows": 150,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 32.84402,
+          "full_max_ms": 92.296,
+          "full_over80": [
+            [
+              92,
+              92.296
+            ]
+          ],
+          "focused_rows": 150,
+          "main": [
+            8.659473317464194,
+            5.801746660868327,
+            253.87333333333333,
+            485881.14666666667,
+            11898.006666666666
+          ],
+          "mirror_if_requested": [
+            8.51522663752238,
+            3.349726668993632,
+            242.4,
+            452724.3466666667,
+            10970.78
+          ],
+          "render_cpu_sum_ms": 17.174699954986572,
+          "render_gpu_sum_ms": 9.15147332986196,
+          "camera_unique": {
+            "camera": 2
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              8,
+              8
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(1057.75, 1421.0)",
+              "(1049.068, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 413
+        },
+        {
+          "stage": "live_mirror_held",
+          "full_rows": 120,
+          "analysis_rows": 120,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 17.52395,
+          "full_max_ms": 70.125,
+          "full_over80": [],
+          "focused_rows": 120,
+          "main": [
+            6.670091672738393,
+            7.453849991162618,
+            278,
+            309666.8333333333,
+            3012.108333333333
+          ],
+          "mirror_if_requested": null,
+          "render_cpu_sum_ms": 6.670091672738393,
+          "render_gpu_sum_ms": 7.453849991162618,
+          "camera_unique": {
+            "camera": 2
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              1,
+              1
+            ],
+            "player": [
+              "(1036.75, 1421.0)",
+              "(997.551, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 406
+        },
+        {
+          "stage": "live_fill_shadows_off",
+          "full_rows": 120,
+          "analysis_rows": 120,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 24.217808333333334,
+          "full_max_ms": 87.58,
+          "full_over80": [
+            [
+              0,
+              87.58
+            ]
+          ],
+          "focused_rows": 120,
+          "main": [
+            5.022591650485992,
+            3.4293833355108894,
+            270.55,
+            318283.73333333334,
+            7527.758333333333
+          ],
+          "mirror_if_requested": [
+            5.550408327579499,
+            1.9966916670401893,
+            246.95,
+            311460.93333333335,
+            7257.241666666667
+          ],
+          "render_cpu_sum_ms": 10.572999978065491,
+          "render_gpu_sum_ms": 5.426075002551078,
+          "camera_unique": {
+            "camera": 2
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              1,
+              1
+            ],
+            "player": [
+              "(1025.52, 1420.057)",
+              "(980.3198, 1420.057)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 393
+        },
+        {
+          "stage": "live_main_shadows_off_coupled",
+          "full_rows": 120,
+          "analysis_rows": 120,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 20.468675,
+          "full_max_ms": 76.936,
+          "full_over80": [],
+          "focused_rows": 120,
+          "main": [
+            4.457016670703888,
+            3.3234916607538865,
+            264.21666666666664,
+            205661.6,
+            5252.3
+          ],
+          "mirror_if_requested": [
+            4.695633323987325,
+            1.5202750037113826,
+            245.81666666666666,
+            198830,
+            4981.666666666667
+          ],
+          "render_cpu_sum_ms": 9.152649994691213,
+          "render_gpu_sum_ms": 4.843766664465269,
+          "camera_unique": {
+            "camera": 2
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              1,
+              1
+            ],
+            "receiver_pool": [
+              7,
+              7
+            ],
+            "player": [
+              "(1049.75, 1421.0)",
+              "(1010.5, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 312
+        },
+        {
+          "stage": "live_receiver_shadows_off",
+          "full_rows": 120,
+          "analysis_rows": 120,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 29.596941666666666,
+          "full_max_ms": 71.182,
+          "full_over80": [],
+          "focused_rows": 120,
+          "main": [
+            8.335450009504953,
+            4.948433355490367,
+            267.5,
+            488478.6,
+            12039.408333333333
+          ],
+          "mirror_if_requested": [
+            8.125733343760173,
+            3.115408331155777,
+            246.825,
+            450131.13333333336,
+            10977.458333333334
+          ],
+          "render_cpu_sum_ms": 16.461183353265127,
+          "render_gpu_sum_ms": 8.063841686646143,
+          "camera_unique": {
+            "camera": 2
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              8,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              1
+            ],
+            "player": [
+              "(1061.75, 1421.0)",
+              "(1004.5, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 374
+        },
+        {
+          "stage": "live_baseline_after",
+          "full_rows": 150,
+          "analysis_rows": 150,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 31.89492,
+          "full_max_ms": 77.081,
+          "full_over80": [],
+          "focused_rows": 150,
+          "main": [
+            8.845680027008058,
+            7.315379994710286,
+            267.67333333333335,
+            489231.81333333335,
+            12042.22
+          ],
+          "mirror_if_requested": [
+            8.356559995015463,
+            4.232199997901916,
+            243.97333333333333,
+            454840.48,
+            11008.16
+          ],
+          "render_cpu_sum_ms": 17.20224002202352,
+          "render_gpu_sum_ms": 11.547579992612203,
+          "camera_unique": {
+            "camera": 2
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              12,
+              11
+            ],
+            "receiver_count": [
+              8,
+              8
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(1067.75, 1421.0)",
+              "(1066.5, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 383
+        },
+        {
+          "stage": "live_combat_fixed_camera",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 36.98213333333334,
+          "full_max_ms": 94.501,
+          "full_over80": [
+            [
+              0,
+              94.501
+            ]
+          ],
+          "focused_rows": 180,
+          "main": [
+            9.578861109415692,
+            7.7556500143474985,
+            330.8777777777778,
+            491914.15555555554,
+            12108.922222222222
+          ],
+          "mirror_if_requested": [
+            8.900655571619671,
+            4.498511118359036,
+            232.16666666666666,
+            449257.97777777776,
+            10918.7
+          ],
+          "render_cpu_sum_ms": 18.479516681035363,
+          "render_gpu_sum_ms": 12.254161132706535,
+          "camera_unique": {
+            "camera": 2
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              10,
+              10
+            ],
+            "receiver_count": [
+              7,
+              8
+            ],
+            "receiver_pool": [
+              1,
+              0
+            ],
+            "player": [
+              "(1100.258, 1427.994)",
+              "(1042.768, 1428.357)"
+            ],
+            "shots": [
+              16,
+              56
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 503
+        },
+        {
+          "stage": "static_after_live",
+          "full_rows": 180,
+          "analysis_rows": 180,
+          "analysis_window": "full marked stage, non-causal live observation",
+          "post_interval_mean_ms": 16.780727777777777,
+          "full_max_ms": 53.43,
+          "full_over80": [],
+          "focused_rows": 180,
+          "main": [
+            0.8232833339108363,
+            5.438822213808695,
+            312,
+            22188,
+            429
+          ],
+          "mirror_if_requested": [
+            0.5542444437742233,
+            3.3740055448479125,
+            230,
+            15224,
+            161
+          ],
+          "render_cpu_sum_ms": 1.3775277776850596,
+          "render_gpu_sum_ms": 8.812827758656608,
+          "camera_unique": {
+            "camera": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              10,
+              10
+            ],
+            "receiver_count": [
+              8,
+              8
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(1042.768, 1428.357)",
+              "(1042.768, 1428.357)"
+            ],
+            "shots": [
+              56,
+              56
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        }
+      ]
+    },
+    "controlled02": {
+      "trace_sha256": "60F50EC98B5AB011EF3855662C9E5D0D00E2A1496A44047E22F8D59E4FB9A607",
+      "receipt_sha256": "E15FA4BEA5701C1ACEA8EAD860A2B5EEC7B93BC083FFD961AD6C1E4BCBCD1B94",
+      "outcome": "complete",
+      "rows": 1515,
+      "receipt": {
+        "state": "released",
+        "exit_code": 0,
+        "engine_errors": [],
+        "source_drift": [],
+        "private_master": 0,
+        "audio": "WASAPI"
+      },
+      "restored_count": 17,
+      "config": {
+        "renderer": "forward_plus",
+        "driver": "vulkan",
+        "adapter": "NVIDIA GeForce RTX 5070 Ti",
+        "fps_cap": 60,
+        "vsync": 1,
+        "main_size": "(640, 360)",
+        "mirror_size": "(320, 180)",
+        "private_master_zero": true,
+        "controlled_camera_interpolation_disabled": true,
+        "moving_caster": {
+          "amplitude_world_x": 0.2,
+          "cast_shadow": 3,
+          "layers": 4,
+          "origin": "[X: (-0.33343, 0.0, -0.160388), Y: (0.0, 0.48, 0.0), Z: (0.10837, 0.0, -0.225291), O: (53.033, 0.616495, 9.192389)]",
+          "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/PlayerDepthVisual3D/ActorVolumeShadow/BodyVolume/Torso",
+          "period_render_frames": 180
+        }
+      },
+      "stages": [
+        {
+          "stage": "controlled_static_before",
+          "full_rows": 180,
+          "analysis_rows": 120,
+          "analysis_window": "last120 uniformly after cache timeout",
+          "post_interval_mean_ms": 16.665983333333333,
+          "full_max_ms": 42.677,
+          "full_over80": [],
+          "focused_rows": 0,
+          "main": [
+            0.5737083330750465,
+            3.8832583387692767,
+            217,
+            21828,
+            441
+          ],
+          "mirror_if_requested": [
+            0.5578749994436899,
+            2.018833329280218,
+            239,
+            15080,
+            173
+          ],
+          "render_cpu_sum_ms": 1.1315833325187366,
+          "render_gpu_sum_ms": 5.902091668049495,
+          "camera_unique": {
+            "camera": 1,
+            "actual_main_camera": 1,
+            "actual_mirror_camera": 1,
+            "moving_caster_transform": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "controlled_one_caster_both_views",
+          "full_rows": 180,
+          "analysis_rows": 120,
+          "analysis_window": "last120 uniformly after cache timeout",
+          "post_interval_mean_ms": 16.672458333333335,
+          "full_max_ms": 58.782,
+          "full_over80": [],
+          "focused_rows": 0,
+          "main": [
+            4.528300005197525,
+            5.9048666715621945,
+            217,
+            259473.7,
+            6523.308333333333
+          ],
+          "mirror_if_requested": [
+            4.88218333919843,
+            3.3561416566371918,
+            239,
+            252725.7,
+            6255.308333333333
+          ],
+          "render_cpu_sum_ms": 9.410483344395955,
+          "render_gpu_sum_ms": 9.261008328199386,
+          "camera_unique": {
+            "camera": 1,
+            "actual_main_camera": 1,
+            "actual_mirror_camera": 1,
+            "moving_caster_transform": 91
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "controlled_one_caster_mirror_held",
+          "full_rows": 180,
+          "analysis_rows": 120,
+          "analysis_window": "last120 uniformly after cache timeout",
+          "post_interval_mean_ms": 16.6497,
+          "full_max_ms": 56.578,
+          "full_over80": [],
+          "focused_rows": 0,
+          "main": [
+            4.282116665442785,
+            5.884899991750718,
+            217,
+            156959.7,
+            955.3083333333333
+          ],
+          "mirror_if_requested": null,
+          "render_cpu_sum_ms": 4.282116665442785,
+          "render_gpu_sum_ms": 5.884899991750718,
+          "camera_unique": {
+            "camera": 1,
+            "actual_main_camera": 1,
+            "actual_mirror_camera": 1,
+            "moving_caster_transform": 91
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "controlled_one_caster_fill_shadows_off",
+          "full_rows": 180,
+          "analysis_rows": 120,
+          "analysis_window": "last120 uniformly after cache timeout",
+          "post_interval_mean_ms": 16.667258333333333,
+          "full_max_ms": 58.644,
+          "full_over80": [],
+          "focused_rows": 0,
+          "main": [
+            2.9745833436648055,
+            5.042933340867361,
+            217,
+            177213.7,
+            4266.308333333333
+          ],
+          "mirror_if_requested": [
+            3.2585916678110762,
+            1.5246750096480057,
+            239,
+            170465.7,
+            3998.3083333333334
+          ],
+          "render_cpu_sum_ms": 6.233175011475882,
+          "render_gpu_sum_ms": 6.567608350515366,
+          "camera_unique": {
+            "camera": 1,
+            "actual_main_camera": 1,
+            "actual_mirror_camera": 1,
+            "moving_caster_transform": 91
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "controlled_one_caster_both_views_after",
+          "full_rows": 180,
+          "analysis_rows": 120,
+          "analysis_window": "last120 uniformly after cache timeout",
+          "post_interval_mean_ms": 16.668366666666667,
+          "full_max_ms": 60.796,
+          "full_over80": [],
+          "focused_rows": 0,
+          "main": [
+            4.478058314323425,
+            5.633908333381018,
+            217,
+            245873.7,
+            6226.308333333333
+          ],
+          "mirror_if_requested": [
+            4.751275004943212,
+            3.506683335701625,
+            239,
+            239125.7,
+            5958.308333333333
+          ],
+          "render_cpu_sum_ms": 9.229333319266637,
+          "render_gpu_sum_ms": 9.140591669082642,
+          "camera_unique": {
+            "camera": 1,
+            "actual_main_camera": 1,
+            "actual_mirror_camera": 1,
+            "moving_caster_transform": 91
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "controlled_static_after",
+          "full_rows": 180,
+          "analysis_rows": 120,
+          "analysis_window": "last120 uniformly after cache timeout",
+          "post_interval_mean_ms": 16.6735,
+          "full_max_ms": 56.981,
+          "full_over80": [],
+          "focused_rows": 0,
+          "main": [
+            0.5796666661898295,
+            6.560275014241537,
+            217,
+            21828,
+            441
+          ],
+          "mirror_if_requested": [
+            0.525766666730245,
+            1.9453083356221517,
+            239,
+            15080,
+            173
+          ],
+          "render_cpu_sum_ms": 1.1054333329200745,
+          "render_gpu_sum_ms": 8.505583349863688,
+          "camera_unique": {
+            "camera": 1,
+            "actual_main_camera": 1,
+            "actual_mirror_camera": 1,
+            "moving_caster_transform": 1
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              7,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              0
+            ],
+            "player": [
+              "(992.0, 1421.0)",
+              "(992.0, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 0
+        },
+        {
+          "stage": "controlled_live_camera_check",
+          "full_rows": 120,
+          "analysis_rows": 120,
+          "analysis_window": "last120 uniformly after cache timeout",
+          "post_interval_mean_ms": 31.429783333333333,
+          "full_max_ms": 102.069,
+          "full_over80": [
+            [
+              0,
+              88.047
+            ],
+            [
+              53,
+              102.069
+            ]
+          ],
+          "focused_rows": 0,
+          "main": [
+            7.970358347892761,
+            7.113683342933655,
+            244.64166666666668,
+            438213.43333333335,
+            10912.416666666666
+          ],
+          "mirror_if_requested": [
+            8.175008308887483,
+            3.9921916544437406,
+            242.2,
+            418727.0333333333,
+            10282.55
+          ],
+          "render_cpu_sum_ms": 16.145366656780244,
+          "render_gpu_sum_ms": 11.105874997377395,
+          "camera_unique": {
+            "camera": 1,
+            "actual_main_camera": 120,
+            "actual_mirror_camera": 120,
+            "moving_caster_transform": 120
+          },
+          "snapshot_start_end": {
+            "furniture": [
+              104,
+              104
+            ],
+            "enemy_roots": [
+              13,
+              13
+            ],
+            "receiver_count": [
+              8,
+              7
+            ],
+            "receiver_pool": [
+              0,
+              1
+            ],
+            "player": [
+              "(1053.75, 1421.0)",
+              "(993.5, 1421.0)"
+            ],
+            "shots": [
+              0,
+              0
+            ],
+            "pending": [
+              0,
+              0
+            ]
+          },
+          "geometry_endpoint_changes": 391
+        }
+      ]
+    }
+  }
+}

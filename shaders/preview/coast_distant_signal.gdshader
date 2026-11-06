@@ -3,6 +3,8 @@ render_mode unshaded, blend_add, cull_disabled, depth_draw_never, shadows_disabl
 uniform vec3 signal_color : source_color=vec3(.91,.94,.79);
 uniform float power=1.;
 uniform bool long_signal=false;
+uniform bool story_signal=false;
+uniform float moon_visibility=1.;
 void fragment(){
  vec2 p=UV-vec2(.5);
  float halo=exp(-dot(p*vec2(2.5,5.),p*vec2(2.5,5.))*2.);
@@ -13,6 +15,7 @@ void fragment(){
    core+=exp(-dot(q*vec2(15.,12.),q*vec2(15.,12.)))*(.7+.06*float(i));
   }
  }else{core=exp(-dot(p*vec2(7.,10.),p*vec2(7.,10.)));}
- ALBEDO=signal_color*power*(core*.9+halo*.16);
+ float contrast=story_signal?mix(1.,.025,smoothstep(.02,.4,moon_visibility)):1.;
+ ALBEDO=signal_color*power*(core*.9+halo*.16)*contrast;
  ALPHA=clamp(core+halo*.45,0.,1.);
 }

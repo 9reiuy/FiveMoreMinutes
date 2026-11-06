@@ -27,6 +27,7 @@ var camera_basis_adjustment := Basis.IDENTITY
 var spawn_position := Vector3(-3,0,23)
 var moon_visibility := 1.0
 var paused := false
+var story_mode := false
 var external_step := false
 var accumulator := 0.0
 var player_position := Vector3(-3,0,23)
@@ -42,6 +43,7 @@ var wave_breakers: Array[Dictionary] = []
 var pixel_materials: Array[ShaderMaterial]=[]
 var atmosphere: RefCounted
 var animated_surfaces: Array[ShaderMaterial]=[]
+var spatial_lighting: Node3D
 
 func _ready() -> void:
  layout=preload("res://scripts/preview/coast_authored_layout.gd").new()
@@ -73,6 +75,7 @@ func _ready() -> void:
  slope_dressing.bind(self)
  atmosphere=preload("res://scripts/preview/coast_atmosphere.gd").new()
  atmosphere.bind(self)
+ spatial_lighting=get_node_or_null("SpatialLighting")
  pixel_materials.clear()
  for material in layout.materials(self):
   if material.shader.code.contains("office_dither_lighting.gdshaderinc"):
@@ -228,6 +231,7 @@ func update_camera(delta: float,snap: bool=false) -> void:
  camera.basis=camera.basis*camera_basis_adjustment
 
 func _unhandled_input(event: InputEvent) -> void:
+ if story_mode: return
  if event is InputEventKey and event.pressed and not event.echo:
   if event.keycode==KEY_SPACE: paused=not paused
   if event.keycode==KEY_F1:
@@ -269,12 +273,15 @@ func advance(delta: float,direction: Vector2=Vector2.ZERO) -> void:
  var local: Vector3=layout.local_point(player_position.x,player_position.z)
  local.z=clampf(local.z,6.3,25.0)
  var half_width:=maxf(.10,ridge_width(local.z)-.5)
+ if bool(get_meta("cliff_platform_sample",false)):
+  half_width=preload("res://scripts/preview/coast_cliff_profile.gd").platform_width(local.z)-.9
  local.x=clampf(local.x,ridge_center(local.z)-half_width,ridge_center(local.z)+half_width)
  player_position=layout.terrain.transform*local
  _place_character()
  update_camera(delta)
  var travelled:=Vector2(player_position.x-previous.x,player_position.z-previous.z).length()
- walker.advance(delta,travelled,direction)
+ var screen_direction:=camera.unproject_position(character.global_position+Vector3(direction.x,0,direction.y))-camera.unproject_position(character.global_position)
+ walker.advance(delta,travelled,screen_direction.normalized())
  walking_distance+=player_position.distance_to(previous)
  if walking_distance>.25:
   walking_distance=0
@@ -317,6 +324,7 @@ func _update_light() -> void:
  sand_material.set_shader_parameter("scene_time",clock)
  sand_material.set_shader_parameter("moon_visibility",moon_visibility)
  atmosphere.update(clock,moon_visibility,self)
+ if spatial_lighting!=null: spatial_lighting.update_lighting(moon_visibility,clock)
  for material in pixel_materials: material.set_shader_parameter("moon_visibility",moon_visibility)
  var horizon: Vector2=camera.unproject_position(Vector3(camera.global_position.x,0,-800))
  sky_material.set_shader_parameter("horizon_y",clampf(horizon.y/maxf(sky.size.y,1.),0,1))

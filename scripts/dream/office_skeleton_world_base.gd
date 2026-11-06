@@ -33,12 +33,32 @@ func _prepare_approved_office_art()->void:
 	if not skeleton_source.is_empty() and not use_authored_office_sample:
 		office_wall_cutaway=preload("res://scripts/dream/office_wall_cutaway.gd").new()
 		office_wall_cutaway.configure(self)
+	else:
+		office_wall_cutaway=null
 
 func refresh_office_wall_cutaway()->void:
 	if office_wall_cutaway!=null: office_wall_cutaway.refresh()
 
 func uses_office_wall_cutaway()->bool:
 	return not skeleton_source.is_empty() and not use_authored_office_sample
+
+func _remove_shared_wall_fixtures(wall: Node3D)->void:
+	var profiling:=bool(get_meta(&"test_profile_shared_wall_breach",false))
+	var started:=Time.get_ticks_usec() if profiling else 0
+	var changed: Array[Node3D]=[]
+	if uses_office_wall_cutaway() and office_wall_cutaway!=null: changed=office_wall_cutaway.remove_wall(wall)
+	if profiling:
+		last_shared_wall_breach_profile["office_cutaway_usec"]=int(last_shared_wall_breach_profile.get("office_cutaway_usec",0))+Time.get_ticks_usec()-started
+		last_shared_wall_breach_profile["local_cutaway_walls"]=int(last_shared_wall_breach_profile.get("local_cutaway_walls",0))+changed.size()
+		started=Time.get_ticks_usec()
+	var batches:=wall_root.get_node_or_null("WallShadowBatches")
+	if is_instance_valid(batches):
+		for neighbor in changed: batches.restore_local_edge(String(neighbor.get_meta(&"edge_key","")),neighbor)
+	if profiling: last_shared_wall_breach_profile["shadow_local_usec"]=int(last_shared_wall_breach_profile.get("shadow_local_usec",0))+Time.get_ticks_usec()-started
+	super._remove_shared_wall_fixtures(wall)
+
+func _refresh_shared_wall_breach_presentation()->void:
+	super._refresh_shared_wall_breach_presentation()
 
 func _get_skeleton_source() -> Dictionary:
 	var options := {"seed":active_seed,"compact":compact_combat_layout,"enhanced_dressing":enhanced_room_dressing}
@@ -199,3 +219,6 @@ func _build_walls() -> void:
 		plate.position = Vector3(float(fixture.x)-.5-float(fixture.dx)*.28,1.45,float(fixture.y)-.5-float(fixture.dy)*.28)
 		plate.rotation.y = PI*.5 if int(fixture.dx) != 0 else 0
 		wall_root.add_child(plate)
+		var vertical := int(fixture.dx) != 0
+		var edge := {"axis": "V" if vertical else "H", "x": roundi(float(fixture.x) - (0.0 if vertical else .5)), "y": roundi(float(fixture.y) - (.5 if vertical else 0.0))}
+		register_wall_attachment(plate, edge)

@@ -1,5 +1,5 @@
 extends RefCounted
-## Preview-only projection offset. Never writes actor/physics coordinates.
+## Display-only projection offset. Never writes actor/physics coordinates.
 static func apply(camera: Camera3D, anchor: Vector3) -> float:
 	camera.h_offset=0.; camera.v_offset=0.
 	var depth:=-(camera.global_transform.affine_inverse()*anchor).z

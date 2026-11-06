@@ -1,0 +1,2028 @@
+{
+  "review_date": "2026-11-06",
+  "source_scope": "User supplied static reverse engineering report; not executable instructions. Independently counted supplied lights_data.json; did not rerun game or extraction.",
+  "source_hashes": {
+    "THKM_逆向分析报告.html": "365FFABCD15EBCC007E747677DE32ACE4270808F425A49D328714342FF2C0B5C",
+    "lights_data.json": "E31ACE6D61200033A1A7AAB99F23D0FA7CF49F280CFAA0544B47FFE47004A32E",
+    "extract_lights.py": "7D3CD0365C4BA95D4BE0AFBFA61E3DBA612004295827F4F62310651910DD847B",
+    "ggm_settings.json": "5E47073865A5C8BCA1E7494C009818663A25624E9EA6D2126E4D9ABDCD13242C",
+    "fx_data.json": "2E7E463F786205384E0CB73AECCF6CCD6893997EE1667D5A03FBDA2D7441BF85"
+  },
+  "totals": {
+    "scenes": 54,
+    "serialized_lights": 1805,
+    "shadow_disabled": 1553,
+    "shadow_disabled_percent": 86.0387811634349,
+    "shadow_hard": 3,
+    "shadow_soft": 249
+  },
+  "levels": [
+    {
+      "file": "level0",
+      "scene": "IntroVideos",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level1",
+      "scene": "MainMenuFinal",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level2",
+      "scene": "PS-LoadingScene_9",
+      "serialized_lights": 0,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 0,
+      "mapping": {},
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": []
+    },
+    {
+      "file": "level3",
+      "scene": "Level_Start01",
+      "serialized_lights": 24,
+      "shadow_disabled": 22,
+      "shadow_hard": 0,
+      "shadow_soft": 2,
+      "mapping": {
+        "4": 19,
+        "1": 4,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 5.0, 'm_AlbedoBoost': 10.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 16,
+      "reflection_probes": 2,
+      "type_shadow_counts": [
+        {
+          "type": "area",
+          "serialized_shadow_type": 0,
+          "count": 1
+        },
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 14
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 7
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level4",
+      "scene": "Level_Carshop_01",
+      "serialized_lights": 50,
+      "shadow_disabled": 45,
+      "shadow_hard": 0,
+      "shadow_soft": 5,
+      "mapping": {
+        "4": 49,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 5.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': False, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": false
+      },
+      "probe_groups": 38,
+      "reflection_probes": 3,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 0,
+          "count": 1
+        },
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 20
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 24
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "file": "level5",
+      "scene": "Level_Bomb_01",
+      "serialized_lights": 31,
+      "shadow_disabled": 17,
+      "shadow_hard": 0,
+      "shadow_soft": 14,
+      "mapping": {
+        "4": 22,
+        "2": 9
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 36,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "area",
+          "serialized_shadow_type": 2,
+          "count": 9
+        },
+        {
+          "type": "directional",
+          "serialized_shadow_type": 0,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 14
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "file": "level6",
+      "scene": "Level_Druglab_14",
+      "serialized_lights": 30,
+      "shadow_disabled": 29,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 22,
+        "1": 7,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 42,
+      "reflection_probes": 12,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 0,
+          "count": 1
+        },
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 28
+        }
+      ]
+    },
+    {
+      "file": "level7",
+      "scene": "Level_Restaurant_01",
+      "serialized_lights": 85,
+      "shadow_disabled": 74,
+      "shadow_hard": 0,
+      "shadow_soft": 11,
+      "mapping": {
+        "4": 85
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 54,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 0,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 73
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 11
+        }
+      ]
+    },
+    {
+      "file": "level8",
+      "scene": "Level_Appartment_01",
+      "serialized_lights": 58,
+      "shadow_disabled": 56,
+      "shadow_hard": 0,
+      "shadow_soft": 2,
+      "mapping": {
+        "4": 58
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 0,
+      "reflection_probes": 1,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 54
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level9",
+      "scene": "Level_Boss_05",
+      "serialized_lights": 15,
+      "shadow_disabled": 2,
+      "shadow_hard": 0,
+      "shadow_soft": 13,
+      "mapping": {
+        "4": 13,
+        "1": 1,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 49,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 2
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 2,
+          "count": 10
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level10",
+      "scene": "Level_Roftop_04",
+      "serialized_lights": 47,
+      "shadow_disabled": 41,
+      "shadow_hard": 0,
+      "shadow_soft": 6,
+      "mapping": {
+        "4": 40,
+        "1": 7
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 1, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 34,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 39
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "file": "level11",
+      "scene": "Level_CoOp_02",
+      "serialized_lights": 31,
+      "shadow_disabled": 30,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 31
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 56,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 30
+        }
+      ]
+    },
+    {
+      "file": "level12",
+      "scene": "Level_Office_01",
+      "serialized_lights": 65,
+      "shadow_disabled": 56,
+      "shadow_hard": 0,
+      "shadow_soft": 9,
+      "mapping": {
+        "4": 64,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 61,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 2
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 56
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "file": "level13",
+      "scene": "Level_Test_Time_03",
+      "serialized_lights": 37,
+      "shadow_disabled": 30,
+      "shadow_hard": 0,
+      "shadow_soft": 7,
+      "mapping": {
+        "4": 37
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 1, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 38,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 18
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 2,
+          "count": 2
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 12
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "file": "level14",
+      "scene": "Level_Casino_07",
+      "serialized_lights": 73,
+      "shadow_disabled": 64,
+      "shadow_hard": 0,
+      "shadow_soft": 9,
+      "mapping": {
+        "4": 72,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 62,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 52
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 12
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "file": "level15",
+      "scene": "Level_Druglab_16",
+      "serialized_lights": 47,
+      "shadow_disabled": 46,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 47
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 42,
+      "reflection_probes": 8,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 42
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "file": "level16",
+      "scene": "Level_Boss_06",
+      "serialized_lights": 27,
+      "shadow_disabled": 21,
+      "shadow_hard": 0,
+      "shadow_soft": 6,
+      "mapping": {
+        "4": 27
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 59,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 21
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "file": "level17",
+      "scene": "level_Market_02",
+      "serialized_lights": 24,
+      "shadow_disabled": 23,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 24
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 42,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 23
+        }
+      ]
+    },
+    {
+      "file": "level18",
+      "scene": "Level_CoOP_07",
+      "serialized_lights": 21,
+      "shadow_disabled": 18,
+      "shadow_hard": 0,
+      "shadow_soft": 3,
+      "mapping": {
+        "4": 21
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 54,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 18
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "file": "level19",
+      "scene": "Level_Restaurant_02",
+      "serialized_lights": 79,
+      "shadow_disabled": 75,
+      "shadow_hard": 0,
+      "shadow_soft": 4,
+      "mapping": {
+        "4": 78,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 76,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 2
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 71
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 4
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "file": "level20",
+      "scene": "Level_Street_06",
+      "serialized_lights": 52,
+      "shadow_disabled": 51,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 52
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 70,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 38
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 13
+        }
+      ]
+    },
+    {
+      "file": "level21",
+      "scene": "Level_CoOp_03",
+      "serialized_lights": 27,
+      "shadow_disabled": 23,
+      "shadow_hard": 2,
+      "shadow_soft": 2,
+      "mapping": {
+        "4": 27
+      },
+      "lightmaps": {
+        "count": 2,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 60,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 20
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 1,
+          "count": 2
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 3
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level22",
+      "scene": "Level_Hotel_10",
+      "serialized_lights": 86,
+      "shadow_disabled": 79,
+      "shadow_hard": 0,
+      "shadow_soft": 7,
+      "mapping": {
+        "4": 86
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': False, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": false
+      },
+      "probe_groups": 77,
+      "reflection_probes": 4,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 67
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 12
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "file": "level23",
+      "scene": "Level_Boss_07",
+      "serialized_lights": 27,
+      "shadow_disabled": 25,
+      "shadow_hard": 0,
+      "shadow_soft": 2,
+      "mapping": {
+        "4": 26,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 2
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 25
+        }
+      ]
+    },
+    {
+      "file": "level24",
+      "scene": "Level_CoOp_06",
+      "serialized_lights": 33,
+      "shadow_disabled": 31,
+      "shadow_hard": 0,
+      "shadow_soft": 2,
+      "mapping": {
+        "4": 33
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 29
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level25",
+      "scene": "Level_Office_06",
+      "serialized_lights": 65,
+      "shadow_disabled": 54,
+      "shadow_hard": 0,
+      "shadow_soft": 11,
+      "mapping": {
+        "4": 65
+      },
+      "lightmaps": {
+        "count": 5,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 78,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 36
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 18
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "file": "level26",
+      "scene": "Level_Alley_05",
+      "serialized_lights": 33,
+      "shadow_disabled": 28,
+      "shadow_hard": 1,
+      "shadow_soft": 4,
+      "mapping": {
+        "4": 32,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 2,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 55,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 0,
+          "count": 1
+        },
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 25
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 1,
+          "count": 1
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "file": "level27",
+      "scene": "Level_Restaurant_03",
+      "serialized_lights": 82,
+      "shadow_disabled": 78,
+      "shadow_hard": 0,
+      "shadow_soft": 4,
+      "mapping": {
+        "4": 82
+      },
+      "lightmaps": {
+        "count": 3,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 2.1600000858306885, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': ",
+        "useShadowmask": false
+      },
+      "probe_groups": 98,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 68
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 10
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "file": "level28",
+      "scene": "Level_Druglab_02",
+      "serialized_lights": 53,
+      "shadow_disabled": 47,
+      "shadow_hard": 0,
+      "shadow_soft": 6,
+      "mapping": {
+        "4": 53
+      },
+      "lightmaps": {
+        "count": 2,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.6399999856948853, 'm_AlbedoBoost': 1.850000023841858, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealti",
+        "useShadowmask": false
+      },
+      "probe_groups": 80,
+      "reflection_probes": 1,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 44
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 3
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "file": "level29",
+      "scene": "Level_Druglab_17",
+      "serialized_lights": 52,
+      "shadow_disabled": 51,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 51,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 65,
+      "reflection_probes": 5,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 0,
+          "count": 1
+        },
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 43
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "file": "level30",
+      "scene": "Level_Boss_08",
+      "serialized_lights": 27,
+      "shadow_disabled": 26,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 27
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 2.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 57,
+      "reflection_probes": 12,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 26
+        }
+      ]
+    },
+    {
+      "file": "level31",
+      "scene": "Level_Bomb_04",
+      "serialized_lights": 34,
+      "shadow_disabled": 33,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 34
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 70,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 15
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 18
+        }
+      ]
+    },
+    {
+      "file": "level32",
+      "scene": "Level_Roftop_03",
+      "serialized_lights": 32,
+      "shadow_disabled": 29,
+      "shadow_hard": 0,
+      "shadow_soft": 3,
+      "mapping": {
+        "4": 32
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 79,
+      "reflection_probes": 1,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 28
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 1
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "file": "level33",
+      "scene": "Level_Test_Time_Office_03",
+      "serialized_lights": 46,
+      "shadow_disabled": 43,
+      "shadow_hard": 0,
+      "shadow_soft": 3,
+      "mapping": {
+        "4": 45,
+        "1": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 1, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 55,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 43
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "file": "level34",
+      "scene": "Level_Druglab_19",
+      "serialized_lights": 48,
+      "shadow_disabled": 37,
+      "shadow_hard": 0,
+      "shadow_soft": 11,
+      "mapping": {
+        "4": 48
+      },
+      "lightmaps": {
+        "count": 2,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 2.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 71,
+      "reflection_probes": 1,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 34
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 3
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "file": "level35",
+      "scene": "Level_Hotel_11",
+      "serialized_lights": 100,
+      "shadow_disabled": 93,
+      "shadow_hard": 0,
+      "shadow_soft": 7,
+      "mapping": {
+        "4": 99,
+        "1": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": true
+      },
+      "probe_groups": 102,
+      "reflection_probes": 2,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 77
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 16
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "file": "level36",
+      "scene": "Level_Alley_04",
+      "serialized_lights": 42,
+      "shadow_disabled": 40,
+      "shadow_hard": 0,
+      "shadow_soft": 2,
+      "mapping": {
+        "4": 41,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 2,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 51,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 0,
+          "count": 1
+        },
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 30
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 9
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level37",
+      "scene": "Level_BossFinal_01",
+      "serialized_lights": 36,
+      "shadow_disabled": 34,
+      "shadow_hard": 0,
+      "shadow_soft": 2,
+      "mapping": {
+        "4": 35,
+        "2": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 52,
+      "reflection_probes": 2,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 2
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 34
+        }
+      ]
+    },
+    {
+      "file": "level38",
+      "scene": "Level_Appartment_02",
+      "serialized_lights": 33,
+      "shadow_disabled": 32,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 32,
+        "1": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 2.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 29,
+      "reflection_probes": 2,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 32
+        }
+      ]
+    },
+    {
+      "file": "level39",
+      "scene": "Level_Appartment_03",
+      "serialized_lights": 33,
+      "shadow_disabled": 32,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 32,
+        "1": 1
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0700000524520874, 'm_AlbedoBoost': 2.880000114440918, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealti",
+        "useShadowmask": false
+      },
+      "probe_groups": 36,
+      "reflection_probes": 3,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 32
+        }
+      ]
+    },
+    {
+      "file": "level40",
+      "scene": "Cutscene01",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level41",
+      "scene": "Cutscene02",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level42",
+      "scene": "Cutscene03",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level43",
+      "scene": "Cutscene04",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level44",
+      "scene": "Cutscene05",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level45",
+      "scene": "Cutscene06",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level46",
+      "scene": "Cutscene07",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level47",
+      "scene": "Cutscene08",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level48",
+      "scene": "Credits",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level49",
+      "scene": "Intro_Busted_01",
+      "serialized_lights": 1,
+      "shadow_disabled": 0,
+      "shadow_hard": 0,
+      "shadow_soft": 1,
+      "mapping": {
+        "4": 1
+      },
+      "lightmaps": {
+        "count": 0,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': True}",
+        "useShadowmask": true
+      },
+      "probe_groups": 0,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "file": "level50",
+      "scene": "InterRoomScene01",
+      "serialized_lights": 11,
+      "shadow_disabled": 4,
+      "shadow_hard": 0,
+      "shadow_soft": 7,
+      "mapping": {
+        "4": 5,
+        "1": 2,
+        "2": 4
+      },
+      "lightmaps": {
+        "count": 2,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 1, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": true
+      },
+      "probe_groups": 1,
+      "reflection_probes": 4,
+      "type_shadow_counts": [
+        {
+          "type": "area",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "area",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 2,
+          "count": 2
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "file": "level51",
+      "scene": "BarConversations",
+      "serialized_lights": 43,
+      "shadow_disabled": 15,
+      "shadow_hard": 0,
+      "shadow_soft": 28,
+      "mapping": {
+        "4": 43
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 38,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 12
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 2,
+          "count": 27
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "file": "level52",
+      "scene": "BarConversationsDead",
+      "serialized_lights": 43,
+      "shadow_disabled": 15,
+      "shadow_hard": 0,
+      "shadow_soft": 28,
+      "mapping": {
+        "4": 43
+      },
+      "lightmaps": {
+        "count": 1,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 0, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": false
+      },
+      "probe_groups": 38,
+      "reflection_probes": 0,
+      "type_shadow_counts": [
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 12
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 2,
+          "count": 27
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 0,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "file": "level53",
+      "scene": "InterRoomScene02",
+      "serialized_lights": 11,
+      "shadow_disabled": 4,
+      "shadow_hard": 0,
+      "shadow_soft": 7,
+      "mapping": {
+        "4": 5,
+        "1": 2,
+        "2": 4
+      },
+      "lightmaps": {
+        "count": 2,
+        "mode": 1,
+        "gisettings": "{'m_BounceScale': 1.0, 'm_IndirectOutputScale': 1.0, 'm_AlbedoBoost': 1.0, 'm_TemporalCoherenceThreshold': 1.0, 'm_EnvironmentLightingMode': 1, 'm_EnableBakedLightmaps': True, 'm_EnableRealtimeLightmaps': False}",
+        "useShadowmask": true
+      },
+      "probe_groups": 1,
+      "reflection_probes": 4,
+      "type_shadow_counts": [
+        {
+          "type": "area",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "area",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "directional",
+          "serialized_shadow_type": 2,
+          "count": 1
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 0,
+          "count": 2
+        },
+        {
+          "type": "point",
+          "serialized_shadow_type": 2,
+          "count": 2
+        },
+        {
+          "type": "spot",
+          "serialized_shadow_type": 2,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "directly_relevant": [
+    "Level_Office_01: 65 serialized lights, 56 without shadows, 9 with soft shadows; 1 lightmap set; baked enabled, realtime lightmaps disabled.",
+    "Level_Office_06: 65 serialized lights, 54 without shadows, 11 with soft shadows; 5 lightmap sets; baked enabled, realtime lightmaps disabled.",
+    "Level_Hotel_11: 100 serialized lights, 93 without shadows, 7 with soft shadows; useShadowmask serialized true."
+  ],
+  "evidence_limits": [
+    "Light count is across serialized scenes, not simultaneous active lights. m_Enabled, activeInHierarchy, camera-visible lights, cullingMask, baked-output channels and runtime writes were not exported.",
+    "Mixed is not equivalent to zero realtime direct lighting or shadow work. The exact mixed submode is not proven for the office scenes by m_LightmapsMode=1; that field is lightmap directional encoding, not mixed lighting mode.",
+    "ReflectionProbe export only counts objects, not mode, refresh/time-slicing or resolution. Offices inspected have zero probe objects but this does not rule out default reflection or screen-space reflection.",
+    "Two SSR shader assets exist; resource presence does not prove camera/profile activation or frame cost.",
+    "Global deferred tier setting can be overridden per-camera. Report lacks camera runtime path/projection and frame captures.",
+    "Main Assembly-CSharp method extraction unavailable; dynamic light pooling/update policy and loading sequence are not proven. Library presence and method names are hypotheses, not measured gameplay behavior.",
+    "Office shadow configuration includes only spot/directional types: Office01 7 spots+2 directionals; Office06 10 spots+1 directional, zero shadow-enabled points. This is not a measured simultaneous shadow-pass count."
+  ],
+  "application_to_perf011": "Continue minimal separation of illumination receivers and shadow proxies without removing any C7 shadows, lights or dynamic reflections. Use report to inform a later static-light/shadow budget study; do not replace the current candidate or renderer based on unverified claims.",
+  "possible_next_readonly_extraction": [
+    "Per-Light enabled/active hierarchy, Transform, full m_Shadows, m_CullingMask, m_Lightmapping, m_BakingOutput incl mixed mode and occlusion channel, m_RenderMode and shadow resolution.",
+    "Per-Renderer lightmap index/ST, cast/receive shadow flags and static flags; per-LightmapSettings map references and mixed-lighting settings.",
+    "Active game camera renderingPath/projection, target textures, enabled postprocessing profiles with SSR parameters; ReflectionProbe mode/refresh/time-slicing/baked references.",
+    "Targeted managed method bodies for actual light toggle/flash pooling, visibility update, reflection and loading if independently available; no inference from class names alone."
+  ],
+  "primary_documentation": [
+    "https://docs.unity3d.com/2017.4/Documentation/Manual/LightMode-Mixed.html",
+    "https://docs.unity3d.com/2017.4/Documentation/Manual/RefProbeTypes.html",
+    "https://docs.unity3d.com/2017.4/Documentation/Manual/RenderingPaths.html"
+  ]
+}

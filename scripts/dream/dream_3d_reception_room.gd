@@ -7,31 +7,30 @@ signal weapon_equipped(weapon_id: String)
 const CELL_PIXELS := 32.0
 
 # Room dimensions
-const MAIN_HALL_WIDTH := 26
-const MAIN_HALL_HEIGHT := 16
-const CORRIDOR_WIDTH := 8
-const CORRIDOR_HEIGHT := 4
-const CORRIDOR_START_X := 9
+const MAIN_HALL_WIDTH := 14
+const MAIN_HALL_HEIGHT := 8
+const ENTRY_DEPTH := 3
+const ENTRY_START_Z := 3
+const ENTRY_END_Z := 5
 
 # Wall & opening constants
 const WALL_HEIGHT := 3.0
 const WALL_THICKNESS := 0.1
 const WALL_COLLISION_THICKNESS := 16.0
-const ELEVATOR_OPENING_START := 2 # Exclude X: 2..5
-const ELEVATOR_OPENING_END := 5
+const ELEVATOR_OPENING_START := 0 # Only lift, at the far left end
+const ELEVATOR_OPENING_END := 3
 const WORLD_WALL_LAYER := 4
 
 # Key positions
-const PLAYER_SPAWN := Vector2(12.5, 18.5) * CELL_PIXELS
-const ELEVATOR_POS_3D := Vector3(3.5, 0.0, -0.5)
-const ELEVATOR_POS_2D := Vector2(3.5, -0.5) * CELL_PIXELS
-const RECEPTION_DESK_POS_3D := Vector3(16.0, 0.0, 3.6)
-const RECEPTION_DESK_POS_2D := Vector2(16.0, 3.6) * CELL_PIXELS
-const WAITRESS_NPC_POS_2D := Vector2(16.0, 2.6) * CELL_PIXELS
+const PLAYER_SPAWN := Vector2(16.0, 4.5) * CELL_PIXELS
+const ELEVATOR_POS_3D := Vector3(1.5, 0.0, -0.5)
+const ELEVATOR_POS_2D := Vector2(1.5, -0.5) * CELL_PIXELS
+const RECEPTION_DESK_POS_3D := Vector3(8.0, 0.0, 2.8)
+const RECEPTION_DESK_POS_2D := Vector2(8.0, 2.8) * CELL_PIXELS
+const WAITRESS_NPC_POS_2D := Vector2(8.0, 1.8) * CELL_PIXELS
 const DIALOGUE_FOCUS_TARGET_3D := Vector3(RECEPTION_DESK_POS_3D.x, 0.0, RECEPTION_DESK_POS_3D.z + 0.5)
 
 const INTERACTION_PROMPT_OFFSET := Vector2(-64.0, -32.0)
-const CRISP_INTERACTION_FONT: Script = preload("res://scripts/ui/crisp_interaction_font.gd")
 const COMPACT_PROMPT = preload("res://scripts/ui/compact_interaction_prompt.gd")
 const GAMEPLAY_CAMERA_FOV := 40.0
 const PHONE_CAMERA := preload("res://scripts/dream/phone_camera_presentation.gd")
@@ -46,7 +45,6 @@ const INTERACTION_RESOLVER_SCRIPT: Script = preload("res://scripts/dream/dream_i
 const CONFIG: DemoConfig = preload("res://resources/demo_config.tres")
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const DREAM_GUN_ATLAS := preload("res://scripts/data/dream_gun_atlas.gd")
-const TRANSITION_GRADIENT_SHADER: Shader = preload("res://shaders/dream3d/transition_corridor_gradient.gdshader")
 
 const RECEPTION_WAITRESS_SCRIPT := preload("res://scripts/dream/reception_waitress_npc.gd")
 const TAROT_OVERLAY_SCENE: PackedScene = preload("res://scenes/ui/tarot/tarot_overlay.tscn")
@@ -139,12 +137,11 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	preload("res://scripts/app/game_input_actions.gd").configure()
 	SFX.play_safe_music(get_instance_id())
-	interaction_prompt.add_theme_font_override(&"font", CRISP_INTERACTION_FONT.get_font())
-	interaction_prompt.add_theme_font_size_override(&"font_size", 12)
 
 	if camera_3d != null:
 		camera_3d.projection = Camera3D.PROJECTION_PERSPECTIVE
 		camera_3d.fov = GAMEPLAY_CAMERA_FOV
+		camera_3d.position = Vector3(0,10.5,10.5)
 		authoritative_camera_fov = camera_3d.fov
 
 	_build_room_geometry()
@@ -284,57 +281,38 @@ func _build_room_geometry() -> void:
 			floor_cells[Vector2i(x, y)] = true
 			room_cells[Vector2i(x, y)] = 0
 
-	for x in range(CORRIDOR_START_X, CORRIDOR_START_X + CORRIDOR_WIDTH):
-		for y in range(MAIN_HALL_HEIGHT, MAIN_HALL_HEIGHT + CORRIDOR_HEIGHT):
-			floor_cells[Vector2i(x, y)] = true
-			room_cells[Vector2i(x, y)] = 0
-
+	# Short arrival vestibule enters from screen right.
+	for x in range(MAIN_HALL_WIDTH, MAIN_HALL_WIDTH + ENTRY_DEPTH):
+		for z in range(ENTRY_START_Z, ENTRY_END_Z + 1):
+			floor_cells[Vector2i(x,z)] = true
+			room_cells[Vector2i(x,z)] = 0
 	FLOOR_BATCH_RENDERER.build(self)
-	var final_floor := preload("res://scripts/dream/preview/sample_floor_texture_review.gd").new()
-	final_floor.world=self
-	final_floor.production_mode=true
-	final_floor.rebuild_floor_surfaces()
-	final_floor.free()
+	# The lobby has its own quiet stone, without changing approved office floors.
+	var stone := ShaderMaterial.new()
+	stone.shader=preload("res://shaders/dream3d/reception_stone.gdshader")
+	for mesh in floor_root.find_children("*","MeshInstance3D",true,false):
+		mesh.material_override=stone
 
-	# 2. Three north elevator facades; only the first has a gameplay opening.
+	# A single visible and functional elevator; every other north bay is solid wall.
 	for x in range(MAIN_HALL_WIDTH):
-		if x < ELEVATOR_OPENING_START or x > 13:
+		if x < ELEVATOR_OPENING_START or x > ELEVATOR_OPENING_END:
 			_spawn_wall(Vector3(x, 0.0, -0.5), 0.0, "NorthWall_%02d" % x)
 
 	# 3. West & East Walls of Main Hall
 	for y in range(MAIN_HALL_HEIGHT):
 		_spawn_wall(Vector3(-0.5, 0.0, y), PI * 0.5, "MainWestWall_%02d" % y)
-		_spawn_wall(Vector3(MAIN_HALL_WIDTH - 0.5, 0.0, y), PI * 0.5, "MainEastWall_%02d" % y)
+		if y < ENTRY_START_Z or y > ENTRY_END_Z:
+			var wall := _spawn_wall(Vector3(MAIN_HALL_WIDTH - 0.5, 0.0, y), PI * 0.5, "MainEastWall_%02d" % y)
+			if y > ENTRY_END_Z: wall.set_cutaway_mode(true)
 
-	# 4. Main hall south walls beside the entrance, with cutaway mode.
-	for x in range(0, CORRIDOR_START_X):
-		var wall := _spawn_wall(Vector3(x, 0.0, MAIN_HALL_HEIGHT - 0.5), 0.0, "MainSouthWallLeft_%02d" % x)
-		if wall != null and wall.has_method("set_cutaway_mode"):
-			wall.call("set_cutaway_mode", true)
-
-	for x in range(CORRIDOR_START_X + CORRIDOR_WIDTH, MAIN_HALL_WIDTH):
-		var wall := _spawn_wall(Vector3(x, 0.0, MAIN_HALL_HEIGHT - 0.5), 0.0, "MainSouthWallRight_%02d" % x)
-		if wall != null and wall.has_method("set_cutaway_mode"):
-			wall.call("set_cutaway_mode", true)
-
-	# 5. Entrance side walls.
-	var corridor_west_x := float(CORRIDOR_START_X) - 0.5
-	var corridor_east_x := float(CORRIDOR_START_X + CORRIDOR_WIDTH) - 0.5
-	for y in range(MAIN_HALL_HEIGHT, MAIN_HALL_HEIGHT + CORRIDOR_HEIGHT):
-		_spawn_wall(Vector3(corridor_west_x, 0.0, y), PI * 0.5, "CorridorWestWall_%02d" % y)
-		_spawn_wall(Vector3(corridor_east_x, 0.0, y), PI * 0.5, "CorridorEastWall_%02d" % y)
-
-	# 6. Entrance south wall with cutaway mode.
-	var corridor_south_y := float(MAIN_HALL_HEIGHT + CORRIDOR_HEIGHT) - 0.5
-	for x in range(CORRIDOR_START_X, CORRIDOR_START_X + CORRIDOR_WIDTH):
-		var wall := _spawn_wall(Vector3(x, 0.0, corridor_south_y), 0.0, "CorridorSouthWall_%02d" % x)
-		if wall != null and wall.has_method("set_cutaway_mode"):
-			wall.call("set_cutaway_mode", true)
-
-	# 7. Entrance corridor bottom atmospheric dark gradient
-	_build_entrance_corridor_gradient()
-
-	# 8. 2D Gameplay Collision Boundaries
+	# The front edge is cut away so the horizontal arrival route stays visible.
+	for x in range(MAIN_HALL_WIDTH):
+		var wall := _spawn_wall(Vector3(x,0.0,MAIN_HALL_HEIGHT-.5),0.0,"MainSouthWall_%02d"%x)
+		if wall != null and wall.has_method("set_cutaway_mode"): wall.set_cutaway_mode(true)
+	for x in range(MAIN_HALL_WIDTH, MAIN_HALL_WIDTH + ENTRY_DEPTH):
+		_spawn_wall(Vector3(x,0,ENTRY_START_Z-.5),0.,"EntryNorth_%d"%x)
+		var wall := _spawn_wall(Vector3(x,0,ENTRY_END_Z+.5),0.,"EntrySouth_%d"%x)
+		wall.set_cutaway_mode(true)
 	_build_gameplay_boundaries()
 
 
@@ -353,64 +331,23 @@ func _spawn_wall(position_3d: Vector3, yaw: float, node_name: String) -> Node3D:
 	return wall
 
 
-func _build_entrance_corridor_gradient() -> void:
-	var gradient_mesh := MeshInstance3D.new()
-	gradient_mesh.name = "EntranceCorridorFadeGradient"
-	var plane := PlaneMesh.new()
-	plane.size = Vector2(float(CORRIDOR_WIDTH), 4.0)
-	gradient_mesh.mesh = plane
-	var corridor_center_x := float(CORRIDOR_START_X) + float(CORRIDOR_WIDTH) * 0.5 - 0.5
-	gradient_mesh.position = Vector3(corridor_center_x, 0.045, float(MAIN_HALL_HEIGHT + CORRIDOR_HEIGHT) - 2.0)
-	gradient_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	gradient_mesh.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
-
-	var mat := ShaderMaterial.new()
-	mat.shader = TRANSITION_GRADIENT_SHADER
-	mat.set_shader_parameter("black_color", Color(0.0, 0.0, 0.0, 1.0))
-	mat.set_shader_parameter("fade_power", 1.4)
-	gradient_mesh.material_override = mat
-	geometry_3d.add_child(gradient_mesh)
-
-
 func _build_gameplay_boundaries() -> void:
-	# Main north boundary opens only around the functional elevator.
-	var north_y := -0.5 * CELL_PIXELS
-	var left_span := float(ELEVATOR_OPENING_START) * CELL_PIXELS + 0.5 * CELL_PIXELS # -16px to 96px
-	_spawn_wall_collision(Vector2(left_span * 0.5 - 8.0, north_y), Vector2(left_span + 16.0, WALL_COLLISION_THICKNESS), "NorthWallCollisionLeft")
-
-	var right_start := float(ELEVATOR_OPENING_END + 1) * CELL_PIXELS - 0.5 * CELL_PIXELS
-	var room_right_px := float(MAIN_HALL_WIDTH) * CELL_PIXELS - 0.5 * CELL_PIXELS
-	var right_width := room_right_px - right_start + 16.0
-	_spawn_wall_collision(Vector2((right_start + room_right_px) * 0.5, north_y), Vector2(right_width, WALL_COLLISION_THICKNESS), "NorthWallCollisionRight")
-
-	# Main Hall West & East Walls
-	var main_center_y := (float(MAIN_HALL_HEIGHT) * 0.5 - 0.5) * CELL_PIXELS
-	var main_height_px := float(MAIN_HALL_HEIGHT) * CELL_PIXELS
-	_spawn_wall_collision(Vector2(-0.5 * CELL_PIXELS, main_center_y), Vector2(WALL_COLLISION_THICKNESS, main_height_px), "MainWestWallCollision")
-	_spawn_wall_collision(Vector2((float(MAIN_HALL_WIDTH) - 0.5) * CELL_PIXELS, main_center_y), Vector2(WALL_COLLISION_THICKNESS, main_height_px), "MainEastWallCollision")
-
-	# Main hall south walls beside the entrance.
-	var main_south_y := (float(MAIN_HALL_HEIGHT) - 0.5) * CELL_PIXELS
-	var left_south_width := float(CORRIDOR_START_X) * CELL_PIXELS
-	_spawn_wall_collision(Vector2(left_south_width * 0.5 - 8.0, main_south_y), Vector2(left_south_width + 16.0, WALL_COLLISION_THICKNESS), "MainSouthWallCollisionLeft")
-
-	var right_south_start := float(CORRIDOR_START_X + CORRIDOR_WIDTH) * CELL_PIXELS - 0.5 * CELL_PIXELS
-	var right_south_width := room_right_px - right_south_start + 16.0
-	_spawn_wall_collision(Vector2((right_south_start + room_right_px) * 0.5, main_south_y), Vector2(right_south_width, WALL_COLLISION_THICKNESS), "MainSouthWallCollisionRight")
-
-	# Entrance west and east walls.
-	var corridor_west_px := (float(CORRIDOR_START_X) - 0.5) * CELL_PIXELS
-	var corridor_east_px := (float(CORRIDOR_START_X + CORRIDOR_WIDTH) - 0.5) * CELL_PIXELS
-	var corridor_center_y := (float(MAIN_HALL_HEIGHT) + float(CORRIDOR_HEIGHT) * 0.5 - 0.5) * CELL_PIXELS
-	var corridor_height_px := float(CORRIDOR_HEIGHT) * CELL_PIXELS
-	_spawn_wall_collision(Vector2(corridor_west_px, corridor_center_y), Vector2(WALL_COLLISION_THICKNESS, corridor_height_px), "CorridorWestWallCollision")
-	_spawn_wall_collision(Vector2(corridor_east_px, corridor_center_y), Vector2(WALL_COLLISION_THICKNESS, corridor_height_px), "CorridorEastWallCollision")
-
-	# Corridor South Wall
-	var corridor_south_px := (float(MAIN_HALL_HEIGHT + CORRIDOR_HEIGHT) - 0.5) * CELL_PIXELS
-	var corridor_center_x := (float(CORRIDOR_START_X) + float(CORRIDOR_WIDTH) * 0.5 - 0.5) * CELL_PIXELS
-	var corridor_width_px := float(CORRIDOR_WIDTH) * CELL_PIXELS
-	_spawn_wall_collision(Vector2(corridor_center_x, corridor_south_px), Vector2(corridor_width_px, WALL_COLLISION_THICKNESS), "CorridorSouthWallCollision")
+	var west := -.5 * CELL_PIXELS
+	var east := (MAIN_HALL_WIDTH-.5) * CELL_PIXELS
+	var north := -.5 * CELL_PIXELS
+	var south := (MAIN_HALL_HEIGHT-.5) * CELL_PIXELS
+	var opening_right := (ELEVATOR_OPENING_END+.5) * CELL_PIXELS
+	_spawn_wall_collision(Vector2((opening_right+east)*.5,north),Vector2(east-opening_right,WALL_COLLISION_THICKNESS),"NorthWallCollisionRight")
+	_spawn_wall_collision(Vector2(west,(north+south)*.5),Vector2(WALL_COLLISION_THICKNESS,south-north),"MainWestWallCollision")
+	_spawn_wall_collision(Vector2((west+east)*.5,south),Vector2(east-west,WALL_COLLISION_THICKNESS),"MainSouthWallCollision")
+	var entry_north := (ENTRY_START_Z-.5) * CELL_PIXELS
+	var entry_south := (ENTRY_END_Z+.5) * CELL_PIXELS
+	var entry_end := east + ENTRY_DEPTH * CELL_PIXELS
+	_spawn_wall_collision(Vector2(east,(north+entry_north)*.5),Vector2(WALL_COLLISION_THICKNESS,entry_north-north),"EastUpperCollision")
+	_spawn_wall_collision(Vector2(east,(entry_south+south)*.5),Vector2(WALL_COLLISION_THICKNESS,south-entry_south),"EastLowerCollision")
+	for z in [entry_north,entry_south]:
+		_spawn_wall_collision(Vector2((east+entry_end)*.5,z),Vector2(entry_end-east,WALL_COLLISION_THICKNESS),"ArrivalSide%d"%int(z))
+	_spawn_wall_collision(Vector2(entry_end,(entry_north+entry_south)*.5),Vector2(WALL_COLLISION_THICKNESS,entry_south-entry_north),"ArrivalEnd")
 
 
 func _spawn_wall_collision(center: Vector2, size: Vector2, node_name: String) -> void:
@@ -438,21 +375,12 @@ func _setup_elevator() -> void:
 	elevator_floor_door.configure_entrance(Vector2.UP, camera_3d)
 	elevator_floor_door.setup_gameplay_2d(collision_root, gameplay_world, ELEVATOR_POS_2D)
 	elevator_floor_door.update_state(ElevatorFloorDoor3D.State.UNLOCKED)
-	# Lobby bays have their own 01/02/03 labels; do not overlay a floor label.
+	# The only bay is 01; its frame carries the entrance identity.
 	elevator_floor_door.indicator_label.hide()
 	elevator_floor_door.industrial_facade.bay_number=1
 	elevator_floor_door.industrial_facade.update_number()
 	elevator_floor_door.approach_entered.connect(_on_elevator_approach_entered)
 	elevator_floor_door.approach_exited.connect(_on_elevator_approach_exited)
-	for i in [1,2]:
-		var closed := ElevatorFloorDoor3D.new(ElevatorFloorDoor3D.Orientation.UP,0)
-		closed.name="BackgroundElevator%d"%(i+1)
-		closed.position=ELEVATOR_POS_3D+Vector3(float(i)*4,0,0)
-		door_root.add_child(closed)
-		closed.update_state(ElevatorFloorDoor3D.State.LOCKED)
-		closed.indicator_label.hide()
-		closed.industrial_facade.bay_number=i+1
-		closed.industrial_facade.update_number()
 
 
 func _setup_reception_desk() -> void:
@@ -462,12 +390,6 @@ func _setup_reception_desk() -> void:
 	props_root.add_child(reception_desk)
 	if reception_desk.has_method("setup_gameplay_2d"):
 		reception_desk.call("setup_gameplay_2d", collision_root, RECEPTION_DESK_POS_2D)
-	for i in [1,2]:
-		var desk := RECEPTION_DESK_SCENE.instantiate() as Node3D
-		desk.name="EmptyReceptionDesk%d"%(i+1)
-		desk.position=RECEPTION_DESK_POS_3D+Vector3(float(i)*3.4,0,0)
-		props_root.add_child(desk)
-		desk.call("setup_gameplay_2d",collision_root,RECEPTION_DESK_POS_2D+Vector2(float(i)*3.4,0)*CELL_PIXELS)
 
 
 func _apply_authored_layout() -> void:
@@ -575,7 +497,7 @@ func _configure_lighting() -> void:
 		env.background_color = Color(0.0, 0.0, 0.0, 1.0)
 		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 		env.ambient_light_color = Color(0.40, 0.44, 0.52, 1.0)
-		env.ambient_light_energy = 0.38
+		env.ambient_light_energy = 0.18
 		env.tonemap_mode = 1
 		env.fog_enabled = false
 
@@ -598,14 +520,18 @@ func _configure_lighting() -> void:
 
 func _build_accent_lights() -> void:
 	# 1. Soft Warm Reception Desk Local Light (illuminates desk & Waitress cleanly without dark shadow bands)
-	var desk_light := OmniLight3D.new()
+	var desk_light := SpotLight3D.new()
 	desk_light.name = "ReceptionDeskLight"
-	desk_light.position = Vector3(RECEPTION_DESK_POS_3D.x, 2.2, RECEPTION_DESK_POS_3D.z + 0.4)
-	desk_light.light_color = Color(0.96, 0.94, 0.90)
-	desk_light.light_energy = 0.45
-	desk_light.omni_range = 4.5
-	desk_light.omni_attenuation = 1.2
-	desk_light.shadow_enabled = false
+	desk_light.position = Vector3(RECEPTION_DESK_POS_3D.x, 3.1, RECEPTION_DESK_POS_3D.z + 0.2)
+	desk_light.rotation_degrees.x=-90
+	desk_light.light_color = Color("ffaa55")
+	desk_light.light_energy = 1.15
+	desk_light.spot_range = 6.0
+	desk_light.spot_angle = 48.0
+	desk_light.spot_attenuation = 0.85
+	desk_light.spot_angle_attenuation = 0.55
+	desk_light.light_specular=0.
+	desk_light.shadow_enabled = true
 	desk_light.light_cull_mask = night_lighting.WORLD_LIGHT_CULL_MASK
 	lighting_root.add_child(desk_light)
 
@@ -613,14 +539,14 @@ func _build_accent_lights() -> void:
 	var elevator_light := OmniLight3D.new()
 	elevator_light.name = "ElevatorAccentLight"
 	elevator_light.position = Vector3(ELEVATOR_POS_3D.x, 2.8, 0.2)
-	elevator_light.light_color = Color(0.85, 0.95, 1.0)
+	elevator_light.light_color = Color("9ecfc1")
 	elevator_light.light_energy = 0.5
 	elevator_light.omni_range = 4.5
 	elevator_light.omni_attenuation = 1.3
 	elevator_light.shadow_enabled = false
 	elevator_light.light_cull_mask = night_lighting.WORLD_LIGHT_CULL_MASK
 	lighting_root.add_child(elevator_light)
-	for point in [Vector2(4,5),Vector2(12,7),Vector2(20,6),Vector2(5,11.5),Vector2(14,14),Vector2(23,12)]:
+	for point in [Vector2(3,4),Vector2(8,4),Vector2(13,4)]:
 		var light := SpotLight3D.new()
 		light.name="LobbyAreaLight%d"%lighting_root.get_child_count()
 		light.position=Vector3(point.x,3.1,point.y)
@@ -628,7 +554,7 @@ func _build_accent_lights() -> void:
 		light.light_color=Color(.87,.91,1.0)
 		# Formal room lighting uses 0.5-energy localized ceiling cones with
 		# a broad falloff shoulder, above the same dark night ambient.
-		light.light_energy=.5; light.spot_range=8.0; light.spot_angle=95
+		light.light_energy=.5; light.spot_range=7.0; light.spot_angle=78
 		light.spot_attenuation=.20; light.spot_angle_attenuation=.15
 		light.shadow_enabled=false
 		light.light_cull_mask=night_lighting.WORLD_LIGHT_CULL_MASK
@@ -671,7 +597,10 @@ func _update_camera_and_projection(delta: float) -> void:
 		var alpha := 1.0 - exp(-maxf(CONFIG.camera_aim_smoothing, 0.01) * delta)
 		camera_aim_offset = camera_aim_offset.lerp(Vector3(target_pixels.x / CELL_PIXELS, 0.0, target_pixels.y / CELL_PIXELS), alpha)
 
-	var normal_focus := ground_position + camera_aim_offset * (1.0 - phone_camera_weight)
+	# Compose the compact right-to-left route as one room, with restrained follow.
+	var room_center := Vector3(7.5,0,3.5)
+	var room_focus := room_center + (ground_position-room_center) * .14 + camera_aim_offset * .15
+	var normal_focus := room_focus.lerp(ground_position,phone_camera_weight)
 	var composed_focus := normal_focus.lerp(DIALOGUE_FOCUS_TARGET_3D, dialogue_camera_weight)
 	if is_instance_valid(entry_cab) and entry_ride_started_usec > 0:
 		composed_focus = composed_focus.lerp(entry_cab.get_camera_focus_world(), entry_camera_weight)
@@ -824,6 +753,7 @@ func _start_elevator_entry() -> void:
 	add_child(layer)
 	picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	geometry_3d.hide()
+	lighting_root.hide()
 	actor_depth_bridges_root.hide()
 	waitress_npc.hide()
 	var reveal := create_tween().set_parallel(true)
@@ -854,6 +784,7 @@ func rollback_elevator_entry() -> void:
 	entry_ride_started_usec = 0
 	entry_camera_weight = 0.0
 	geometry_3d.show()
+	lighting_root.show()
 	actor_depth_bridges_root.show()
 	waitress_npc.show()
 	if is_instance_valid(entry_cab):
@@ -923,6 +854,9 @@ func _setup_tarot_system() -> void:
 func _on_waitress_interaction_requested() -> void:
 	if elevator_transition_in_progress or (tarot_overlay != null and tarot_overlay.visible): return
 	if dialogue_controller==null or dialogue_bubble==null or dialogue_controller.is_active(): return
+	if bool(get_meta(&"chapter_one",false)) and bool(get_meta(&"chapter_dialogue_heard",false)) and not bool(get_meta(&"chapter_tarot_taken",false)):
+		_start_tarot_sequence()
+		return
 	var lines: Array=[
 		"电、电梯在左边……通往办公楼……今晚也请小心。",
 		"只要撑到发奖金就好了……他们都这么说。可上去的人……怎么越来越少了……",
@@ -971,6 +905,10 @@ func _on_waitress_emotion_line(index: int, _line: Dictionary) -> void:
 	waitress_npc.hint_emotion=feelings[clampi(index,0,feelings.size()-1)]
 
 func _on_waitress_dialogue_finished(interrupted: bool, action_id: Variant) -> void:
+	if bool(get_meta(&"chapter_one",false)) and not interrupted:
+		set_meta(&"chapter_dialogue_heard",true)
+		# Separate E interaction opens cards; never restore dialogue choice buttons.
+		tarot_visit_state.selected=bool(get_meta(&"chapter_tarot_taken",false))
 	if not interrupted: waitress_npc.hint_emotion="happy"
 	if interrupted:
 		tarot_visit_state.selected = true
@@ -1021,15 +959,30 @@ func _start_tarot_sequence() -> void:
 
 	# Ensure hand is drawn once per visit (locked state)
 	if not tarot_visit_state.hand_generated:
-		var controller := TarotDrawController.new()
+		var draw_seed: int=int(profile_state.get("chapter_one",{}).get("seed",0)) if bool(get_meta(&"chapter_one",false)) else 0
+		var controller := TarotDrawController.new(draw_seed)
 		tarot_visit_state.hand = controller.draw_three()
 		tarot_visit_state.hand_generated = true
 
 	if tarot_overlay != null:
 		tarot_overlay.start_tarot_sequence(tarot_visit_state.hand)
+		if bool(get_meta(&"chapter_one",false)):
+			_show_chapter_tarot_bonuses()
+
+func _show_chapter_tarot_bonuses() -> void:
+	while is_instance_valid(tarot_overlay) and tarot_overlay.visible and tarot_overlay.cards.size()<3:
+		await get_tree().process_frame
+	if not is_instance_valid(tarot_overlay) or not tarot_overlay.visible: return
+	for view in tarot_overlay.cards:
+		view.card_hovered.connect(func(card,hovered):
+			if hovered:
+				var result: TarotDrawResult=card.draw_result
+				var bonus: Dictionary=preload("res://scripts/story/chapter_tarot.gd").bonus(str(result.get_id()),result.is_reversed)
+				tarot_overlay.prompt_label.text="%s  ·  本章%s"%[result.get_full_title_zh(),bonus.get("label","")])
 
 
 func _on_tarot_selection_finished(selected_result: TarotDrawResult) -> void:
+	if bool(get_meta(&"chapter_one",false)): set_meta(&"chapter_tarot_taken",true)
 	tarot_visit_state.selected = true
 	tarot_visit_state.selected_result = selected_result
 

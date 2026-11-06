@@ -15,6 +15,17 @@ var run_interface: Node
 var night_lighting: Node3D
 @export var dynamic_shadows_enabled := true
 var shadow_manager: Node3D
+## Approved sparse profile; disable explicitly for legacy lighting comparisons.
+@export var sparse_lighting_enabled := true
+
+func uses_office_real_colour() -> bool:
+	return approved_sample_art_enabled and not use_authored_office_sample and not has_node("ChapterTraining")
+
+func uses_office_night_lighting() -> bool:
+	return (uses_office_real_colour() and sparse_lighting_enabled
+		and dynamic_shadows_enabled and RenderingServer.get_current_rendering_method() == "forward_plus")
+
+var sparse_lighting: Node3D
 ## Main sets this before attachment: the initial elevator must wait until
 ## first-use graphics have rendered behind the loading overlay.
 var loading_render_preparation_pending := false
@@ -43,7 +54,6 @@ var interaction_resolver: DreamInteractionResolver
 ## 交互提示相对世界锚点的屏幕偏移，沿用原 2D Label 的 offset。
 const INTERACTION_PROMPT_OFFSET := Vector2(-64.0, -32.0)
 const INTERACTION_PROMPT_SIZE := Vector2(128.0, 18.0)
-const CRISP_INTERACTION_FONT: Script = preload("res://scripts/ui/crisp_interaction_font.gd")
 
 @export var persist_profile := true
 @export var dream_layer_id: int = 1
@@ -564,6 +574,19 @@ var glass_wall_edges: Dictionary = {}
 var door_edges: Dictionary = {}
 var door_opening_edges: Dictionary = {}
 var edge_states: Dictionary = {}
+## Durable runtime openings belong to this floor transaction, never to preview.
+var broken_shared_walls: Dictionary = {}
+var dash_breach_links: Dictionary = {}
+var last_shared_wall_breach_profile: Dictionary = {}
+var _pending_dash_wall_breaches: Dictionary = {}
+var _pending_dash_glass_breaks: Dictionary = {}
+var _pending_dash_door_breaks: Dictionary = {}
+var _pending_dash_wall_breach_token := -1
+var _pending_dash_wall_breach_direction := Vector2.ZERO
+const SHARED_WALL_BREACH = preload("res://scripts/dream/shared_wall_breach.gd")
+const WALL_ATTACHMENTS = preload("res://scripts/dream/wall_attachments.gd")
+const DASH_GLASS_BREAK = preload("res://scripts/dream/dash_glass_break.gd")
+const DASH_DOOR_BREAK = preload("res://scripts/dream/dash_door_break.gd")
 var spawn_room_id: int = -1
 var boss_room_id: int = -1
 var key_room_id: int = -1
@@ -598,7 +621,6 @@ var elevator_floor_door: ElevatorFloorDoor3D
 var active_transition_cab: IndependentElevatorCab3D
 var transition_generation_token: int = 0
 var transition_phase: StringName = &"IDLE"
-const ELEVATOR_VISIBLE_RIDE_SECONDS := 3.0
 var _cab_suspended_floor_state: Array[Dictionary] = []
 var _next_floor_render_ready := false
 
@@ -615,6 +637,117 @@ var _stashed_physics_state: Array[Dictionary] = []
 
 func get_current_floor_token() -> int:
 	return _layout_generation
+
+
+func query_dash_breakable_walls(from: Vector2, to: Vector2, body_radius: float = 8.0) -> Array[String]:
+	return SHARED_WALL_BREACH.query(self, from, to, body_radius)
+
+
+func queue_dash_wall_breaches(from: Vector2, to: Vector2, body_radius: float, floor_token: int) -> void:
+	if floor_token != _layout_generation or not SHARED_WALL_BREACH.allowed(self) or bool(get_meta(&"test_disable_shared_wall_breaches", false)):
+		return
+	var keys := query_dash_breakable_walls(from, to, body_radius)
+	var glass: Array[Node] = DASH_GLASS_BREAK.query(self, from, to, body_radius)
+	var doors: Array[Node] = DASH_DOOR_BREAK.query(self, from, to, body_radius)
+	if keys.is_empty() and glass.is_empty() and doors.is_empty():
+		return
+	if _pending_dash_wall_breach_token != floor_token:
+		_pending_dash_wall_breaches.clear()
+		_pending_dash_glass_breaks.clear()
+		_pending_dash_door_breaks.clear()
+		_pending_dash_wall_breach_token = floor_token
+		_pending_dash_wall_breach_direction = (to - from).normalized()
+		call_deferred("_flush_dash_wall_breaches", floor_token)
+	for key in keys:
+		_pending_dash_wall_breaches[key] = true
+	for target in glass:
+		if is_instance_valid(target) and not target.is_queued_for_deletion():
+			_pending_dash_glass_breaks[target.get_instance_id()] = weakref(target)
+	for target in doors:
+		if is_instance_valid(target) and not target.is_queued_for_deletion():
+			_pending_dash_door_breaks[target.get_instance_id()] = weakref(target)
+
+
+func _flush_dash_wall_breaches(floor_token: int) -> void:
+	if floor_token != _pending_dash_wall_breach_token:
+		return
+	var keys := _pending_dash_wall_breaches.keys()
+	var glass: Array[Node] = []
+	for reference: WeakRef in _pending_dash_glass_breaks.values():
+		var target: Node = reference.get_ref()
+		if is_instance_valid(target) and not target.is_queued_for_deletion():
+			glass.append(target)
+	var doors: Array[Node] = []
+	for reference: WeakRef in _pending_dash_door_breaks.values():
+		var target: Node = reference.get_ref()
+		if is_instance_valid(target) and not target.is_queued_for_deletion():
+			doors.append(target)
+	var direction := _pending_dash_wall_breach_direction
+	_clear_pending_dash_wall_breaches()
+	if floor_token != _layout_generation or not SHARED_WALL_BREACH.allowed(self):
+		return
+	if not keys.is_empty():
+		_commit_dash_wall_breaches(keys, floor_token, direction)
+	if DASH_GLASS_BREAK.commit(self, glass, floor_token, direction) > 0:
+		_prepare_wall_cutout_cache()
+	DASH_DOOR_BREAK.commit(self, doors, floor_token, direction)
+
+
+func _clear_pending_dash_wall_breaches() -> void:
+	_pending_dash_wall_breaches.clear()
+	_pending_dash_glass_breaks.clear()
+	_pending_dash_door_breaks.clear()
+	_pending_dash_wall_breach_token = -1
+	_pending_dash_wall_breach_direction = Vector2.ZERO
+
+
+func _commit_dash_wall_breaches(keys: Array, token: int, direction: Vector2) -> int:
+	return SHARED_WALL_BREACH.commit(self, keys, token, direction)
+
+
+func register_dash_open_edge(key: String, edge: Dictionary) -> void:
+	SHARED_WALL_BREACH.register_open_edge(self, key, edge)
+
+
+func register_wall_attachment(attachment: Node, edge: Dictionary) -> void:
+	WALL_ATTACHMENTS.bind(self, attachment, edge)
+
+
+func _remove_shared_wall_fixtures(wall: Node3D) -> void:
+	var key := String(wall.get_meta(&"edge_key", ""))
+	WALL_ATTACHMENTS.remove(self, key)
+	# Room dressing lives below FloorRoot, separately from its supporting wall.
+	if is_instance_valid(room_visibility):
+		var fixtures: Array = room_visibility.get("_wall_fixtures")
+		for fixture in fixtures.duplicate():
+			if not is_instance_valid(fixture):
+				fixtures.erase(fixture)
+				continue
+			var edge: Dictionary = fixture.get_meta(&"wall_fixture_edge", {})
+			if not edge.is_empty() and _edge_key(edge) == key:
+				fixtures.erase(fixture)
+				fixture.free()
+	for fixture in wall_root.get_children():
+		if fixture == wall:
+			continue
+		var edge: Dictionary = fixture.get_meta(&"wall_fixture_edge", {})
+		if not edge.is_empty() and _edge_key(edge) == key:
+			fixture.free()
+	for stain in world_effects_root.get_children():
+		if String(stain.get_meta(&"blood_wall_edge_key", "")) == key:
+			stain.queue_free()
+	# A spent/flying tank has already left its wall and keeps its own lifecycle.
+	for tank in key_root.get_children():
+		if tank.is_in_group(&"fire_extinguishers") and not bool(tank.get("broken")) and String(tank.get_meta(&"wall_edge_key", "")) == key:
+			tank.queue_free()
+
+
+func _refresh_shared_wall_breach_presentation() -> void:
+	var profile_enabled := bool(get_meta(&"test_profile_shared_wall_breach", false))
+	var started := Time.get_ticks_usec() if profile_enabled else 0
+	_prepare_wall_cutout_cache()
+	if profile_enabled:
+		last_shared_wall_breach_profile["cutout_cache_usec"] = Time.get_ticks_usec() - started
 
 # One ownership contract for immediate regeneration and staged transitions.
 func _floor_owned_roots() -> Array:
@@ -1069,6 +1202,7 @@ func _ready() -> void:
 		player.call("set_attacking_enabled", false)
 	if player_depth_bridge != null and player_depth_bridge.has_method("configure"):
 		player_depth_bridge.set("volume_shadow_enabled", dynamic_shadows_enabled)
+		player_depth_bridge.office_linear_lighting = uses_office_night_lighting()
 		# Gameplay remains a real CharacterBody2D.  Only its presentation is
 		# routed through the depth-capable 3D bridge in this prototype.
 		player_depth_bridge.call("configure", player, actor_depth_viewport, actor_depth_render_root, gameplay_canvas)
@@ -1104,6 +1238,11 @@ func _ready() -> void:
 		add_child(shadow_manager)
 		shadow_manager.configure(self)
 	_configure_projectile_local_light_pool()
+	if sparse_lighting_enabled:
+		sparse_lighting = preload("res://scripts/dream/office_sparse_lighting.gd").new()
+		sparse_lighting.name = "OfficeSparseLighting"
+		add_child(sparse_lighting)
+		sparse_lighting.configure(self)
 	# Keep the static KeyLight on the same explicit cull mask as the dynamic
 	# ceiling/muzzle lights: world visuals, Player receiver and Player shadow
 	# proxy.  The flashlight uses its narrower mask in dream_night_lighting.gd.
@@ -1160,8 +1299,6 @@ func _ready() -> void:
 	interaction_prompt.add_theme_color_override("font_color", Color(0.83, 0.93, 0.96, 1))
 	interaction_prompt.add_theme_color_override("font_outline_color", Color(0.02, 0.04, 0.06, 1))
 	interaction_prompt.add_theme_constant_override("outline_size", 2)
-	interaction_prompt.add_theme_font_override(&"font", CRISP_INTERACTION_FONT.get_font())
-	interaction_prompt.add_theme_font_size_override("font_size", 12)
 	interaction_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	interaction_prompt.size = INTERACTION_PROMPT_SIZE
 	ui.add_child(interaction_prompt)
@@ -2192,6 +2329,7 @@ func _install_floor_power_switch() -> void:
 					breaker.set_meta(&"dream_room_id",int(room.id))
 					breaker.set_meta(&"wall_inward",inward)
 					key_root.add_child(breaker)
+					register_wall_attachment(breaker, edge)
 					return
 
 
@@ -2202,6 +2340,7 @@ func _prepare_wall_shadow_batches() -> void:
 		return
 	var existing := wall_root.get_node_or_null("WallShadowBatches")
 	if existing != null and is_instance_valid(existing):
+		existing.set_batched(false)
 		existing.free()
 	var batches := preload("res://scripts/dream/wall_shadow_batches.gd").new()
 	batches.build(wall_root)
@@ -2249,6 +2388,7 @@ func begin_firearm_render_preparation() -> bool:
 	if bool(get_meta(&"test_skip_firearm_render_preparation",false)):
 		return false
 	if is_instance_valid(shadow_manager): shadow_manager.prepare_loading_selection()
+	if is_instance_valid(sparse_lighting): sparse_lighting.prepare_loading_pose()
 	return true
 
 
@@ -2258,11 +2398,17 @@ func complete_firearm_render_preparation(report: Dictionary) -> void:
 	firearm_render_preparation_finished.emit(last_firearm_render_preparation)
 
 
-func finish_loading_render_preparation() -> void:
-	if not loading_render_preparation_pending: return
+func is_loading_render_ready() -> bool:
+	return preload("res://scripts/dream/elevator_render_readiness.gd").is_ready(self,last_firearm_render_preparation)
+
+
+func finish_loading_render_preparation() -> bool:
+	if not is_loading_render_ready(): return false
+	if not loading_render_preparation_pending: return true
 	loading_render_preparation_pending=false
 	if enable_game_start_cab_exit and floor_index==0 and not player_has_left_elevator_cab and elevator_floor_door!=null and player!=null:
 		call_deferred("_perform_game_start_cab_exit")
+	return true
 
 
 ## Pure data entry used by deterministic headless tests.
@@ -2386,7 +2532,7 @@ func _current_floor_path_adjacency() -> Dictionary:
 	# Only the formal implementation has this wall-membership edge contract.
 	# Derived scenes may override it (locks, different connections): keep their
 	# original query rather than guessing which extra state must invalidate it.
-	if not _floor_path_cache_enabled or get_script().resource_path not in ["res://scripts/dream/dream_3d_random_dungeon.gd","res://scripts/dream/office_skeleton_world_base.gd"]: return {}
+	if not _floor_path_cache_enabled or get_script().resource_path not in ["res://scripts/dream/dream_3d_random_dungeon.gd","res://scripts/dream/office_skeleton_world_base.gd","res://scripts/testing/lab_world.gd"]: return {}
 	# Native key-array equality is exact, not a hash or a time-based guess.
 	# Detect even same-size replacements or in-place glass/wall changes.
 	var floors := floor_cells.keys()
@@ -2478,6 +2624,9 @@ func _mark_floor_path_edge_cells(key: String, affected: Dictionary) -> void:
 
 func _reset_layout_data() -> void:
 	_clear_world_interaction_target()
+	_clear_pending_dash_wall_breaches()
+	broken_shared_walls.clear()
+	dash_breach_links.clear()
 	_floor_path_cache_enabled = false
 	_floor_path_adjacency.clear(); _floor_path_floor_keys.clear(); _floor_path_wall_keys.clear()
 	_floor_path_wall_membership.clear()
@@ -4533,6 +4682,9 @@ func _can_cross_floor_edge(from_cell: Vector2i, to_cell: Vector2i, ignore_boss_l
 
 
 func _clear_generated_building() -> void:
+	_clear_pending_dash_wall_breaches()
+	broken_shared_walls.clear()
+	dash_breach_links.clear()
 	preload("res://scripts/dream/floor_reflections.gd").uninstall(self)
 	_special_units_generation = -1
 	_pending_drone_facades.clear()
@@ -4655,7 +4807,7 @@ func _build_floor() -> void:
 	preload("res://scripts/dream/dream_3d_floor_batch_renderer.gd").build(self)
 	for room in rooms:
 		if not bool(room.get("authored_sample", false)):
-			var fixtures: Node3D = preload("res://scripts/dream/office_random_room_decor.gd").build(room, _get_room_doors(int(room.id)), wall_edges, wall_thickness, edge_states, enhanced_room_dressing)
+			var fixtures: Node3D = preload("res://scripts/dream/office_random_room_decor.gd").build(room, _get_room_doors(int(room.id)), wall_edges, wall_thickness, edge_states, enhanced_room_dressing, self)
 			floor_root.add_child(fixtures)
 			continue
 		if lazy_room_presentation and int(room.id) != current_room_id:
@@ -4669,7 +4821,7 @@ func _build_floor() -> void:
 			floor_root.add_child(details)
 		var room_art = preload("res://scripts/dream/office_room_low_pixel_art.gd")
 		if String(room.sample_key) != "office" and room_art.enabled:
-			var fixtures: Node3D = room_art.room_fixtures(String(room.sample_key), Vector2(room.grid_rect.position))
+			var fixtures: Node3D = room_art.room_fixtures(String(room.sample_key), Vector2(room.grid_rect.position), self)
 			if fixtures != null:
 				fixtures.set_meta(&"dream_room_id", int(room.id))
 				floor_root.add_child(fixtures)
@@ -4681,6 +4833,7 @@ func _build_floor() -> void:
 ## 3D 层只负责模型、表情与武器动画。每层内容生成后只刷新一次，
 ## 不随当前房间切换重掷；独立外观容器参与楼层暂存、销毁与失败回滚。
 func _spawn_special_units() -> void:
+	if bool(get_meta(&"chapter_one",false)) and floor_index>=2: return
 	if not spawn_content or _special_units_generation == _layout_generation: return
 	_special_units_generation = _layout_generation
 	_spawn_hotel_robots()
@@ -5462,6 +5615,17 @@ func _on_glass_window_shattered(window: Node3D) -> void:
 	edge_states[edge_key] = &"OPEN"
 	if internal_wall_edges.has(edge_key):
 		internal_wall_edges.erase(edge_key)
+	WALL_ATTACHMENTS.remove(self, edge_key)
+	# The existing one-shot glass signal is shared by bullets, impact and dash.
+	# Register physical openings here so every shatter source has the same route.
+	var run_width := maxi(1, int(edge_data.get("preview_run_width", 1)))
+	for offset in run_width:
+		var segment := edge_data.duplicate(true)
+		if String(segment.get("axis", "")) == "V":
+			segment["y"] = int(segment["y"]) + offset
+		else:
+			segment["x"] = int(segment["x"]) + offset
+		register_dash_open_edge(_edge_key(segment), segment)
 	var window_gameplay_pos := Vector2(window.position.x, window.position.z) * CELL_PIXELS
 	var side_cells := _edge_side_cells(edge_data)
 	if side_cells.size() == 2:
@@ -7319,8 +7483,20 @@ func _update_camera_and_actor_projection(delta: float = 0.0) -> void:
 		camera_3d.fov = phone_fov
 	else:
 		camera_3d.size = phone_size
-	if bool(get_meta(&"pixel_stability_sample",false)):
-		preload("res://scripts/dream/preview/pixel_camera_stability.gd").apply(camera_3d,get_meta(&"pixel_stability_anchor",to_global(ground_position)))
+	if transition_phase == &"CAB_RIDE" and is_instance_valid(active_transition_cab):
+		active_transition_cab.apply_reference_camera(camera_3d)
+	if bool(get_meta(&"pixel_stability_enabled",false)) and phone_camera_weight<.001 and dialogue_weight<.001 and transition_phase==&"IDLE":
+		var token:=get_current_floor_token()
+		if int(get_meta(&"pixel_stability_floor",-1))!=token:
+			set_meta(&"pixel_stability_floor",token)
+			set_meta(&"pixel_stability_anchor",to_global(ground_position))
+		var anchor: Vector3=get_meta(&"pixel_stability_anchor",to_global(ground_position))
+		if -(camera_3d.global_transform.affine_inverse()*anchor).z<=camera_3d.near:
+			anchor=to_global(ground_position)
+			set_meta(&"pixel_stability_anchor",anchor)
+		preload("res://scripts/dream/preview/pixel_camera_stability.gd").apply(camera_3d,anchor)
+	else:
+		camera_3d.h_offset=0.; camera_3d.v_offset=0.
 	var screen_position := camera_3d.unproject_position(to_global(ground_position))
 	gameplay_canvas.transform = Transform2D(Vector2.RIGHT, Vector2.DOWN, screen_position - gameplay_position)
 
@@ -8322,6 +8498,9 @@ func _ensure_room_clear_arrows(room_id: int) -> void:
 
 
 func _spawn_room_encounter(room_id: int) -> void:
+	if bool(get_meta(&"chapter_one",false)) and floor_index>=2:
+		_set_room_content_active(room_id,true)
+		return
 	if not spawn_content:
 		_set_room_content_active(room_id, true)
 		return
@@ -8633,6 +8812,7 @@ func _on_boss_defeated(at_position: Vector2, _legacy_drop_count: int = 1) -> voi
 
 
 func _activate_wake_exit() -> void:
+	if bool(get_meta(&"chapter_one",false)): return
 	if wake_exit_trigger != null and is_instance_valid(wake_exit_trigger):
 		wake_exit_trigger.monitorable = true
 		wake_exit_trigger.monitoring = true
@@ -8671,6 +8851,13 @@ func complete_death_run() -> bool:
 
 
 func restart_current_floor_after_death() -> bool:
+	if floor_transition_in_progress or not is_instance_valid(player): return false
+	transition_generation_token += 1
+	var token:=transition_generation_token
+	floor_transition_in_progress=true
+	transition_phase=&"RESTART_LOADING"
+	_next_floor_render_ready=false
+	loading_render_preparation_pending=true
 	reset_hit_stop()
 	run_finished = false
 	boss_defeated = false
@@ -8678,27 +8865,43 @@ func restart_current_floor_after_death() -> bool:
 	has_boss_key = false
 	badge_drop_committed = false
 	badge_drop_pending = false
-	floor_transition_in_progress = false
-	transition_phase = &"IDLE"
-	if is_instance_valid(player) and player.has_method("revive_for_floor_restart"):
-		player.call("revive_for_floor_restart", String(player.get("selected_weapon_id")), config, permanent_upgrades)
-	var saved_cab_exit := enable_game_start_cab_exit
-	enable_game_start_cab_exit = false
-	var target_seed := active_seed if active_seed != 0 else seed
-	var ok := regenerate(target_seed)
-	enable_game_start_cab_exit = saved_cab_exit
-	player_has_left_elevator_cab = true
-	if is_instance_valid(elevator_floor_door):
-		elevator_floor_door.update_state(ElevatorFloorDoor3D.State.LOCKED)
-		elevator_floor_door.update_indicator(floor_index)
-	if is_instance_valid(player):
-		player.set("movement_enabled", true)
-		if player.has_method("set_dash_enabled"):
-			player.call("set_dash_enabled", not bool(player.get("dash_disabled_by_hunger")))
-		if player.has_method("set_attacking_enabled"):
-			player.call("set_attacking_enabled", true)
-	_update_camera_and_actor_projection()
-	return ok
+	var report: Dictionary=await preload("res://scripts/dream/elevator_loading_cover.gd").run(
+		get_tree(),self,_load_floor_behind_cover.bind(token,true),token,_prepare_death_restart_cab)
+	if token!=transition_generation_token or not is_inside_tree(): return false
+	set_meta(&"last_death_restart_loading",report)
+	if bool(report.get("cancelled",true)):
+		floor_transition_in_progress=false
+		loading_render_preparation_pending=false
+		transition_phase=&"IDLE"
+		return false
+	loading_render_preparation_pending=false
+	floor_loading_render_preparation_finished.emit(report)
+	while get_tree().paused:
+		await get_tree().process_frame
+		if token!=transition_generation_token or not is_inside_tree(): return false
+	await _commit_staged_transition_exit(token,false)
+	return token==transition_generation_token and not floor_transition_in_progress and is_loading_render_ready()
+
+
+func _prepare_death_restart_cab() -> void:
+	if is_instance_valid(run_interface): run_interface._clear_death_presentation()
+	player.revive_for_floor_restart(String(player.selected_weapon_id),config,permanent_upgrades)
+	player.set_attacking_enabled(false)
+	player_has_left_elevator_cab=false
+	transition_phase=&"CAB_RIDE"
+	_create_transition_cab()
+	_sync_transition_render_pose()
+
+
+func _restore_failed_death_restart() -> void:
+	# Do not emit died again (save/audio/settlement listeners already ran).
+	player.dead=true
+	player.current_health=0.0
+	player.movement_enabled=false
+	player.set_dash_enabled(false)
+	player.set_attacking_enabled(false)
+	player.health_changed.emit(player.current_health,player.maximum_health)
+	if is_instance_valid(run_interface): run_interface._show_restart_failure()
 
 
 
@@ -8813,6 +9016,7 @@ func _close_elevator_doors() -> void:
 func _set_elevator_runtime_active() -> void:
 	if elevator_state != &"TRANSITIONING":
 		elevator_state = &"UNLOCKED" if has_floor_badge else &"LOCKED"
+	if has_node("ChapterOneRun") and not $ChapterOneRun.can_advance(): elevator_state=&"LOCKED"
 	if elevator_floor_door != null and is_instance_valid(elevator_floor_door):
 		elevator_floor_door.visible = true
 		if elevator_state == &"UNLOCKED":
@@ -8823,6 +9027,7 @@ func _set_elevator_runtime_active() -> void:
 
 
 func _set_building_exterior_visible(p_visible: bool) -> void:
+	if is_instance_valid(sparse_lighting): sparse_lighting.set_suspended(not p_visible)
 	var telegraph: Node=floor_root.get_node_or_null("EnemyAimTelegraph") if is_instance_valid(floor_root) else null
 	if telegraph!=null: telegraph.visible=p_visible
 	if is_instance_valid(office_art_root): office_art_root.visible=p_visible
@@ -8953,6 +9158,7 @@ func _scripted_walk_player_to(target_pos: Vector2, speed: float = 110.0, timeout
 func _begin_elevator_entry_transition() -> void:
 	if floor_transition_in_progress or transition_phase != &"IDLE":
 		return
+	if has_node("ChapterOneRun") and not $ChapterOneRun.can_advance(): return
 	floor_transition_in_progress = true
 	elevator_state = &"TRANSITIONING"
 	transition_phase = &"ENTERING"
@@ -9002,6 +9208,9 @@ func _begin_elevator_entry_transition() -> void:
 		return
 
 	# Phase 2: FULL OCCLUSION MOMENT!
+	if bool(get_meta(&"chapter_one_return",false)):
+		$ChapterOneRun.return_via_cab()
+		return
 	_transition_to_independent_cab(token)
 
 
@@ -9010,34 +9219,77 @@ func _transition_to_independent_cab(token: int) -> void:
 		return
 	transition_phase = &"LOADING"
 	_next_floor_render_ready = false
-	var report: Dictionary = await preload("res://scripts/dream/elevator_loading_cover.gd").run(get_tree(),self,_load_floor_behind_cover.bind(token),token)
+	var preview := func() -> void:
+		transition_phase = &"CAB_RIDE"
+		_create_transition_cab()
+		active_transition_cab.begin_reference_ride(floor_index + 1)
+		_sync_transition_render_pose()
+	var report: Dictionary = await preload("res://scripts/dream/elevator_loading_cover.gd").run(
+		get_tree(), self, _load_floor_behind_cover.bind(token), token, preview, true)
 	if token != transition_generation_token or not is_inside_tree(): return
 	if bool(report.get("rolled_back",false)):
 		floor_transition_in_progress=false
 		transition_phase=&"IDLE"
 	floor_loading_render_preparation_finished.emit(report)
 	if bool(report.get("cancelled",true)): return
-	# Count only the ready, visible ride; a pause/menu does not consume it.
-	var ride_elapsed := 0.0
-	var last_tick := Time.get_ticks_usec()
-	var previously_paused := get_tree().paused
-	while ride_elapsed < ELEVATOR_VISIBLE_RIDE_SECONDS:
+	# Completion, not elapsed cab time, permits arrival. Respect an existing
+	# player pause without ever using a timeout to bypass the readiness gate.
+	while get_tree().paused:
 		await get_tree().process_frame
 		if token != transition_generation_token or not is_inside_tree(): return
-		var now := Time.get_ticks_usec()
-		var currently_paused := get_tree().paused
-		# Do not count a pre-creation frame delta, slow-motion game time, or
-		# the pause/resume boundary interval as visible controllable ride time.
-		if not previously_paused and not currently_paused:
-			ride_elapsed += (now-last_tick)/1000000.0
-		last_tick = now
-		previously_paused = currently_paused
 	if token != transition_generation_token or not is_inside_tree(): return
 	_commit_staged_transition_exit(token)
 
 
-func _load_floor_behind_cover(token: int) -> Dictionary:
+func _load_floor_behind_cover(token: int, restart_same_floor: bool=false) -> Dictionary:
 	if token != transition_generation_token or not is_inside_tree(): return {"cancelled":true}
+	if not restart_same_floor and not is_instance_valid(active_transition_cab): _create_transition_cab()
+	# The retry cab is already visible via the loading cover. Build exactly the
+	# current floor; this must not advance chapter progress or derive a new seed.
+	var old_floor_idx := floor_index
+	var next_floor_idx := floor_index if restart_same_floor else floor_index + 1
+	var next_seed := (active_seed if active_seed!=0 else seed) if restart_same_floor else _derive_floor_seed(next_floor_idx)
+	var stage_ok := await _regenerate_staged(next_seed, next_floor_idx, token, true)
+	if token != transition_generation_token or not is_inside_tree(): return {"cancelled":true}
+	if not restart_same_floor and is_instance_valid(active_transition_cab):
+		if stage_ok:
+			await active_transition_cab.brake_reference_ride()
+			if token != transition_generation_token or not is_inside_tree() or not is_instance_valid(active_transition_cab):
+				return {"cancelled":true}
+		active_transition_cab.seal_reference_view()
+	if not stage_ok:
+		await _rollback_failed_transition(token, old_floor_idx)
+		_sync_transition_render_pose()
+		if restart_same_floor: _restore_failed_death_restart()
+		floor_transition_in_progress=true
+		return {"cancelled":true,"rolled_back":true}
+	active_transition_cab.visible = false
+	transition_phase = &"PREPARING_FLOOR"
+	_set_building_exterior_visible(true)
+	player.global_position = elevator_floor_door.get_doorway_threshold_position_2d()
+	_sync_transition_render_pose()
+	var preparation: Dictionary = await preload("res://scripts/dream/elevator_render_readiness.gd").run(get_tree(),self)
+	if token != transition_generation_token or not is_inside_tree(): return {"cancelled":true}
+	if not is_loading_render_ready():
+		await _rollback_failed_transition(token,old_floor_idx)
+		_sync_transition_render_pose()
+		if restart_same_floor: _restore_failed_death_restart()
+		floor_transition_in_progress=true
+		return {"cancelled":true,"rolled_back":true}
+	if not restart_same_floor:
+		active_transition_cab.arrive_reference_ride(next_floor_idx)
+		elevator_floor_door.show_reference_arrival()
+	_clear_floor_stash()
+	if not _prepare_floor_exit_scene(token): return {"cancelled":true}
+	if DisplayServer.get_name() != "headless":
+		for frame in 3: await RenderingServer.frame_post_draw
+		if token != transition_generation_token or not is_inside_tree(): return {"cancelled":true}
+		get_viewport().get_texture().get_image()
+	_next_floor_render_ready = is_loading_render_ready()
+	return {"cancelled":not _next_floor_render_ready,"render_preparation":preparation,"ready_before_exit":_next_floor_render_ready,"fixed_ride_seconds":0.0,"death_restart":restart_same_floor}
+
+
+func _create_transition_cab() -> void:
 	# Ride bed starts on entering the cab and stops on arrival -- see
 	# _commit_staged_transition_exit.  The other EXITING entry point,
 	# _perform_game_start_cab_exit, deliberately does NOT start it: the player
@@ -9073,62 +9325,6 @@ func _load_floor_behind_cover(token: int) -> Dictionary:
 	# Camera focuses on cab center
 	camera_aim_offset = Vector3.ZERO
 	_update_camera_and_actor_projection()
-
-	# Generation and first-use rendering happen exclusively under the cover.
-	var old_floor_idx := floor_index
-	var next_floor_idx := floor_index + 1
-	var next_seed := _derive_floor_seed(next_floor_idx)
-
-	# Run staged generation behind the already submitted black output.
-	var stage_ok := await _regenerate_staged(next_seed, next_floor_idx, token, true)
-
-	if token != transition_generation_token or not is_inside_tree():
-		return {"cancelled":true}
-
-	if not stage_ok:
-		await _rollback_failed_transition(token, old_floor_idx)
-		_sync_transition_render_pose()
-		floor_transition_in_progress=true # Retain the input boundary through rollback reveal.
-		return {"cancelled":true,"rolled_back":true}
-
-	# Submit the new floor at its actual exit receiver/camera without destroying
-	# the cab. Keep the old floor stash until preparation succeeds.
-	active_transition_cab.visible = false
-	transition_phase = &"PREPARING_FLOOR"
-	_set_building_exterior_visible(true)
-	player.global_position = elevator_floor_door.get_doorway_threshold_position_2d()
-	_sync_transition_render_pose()
-	var preparation: Dictionary = {"cancelled":false,"skipped":"headless"}
-	if DisplayServer.get_name() != "headless" and not bool(get_meta(&"test_skip_floor_exit_render_preparation",false)):
-		var pools: Dictionary = await preload("res://scripts/dream/floor_exit_render_preparation.gd").prepare_pools(get_tree(),self,get_current_floor_token(),token)
-		if bool(pools.get("cancelled",true)): return {"cancelled":true}
-		_sync_transition_render_pose()
-		begin_firearm_render_preparation()
-		preparation = await preload("res://scripts/dream/firearm_render_preparation.gd").run(get_tree(),self)
-		preparation["capture_pools"] = pools
-	if token != transition_generation_token or not is_inside_tree(): return {"cancelled":true}
-	if bool(preparation.get("cancelled",false)):
-		await _rollback_failed_transition(token,old_floor_idx)
-		_sync_transition_render_pose()
-		floor_transition_in_progress=true
-		return {"cancelled":true,"rolled_back":true}
-	_clear_floor_stash()
-	_set_building_exterior_visible(false)
-	_set_floor_runtime_suspended_for_cab(true)
-	active_transition_cab.visible = true
-	active_transition_cab.update_indicator(next_floor_idx)
-	player.global_position = active_transition_cab.get_player_initial_position_2d()
-	transition_phase = &"CAB_RIDE"
-	_sync_transition_render_pose()
-	if DisplayServer.get_name() != "headless":
-		# Flush queued old-floor deletion, cab materials, player capture and the
-		# final mask before unpausing/showing the movable cab.
-		for frame in 4: await RenderingServer.frame_post_draw
-		if token != transition_generation_token or not is_inside_tree(): return {"cancelled":true}
-		get_viewport().get_texture().get_image()
-	_next_floor_render_ready = true
-	player.set("movement_enabled",true)
-	return {"cancelled":false,"render_preparation":preparation,"ready_before_ride":true}
 
 
 func _sync_transition_render_pose() -> void:
@@ -9177,9 +9373,10 @@ func _suspend_cab_floor_node(node: Node) -> void:
 	for child in node.get_children(): _suspend_cab_floor_node(child)
 
 
-func _commit_staged_transition_exit(token: int) -> void:
+func _commit_staged_transition_exit(token: int, notify_floor_change: bool=true) -> void:
 	if token != transition_generation_token or not is_inside_tree():
 		return
+	if not _next_floor_render_ready or not is_loading_render_ready(): return
 	transition_phase = &"EXITING"
 
 	# 1. Lock player movement in cab
@@ -9191,19 +9388,17 @@ func _commit_staged_transition_exit(token: int) -> void:
 	_set_elevator_ride_rumbling(false)
 	SFX.stop_elevator_music()
 	_play_elevator_arrival_chime()
-	if bool(get_meta(&"test_skip_floor_exit_render_preparation",false)):
-		_prepare_floor_exit_scene(token)
-	else:
-		var report: Dictionary=await preload("res://scripts/dream/floor_exit_render_preparation.gd").run(get_tree(),self,_prepare_floor_exit_scene.bind(token),token,not _next_floor_render_ready)
-		floor_exit_render_preparation_finished.emit(report)
-		if bool(report.get("cancelled",true)): return
+	# The loading transaction already submitted this exact exit pose.
+	floor_exit_render_preparation_finished.emit({"cancelled":false,"ready":true,"prewarmed":true,"fixed_ride_seconds":0.0})
 	if token != transition_generation_token or not is_inside_tree(): return
 
 	await get_tree().create_timer(0.08).timeout
+	if token != transition_generation_token or not is_inside_tree(): return
 
 	# 5. Open new floor doors
 	if elevator_floor_door != null and is_instance_valid(elevator_floor_door):
 		await elevator_floor_door.open_doors(0.40)
+	if token != transition_generation_token or not is_inside_tree(): return
 
 	# 6. Walk player naturally out of elevator into corridor safe landing zone
 	var exit_landing := Vector2.ZERO
@@ -9213,10 +9408,12 @@ func _commit_staged_transition_exit(token: int) -> void:
 		exit_landing = player.global_position + Vector2.DOWN * 48.0
 
 	await _scripted_walk_player_to(exit_landing, 110.0, 1.8)
+	if token != transition_generation_token or not is_inside_tree(): return
 
 	# 7. Close doors smoothly behind player and lock
 	if elevator_floor_door != null and is_instance_valid(elevator_floor_door):
 		await elevator_floor_door.close_doors(0.40)
+		if token != transition_generation_token or not is_inside_tree(): return
 		elevator_floor_door.update_state(ElevatorFloorDoor3D.State.LOCKED)
 
 	# Consume badge
@@ -9226,7 +9423,7 @@ func _commit_staged_transition_exit(token: int) -> void:
 	if player != null and is_instance_valid(player):
 		player.set("movement_enabled", true)
 		if player.has_method("set_dash_enabled"):
-			player.set("dash_enabled", true)
+			player.set_dash_enabled(not bool(player.dash_disabled_by_hunger))
 		if player.has_method("set_attacking_enabled"):
 			player.call("set_attacking_enabled", true)
 
@@ -9240,7 +9437,7 @@ func _commit_staged_transition_exit(token: int) -> void:
 	if is_instance_valid(objective_guidance):
 		objective_guidance.reset_floor()
 	SFX.play_battle_music(false, get_instance_id())
-	elevator_floor_transition_completed.emit(floor_index)
+	if notify_floor_change: elevator_floor_transition_completed.emit(floor_index)
 
 
 func _prepare_floor_exit_scene(token: int) -> bool:
@@ -9285,7 +9482,7 @@ func _stash_current_floor_for_rollback() -> void:
 		"room_states", "corridor_states", "room_encounters", "room_layout_plans", "room_ambient_spawned",
 		"floor_cells", "presentation_floor_cells", "room_cells", "corridor_cells", "pit_cells",
 		"pillar_footprints", "pillar_cells", "internal_wall_edges", "wall_edges", "window_wall_edges",
-		"glass_wall_edges", "door_edges", "door_opening_edges", "edge_states", "spawn_room_id",
+		"glass_wall_edges", "door_edges", "door_opening_edges", "edge_states", "broken_shared_walls", "dash_breach_links", "spawn_room_id",
 		"boss_room_id", "key_room_id", "spawn_cell", "main_entrance", "current_room_id",
 		"floor_shape", "elevator_room_id", "elevator_anchor_cell", "elevator_edge_key",
 		"elevator_floor_door", "elevator_approach_trigger", "elevator_door_pos_2d", "elevator_cab_inward_2d",
@@ -9296,6 +9493,7 @@ func _stash_current_floor_for_rollback() -> void:
 		var value: Variant = get(property)
 		_stashed_runtime_state[property] = value.duplicate(true) if value is Array or value is Dictionary else value
 	# Invalidate delayed drops/debris before any staged layout can expose roots.
+	_clear_pending_dash_wall_breaches()
 	_layout_generation += 1
 	room_ambient_spawn_pending.clear()
 
@@ -9361,6 +9559,7 @@ func _rollback_failed_transition(token: int, old_floor_idx: int) -> void:
 	floor_index = old_floor_idx
 
 	# Reject callbacks from the aborted new floor too.
+	_clear_pending_dash_wall_breaches()
 	preload("res://scripts/dream/floor_reflections.gd").uninstall(self)
 	_layout_generation += 1
 	var roots_to_clear := _floor_owned_roots()
@@ -9414,7 +9613,11 @@ func _rollback_failed_transition(token: int, old_floor_idx: int) -> void:
 			node.freeze = record.freeze
 	_stashed_physics_state.clear()
 	_stashed_runtime_state.clear()
+	WALL_ATTACHMENTS.refresh_floor_token(self)
 	_rebuild_settled_blood_registry()
+	_open_connected_rooms_cache.clear()
+	_open_boundary_edges_cache.clear()
+	employee_path_cache.clear()
 	_floor_path_cache_enabled = true
 	_current_floor_path_adjacency()
 	var restored_pool := actor_depth_bridges_root.get_node_or_null(^"ProjectileCapturePool") as Node3D
@@ -9619,6 +9822,20 @@ func _perform_game_start_cab_exit() -> void:
 	player.global_position = elevator_floor_door.get_doorway_threshold_position_2d()
 	_update_camera_and_actor_projection()
 
+	# F6/direct-scene entry also obeys the gate. Main/reception arrive here with
+	# a valid receipt and do not repeat preparation. The cover owns pause cleanup.
+	if not is_loading_render_ready():
+		transition_phase=&"PREPARING_FLOOR"
+		var token:=transition_generation_token
+		var work: Callable=preload("res://scripts/dream/elevator_render_readiness.gd").run.bind(get_tree(),self)
+		var report: Dictionary=await preload("res://scripts/dream/elevator_loading_cover.gd").run(get_tree(),self,work,token)
+		if token!=transition_generation_token or not is_inside_tree(): return
+		if bool(report.get("cancelled",true)) or not is_loading_render_ready():
+			transition_phase=&"PREPARATION_FAILED"
+			push_error("Elevator preparation failed; exit remains closed. Return to menu to retry.")
+			return
+		loading_render_preparation_pending=false
+	transition_phase=&"EXITING"
 	await get_tree().create_timer(0.25).timeout
 	_play_elevator_arrival_chime()
 	if elevator_floor_door != null and is_instance_valid(elevator_floor_door):
@@ -9763,6 +9980,8 @@ func are_rooms_openly_connected(room_a: int, room_b: int) -> bool:
 		return true
 	if room_a < 0 or room_b < 0 or room_a >= rooms.size() or room_b >= rooms.size():
 		return false
+	if not SHARED_WALL_BREACH.edges_between(self, room_a, room_b).is_empty():
+		return true
 	var cache_key := "%d_%d" % [mini(room_a, room_b), maxi(room_a, room_b)]
 	if _open_connected_rooms_cache.has(cache_key):
 		return bool(_open_connected_rooms_cache[cache_key])
@@ -9975,6 +10194,8 @@ func get_employee_corridor_transit_points(from_room: int, target_room_id: int) -
 	the two rooms as if they shared a wall.
 	"""
 	var empty: Array[Vector2] = []
+	if not SHARED_WALL_BREACH.edges_between(self, from_room, target_room_id).is_empty():
+		return empty # The selected breach socket is a direct physical passage.
 	var connection := _connection_between_rooms(from_room, target_room_id)
 	if connection.is_empty():
 		return empty
@@ -10458,6 +10679,10 @@ func _spawn_depth_bridge(
 	actor_depth_bridges_root.add_child(bridge)
 	bridge.set_meta(&"source_actor", source)
 	bridge.set("volume_shadow_enabled", dynamic_shadows_enabled)
+	bridge.office_linear_lighting = uses_office_night_lighting()
+	if bridge.office_linear_lighting:
+		var breaker := key_root.get_node_or_null("FloorPowerSwitch")
+		bridge.office_power_cut = is_instance_valid(breaker) and not breaker.powered
 	# Set the formal camera before the first bridge capture.  Projectile and
 	# muzzle carriers use an explicit camera-facing plane, so their initial
 	# transform cannot depend on the order in which _process() runs.
@@ -11127,6 +11352,7 @@ func _spawn_population_enemy() -> bool:
 
 
 func _update_enemy_population(delta: float) -> void:
+	if bool(get_meta(&"chapter_one",false)): return
 	# Production Random Dream encounters are one-shot per room.  Keep the legacy
 	# helper for old diagnostics/API compatibility, but never replenish enemies
 	# after an encounter has been activated or cleared.
@@ -11838,7 +12064,9 @@ func get_employee_door_plan(employee: EmployeeEnemy, target_room_id: int, prefer
 	if target_room_id < 0:
 		return {}
 	if are_rooms_openly_connected(from_room, target_room_id):
-		var open_edges := _get_open_boundary_edges_between(from_room, target_room_id)
+		var open_edges: Array[Dictionary] = SHARED_WALL_BREACH.edges_between(self, from_room, target_room_id)
+		if open_edges.is_empty():
+			open_edges = _get_open_boundary_edges_between(from_room, target_room_id)
 		var best_edge: Dictionary = {}
 		if not open_edges.is_empty():
 			var best_distance := INF
@@ -11862,6 +12090,8 @@ func get_employee_door_plan(employee: EmployeeEnemy, target_room_id: int, prefer
 				step = sides[1] - sides[0] if from_first else sides[0] - sides[1]
 		if step == Vector2i.ZERO:
 			step = _room_step_vector(from_room, target_room_id)
+		if not SHARED_WALL_BREACH.edges_between(self, from_room, target_room_id).is_empty():
+			direction = _direction_name_from_step(step)
 		if direction.is_empty():
 			direction = _direction_name_from_step(step)
 		if direction.is_empty():
@@ -11939,7 +12169,8 @@ func _next_route_room(from_room: int, destination: int) -> int:
 			if first_hop.has(neighbor):
 				continue
 			var edge := _find_door_edge_between(room_id, neighbor)
-			if edge.is_empty() or (int(edge.get("door_id", -1)) == boss_door_id and is_boss_door_locked()):
+			var breached := not SHARED_WALL_BREACH.edges_between(self, room_id, neighbor).is_empty()
+			if not breached and (edge.is_empty() or (int(edge.get("door_id", -1)) == boss_door_id and is_boss_door_locked())):
 				continue
 			first_hop[neighbor] = neighbor if room_id == from_room else first_hop[room_id]
 			if neighbor == destination:
@@ -12008,7 +12239,8 @@ func transfer_employee_through_door(employee: EmployeeEnemy, direction: StringNa
 		employee.on_room_transit_finished()
 		return
 	var expected := int(rooms[from_room].get("connections", []).find(target_room_id)) if from_room >= 0 else -1
-	if expected < 0 or (int(expected_edge.get("door_id", -1)) == boss_door_id and is_boss_door_locked()):
+	var breached := not SHARED_WALL_BREACH.edges_between(self, from_room, target_room_id).is_empty()
+	if expected < 0 or (not breached and int(expected_edge.get("door_id", -1)) == boss_door_id and is_boss_door_locked()):
 		employee.on_room_transit_finished()
 		return
 	employee.previous_room_id = from_room
@@ -12017,6 +12249,12 @@ func transfer_employee_through_door(employee: EmployeeEnemy, direction: StringNa
 	var connection := _connection_between_rooms(from_room, target_room_id)
 	var target_door := _connection_door_for_room(connection, target_room_id)
 	var step := _room_step_vector(from_room, target_room_id)
+	if breached:
+		match direction:
+			&"right": step = Vector2i.RIGHT
+			&"left": step = Vector2i.LEFT
+			&"bottom": step = Vector2i.DOWN
+			&"top": step = Vector2i.UP
 	var destination_inside: Vector2i = target_door.get("inside_cell", Vector2i.ZERO)
 	var fallback_exit := Vector2(destination_inside) * CELL_PIXELS + Vector2(step) * EMPLOYEE_CONFIG.employee_door_exit_distance
 	if openly_connected and employee.route_transit_point != Vector2.ZERO:
@@ -13123,6 +13361,10 @@ func spawn_weapon_muzzle(at_position: Vector2, direction: Vector2, effect_kind: 
 		muzzle_world = snapshot["world_origin"]
 		var map_point := to_local(muzzle_world)
 		muzzle_plane = Vector2(map_point.y, map_point.z - at_position.y / CELL_PIXELS)
+	if source_actor is EmployeeEnemy and source_actor.ranged_attack_fire_locked and is_instance_valid(floor_root):
+		var presenter := floor_root.get_node_or_null("EnemyAimTelegraph")
+		if presenter != null:
+			presenter.record_employee_shot(source_actor, muzzle_world)
 	if is_instance_valid(night_lighting):
 		if night_lighting.has_method("flash_muzzle_world"):
 			night_lighting.call("flash_muzzle_world", muzzle_world, effect_kind)

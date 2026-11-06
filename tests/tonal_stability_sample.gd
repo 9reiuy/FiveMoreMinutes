@@ -81,6 +81,6 @@ func run() -> void:
 	world.player.global_position=initial_player
 	camera.global_transform=start; camera.h_offset=0.; camera.v_offset=0.
 	set_enhanced(false)
-	FileAccess.open(OUTPUT+"/report.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"camera_pixel_error":worst,"materials":dither_materials.size(),"gpu":RenderingServer.get_video_adapter_name(),"scope":"same frozen formal floor and slow camera path; no walking or FPS claim"},"  "))
+	FileAccess.open(OUTPUT+"/report.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"camera_pixel_error":worst,"materials":dither_materials.size(),"gpu":RenderingServer.get_video_adapter_name(),"scope":"same frozen formal floor, slow camera path and scripted visual walk; no manual gameplay or FPS claim"},"  "))
 	preview.queue_free(); await process_frame
 	print("FINAL checks=",checks," failures=",failures); quit(failures)

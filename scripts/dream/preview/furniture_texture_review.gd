@@ -1,5 +1,6 @@
 extends Node
 ## Approved furniture art; sample controls are disabled in the floor-owned production mode.
+const FINISH = preload("res://scripts/dream/preview/furniture_direct_finish.gd")
 const ART = preload("res://scripts/dream/preview/furniture_face_textures.gd")
 static var shader_cache: Dictionary={}
 const CATALOG = preload("res://scripts/dream/office_furniture_catalog.gd")
@@ -9,6 +10,7 @@ const FOCUS_KINDS := ["workstation", "cabinet", "water_dispenser", "chair", "sof
 var enabled := true
 var records: Array[Dictionary]=[]
 var registered: Dictionary={}
+var catalogue_finishes: Dictionary = {}
 var world: Node
 var label: Label
 var water: WeakRef
@@ -50,6 +52,7 @@ func refresh_assets() -> void:
 	_add_review_water()
 	records=records.filter(func(record: Dictionary) -> bool: return is_instance_valid(record.node.get_ref()))
 	registered.clear()
+	var dither: Node = world.get_node_or_null("OfficeDitherLighting") if production_mode else null
 	for record in records: registered[record.node.get_ref().get_instance_id()]=true
 	for bridge in world.actor_depth_bridges_root.get_children():
 		if not bridge is Furniture3DVisual: continue
@@ -58,14 +61,18 @@ func refresh_assets() -> void:
 		var kind := String(source.get_meta(&"office_furniture_kind",""))
 		if production_mode and kind=="desk": kind="workstation"
 		if production_mode and kind=="cabinet_open": kind="cabinet"
-		if kind not in REVIEW_KINDS: continue
+		if kind not in REVIEW_KINDS and not (production_mode and kind in ["copier", "bin"]): continue
 		for mesh in bridge.visual_instance.find_children("*","MeshInstance3D",true,false):
 			if mesh.has_meta(&"review_desktop_detail"): continue
 			if mesh.cast_shadow==GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY or registered.has(mesh.get_instance_id()): continue
 			var original := mesh.material_override as ShaderMaterial
-			if original==null: continue
-			var texture := original.get_shader_parameter("atlas") as Texture2D
-			if texture==null: continue
+			var texture: Texture2D
+			if original != null:
+				texture = original.get_shader_parameter("atlas") as Texture2D
+			if texture == null:
+				if production_mode and kind != "plant":
+					FINISH.apply_catalogue(mesh, kind, catalogue_finishes, dither)
+				continue
 			var assigned := assigned_variant(source,kind)
 			var result := ART.build(mesh.mesh,texture,kind,assigned if variant_override<0 else variant_override)
 			# Keep the active sample's lighting/dither/cutaway implementation unchanged.
@@ -74,12 +81,31 @@ func refresh_assets() -> void:
 			if not shader_cache.has(shader_id):
 				var shader := Shader.new()
 				shader.code=original.shader.code.replace("filter_nearest_mipmap","filter_nearest")
+				shader.code=shader.code.replace("shader_type spatial;", "shader_type spatial;\nuniform vec4 standby_screen_rect = vec4(0.0);\nuniform bool standby_screen_enabled = false;")
+				shader.code=shader.code.replace("ROUGHNESS = 1.0;", "ROUGHNESS = 1.0;\nif (standby_screen_enabled && all(greaterThanEqual(UV, standby_screen_rect.xy)) && all(lessThan(UV, standby_screen_rect.zw))) { EMISSION += vec3(0.008,0.019,0.021); }")
 				shader_cache[shader_id]=shader
 			var material := ShaderMaterial.new(); material.shader=shader_cache[shader_id]
+			if production_mode and kind != "plant":
+				FINISH.apply_faces(material, mesh.mesh, kind, result)
 			for uniform in original.shader.get_shader_uniform_list():
 				var value: Variant=original.get_shader_parameter(uniform.name)
 				if value!=null: material.set_shader_parameter(uniform.name,value)
 			material.set_shader_parameter("atlas",result.texture)
+			# Stable seeded identity selects about one quarter of workstations.
+			# Face rebaking changes UVs: take the display rectangle from the result,
+			# never illuminate the shared desk/monitor-housing material wholesale.
+			var standby := production_mode and kind=="workstation" and assigned==0
+			material.set_shader_parameter("standby_screen_enabled",standby)
+			if standby:
+				for face in result.faces:
+					if face.tile!="screen_front": continue
+					var display: Rect2i=face.rect.grow(-2)
+					var dimensions:=Vector2(result.image.get_size())
+					var start:=Vector2(display.position)/dimensions
+					var end:=Vector2(display.end)/dimensions
+					material.set_shader_parameter("standby_screen_rect",Vector4(start.x,start.y,end.x,end.y))
+			mesh.set_meta(&"standby_screen",standby)
+			mesh.set_meta(&"standby_screen_eligible",kind=="workstation")
 			var record := {"node":weakref(mesh),"mesh":mesh.mesh,"material":original,"new_mesh":result.mesh,"new_material":material,"result":result,"kind":kind,"assigned_variant":assigned,"identity":source.get_meta(&"texture_review_identity")}
 			records.append(record); registered[mesh.get_instance_id()]=true
 			_apply(record)

@@ -72,6 +72,7 @@ static func make_floor(color: Color, kind: String) -> ShaderMaterial:
 	if not materials.has(key):
 		var mat := make(color, kind).duplicate() as ShaderMaterial
 		mat.shader = FLOOR_SHADER
+		mat.set_shader_parameter("base_color",Color(color.r*.92,color.g*.92,color.b*.92,color.a))
 		materials[key] = mat
 	return materials[key]
 

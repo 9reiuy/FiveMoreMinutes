@@ -7,30 +7,31 @@ const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const HEAL_EFFECT_SCENE := preload("res://scenes/entities/heal_effect.tscn")
 const ROLL_SPEED_TRAIL_SCRIPT := preload("res://scripts/entities/roll_speed_trail.gd")
 const CONFIG := preload("res://resources/demo_config.tres")
+const FIREARM_RULES := preload("res://scripts/dream/dream_firearm_rules.gd")
 const WEAPON_POSE := preload("res://scripts/dream/dream_weapon_pose.gd")
 const HAND_PRESENTATION := preload("res://scripts/entities/player_hand_presentation.gd")
 var hand_presentation: RefCounted
 const WORLD_WEAPON_PICKUP_SCRIPT := preload("res://scripts/dream/world_weapon_pickup.gd")
 const TACTICAL_GHOST_PREVIEW_SCRIPT := preload("res://scripts/entities/tactical_ghost_preview.gd")
 
-## DreamPlayer正式角色图集：192x191，6列x6行，每格32x32。
-## 第1列为完整组装参考角色；第2列为手部；第3列为左朝向与背面头部；第4列为右朝向头部；第5列为身体；第6列为双腿。
+## Eight authored views with a combined head/upper body; see shared atlas map.
+const CHARACTER_ATLAS = preload("res://scripts/data/player_character_atlas.gd")
 const PLAYER_CHARACTER_ATLAS: Texture2D = preload("res://art/Dream/dream_chr_32x32.png")
 const PLAYER_HEAD_LEFT_OPEN_REGION := Rect2(64, 0, 32, 32)
 const PLAYER_HEAD_LEFT_BLINK_REGION := Rect2(64, 32, 32, 32)
 const PLAYER_HEAD_LEFT_CLOSED_REGION := Rect2(64, 64, 32, 32)
-const PLAYER_HEAD_RIGHT_OPEN_REGION := Rect2(96, 0, 32, 32)
-const PLAYER_HEAD_RIGHT_BLINK_REGION := Rect2(96, 32, 32, 32)
-const PLAYER_HEAD_RIGHT_CLOSED_REGION := Rect2(96, 64, 32, 32)
-const PLAYER_HEAD_BACK_REGION := Rect2(64, 128, 32, 32)
+const PLAYER_HEAD_RIGHT_OPEN_REGION := Rect2(192, 0, 32, 32)
+const PLAYER_HEAD_RIGHT_BLINK_REGION := Rect2(192, 32, 32, 32)
+const PLAYER_HEAD_RIGHT_CLOSED_REGION := Rect2(192, 64, 32, 32)
+const PLAYER_HEAD_BACK_REGION := Rect2(128, 128, 32, 32)
 
 const PLAYER_BODY_FRONT_REGION := Rect2(128, 0, 32, 32)
 const PLAYER_BODY_BACK_REGION := Rect2(128, 128, 32, 32)
 
-const PLAYER_LEFT_FOOT_FRONT_REGION := Rect2(171, 12, 4, 9)
-const PLAYER_RIGHT_FOOT_FRONT_REGION := Rect2(176, 12, 4, 9)
-const PLAYER_LEFT_FOOT_BACK_REGION := Rect2(171, 140, 4, 9)
-const PLAYER_RIGHT_FOOT_BACK_REGION := Rect2(176, 140, 4, 9)
+const PLAYER_LEFT_FOOT_FRONT_REGION := Rect2(43, 76, 4, 9)
+const PLAYER_RIGHT_FOOT_FRONT_REGION := Rect2(48, 76, 4, 9)
+const PLAYER_LEFT_FOOT_BACK_REGION := Rect2(43, 140, 4, 9)
+const PLAYER_RIGHT_FOOT_BACK_REGION := Rect2(48, 140, 4, 9)
 
 const PLAYER_LEFT_HAND_REGION := Rect2(37, 16, 5, 4)
 const PLAYER_RIGHT_HAND_REGION := Rect2(52, 16, 5, 4)
@@ -265,6 +266,8 @@ var visual_home_position := Vector2(0, -18.25)
 var character_visual_scale := 1.0
 var character_facing_back := false
 var character_facing_right := false
+var character_facing_index := CHARACTER_ATLAS.Facing.DOWN
+var player_facing_frames: Dictionary = {}
 var idle_animation_time := 0.0
 var walk_animation_time := 0.0
 var walk_visual_bounce := 0.0
@@ -283,9 +286,11 @@ var player_blink_time_left := 2.5
 var player_blink_phase_left := 0.0
 var player_blink_phase := 0
 
-## 动画始终以dream_player.tscn中保存的位置为基准。
+## 以场景中保存的中性位置加八向衣摆校正为基准；走路和踢腿共用当前方向基准。
 var head_base_position := Vector2.ZERO
 var body_base_position := Vector2.ZERO
+var left_leg_home_position := Vector2.ZERO
+var right_leg_home_position := Vector2.ZERO
 var left_leg_base_position := Vector2.ZERO
 var right_leg_base_position := Vector2.ZERO
 var left_hand_base_position := Vector2.ZERO
@@ -348,6 +353,7 @@ var secondary_collision_cooldown_left := 0.0
 var airborne_visual_rotation_target := 0.0
 var movement_impulse_velocity := Vector2.ZERO
 var movement_impulse_left := 0.0
+var _firearm_recoil_velocity := Vector2.ZERO
 ## Locomotion is kept separate from lightweight recoil so the time controller
 ## never mistakes a knockback/recoil displacement for player activity.
 var _time_locomotion_velocity := Vector2.ZERO
@@ -685,6 +691,9 @@ func is_throw_aim_active() -> bool:
 
 
 func begin_throw_aim() -> bool:
+	# The introductory range has no weapon-drop owner; retain its loan weapon.
+	if bool(get_meta(&"tutorial_loan_weapon", false)):
+		return false
 	if (
 		dead
 		or throw_aim_active
@@ -1018,32 +1027,24 @@ func _ready() -> void:
 
 
 func _setup_character_parts() -> void:
-	left_leg_base_position = left_leg.position
-	right_leg_base_position = right_leg.position
+	set_meta(&"character_combined_upper_body",true)
+	set_meta(&"character_upper_torso_center",CHARACTER_ATLAS.TORSO_CENTER)
+	left_leg_home_position = left_leg.position
+	right_leg_home_position = right_leg.position
+	left_leg_base_position = left_leg_home_position
+	right_leg_base_position = right_leg_home_position
 	body_base_position = body_pivot.position
 	head_base_position = head_part.position
 	left_hand_base_position = left_hand_part.position if left_hand_part != null else Vector2.ZERO
 	right_hand_base_position = right_hand_part.position if right_hand_part != null else Vector2.ZERO
 	body_base_rotation = body_pivot.rotation
 
-	var head_left_open: AtlasTexture = _make_player_atlas_texture(PLAYER_HEAD_LEFT_OPEN_REGION)
-	var head_left_blink: AtlasTexture = _make_player_atlas_texture(PLAYER_HEAD_LEFT_BLINK_REGION)
-	var head_left_closed: AtlasTexture = _make_player_atlas_texture(PLAYER_HEAD_LEFT_CLOSED_REGION)
-
-	var head_right_open: AtlasTexture = _make_player_atlas_texture(PLAYER_HEAD_RIGHT_OPEN_REGION)
-	var head_right_blink: AtlasTexture = _make_player_atlas_texture(PLAYER_HEAD_RIGHT_BLINK_REGION)
-	var head_right_closed: AtlasTexture = _make_player_atlas_texture(PLAYER_HEAD_RIGHT_CLOSED_REGION)
-
-	player_head_back_frame = _make_player_atlas_texture(PLAYER_HEAD_BACK_REGION)
-
-	player_head_left_frames = [head_left_open, head_left_blink, head_left_closed]
-	player_head_right_frames = [head_right_open, head_right_blink, head_right_closed]
-
-	player_head_frames.clear()
-	player_head_frames.append_array(player_head_left_frames)
-
-	var body_front_texture: AtlasTexture = _make_player_atlas_texture(PLAYER_BODY_FRONT_REGION)
-	var body_back_texture: AtlasTexture = _make_player_atlas_texture(PLAYER_BODY_BACK_REGION)
+	player_facing_frames.clear()
+	for facing_index in 8: player_facing_frames[facing_index]=CHARACTER_ATLAS.frames(facing_index)
+	player_head_left_frames.assign(player_facing_frames[CHARACTER_ATLAS.Facing.LEFT])
+	player_head_right_frames.assign(player_facing_frames[CHARACTER_ATLAS.Facing.RIGHT])
+	player_head_back_frame=player_facing_frames[CHARACTER_ATLAS.Facing.UP][0]
+	player_head_frames.assign(player_facing_frames[character_facing_index])
 
 	var left_foot_front_texture: AtlasTexture = _make_player_atlas_texture(PLAYER_LEFT_FOOT_FRONT_REGION)
 	var right_foot_front_texture: AtlasTexture = _make_player_atlas_texture(PLAYER_RIGHT_FOOT_FRONT_REGION)
@@ -1054,8 +1055,8 @@ func _setup_character_parts() -> void:
 	var right_hand_texture: AtlasTexture = _make_player_atlas_texture(PLAYER_RIGHT_HAND_REGION)
 
 	front_part_textures = {
-		"head": head_left_open,
-		"body": body_front_texture,
+		"head": player_head_left_frames[0],
+		"body": null,
 		"left_foot": left_foot_front_texture,
 		"right_foot": right_foot_front_texture,
 		"left_hand": left_hand_texture,
@@ -1064,7 +1065,7 @@ func _setup_character_parts() -> void:
 
 	back_part_textures = {
 		"head": player_head_back_frame,
-		"body": body_back_texture,
+		"body": null,
 		"left_foot": left_foot_back_texture,
 		"right_foot": right_foot_back_texture,
 		"left_hand": left_hand_texture,
@@ -1112,6 +1113,10 @@ func _get_character_parts(root: Node) -> Array[Sprite2D]:
 
 func _apply_character_part_set(use_back: bool) -> void:
 	var textures: Dictionary = back_part_textures if use_back else front_part_textures
+	# Recompute from saved scene anchors, never from last frame's animated feet.
+	var leg_offset := CHARACTER_ATLAS.foot_offset(character_facing_index)
+	left_leg_base_position = left_leg_home_position + leg_offset
+	right_leg_base_position = right_leg_home_position + leg_offset
 
 	for root in [visual, heal_overlay]:
 		var root_left := root.get_node("LeftFoot") as Sprite2D
@@ -1123,13 +1128,14 @@ func _apply_character_part_set(use_back: bool) -> void:
 
 		root_left.texture = textures.get("left_foot") as Texture2D
 		root_right.texture = textures.get("right_foot") as Texture2D
+		root_left.position = left_leg_base_position
+		root_right.position = right_leg_base_position
 		root_body.texture = textures.get("body") as Texture2D
 		root_left.visible = true
 		root_right.visible = true
-		root_body.visible = true
-		if use_back:
-			root_head.texture = player_head_back_frame
-		elif not player_head_frames.is_empty():
+		root_body.visible = false
+		root_head.visible = true
+		if not player_head_frames.is_empty():
 			root_head.texture = player_head_frames[clampi(player_head_frame_index, 0, player_head_frames.size() - 1)]
 		else:
 			root_head.texture = textures.get("head") as Texture2D
@@ -1444,13 +1450,6 @@ func _update_punch_visual() -> void:
 
 
 func _set_player_head_frame(frame_index: int) -> void:
-	if character_facing_back:
-		for root in [visual, heal_overlay]:
-			var head := root.get_node_or_null("BodyPivot/Head") as Sprite2D
-			if head != null:
-				head.texture = player_head_back_frame
-		return
-
 	if player_head_frames.is_empty():
 		return
 	player_head_frame_index = clampi(frame_index, 0, player_head_frames.size() - 1)
@@ -1556,6 +1555,11 @@ func _physics_process(delta: float) -> void:
 
 func _physics_process_profiled(delta:float)->void:
 	delta = combat_action_delta(delta)
+	if not movement_enabled or scripted_locomotion_active or dead or dashing or vault_active or airborne_knockback:
+		_firearm_recoil_velocity = Vector2.ZERO
+	var firearm_recoil := _firearm_recoil_velocity
+	if firearm_recoil != Vector2.ZERO:
+		_firearm_recoil_velocity = FIREARM_RULES.decay_body_recoil(firearm_recoil, delta)
 	_auto_vault_cooldown_left=maxf(0.0,_auto_vault_cooldown_left-delta)
 	# This sample is rebuilt only by the normal locomotion branch below.  Any
 	# airborne, dash, recovery or dead frame therefore contributes zero to the
@@ -1890,6 +1894,8 @@ func _physics_process_profiled(delta:float)->void:
 		velocity if velocity.length_squared() > 0.0001 else input_vector,
 		delta
 	)
+	velocity += firearm_recoil
+	impulse_velocity_before += firearm_recoil
 	var reaction_compensation := combat_action_delta(1.0)
 	velocity *= reaction_compensation
 	move_and_slide()
@@ -1913,7 +1919,12 @@ func _physics_process_profiled(delta:float)->void:
 		else:
 			# Convert displacement back to a gameplay-speed sample before clamping;
 			# limiting the displacement itself would mix pixel/frame and pixel/second.
-			_time_locomotion_velocity = (locomotion_step / delta).limit_length(maxf(movement_speed, 1.0))
+			# A wall can absorb the recoil. Subtracting the full impulse must not
+			# create locomotion speed for a stationary player.
+			var speed_limit := maxf(movement_speed, 1.0)
+			if firearm_recoil != Vector2.ZERO:
+				speed_limit = _time_locomotion_velocity.length()
+			_time_locomotion_velocity = (locomotion_step / delta).limit_length(speed_limit)
 	_time_locomotion_speed = _time_locomotion_velocity.length()
 
 	_push_rigid_props(input_vector)
@@ -2169,6 +2180,21 @@ func _play_footsteps_for_gait() -> void:
 	SFX.play_event(&"footstep")
 
 
+## Presentation axes only. Gameplay aim, hit rays and weapon markers stay in
+## map space; eight-way art must face the direction seen by the real Camera.
+func character_screen_direction(map_direction: Vector2) -> Vector2:
+	var world := _dream_world() as Node3D
+	if world == null: return map_direction.normalized()
+	var camera := world.get("camera_3d") as Camera3D
+	var reference: Variant = get_meta(&"depth_visual_bridge") if has_meta(&"depth_visual_bridge") else null
+	var bridge: Node3D = reference.get_ref() if reference is WeakRef else null
+	if camera == null or not camera.is_inside_tree() or not is_instance_valid(bridge): return map_direction.normalized()
+	var map_root := bridge.get_parent_node_3d()
+	var point: Vector3 = bridge.actor_sprite.global_position
+	var world_direction := map_root.global_basis*Vector3(map_direction.x,0,map_direction.y)/32.
+	var projected := camera.unproject_position(point+world_direction)-camera.unproject_position(point)
+	return projected.normalized() if projected.length_squared()>.000001 else map_direction.normalized()
+
 func _update_direction_animation(motion: Vector2, delta: float) -> void:
 	if visual == null:
 		return
@@ -2184,19 +2210,19 @@ func _update_direction_animation(motion: Vector2, delta: float) -> void:
 	if aim_dir.length_squared() <= 0.0001:
 		aim_dir = direction
 
-	# 上方 90° 扇区（[-135°, -45°]）：背向模式
-	var facing_back := aim_dir.y < 0.0 and absf(aim_dir.y) >= absf(aim_dir.x)
-	var facing_right := aim_dir.x >= 0.0
-
-	var facing_changed := (facing_back != character_facing_back) or (facing_right != character_facing_right)
+	var screen_direction := character_screen_direction(aim_dir)
+	var facing_index: int = CHARACTER_ATLAS.facing(screen_direction)
+	var facing_back: bool = CHARACTER_ATLAS.is_back(facing_index)
+	var facing_right := screen_direction.x >= 0.
+	var facing_changed := facing_index != character_facing_index
+	character_facing_back = facing_back
+	character_facing_right = facing_right
 
 	if facing_changed:
 		character_facing_back = facing_back
 		character_facing_right = facing_right
-
-		var target_head_frames := player_head_right_frames if character_facing_right else player_head_left_frames
-		player_head_frames.clear()
-		player_head_frames.append_array(target_head_frames)
+		character_facing_index = facing_index
+		player_head_frames.assign(player_facing_frames[facing_index])
 
 		_apply_character_part_set(character_facing_back)
 		_refresh_held_weapon_depth()
@@ -2332,11 +2358,6 @@ func _update_direction_animation(motion: Vector2, delta: float) -> void:
 			* runtime_config.player_idle_body_breath_pixels
 		)
 
-		var head_breath := roundf(
-			breath_phase
-			* runtime_config.player_idle_head_breath_pixels
-		)
-
 		_set_part_position(
 			body_pivot,
 			body_base_position + Vector2(
@@ -2349,7 +2370,7 @@ func _update_direction_animation(motion: Vector2, delta: float) -> void:
 			head_part,
 			head_base_position + Vector2(
 				0,
-				body_breath - head_breath
+			0.0
 			)
 		)
 
@@ -3179,6 +3200,8 @@ func _dash_floor_position_valid(position: Vector2) -> bool:
 	var world := _dream_world()
 	if world == null or not world.has_method("_cell_for_gameplay_position"):
 		return true
+	if world.has_method("is_player_dash_landing_allowed") and not world.call("is_player_dash_landing_allowed", position):
+		return false
 	var floors: Variant = world.get("floor_cells")
 	if not floors is Dictionary:
 		return true
@@ -4411,12 +4434,11 @@ func cancel_dash() -> void:
 	_emit_dash_state()
 
 func set_dash_enabled(enabled: bool) -> void:
-	dash_enabled = (
-		enabled
-		and not dead
-		and not dash_disabled_by_hunger
-	)
-
+	var next_enabled := enabled and not dead and not dash_disabled_by_hunger
+	# A repeated permission update must not reset locomotion every render frame.
+	if dash_enabled == next_enabled:
+		return
+	dash_enabled = next_enabled
 	if not dash_enabled:
 		cancel_dash()
 
@@ -4681,6 +4703,7 @@ func revive_for_floor_restart(
 	velocity = Vector2.ZERO
 	movement_impulse_velocity = Vector2.ZERO
 	movement_impulse_left = 0.0
+	_firearm_recoil_velocity = Vector2.ZERO
 	external_knockback_left = 0.0
 	knockback_recovery_left = 0.0
 	airborne_knockback = false
@@ -5312,9 +5335,8 @@ func try_consume_ammo_for_attack() -> bool:
 	)
 
 	if current <= 0:
-		_start_reload(
-			selected_weapon_id
-		)
+		if not bool(get_meta(&"tutorial_manual_reload", false)):
+			_start_reload(selected_weapon_id)
 
 		return false
 
@@ -5325,9 +5347,10 @@ func try_consume_ammo_for_attack() -> bool:
 	] = state
 
 	if int(state.current) <= 0:
-		_start_reload(
-			selected_weapon_id
-		)
+		if not bool(get_meta(&"tutorial_manual_reload", false)):
+			_start_reload(selected_weapon_id)
+		else:
+			_emit_ammo_state()
 
 	else:
 		_emit_ammo_state()
@@ -5787,10 +5810,8 @@ func _apply_firearm_recoil(multiplier: float) -> void:
 	var impulse_level: StringName = &"small"
 	match weapon_name:
 		&"shotgun":
-			recoil = runtime_config.player_shotgun_recoil
 			impulse_level = &"heavy"
 		&"assault_rifle":
-			recoil = runtime_config.player_assault_rifle_recoil
 			impulse_level = &"medium"
 		&"lucille":
 			impulse_level = &"heavy"
@@ -5803,6 +5824,14 @@ func _apply_firearm_recoil(multiplier: float) -> void:
 	if recoil > 0.0:
 		apply_movement_impulse(-direction.normalized(), recoil * maxf(multiplier, 0.5))
 	_request_combat_camera_impulse(impulse_level, -direction.normalized())
+
+
+func apply_firearm_body_recoil(weapon_id: StringName, direction: Vector2, multiplier: float) -> void:
+	if dead or not movement_enabled or scripted_locomotion_active or dashing or vault_active or airborne_knockback:
+		return
+	_firearm_recoil_velocity = FIREARM_RULES.body_recoil_after_shot(
+		runtime_config, weapon_id, direction, _firearm_recoil_velocity, multiplier
+	)
 
 
 func _request_combat_camera_impulse(level: StringName, direction: Vector2) -> void:

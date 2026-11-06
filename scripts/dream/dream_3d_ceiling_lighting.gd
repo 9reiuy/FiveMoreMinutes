@@ -4,6 +4,7 @@ extends Node3D
 ## Gameplay floor/room topology remains authoritative; this node only creates
 ## visual lights from already-valid cells and never invents a second map.
 
+const OFFICE_NIGHT := preload("res://scripts/dream/office_night_ceiling.gd")
 const FIXTURE_SIZE := Vector2(1.35, 0.46)
 const CEILING_LIGHT_HEIGHT_OFFSET := 0.10
 const WORLD_LIGHT_CULL_MASK := 7 | 8  # + cutout occluder furniture layer
@@ -12,18 +13,18 @@ const INVALID_LIGHT_CELL := Vector2i(2147483647, 2147483647)
 ## zero-light cutoff. Generated fixtures only; authored tutorial values stay.
 const ROOM_RANGE_SHOULDER := 1.20
 const ROOM_ANGLE_SHOULDER_DEGREES := 5.0
-const ROOM_RADIAL_ATTENUATION := 0.20
-const ROOM_ANGULAR_ATTENUATION := 0.15
+const ROOM_RADIAL_ATTENUATION := 0.80
+const ROOM_ANGULAR_ATTENUATION := 0.55
 const WALL_PAIR_MIN_SPACING := 1.25
 
 @export_range(0.0, 4.0, 0.05) var ceiling_light_wall_clearance := 0.5
 ## Energy remains unchanged. Range/angle exports are retained for authored
 ## callers; generated fixtures use their planned responsibility rectangles.
-@export_range(0.0, 8.0, 0.05) var light_energy := 0.50
+@export_range(0.0, 8.0, 0.05) var light_energy := 1.0
 @export_range(1.0, 64.0, 0.1) var light_range := 28.0
-@export_range(45.0, 170.0, 1.0) var light_angle := 125.0
+@export_range(20.0, 80.0, 1.0) var light_angle := 58.0
 ## The floor is lit primarily by unshadowed spot and center fill.
-@export_range(0.0, 1.0, 0.01) var floor_fill_energy := 0.20
+@export_range(0.0, 1.0, 0.01) var floor_fill_energy := 0.12
 @export_range(1.0, 32.0, 0.5) var floor_fill_range_padding := 1.5
 @export_range(0.05, 2.0, 0.05) var spot_attenuation := 0.42
 @export_range(0.05, 2.0, 0.05) var spot_angle_attenuation := 0.45
@@ -52,9 +53,11 @@ var room_light_plans: Dictionary = {}
 var _mesh_cache: Dictionary = {}
 var _material_cache: Dictionary = {}
 var _shadow_candidates: Array[Light3D] = []
+var _fixture_world: Node3D
 
 
 func get_shadow_candidates() -> Array[Light3D]:
+	_shadow_candidates = _shadow_candidates.filter(func(light) -> bool: return is_instance_valid(light))
 	return _shadow_candidates.duplicate()
 
 
@@ -81,6 +84,7 @@ func clear_lights() -> void:
 
 func build_for_world(world: Node) -> void:
 	clear_lights()
+	_fixture_world = world as Node3D
 	if world == null:
 		return
 	var floor_cells: Dictionary = world.get("floor_cells")
@@ -89,6 +93,9 @@ func build_for_world(world: Node) -> void:
 		return
 	var rooms_variant: Variant = world.get("rooms")
 	if not rooms_variant is Array:
+		return
+	if world.has_method("uses_office_night_lighting") and world.uses_office_night_lighting():
+		OFFICE_NIGHT.build(self, world, floor_cells, room_cells)
 		return
 	var ceiling_y := float(world.get("wall_height")) + (-CEILING_LIGHT_HEIGHT_OFFSET if managed_shadows else CEILING_LIGHT_HEIGHT_OFFSET)
 	for room_variant in rooms_variant:
@@ -415,6 +422,7 @@ func _plan_sconces(valid: Dictionary, world: Node, doors: Array[Rect2], seat: Ve
 				point += inward * 0.09
 				candidate.append({
 					"kind": &"wall", "room_id": room_id, "inward": inward,
+					"wall_edge": {"axis": "H" if group["horizontal"] else "V", "x": roundi(along) if group["horizontal"] else roundi(float(group["fixed"]) + .5), "y": roundi(float(group["fixed"]) + .5) if group["horizontal"] else roundi(along)},
 					"position": Vector3(point.x, (ceiling_y + (CEILING_LIGHT_HEIGHT_OFFSET if managed_shadows else -CEILING_LIGHT_HEIGHT_OFFSET)) * 0.65, point.y),
 					"yaw": atan2(-inward.x, -inward.y),
 					"coverage": Rect2(point + inward * 1.5 - Vector2.ONE * 1.5, Vector2.ONE * 3.0),
@@ -482,6 +490,8 @@ func _create_sconce(plan: Dictionary, index: int) -> void:
 	light.shadow_bias = 0.02
 	holder.add_child(light)
 	_register_shadow_candidate(light, int(plan["room_id"]))
+	if is_instance_valid(_fixture_world) and _fixture_world.has_method("register_wall_attachment"):
+		_fixture_world.register_wall_attachment(holder, plan.get("wall_edge", {}))
 
 
 func _find_light_cell(
@@ -666,6 +676,7 @@ func _create_light_at(
 
 	var light := SpotLight3D.new()
 	light.name = "RoomLight"
+	light.position.y = -0.12
 	light.rotation.x = -PI * 0.5
 	light.light_energy = light_energy
 	light.light_cull_mask = WORLD_LIGHT_CULL_MASK
@@ -673,7 +684,7 @@ func _create_light_at(
 	if managed_shadows:
 		# Four overlapping office cones plus exterior daylight otherwise clip
 		# pale furniture and the floor to white in the formal game camera.
-		light.light_energy *= 0.6
+		light.light_energy *= 0.85
 
 	match archetype:
 		"conference":
@@ -730,14 +741,24 @@ func _create_room_center_fill(
 
 	fill.light_energy = floor_fill_energy
 	if managed_shadows:
-		# A weak local fill preserves readability without erasing main shadows.
-		fill.light_energy *= 0.35
-		fill.omni_range = maxf(2.0, minf(fill.omni_range, float(mini(bounds.size.x, bounds.size.y)) * 0.5))
+		# Broad reflected fixture light reaches VERTICAL receivers too. The old
+		# ceiling-height, short-range fill could only touch the floor, leaving
+		# every wall below the palette's first useful dark color. This remains a
+		# real, shadowed room source, not emission or a floor-only floodlight.
+		holder.position.y = ceiling_y * 0.55
+		fill.light_energy = light_energy * 0.28
+		fill.omni_range = maxf(3.0, half_diagonal + 1.8)
+		fill.omni_attenuation = 0.85
 	fill.light_color = preload("res://scripts/dream/dream_room_environment_theme.gd").profile(archetype).light
 	fill.light_specular = 0.0
 	fill.light_cull_mask = WORLD_LIGHT_CULL_MASK
 	fill.shadow_enabled = false
 	holder.add_child(fill)
+	if managed_shadows:
+		_register_shadow_candidate(fill, room_id)
+		fill.shadow_bias = 0.025
+		fill.shadow_normal_bias = 0.12
+		fill.set_meta(&"fixture_bounce",true)
 
 
 ## Open rails never cover the luminous top surface. Every component shares the
@@ -850,7 +871,9 @@ func _spot_coverage(
 		target_radius = minf(target_radius, maxf(short_axis * 0.9, 1.5))
 	target_radius += 0.75
 	var height := maxf(absf(ceiling_y), 0.5)
-	var required_angle := rad_to_deg(2.0 * atan(target_radius / height)) + 6.0
-	var angle := clampf(maxf(light_angle, required_angle), 45.0, 170.0)
+	# Godot expects the angular radius, not the cone's full diameter. Wide
+	# (>89 degree) spots cannot cast usable shadows.
+	var required_angle := rad_to_deg(atan(target_radius / height)) + 3.0
+	var angle := clampf(maxf(light_angle, required_angle), 20.0, 80.0)
 	var slant_range := sqrt(target_radius * target_radius + height * height) + 1.0
 	return Vector2(maxf(light_range, slant_range), angle)

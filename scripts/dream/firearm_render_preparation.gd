@@ -8,9 +8,11 @@ static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -
 	preload("res://scripts/app/performance_markers.gd").lighting_event(world,"prewarm_start")
 	var whole_started:=Time.get_ticks_usec()
 	var phase_timings: Dictionary={}
-	var destruction: Dictionary=await preload("res://scripts/dream/destruction_render_preparation.gd").run(tree,world)
-	if destruction.get("cancelled",false) or not is_instance_valid(world): return {"cancelled":true,"destruction":destruction}
 	var floor_token: int=world.get_current_floor_token()
+	var transition_token: int=world.transition_generation_token
+	var destruction: Dictionary=await preload("res://scripts/dream/destruction_render_preparation.gd").run(tree,world)
+	if destruction.get("cancelled",true) or not is_instance_valid(world) or not world.is_inside_tree(): return {"cancelled":true,"destruction":destruction}
+	if world.get_current_floor_token()!=floor_token or world.transition_generation_token!=transition_token: return {"cancelled":true,"destruction":destruction}
 	var lighting: Node3D=world.night_lighting
 	if not is_instance_valid(lighting) or not is_instance_valid(world.player_depth_bridge): return {"skipped":"world_not_ready"}
 	var saved: Array=[]
@@ -50,7 +52,7 @@ static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -
 		var impact_draw_started:=Time.get_ticks_usec()
 		for frame in 2: await RenderingServer.frame_post_draw
 		phase_timings["impact_draw_wait_ms"]=(Time.get_ticks_usec()-impact_draw_started)/1000.0
-		if not is_instance_valid(world) or not world.is_inside_tree() or world.get_current_floor_token()!=floor_token:
+		if not is_instance_valid(world) or not world.is_inside_tree() or world.get_current_floor_token()!=floor_token or world.transition_generation_token!=transition_token:
 			for node in temporary_sources:
 				if is_instance_valid(node): node.queue_free()
 			_clear_firearm_render_vfx(world)
@@ -115,7 +117,7 @@ static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -
 	phase_timings["receiver_ms"]=(Time.get_ticks_usec()-receiver_started)/1000.0
 	preload("res://scripts/app/performance_markers.gd").lighting_event(world,"prewarm_completed_draws")
 	var cancelled: bool=not is_instance_valid(world) or not world.is_inside_tree()
-	if not cancelled: cancelled=world.get_current_floor_token()!=floor_token or not is_instance_valid(lighting)
+	if not cancelled: cancelled=world.get_current_floor_token()!=floor_token or world.transition_generation_token!=transition_token or not is_instance_valid(lighting)
 	var readback_bytes:=0
 	if not cancelled:
 		# Complete actual GPU work; allocating dormant pool slots is insufficient.
@@ -139,10 +141,13 @@ static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -
 	# Release capture ownership and submit the restored world before revealing it.
 	for frame in 2: await tree.process_frame
 	if not cancelled: await RenderingServer.frame_post_draw
+	# Cleanup itself yields: do not certify a replaced or freed floor afterwards.
+	cancelled=cancelled or not is_instance_valid(world)
+	if not cancelled: cancelled=not world.is_inside_tree() or world.is_queued_for_deletion() or world.get_current_floor_token()!=floor_token or world.transition_generation_token!=transition_token
 	phase_timings["cleanup_ms"]=(Time.get_ticks_usec()-cleanup_started)/1000.0
 	return {"elapsed_ms":float(Time.get_ticks_usec()-whole_started)/1000.0,"firearm_elapsed_ms":float(Time.get_ticks_usec()-started)/1000.0,"phase_timings":phase_timings,"destruction":destruction,"world_readback_bytes":readback_bytes,"temporary_sources":temporary_sources.size(),"cancelled":cancelled}
 
-static func _clear_firearm_render_vfx(world: Node) -> void:
+static func _clear_firearm_render_vfx(world: Variant) -> void:
 	if not is_instance_valid(world): return
 	var host: Node = world.floor_root if is_instance_valid(world.get("floor_root")) else world
 	var burning_node: Node = host.get_node_or_null("BurningEffects") if is_instance_valid(host) else null

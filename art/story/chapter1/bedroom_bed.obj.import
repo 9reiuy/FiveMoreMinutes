@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://tfs11bx7m8c"
+path="res://.godot/imported/bedroom_bed.obj-da5cf5a4640a5a1b2c8f1450c5f8e4fa.mesh"
+
+[deps]
+
+files=["res://.godot/imported/bedroom_bed.obj-da5cf5a4640a5a1b2c8f1450c5f8e4fa.mesh"]
+
+source_file="res://art/story/chapter1/bedroom_bed.obj"
+dest_files=["res://.godot/imported/bedroom_bed.obj-da5cf5a4640a5a1b2c8f1450c5f8e4fa.mesh", "res://.godot/imported/bedroom_bed.obj-da5cf5a4640a5a1b2c8f1450c5f8e4fa.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -148,7 +148,7 @@ func run() -> void:
 	obstacle.global_position=(nominal+shooter.global_position)*.5
 	await physics_frame
 	check(shooter.get_projectile_origin().distance_to(nominal)>.1,"Nearby collider actually clamps gameplay muzzle in regression fixture")
-	check(telegraph.aim_segment(shooter).start==shooter.projectile_origin.global_position,"Furniture-clamped gameplay muzzle cannot shift visual red-line origin")
+	check(telegraph.aim_segment(shooter).start==shooter.global_position,"Furniture-clamped gameplay muzzle cannot shift the body-centered warning")
 	obstacle.free()
 	shooter.current_ammo=1
 	var committed: Vector2=shooter.ranged_attack_target_snapshot

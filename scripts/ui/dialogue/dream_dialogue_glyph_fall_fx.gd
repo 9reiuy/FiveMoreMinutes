@@ -10,7 +10,6 @@ const GRAVITY: float = 520.0
 const LIFETIME: float = 0.5
 const FADE_START: float = 0.35
 const FADE_DURATION: float = 0.15
-const FONT_RES := preload("res://scripts/ui/crisp_interaction_font.gd")
 
 class GlyphData:
 	var label: Label
@@ -42,8 +41,13 @@ static func spawn_from_label(parent: Node, source_label: Label, visible_count: i
 	var total_len: int = full_text.length()
 	var count: int = total_len if visible_count < 0 else mini(visible_count, total_len)
 
-	var font: Font = FONT_RES.get_font()
+	# Detached glyphs inherit the actual dialogue face and size so they do not
+	# change shape when an interrupt breaks the text apart.
+	var font: Font = source_label.get_theme_font(&"font")
+	var font_size := source_label.get_theme_font_size(&"font_size")
 	var font_color: Color = source_label.get_theme_color(&"font_color")
+	var outline_color: Color = source_label.get_theme_color(&"font_outline_color")
+	var outline_size := source_label.get_theme_constant(&"outline_size")
 
 	for i in range(count):
 		var char_str: String = full_text.substr(i, 1)
@@ -55,9 +59,11 @@ static func spawn_from_label(parent: Node, source_label: Label, visible_count: i
 		glyph_label.name = "Glyph_%d" % i
 		glyph_label.text = char_str
 		glyph_label.add_theme_font_override(&"font", font)
-		glyph_label.add_theme_font_size_override(&"font_size", 12)
+		glyph_label.add_theme_font_size_override(&"font_size", font_size)
 		if font_color.a > 0.0:
 			glyph_label.add_theme_color_override(&"font_color", font_color)
+		glyph_label.add_theme_color_override(&"font_outline_color", outline_color)
+		glyph_label.add_theme_constant_override(&"outline_size", outline_size)
 		glyph_label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		glyph_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 

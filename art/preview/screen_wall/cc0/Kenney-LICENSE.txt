@@ -1,0 +1,9 @@
+All models in this repository were created by Kenney (www.kenney.nl) and are
+released under Creative Commons Zero (CC0 1.0 Universal):
+http://creativecommons.org/publicdomain/zero/1.0/
+
+You can use them for personal, educational and commercial purposes.
+Crediting Kenney is appreciated but not required. Support Kenney: https://kenney.nl/donate
+
+The models were converted (textures embedded into each .glb) and thumbnails were
+rendered for the Tiny Game Engine model library; these derived files are also CC0.

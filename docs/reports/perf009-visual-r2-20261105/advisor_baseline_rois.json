@@ -1,0 +1,109 @@
+{
+  "scope": "Advisor-selected small fixed regions in the matched AB20261105 static Camera frames. Encoded RGB8 luma proxy; not physical radiance. Use only with identical camera/scene and visual review; no automatic acceptance threshold.",
+  "regions": [
+    {
+      "name": "hall_lit",
+      "stem": "01_interior_overview",
+      "rectangle_exclusive_max": [
+        249,
+        208,
+        265,
+        224
+      ],
+      "measurements": {
+        "A": {
+          "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\01_interior_overview_main.png",
+          "sha256": "5C00D8DA677436E825BF65D8BAEB1905B8BB77516B0C5C22E8E655572B0E35EA",
+          "median_encoded_luma": 145.2733,
+          "min": 121.73519999999999,
+          "max": 151.45839999999998
+        },
+        "B": {
+          "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\01_interior_overview_main.png",
+          "sha256": "B20B5C0014F61837593D6473458BF8455FE8AC33925E2929EBFE3DE8E708C837",
+          "median_encoded_luma": 103.0722,
+          "min": 88.0722,
+          "max": 103.0722
+        }
+      }
+    },
+    {
+      "name": "hall_shadow",
+      "stem": "01_interior_overview",
+      "rectangle_exclusive_max": [
+        125,
+        214,
+        141,
+        230
+      ],
+      "measurements": {
+        "A": {
+          "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\01_interior_overview_main.png",
+          "sha256": "5C00D8DA677436E825BF65D8BAEB1905B8BB77516B0C5C22E8E655572B0E35EA",
+          "median_encoded_luma": 43.7192,
+          "min": 36.7192,
+          "max": 44.791399999999996
+        },
+        "B": {
+          "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\01_interior_overview_main.png",
+          "sha256": "B20B5C0014F61837593D6473458BF8455FE8AC33925E2929EBFE3DE8E708C837",
+          "median_encoded_luma": 36.0,
+          "min": 31.0,
+          "max": 37.0
+        }
+      }
+    },
+    {
+      "name": "dark_room_lit",
+      "stem": "03_dark_actor_furniture",
+      "rectangle_exclusive_max": [
+        139,
+        104,
+        153,
+        116
+      ],
+      "measurements": {
+        "A": {
+          "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\03_dark_actor_furniture_main.png",
+          "sha256": "BF0E16D6BB97FAB901B82B26F94E334131EEAEE53104BFC78B77A01437A2C61A",
+          "median_encoded_luma": 24.7954,
+          "min": 19.795399999999997,
+          "max": 27.727199999999996
+        },
+        "B": {
+          "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\03_dark_actor_furniture_main.png",
+          "sha256": "B5A61268872335F41696B1EF3A5A7092F1E90BB4EC2E06E423B76389A2CCE9A6",
+          "median_encoded_luma": 29.5828,
+          "min": 21.008,
+          "max": 32.3702
+        }
+      }
+    },
+    {
+      "name": "dark_room_shade",
+      "stem": "03_dark_actor_furniture",
+      "rectangle_exclusive_max": [
+        202,
+        128,
+        216,
+        140
+      ],
+      "measurements": {
+        "A": {
+          "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\03_dark_actor_furniture_main.png",
+          "sha256": "BF0E16D6BB97FAB901B82B26F94E334131EEAEE53104BFC78B77A01437A2C61A",
+          "median_encoded_luma": 6.8595999999999995,
+          "min": 5.0722,
+          "max": 7.8595999999999995
+        },
+        "B": {
+          "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\03_dark_actor_furniture_main.png",
+          "sha256": "B5A61268872335F41696B1EF3A5A7092F1E90BB4EC2E06E423B76389A2CCE9A6",
+          "median_encoded_luma": 7.7874,
+          "min": 6.0722,
+          "max": 8.0722
+        }
+      }
+    }
+  ]
+}

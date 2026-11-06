@@ -162,6 +162,7 @@ func _refresh_preview() -> void:
 		var part: CanvasItem = part_variant as CanvasItem
 		if part != null:
 			part.visible = true
+	if preview_body!=null and bool(player.get_meta(&"character_combined_upper_body",false)): preview_body.hide()
 	if preview_left_hand != null:
 		preview_left_hand.visible = true
 	if preview_right_hand != null:

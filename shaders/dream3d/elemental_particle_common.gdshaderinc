@@ -1,3 +1,12 @@
+
+#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS
+// These are authored display codes, including reserved effect identities.
+// Decode once before the linear spatial output; keep alpha/depth unchanged.
+vec3 r2_effect_decode(vec3 encoded) {
+    return mix(encoded / 12.92, pow((encoded + vec3(0.055)) / 1.055, vec3(2.4)),
+        step(vec3(0.04045), encoded));
+}
+#endif
 uniform int particle_kind = 0;
 uniform bool outline_pass = false;
 uniform float contour_world_width = 0.02;
@@ -21,6 +30,11 @@ void fragment() {
 	vec3 ink=COLOR.rgb;
 	if (particle_kind==1 && p.y<-.2) { ink*=1.08; }
 	ALBEDO=outline_pass ? contour_color.rgb : ink;
+#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS
+    // contour_color is already a source_color uniform. MultiMesh COLOR is
+    // authored RGBA data and includes fire/muzzle identity markers.
+    if (!outline_pass) { ALBEDO = r2_effect_decode(ink); }
+#endif
 	// Intentional solid alpha: joins the ordered transparent pass, NOT soft
 	// blending. Scene depth testing stays enabled in both passes.
 	ALPHA=1.0;

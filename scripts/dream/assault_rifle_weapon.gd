@@ -17,7 +17,7 @@ var active := false:
 		if not active:
 			_reset_spread()
 var cooldown_left := 0.0
-var recoil_multiplier := 0.8
+var recoil_multiplier := 1.5
 var extra_attack_chance := 0.0
 var extra_attack_delay := 0.08
 ## Total cone angle, in degrees. Sustained fire adds one degree per real shot.
@@ -93,6 +93,8 @@ func _fire(direction: Vector2, allow_extra: bool) -> void:
 		projectile_spawned = projectile.is_inside_tree()
 	if projectile_spawned:
 		current_spread_degrees = clampf(current_spread_degrees + spread_growth_per_shot, base_spread_degrees, maxf(max_spread_degrees, base_spread_degrees))
+		if get_parent().has_method("apply_firearm_body_recoil"):
+			get_parent().apply_firearm_body_recoil(&"assault_rifle", direction, recoil_multiplier)
 		SFX.play_weapon_fire()
 	if allow_extra and randf() < extra_attack_chance:
 		await get_tree().create_timer(extra_attack_delay, false).timeout

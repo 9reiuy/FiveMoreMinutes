@@ -17,14 +17,17 @@ const CHARGE_VISUAL_SCRIPT: Script = preload("res://scripts/dream/dream_charge_v
 const CHARGE_SEMANTIC_SHADER: Shader = preload("res://shaders/charge_semantic.gdshader")
 
 ## Employee_men_32x32.png is a 5-column, 3-row atlas.  Column one is the
-## assembled reference only; runtime visuals use the separated cells below.
+## assembled reference only. Employee column two now contains head + torso;
+## hands/feet remain separate. Corpse joints crop the same pixels at the neck.
 const EMPLOYEE_CHARACTER_ATLAS: Texture2D = preload("res://art/Dream/enemy/Employee_men_32x32.png")
-## Waitress reuses the same separated-part layout and the same gameplay/AI
-## script; only the authored visual atlas and default loadout differ.
+## Waitress retains its existing separated-part layout and the shared AI;
+## her art/rig is configured independently from Employee.
 const WAITRESS_CHARACTER_ATLAS: Texture2D = preload("res://art/Dream/enemy/waitress.png")
-## The head cells carry four transparent columns on the right.  Cropping those
-## columns also removes the two stray edge pixels that are not present in the
-## column-one assembled reference, keeping the idle composite pixel-aligned.
+## Legacy separated regions remain the waitress layout; do not migrate her art
+## when updating Employee. Employee uses the full 32px cell without edge crop.
+const EMPLOYEE_NECK_ROW := 23
+const EMPLOYEE_UPPER_POSITION := Vector2(-16,-17)
+const EMPLOYEE_TORSO_POSITION := Vector2(-16,6)
 const EMPLOYEE_HEAD_OPEN_REGION: Rect2 = Rect2(32, 0, 28, 32)
 const EMPLOYEE_HEAD_BLINK_REGION: Rect2 = Rect2(32, 32, 28, 32)
 const EMPLOYEE_HEAD_CLOSED_REGION: Rect2 = Rect2(32, 64, 28, 32)
@@ -152,6 +155,7 @@ var movement_speed_multiplier := 1.0
 
 var knockback_velocity := Vector2.ZERO
 var knockback_left := 0.0
+var _firearm_recoil_velocity := Vector2.ZERO
 
 var wander_target := Vector2.ZERO
 var authored_patrol_route: Array[Vector2] = []
@@ -320,6 +324,9 @@ var reload_visual_tween: Tween
 var walk_phase := 0.0
 var facing_back := false
 var enemy_head_frames: Array[Texture2D] = []
+var enemy_corpse_head_frames: Array[Texture2D] = []
+var combined_upper_body := false
+var corpse_upper_parts_active := false
 var enemy_head_frame_index := 0
 var enemy_blink_time_left := 3.0
 var enemy_blink_phase_left := 0.0
@@ -584,33 +591,51 @@ func configure_archetype(archetype: StringName) -> void:
 
 
 func _setup_character_parts() -> void:
-	## Keep all alignment in unscaled local coordinates.  The atlas regions
-	## below are derived from the opaque pixels in the 32px cells; the scene
-	## positions then line them up with column-one's assembled reference.
-	var head_open: AtlasTexture = _make_employee_atlas_texture(
-		EMPLOYEE_HEAD_OPEN_REGION
-	)
-	var head_blink: AtlasTexture = _make_employee_atlas_texture(
-		EMPLOYEE_HEAD_BLINK_REGION
-	)
-	var head_closed: AtlasTexture = _make_employee_atlas_texture(
-		EMPLOYEE_HEAD_CLOSED_REGION
-	)
+	combined_upper_body = enemy_archetype != &"waitress"
+	corpse_upper_parts_active = false
 	enemy_head_frames.clear()
-	enemy_head_frames.append(head_open)
-	enemy_head_frames.append(head_blink)
-	enemy_head_frames.append(head_closed)
+	enemy_corpse_head_frames.clear()
+	for frame in 3:
+		var upper_region := Rect2(32,frame*32,32 if combined_upper_body else 28,32)
+		enemy_head_frames.append(_make_employee_atlas_texture(upper_region))
+		if combined_upper_body:
+			enemy_corpse_head_frames.append(_make_employee_atlas_texture(Rect2(32,frame*32,32,EMPLOYEE_NECK_ROW)))
 
-	head.texture = head_open
-	body.texture = _make_employee_atlas_texture(EMPLOYEE_BODY_REGION)
+	head.position = EMPLOYEE_UPPER_POSITION if combined_upper_body else Vector2(-16,-20)
+	body.position = EMPLOYEE_TORSO_POSITION if combined_upper_body else Vector2(-16,-8)
+	head.texture = enemy_head_frames[0]
+	body.texture = _make_employee_atlas_texture(Rect2(32,EMPLOYEE_NECK_ROW,32,32-EMPLOYEE_NECK_ROW) if combined_upper_body else EMPLOYEE_BODY_REGION)
+	body.visible = not combined_upper_body
 	left_leg.texture = _make_employee_atlas_texture(EMPLOYEE_LEFT_FOOT_REGION)
 	right_leg.texture = _make_employee_atlas_texture(EMPLOYEE_RIGHT_FOOT_REGION)
 	left_hand.texture = _make_employee_atlas_texture(EMPLOYEE_LEFT_HAND_REGION)
 	right_hand.texture = _make_employee_atlas_texture(EMPLOYEE_RIGHT_HAND_REGION)
+	left_hand.position = Vector2(-11,6 if combined_upper_body else 7)
+	right_hand.position = Vector2(4,6 if combined_upper_body else 7)
+	set_meta(&"character_combined_upper_body",combined_upper_body)
+	# Both authored employee/waitress cells face left before horizontal mirroring.
+	set_meta(&"character_authored_facing_x",-1.0)
+	set_meta(&"character_upper_torso_center",Vector2(15,27))
 
 	for part in [left_leg, right_leg, head, body, left_hand, right_hand]:
 		part.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		part.centered = false
+	# configure_archetype can run after _ready; refresh visual bases on both paths.
+	head_base_position = head.position
+	body_base_position = body.position
+	left_hand_base_position = left_hand.position
+	right_hand_base_position = right_hand.position
+
+
+func _prepare_corpse_upper_parts() -> void:
+	if not combined_upper_body or corpse_upper_parts_active:
+		return
+	# The live character is one complete cell. Reuse two adjacent, disjoint
+	# regions only when the existing ragdoll/dismemberment needs neck movement.
+	corpse_upper_parts_active = true
+	body.texture = _make_employee_atlas_texture(Rect2(32,64+EMPLOYEE_NECK_ROW,32,32-EMPLOYEE_NECK_ROW))
+	body.show()
+	set_meta(&"character_combined_upper_body",false)
 
 
 func _set_enemy_head_frame(frame_index: int) -> void:
@@ -625,7 +650,7 @@ func _set_enemy_head_frame(frame_index: int) -> void:
 		0,
 		enemy_head_frames.size() - 1
 	)
-	head.texture = enemy_head_frames[enemy_head_frame_index]
+	head.texture = enemy_corpse_head_frames[enemy_head_frame_index] if corpse_upper_parts_active else enemy_head_frames[enemy_head_frame_index]
 
 
 func _get_next_enemy_blink_delay() -> float:
@@ -694,6 +719,7 @@ func configure(
 ) -> void:
 	target = new_target
 	feedback_config = config
+	_firearm_recoil_velocity = Vector2.ZERO
 	# configure() is also the ordinary-enemy initialization path.  Boss setup
 	# calls configure_boss(true) immediately afterwards and opts back in.
 	boss_variant = false
@@ -985,6 +1011,7 @@ func _physics_process_profiled(delta:float)->void:
 	# ============================================================
 
 	if _process_knockback(delta):
+		_firearm_recoil_velocity = Vector2.ZERO
 		move_and_slide()
 
 		if get_slide_collision_count() > 0:
@@ -996,6 +1023,7 @@ func _physics_process_profiled(delta:float)->void:
 
 		return
 	if burning_panic:
+		_firearm_recoil_velocity = Vector2.ZERO
 		if state in [State.KNOCKED_DOWN,State.GETTING_UP]:
 			velocity=Vector2.ZERO
 		else:_update_burning_panic(delta)
@@ -1006,6 +1034,7 @@ func _physics_process_profiled(delta:float)->void:
 	# callback continues the visual knockdown timer/get-up tween.
 	if not target_valid:
 		_cancel_ranged_attack_windup()
+		_firearm_recoil_velocity = Vector2.ZERO
 		velocity = Vector2.ZERO
 		return
 	if state != State.ATTACK_PLAYER and ranged_attack_session_active:
@@ -1050,6 +1079,13 @@ func _physics_process_profiled(delta:float)->void:
 	if ranged_attack_windup_pending:
 		velocity = Vector2.ZERO
 
+	if state in [State.KNOCKED_DOWN, State.GETTING_UP, State.ROOM_TRANSIT]:
+		_firearm_recoil_velocity = Vector2.ZERO
+	var locomotion_velocity := velocity
+	var firearm_recoil := _firearm_recoil_velocity
+	if firearm_recoil != Vector2.ZERO:
+		velocity += firearm_recoil
+		_firearm_recoil_velocity = FIREARM_RULES.decay_body_recoil(firearm_recoil, delta)
 	move_and_slide()
 	_constrain_position_to_room_bounds()
 
@@ -1059,6 +1095,9 @@ func _physics_process_profiled(delta:float)->void:
 		var collision := get_slide_collision(i)
 		var collider := collision.get_collider()
 		if collider != null and collider.is_in_group(&"physical_doors"):
+			# Recoil can hit a door from behind without the AI trying to enter it.
+			if firearm_recoil != Vector2.ZERO and locomotion_velocity.dot(collision.get_normal()) >= 0.0:
+				continue
 			var door_node: Node = null
 			if collider.get("door_owner") is Node:
 				door_node = collider.get("door_owner") as Node
@@ -1286,8 +1325,8 @@ func _get_gameplay_facing_direction() -> Vector2:
 		direction = Vector2.RIGHT.rotated(weapon_root.rotation)
 	elif velocity.length_squared() > 0.001:
 		direction = velocity.normalized()
-	elif character_visual != null and absf(character_visual.scale.x) > 0.001:
-		direction = Vector2.LEFT if character_visual.scale.x < 0.0 else Vector2.RIGHT
+	# An authored sprite's mirror sign is presentation, not an AI/FOV heading.
+	# Idle actors retain the last logical direction instead of inferring it here.
 	if direction.length_squared() <= 0.001:
 		direction = Vector2.RIGHT
 	last_facing_direction = direction.normalized()
@@ -1786,7 +1825,7 @@ func _update_attack_player(delta: float) -> void:
 					last_facing_direction = Vector2.RIGHT.rotated(sweep_angle)
 				_set_back_facing(last_facing_direction.y < -0.2)
 				if character_visual != null:
-					character_visual.scale.x = absf(base_visual_scale.x) * (-1.0 if last_facing_direction.x < -0.2 else 1.0)
+					_apply_live_facing(last_facing_direction)
 			else:
 				lkp_search_time_left = 0.0
 				has_last_known_target_position = false
@@ -2296,7 +2335,7 @@ func _update_move_to_door() -> void:
 				last_facing_direction = door_dir
 				_set_back_facing(last_facing_direction.y < -0.2)
 				if character_visual != null:
-					character_visual.scale.x = absf(base_visual_scale.x) * (-1.0 if last_facing_direction.x < -0.2 else 1.0)
+					_apply_live_facing(last_facing_direction)
 			velocity = Vector2.ZERO
 			if door_hold_time_left <= 0.0:
 				door_hold_active = false
@@ -2982,6 +3021,14 @@ func _fire_held_weapon() -> void:
 			_set_weapon_attack_cooldown(float(parameters.interval))
 			for shot_direction in FIREARM_RULES.directions(direction, int(parameters.pellets), float(parameters.spread_degrees), random):
 				_spawn_bullet(shot_direction, float(parameters.damage), float(parameters.range), float(parameters.speed), weapon_kind)
+			if weapon_kind != &"basic":
+				var recoil_multiplier := (
+					_cfg("shotgun_recoil_multiplier", 2.8) if weapon_kind == &"shotgun"
+					else _cfg("assault_rifle_recoil_multiplier", 1.5)
+				)
+				_firearm_recoil_velocity = FIREARM_RULES.body_recoil_after_shot(
+					feedback_config, weapon_kind, direction, _firearm_recoil_velocity, recoil_multiplier
+				)
 			ranged_attack_shot_serial+=1
 			if DREAM_GUN_ATLAS.is_automatic_weapon(held_weapon_id):
 				ranged_attack_magazine_primed=current_ammo>0 and reload_left<=0.0
@@ -3401,10 +3448,16 @@ func _play_weapon_recoil() -> void:
 		)
 
 	else:
+		var kick_distance := 4.0
+		match held_weapon_id:
+			"shotgun":
+				kick_distance = _cfg("weapon_recoil_distance", 4.0) * maxf(_cfg("shotgun_recoil_multiplier", 2.8), 0.1)
+			"assault_rifle":
+				kick_distance = _cfg("weapon_recoil_distance", 4.0) * maxf(_cfg("assault_rifle_recoil_multiplier", 1.5), 0.1)
 		visual_tween.tween_property(
 			weapon_motion,
 			"position:x",
-			-4.0,
+			-kick_distance,
 			0.04
 		)
 
@@ -3437,7 +3490,7 @@ func _update_weapon_aim() -> void:
 	# old implementation hid WeaponRoot in that case, leaving an armed Employee
 	# with both the weapon and hands invisible.  Aim falls back to actual motion
 	# and finally to the current horizontal facing; no gameplay state changes.
-	var direction := Vector2.RIGHT
+	var direction := last_facing_direction
 	if state == State.INVESTIGATE_GUNSHOT and gunshot_threat_position.length_squared() > 0.001:
 		# Investigation points at the recorded sound position only.  The neutral
 		# employee must not visually/implicitly acquire the Player through walls.
@@ -3447,8 +3500,6 @@ func _update_weapon_aim() -> void:
 		direction = global_position.direction_to(ranged_attack_target_snapshot if aim_locked else _get_known_target_position())
 	elif velocity.length_squared() > 0.001:
 		direction = velocity.normalized()
-	elif character_visual.scale.x < 0.0:
-		direction = Vector2.LEFT
 	if direction.length_squared() <= 0.001:
 		direction = Vector2.RIGHT
 	last_facing_direction = direction.normalized()
@@ -3468,6 +3519,7 @@ func _update_weapon_aim() -> void:
 	held_weapon_sprite.flip_v = (
 		direction.x < 0.0
 	)
+	_apply_live_facing(direction)
 
 
 # ============================================================
@@ -4406,6 +4458,7 @@ func _die() -> void:
 	var inherited_death_velocity := (velocity + knockback_velocity) * float(_cfg(&"corpse_inherited_velocity_ratio",0.35))
 
 	dead = true
+	_prepare_corpse_upper_parts()
 	# Lock the authored closed-eye frame before any death movement, blood,
 	# dismemberment or facing callback can run.
 	_set_enemy_head_frame(2)
@@ -4803,9 +4856,10 @@ func _step_ragdoll_physics(delta: float) -> void:
 
 
 func _apply_ragdoll_transforms() -> void:
-	const HEAD_PIVOT := Vector2(14.0, 26.0)
+	var neck_pivot := Vector2(16,EMPLOYEE_NECK_ROW) if combined_upper_body else Vector2(14,26)
 	head.rotation = ragdoll_head_rot
-	head.position = head_base_position + HEAD_PIVOT + ragdoll_head_pos - HEAD_PIVOT.rotated(ragdoll_head_rot)
+	head.position = head_base_position + neck_pivot + ragdoll_head_pos - neck_pivot.rotated(ragdoll_head_rot)
+	if corpse_upper_parts_active: body.position = body_base_position
 
 	const HAND_PIVOT := Vector2(2.5, 2.0)
 	left_hand.rotation = ragdoll_left_hand_rot
@@ -6326,32 +6380,25 @@ func _update_human_animation(
 	# 朝向
 	# ========================================================
 
-	var motion := velocity
-
-	if motion.length_squared() > 0.1:
-		last_facing_direction = motion.normalized()
-		_set_back_facing(
-			motion.y < -0.2
-		)
-
-	var horizontal_sign: float = (
-		-1.0
-		if motion.x < -0.2
-		else 1.0
-	)
-
-	character_visual.scale.x = (
-		absf(
-			base_visual_scale.x
-		)
-		* horizontal_sign
-	)
+	# Armed actors can strafe/backpedal. Their face follows the held muzzle,
+	# including frames where crowd staggering skips the aim solve.
+	var facing := Vector2.RIGHT.rotated(weapon_root.rotation) if not held_weapon_id.is_empty() else velocity
+	_apply_live_facing(facing)
 
 	# Character size is fixed during normal hit/attack/movement feedback.  Every
 	# EmployeeEnemy, including the boss behavior variant, uses the shared Player
 	# visual-scale baseline; no per-frame hit scaling can accumulate or leave the
 	# actor at a different size.
 	character_visual.scale.y = absf(base_visual_scale.y)
+
+
+func _apply_live_facing(direction: Vector2) -> void:
+	if dead or direction.length_squared() < 0.001: return
+	last_facing_direction = direction.normalized()
+	_set_back_facing(direction.y < -0.2)
+	# Exact vertical aim preserves its previous horizontal side.
+	if absf(direction.x) > 0.001:
+		character_visual.scale.x = absf(base_visual_scale.x) * (1.0 if direction.x < 0.0 else -1.0)
 
 
 func _update_enemy_unarmed_visual(movement_blocked: bool) -> void:

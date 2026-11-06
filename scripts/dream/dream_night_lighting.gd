@@ -5,7 +5,7 @@ extends Node3D
 ## when the perspective mouse ray intersects the ground several cells away,
 ## while the finite range still prevents the light from washing the map out.
 @export_range(8.0, 89.0, 1.0) var flashlight_angle := 60.0
-@export var flashlight_energy := 1.1
+@export var flashlight_energy := 0.55
 @export var flashlight_attenuation := 0.80
 ## A small filter radius hides the remaining one-pixel quantization of the
 ## Compatibility renderer's positional shadow map without washing out the
@@ -63,6 +63,9 @@ var next_flash := 0
 var emitter_position := Vector3.ZERO
 var managed_shadows := false
 var shadow_transition_paused := false
+## Retain the legacy snapshot fields for firearm preparation. They only reserve
+## the strongest pulse's origin during pool reuse; muzzle lights no longer cast
+## shadows. Room lamps and the player's flashlight keep their own shadow policy.
 var _muzzle_shadow_slot := -1
 var _muzzle_shadow_frame := -1
 var _muzzle_shadow_score := 0.0
@@ -70,8 +73,8 @@ var _muzzle_shadow_score := 0.0
 
 func set_managed_shadows(enabled: bool) -> void:
 	managed_shadows = enabled
-	# Floor lamps own the player's single body shadow. Gun flashes continue
-	# to shadow furniture/enemies without adding another player silhouette.
+	# Managed mode still controls pulse priority and real-clock expiry, but gun
+	# flashes only illuminate: no transient point-light shadow maps in either mode.
 	for light in muzzle_lights:
 		light.shadow_caster_mask = light.shadow_caster_mask & ~PLAYER_SHADOW_LAYER if enabled else light.shadow_caster_mask | PLAYER_SHADOW_LAYER
 	_clear_muzzle_shadows()
@@ -129,7 +132,7 @@ func configure(owner_world: Node3D) -> void:
 		light.light_color = Color(1, 0.70, 0.34)
 		light.light_specular = 0.0
 		light.light_cull_mask = WORLD_LIGHT_CULL_MASK
-		# The office selects at most one slot; legacy callers remain unshadowed.
+		# Keep the flash illumination without a transient point-light shadow pass.
 		light.shadow_enabled = false
 		if managed_shadows: light.shadow_caster_mask &= ~PLAYER_SHADOW_LAYER
 		light.shadow_bias = 0.04
@@ -430,7 +433,9 @@ func flash_muzzle_world(muzzle_world_position: Vector3, kind: StringName) -> voi
 			_muzzle_shadow_slot = slot
 			_muzzle_shadow_frame = frame
 			_muzzle_shadow_score = score
-			light.shadow_enabled = true
+			# Reserve the same bright pulse so simultaneous shots keep their original
+			# lighting positions. Do not promote it to a shadow-casting light: changing
+			# that state on each shot adds shadow work and lighting shader variants.
 	next_flash = (slot + 1) % MUZZLE_POOL_SIZE
 
 

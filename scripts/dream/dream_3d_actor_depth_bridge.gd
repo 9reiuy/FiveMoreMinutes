@@ -2,10 +2,10 @@ extends Node3D
 ## One live 2D gameplay owner, passive visual copies, one depth-tested carrier.
 ## No duplicated movement, timers, damage, groups, signals, or collision.
 const PIXELS_PER_WORLD_CELL := 32.0
+const STANDING_CONTACT_CLEARANCE := 0.02
 const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
 const CHARACTER_PROJECTION := preload("res://scripts/dream/character_visual_projection.gd")
 const ACTOR_VOLUME_SHADOW := preload("res://scripts/dream/actor_volume_shadow.gd")
-static var _character_no_shadow_shader: Shader
 ## Formal Player/Enemy visual carriers share one receiver layer.  The Player's
 ## shadow-only carrier stays separate because a Light3D cull mask applies to
 ## both receivers and shadow casters; this lets the flashlight illuminate the
@@ -13,7 +13,7 @@ static var _character_no_shadow_shader: Shader
 const CHARACTER_VISUAL_LAYER := 2
 const PLAYER_SHADOW_LAYER := 4
 const VISUAL_CONFIG: Resource = preload("res://resources/demo_config.tres")
-const CHARACTER_EMISSION_FALLBACK := 0.045
+const CHARACTER_EMISSION_FALLBACK := 0.01
 const DEFAULT_SOURCE_PATHS: Array[NodePath] = [^"CharacterVisual", ^"HealOverlay", ^"WeaponRoot", ^"PlayerHPBar"]
 var source_actor: Node2D
 var render_viewport: SubViewport
@@ -39,6 +39,8 @@ var outline_material: ShaderMaterial
 var floor_contact_lift := 0.0
 var lowest_visible_pixel := 0.0
 var lit_material: ShaderMaterial
+var office_linear_lighting := false
+var office_power_cut := false
 var smoke_silhouette := false
 var blood_material: ShaderMaterial
 var projectile_material: ShaderMaterial
@@ -93,6 +95,10 @@ var weapon_capture_root: Node2D
 var attachment_capture_root: Node2D
 var body_contact_local := Vector2.ZERO
 var contact_scale := Vector2.ZERO
+var _contact_left_foot: Sprite2D
+var _contact_right_foot: Sprite2D
+var _contact_left_texture: Texture2D
+var _contact_right_texture: Texture2D
 var grip_local := Vector2.ZERO
 var weapon_reference_height := 0.0
 var weapon_capture_rotation_delta := 0.0
@@ -271,6 +277,8 @@ func _rebind_capture(source: Node2D, camera: Camera3D, height: float, depth: flo
 func suspend_projectile() -> void:
 	configured = false
 	set_process(false)
+	_cancel_pending_static_capture()
+	capture_initialized = false
 	actor_sprite.hide()
 	if shadow_proxy != null: shadow_proxy.hide()
 	render_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
@@ -402,14 +410,9 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 		lit_material = ShaderMaterial.new()
 		var is_character := source_actor.is_in_group(&"dream_player") or source_actor.is_in_group(&"dream_enemies")
 		var carrier_shader: Shader = preload("res://shaders/dream3d/lit_pixel_carrier.gdshader")
-		if volume_shadow_enabled and is_character:
-			if _character_no_shadow_shader == null:
-				_character_no_shadow_shader = Shader.new()
-				_character_no_shadow_shader.code = carrier_shader.code.replace(
-					"render_mode cull_disabled,", "render_mode shadows_disabled, cull_disabled,")
-			lit_material.shader = _character_no_shadow_shader
-		else:
-			lit_material.shader = carrier_shader
+		# The volume owns cast shadows; it must not disable receiving actual room,
+		# window, flashlight or furniture shadows on the visible character plane.
+		lit_material.shader = carrier_shader
 		lit_material.set_shader_parameter("capture_texture", render_viewport.get_texture())
 		lit_material.set_meta(&"runtime_uniform_owner", true)
 		_sync_character_readability()
@@ -439,7 +442,10 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 			"occlusion_cutout_enabled",
 			_should_receive_occlusion_cutout()
 		)
+		lit_material.set_shader_parameter("office_linear_lighting", office_linear_lighting)
 		actor_sprite.material_override = lit_material
+		if office_power_cut:
+			actor_sprite.set_instance_shader_parameter(&"office_power_cut", true)
 		# Use the SAME actual plane in camera and shadow passes. Shader billboards
 		# can otherwise face the light in a shadow pass and cast a different shape.
 		actor_sprite.billboard = BaseMaterial3D.BILLBOARD_DISABLED
@@ -456,7 +462,8 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 		var player_caster := source_actor.is_in_group(&"dream_player")
 		# Keep the player's existing body shadow, without the coarse gun box
 		# that projects a detached rod behind the head. Visible gun art is separate.
-		volume_shadow.configure(source_actor, PLAYER_SHADOW_LAYER if player_caster else CHARACTER_VISUAL_LAYER, not player_caster)
+		var enemy_layer := (1 << 13) if office_linear_lighting else CHARACTER_VISUAL_LAYER
+		volume_shadow.configure(source_actor, PLAYER_SHADOW_LAYER if player_caster else enemy_layer, not player_caster)
 	if solid_visual:
 		# 投影代理：与可见精灵同一 capture、同一 transform 的 SHADOWS_ONLY 孪生。
 		# 阴影仍是真实像素剪影（不是整块矩形），与 Actor 对齐、不参与碰撞；
@@ -629,6 +636,8 @@ func _create_character_layers() -> void:
 			weapon_material.set_shader_parameter("enemy_rim_enabled", false)
 			weapon_material.set_shader_parameter("capture_texture", viewport.get_texture())
 			sprite.material_override = weapon_material
+			if office_power_cut:
+				sprite.set_instance_shader_parameter(&"office_power_cut", true)
 		else:
 			attachment_capture_root = capture
 			attachment_sprite = sprite
@@ -662,17 +671,38 @@ func _refresh_body_contact() -> void:
 	if not is_instance_valid(_cached_character_visual) and source_actor != null and is_instance_valid(source_actor):
 		_cached_character_visual = source_actor.get_node_or_null(^"CharacterVisual") as Node2D
 	var body := _cached_character_visual
-	if body == null or contact_scale.is_equal_approx(body.scale.abs()):
+	if body == null:
 		return
-	# Bind feet, not the current weapon silhouette. Facing changes do not move Y.
+	if not is_instance_valid(_contact_left_foot):
+		_contact_left_foot = body.get_node_or_null(^"LeftFoot") as Sprite2D
+	if not is_instance_valid(_contact_right_foot):
+		_contact_right_foot = body.get_node_or_null(^"RightFoot") as Sprite2D
+	var left_texture := _contact_left_foot.texture if is_instance_valid(_contact_left_foot) else null
+	var right_texture := _contact_right_foot.texture if is_instance_valid(_contact_right_foot) else null
+	var scale := body.scale.abs()
+	if contact_scale.is_equal_approx(scale) and left_texture == _contact_left_texture and right_texture == _contact_right_texture:
+		return
+
+	# Sample the authored stance even if the carrier first updates while the
+	# feet are bobbing, airborne, or hidden by a full-body phone frame.
+	var rest_property := &"visual_home_position" if _cached_is_player else &"character_visual_base_position"
+	var rest: Variant = source_actor.get(rest_property)
+	var rest_position: Vector2 = rest if rest is Vector2 else body.position
+	var stance := Transform2D(0.0, scale, 0.0, rest_position)
 	var bottom := -INF
-	for foot_name in [^"LeftFoot", ^"RightFoot"]:
-		var foot := body.get_node_or_null(foot_name) as Node2D
-		if foot != null:
-			bottom = maxf(bottom, _lowest_pixel(foot) - source_actor.global_position.y + _source_fake_height_pixels())
+	for foot in [_contact_left_foot, _contact_right_foot]:
+		if not is_instance_valid(foot) or foot.texture == null:
+			continue
+		var base_property := &"left_leg_base_position" if foot == _contact_left_foot else &"right_leg_base_position"
+		var base: Variant = source_actor.get(base_property)
+		var foot_position: Vector2 = base if base is Vector2 else foot.position
+		var foot_bottom := stance * (foot_position + Vector2(0.0, _opaque_rect(foot).end.y * absf(foot.scale.y)))
+		bottom = maxf(bottom, source_actor.global_transform.basis_xform(foot_bottom).y)
 	if is_finite(bottom):
 		body_contact_local = Vector2(0.0, bottom)
-	contact_scale = body.scale.abs()
+	contact_scale = scale
+	_contact_left_texture = left_texture
+	_contact_right_texture = right_texture
 
 
 func _character_colour_origin(camera: Camera3D, height: float) -> Vector3:
@@ -689,7 +719,7 @@ func _character_colour_origin(camera: Camera3D, height: float) -> Vector3:
 		_refresh_body_contact()
 		contact_in_capture = body_contact_local + viewport_offset - Vector2(render_viewport.size) * 0.5
 	var offset := camera.global_basis.orthonormalized() * Vector3(contact_in_capture.x, -contact_in_capture.y, 0.0) / PIXELS_PER_WORLD_CELL
-	var contact_clearance := 0.012 if is_dead_enemy else floor_contact_lift
+	var contact_clearance := 0.012 if is_dead_enemy else floor_contact_lift + STANDING_CONTACT_CLEARANCE
 	return _character_ground() + Vector3.UP * (height / PIXELS_PER_WORLD_CELL + contact_clearance) - offset
 
 
@@ -754,8 +784,11 @@ func get_hit_feedback_world_position() -> Vector3:
 	var camera:=_active_world_camera()
 	if camera==null or source_actor==null: return actor_sprite.global_position
 	var torso:=source_actor.get_node_or_null(^"CharacterVisual/BodyPivot/Body") as Sprite2D
+	var combined:=bool(source_actor.get_meta(&"character_combined_upper_body",false))
+	if combined: torso=source_actor.get_node_or_null(^"CharacterVisual/BodyPivot/Head") as Sprite2D
 	if torso==null: return actor_sprite.global_position
-	var point:=source_actor.to_local(torso.to_global(_opaque_rect(torso).get_center()))
+	var center: Vector2=source_actor.get_meta(&"character_upper_torso_center",Vector2(16,25)) if combined else _opaque_rect(torso).get_center()
+	var point:=source_actor.to_local(torso.to_global(center))
 	var capture:=point+viewport_offset-Vector2(render_viewport.size)*.5
 	var basis:=camera.global_basis.orthonormalized()
 	return _character_colour_origin(camera,_source_fake_height_pixels())+basis*Vector3(capture.x,-capture.y,0)/PIXELS_PER_WORLD_CELL+basis.z*.035
@@ -962,6 +995,39 @@ func _sync_roots() -> void:
 		clone_roots.append(copy)
 
 
+## Convert each recorded gameplay point to this shot's camera plane. A
+## billboard is only a carrier: rotating a map-space trail onto it loses map
+## foreshortening and bends. Project every point, then intersect its camera
+## ray with the plane through the current head (also exact in perspective).
+func project_projectile_history(samples: Array, head: Vector2) -> Array[Vector2]:
+	var points: Array[Vector2] = []
+	var camera := _active_world_camera()
+	var map_parent := get_parent_node_3d()
+	if not configured or camera == null or map_parent == null or actor_sprite == null:
+		return points
+	var shot_origin: Variant = source_actor.get_meta(&"shot_visual_origin") if source_actor.has_meta(&"shot_visual_origin") else null
+	var shot_gameplay: Variant = source_actor.get_meta(&"shot_gameplay_origin") if source_actor.has_meta(&"shot_gameplay_origin") else null
+	if not shot_origin is Vector3 or not shot_gameplay is Vector2:
+		return points
+	var head_delta: Vector2 = head - shot_gameplay
+	var head_world: Vector3 = shot_origin + map_parent.global_basis * Vector3(head_delta.x, 0, head_delta.y) / PIXELS_PER_WORLD_CELL
+	if camera.is_position_behind(head_world): return points
+	var basis := camera.global_basis.orthonormalized()
+	for sample in samples:
+		var delta: Vector2 = sample.position - shot_gameplay
+		var world_point: Vector3 = shot_origin + map_parent.global_basis * Vector3(delta.x, 0, delta.y) / PIXELS_PER_WORLD_CELL
+		if camera.is_position_behind(world_point): return []
+		var screen := camera.unproject_position(world_point)
+		var ray_origin := camera.project_ray_origin(screen)
+		var ray_direction := camera.project_ray_normal(screen)
+		var denominator := ray_direction.dot(basis.z)
+		if absf(denominator) < .000001: return []
+		var intersection := ray_origin + ray_direction * (head_world - ray_origin).dot(basis.z) / denominator
+		var relative := intersection - head_world
+		points.append(Vector2(relative.dot(basis.x), -relative.dot(basis.y)) / actor_sprite.pixel_size)
+	return points
+
+
 func _shot_capture_heading(camera: Camera3D) -> float:
 	# Both the tracer and muzzle burst live on camera-facing capture planes.
 	# Their 2D gameplay direction must be projected through the current map and
@@ -1083,7 +1149,11 @@ func _process_profiled(_delta:float)->void:
 		return
 	_sync_roots()
 	if projectile_material != null and source_actor.has_method(&"flush_office_tracer_update"):
-		source_actor.flush_office_tracer_update()
+		var trail_camera := _active_world_camera()
+		# Camera changes can occur between physics ticks. Reproject the retained
+		# points once before capture, without advancing their lifetime or damage.
+		var camera_signature := hash([trail_camera.global_transform, trail_camera.get_camera_projection(), get_parent_node_3d().global_transform]) if trail_camera != null else 0
+		source_actor.flush_office_tracer_update(camera_signature)
 	var height := 0.0 if ground_only else _source_fake_height_pixels()
 	var camera := _active_world_camera()
 	if character_projection and not is_instance_valid(_cached_character_visual):
@@ -1121,7 +1191,8 @@ func _process_profiled(_delta:float)->void:
 		skip_staggered_enemy_sync = ((Engine.get_process_frames() + get_instance_id()) & 1) == 1
 	if not skip_capture_sync and not skip_staggered_enemy_sync:
 		weapon_capture_rotation_delta = _weapon_capture_delta(camera)
-		var shot_heading := _shot_capture_heading(camera) if has_shot_origin else NAN
+		var projected_history := bool(source_actor.get_meta(&"projectile_history_projected", false))
+		var shot_heading := _shot_capture_heading(camera) if has_shot_origin and not projected_history else NAN
 		if not is_nan(shot_heading) and not _cached_bullet_sprite_resolved:
 			_cached_bullet_sprite = source_actor.get_node_or_null(^"BulletSprite") as Node2D
 			_cached_bullet_sprite_resolved = true
@@ -1148,6 +1219,16 @@ func _process_profiled(_delta:float)->void:
 				# only the captured weapon pixels follow the formal camera projection.
 				capture.x = capture.x.rotated(weapon_capture_rotation_delta)
 				capture.y = capture.y.rotated(weapon_capture_rotation_delta)
+			if character_projection and source == _cached_character_visual and _cached_is_enemy and upright_contact:
+				# Body pixels are upright; weapon pixels have already been projected.
+				# Match their screen-space sides without changing gameplay/FOV heading.
+				var held: Variant = source_actor.get("held_weapon_id")
+				if held != null and not String(held).is_empty() and is_instance_valid(_cached_weapon_root):
+					var screen_heading := _cached_weapon_root.global_rotation + weapon_capture_rotation_delta
+					var horizontal := cos(screen_heading)
+					var authored_side := float(source_actor.get_meta(&"character_authored_facing_x",1.0))
+					if absf(horizontal) > 0.001 and capture.determinant() * horizontal * authored_side < 0.0:
+						capture.x = -capture.x
 			capture.origin += viewport_offset
 			if not optimize_capture_transform or copy.transform != capture:
 				copy.transform = capture
@@ -1257,23 +1338,9 @@ func _process_profiled(_delta:float)->void:
 		and camera_viewport_rect.grow(160).has_point(camera.unproject_position(actor_sprite.global_position)))
 	# 血迹（永久保留）纳入静态捕获：settle 后 SubViewport 不再每帧重绘，
 	# 仅当载荷版本变化（新血滴落地 / append_wall_impact）时刷新一次。
-	if _cached_room_gated_prop:
-		# configure() and _process() can both run before the first rendered frame.
-		# Do not cancel UPDATE_ONCE or accept a static capture until the renderer
-		# has actually completed it with this room's drawable source.
+	if _cached_room_gated_prop or (static_capture and not freeze_pending):
 		freeze_pending = false
-		var signature := _capture_signature(render_root)
-		if not capture_initialized or signature != last_static_signature:
-			if not furniture_capture_pending:
-				last_static_signature = signature
-				furniture_capture_pending = true
-				render_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-				furniture_capture_callback = _on_furniture_capture_drawn.bind(furniture_capture_epoch)
-				RenderingServer.frame_post_draw.connect(furniture_capture_callback, CONNECT_ONE_SHOT)
-		elif not furniture_capture_pending:
-			render_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
-			static_visual_frozen = true
-			set_process(false)
+		_sync_static_capture()
 	elif freeze_pending:
 		# 静态血迹冻结：UPDATE_ONCE 与可见性无关（离屏同样完成单次捕获），
 		# 冻结后该 bridge 的 per-frame 成本归零（Door 血转 transform-only）。
@@ -1284,21 +1351,6 @@ func _process_profiled(_delta:float)->void:
 		else:
 			static_visual_frozen = true
 			set_process(false)
-	elif static_capture:
-		if not capture_initialized:
-			render_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-			last_static_signature = _capture_signature(render_root)
-			capture_initialized = true
-		else:
-			var signature := _capture_signature(render_root)
-			if signature != last_static_signature:
-				last_static_signature = signature
-				render_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-			else:
-				render_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
-				if not _cached_is_enemy and not _cached_is_player and not source_actor.is_in_group(&"physical_doors"):
-					static_visual_frozen = true
-					set_process(false)
 	elif on_screen and source_actor.visible:
 		render_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	else:
@@ -1328,7 +1380,29 @@ func _sync_volume_shadow(camera: Camera3D, height: float) -> void:
 		muzzle = _weapon_visual_snapshot_synced(marker.global_position, camera).get("world_origin")
 	volume_shadow.sync_pose(_character_ground(), get_parent_node_3d().global_basis, height / PIXELS_PER_WORLD_CELL, grip, muzzle)
 
-func _on_furniture_capture_drawn(epoch: int) -> void:
+func _sync_static_capture() -> void:
+	# A new or reused viewport can still contain unrelated GPU pixels. A
+	# second sync in this frame must not cancel the pending first draw.
+	if not capture_initialized:
+		actor_sprite.hide()
+		if shadow_proxy != null: shadow_proxy.hide()
+	if furniture_capture_pending:
+		return
+	var signature := _capture_signature(render_root)
+	if not capture_initialized or signature != last_static_signature:
+		last_static_signature = signature
+		furniture_capture_pending = true
+		render_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+		furniture_capture_callback = _on_static_capture_drawn.bind(furniture_capture_epoch)
+		RenderingServer.frame_post_draw.connect(furniture_capture_callback, CONNECT_ONE_SHOT)
+		return
+	render_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	if _cached_room_gated_prop or (not _cached_is_enemy and not _cached_is_player and not source_actor.is_in_group(&"physical_doors")):
+		static_visual_frozen = true
+		set_process(false)
+
+
+func _on_static_capture_drawn(epoch: int) -> void:
 	if epoch != furniture_capture_epoch:
 		return
 	furniture_capture_pending = false
@@ -1434,14 +1508,17 @@ func resize_blood_ground_capture(half_extent: float) -> void:
 func request_capture_refresh() -> void:
 	if transform_only:
 		return
-	if furniture_capture_callback.is_valid() and RenderingServer.frame_post_draw.is_connected(furniture_capture_callback):
-		RenderingServer.frame_post_draw.disconnect(furniture_capture_callback)
-	furniture_capture_epoch += 1
-	furniture_capture_pending = false
+	_cancel_pending_static_capture()
 	static_visual_frozen = false
 	capture_initialized = false
 	last_static_signature = 0
 	set_process(true)
+
+func _cancel_pending_static_capture() -> void:
+	if furniture_capture_callback.is_valid() and RenderingServer.frame_post_draw.is_connected(furniture_capture_callback):
+		RenderingServer.frame_post_draw.disconnect(furniture_capture_callback)
+	furniture_capture_epoch += 1
+	furniture_capture_pending = false
 
 
 ## Room visibility owns the gameplay source, while a frozen static bridge no
@@ -1454,13 +1531,11 @@ func set_room_presentation_active(active: bool) -> void:
 		return
 	room_presentation_active = active
 	if not active:
-		if furniture_capture_callback.is_valid() and RenderingServer.frame_post_draw.is_connected(furniture_capture_callback):
-			RenderingServer.frame_post_draw.disconnect(furniture_capture_callback)
-		furniture_capture_epoch += 1
-		furniture_capture_pending = false
+		_cancel_pending_static_capture()
 		render_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 		set_process(false)
-		var is_visible: bool = (source_actor != null and is_instance_valid(source_actor) and source_actor.visible)
+		var is_visible: bool = (source_actor != null and is_instance_valid(source_actor) and source_actor.visible
+			and (not _cached_static_capture_source or capture_initialized))
 		if actor_sprite != null and is_instance_valid(actor_sprite):
 			actor_sprite.visible = is_visible
 		if shadow_proxy != null and is_instance_valid(shadow_proxy):
@@ -1722,3 +1797,12 @@ func set_smoke_silhouette(enabled: bool) -> void:
 			sprite.material_overlay=overlay
 		elif overlay!=null and sprite.material_overlay==overlay:
 			sprite.material_overlay=sprite.get_meta(&"pre_smoke_overlay") if sprite.has_meta(&"pre_smoke_overlay") else null
+
+
+func set_office_power_cut(value: bool) -> void:
+	if not office_linear_lighting:
+		return
+	office_power_cut = value
+	for sprite in [actor_sprite, weapon_sprite]:
+		if is_instance_valid(sprite) and sprite.material_override is ShaderMaterial:
+			sprite.set_instance_shader_parameter(&"office_power_cut", value)

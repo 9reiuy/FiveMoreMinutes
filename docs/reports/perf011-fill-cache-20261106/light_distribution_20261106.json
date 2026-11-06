@@ -1,0 +1,448 @@
+{
+  "candidate": {
+    "revision": "PERF011 R4 - C7 visuals, corrected shadow-proxy associations",
+    "manifest": "perf011_fill_cache_20261106/R4_manifest.json",
+    "manifest_sha256": "1097531022D858C1D8CF1E28A498FDBDC592E8368821FF102CCCE8B15E0257C1",
+    "cache_session": "PlaySessions/PERF011_R4_native07"
+  },
+  "seed": 42001,
+  "scope": "Delivered R4 fixed sample floor, powered-on. Area allocation from latest entry layout and native fixture; active-node example from matching R4 office snapshot, not current live user camera.",
+  "room_names_source": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\lighting_reflection_lab_20261104\\evidence\\inspection.json",
+  "room_bounds_exact_match_to_current": true,
+  "floor_cells": 2494,
+  "rooms": [
+    {
+      "id": 0,
+      "name": "大办公区",
+      "archetype": "open_office",
+      "cells": 744,
+      "rect": [
+        15.5,
+        32.5,
+        31,
+        24
+      ],
+      "top_lights": 2,
+      "fill_lights": 2,
+      "interior_light_nodes": 4,
+      "positions": [
+        [
+          23.25,
+          44.5
+        ],
+        [
+          38.75,
+          44.5
+        ]
+      ]
+    },
+    {
+      "id": 1,
+      "name": "接待区",
+      "archetype": "reception",
+      "cells": 140,
+      "rect": [
+        23.5,
+        56.5,
+        14,
+        10
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          30.5,
+          61.5
+        ]
+      ]
+    },
+    {
+      "id": 2,
+      "name": "办公区上方横廊",
+      "archetype": "corridor",
+      "cells": 168,
+      "rect": [
+        15.5,
+        28.5,
+        42,
+        4
+      ],
+      "top_lights": 2,
+      "fill_lights": 2,
+      "interior_light_nodes": 4,
+      "positions": [
+        [
+          26.0,
+          30.5
+        ],
+        [
+          47.0,
+          30.5
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "name": "经理室 A",
+      "archetype": "manager",
+      "cells": 120,
+      "rect": [
+        47.5,
+        16.5,
+        10,
+        12
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          52.5,
+          22.5
+        ]
+      ]
+    },
+    {
+      "id": 4,
+      "name": "左侧长走廊",
+      "archetype": "corridor",
+      "cells": 192,
+      "rect": [
+        11.5,
+        18.5,
+        4,
+        48
+      ],
+      "top_lights": 2,
+      "fill_lights": 2,
+      "interior_light_nodes": 4,
+      "positions": [
+        [
+          13.5,
+          30.5
+        ],
+        [
+          13.5,
+          54.5
+        ]
+      ]
+    },
+    {
+      "id": 5,
+      "name": "下方左侧短廊",
+      "archetype": "corridor",
+      "cells": 32,
+      "rect": [
+        15.5,
+        56.5,
+        8,
+        4
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          19.5,
+          58.5
+        ]
+      ]
+    },
+    {
+      "id": 6,
+      "name": "档案室",
+      "archetype": "archive",
+      "cells": 110,
+      "rect": [
+        0.5,
+        34.5,
+        11,
+        10
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          6.0,
+          39.5
+        ]
+      ]
+    },
+    {
+      "id": 7,
+      "name": "茶水间",
+      "archetype": "pantry",
+      "cells": 100,
+      "rect": [
+        1.5,
+        53.5,
+        10,
+        10
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          6.5,
+          58.5
+        ]
+      ]
+    },
+    {
+      "id": 8,
+      "name": "机房",
+      "archetype": "server",
+      "cells": 110,
+      "rect": [
+        5.5,
+        6.5,
+        10,
+        11
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          10.5,
+          12.0
+        ]
+      ]
+    },
+    {
+      "id": 9,
+      "name": "大会议室",
+      "archetype": "conference_large",
+      "cells": 168,
+      "rect": [
+        15.5,
+        14.5,
+        12,
+        14
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          21.5,
+          21.5
+        ]
+      ]
+    },
+    {
+      "id": 10,
+      "name": "休息室",
+      "archetype": "lounge",
+      "cells": 100,
+      "rect": [
+        46.5,
+        39.5,
+        10,
+        10
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          51.5,
+          44.5
+        ]
+      ]
+    },
+    {
+      "id": 11,
+      "name": "右侧长走廊",
+      "archetype": "corridor",
+      "cells": 268,
+      "rect": [
+        57.5,
+        -0.5,
+        4,
+        67
+      ],
+      "top_lights": 3,
+      "fill_lights": 3,
+      "interior_light_nodes": 6,
+      "positions": [
+        [
+          59.5,
+          10.6666669845581
+        ],
+        [
+          59.5,
+          33.0
+        ],
+        [
+          59.5,
+          55.3333358764648
+        ]
+      ]
+    },
+    {
+      "id": 12,
+      "name": "下方右侧横廊",
+      "archetype": "corridor",
+      "cells": 80,
+      "rect": [
+        37.5,
+        56.5,
+        20,
+        4
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          47.5,
+          58.5
+        ]
+      ]
+    },
+    {
+      "id": 13,
+      "name": "经理室 B",
+      "archetype": "manager",
+      "cells": 120,
+      "rect": [
+        38.5,
+        6.5,
+        12,
+        10
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          44.5,
+          11.5
+        ]
+      ]
+    },
+    {
+      "id": 14,
+      "name": "储藏室",
+      "archetype": "storage",
+      "cells": 42,
+      "rect": [
+        -0.5,
+        44.5,
+        7,
+        6
+      ],
+      "top_lights": 1,
+      "fill_lights": 1,
+      "interior_light_nodes": 2,
+      "positions": [
+        [
+          3.0,
+          47.5
+        ]
+      ]
+    }
+  ],
+  "interior_top_lights": 20,
+  "interior_fill_lights": 20,
+  "corridor_top_lights": 9,
+  "snapshot_nodes_allocated": 196,
+  "snapshot_visible_nonzero_energy": 51,
+  "snapshot_other_active": [
+    {
+      "caster": 4294967295,
+      "cull": 4294967295,
+      "energy": 0.349999994039536,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/GeneratedBuildingRoot/WakeExitRoot/ElevatorFloorDoor3D/IndustrialFacade/FreightAmberDownlight",
+      "shadow": false,
+      "visible": true
+    },
+    {
+      "caster": 131085,
+      "cull": 917519,
+      "energy": 0.550000011920929,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/OfficeShadowManager/ExteriorWindowSun",
+      "shadow": true,
+      "visible": true
+    },
+    {
+      "caster": 9,
+      "cull": 589839,
+      "energy": 3.20000004768372,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/ExteriorPatrolDrones/ExteriorPatrolDrone_0/ExteriorDroneBody/PatrolLight",
+      "shadow": true,
+      "visible": true
+    },
+    {
+      "caster": 9,
+      "cull": 589839,
+      "energy": 3.20000004768372,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/ExteriorPatrolDrones/ExteriorPatrolDrone_1/ExteriorDroneBody/PatrolLight",
+      "shadow": true,
+      "visible": true
+    },
+    {
+      "caster": 131081,
+      "cull": 65536,
+      "energy": 0.550000011920929,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/NightLightingPlayerReceiver/PlayerReceiver",
+      "shadow": true,
+      "visible": true
+    },
+    {
+      "caster": 131081,
+      "cull": 65536,
+      "energy": 1.04999995231628,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/NightLightingPlayerReceiver/PlayerReceiver2",
+      "shadow": true,
+      "visible": true
+    },
+    {
+      "caster": 131081,
+      "cull": 65536,
+      "energy": 1.04999995231628,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/NightLightingPlayerReceiver/PlayerReceiver3",
+      "shadow": true,
+      "visible": true
+    },
+    {
+      "caster": 131081,
+      "cull": 65536,
+      "energy": 1.04999995231628,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/NightLightingPlayerReceiver/PlayerReceiver4",
+      "shadow": true,
+      "visible": true
+    },
+    {
+      "caster": 131081,
+      "cull": 65536,
+      "energy": 1.04999995231628,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/NightLightingPlayerReceiver/PlayerReceiver5",
+      "shadow": true,
+      "visible": true
+    },
+    {
+      "caster": 131081,
+      "cull": 65536,
+      "energy": 1.04999995231628,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/NightLightingPlayerReceiver/PlayerReceiver6",
+      "shadow": true,
+      "visible": true
+    },
+    {
+      "caster": 131081,
+      "cull": 65536,
+      "energy": 1.04999995231628,
+      "path": "/root/LightingReflectionLab/SelectivePixelPreview/WorldDisplayContainer/WorldViewport/LabWorld/NightLightingPlayerReceiver/PlayerReceiver7",
+      "shadow": true,
+      "visible": true
+    }
+  ],
+  "floor_map_source": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\PERF011_R4_native07\\trace.json",
+  "entry_layout_source": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\Play_20261106-053905_startup_check\\ready.json",
+  "snapshot_source": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\PERF011_R4_visual05\\visual.json"
+}

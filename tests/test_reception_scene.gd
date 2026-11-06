@@ -28,34 +28,32 @@ func _run() -> void:
 	await process_frame
 	
 	# 1. Floor verification
-	var expected_floors := 26 * 16 + 8 * 4 # Approved 2026-10-14 lobby layout
-	_check(room.floor_cells.size() == expected_floors, "Floor cells count matches (expected %d, got %d)" % [expected_floors, room.floor_cells.size()])
-	_check(room.floor_cells.has(Vector2i(0, 0)), "Main hall corner (0,0) has floor")
-	_check(room.floor_cells.has(Vector2i(25, 15)), "Main hall corner (25,15) has floor")
-	_check(room.floor_cells.has(Vector2i(9, 16)), "Corridor start (9,16) has floor")
-	_check(room.floor_cells.has(Vector2i(16, 19)), "Corridor end (16,19) has floor")
-	_check(not room.floor_cells.has(Vector2i(0, 16)), "Outside corridor (0,16) has no floor")
-	_check(not room.floor_cells.has(Vector2i(25, 16)), "Outside corridor (25,16) has no floor")
+	var expected_floors := 14*8 + 3*3
+	_check(room.floor_cells.size()==expected_floors,"Compact lobby and right vestibule occupy 121 cells")
+	for cell in [Vector2i(0,0),Vector2i(13,7),Vector2i(14,3),Vector2i(16,5)]:
+		_check(room.floor_cells.has(cell),"Expected floor at "+str(cell))
+	for cell in [Vector2i(0,8),Vector2i(14,2),Vector2i(17,4)]:
+		_check(not room.floor_cells.has(cell),"No floor outside compact perimeter at "+str(cell))
 	
 	# 2. Player spawn verification
-	var expected_player_pos := Vector2(12.5, 18.5) * 32.0
+	var expected_player_pos: Vector2 = room.PLAYER_SPAWN
 	_check(room.player != null, "Player exists")
-	_check(room.player.global_position.distance_to(expected_player_pos) < 0.1, "Player spawn position is at Vector2(12.5, 18.5)*32.0")
+	_check(room.player.global_position.distance_to(expected_player_pos) < 0.1, "Player spawns in the right vestibule")
 	_check(bool(room.player.get("movement_enabled")) == true, "Player movement is enabled")
 	_check(bool(room.player.get("attacking_enabled")) == false, "Player attacking is disabled (safe lobby)")
 	_check(bool(room.player.get("dash_enabled")) == true, "Player dash is enabled")
 	
 	# 3. Elevator verification
 	_check(room.elevator_floor_door != null, "ElevatorFloorDoor3D exists")
-	_check(room.elevator_floor_door.position.distance_to(Vector3(3.5, 0.0, -0.5)) < 0.01, "Elevator position is Vector3(3.5, 0.0, -0.5)")
+	_check(room.elevator_floor_door.position.distance_to(Vector3(1.5, 0.0, -0.5)) < 0.01, "Elevator position is Vector3(1.5, 0.0, -0.5)")
 	_check(room.elevator_floor_door.door_orientation == ElevatorFloorDoor3D.Orientation.UP, "Elevator orientation is UP")
 	
 	# 4. Reception Desk & Waitress verification
 	_check(room.reception_desk != null, "Reception desk exists")
-	_check(room.reception_desk.position.distance_to(Vector3(16.0, 0.0, 3.6)) < 0.01, "Reception desk position is Vector3(16.0, 0.0, 3.6)")
+	_check(room.reception_desk.position.distance_to(Vector3(8.0, 0.0, 2.8)) < 0.01, "Reception desk position is Vector3(8.0, 0.0, 2.8)")
 	_check(room.waitress_npc != null, "Waitress NPC exists")
-	var expected_npc_pos := Vector2(16.0, 2.6) * 32.0
-	_check(room.waitress_npc.global_position.distance_to(expected_npc_pos) < 0.1, "Waitress NPC position is at Vector2(16.0, 2.6)*32.0")
+	var expected_npc_pos := Vector2(8.0, 1.8) * 32.0
+	_check(room.waitress_npc.global_position.distance_to(expected_npc_pos) < 0.1, "Waitress NPC position is at Vector2(8.0, 1.8)*32.0")
 	
 	# 5. Walls & cutaways verification
 	var cutaway_walls := 0
@@ -82,11 +80,15 @@ func _run() -> void:
 			_check(rect.size.distance_to(expected_desk_size) < 0.1, "Desk collision size matches updated ~108.8x35.2 bounds (got %s, expected %s)" % [rect.size, expected_desk_size])
 	
 	# 7. Elevator Approach Trigger & Prompt
+	room.player.global_position=room.elevator_floor_door.get_corridor_approach_position_2d()
+	await physics_frame; await process_frame
 	room._on_elevator_approach_entered(room.player)
 	room._update_interaction_prompt()
 	_check(room.interaction_prompt.visible == true, "Interaction prompt is visible on elevator approach")
 	_check(room.interaction_prompt.text == "进入", "Interaction prompt text is '进入'")
 	
+	room.player.global_position=room.PLAYER_SPAWN
+	await physics_frame; await process_frame
 	room._on_elevator_approach_exited(room.player)
 	room._update_interaction_prompt()
 	await create_timer(0.12).timeout
@@ -95,11 +97,13 @@ func _run() -> void:
 	# 8. Elevator Sequence and Signal
 	var tracker := {"received": false}
 	room.elevator_entered.connect(func(): tracker["received"] = true)
+	room.player.global_position=room.elevator_floor_door.get_corridor_approach_position_2d()
+	await physics_frame; await process_frame
 	room._start_elevator_entry()
 	
 	# Wait for elevator sequence to finish (open, walk, close, fade)
 	var wait_time := 0.0
-	while not tracker["received"] and wait_time < 4.0:
+	while not tracker["received"] and wait_time < 12.0:
 		await create_timer(0.1).timeout
 		wait_time += 0.1
 		

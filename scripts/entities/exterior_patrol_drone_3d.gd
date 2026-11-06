@@ -20,6 +20,10 @@ const DETECT_RANGE := 300.0
 const SPOT_SECONDS := 0.5
 const PATROL_HALF_LENGTH := 1.35
 const PATROL_SPEED := 1.15
+const PATROL_LIGHT_ENERGY := 3.2
+const LOCK_LIGHT_ENERGY := 5.2
+const LOCK_LIGHT_COLOR := Color(1.0, 0.08, 0.08)
+const LOCK_SIGHT_INTERVAL := 0.07
 
 var world: Node3D
 var player: Node2D
@@ -52,10 +56,17 @@ var _body: Node3D
 var _proxy: StaticBody2D
 var _muzzle_2d: Node2D
 var _dead := false
+var _searchlight_circuit_on := true
+var _light_lock := 0.0
+var _lock_sight_left := 0.0
+var _lock_sight_clear := false
+var _beam: MeshInstance3D
+var _beam_material: ShaderMaterial
+var _beam_elapsed := 0.0
 
 
 func _ready() -> void:
-	_body = DRONE_BUILDER.build()
+	_body = DRONE_BUILDER.build(true)
 	_body.name = "ExteriorDroneBody"
 	_body.scale = Vector3.ONE * 1.3*SIZE_RATIO
 	add_child(_body)
@@ -76,14 +87,27 @@ func _ready() -> void:
 	# 所以屏幕上是「一束朝前打的光」而不是照地板的圆斑。
 	_spot_light = SpotLight3D.new()
 	_spot_light.name = "PatrolLight"
-	_spot_light.light_color = Color(1.0, 0.82, 0.55)
-	_spot_light.light_energy = 0.0
-	_spot_light.spot_range = 18.0
+	_spot_light.light_color = Color.WHITE
+	_spot_light.light_energy = PATROL_LIGHT_ENERGY
+	_spot_light.spot_range = 10.0
 	_spot_light.spot_angle = 20.0
-	_spot_light.spot_attenuation = 1.5
+	_spot_light.spot_attenuation = 0.85
+	_spot_light.spot_angle_attenuation = 0.65
+	_spot_light.light_cull_mask = 1 | 2 | 4 | 8
+	_spot_light.shadow_enabled = true
+	_spot_light.shadow_bias = 0.025
+	_spot_light.shadow_normal_bias = 0.10
+	_spot_light.shadow_blur = 2.0
+	# The floor's single chosen source owns the player's long body shadow.
+	# The searchlight still lights/shadows actors and casts environment shadows.
+	_spot_light.shadow_caster_mask = 1 | 8
 	_spot_light.position = Vector3(0.0, 0.1, -0.46)
 	_spot_light.rotation.x = deg_to_rad(-12.0)
 	_body.add_child(_spot_light)
+	_build_searchlight_beam()
+	var breaker := world.key_root.get_node_or_null("FloorPowerSwitch") as Node
+	if is_instance_valid(breaker) and not breaker.powered:
+		set_searchlight_powered(false)
 
 	_build_proxy()
 	global_position = patrol_center
@@ -121,9 +145,11 @@ func _physics_process(delta: float) -> void:
 	_update_detection(delta)
 	_apply_facing()
 	_sync_2d()
+	_update_lock_sight(delta)
 
 func _process(delta: float) -> void:
 	if _dead: return
+	_update_searchlight(delta)
 	body_recoil=maxf(0.0,body_recoil-delta*5.5)
 	if is_instance_valid(_body):
 		_body.position.z=body_recoil*.09
@@ -190,11 +216,10 @@ func _sync_2d() -> void:
 
 func _update_detection(delta: float) -> void:
 	if not is_instance_valid(player) or player.get("dead") == true:
-		_set_light(0.0)
 		return
 	if _smoke_blocks_player():
 		_spot_elapsed=-1.0
-		_set_light(0.0)
+		_lock_sight_clear = false
 		_cooldown=maxf(0,_cooldown-delta)
 		_reload_left=maxf(0,_reload_left-delta)
 		return
@@ -206,11 +231,9 @@ func _update_detection(delta: float) -> void:
 	if _spot_elapsed >= 0.0:
 		if _spot_elapsed<.38: _aim_target=player.global_position
 		_spot_elapsed += delta
-		_set_light(lerpf(1.4, 5.2, clampf(_spot_elapsed / SPOT_SECONDS, 0.0, 1.0)))
 		if _spot_elapsed >= SPOT_SECONDS:
 			if _can_see_player(): _fire()
 			_spot_elapsed = -1.0
-			_set_light(0.0)
 		return
 	if _cooldown <= 0.0 and _can_see_player():
 		if _magazine_primed: _fire()
@@ -246,15 +269,101 @@ func firearm_parameters() -> Dictionary:
 func get_ranged_telegraph_state() -> Dictionary:
 	if _smoke_blocks_player():return {}
 	if _dead or _spot_elapsed<0.0 or not is_instance_valid(_muzzle_2d): return {}
-	return {"start":_muzzle_2d.global_position,"target":_aim_target,"progress":clampf(_spot_elapsed/SPOT_SECONDS,0,1)}
+	var body := world.to_local(global_position)
+	return {"start": Vector2(body.x, body.z) * CELL_PIXELS, "center_world": global_position,
+		"sight_start": _muzzle_2d.global_position, "target": _aim_target,
+		"progress": clampf(_spot_elapsed / SPOT_SECONDS, 0.0, 1.0),
+		"shot_range": float(firearm_parameters().range)}
 
 func get_weapon_visual_snapshot(gameplay_position: Vector2) -> Dictionary:
 	return {"world_origin":_muzzle_3d.global_position,"gameplay_origin":gameplay_position} if is_instance_valid(_muzzle_3d) else {}
 
 
-func _set_light(energy: float) -> void:
-	if _spot_light != null:
+func _update_lock_sight(delta: float) -> void:
+	if not is_instance_valid(player) or player.dead or (_spot_elapsed < 0.0 and not _magazine_primed):
+		_lock_sight_left = 0.0
+		_lock_sight_clear = false
+		return
+	_lock_sight_left -= delta
+	if _lock_sight_left <= 0.0:
+		_lock_sight_left = LOCK_SIGHT_INTERVAL
+		_lock_sight_clear = _can_see_player()
+
+func set_searchlight_powered(enabled: bool) -> void:
+	_searchlight_circuit_on = enabled
+	if not _dead:
+		_update_searchlight(0.0)
+
+
+func _update_searchlight(delta: float) -> void:
+	if not _searchlight_circuit_on or not is_instance_valid(world) or world.floor_transition_in_progress \
+		or not is_instance_valid(player) or player.dead:
+		_switch_searchlight_off()
+		return
+	var progress := 0.0
+	if _lock_sight_clear:
+		progress = clampf(_spot_elapsed / SPOT_SECONDS, 0.0, 1.0) if _spot_elapsed >= 0.0 else float(_magazine_primed)
+	_light_lock = move_toward(_light_lock, progress, delta / 0.18)
+	var color := Color.WHITE.lerp(LOCK_LIGHT_COLOR, smoothstep(0.0, 1.0, _light_lock))
+	var energy := lerpf(PATROL_LIGHT_ENERGY, LOCK_LIGHT_ENERGY, _light_lock)
+	if not _spot_light.visible or _beam_elapsed >= 0.12:
+		_beam_elapsed = 0.0
+		_update_beam_length()
+	if _spot_light.light_color != color:
+		_spot_light.light_color = color
+		_beam_material.set_shader_parameter(&"light_tint", color)
+	if not is_equal_approx(_spot_light.light_energy, energy):
 		_spot_light.light_energy = energy
+		_beam_material.set_shader_parameter(&"density", lerpf(0.03, 0.041, _light_lock))
+	if not _spot_light.visible:
+		_spot_light.show()
+	if not _beam.visible:
+		_beam.show()
+	_beam_elapsed += delta
+
+func _switch_searchlight_off() -> void:
+	_light_lock = 0.0
+	if _spot_light.light_energy != 0.0:
+		_spot_light.light_energy = 0.0
+	if _spot_light.visible:
+		_spot_light.hide()
+	if _beam.visible:
+		_beam.hide()
+
+func _build_searchlight_beam() -> void:
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(4.38,4.38,6.0)
+	_beam = MeshInstance3D.new()
+	_beam.name = "SearchlightAir"
+	_beam.set_meta(&"unit_visual_fx",true)
+	_beam.mesh = mesh
+	_beam.position.z = -3.0
+	_beam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_beam_material = ShaderMaterial.new()
+	_beam_material.set_meta(&"runtime_uniform_owner", true)
+	_beam_material.shader = preload("res://shaders/dream3d/patrol_light_scattering.gdshader")
+	_beam_material.set_shader_parameter(&"light_tint", Color.WHITE)
+	_beam.material_override = _beam_material
+	_spot_light.add_child(_beam)
+
+func _update_beam_length() -> void:
+	if not is_instance_valid(world) or not is_instance_valid(player): return
+	# Transparent pixel walls are not in Compatibility's opaque depth copy.
+	# Clip the air volume against the existing gameplay LOS as well, without
+	# changing the real light's shadowing or the drone's targeting/combat rules.
+	var origin: Vector3 = _spot_light.global_position
+	var map_origin: Vector3 = world.to_local(origin)
+	var from_2d := Vector2(map_origin.x,map_origin.z)*CELL_PIXELS
+	var forward := -_spot_light.global_basis.z.normalized()
+	var limit := 6.0*_spot_light.global_basis.z.length()
+	if forward.y < -0.001: limit = minf(limit,maxf(origin.y/-forward.y,0.1))
+	var low := 0.0; var high := limit
+	for i in 7:
+		var distance := (low+high)*0.5
+		var point: Vector3 = world.to_local(origin+forward*distance)
+		if world.exterior_drone_sight_clear(from_2d,Vector2(point.x,point.z)*CELL_PIXELS): low=distance
+		else: high=distance
+	_beam_material.set_shader_parameter("visible_length",maxf(0.05,low/_spot_light.global_basis.z.length()))
 
 
 func _fire() -> void:
@@ -335,7 +444,7 @@ func take_damage(amount: float, _hit_origin: Vector2 = Vector2.ZERO, _force: flo
 		if is_instance_valid(_proxy):
 			_proxy.dead=true
 			_proxy.remove_from_group(&"dream_enemies")
-		_set_light(0.0)
+		_switch_searchlight_off()
 		if is_instance_valid(_rig):
 			_rig.set_flash_time(9.0)
 			_rig.set_process(false)

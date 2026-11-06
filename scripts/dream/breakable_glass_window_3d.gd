@@ -264,11 +264,13 @@ func shatter(impact_direction: Vector2 = Vector2.ZERO) -> void:
 		collision_shape_2d.set_deferred("disabled", true)
 
 	if glass_pane != null and is_instance_valid(glass_pane):
-		glass_pane.visible = false
 		if is_inside_tree():
 			_spawn_shards(impact_direction)
+		glass_pane.visible = false
 
 	if frame_root != null and is_instance_valid(frame_root):
+		# The complete contacted glass cell breaks away, including the overhead
+		# header and its opaque shadow twins. No floating top frame remains.
 		frame_root.visible = false
 	for cap in cutaway_caps:
 		if is_instance_valid(cap):

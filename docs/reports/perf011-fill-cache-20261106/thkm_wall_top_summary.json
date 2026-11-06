@@ -1,0 +1,5526 @@
+{
+  "black_slots": 368,
+  "horizontal_flat_count": 323,
+  "slot_geometry": [
+    {
+      "name": "Pillar_40cm_A (1)",
+      "renderer": 10048,
+      "material_slot": 2,
+      "mesh_submesh": 16,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 14,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10049,
+      "material_slot": 1,
+      "mesh_submesh": 195,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 194,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10050,
+      "material_slot": 1,
+      "mesh_submesh": 208,
+      "triangles": 6,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 207,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10051,
+      "material_slot": 1,
+      "mesh_submesh": 162,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 161,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 10052,
+      "material_slot": 1,
+      "mesh_submesh": 106,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 105,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10054,
+      "material_slot": 1,
+      "mesh_submesh": 438,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 437,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10058,
+      "material_slot": 1,
+      "mesh_submesh": 210,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 209,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 10067,
+      "material_slot": 0,
+      "mesh_submesh": 260,
+      "triangles": 106,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 260,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 10067,
+      "material_slot": 1,
+      "mesh_submesh": 261,
+      "triangles": 14,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 260,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 10089,
+      "material_slot": 0,
+      "mesh_submesh": 285,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 285,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Window_2m_A_Mesh",
+      "renderer": 10093,
+      "material_slot": 0,
+      "mesh_submesh": 365,
+      "triangles": 20,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 365,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 10100,
+      "material_slot": 0,
+      "mesh_submesh": 394,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 394,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10120,
+      "material_slot": 1,
+      "mesh_submesh": 234,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 233,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10124,
+      "material_slot": 1,
+      "mesh_submesh": 445,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 444,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10127,
+      "material_slot": 1,
+      "mesh_submesh": 147,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 146,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10138,
+      "material_slot": 1,
+      "mesh_submesh": 222,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 221,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10148,
+      "material_slot": 1,
+      "mesh_submesh": 171,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 170,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10160,
+      "material_slot": 1,
+      "mesh_submesh": 13,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 12,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10163,
+      "material_slot": 1,
+      "mesh_submesh": 484,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 483,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (1)",
+      "renderer": 10168,
+      "material_slot": 2,
+      "mesh_submesh": 87,
+      "triangles": 10,
+      "y": 2.4999990463256836,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 85,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (3)",
+      "renderer": 10173,
+      "material_slot": 2,
+      "mesh_submesh": 180,
+      "triangles": 10,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 178,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10174,
+      "material_slot": 1,
+      "mesh_submesh": 465,
+      "triangles": 6,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 464,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10181,
+      "material_slot": 1,
+      "mesh_submesh": 237,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 236,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 10182,
+      "material_slot": 0,
+      "mesh_submesh": 289,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 289,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Window_4m_A_Mesh",
+      "renderer": 10185,
+      "material_slot": 0,
+      "mesh_submesh": 379,
+      "triangles": 20,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 379,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (3)",
+      "renderer": 10187,
+      "material_slot": 1,
+      "mesh_submesh": 5,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 4,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (29)",
+      "renderer": 10192,
+      "material_slot": 0,
+      "mesh_submesh": 364,
+      "triangles": 2,
+      "y": 2.497999906539917,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 364,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 10201,
+      "material_slot": 2,
+      "mesh_submesh": 109,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 107,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10206,
+      "material_slot": 1,
+      "mesh_submesh": 74,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 73,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10220,
+      "material_slot": 1,
+      "mesh_submesh": 84,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 83,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10224,
+      "material_slot": 1,
+      "mesh_submesh": 254,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 253,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10225,
+      "material_slot": 1,
+      "mesh_submesh": 7,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 6,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (16)",
+      "renderer": 10226,
+      "material_slot": 0,
+      "mesh_submesh": 249,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 249,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10229,
+      "material_slot": 1,
+      "mesh_submesh": 224,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 223,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 10233,
+      "material_slot": 1,
+      "mesh_submesh": 114,
+      "triangles": 14,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 113,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Window_2m_A_Mesh",
+      "renderer": 10237,
+      "material_slot": 0,
+      "mesh_submesh": 276,
+      "triangles": 20,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 276,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10242,
+      "material_slot": 1,
+      "mesh_submesh": 248,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 247,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10269,
+      "material_slot": 0,
+      "mesh_submesh": 371,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 371,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10269,
+      "material_slot": 1,
+      "mesh_submesh": 372,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 371,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 10270,
+      "material_slot": 0,
+      "mesh_submesh": 332,
+      "triangles": 24,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 332,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 10270,
+      "material_slot": 1,
+      "mesh_submesh": 333,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 332,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10293,
+      "material_slot": 1,
+      "mesh_submesh": 182,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 181,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 10295,
+      "material_slot": 2,
+      "mesh_submesh": 125,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 123,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10301,
+      "material_slot": 1,
+      "mesh_submesh": 118,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 117,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 10311,
+      "material_slot": 2,
+      "mesh_submesh": 113,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 111,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (4)",
+      "renderer": 10328,
+      "material_slot": 1,
+      "mesh_submesh": 22,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 21,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (15)",
+      "renderer": 10331,
+      "material_slot": 2,
+      "mesh_submesh": 418,
+      "triangles": 10,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 416,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10337,
+      "material_slot": 1,
+      "mesh_submesh": 132,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 131,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10341,
+      "material_slot": 1,
+      "mesh_submesh": 21,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 20,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (10)",
+      "renderer": 10342,
+      "material_slot": 1,
+      "mesh_submesh": 214,
+      "triangles": 6,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 213,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10343,
+      "material_slot": 1,
+      "mesh_submesh": 155,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 154,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10349,
+      "material_slot": 1,
+      "mesh_submesh": 173,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 172,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10353,
+      "material_slot": 1,
+      "mesh_submesh": 190,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 189,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10369,
+      "material_slot": 1,
+      "mesh_submesh": 13,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 12,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10374,
+      "material_slot": 1,
+      "mesh_submesh": 220,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 219,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10395,
+      "material_slot": 1,
+      "mesh_submesh": 80,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 79,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10398,
+      "material_slot": 1,
+      "mesh_submesh": 26,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 25,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10403,
+      "material_slot": 1,
+      "mesh_submesh": 228,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 227,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (13)",
+      "renderer": 10404,
+      "material_slot": 0,
+      "mesh_submesh": 370,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 370,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "Floor_1m_A (12)",
+      "renderer": 10407,
+      "material_slot": 0,
+      "mesh_submesh": 405,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 405,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10409,
+      "material_slot": 1,
+      "mesh_submesh": 96,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 95,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10412,
+      "material_slot": 1,
+      "mesh_submesh": 189,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 188,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10424,
+      "material_slot": 1,
+      "mesh_submesh": 194,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 193,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10426,
+      "material_slot": 0,
+      "mesh_submesh": 386,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 386,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10426,
+      "material_slot": 1,
+      "mesh_submesh": 387,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 386,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (28)",
+      "renderer": 10431,
+      "material_slot": 0,
+      "mesh_submesh": 353,
+      "triangles": 2,
+      "y": 2.6689999103546143,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 353,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10441,
+      "material_slot": 0,
+      "mesh_submesh": 273,
+      "triangles": 24,
+      "y": 1.249999761581421,
+      "half_height": 1.249999761581421,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 273,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10441,
+      "material_slot": 1,
+      "mesh_submesh": 274,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 273,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (16)",
+      "renderer": 10454,
+      "material_slot": 1,
+      "mesh_submesh": 436,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 435,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A (2)",
+      "renderer": 10458,
+      "material_slot": 1,
+      "mesh_submesh": 206,
+      "triangles": 18,
+      "y": 2.4999990463256836,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 205,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10462,
+      "material_slot": 1,
+      "mesh_submesh": 90,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 89,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10466,
+      "material_slot": 1,
+      "mesh_submesh": 174,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 173,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 10468,
+      "material_slot": 0,
+      "mesh_submesh": 328,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 328,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10470,
+      "material_slot": 1,
+      "mesh_submesh": 46,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 45,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10473,
+      "material_slot": 0,
+      "mesh_submesh": 291,
+      "triangles": 24,
+      "y": 1.249999761581421,
+      "half_height": 1.249999761581421,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 291,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10473,
+      "material_slot": 1,
+      "mesh_submesh": 292,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 291,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10478,
+      "material_slot": 1,
+      "mesh_submesh": 156,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 155,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10481,
+      "material_slot": 1,
+      "mesh_submesh": 18,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 17,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (7)",
+      "renderer": 10484,
+      "material_slot": 2,
+      "mesh_submesh": 230,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 228,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10486,
+      "material_slot": 1,
+      "mesh_submesh": 461,
+      "triangles": 6,
+      "y": 2.4999988079071045,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 460,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10492,
+      "material_slot": 1,
+      "mesh_submesh": 219,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 218,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10504,
+      "material_slot": 1,
+      "mesh_submesh": 236,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 235,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10509,
+      "material_slot": 1,
+      "mesh_submesh": 451,
+      "triangles": 6,
+      "y": 2.4999988079071045,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 450,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10512,
+      "material_slot": 1,
+      "mesh_submesh": 252,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 251,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10524,
+      "material_slot": 0,
+      "mesh_submesh": 311,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 311,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10524,
+      "material_slot": 1,
+      "mesh_submesh": 312,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 311,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10526,
+      "material_slot": 1,
+      "mesh_submesh": 186,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 185,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10528,
+      "material_slot": 0,
+      "mesh_submesh": 396,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 396,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10528,
+      "material_slot": 1,
+      "mesh_submesh": 397,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 396,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10530,
+      "material_slot": 1,
+      "mesh_submesh": 134,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 133,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10536,
+      "material_slot": 1,
+      "mesh_submesh": 84,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 83,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10539,
+      "material_slot": 1,
+      "mesh_submesh": 108,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 107,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10540,
+      "material_slot": 1,
+      "mesh_submesh": 182,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 181,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10551,
+      "material_slot": 1,
+      "mesh_submesh": 218,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 217,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Window_4m_A_Mesh",
+      "renderer": 10564,
+      "material_slot": 0,
+      "mesh_submesh": 306,
+      "triangles": 20,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 306,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10565,
+      "material_slot": 1,
+      "mesh_submesh": 24,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 23,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10578,
+      "material_slot": 0,
+      "mesh_submesh": 238,
+      "triangles": 24,
+      "y": 1.249999761581421,
+      "half_height": 1.249999761581421,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 238,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10578,
+      "material_slot": 1,
+      "mesh_submesh": 239,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 238,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 10588,
+      "material_slot": 0,
+      "mesh_submesh": 344,
+      "triangles": 106,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 344,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 10588,
+      "material_slot": 1,
+      "mesh_submesh": 345,
+      "triangles": 14,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 344,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10589,
+      "material_slot": 1,
+      "mesh_submesh": 430,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 429,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10594,
+      "material_slot": 1,
+      "mesh_submesh": 98,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 97,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (1)",
+      "renderer": 10595,
+      "material_slot": 1,
+      "mesh_submesh": 56,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 55,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10606,
+      "material_slot": 1,
+      "mesh_submesh": 90,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 89,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10617,
+      "material_slot": 1,
+      "mesh_submesh": 479,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 478,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10622,
+      "material_slot": 1,
+      "mesh_submesh": 224,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 223,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10623,
+      "material_slot": 1,
+      "mesh_submesh": 3,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 2,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10626,
+      "material_slot": 1,
+      "mesh_submesh": 110,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 109,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10633,
+      "material_slot": 0,
+      "mesh_submesh": 281,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 281,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10633,
+      "material_slot": 1,
+      "mesh_submesh": 282,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 281,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10636,
+      "material_slot": 1,
+      "mesh_submesh": 120,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 119,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10640,
+      "material_slot": 1,
+      "mesh_submesh": 196,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 195,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (25)",
+      "renderer": 10650,
+      "material_slot": 0,
+      "mesh_submesh": 259,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 259,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (8)",
+      "renderer": 10657,
+      "material_slot": 1,
+      "mesh_submesh": 459,
+      "triangles": 6,
+      "y": 2.4999988079071045,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 458,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 10668,
+      "material_slot": 0,
+      "mesh_submesh": 315,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 315,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 10669,
+      "material_slot": 0,
+      "mesh_submesh": 351,
+      "triangles": 24,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 351,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 10669,
+      "material_slot": 1,
+      "mesh_submesh": 352,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 351,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (14)",
+      "renderer": 10674,
+      "material_slot": 2,
+      "mesh_submesh": 441,
+      "triangles": 10,
+      "y": 2.4999990463256836,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 439,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 10675,
+      "material_slot": 0,
+      "mesh_submesh": 283,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 283,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10702,
+      "material_slot": 1,
+      "mesh_submesh": 159,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 158,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10704,
+      "material_slot": 1,
+      "mesh_submesh": 163,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 162,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 10706,
+      "material_slot": 2,
+      "mesh_submesh": 121,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 119,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10709,
+      "material_slot": 1,
+      "mesh_submesh": 169,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 168,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (7)",
+      "renderer": 10710,
+      "material_slot": 1,
+      "mesh_submesh": 413,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 412,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 10711,
+      "material_slot": 1,
+      "mesh_submesh": 44,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 43,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (6)",
+      "renderer": 10716,
+      "material_slot": 2,
+      "mesh_submesh": 208,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 206,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10735,
+      "material_slot": 0,
+      "mesh_submesh": 392,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 392,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10735,
+      "material_slot": 1,
+      "mesh_submesh": 393,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 392,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10741,
+      "material_slot": 1,
+      "mesh_submesh": 422,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 421,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (1)",
+      "renderer": 10743,
+      "material_slot": 1,
+      "mesh_submesh": 68,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 67,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10748,
+      "material_slot": 1,
+      "mesh_submesh": 145,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 144,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10754,
+      "material_slot": 1,
+      "mesh_submesh": 25,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 24,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 10756,
+      "material_slot": 2,
+      "mesh_submesh": 133,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 131,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10757,
+      "material_slot": 1,
+      "mesh_submesh": 214,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 213,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (9)",
+      "renderer": 10767,
+      "material_slot": 2,
+      "mesh_submesh": 212,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 210,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (3)",
+      "renderer": 10775,
+      "material_slot": 1,
+      "mesh_submesh": 411,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 410,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10776,
+      "material_slot": 1,
+      "mesh_submesh": 216,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 215,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10785,
+      "material_slot": 1,
+      "mesh_submesh": 82,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 81,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10794,
+      "material_slot": 1,
+      "mesh_submesh": 420,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 419,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10795,
+      "material_slot": 1,
+      "mesh_submesh": 33,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 32,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (6)",
+      "renderer": 10811,
+      "material_slot": 1,
+      "mesh_submesh": 60,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 59,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10815,
+      "material_slot": 1,
+      "mesh_submesh": 158,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 157,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10821,
+      "material_slot": 1,
+      "mesh_submesh": 153,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 152,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10823,
+      "material_slot": 1,
+      "mesh_submesh": 43,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 42,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10825,
+      "material_slot": 1,
+      "mesh_submesh": 176,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 175,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Door_Wind_4m_A_Mesh",
+      "renderer": 10833,
+      "material_slot": 0,
+      "mesh_submesh": 252,
+      "triangles": 32,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 252,
+        "subMeshCount": 7
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 10836,
+      "material_slot": 0,
+      "mesh_submesh": 362,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 362,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A (1)",
+      "renderer": 10838,
+      "material_slot": 1,
+      "mesh_submesh": 157,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 156,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10842,
+      "material_slot": 1,
+      "mesh_submesh": 205,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 204,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10856,
+      "material_slot": 1,
+      "mesh_submesh": 160,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 159,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10860,
+      "material_slot": 1,
+      "mesh_submesh": 122,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 121,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10861,
+      "material_slot": 1,
+      "mesh_submesh": 31,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 30,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10867,
+      "material_slot": 1,
+      "mesh_submesh": 161,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 160,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10869,
+      "material_slot": 0,
+      "mesh_submesh": 358,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 358,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10869,
+      "material_slot": 1,
+      "mesh_submesh": 359,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 358,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (5)",
+      "renderer": 10870,
+      "material_slot": 2,
+      "mesh_submesh": 29,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 27,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10873,
+      "material_slot": 1,
+      "mesh_submesh": 48,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 47,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (11)",
+      "renderer": 10887,
+      "material_slot": 0,
+      "mesh_submesh": 390,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 390,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10904,
+      "material_slot": 1,
+      "mesh_submesh": 197,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 196,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10908,
+      "material_slot": 1,
+      "mesh_submesh": 45,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 44,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Door_Wind_4m_A_Mesh",
+      "renderer": 10915,
+      "material_slot": 0,
+      "mesh_submesh": 264,
+      "triangles": 32,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 264,
+        "subMeshCount": 7
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10917,
+      "material_slot": 0,
+      "mesh_submesh": 356,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 356,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10917,
+      "material_slot": 1,
+      "mesh_submesh": 357,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 356,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Door_Win_65m_A_Mesh",
+      "renderer": 10931,
+      "material_slot": 2,
+      "mesh_submesh": 48,
+      "triangles": 48,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 46,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10934,
+      "material_slot": 1,
+      "mesh_submesh": 170,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 169,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10936,
+      "material_slot": 1,
+      "mesh_submesh": 184,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 183,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 10940,
+      "material_slot": 1,
+      "mesh_submesh": 96,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 95,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 10946,
+      "material_slot": 2,
+      "mesh_submesh": 149,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 147,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10949,
+      "material_slot": 1,
+      "mesh_submesh": 82,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 81,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10961,
+      "material_slot": 0,
+      "mesh_submesh": 375,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 375,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 10961,
+      "material_slot": 1,
+      "mesh_submesh": 376,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 375,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10983,
+      "material_slot": 1,
+      "mesh_submesh": 246,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 245,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 10989,
+      "material_slot": 1,
+      "mesh_submesh": 191,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 190,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (12)",
+      "renderer": 10992,
+      "material_slot": 2,
+      "mesh_submesh": 475,
+      "triangles": 10,
+      "y": 2.4999990463256836,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 473,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11002,
+      "material_slot": 1,
+      "mesh_submesh": 20,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 19,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11006,
+      "material_slot": 1,
+      "mesh_submesh": 222,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 221,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (2)",
+      "renderer": 11026,
+      "material_slot": 2,
+      "mesh_submesh": 96,
+      "triangles": 10,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 94,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11034,
+      "material_slot": 1,
+      "mesh_submesh": 136,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 135,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11036,
+      "material_slot": 1,
+      "mesh_submesh": 201,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 200,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11049,
+      "material_slot": 1,
+      "mesh_submesh": 58,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 57,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11052,
+      "material_slot": 1,
+      "mesh_submesh": 192,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 191,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (4)",
+      "renderer": 11053,
+      "material_slot": 1,
+      "mesh_submesh": 175,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 174,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11058,
+      "material_slot": 1,
+      "mesh_submesh": 76,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 75,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (5)",
+      "renderer": 11060,
+      "material_slot": 1,
+      "mesh_submesh": 210,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 209,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11065,
+      "material_slot": 1,
+      "mesh_submesh": 100,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 99,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11068,
+      "material_slot": 1,
+      "mesh_submesh": 486,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 485,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (18)",
+      "renderer": 11070,
+      "material_slot": 1,
+      "mesh_submesh": 409,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 408,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A (1)",
+      "renderer": 11074,
+      "material_slot": 1,
+      "mesh_submesh": 428,
+      "triangles": 8,
+      "y": 2.4999990463256836,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 427,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 11083,
+      "material_slot": 2,
+      "mesh_submesh": 129,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 127,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11087,
+      "material_slot": 1,
+      "mesh_submesh": 250,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 249,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11088,
+      "material_slot": 1,
+      "mesh_submesh": 141,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 140,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 11096,
+      "material_slot": 0,
+      "mesh_submesh": 406,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 406,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11098,
+      "material_slot": 1,
+      "mesh_submesh": 64,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 63,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11099,
+      "material_slot": 1,
+      "mesh_submesh": 165,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 164,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11106,
+      "material_slot": 1,
+      "mesh_submesh": 112,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 111,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 11110,
+      "material_slot": 2,
+      "mesh_submesh": 153,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 151,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11111,
+      "material_slot": 1,
+      "mesh_submesh": 449,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 448,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11115,
+      "material_slot": 1,
+      "mesh_submesh": 126,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 125,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11116,
+      "material_slot": 1,
+      "mesh_submesh": 62,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 61,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11117,
+      "material_slot": 1,
+      "mesh_submesh": 434,
+      "triangles": 6,
+      "y": 2.4999990463256836,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 433,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11120,
+      "material_slot": 1,
+      "mesh_submesh": 198,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 197,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11124,
+      "material_slot": 1,
+      "mesh_submesh": 17,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 16,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11127,
+      "material_slot": 1,
+      "mesh_submesh": 112,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 111,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11132,
+      "material_slot": 0,
+      "mesh_submesh": 334,
+      "triangles": 24,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 334,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11132,
+      "material_slot": 1,
+      "mesh_submesh": 335,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 334,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11148,
+      "material_slot": 1,
+      "mesh_submesh": 202,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 201,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Door_Wind_4m_A_Mesh",
+      "renderer": 11153,
+      "material_slot": 0,
+      "mesh_submesh": 398,
+      "triangles": 32,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 398,
+        "subMeshCount": 7
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11155,
+      "material_slot": 1,
+      "mesh_submesh": 167,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 166,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11162,
+      "material_slot": 1,
+      "mesh_submesh": 1,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 0,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11170,
+      "material_slot": 1,
+      "mesh_submesh": 223,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 222,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11176,
+      "material_slot": 1,
+      "mesh_submesh": 169,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 168,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11180,
+      "material_slot": 1,
+      "mesh_submesh": 78,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 77,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11185,
+      "material_slot": 1,
+      "mesh_submesh": 424,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 423,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 11202,
+      "material_slot": 2,
+      "mesh_submesh": 105,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 103,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (13)",
+      "renderer": 11203,
+      "material_slot": 2,
+      "mesh_submesh": 470,
+      "triangles": 10,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 468,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "Floor_1m_A (23)",
+      "renderer": 11204,
+      "material_slot": 0,
+      "mesh_submesh": 314,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 314,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "Pillar_40cm_A",
+      "renderer": 11214,
+      "material_slot": 2,
+      "mesh_submesh": 38,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 36,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11220,
+      "material_slot": 1,
+      "mesh_submesh": 104,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 103,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11227,
+      "material_slot": 1,
+      "mesh_submesh": 212,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 211,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11230,
+      "material_slot": 1,
+      "mesh_submesh": 66,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 65,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (3)",
+      "renderer": 11231,
+      "material_slot": 2,
+      "mesh_submesh": 217,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 215,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11234,
+      "material_slot": 1,
+      "mesh_submesh": 415,
+      "triangles": 18,
+      "y": 2.4999990463256836,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 414,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11236,
+      "material_slot": 0,
+      "mesh_submesh": 287,
+      "triangles": 90,
+      "y": 1.249999761581421,
+      "half_height": 1.249999761581421,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 287,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11236,
+      "material_slot": 1,
+      "mesh_submesh": 288,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 287,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (14)",
+      "renderer": 11246,
+      "material_slot": 1,
+      "mesh_submesh": 467,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 466,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A (2)",
+      "renderer": 11260,
+      "material_slot": 1,
+      "mesh_submesh": 15,
+      "triangles": 8,
+      "y": 2.4999990463256836,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 14,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (4)",
+      "renderer": 11269,
+      "material_slot": 2,
+      "mesh_submesh": 185,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 183,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 11270,
+      "material_slot": 0,
+      "mesh_submesh": 388,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 388,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11275,
+      "material_slot": 1,
+      "mesh_submesh": 106,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 105,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (11)",
+      "renderer": 11293,
+      "material_slot": 2,
+      "mesh_submesh": 206,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 204,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11305,
+      "material_slot": 0,
+      "mesh_submesh": 324,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 324,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11305,
+      "material_slot": 1,
+      "mesh_submesh": 325,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 324,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11308,
+      "material_slot": 1,
+      "mesh_submesh": 80,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 79,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 11313,
+      "material_slot": 2,
+      "mesh_submesh": 141,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 139,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 11331,
+      "material_slot": 0,
+      "mesh_submesh": 247,
+      "triangles": 106,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 247,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 11331,
+      "material_slot": 1,
+      "mesh_submesh": 248,
+      "triangles": 14,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 247,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11332,
+      "material_slot": 1,
+      "mesh_submesh": 108,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 107,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11343,
+      "material_slot": 1,
+      "mesh_submesh": 240,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 239,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (1)",
+      "renderer": 11350,
+      "material_slot": 0,
+      "mesh_submesh": 240,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 240,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "Floor_1m_A (21)",
+      "renderer": 11351,
+      "material_slot": 0,
+      "mesh_submesh": 294,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 294,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (10)",
+      "renderer": 11356,
+      "material_slot": 2,
+      "mesh_submesh": 233,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 231,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11358,
+      "material_slot": 1,
+      "mesh_submesh": 120,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 119,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11365,
+      "material_slot": 1,
+      "mesh_submesh": 151,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 150,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11370,
+      "material_slot": 1,
+      "mesh_submesh": 426,
+      "triangles": 6,
+      "y": 2.4999990463256836,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 425,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11377,
+      "material_slot": 1,
+      "mesh_submesh": 11,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 10,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 11378,
+      "material_slot": 0,
+      "mesh_submesh": 326,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 326,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11380,
+      "material_slot": 1,
+      "mesh_submesh": 41,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 40,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11383,
+      "material_slot": 1,
+      "mesh_submesh": 203,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 202,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 11388,
+      "material_slot": 2,
+      "mesh_submesh": 129,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 127,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11398,
+      "material_slot": 1,
+      "mesh_submesh": 102,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 101,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11400,
+      "material_slot": 1,
+      "mesh_submesh": 256,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 255,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (2)",
+      "renderer": 11405,
+      "material_slot": 1,
+      "mesh_submesh": 212,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 211,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 11411,
+      "material_slot": 2,
+      "mesh_submesh": 145,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 143,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (19)",
+      "renderer": 11416,
+      "material_slot": 1,
+      "mesh_submesh": 472,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 471,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11422,
+      "material_slot": 1,
+      "mesh_submesh": 94,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 93,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11423,
+      "material_slot": 1,
+      "mesh_submesh": 204,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 203,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Window_2m_A_Mesh",
+      "renderer": 11424,
+      "material_slot": 0,
+      "mesh_submesh": 301,
+      "triangles": 20,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 301,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11427,
+      "material_slot": 1,
+      "mesh_submesh": 114,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 113,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11431,
+      "material_slot": 1,
+      "mesh_submesh": 447,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 446,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11436,
+      "material_slot": 1,
+      "mesh_submesh": 93,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 92,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11452,
+      "material_slot": 0,
+      "mesh_submesh": 317,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 317,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11452,
+      "material_slot": 1,
+      "mesh_submesh": 318,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 317,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11456,
+      "material_slot": 1,
+      "mesh_submesh": 214,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 213,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11457,
+      "material_slot": 1,
+      "mesh_submesh": 178,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 177,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11466,
+      "material_slot": 1,
+      "mesh_submesh": 86,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 85,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11471,
+      "material_slot": 1,
+      "mesh_submesh": 226,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 225,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11476,
+      "material_slot": 0,
+      "mesh_submesh": 354,
+      "triangles": 90,
+      "y": 1.249999761581421,
+      "half_height": 1.249999761581421,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 354,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11476,
+      "material_slot": 1,
+      "mesh_submesh": 355,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 354,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11477,
+      "material_slot": 1,
+      "mesh_submesh": 172,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 171,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11491,
+      "material_slot": 0,
+      "mesh_submesh": 337,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 337,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11491,
+      "material_slot": 1,
+      "mesh_submesh": 338,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 337,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11494,
+      "material_slot": 1,
+      "mesh_submesh": 42,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 41,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11495,
+      "material_slot": 1,
+      "mesh_submesh": 200,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 199,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (8)",
+      "renderer": 11498,
+      "material_slot": 2,
+      "mesh_submesh": 209,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 207,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 11506,
+      "material_slot": 1,
+      "mesh_submesh": 54,
+      "triangles": 14,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 53,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 11515,
+      "material_slot": 2,
+      "mesh_submesh": 137,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 135,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11522,
+      "material_slot": 1,
+      "mesh_submesh": 116,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 115,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11524,
+      "material_slot": 1,
+      "mesh_submesh": 104,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 103,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11528,
+      "material_slot": 1,
+      "mesh_submesh": 116,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 115,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11529,
+      "material_slot": 0,
+      "mesh_submesh": 297,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 297,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11529,
+      "material_slot": 1,
+      "mesh_submesh": 298,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 297,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 11531,
+      "material_slot": 0,
+      "mesh_submesh": 262,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 262,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11533,
+      "material_slot": 1,
+      "mesh_submesh": 98,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 97,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11538,
+      "material_slot": 1,
+      "mesh_submesh": 164,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 163,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Window_4m_A_Mesh",
+      "renderer": 11544,
+      "material_slot": 0,
+      "mesh_submesh": 346,
+      "triangles": 20,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 346,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "Wall_Office_Window_2m_A_Mesh",
+      "renderer": 11550,
+      "material_slot": 0,
+      "mesh_submesh": 319,
+      "triangles": 20,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 319,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "Floor_1m_A (10)",
+      "renderer": 11552,
+      "material_slot": 0,
+      "mesh_submesh": 293,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 293,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11559,
+      "material_slot": 1,
+      "mesh_submesh": 23,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 22,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11562,
+      "material_slot": 1,
+      "mesh_submesh": 235,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 234,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11568,
+      "material_slot": 1,
+      "mesh_submesh": 50,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 49,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11574,
+      "material_slot": 0,
+      "mesh_submesh": 360,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 360,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11574,
+      "material_slot": 1,
+      "mesh_submesh": 361,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 360,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11581,
+      "material_slot": 1,
+      "mesh_submesh": 11,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 10,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11585,
+      "material_slot": 1,
+      "mesh_submesh": 177,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 176,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A (9)",
+      "renderer": 11589,
+      "material_slot": 1,
+      "mesh_submesh": 199,
+      "triangles": 6,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 198,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (20)",
+      "renderer": 11599,
+      "material_slot": 1,
+      "mesh_submesh": 457,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 456,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Pillar_40cm_A (2)",
+      "renderer": 11600,
+      "material_slot": 2,
+      "mesh_submesh": 139,
+      "triangles": 10,
+      "y": 2.500000476837158,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 137,
+        "subMeshCount": 3
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11601,
+      "material_slot": 1,
+      "mesh_submesh": 37,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 36,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11603,
+      "material_slot": 1,
+      "mesh_submesh": 193,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 192,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11611,
+      "material_slot": 1,
+      "mesh_submesh": 94,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 93,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11612,
+      "material_slot": 1,
+      "mesh_submesh": 227,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 226,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11617,
+      "material_slot": 1,
+      "mesh_submesh": 244,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 243,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 11620,
+      "material_slot": 0,
+      "mesh_submesh": 295,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 295,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11622,
+      "material_slot": 1,
+      "mesh_submesh": 238,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 237,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (2)",
+      "renderer": 11625,
+      "material_slot": 0,
+      "mesh_submesh": 313,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 313,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11635,
+      "material_slot": 1,
+      "mesh_submesh": 180,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 179,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11639,
+      "material_slot": 1,
+      "mesh_submesh": 187,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 186,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11642,
+      "material_slot": 1,
+      "mesh_submesh": 453,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 452,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11652,
+      "material_slot": 1,
+      "mesh_submesh": 19,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 18,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11661,
+      "material_slot": 1,
+      "mesh_submesh": 124,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 123,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11671,
+      "material_slot": 1,
+      "mesh_submesh": 432,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 431,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11683,
+      "material_slot": 1,
+      "mesh_submesh": 221,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 220,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11684,
+      "material_slot": 0,
+      "mesh_submesh": 373,
+      "triangles": 24,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 373,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11684,
+      "material_slot": 1,
+      "mesh_submesh": 374,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 373,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11692,
+      "material_slot": 1,
+      "mesh_submesh": 168,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 167,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11705,
+      "material_slot": 1,
+      "mesh_submesh": 232,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 231,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11713,
+      "material_slot": 1,
+      "mesh_submesh": 92,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 91,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11716,
+      "material_slot": 1,
+      "mesh_submesh": 201,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 200,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Window_4m_A_Mesh",
+      "renderer": 11723,
+      "material_slot": 0,
+      "mesh_submesh": 242,
+      "triangles": 20,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 242,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11727,
+      "material_slot": 0,
+      "mesh_submesh": 271,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 271,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11727,
+      "material_slot": 1,
+      "mesh_submesh": 272,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 271,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (13)",
+      "renderer": 11741,
+      "material_slot": 1,
+      "mesh_submesh": 463,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 462,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11746,
+      "material_slot": 1,
+      "mesh_submesh": 482,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 481,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11763,
+      "material_slot": 1,
+      "mesh_submesh": 39,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 38,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11770,
+      "material_slot": 1,
+      "mesh_submesh": 35,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 34,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11779,
+      "material_slot": 1,
+      "mesh_submesh": 89,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 88,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11781,
+      "material_slot": 1,
+      "mesh_submesh": 9,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 8,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11782,
+      "material_slot": 1,
+      "mesh_submesh": 258,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 257,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (56)",
+      "renderer": 11785,
+      "material_slot": 0,
+      "mesh_submesh": 275,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 275,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11793,
+      "material_slot": 1,
+      "mesh_submesh": 167,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 166,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11797,
+      "material_slot": 1,
+      "mesh_submesh": 72,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 71,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11812,
+      "material_slot": 0,
+      "mesh_submesh": 299,
+      "triangles": 24,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 299,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11812,
+      "material_slot": 1,
+      "mesh_submesh": 300,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 299,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11814,
+      "material_slot": 0,
+      "mesh_submesh": 250,
+      "triangles": 44,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 250,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11814,
+      "material_slot": 1,
+      "mesh_submesh": 251,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 250,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11820,
+      "material_slot": 1,
+      "mesh_submesh": 70,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 69,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11829,
+      "material_slot": 1,
+      "mesh_submesh": 143,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 142,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 11847,
+      "material_slot": 0,
+      "mesh_submesh": 330,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 330,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11848,
+      "material_slot": 1,
+      "mesh_submesh": 118,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 117,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 11854,
+      "material_slot": 1,
+      "mesh_submesh": 166,
+      "triangles": 14,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 165,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (17)",
+      "renderer": 11863,
+      "material_slot": 1,
+      "mesh_submesh": 443,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 442,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (17)",
+      "renderer": 11864,
+      "material_slot": 0,
+      "mesh_submesh": 336,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 336,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11867,
+      "material_slot": 1,
+      "mesh_submesh": 88,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 87,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 11869,
+      "material_slot": 2,
+      "mesh_submesh": 117,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 115,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_Window_1m",
+      "renderer": 11877,
+      "material_slot": 2,
+      "mesh_submesh": 101,
+      "triangles": 6,
+      "y": 0.25886496901512146,
+      "half_height": 0.25886496901512146,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 99,
+        "subMeshCount": 4
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11878,
+      "material_slot": 1,
+      "mesh_submesh": 188,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 187,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11890,
+      "material_slot": 1,
+      "mesh_submesh": 100,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 99,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11911,
+      "material_slot": 1,
+      "mesh_submesh": 149,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 148,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_1m_A",
+      "renderer": 11913,
+      "material_slot": 1,
+      "mesh_submesh": 230,
+      "triangles": 14,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 229,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A (15)",
+      "renderer": 11915,
+      "material_slot": 1,
+      "mesh_submesh": 455,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 454,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11919,
+      "material_slot": 1,
+      "mesh_submesh": 40,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 39,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11931,
+      "material_slot": 1,
+      "mesh_submesh": 165,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 164,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11932,
+      "material_slot": 1,
+      "mesh_submesh": 477,
+      "triangles": 18,
+      "y": 2.4999990463256836,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 476,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11933,
+      "material_slot": 1,
+      "mesh_submesh": 203,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 202,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11935,
+      "material_slot": 0,
+      "mesh_submesh": 384,
+      "triangles": 24,
+      "y": 1.2499996423721313,
+      "half_height": 1.2499996423721313,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 384,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11935,
+      "material_slot": 1,
+      "mesh_submesh": 385,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 384,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11937,
+      "material_slot": 1,
+      "mesh_submesh": 110,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 109,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11949,
+      "material_slot": 1,
+      "mesh_submesh": 92,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 91,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11952,
+      "material_slot": 1,
+      "mesh_submesh": 242,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 241,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_05m_A",
+      "renderer": 11955,
+      "material_slot": 1,
+      "mesh_submesh": 52,
+      "triangles": 8,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 51,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_Concave_1m_A",
+      "renderer": 11957,
+      "material_slot": 1,
+      "mesh_submesh": 91,
+      "triangles": 18,
+      "y": 2.499999523162842,
+      "half_height": 1.1920928955078125e-07,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 90,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Door_2m_A",
+      "renderer": 11959,
+      "material_slot": 0,
+      "mesh_submesh": 377,
+      "triangles": 4,
+      "y": 2.499999523162842,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 377,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "IND_Wall_Corner_05m_A",
+      "renderer": 11972,
+      "material_slot": 1,
+      "mesh_submesh": 102,
+      "triangles": 8,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 101,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Wall_Office_Window_2m_A_Mesh",
+      "renderer": 11974,
+      "material_slot": 0,
+      "mesh_submesh": 339,
+      "triangles": 20,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 339,
+        "subMeshCount": 5
+      }
+    },
+    {
+      "name": "Floor_1m_A (27)",
+      "renderer": 11978,
+      "material_slot": 0,
+      "mesh_submesh": 241,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 241,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "IND_Wall_1m_A",
+      "renderer": 11980,
+      "material_slot": 1,
+      "mesh_submesh": 225,
+      "triangles": 6,
+      "y": 2.4999992847442627,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 224,
+        "subMeshCount": 2
+      }
+    },
+    {
+      "name": "Floor_1m_A (22)",
+      "renderer": 11982,
+      "material_slot": 0,
+      "mesh_submesh": 391,
+      "triangles": 2,
+      "y": 2.5,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 391,
+        "subMeshCount": 1
+      }
+    },
+    {
+      "name": "Wall_Office_Door_Win_65m_A_Mesh",
+      "renderer": 11996,
+      "material_slot": 2,
+      "mesh_submesh": 53,
+      "triangles": 48,
+      "y": 2.500100612640381,
+      "half_height": 0.0,
+      "enabled": true,
+      "shadow": 1,
+      "static_batch": {
+        "firstSubMesh": 51,
+        "subMeshCount": 5
+      }
+    }
+  ]
+}

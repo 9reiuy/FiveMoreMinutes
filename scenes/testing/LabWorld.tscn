@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3]
+[ext_resource type="PackedScene" path="res://scenes/dream/Dream3D_RandomDungeon.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/testing/lab_world.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/testing/lab_player.gd" id="3"]
+[node name="LabWorld" instance=ExtResource("1")]
+script = ExtResource("2")
+generate_on_ready = false
+persist_profile = false
+enable_game_start_cab_exit = false
+disable_player_combat = false
+spawn_content = true
+approved_sample_art_enabled = true
+
+[node name="DreamPlayer" parent="GameplayCanvas/GameplayWorld"]
+script = ExtResource("3")

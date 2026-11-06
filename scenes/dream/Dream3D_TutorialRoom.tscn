@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/dream/dream_3d_tutorial_room.gd" id="1_controller"]
 [ext_resource type="PackedScene" path="res://scenes/entities/dream_player.tscn" id="2_player"]
@@ -7,26 +7,28 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/confirmation_dialog.tscn" id="5_dialogue"]
 [ext_resource type="Theme" path="res://assets/fonts/pixel_theme.tres" id="6_theme"]
 [ext_resource type="FontFile" path="res://assets/fonts/boutique_bitmap/BoutiqueBitmap9x9_Bold_1.9.ttf" id="7_font"]
-[ext_resource type="PackedScene" path="res://scenes/ui/dialogue/dream_dialogue_bubble.tscn" id="8_bubble"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue/growing_dialogue_bubble.tscn" id="8_bubble"]
+[ext_resource type="PackedScene" path="res://scenes/story/chapter_tutorial_layout.tscn" id="10_layout"]
+[ext_resource type="Script" path="res://scripts/story/chapter_tutorial.gd" id="11_training"]
 
 [sub_resource type="Environment" id="Environment_tutorial"]
 background_mode = 1
 background_color = Color(0, 0, 0, 1)
-ambient_light_source = 3
-ambient_light_color = Color(0.20, 0.23, 0.29, 1)
-ambient_light_energy = 0.22
+ambient_light_source = 2
+ambient_light_color = Color(0.38, 0.46, 0.58, 1)
+ambient_light_energy = 0.12
 tonemap_mode = 1
 glow_enabled = true
 glow_intensity = 0.55
 glow_strength = 0.75
 glow_bloom = 0.06
-fog_enabled = true
+fog_enabled = false
 fog_light_energy = 0.45
 fog_light_color = Color(0.30, 0.34, 0.43, 1)
 fog_density = 0.001
 
 [sub_resource type="RectangleShape2D" id="GuideTriggerShape"]
-size = Vector2(704, 28)
+size = Vector2(96, 48)
 
 [sub_resource type="RectangleShape2D" id="ExitTriggerShape"]
 size = Vector2(88, 72)
@@ -96,11 +98,12 @@ script = ExtResource("3_depth_bridge")
 [node name="CameraRig" type="Node3D" parent="."]
 
 [node name="Camera3D" type="Camera3D" parent="CameraRig"]
-transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 12, 12)
+position = Vector3(14.142136, 13, 0)
+rotation_degrees = Vector3(-42.59, 90, 0)
 projection = 0
 current = true
 size = 13.5
-fov = 40.0
+fov = 35.0
 near = 0.05
 far = 192.0
 
@@ -111,7 +114,7 @@ environment = SubResource("Environment_tutorial")
 
 [node name="KeyLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(0.88294756, 0.36994863, -0.2890356, 0, 0.6156615, 0.7880107, 0.46947157, -0.6957722, 0.5435968, 0, 0, 0)
-light_energy = 0.025
+light_energy = 0.0
 shadow_enabled = false
 
 [node name="GameplayUI" type="CanvasLayer" parent="."]
@@ -137,3 +140,8 @@ visible = false
 
 [node name="ConfirmationDialog" parent="DialogueLayer" instance=ExtResource("5_dialogue")]
 visible = false
+
+[node name="ChapterLayout" parent="TutorialGeometry" instance=ExtResource("10_layout")]
+
+[node name="ChapterTraining" type="Node" parent="."]
+script = ExtResource("11_training")

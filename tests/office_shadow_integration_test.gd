@@ -35,7 +35,7 @@ func _run() -> void:
 		_check(manager.get_debug_stats().interior_candidates > 0, "Floor %d registers room lamps" % floor_number)
 		_check(world.player_depth_bridge.volume_shadow != null, "Floor %d keeps player volume" % floor_number)
 		_check(world.player_depth_bridge.volume_shadow.weapon == null, "Player never creates a detached gun-shadow box")
-		_check(world.player_depth_bridge.lit_material.shader.code.contains("render_mode shadows_disabled"), "Character does not receive volume self shadows")
+		_check(not world.player_depth_bridge.lit_material.shader.code.contains("render_mode shadows_disabled"), "Character receives actual room light and environmental shadows")
 		var outlined_furniture := 0
 		var eligible_furniture_meshes := 0
 		for furniture_visual in world.actor_depth_bridges_root.get_children():

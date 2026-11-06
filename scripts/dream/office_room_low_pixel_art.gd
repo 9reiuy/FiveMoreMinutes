@@ -129,7 +129,7 @@ static func make_visual(kind: String) -> Node3D:
 	root.add_child(display)
 	return root
 
-static func room_fixtures(key: String, origin: Vector2) -> Node3D:
+static func room_fixtures(key: String, origin: Vector2, world: Node3D = null) -> Node3D:
 	# Wall-mounted, presentation-only details. Never consume passage width or alter LOS.
 	var placements: Array = []
 	match key:
@@ -150,12 +150,15 @@ static func room_fixtures(key: String, origin: Vector2) -> Node3D:
 	root.name = "RoomLowPixelFixtures_" + key
 	for entry in placements:
 		var display := MeshInstance3D.new()
+		display.name = "WallFixture_" + String(entry[0])
 		display.mesh = _fixture_mesh(String(entry[0]), Vector2(float(entry[4]), float(entry[5])))
 		display.material_override = material()
 		display.position = Vector3(origin.x + float(entry[1]), float(entry[2]), origin.y + float(entry[3]))
 		display.rotation.y = float(entry[6])
 		display.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		root.add_child(display)
+		if world != null:
+			preload("res://scripts/dream/wall_attachments.gd").bind_at_pose(world, display, Vector2(display.position.x, display.position.z), display.rotation.y)
 	if key == "lounge":
 		var rug := MeshInstance3D.new()
 		rug.name = "LowContrastSeatRug"

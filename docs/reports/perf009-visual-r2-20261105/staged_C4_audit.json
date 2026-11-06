@@ -1,0 +1,90 @@
+{
+  "scope": "Read-only staged candidate hash verification. Runtime restoration is checked separately after final owner validation.",
+  "manifest_sha256": "C871C6FC70F4189C404CA1C5C267799FA5F1CD805A920797FE94E74A01D6F545",
+  "files": [
+    {
+      "path": "shaders/dream3d/fire_extinguisher_red.gdshader",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\fire_extinguisher_red.gdshader",
+      "sha256": "0F93818A86F4822D95C665C9CB9C1CAF2840B8FB8145A4070EEC4AE6E02D2C14",
+      "changed_vs_B0": false
+    },
+    {
+      "path": "shaders/dream3d/preview/sample_neon_city.gdshader",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\sample_neon_city.gdshader",
+      "sha256": "4C5A05FBF89DB78D114B466FCFB783A0B57C732BA494C44C6F8359F2DBA6242A",
+      "changed_vs_B0": false
+    },
+    {
+      "path": "shaders/dream3d/floor_reflection_surface.gdshaderinc",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\floor_reflection_surface.gdshaderinc",
+      "sha256": "3E0497633EE6F27FFD386B2B20B5B3830B3BB95003D6B003458B8433C509D106",
+      "changed_vs_B0": true
+    },
+    {
+      "path": "shaders/dream3d/lit_pixel_carrier.gdshader",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\lit_pixel_carrier.gdshader",
+      "sha256": "7DDB6AE9A246B218D156FA9DA211201C230B35E8DB6E3E0AB88AD29C93D10D2B",
+      "changed_vs_B0": false
+    },
+    {
+      "path": "scripts/entities/basic_projectile.gd",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\basic_projectile_bytes.gd",
+      "sha256": "37E76DBA786E6CC0219D2269B3108DADEF18A29B79408CF04ECF494821844D7A",
+      "changed_vs_B0": false
+    },
+    {
+      "path": "scripts/dream/floor_reflections.gd",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\floor_reflections.gd",
+      "sha256": "C7919ECCE21A0FE897DA0A9E594E10202F3444AD1BFA8BB5CC702B0A9C0FFE43",
+      "changed_vs_B0": true
+    },
+    {
+      "path": "night_office/n3_lighting.gd",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\n3_lighting.gd",
+      "sha256": "515A9A0BF9EB71CDC22F2289A3E5D6D81B0509724A122AA061B86F0E46DBA7D7",
+      "changed_vs_B0": false
+    },
+    {
+      "path": "scripts/dream/preview/sample_floor_texture_review.gd",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\sample_floor_texture_review.gd",
+      "sha256": "3C1E41966A00DFF15E80B2514316E1EDABE0282A3735E239238487A051FFF597",
+      "changed_vs_B0": true
+    },
+    {
+      "path": "scripts/dream/preview/sample_wall_and_desktop_review.gd",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\sample_wall_and_desktop_review.gd",
+      "sha256": "24979D939C30228123BA42B3C81D532060388D84717C1BD3391B65024B164645",
+      "changed_vs_B0": true
+    },
+    {
+      "path": "shaders/dream3d/blood_semantic_carrier.gdshader",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\blood_semantic_carrier.gdshader",
+      "sha256": "751C88B094E1E0CC20711648091CFB6125246A2F4299387B7A204542A4F73376",
+      "changed_vs_B0": true
+    },
+    {
+      "path": "shaders/dream3d/blood_airborne_semantic.gdshader",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\blood_airborne_semantic.gdshader",
+      "sha256": "52BD3268A2F3B1001A51238C6F8F16ACF3F055FDB18F14F1903952856C58585D",
+      "changed_vs_B0": true
+    },
+    {
+      "path": "shaders/dream3d/elemental_particle_common.gdshaderinc",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\elemental_particle_common.gdshaderinc",
+      "sha256": "1B664A382142E78FFEA2F7AF70D9C092EEE9622971B5AC6241B540F42087331A",
+      "changed_vs_B0": true
+    },
+    {
+      "path": "shaders/dream3d/elemental_shockwave.gdshader",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\elemental_shockwave.gdshader",
+      "sha256": "8F806ED82C1703913D09FCFB2EC75FCD251B2C4EC3CAB467E6CB6848C365C800",
+      "changed_vs_B0": true
+    },
+    {
+      "path": "scripts/dream/office_shadow_manager.gd",
+      "staged": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r2_20261105\\C4\\office_shadow_manager.gd",
+      "sha256": "C0A68C4CD3A6E20FFBD6FCC6A9D715E7217AD8A9C9E1CE97E567C155D82846CC",
+      "changed_vs_B0": true
+    }
+  ]
+}

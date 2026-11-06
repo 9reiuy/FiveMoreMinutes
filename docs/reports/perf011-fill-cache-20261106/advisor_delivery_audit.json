@@ -1,0 +1,26 @@
+{
+  "candidate_manifest_sha256": "1097531022D858C1D8CF1E28A498FDBDC592E8368821FF102CCCE8B15E0257C1",
+  "restored_source_count": 237,
+  "source_drift": [],
+  "restored_patch_count": 17,
+  "restored_patch_drift": [],
+  "staged_patch_drift": [],
+  "prior_evidence_count": 112,
+  "authorized_entry_changes": [
+    "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\visual_r3_active.json",
+    "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\playable.gd",
+    "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\play_inputs.json"
+  ],
+  "unexpected_prior_evidence_drift": [],
+  "launcher_unchanged": true,
+  "entry_smoke_state": "released",
+  "entry_smoke_exit": 0,
+  "entry_smoke_engine_errors": [],
+  "entry_process_check": {
+    "time": "2026-11-06T05:40:25.3944483+08:00",
+    "host_cim_succeeded": true,
+    "peer_count": 0,
+    "peers": [],
+    "playable_lock_released": true
+  }
+}

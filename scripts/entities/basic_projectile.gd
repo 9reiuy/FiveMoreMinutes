@@ -68,6 +68,7 @@ var _terminal_trail_remaining := 0.0
 var _history_texture: ImageTexture
 var _history_texture_size := Vector2i.ZERO
 var _office_tracer_update_pending := false
+var _trail_camera_signature := 0
 var _cached_bullet_sprite: Sprite2D
 var _ray_query: PhysicsRayQueryParameters2D
 var _cast_exclude_rids: Array[RID] = []
@@ -153,18 +154,106 @@ func _update_office_tracer() -> void:
 	if sprite == null: return
 	var inverse_scale := Vector2.ONE / sprite.scale.abs().max(Vector2(0.001, 0.001))
 	var points: Array[Vector2] = []
+	var reference: Variant = get_meta(&"depth_visual_bridge") if has_meta(&"depth_visual_bridge") else null
+	var bridge: Node = reference.get_ref() if reference is WeakRef else null
+	if is_instance_valid(bridge) and bridge.has_method(&"project_projectile_history"):
+		points = bridge.project_projectile_history(_trail_history, global_position)
+	var projected := points.size() == _trail_history.size() and not points.is_empty()
+	set_meta(&"projectile_history_projected", projected)
 	var lower := Vector2(-3, -5)
 	var upper := Vector2(3, 5)
-	for sample in _trail_history:
-		var relative: Vector2 = sample.position - global_position
-		if relative.length_squared() > MAX_TRAIL_RADIUS_PIXELS * MAX_TRAIL_RADIUS_PIXELS:
-			relative = relative.normalized() * MAX_TRAIL_RADIUS_PIXELS
-		var point := relative.rotated(-global_rotation) * inverse_scale
-		points.append(point)
+	if not projected:
+		points.clear()
+		for sample in _trail_history:
+			var relative: Vector2 = sample.position - global_position
+			if relative.length_squared() > MAX_TRAIL_RADIUS_PIXELS * MAX_TRAIL_RADIUS_PIXELS:
+				relative = relative.normalized() * MAX_TRAIL_RADIUS_PIXELS
+			points.append(relative.rotated(-global_rotation))
+	for index in points.size():
+		var point := points[index] * inverse_scale
+		points[index] = point
 		lower = lower.min(point - Vector2(2, 2))
 		upper = upper.max(point + Vector2(2, 2))
 	var anchor := -lower.floor()
 	var dimensions := Vector2i(upper.ceil() - lower.floor() + Vector2.ONE)
+	var picture := _perf009_raster_tracer(points, anchor, dimensions, projected)
+	if _history_texture == null or _history_texture_size != dimensions:
+		if _history_texture != null:
+			_release_history_texture(_history_texture, _history_texture_size)
+		var bucket: Array = _history_texture_pool.get(dimensions, [])
+		if not bucket.is_empty():
+			_history_texture = bucket.pop_back() as ImageTexture
+			_history_texture.update(picture)
+		else:
+			_history_texture = ImageTexture.create_from_image(picture)
+		_history_texture_size = dimensions
+	else:
+		_history_texture.update(picture)
+	sprite.texture = _history_texture
+	# Projected points already use camera axes. Cancel the gameplay root's
+	# heading only on its visual child, and rotate the head anchor with it.
+	# Collision, velocity and stored world history never inherit this change.
+	sprite.rotation = -global_rotation if projected else 0.
+	sprite.position = (-anchor * sprite.scale).rotated(sprite.rotation)
+	var glow := sprite.material as ShaderMaterial
+	if glow != null:
+		glow.set_shader_parameter(&"head_uv", (anchor + Vector2(0.5, 0.5)) / Vector2(dimensions))
+		glow.set_shader_parameter(&"glow_strength", 0.0 if consumed else clampf(float(CONFIG.get("projectile_visual_glow_strength")), 0.0, 1.0))
+
+
+func _perf009_raster_tracer(points: Array[Vector2], anchor: Vector2, dimensions: Vector2i, projected: bool) -> Image:
+	var ordered := true
+	for index in range(1, _trail_history.size()):
+		if float(_trail_history[index].time) < float(_trail_history[index-1].time): ordered = false; break
+	if ordered: return _perf009_raster_ordered_tracer(points, anchor, dimensions, projected)
+	var picture := _acquire_pooled_image(dimensions)
+	var pixels := picture.get_data()
+	var inv_history_window := 1.0 / HISTORY_WINDOW_SECONDS
+	var dim_x := dimensions.x
+	var dim_y := dimensions.y
+	for index in range(1, points.size()):
+		var from := points[index - 1]
+		var to := points[index]
+		var steps := maxi(1, int(ceil(from.distance_to(to))))
+		var inv_steps := 1.0 / float(steps)
+		var t0 := float(_trail_history[index - 1].time)
+		var t1 := float(_trail_history[index].time)
+		for step in range(steps + 1):
+			var ratio := float(step) * inv_steps
+			var sample_time := lerpf(t0, t1, ratio)
+			var alpha := clampf(1.0 - (_trail_clock - sample_time) * inv_history_window, 0.0, 1.0) * 0.82
+			if alpha <= 0.0: continue
+			# Image::set_pixel converts Color alpha to float32, multiplies by
+			# double 255.0 and truncates. Color.to_rgba32 rounds, so do not use it.
+			var alpha_byte := int(Color(0, 0, 0, alpha).a * 255.0)
+			var packed := 0x00FFFFFF | (alpha_byte << 24)
+			var pixel := Vector2i((from.lerp(to, ratio) + anchor).round())
+			for offset_x in range(-1, 2):
+				var px := pixel.x + offset_x
+				if px < 0 or px >= dim_x: continue
+				for offset_y in range(-1, 2):
+					if projected and absi(offset_x) + absi(offset_y) > 1: continue
+					if not projected and offset_x != 0: continue
+					var y := pixel.y + offset_y
+					if y >= 0 and y < dim_y:
+						var offset := (y * dim_x + px) * 4
+						# Equal quantized alpha has identical white RGB; retain white
+						# RGB even when a positive alpha truncates to zero.
+						if alpha_byte >= pixels[offset + 3]: pixels.encode_u32(offset, packed)
+	if not consumed:
+		var ax := int(anchor.x)
+		var ay := int(anchor.y)
+		for x in range(-2, 3):
+			for y in range(-2, 3):
+				if x*x + y*y <= 4: pixels.encode_u32(((ay+y)*dim_x + ax+x)*4, 0xFFFFFFFF)
+	picture.set_data(dim_x, dim_y, false, Image.FORMAT_RGBA8, pixels)
+	return picture
+
+
+# Time-stamped native histories are ordered, so later alpha never decreases.
+# Native clipped spans give identical pixels; unordered diagnostic inputs
+# retain the max-alpha byte raster above.
+func _perf009_raster_ordered_tracer(points: Array[Vector2], anchor: Vector2, dimensions: Vector2i, projected: bool) -> Image:
 	var picture := _acquire_pooled_image(dimensions)
 	# Rasterize actual time-stamped travel, including turns and cutoff interpolation.
 	var inv_history_window := 1.0 / HISTORY_WINDOW_SECONDS
@@ -181,40 +270,17 @@ func _update_office_tracer() -> void:
 			var ratio := float(step) * inv_steps
 			var sample_time := lerpf(t0, t1, ratio)
 			var alpha := clampf(1.0 - (_trail_clock - sample_time) * inv_history_window, 0.0, 1.0) * 0.82
+			if alpha <= 0.0: continue
 			var pixel := Vector2i((from.lerp(to, ratio) + anchor).round())
-			var px := pixel.x
-			if px >= 0 and px < dim_x:
-				for offset_y in range(-1, 2):
-					var y := pixel.y + offset_y
-					if y >= 0 and y < dim_y:
-						var cur_a := picture.get_pixel(px, y).a
-						if alpha > cur_a:
-							picture.set_pixel(px, y, Color(1.0, 1.0, 1.0, alpha))
+			var tint := Color(1.0, 1.0, 1.0, alpha)
+			if projected: picture.fill_rect(Rect2i(pixel + Vector2i(-1,0), Vector2i(3,1)), tint)
+			picture.fill_rect(Rect2i(pixel + Vector2i(0,-1), Vector2i(1,3)), tint)
 	if not consumed:
-		var ax := int(anchor.x)
-		var ay := int(anchor.y)
-		for x in range(-2, 3):
-			for y in range(-2, 3):
-				if x * x + y * y <= 4:
-					picture.set_pixel(ax + x, ay + y, Color.WHITE)
-	if _history_texture == null or _history_texture_size != dimensions:
-		if _history_texture != null:
-			_release_history_texture(_history_texture, _history_texture_size)
-		var bucket: Array = _history_texture_pool.get(dimensions, [])
-		if not bucket.is_empty():
-			_history_texture = bucket.pop_back() as ImageTexture
-			_history_texture.update(picture)
-		else:
-			_history_texture = ImageTexture.create_from_image(picture)
-		_history_texture_size = dimensions
-	else:
-		_history_texture.update(picture)
-	sprite.texture = _history_texture
-	sprite.position = -anchor * sprite.scale
-	var glow := sprite.material as ShaderMaterial
-	if glow != null:
-		glow.set_shader_parameter(&"head_uv", (anchor + Vector2(0.5, 0.5)) / Vector2(dimensions))
-		glow.set_shader_parameter(&"glow_strength", 0.0 if consumed else clampf(float(CONFIG.get("projectile_visual_glow_strength")), 0.0, 1.0))
+		var at := Vector2i(anchor)
+		for row in range(-2,3):
+			var half_width := 2 if row == 0 else (1 if absi(row) == 1 else 0)
+			picture.fill_rect(Rect2i(at + Vector2i(-half_width,row), Vector2i(half_width*2+1,1)), Color.WHITE)
+	return picture
 
 
 func _request_office_tracer_update() -> void:
@@ -228,9 +294,10 @@ func _request_office_tracer_update() -> void:
 	_office_tracer_update_pending = true
 
 
-func flush_office_tracer_update() -> void:
-	if not _office_tracer_update_pending:
+func flush_office_tracer_update(camera_signature: int = 0) -> void:
+	if not _office_tracer_update_pending and camera_signature == _trail_camera_signature:
 		return
+	_trail_camera_signature = camera_signature
 	_office_tracer_update_pending = false
 	_update_office_tracer()
 

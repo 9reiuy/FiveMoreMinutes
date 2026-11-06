@@ -13,8 +13,8 @@ size = Vector3(0.6, 1, 0.6)
 [sub_resource type="Environment" id="Environment_dungeon"]
 background_mode = 1
 ambient_light_source = 2
-ambient_light_color = Color(0.4, 0.44, 0.52, 1)
-ambient_light_energy = 0.38
+ambient_light_color = Color(0.18, 0.22, 0.30, 1)
+ambient_light_energy = 0.12
 tonemap_mode = 1
 
 [node name="Dream3D_BuildingLayout" type="Node3D" unique_id=1834488450]
@@ -125,4 +125,4 @@ environment = SubResource("Environment_dungeon")
 
 [node name="KeyLight" type="DirectionalLight3D" parent="Lighting" unique_id=1665044504]
 transform = Transform3D(0.88294756, 0.36994863, -0.2890356, 0, 0.6156615, 0.7880107, 0.46947157, -0.6957722, 0.5435968, 0, 0, 0)
-light_energy = 0.025
+light_energy = 0.0

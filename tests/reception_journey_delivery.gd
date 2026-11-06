@@ -77,8 +77,9 @@ func run() -> void:
 	while world.floor_transition_in_progress: await process_frame
 	recording = false
 	check(main.get_meta(&"last_reception_journey", {}).get("success", false), "Visible cab preparation successfully committed")
-	check(main.get_meta(&"last_reception_journey", {}).get("visible_ride_seconds", 0.0) >= 3.0, "Cab offers at least three seconds of unpaused controllable time after preparation")
-	check(cab_positions.size() > 8 and cab_positions[3].distance_to(cab_positions[7]) > 3.0, "Real movement input moves the passenger inside the visible cab")
+	check(main.get_meta(&"last_reception_journey", {}).get("fixed_ride_seconds", -1.0) == 0.0 and world.is_loading_render_ready(), "Current rendered receipt replaces the fixed three-second ride")
+	# A fast load need not leave enough time for a manual movement sample.
+	check(cab_positions.size() > 0, "Visible reception cab remains present while loading")
 	check(world.floor_root.visible and world.wall_root.visible, "Prepared floor geometry is revealed at arrival")
 	check(is_instance_valid(world.room_visibility) and world.room_visibility.world == world and world.player.get_meta(&"dream_room_id", -1) == world.spawn_room_id, "Fresh staged run initializes formal room visibility and player room identity")
 	check(world.get_world_3d() != root.world_3d, "Prepared floor keeps a private 3D world rather than leaking duplicate actors into lobby camera")

@@ -17,6 +17,7 @@ uniform vec3 ray_direction_dx;
 uniform vec3 ray_direction_dy;
 uniform bool neon_surface = false;
 uniform bool own_facade = false;
+uniform float facade_light_gain : hint_range(0.0, 1.0) = 1.0;
 uniform bool height_fog_enabled = true;
 uniform float height_fog_start = -2.0;
 uniform float height_fog_end = -30.0;
@@ -24,6 +25,13 @@ uniform float height_fog_end = -30.0;
 varying vec3 face_normal;
 varying float city_height;
 varying float light_visibility;
+
+#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS
+vec3 city_srgb_to_linear(vec3 encoded) {
+	return mix(encoded / 12.92, pow((encoded + 0.055) / 1.055, vec3(2.4)),
+		step(vec3(0.04045), encoded));
+}
+#endif
 
 void vertex() {
 	face_normal = NORMAL;
@@ -75,9 +83,10 @@ void fragment() {
 			if (part.y < 2.0) { col *= 0.72; }
 			else if (part.x >= 7.0 && part.x < 24.0 && part.y >= 14.0 && part.y < (own_facade ? 68.0 : 44.0)) {
 				// Dark, dim and lit apartments; no blurred glow or per-window light objects.
-				if (tone >= 9.0) { col = vec3(0.71, 0.54, 0.34) * (0.80 + tone * 0.018); }
-				else if (tone >= 5.0) { col = vec3(0.32, 0.52, 0.59); }
-				else if (tone >= 3.0) { col = vec3(0.20, 0.22, 0.31); }
+				float rare_warm = mod(window_cell.x * 11.0 + window_cell.y * 19.0 + seed * 3.0, 101.0);
+				if (tone >= 5.0 && rare_warm < 3.0) { col = vec3(0.35, 0.28, 0.19); }
+				else if (tone >= 5.0) { col = vec3(0.353, 0.451, 0.557); }
+				else if (tone >= 3.0) { col = vec3(0.169, 0.220, 0.306); }
 				else { col *= 0.35; }
 			}
 		}
@@ -89,8 +98,17 @@ void fragment() {
 	float far_haze = own_facade ? 0.0 : clamp(length(VERTEX) / 260.0, 0.0, 0.42);
 	float haze = max(down * 0.94, far_haze);
 	light_visibility = 1.0 - haze;
-	ALBEDO = col;
-	EMISSION = mix(col, vec3(0.025, 0.035, 0.075), haze);
+	ALBEDO = col * facade_light_gain;
+	EMISSION = mix(col, vec3(0.025, 0.035, 0.075), haze) * facade_light_gain;
+	#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS
+		// COLOR and the window/haze constants above are authored display
+		// codes. Match the Compatibility albedo/emission decode boundary,
+		// after the existing shading pattern and facade gain.
+		if (!OUTPUT_IS_SRGB) {
+			ALBEDO = city_srgb_to_linear(ALBEDO);
+			EMISSION = city_srgb_to_linear(EMISSION);
+		}
+	#endif
 	ROUGHNESS = 1.0;
 	SPECULAR = 0.0;
 }

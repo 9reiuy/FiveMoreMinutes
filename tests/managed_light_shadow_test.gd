@@ -56,6 +56,8 @@ func run() -> void:
 	await process_frame
 
 	var owner := Node3D.new()
+	var muzzle_checks_before := checks
+	var muzzle_failures_before := failures
 	root.add_child(owner)
 	var night := NIGHT.new()
 	owner.add_child(night)
@@ -68,15 +70,19 @@ func run() -> void:
 	night.muzzle_duration = 1.0
 	night.flash_muzzle_world(Vector3(1, 1, 1), &"pistol")
 	night.flash_muzzle_world(Vector3(2, 1, 1), &"shotgun")
-	check(_shadow_count(night) == 1, "Concurrent muzzle flashes exceeded one shadow")
+	check(_shadow_count(night) == 0, "Managed muzzle flashes must illuminate without dynamic shadows")
 	var locked_slot: int = night._muzzle_shadow_slot
 	check(night.muzzle_lights[locked_slot].light_energy == 4.0, "Highest contribution shot did not win frame")
 	var locked_position: Vector3 = night.muzzle_lights[locked_slot].global_position
 	for index in 20:
 		night.flash_muzzle_world(Vector3(index, 2, 0), &"pistol")
-		check(_shadow_count(night) == 1, "Pool wrap exceeded shadow budget")
+		check(_shadow_count(night) == 0, "Pool wrap re-enabled muzzle shadows")
 	check(night.muzzle_lights[locked_slot].global_position == locked_position, "Pool moved immutable shot origin")
 	check(night.remaining[locked_slot] <= 0.080, "Flash exceeds 80ms duration")
+	check(night.muzzle_lights[locked_slot].visible, "Shadow simplification hid the muzzle illumination")
+	check(night.muzzle_lights[locked_slot].light_color == Color(1, 0.70, 0.34), "Muzzle illumination color changed")
+	check(night.muzzle_lights[locked_slot].omni_range == 4.0, "Muzzle illumination range changed")
+	check(night.flashlight.shadow_enabled, "Muzzle simplification removed flashlight shadows")
 	check((night.flashlight.light_cull_mask & 4) == 0, "Flashlight includes own player shadow")
 	# Real-clock expiry must work even with delta zero (slow motion / pause).
 	var expiry_wait_started := Time.get_ticks_usec()
@@ -86,6 +92,8 @@ func run() -> void:
 	night.shadow_transition_paused = true
 	night._process(0.0)
 	check(_shadow_count(night) == 0, "Paused time extended muzzle shadow beyond 80ms")
+	for light in night.muzzle_lights:
+		check(not light.visible, "Real-clock expiry left muzzle illumination active")
 	night.set_shadow_transition_paused(false)
 	night.flash_muzzle_world(Vector3.ZERO, &"rifle")
 	night.set_shadow_transition_paused(true)
@@ -95,6 +103,15 @@ func run() -> void:
 	check(not night.flashlight.visible, "Cab transition retained torch")
 	night.flash_muzzle_world(Vector3.ZERO, &"shotgun")
 	check(_shadow_count(night) == 0, "Paused transition accepted new pulse")
+	night.set_shadow_transition_paused(false)
+	for managed in [false, true, false, true]:
+		night.set_managed_shadows(managed)
+		for kind in [&"pistol", &"rifle", &"assault_rifle", &"shotgun"]:
+			night.flash_muzzle_world(Vector3(3, 1, 2), kind)
+			var pulse: OmniLight3D = night.muzzle_lights[(night.next_flash + 5) % 6]
+			check(_shadow_count(night) == 0, "Lighting mode change re-enabled shot shadows")
+			check(pulse.visible and is_equal_approx(pulse.light_energy, float(NIGHT.MUZZLE_ENERGY[kind])), "Weapon pulse lost visibility or intensity")
+	print("MUZZLE_SHADOW_POLICY_CHECKS=", checks - muzzle_checks_before, " FAILURES=", failures - muzzle_failures_before)
 	owner.queue_free()
 	await process_frame
 

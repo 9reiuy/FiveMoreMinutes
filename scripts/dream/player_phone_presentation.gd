@@ -39,9 +39,9 @@ func bind(owner_world: Node3D) -> void:
 		texture.atlas = ART
 		texture.region = Rect2(i*32,192,32,32)
 		frames.append(texture)
-	var atlas_mask := AtlasTexture.new()
-	atlas_mask.atlas = ART; atlas_mask.region = Rect2(192,192,32,32)
-	mask = ImageTexture.create_from_image(atlas_mask.get_image())
+	var mask_image: Image=ART.get_image()
+	if mask_image.is_compressed(): mask_image.decompress()
+	mask = ImageTexture.create_from_image(mask_image.get_region(Rect2i(192,192,32,32)))
 	pose = Sprite2D.new()
 	pose.name = "PhonePose"
 	pose.centered = false

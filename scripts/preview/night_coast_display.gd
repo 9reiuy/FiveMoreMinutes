@@ -2,13 +2,14 @@ extends Control
 ## Fixed pixel presentation for standalone F6/launcher, including mouse mapping.
 var view: SubViewport
 var coast: Node3D
+@export var coast_scene: PackedScene = preload("res://scenes/preview/night_coast_city_cliff_sample.tscn")
 func _ready() -> void:
  set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  mouse_filter=Control.MOUSE_FILTER_IGNORE
  view=SubViewport.new(); view.size=Vector2i(640,360)
  view.own_world_3d=true; view.render_target_update_mode=SubViewport.UPDATE_ALWAYS
  add_child(view)
- coast=preload("res://scenes/preview/night_coast.tscn").instantiate()
+ coast=coast_scene.instantiate()
  view.add_child(coast)
  var image:=TextureRect.new()
  image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

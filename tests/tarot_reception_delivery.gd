@@ -72,10 +72,11 @@ func run() -> void:
 	var requested_palette: bool=root.get_node("SettingsManager").get_palette_enabled()
 	if validate:
 		check(not bool(main.current_screen.palette_material.get_shader_parameter("palette_enabled")),"Lobby preserves the approved native furniture palette")
-		var lobby_doors: Array=[room.elevator_floor_door,room.door_root.get_node("BackgroundElevator2"),room.door_root.get_node("BackgroundElevator3")]
+		var lobby_doors: Array=[room.elevator_floor_door]
+		check(room.door_root.get_child_count()==1,"Lobby has only one elevator")
 		for i in lobby_doors.size():
 			check(lobby_doors[i].industrial_facade.has_node("FreightStructuralFrame"),"Lobby bay uses approved freight facade")
-			check(lobby_doors[i].industrial_facade.get_node("FreightNumber").text=="%02d"%(i+1),"Lobby bay retains distinct 01/02/03 numbering")
+			check(lobby_doors[i].industrial_facade.get_node("FreightNumber").text=="%02d"%(i+1),"Only lobby elevator is numbered 01")
 	await frames(30); capture("entrance")
 	var measured_viewport: RID=room.camera_3d.get_viewport().get_viewport_rid()
 	RenderingServer.viewport_set_measure_render_time(measured_viewport,true)
@@ -100,7 +101,7 @@ func run() -> void:
 	await frames(30); capture("hall")
 	if revision:
 		room.set_process(false)
-		var center: Vector2=room.camera_3d.unproject_position(room.to_global(Vector3(11,0,10.5)))
+		var center: Vector2=room.camera_3d.unproject_position(room.to_global(Vector3(4.8,0,5.8)))
 		var region:=Rect2i(Vector2i(center)-Vector2i(4,4),Vector2i(8,8))
 		main.current_screen.set_palette_enabled(false); await frames(4)
 		capture("palette_off")
@@ -108,7 +109,7 @@ func run() -> void:
 		main.current_screen.set_palette_enabled(true); await frames(4)
 		capture("palette_on")
 		var after: PackedByteArray=room.camera_3d.get_viewport().get_texture().get_image().get_region(region).get_data()
-		check(before==after,"Rendered marble floor remains identical when palette toggles")
+		check(before==after,"Rendered stone floor remains identical when palette toggles")
 		check(not bool(main.current_screen.palette_material.get_shader_parameter("palette_enabled")),"Palette ON request cannot recolour this lobby")
 		main.current_screen.set_palette_enabled(requested_palette)
 		room.set_process(true)
@@ -123,10 +124,10 @@ func run() -> void:
 		room.waitress_approached_this_session=false
 		room.dialogue_controller.dismiss_if_active(); await frames(30)
 		recording=true
-		for point in [Vector2(12.5,7.2),Vector2(4.8,7.2),Vector2(4.8,8.7),Vector2(4.8,7.2),Vector2(12.5,7.2)]:
+		for point in [Vector2(14.5,4.5),Vector2(12.5,4.5),Vector2(9.,4.5)]:
 			check(await move_to(point),"Ordinary movement reaches lobby waypoint "+str(point))
 		capture("lounge")
-		check(await move_to(Vector2(16,5)),"Walk to passive left counter")
+		check(await move_to(Vector2(8.,4.4)),"Walk to the central counter")
 		check(not room.dialogue_controller.is_active(),"Passive NPC only hints on approach")
 		Input.action_press("pickup_weapon"); await frames(2); Input.action_release("pickup_weapon")
 		await frames(60); capture("dialogue")
@@ -137,7 +138,7 @@ func run() -> void:
 		await frames(20)
 		check(not room.tarot_overlay.visible and not room.tarot_visit_state.selected,"Closing dialogue does not draw or select tarot")
 		
-		for point in [Vector2(12.5,5.5),Vector2(3.5,5.5),Vector2(3.5,1.3)]:
+		for point in [Vector2(5.,4.5),Vector2(room.ELEVATOR_POS_3D.x,4.5),Vector2(room.ELEVATOR_POS_3D.x,1.3)]:
 			check(await move_to(point),"Ordinary movement reaches elevator waypoint "+str(point))
 		capture("elevator_ready")
 		check(room.elevator_approach_active,"Only functional elevator offers entry prompt")

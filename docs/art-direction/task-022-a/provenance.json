@@ -1,0 +1,41 @@
+{
+  "task": "TASK-022-A",
+  "stage": "Phase 1 concept overpaint, awaiting visual review",
+  "created_at": "2026-11-03T19:47:05.394008+08:00",
+  "branch": "wip/linux-migrate-20261018",
+  "head": "b5d286d8491701ac433826aa26b1d75d32f88c75",
+  "edit_target": {
+    "source": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\palette_switch_20261103\\palette_main_switch_test_20261103_191304\\first_floor_1.png",
+    "delivered": "current-office.png",
+    "size": [
+      640,
+      360
+    ],
+    "mode": "RGBA",
+    "format": "PNG",
+    "sha256": "842d4a1052402f3d257f2ffd833364ab0ff312f39e22955110280b687d96ee89"
+  },
+  "overpaint": {
+    "tool": "built-in imagegen",
+    "generated_source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a19cc7-d32b-7081-97e2-4b72cdd0c8b3\\exec-f04b7e20-28b5-4311-b91a-97e771d5971e.png",
+    "delivered": "target-overpaint-a-v1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "mode": "RGB",
+    "format": "PNG",
+    "sha256": "ba4b9698c1ee69550f062c5da4d70306fdac7b4b6f48587be11bf5750d646ef9"
+  },
+  "prompt_file": "imagegen-prompt.txt",
+  "prompt_sha256": "32f53edbf93c10c287214d933c83987778f32cf04773688029235f28467f87d7",
+  "brief_sha256": "2032cbbfedf955c117f74a6ffea5912e24b5a4025737168d6a9ccb93608eae7b",
+  "supplied_style_reference_images": [],
+  "limitations": [
+    "Reference images 1-4 were not attached; the style was interpreted from the written brief.",
+    "Generated overpaint is a concept, not an in-engine capture or delivered gameplay geometry.",
+    "The source frame has no blood and no full root HUD; those require actual Camera review in the pilot.",
+    "Current production blood remains orange; this task changes no blood color logic.",
+    "No performance acceptance or production integration in this phase."
+  ]
+}

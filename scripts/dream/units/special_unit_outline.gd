@@ -25,6 +25,7 @@ func configure(owner_world: Node3D, source: Node3D, target: Node2D, offset: Vect
 	var flat:=StandardMaterial3D.new(); flat.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED; flat.albedo_color=Color.WHITE
 	for raw in model.find_children("*","MeshInstance3D",true,false):
 		var source_mesh: MeshInstance3D=raw
+		if bool(source_mesh.get_meta(&"unit_visual_fx",false)): continue
 		source_mesh.material_overlay=null
 		if source_mesh.mesh==null or source_mesh.find_parent("MuzzleFire")!=null: continue
 		var copy:=MeshInstance3D.new(); copy.mesh=source_mesh.mesh; copy.material_override=flat
@@ -56,35 +57,42 @@ func sync() -> void:
 	if not enabled or not can_process() or not is_instance_valid(model) or not is_instance_valid(actor) or actor.get("dead")==true or actor.get_meta(&"smoke_hidden_from_player",false):
 		border.hide(); capture.render_target_update_mode=SubViewport.UPDATE_DISABLED; return
 	var real: Camera3D=world.camera_3d
+	# Use the camera's effective, orthonormal render transform, including its
+	# display-only h/v offset. global_transform omits those camera offsets.
+	var effective:=real.get_camera_transform()
 	var center:=model.get_parent_node_3d().to_global(center_offset)
 	var size:=real.get_viewport().get_visible_rect().size
 	var pixel:=real.unproject_position(center).round()
-	var projected_radius:=real.unproject_position(center+real.global_basis.x*radius).distance_to(pixel)
+	var projected_radius:=real.unproject_position(center+effective.basis.x*radius).distance_to(pixel)
 	var extent:=clampi(int(pow(2,ceil(log(maxf(projected_radius*2.0+8.0,64.0))/log(2.0)))),64,512)
 	var on_screen:=not real.is_position_behind(center) and Rect2(Vector2.ZERO,size).grow(extent*.5).has_point(pixel)
 	border.visible=on_screen
 	capture.render_target_update_mode=SubViewport.UPDATE_ALWAYS if on_screen else SubViewport.UPDATE_DISABLED
 	if not on_screen: return
 	if capture.size!=Vector2i(extent,extent): capture.size=Vector2i(extent,extent)
-	var inverse:=real.global_transform.affine_inverse()
+	var inverse:=effective.affine_inverse()
 	var depth:=maxf(.1,-(inverse*center).z)
 	var half:=Vector2.ONE*float(extent)*.5
 	var tl:=inverse*real.project_position(pixel-half,real.near)
 	var br:=inverse*real.project_position(pixel+half,real.near)
 	var near_center:=inverse*real.project_position(pixel,real.near)
-	camera.global_transform=real.global_transform
+	camera.global_transform=effective
+	camera.h_offset=0.0; camera.v_offset=0.0
 	camera.keep_aspect=Camera3D.KEEP_HEIGHT
 	camera.set_frustum(tl.y-br.y,Vector2(near_center.x,near_center.y),real.near,real.far)
+	camera.force_update_transform()
 	var a:=real.project_position(pixel-half,depth)
 	var b:=real.project_position(pixel+half,depth)
 	border.mesh.size=Vector2(absf((inverse*b).x-(inverse*a).x),absf((inverse*b).y-(inverse*a).y))
-	border.global_transform=Transform3D(real.global_basis,real.project_position(pixel,depth))
+	border.global_transform=Transform3D(effective.basis,real.project_position(pixel,depth))
+	border.force_update_transform()
 	material.set_shader_parameter("rim_color",Color.WHITE if aimed or melee else Color(.55,.58,.62))
 	material.set_shader_parameter("pixel_width",maxf(1.0,size.y/360.0))
 	for record in records:
 		var source: Node3D=record.source.get_ref()
 		if not is_instance_valid(source): record.copy.hide(); continue
 		record.copy.global_transform=source.global_transform
+		record.copy.force_update_transform()
 		record.copy.visible=source.is_visible_in_tree()
 
 func _exit_tree() -> void:

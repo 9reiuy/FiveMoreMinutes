@@ -12,8 +12,11 @@ var sections: Dictionary={}
 var fixtures: Array[Dictionary]=[]
 var refresh_count:=0
 var last_refresh_usec:=0
+var configure_count:=0
+var last_local_update_count:=0
 
 func configure(source: Node3D)->void:
+	configure_count+=1
 	world=source; geometry=GEOMETRY.new(); walls.clear(); endpoints.clear(); records.clear(); sections.clear(); fixtures.clear()
 	for wall in world.wall_root.get_children():
 		if not wall.has_method("set_office_cutaway_profile"): continue
@@ -23,43 +26,7 @@ func configure(source: Node3D)->void:
 			if not endpoints.has(key): endpoints[key]=[]
 			endpoints[key].append(wall)
 	for wall in walls:
-		var base: Mesh=wall.get("_window_wall_mesh") if wall.window_variant else wall.get("_base_wall_mesh")
-		var depth: float=minf(base.get_aabb().size.z,.25)
-		var miters:=Vector2.ZERO
-		var wall_dir: Vector3=wall.global_basis.x.normalized()
-		var wall_norm: Vector3=wall.global_basis.z.normalized()
-		var aligned_sides: Array=[[],[]]
-		var perp_sides: Array=[[],[]]
-		for index in 2:
-			var side: float=-1.0 if index==0 else 1.0
-			var endpoint_list: Array=endpoints[_endpoint_key(wall,side)]
-			var neighbors: Array=[]
-			for other in endpoint_list:
-				if other==wall: continue
-				neighbors.append(other)
-				var alignment: float=absf((other as Node3D).global_basis.x.normalized().dot(wall_dir))
-				if alignment>.99: aligned_sides[index].append(other)
-				elif alignment<.1: perp_sides[index].append(other)
-			if neighbors.size()!=1: continue
-			var other: Node3D=neighbors[0]
-			if absf(other.global_basis.x.normalized().dot(wall_dir))>.01: continue
-			var point: Vector3=wall.to_global(Vector3(side*.5,0,0))
-			miters[index]=-side*signf((other.global_position-point).dot(wall_norm))
-		var full: Mesh=geometry.join_mesh(geometry._thin_mesh(base,depth),miters)
-		var height: float=float(wall.wall_height)
-		var key:=Vector2(height,depth)
-		if not sections.has(key):
-			var section:=ShaderMaterial.new(); section.shader=SECTION
-			section.set_shader_parameter("section_pixels",ImageTexture.create_from_image(GEOMETRY.section_image(key.x,key.y)))
-			section.set_shader_parameter("section_height",key.x); section.set_shader_parameter("section_thickness",key.y)
-			sections[key]=section
-		var phase: float=float(posmod(roundi(wall.position.x if absf(wall.basis.x.x)>.5 else -wall.position.z),3))
-		records[wall.get_instance_id()]={
-			"full":full,"depth":depth,"height":height,"miters":miters,"section":sections[key],
-			"phase":phase,"aligned_left":aligned_sides[0],"perp_left":perp_sides[0],
-			"aligned_right":aligned_sides[1],"perp_right":perp_sides[1],
-			"cut_variants":[null,null,null,null],"last_posts_mask":-1
-		}
+		records[wall.get_instance_id()]=_build_record(wall)
 	# Wall-mounted purely visual details follow the thinner visible face.
 	for fixture in world.wall_root.get_children():
 		if not fixture is MeshInstance3D or not String(fixture.name).begins_with("WallFixture_"): continue
@@ -70,10 +37,80 @@ func configure(source: Node3D)->void:
 			if p.length_squared()<distance: nearest=wall; distance=p.length_squared()
 		if nearest!=null:
 			var p: Vector3=nearest.to_local(fixture.global_position)
-			p.z=signf(p.z)*(float(records[nearest.get_instance_id()].depth)*.5+maxf(0,absf(p.z)-float(nearest.wall_thickness)*.5))
+			if not fixture.has_meta(&"office_cutaway_face_offset"):
+				fixture.set_meta(&"office_cutaway_face_offset",maxf(0,absf(p.z)-float(nearest.wall_thickness)*.5))
+			p.z=signf(p.z)*(float(records[nearest.get_instance_id()].depth)*.5+float(fixture.get_meta(&"office_cutaway_face_offset")))
 			fixture.global_position=nearest.to_global(p)
 			fixtures.append({"node":fixture,"wall":nearest})
 	refresh()
+
+func _build_record(wall: Node3D)->Dictionary:
+	var base: Mesh=wall.get("_window_wall_mesh") if wall.window_variant else wall.get("_base_wall_mesh")
+	var depth: float=minf(base.get_aabb().size.z,.25)
+	var miters:=Vector2.ZERO
+	var wall_dir: Vector3=wall.global_basis.x.normalized()
+	var wall_norm: Vector3=wall.global_basis.z.normalized()
+	var aligned_sides: Array=[[],[]]
+	var perp_sides: Array=[[],[]]
+	for index in 2:
+		var side: float=-1.0 if index==0 else 1.0
+		var endpoint_list: Array=endpoints[_endpoint_key(wall,side)]
+		var neighbors: Array=[]
+		for other in endpoint_list:
+			if not is_instance_valid(other) or other==wall: continue
+			neighbors.append(other)
+			var alignment: float=absf((other as Node3D).global_basis.x.normalized().dot(wall_dir))
+			if alignment>.99: aligned_sides[index].append(other)
+			elif alignment<.1: perp_sides[index].append(other)
+		if neighbors.size()!=1: continue
+		var other: Node3D=neighbors[0]
+		if absf(other.global_basis.x.normalized().dot(wall_dir))>.01: continue
+		var point: Vector3=wall.to_global(Vector3(side*.5,0,0))
+		miters[index]=-side*signf((other.global_position-point).dot(wall_norm))
+	var full: Mesh=geometry.join_mesh(geometry._thin_mesh(base,depth),miters)
+	var height: float=float(wall.wall_height)
+	var key:=Vector2(height,depth)
+	if not sections.has(key):
+		var section:=ShaderMaterial.new(); section.shader=SECTION
+		section.set_shader_parameter("section_pixels",ImageTexture.create_from_image(GEOMETRY.section_image(key.x,key.y)))
+		section.set_shader_parameter("section_height",key.x); section.set_shader_parameter("section_thickness",key.y)
+		sections[key]=section
+	var phase: float=float(posmod(roundi(wall.position.x if absf(wall.basis.x.x)>.5 else -wall.position.z),3))
+	return {
+		"full":full,"depth":depth,"height":height,"miters":miters,"section":sections[key],
+		"phase":phase,"aligned_left":aligned_sides[0],"perp_left":perp_sides[0],
+		"aligned_right":aligned_sides[1],"perp_right":perp_sides[1],
+		"cut_variants":[null,null,null,null],"last_posts_mask":-1
+	}
+
+func remove_wall_fixtures(wall: Node3D)->void:
+	var kept: Array[Dictionary]=[]
+	for fixture in fixtures:
+		if fixture.wall==wall:
+			if is_instance_valid(fixture.node): fixture.node.free()
+		elif is_instance_valid(fixture.wall) and is_instance_valid(fixture.node): kept.append(fixture)
+	fixtures=kept
+
+func remove_wall(wall: Node3D)->Array[Node3D]:
+	var affected: Dictionary={}
+	for side in [-1.0,1.0]:
+		var key:=_endpoint_key(wall,side)
+		var joined: Array=endpoints.get(key,[])
+		joined.erase(wall)
+		if joined.is_empty(): endpoints.erase(key)
+		else:
+			for neighbor in joined:
+				if is_instance_valid(neighbor): affected[neighbor.get_instance_id()]=neighbor
+	walls.erase(wall)
+	records.erase(wall.get_instance_id())
+	remove_wall_fixtures(wall)
+	var changed: Array[Node3D]=[]
+	changed.assign(affected.values())
+	# Removing an edge only changes the profiles meeting its two endpoints.
+	for neighbor in changed: records[neighbor.get_instance_id()]=_build_record(neighbor)
+	for neighbor in changed: _refresh_wall(neighbor)
+	last_local_update_count=changed.size()
+	return changed
 
 func _endpoint_key(wall: Node3D,side: float)->Vector2i:
 	var p: Vector3=world.to_local(wall.to_global(Vector3(side*.5,0,0)))
@@ -83,34 +120,36 @@ func refresh()->void:
 	if not is_instance_valid(world) or walls.is_empty() or not is_instance_valid(walls[0]): return
 	if walls[0].get_parent()!=world.wall_root: return # Old floor may be in the rollback stash.
 	var started:=Time.get_ticks_usec()
-	for wall in walls:
-		if not is_instance_valid(wall): continue
-		var record: Dictionary=records[wall.get_instance_id()]
-		var continues_l:=false
-		for other in record.aligned_left:
-			if other.cutaway_mode: continues_l=true; break
-		var junction_l:=false
-		for other in record.perp_left:
-			if not other.cutaway_mode: junction_l=true; break
-		var post_left: bool=not continues_l or junction_l
-
-		var continues_r:=false
-		for other in record.aligned_right:
-			if other.cutaway_mode: continues_r=true; break
-		var junction_r:=false
-		for other in record.perp_right:
-			if not other.cutaway_mode: junction_r=true; break
-		var post_right: bool=not continues_r or junction_r
-
-		var posts_mask: int=(1 if post_left else 0) | (2 if post_right else 0)
-		if posts_mask!=int(record.last_posts_mask):
-			record.last_posts_mask=posts_mask
-			var variants: Array=record.cut_variants
-			var cut: Mesh=variants[posts_mask]
-			if cut==null:
-				cut=geometry.join_mesh(geometry.cut_mesh(float(record.height),float(record.depth),post_left,post_right,float(record.phase)),record.miters)
-				variants[posts_mask]=cut
-			wall.set_office_cutaway_profile(record.full,cut,record.section)
+	for wall in walls: _refresh_wall(wall)
 	for fixture in fixtures:
 		if is_instance_valid(fixture.node) and is_instance_valid(fixture.wall): fixture.node.visible=not fixture.wall.cutaway_mode
 	refresh_count+=1; last_refresh_usec=Time.get_ticks_usec()-started
+
+func _refresh_wall(wall: Node3D)->void:
+	if not is_instance_valid(wall): return
+	var record: Dictionary=records[wall.get_instance_id()]
+	var continues_l:=false
+	for other in record.aligned_left:
+		if is_instance_valid(other) and other.cutaway_mode: continues_l=true; break
+	var junction_l:=false
+	for other in record.perp_left:
+		if is_instance_valid(other) and not other.cutaway_mode: junction_l=true; break
+	var post_left: bool=not continues_l or junction_l
+
+	var continues_r:=false
+	for other in record.aligned_right:
+		if is_instance_valid(other) and other.cutaway_mode: continues_r=true; break
+	var junction_r:=false
+	for other in record.perp_right:
+		if is_instance_valid(other) and not other.cutaway_mode: junction_r=true; break
+	var post_right: bool=not continues_r or junction_r
+
+	var posts_mask: int=(1 if post_left else 0) | (2 if post_right else 0)
+	if posts_mask!=int(record.last_posts_mask):
+		record.last_posts_mask=posts_mask
+		var variants: Array=record.cut_variants
+		var cut: Mesh=variants[posts_mask]
+		if cut==null:
+			cut=geometry.join_mesh(geometry.cut_mesh(float(record.height),float(record.depth),post_left,post_right,float(record.phase)),record.miters)
+			variants[posts_mask]=cut
+		wall.set_office_cutaway_profile(record.full,cut,record.section)

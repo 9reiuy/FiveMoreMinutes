@@ -41,10 +41,10 @@ func _run() -> void:
 
 	# Test player positions around the desk
 	var test_positions: Array[Dictionary] = [
-		{"name": "Desk front center", "pos": Vector2(16.0, 4.65) * 32.0},
-		{"name": "Desk front left", "pos": Vector2(14.5, 4.65) * 32.0},
-		{"name": "Desk front right", "pos": Vector2(17.5, 4.65) * 32.0},
-		{"name": "Stepped back slightly", "pos": Vector2(16.0, 5.3) * 32.0},
+		{"name": "Desk front center", "pos": Vector2(8.0, 3.85) * 32.0},
+		{"name": "Desk front left", "pos": Vector2(6.5, 3.85) * 32.0},
+		{"name": "Desk front right", "pos": Vector2(9.5, 3.85) * 32.0},
+		{"name": "Stepped back slightly", "pos": Vector2(8.0, 4.5) * 32.0},
 	]
 
 	for entry in test_positions:
@@ -64,7 +64,7 @@ func _run() -> void:
 			"Talk action sits above emotion bubble")
 
 	# Test far away position (entrance)
-	var far_pos := Vector2(12.5, 18.5) * 32.0
+	var far_pos: Vector2 = room.PLAYER_SPAWN
 	player.global_position = far_pos
 	var far_target = resolver.update_target()
 	_check(far_target == null, "Entrance far away: update_target() returns null")

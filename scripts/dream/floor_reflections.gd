@@ -2,6 +2,7 @@ extends Node3D
 ## Floor-owned presentation. One shared render; no duplicated gameplay actors.
 const EXCLUDED:=1<<19
 const CAPTURE_FLAG:=1<<18
+const RENDER_LAYERS := preload("res://scripts/dream/render_layer_mask.gd")
 const SURFACE_INCLUDE="res://shaders/dream3d/floor_reflection_surface.gdshaderinc"
 const PROFILES={
 	"restroom":Vector4(.23,1.15,.24,.55), "pantry":Vector4(.20,1.25,.20,.60),
@@ -15,11 +16,13 @@ var original_camera_mask:=0
 var original_token:=-1
 var enabled:=true
 var update_hz:=15.0
+var native_office := false
 var renders:=0
 var cpu_usec:=0
 var restored:=false
 var surfaces:Array[Dictionary]=[]
 var layers:Array[Dictionary]=[]
+var mirror_walls: Array[MeshInstance3D] = []
 var lights:Array[Dictionary]=[]
 var actor_shaders:Array[Dictionary]=[]
 var actor_materials:Array[ShaderMaterial]=[]
@@ -63,24 +66,36 @@ static func profile(key:String)->Vector4: return PROFILES.get(key,Vector4(.025,2
 
 func configure(owner_world:Node3D)->void:
 	world=owner_world; dungeon=world.has_method("get_current_floor_token"); original_token=_token()
+	native_office = dungeon and world.uses_office_night_lighting()
 	original_camera_mask=world.camera_3d.cull_mask
 	world.camera_3d.cull_mask=(original_camera_mask|EXCLUDED)&~CAPTURE_FLAG
 	viewport=SubViewport.new(); viewport.name="FloorReflectionViewport"
-	viewport.size=Vector2i(256,144); viewport.world_3d=world.get_world_3d()
+	viewport.size=Vector2i(320,180) if native_office else Vector2i(256,144)
+	viewport.transparent_bg=native_office
+	viewport.world_3d=world.get_world_3d()
 	viewport.render_target_update_mode=SubViewport.UPDATE_DISABLED
 	# Main lighting/shadows stay untouched. The blurred secondary colour view
 	# uses existing lights without a second positional shadow atlas.
-	viewport.positional_shadow_atlas_size=0; viewport.msaa_3d=Viewport.MSAA_DISABLED
+	viewport.positional_shadow_atlas_size=2048 if native_office else 0
+	if native_office:
+		for quadrant in 4:
+			viewport.set("positional_shadow_atlas_quad_%d" % quadrant, Viewport.SHADOW_ATLAS_QUADRANT_SUBDIV_16)
+	viewport.msaa_3d=Viewport.MSAA_DISABLED
 	add_child(viewport)
 	camera=Camera3D.new(); camera.name="FloorReflectionCamera"; viewport.add_child(camera)
 	camera.cull_mask=(original_camera_mask&~EXCLUDED)|CAPTURE_FLAG
+	if native_office: camera.cull_mask |= 1 << 13
 	camera.current=true
 	var env:WorldEnvironment=world.get_node_or_null("Lighting/WorldEnvironment")
 	if env!=null:
 		camera.environment=env.environment.duplicate()
 		camera.environment.background_mode=Environment.BG_COLOR
 		camera.environment.background_color=Color.BLACK
+		if native_office:
+			camera.environment.ambient_light_color=world.sparse_lighting.sparse_environment.ambient_light_color
+			camera.environment.ambient_light_energy=.025
 	_install_surfaces()
+	if native_office: _install_mirror_walls()
 	_install_scene_carriers()
 	for light in world.find_children("*","Light3D",true,false): _register_light(light)
 	process_priority=120
@@ -88,10 +103,15 @@ func configure(owner_world:Node3D)->void:
 	get_tree().node_added.connect(_on_node_added)
 
 func _register_light(light:Light3D)->void:
+	# Ground readability must not become another lamp on reflected furniture.
+	if light.get_meta(&"ground_readability_only",false): return
 	if installed_ids.has(light.get_instance_id()): return
 	installed_ids[light.get_instance_id()]=weakref(light)
-	lights.append({"node":weakref(light),"old":light.light_cull_mask})
-	light.light_cull_mask|=EXCLUDED
+	lights.append({"node":weakref(light),"old":light.light_cull_mask, "casters":light.shadow_caster_mask})
+	if native_office and light.shadow_caster_mask & 2:
+		light.shadow_caster_mask |= 1 << 13
+		light.light_cull_mask |= 1 << 13
+	light.light_cull_mask|=EXCLUDED | (CAPTURE_FLAG if native_office else 0)
 
 func _on_node_added(node:Node)->void:
 	if world.is_ancestor_of(node) and (node is GeometryInstance3D or node is Light3D) and not installed_ids.has(node.get_instance_id()):
@@ -137,17 +157,27 @@ func _bind_surface(material:ShaderMaterial,key:String)->void:
 	material.set_shader_parameter("sample_reflection_texture",viewport.get_texture())
 	material.set_shader_parameter("sample_reflection_size",Vector2(viewport.size))
 	material.set_shader_parameter("sample_reflection_strength",values.x)
-	material.set_shader_parameter("sample_reflection_blur",values.y)
+	material.set_shader_parameter("sample_reflection_blur",maxf(.55,values.y*.6) if native_office else values.y)
+	material.set_shader_parameter("sample_native_reflection",native_office)
 	material.set_shader_parameter("sample_surface_gloss",values.z)
 	material.set_shader_parameter("sample_surface_roughness",values.w)
 	material.set_shader_parameter("sample_surface_enabled",enabled)
 	floor_materials.append(material)
 
 func _surface_shader(source:Shader)->Shader:
+	# Local matte receivers (e.g. reception stone) have their own coordinate
+	# contract and deliberately do not participate in office floor reflections.
+	if not source.code.contains("architecture_world"): return source
 	var shader_key:=source.code.hash()
 	if surface_shaders.has(shader_key): return surface_shaders[shader_key]
 	var code:=source.code.replace("shader_type spatial;","shader_type spatial;\n#include \""+SURFACE_INCLUDE+"\"")
-	code=code.replace("ALBEDO = texture(atlas, atlas_uv).rgb;","ALBEDO = texture(atlas, atlas_uv).rgb;\nEMISSION += sample_surface_reflection(architecture_world, ALBEDO);")
+	code=code.replace("void fragment() {", """void fragment() {
+float world_footprint=max(length(dFdx(architecture_world.xz)),length(dFdy(architecture_world.xz)));
+sample_grain_retained=1.0-smoothstep(0.5,1.0,world_footprint*32.0);
+sample_cluster_retained=1.0-smoothstep(0.5,1.0,world_footprint*4.0);
+""")
+	var tone := "review_floor_authored" if code.contains("vec3 review_floor_authored =") else "ALBEDO"
+	code=code.replace("ROUGHNESS = 1.0;","if(sample_native_reflection){ vec4 reflected=sample_mirror_reflection(architecture_world,"+tone+"); ALBEDO*=1.0-reflected.a; EMISSION+=reflected.rgb; } else { EMISSION += min(sample_surface_reflection(architecture_world, "+tone+"),vec3(0.006)); }\nROUGHNESS = 1.0;")
 	# Preserve the approved ordered diffuse path and its existing shadow attenuation.
 	var start:=code.find("void light()")
 	if start>=0:
@@ -156,7 +186,7 @@ func _surface_shader(source:Shader)->Shader:
 			if code[end]=="{": depth+=1
 			elif code[end]=="}": depth-=1
 			end+=1
-		code=code.insert(end-1,"\nSPECULAR_LIGHT += sample_surface_highlight(NORMAL,LIGHT,VIEW,LIGHT_COLOR,ATTENUATION,architecture_world,ALBEDO);\n")
+		code=code.insert(end-1,"\nif(!sample_native_reflection || (!LIGHT_IS_DIRECTIONAL && SPECULAR_AMOUNT > 0.0)) { SPECULAR_LIGHT = min(SPECULAR_LIGHT + sample_surface_highlight(NORMAL,LIGHT,VIEW,LIGHT_COLOR,ATTENUATION,architecture_world,ALBEDO),vec3(sample_native_reflection ? 0.12 : 0.001)); }\n")
 	var shader:=Shader.new(); shader.code=code; surface_shaders[shader_key]=shader
 	return shader
 
@@ -180,7 +210,29 @@ func set_preview_style(key:String,original_style:String="office")->void:
 func _exclude(node:VisualInstance3D)->void:
 	if installed_ids.has(node.get_instance_id()): return
 	installed_ids[node.get_instance_id()]=weakref(node)
-	layers.append({"node":weakref(node),"old":node.layers}); node.layers=EXCLUDED
+	layers.append({"node":weakref(node),"old":node.layers})
+	RENDER_LAYERS.apply(node,EXCLUDED)
+
+func _install_mirror_walls() -> void:
+	for wall in world.wall_root.get_children():
+		if not wall.has_method("set_office_cutaway_profile"): continue
+		var source: MeshInstance3D = wall.get("wall_mesh")
+		var full: Mesh = wall.get("office_full_mesh")
+		if source == null or full == null: continue
+		var proxy := MeshInstance3D.new()
+		proxy.name = "MirrorWall"
+		proxy.mesh = full
+		proxy.layers = CAPTURE_FLAG
+		proxy.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var source_material: Material = wall.get("wall_material_front")
+		if source_material is ShaderMaterial:
+			var material := source_material.duplicate() as ShaderMaterial
+			material.set_shader_parameter("architecture_cutaway", false)
+			proxy.material_override = material
+		wall.add_child(proxy)
+		proxy.transform = source.transform
+		_exclude(source)
+		mirror_walls.append(proxy)
 
 func _install_scene_carriers()->void:
 	var art:Node=world.office_art_root.get_node_or_null("ApprovedOfficeArt") if dungeon else null
@@ -309,7 +361,7 @@ func _before_draw()->void:
 	if not can_process() and not covered_exit: return
 	if production_mode and _transitioning() and not exiting: return
 	var started:=Time.get_ticks_usec()
-	if started-last_render_usec<1000000.0/update_hz: return
+	if not native_office and started-last_render_usec<1000000.0/update_hz: return
 	last_render_usec=started
 	if viewport.world_3d!=world.get_world_3d(): viewport.world_3d=world.get_world_3d()
 	for record in lights:
@@ -323,7 +375,10 @@ func _before_draw()->void:
 	camera.global_transform=Transform3D(Basis.looking_at(forward,up),eye)
 	camera.projection=main.projection; camera.fov=main.fov; camera.size=main.size
 	var focus:Vector3=world.get_gameplay_world_position(world.player.global_position,0.0)
-	camera.near=main.near; camera.far=minf(main.far,main.global_position.distance_to(focus)+7.0); camera.keep_aspect=main.keep_aspect
+	camera.near=main.near
+	camera.far=main.far if native_office else minf(main.far,main.global_position.distance_to(focus)+7.0)
+	camera.keep_aspect=main.keep_aspect
+	camera.force_update_transform()
 	for material in actor_materials: material.set_shader_parameter("sample_primary_eye",main.global_position)
 	var reflection_view:Transform3D=camera.global_transform.affine_inverse()
 	var reflection_projection:Projection=camera.get_camera_projection()
@@ -336,6 +391,9 @@ func _before_draw()->void:
 func restore()->void:
 	if restored: return
 	restored=true
+	for wall in mirror_walls:
+		if is_instance_valid(wall): wall.free()
+	mirror_walls.clear()
 	if RenderingServer.frame_pre_draw.is_connected(_before_draw): RenderingServer.frame_pre_draw.disconnect(_before_draw)
 	if get_tree()!=null and get_tree().node_added.is_connected(_on_node_added): get_tree().node_added.disconnect(_on_node_added)
 	if is_instance_valid(world) and is_instance_valid(world.camera_3d): world.camera_3d.cull_mask=original_camera_mask
@@ -349,11 +407,13 @@ func restore()->void:
 		var material:ShaderMaterial=record.material.get_ref()
 		if material!=null: material.shader=record.shader
 	for record in layers:
-		var node:Node=record.node.get_ref()
-		if is_instance_valid(node): node.layers=record.old
+		var node := record.node.get_ref() as VisualInstance3D
+		if is_instance_valid(node): RENDER_LAYERS.apply(node, record.old)
 	for record in lights:
-		var node:Node=record.node.get_ref()
-		if is_instance_valid(node): node.light_cull_mask=record.old
+		var node := record.node.get_ref() as Light3D
+		if is_instance_valid(node):
+			node.light_cull_mask=record.old
+			if native_office: node.shadow_caster_mask=record.casters
 	if is_instance_valid(viewport): viewport.render_target_update_mode=SubViewport.UPDATE_DISABLED
 
 func _exit_tree()->void:

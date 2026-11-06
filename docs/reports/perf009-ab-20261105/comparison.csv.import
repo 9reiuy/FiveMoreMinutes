@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://by6go4es6w73f"
+
+[deps]
+
+files=["res://docs/reports/perf009-ab-20261105/comparison.scheme.translation", "res://docs/reports/perf009-ab-20261105/comparison.group.translation", "res://docs/reports/perf009-ab-20261105/comparison.frames.translation", "res://docs/reports/perf009-ab-20261105/comparison.average.translation", "res://docs/reports/perf009-ab-20261105/comparison.one.translation", "res://docs/reports/perf009-ab-20261105/comparison.p50.translation", "res://docs/reports/perf009-ab-20261105/comparison.p95.translation", "res://docs/reports/perf009-ab-20261105/comparison.p99.translation", "res://docs/reports/perf009-ab-20261105/comparison.max.translation", "res://docs/reports/perf009-ab-20261105/comparison.strict.translation", "res://docs/reports/perf009-ab-20261105/comparison.draw.translation", "res://docs/reports/perf009-ab-20261105/comparison.main.translation", "res://docs/reports/perf009-ab-20261105/comparison.main.translation", "res://docs/reports/perf009-ab-20261105/comparison.mirror.translation", "res://docs/reports/perf009-ab-20261105/comparison.mirror.translation", "res://docs/reports/perf009-ab-20261105/comparison.cover.translation"]
+
+source_file="res://docs/reports/perf009-ab-20261105/comparison.csv"
+dest_files=["res://docs/reports/perf009-ab-20261105/comparison.scheme.translation", "res://docs/reports/perf009-ab-20261105/comparison.group.translation", "res://docs/reports/perf009-ab-20261105/comparison.frames.translation", "res://docs/reports/perf009-ab-20261105/comparison.average.translation", "res://docs/reports/perf009-ab-20261105/comparison.one.translation", "res://docs/reports/perf009-ab-20261105/comparison.p50.translation", "res://docs/reports/perf009-ab-20261105/comparison.p95.translation", "res://docs/reports/perf009-ab-20261105/comparison.p99.translation", "res://docs/reports/perf009-ab-20261105/comparison.max.translation", "res://docs/reports/perf009-ab-20261105/comparison.strict.translation", "res://docs/reports/perf009-ab-20261105/comparison.draw.translation", "res://docs/reports/perf009-ab-20261105/comparison.main.translation", "res://docs/reports/perf009-ab-20261105/comparison.main.translation", "res://docs/reports/perf009-ab-20261105/comparison.mirror.translation", "res://docs/reports/perf009-ab-20261105/comparison.mirror.translation", "res://docs/reports/perf009-ab-20261105/comparison.cover.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

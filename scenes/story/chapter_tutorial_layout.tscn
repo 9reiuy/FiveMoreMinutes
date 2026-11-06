@@ -1,0 +1,3553 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/dream/3d/WallStraight3D.tscn" id="wall"]
+
+[ext_resource type="Script" path="res://scripts/story/training_gate.gd" id="gate"]
+
+[ext_resource type="PackedScene" path="res://scenes/story/tutorial_props/cabinet.tscn" id="cabinet"]
+
+[ext_resource type="PackedScene" path="res://scenes/story/tutorial_props/sofa.tscn" id="sofa"]
+
+[ext_resource type="PackedScene" path="res://scenes/story/tutorial_props/workstation.tscn" id="workstation"]
+
+[ext_resource type="PackedScene" path="res://scenes/story/tutorial_props/chair.tscn" id="chair"]
+
+[ext_resource type="PackedScene" path="res://scenes/story/tutorial_props/shelf.tscn" id="shelf"]
+
+[ext_resource type="PackedScene" path="res://scenes/story/tutorial_props/coffee_table.tscn" id="coffee_table"]
+
+[ext_resource type="PackedScene" path="res://scenes/story/tutorial_props/water_dispenser.tscn" id="water_dispenser"]
+
+[ext_resource type="ArrayMesh" path="res://art/story/chapter1/workbench.obj" id="workmesh"]
+
+[ext_resource type="Material" path="res://art/story/chapter1/workbench.tres" id="workmat"]
+
+[sub_resource type="StandardMaterial3D" id="mat_wall"]
+
+albedo_color = Color(0.27, 0.31, 0.37, 1)
+
+roughness = 0.88
+
+metallic_specular = 0.0
+
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="mat_cap"]
+
+albedo_color = Color(0.43137254901960786, 0.49019607843137253, 0.5725490196078431, 1)
+
+roughness = 0.88
+
+metallic_specular = 0.0
+
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="mat_floor"]
+
+albedo_color = Color(0.38, 0.42, 0.46, 1)
+
+roughness = 0.88
+
+metallic_specular = 0.0
+
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="mat_rubber"]
+
+albedo_color = Color(0.105, 0.14, 0.17, 1)
+
+roughness = 0.88
+
+metallic_specular = 0.0
+
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="mat_amber"]
+
+albedo_color = Color(0.58, 0.36, 0.12, 1)
+
+roughness = 0.88
+
+metallic_specular = 0.0
+
+texture_filter = 0
+
+emission_enabled = true
+
+emission = Color(0.58, 0.36, 0.12, 1)
+
+emission_energy_multiplier = 0.4
+
+[sub_resource type="StandardMaterial3D" id="mat_teal"]
+
+albedo_color = Color(0.2, 0.48, 0.45, 1)
+
+roughness = 0.88
+
+metallic_specular = 0.0
+
+texture_filter = 0
+
+emission_enabled = true
+
+emission = Color(0.2, 0.48, 0.45, 1)
+
+emission_energy_multiplier = 0.4
+
+[sub_resource type="StandardMaterial3D" id="mat_metal"]
+
+albedo_color = Color(0.34, 0.4, 0.45, 1)
+
+roughness = 0.88
+
+metallic_specular = 0.0
+
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="mat_glass"]
+
+albedo_color = Color(0.17, 0.31, 0.35, 1)
+
+roughness = 0.88
+
+metallic_specular = 0.0
+
+texture_filter = 0
+
+[sub_resource type="BoxMesh" id="mesh1"]
+
+size = Vector3(8, 0.012, 6)
+
+[sub_resource type="BoxMesh" id="mesh2"]
+
+size = Vector3(8.14, 0.4, 6.14)
+
+[sub_resource type="BoxMesh" id="mesh3"]
+
+size = Vector3(5, 0.012, 7)
+
+[sub_resource type="BoxMesh" id="mesh4"]
+
+size = Vector3(5.14, 0.4, 7.14)
+
+[sub_resource type="BoxMesh" id="mesh5"]
+
+size = Vector3(9, 0.012, 8)
+
+[sub_resource type="BoxMesh" id="mesh6"]
+
+size = Vector3(9.14, 0.4, 8.14)
+
+[sub_resource type="BoxMesh" id="mesh7"]
+
+size = Vector3(3, 0.012, 23)
+
+[sub_resource type="BoxMesh" id="mesh8"]
+
+size = Vector3(3.14, 0.4, 23.14)
+
+[sub_resource type="BoxMesh" id="mesh9"]
+
+size = Vector3(1, 0.012, 3)
+
+[sub_resource type="BoxMesh" id="mesh10"]
+
+size = Vector3(1.1400000000000001, 0.4, 3.14)
+
+[sub_resource type="BoxMesh" id="mesh11"]
+
+size = Vector3(3, 0.012, 3)
+
+[sub_resource type="BoxMesh" id="mesh12"]
+
+size = Vector3(3.14, 0.4, 3.14)
+
+[sub_resource type="BoxMesh" id="mesh13"]
+
+size = Vector3(1, 0.012, 3)
+
+[sub_resource type="BoxMesh" id="mesh14"]
+
+size = Vector3(1.1400000000000001, 0.4, 3.14)
+
+[sub_resource type="BoxMesh" id="mesh15"]
+
+size = Vector3(2.1, 0.018, 1.4)
+
+[sub_resource type="BoxMesh" id="mesh16"]
+
+size = Vector3(0.09, 0.09, 4.7)
+
+[sub_resource type="BoxMesh" id="mesh17"]
+
+size = Vector3(0.09, 0.09, 4.7)
+
+[sub_resource type="BoxMesh" id="mesh18"]
+
+size = Vector3(3.3, 0.025, 0.12)
+
+[sub_resource type="BoxMesh" id="mesh19"]
+
+size = Vector3(3.3, 0.025, 0.12)
+
+[sub_resource type="BoxMesh" id="mesh20"]
+
+size = Vector3(3.3, 0.025, 0.12)
+
+[sub_resource type="BoxMesh" id="mesh21"]
+
+size = Vector3(1.7, 0.012, 6.3)
+
+[sub_resource type="BoxMesh" id="mesh22"]
+
+size = Vector3(1.2, 0.24, 0.8)
+
+[sub_resource type="BoxMesh" id="mesh23"]
+
+size = Vector3(0.3, 0.035, 2.8)
+
+[sub_resource type="BoxMesh" id="mesh24"]
+
+size = Vector3(5.2, 2.0, 0.25)
+
+[sub_resource type="BoxMesh" id="mesh25"]
+
+size = Vector3(6.9, 0.8, 0.28)
+
+[sub_resource type="BoxMesh" id="mesh26"]
+
+size = Vector3(6.9, 0.04, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh27"]
+
+size = Vector3(2.88, 2.7, 0.16)
+
+[sub_resource type="BoxMesh" id="mesh28"]
+
+size = Vector3(0.2, 2.8800000000000003, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh29"]
+
+size = Vector3(0.09, 2.8600000000000003, 0.09)
+
+[sub_resource type="BoxMesh" id="mesh30"]
+
+size = Vector3(0.2, 2.8800000000000003, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh31"]
+
+size = Vector3(0.09, 2.8600000000000003, 0.09)
+
+[sub_resource type="BoxMesh" id="mesh32"]
+
+size = Vector3(3, 0.2, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh33"]
+
+size = Vector3(3, 0.05, 0.35)
+
+[sub_resource type="BoxMesh" id="mesh34"]
+
+size = Vector3(1.2000000000000002, 1.944, 0.035)
+
+[sub_resource type="BoxMesh" id="mesh35"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh36"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh37"]
+
+size = Vector3(1.2000000000000002, 1.944, 0.035)
+
+[sub_resource type="BoxMesh" id="mesh38"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh39"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh40"]
+
+size = Vector3(0.035, 2.538, 0.025)
+
+[sub_resource type="BoxMesh" id="mesh41"]
+
+size = Vector3(0.28, 0.26, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh42"]
+
+size = Vector3(0.3, 0.045, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh43"]
+
+size = Vector3(0.045, 0.22, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh44"]
+
+size = Vector3(0.75, 0.08, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh45"]
+
+size = Vector3(2.88, 2.7, 0.16)
+
+[sub_resource type="BoxMesh" id="mesh46"]
+
+size = Vector3(0.2, 2.8800000000000003, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh47"]
+
+size = Vector3(0.09, 2.8600000000000003, 0.09)
+
+[sub_resource type="BoxMesh" id="mesh48"]
+
+size = Vector3(0.2, 2.8800000000000003, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh49"]
+
+size = Vector3(0.09, 2.8600000000000003, 0.09)
+
+[sub_resource type="BoxMesh" id="mesh50"]
+
+size = Vector3(3, 0.2, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh51"]
+
+size = Vector3(3, 0.05, 0.35)
+
+[sub_resource type="BoxMesh" id="mesh52"]
+
+size = Vector3(1.2000000000000002, 1.944, 0.035)
+
+[sub_resource type="BoxMesh" id="mesh53"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh54"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh55"]
+
+size = Vector3(1.2000000000000002, 1.944, 0.035)
+
+[sub_resource type="BoxMesh" id="mesh56"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh57"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh58"]
+
+size = Vector3(0.035, 2.538, 0.025)
+
+[sub_resource type="BoxMesh" id="mesh59"]
+
+size = Vector3(0.28, 0.26, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh60"]
+
+size = Vector3(0.3, 0.045, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh61"]
+
+size = Vector3(0.045, 0.22, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh62"]
+
+size = Vector3(0.75, 0.08, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh63"]
+
+size = Vector3(2.88, 2.7, 0.16)
+
+[sub_resource type="BoxMesh" id="mesh64"]
+
+size = Vector3(0.2, 2.8800000000000003, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh65"]
+
+size = Vector3(0.09, 2.8600000000000003, 0.09)
+
+[sub_resource type="BoxMesh" id="mesh66"]
+
+size = Vector3(0.2, 2.8800000000000003, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh67"]
+
+size = Vector3(0.09, 2.8600000000000003, 0.09)
+
+[sub_resource type="BoxMesh" id="mesh68"]
+
+size = Vector3(3, 0.2, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh69"]
+
+size = Vector3(3, 0.05, 0.35)
+
+[sub_resource type="BoxMesh" id="mesh70"]
+
+size = Vector3(1.2000000000000002, 1.944, 0.035)
+
+[sub_resource type="BoxMesh" id="mesh71"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh72"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh73"]
+
+size = Vector3(1.2000000000000002, 1.944, 0.035)
+
+[sub_resource type="BoxMesh" id="mesh74"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh75"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh76"]
+
+size = Vector3(0.035, 2.538, 0.025)
+
+[sub_resource type="BoxMesh" id="mesh77"]
+
+size = Vector3(0.28, 0.26, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh78"]
+
+size = Vector3(0.3, 0.045, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh79"]
+
+size = Vector3(0.045, 0.22, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh80"]
+
+size = Vector3(0.75, 0.08, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh81"]
+
+size = Vector3(2.88, 2.7, 0.16)
+
+[sub_resource type="BoxMesh" id="mesh82"]
+
+size = Vector3(0.2, 2.8800000000000003, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh83"]
+
+size = Vector3(0.09, 2.8600000000000003, 0.09)
+
+[sub_resource type="BoxMesh" id="mesh84"]
+
+size = Vector3(0.2, 2.8800000000000003, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh85"]
+
+size = Vector3(0.09, 2.8600000000000003, 0.09)
+
+[sub_resource type="BoxMesh" id="mesh86"]
+
+size = Vector3(3, 0.2, 0.34)
+
+[sub_resource type="BoxMesh" id="mesh87"]
+
+size = Vector3(3, 0.05, 0.35)
+
+[sub_resource type="BoxMesh" id="mesh88"]
+
+size = Vector3(1.2000000000000002, 1.944, 0.035)
+
+[sub_resource type="BoxMesh" id="mesh89"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh90"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh91"]
+
+size = Vector3(1.2000000000000002, 1.944, 0.035)
+
+[sub_resource type="BoxMesh" id="mesh92"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh93"]
+
+size = Vector3(1.1099999999999999, 0.06, 0.05)
+
+[sub_resource type="BoxMesh" id="mesh94"]
+
+size = Vector3(0.035, 2.538, 0.025)
+
+[sub_resource type="BoxMesh" id="mesh95"]
+
+size = Vector3(0.28, 0.26, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh96"]
+
+size = Vector3(0.3, 0.045, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh97"]
+
+size = Vector3(0.045, 0.22, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh98"]
+
+size = Vector3(0.75, 0.08, 0.06)
+
+[sub_resource type="BoxMesh" id="mesh99"]
+
+size = Vector3(0.035, 0.72, 0.86)
+
+[sub_resource type="BoxMesh" id="mesh100"]
+
+size = Vector3(0.09, 0.06, 0.94)
+
+[sub_resource type="BoxMesh" id="mesh101"]
+
+size = Vector3(0.09, 0.06, 0.94)
+
+[sub_resource type="BoxMesh" id="mesh102"]
+
+size = Vector3(0.035, 0.72, 0.86)
+
+[sub_resource type="BoxMesh" id="mesh103"]
+
+size = Vector3(0.09, 0.06, 0.94)
+
+[sub_resource type="BoxMesh" id="mesh104"]
+
+size = Vector3(0.09, 0.06, 0.94)
+
+[node name="ChapterLayout" type="Node3D"]
+
+[node name="Architecture" type="Node3D" parent="."]
+
+[node name="Wall_0_1_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(0.0, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_0_1_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(-0.5, 0, 1.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_0_2_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(-0.5, 0, 2.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_0_3_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(-0.5, 0, 3.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_0_4_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(-0.5, 0, 4.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_0_5_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(-0.5, 0, 5.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_0_6_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(-0.5, 0, 6.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_0_7_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(-0.5, 0, 7.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_0_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(0.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_0_8_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(-0.5, 0, 8.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_1_1_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.0, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_1_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_1_18_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.0, 0, 17.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_1_18_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(0.5, 0, 18.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_1_19_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(0.5, 0, 19.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_1_20_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(0.5, 0, 20.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_1_21_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(0.5, 0, 21.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_1_22_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(0.5, 0, 22.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_1_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_1_23_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(0.5, 0, 23.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_1_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(2.0, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(2.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_2_10_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(2.0, 0, 9.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_10_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.5, 0, 10.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_11_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.5, 0, 11.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_12_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.5, 0, 12.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_13_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.5, 0, 13.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_14_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.5, 0, 14.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_15_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.5, 0, 15.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_16_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(2.0, 0, 16.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_2_16_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(1.5, 0, 16.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_18_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(2.0, 0, 17.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_2_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(2.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_3_1_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(3.0, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_3_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(3.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_3_10_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(3.0, 0, 9.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_3_16_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(3.0, 0, 16.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_3_18_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(3.0, 0, 17.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_3_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(3.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_4_1_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(4.0, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_4_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(4.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_4_10_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(4.0, 0, 9.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_4_16_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(4.0, 0, 16.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_4_18_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(4.0, 0, 17.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_4_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(4.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_5_1_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(5.0, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_5_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(5.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_5_10_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(5.0, 0, 9.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_5_16_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(5.0, 0, 16.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_5_18_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(5.0, 0, 17.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_5_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(5.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_6_1_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.0, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_6_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_6_10_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.0, 0, 9.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_6_10_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.5, 0, 10.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_6_11_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.5, 0, 11.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_6_12_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.5, 0, 12.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_6_13_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.5, 0, 13.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_6_16_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.0, 0, 16.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_6_18_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.0, 0, 17.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_6_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(6.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_7_1_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(7.0, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_7_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(7.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_7_14_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(7.0, 0, 13.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_7_16_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(7.0, 0, 16.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_7_18_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(7.0, 0, 17.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_7_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(7.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_1_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.0, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_8_1_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.5, 0, 1.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_2_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.5, 0, 2.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_3_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.5, 0, 3.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_4_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.5, 0, 4.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_5_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.5, 0, 5.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_14_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.0, 0, 13.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_8_16_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.0, 0, 16.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_18_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.0, 0, 17.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_8_18_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.5, 0, 18.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_19_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.5, 0, 19.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_8_23_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(8.5, 0, 23.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_9_6_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.0, 0, 5.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_9_8_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.0, 0, 8.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_9_14_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.0, 0, 13.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_9_16_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.0, 0, 16.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_9_20_N" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.0, 0, 19.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_9_22_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.0, 0, 22.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_10_1_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 1.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_2_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 2.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_3_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 3.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_4_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 4.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_5_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 5.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_9_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 9.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_10_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 10.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_11_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 11.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_12_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 12.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_13_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 13.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_17_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 17.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_18_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 18.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_19_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 19.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_10_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(10.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_10_23_W" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(9.5, 0, 23.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = false
+
+[node name="Wall_11_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(11.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_1_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 1.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_2_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 2.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_3_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 3.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_4_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 4.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_5_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 5.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_6_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 6.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_7_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 7.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_8_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 8.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_9_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 9.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_10_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 10.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_11_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 11.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_12_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 12.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_13_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 13.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_14_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 14.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_15_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 15.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_16_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 16.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_17_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 17.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_18_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 18.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_19_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 19.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_20_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 20.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_21_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 21.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_22_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 22.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_23_S" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.0, 0, 23.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Wall_12_23_E" parent="Architecture" instance=ExtResource("wall")]
+
+position = Vector3(12.5, 0, 23.0)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+wall_height = 2.8
+
+wall_thickness = 0.12
+
+metadata/solid_size = Vector2(1, 0.12)
+
+metadata/cutaway = true
+
+[node name="Preparation" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="Preparation"]
+
+position = Vector3(4.5, 0.008, 20.5)
+
+mesh = SubResource("mesh1")
+
+material_override = SubResource("mat_floor")
+
+metadata/pixel_swatch = "floor_tile"
+
+[node name="FoundationPreparation" type="MeshInstance3D" parent="Architecture"]
+
+position = Vector3(4.5, -0.22, 20.5)
+
+mesh = SubResource("mesh2")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Movement" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(4.0, 0.008, 13.0)
+
+mesh = SubResource("mesh3")
+
+material_override = SubResource("mat_floor")
+
+metadata/pixel_swatch = "floor_tile"
+
+[node name="FoundationMovement" type="MeshInstance3D" parent="Architecture"]
+
+position = Vector3(4.0, -0.22, 13.0)
+
+mesh = SubResource("mesh4")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Range" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="Range"]
+
+position = Vector3(4.0, 0.008, 4.5)
+
+mesh = SubResource("mesh5")
+
+material_override = SubResource("mat_floor")
+
+metadata/pixel_swatch = "floor_tile"
+
+[node name="FoundationRange" type="MeshInstance3D" parent="Architecture"]
+
+position = Vector3(4.0, -0.22, 4.5)
+
+mesh = SubResource("mesh6")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Gallery" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="Gallery"]
+
+position = Vector3(11.0, 0.008, 12.0)
+
+mesh = SubResource("mesh7")
+
+material_override = SubResource("mat_floor")
+
+metadata/pixel_swatch = "floor_tile"
+
+[node name="FoundationGallery" type="MeshInstance3D" parent="Architecture"]
+
+position = Vector3(11.0, -0.22, 12.0)
+
+mesh = SubResource("mesh8")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="LinkA" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="LinkA"]
+
+position = Vector3(9.0, 0.008, 21.0)
+
+mesh = SubResource("mesh9")
+
+material_override = SubResource("mat_floor")
+
+metadata/pixel_swatch = "floor_tile"
+
+[node name="FoundationLinkA" type="MeshInstance3D" parent="Architecture"]
+
+position = Vector3(9.0, -0.22, 21.0)
+
+mesh = SubResource("mesh10")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="LinkB" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="LinkB"]
+
+position = Vector3(8.0, 0.008, 15.0)
+
+mesh = SubResource("mesh11")
+
+material_override = SubResource("mat_floor")
+
+metadata/pixel_swatch = "floor_tile"
+
+[node name="FoundationLinkB" type="MeshInstance3D" parent="Architecture"]
+
+position = Vector3(8.0, -0.22, 15.0)
+
+mesh = SubResource("mesh12")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="LinkC" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="LinkC"]
+
+position = Vector3(9.0, 0.008, 7.0)
+
+mesh = SubResource("mesh13")
+
+material_override = SubResource("mat_floor")
+
+metadata/pixel_swatch = "floor_tile"
+
+[node name="FoundationLinkC" type="MeshInstance3D" parent="Architecture"]
+
+position = Vector3(9.0, -0.22, 7.0)
+
+mesh = SubResource("mesh14")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="WaitingBench" parent="Preparation" instance=ExtResource("sofa")]
+
+position = Vector3(1.9, 0, 21.5)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="ArchiveCabinet" parent="Preparation" instance=ExtResource("cabinet")]
+
+position = Vector3(2, 0, 18.8)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+[node name="RegistrationDesk" parent="Preparation" instance=ExtResource("workstation")]
+
+position = Vector3(6.5, 0, 18.9)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+[node name="DeskReturn" parent="Preparation" instance=ExtResource("coffee_table")]
+
+position = Vector3(7.6, 0, 19.5)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="Chair" parent="Preparation" instance=ExtResource("chair")]
+
+position = Vector3(6.5, 0, 18.1)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+[node name="WaterDispenser" parent="Preparation" instance=ExtResource("water_dispenser")]
+
+position = Vector3(2.5, 0, 23.0)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+[node name="EntryMat" type="MeshInstance3D" parent="Preparation"]
+
+position = Vector3(4, 0.025, 22)
+
+mesh = SubResource("mesh15")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="EquipmentLocker" parent="Movement" instance=ExtResource("cabinet")]
+
+position = Vector3(2.5, 0, 15.6)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="ServiceLocker" parent="Movement" instance=ExtResource("cabinet")]
+
+position = Vector3(6.0, 0, 11.0)
+
+rotation_degrees = Vector3(0, -90, 0)
+
+[node name="Pipe15" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(2.0, 0.4, 13.5)
+
+mesh = SubResource("mesh16")
+
+material_override = SubResource("mat_metal")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Pipe16" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(6.0, 0.4, 13.5)
+
+mesh = SubResource("mesh17")
+
+material_override = SubResource("mat_metal")
+
+metadata/pixel_swatch = "metal"
+
+[node name="StartGroove" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(4, 0.028, 15.0)
+
+mesh = SubResource("mesh18")
+
+material_override = SubResource("mat_amber")
+
+metadata/pixel_swatch = "metal"
+
+[node name="DashStrip" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(4, 0.028, 12.7)
+
+mesh = SubResource("mesh19")
+
+material_override = SubResource("mat_amber")
+
+metadata/pixel_swatch = "metal"
+
+[node name="FinishSensor" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(4, 0.028, 10.7)
+
+mesh = SubResource("mesh20")
+
+material_override = SubResource("mat_amber")
+
+metadata/pixel_swatch = "metal"
+
+[node name="GuideRunner" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(4, 0.018, 13.5)
+
+mesh = SubResource("mesh21")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="TrainingTarget" type="Marker3D" parent="Range"]
+
+position = Vector3(4, 0, 2.6)
+
+[node name="TrainingWeapon" type="Marker3D" parent="Range"]
+
+position = Vector3(7, 0, 7.3)
+
+[node name="EditorPreview" type="Node3D" parent="Range/TrainingTarget"]
+
+[node name="TargetBase" type="MeshInstance3D" parent="Range"]
+
+position = Vector3(4, 0.12, 2.6)
+
+mesh = SubResource("mesh22")
+
+material_override = SubResource("mat_metal")
+
+metadata/pixel_swatch = "metal"
+
+[node name="TargetRail" type="MeshInstance3D" parent="Range"]
+
+position = Vector3(4, 0.02, 3.3)
+
+mesh = SubResource("mesh23")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="RangeBackstop" type="MeshInstance3D" parent="Range"]
+
+position = Vector3(4, 1.0, 1.3)
+
+mesh = SubResource("mesh24")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+metadata/solid_size = Vector2(5.2, 0.25)
+
+metadata/solid_layer = 4
+
+[node name="ShootingChestWall" type="MeshInstance3D" parent="Range"]
+
+position = Vector3(3.0, 0.4, 5.15)
+
+mesh = SubResource("mesh25")
+
+material_override = SubResource("mat_metal")
+
+metadata/pixel_swatch = "metal"
+
+metadata/solid_size = Vector2(6.9, 0.28)
+
+metadata/solid_layer = 32
+
+[node name="ChestWallCap" type="MeshInstance3D" parent="Range"]
+
+position = Vector3(3.0, 0.81, 5.15)
+
+mesh = SubResource("mesh26")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="AmmoCrate0" parent="Range" instance=ExtResource("cabinet")]
+
+position = Vector3(1, 0, 7.4)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+[node name="AmmoCrate1" parent="Range" instance=ExtResource("cabinet")]
+
+position = Vector3(1, 0, 6.1)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+[node name="RangeShelf" parent="Range" instance=ExtResource("shelf")]
+
+position = Vector3(7.5, 0, 3.1)
+
+rotation_degrees = Vector3(0, -90, 0)
+
+[node name="AmmunitionDesk" type="MeshInstance3D" parent="Range"]
+
+position = Vector3(7, 0, 6.2)
+
+mesh = ExtResource("workmesh")
+
+material_override = ExtResource("workmat")
+
+metadata/solid_size = Vector2(1.5, 0.85)
+
+[node name="PreparationDoor" type="Node3D" parent="Architecture"]
+
+position = Vector3(8.5, 0, 21)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+script = ExtResource("gate")
+
+width = 3.0
+
+height = 2.7
+
+collision_layer = 4
+
+[node name="Leaf" type="MeshInstance3D" parent="Architecture/PreparationDoor"]
+
+position = Vector3(0, 1.35, 0)
+
+mesh = SubResource("mesh27")
+
+material_override = SubResource("mat_metal")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Jamb-1" type="MeshInstance3D" parent="Architecture/PreparationDoor"]
+
+position = Vector3(-1.4, 1.35, 0.02)
+
+mesh = SubResource("mesh28")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="JambChamfer-1" type="MeshInstance3D" parent="Architecture/PreparationDoor"]
+
+position = Vector3(-1.31, 1.35, 0.21)
+
+mesh = SubResource("mesh29")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+rotation_degrees = Vector3(0, 45, 0)
+
+[node name="Jamb1" type="MeshInstance3D" parent="Architecture/PreparationDoor"]
+
+position = Vector3(1.4, 1.35, 0.02)
+
+mesh = SubResource("mesh30")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="JambChamfer1" type="MeshInstance3D" parent="Architecture/PreparationDoor"]
+
+position = Vector3(1.31, 1.35, 0.21)
+
+mesh = SubResource("mesh31")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+rotation_degrees = Vector3(0, 45, 0)
+
+[node name="Header" type="MeshInstance3D" parent="Architecture/PreparationDoor"]
+
+position = Vector3(0, 2.7600000000000002, 0.02)
+
+mesh = SubResource("mesh32")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Sill" type="MeshInstance3D" parent="Architecture/PreparationDoor"]
+
+position = Vector3(0, 0.025, 0.02)
+
+mesh = SubResource("mesh33")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Inset-1" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(-0.72, 0, 0.095)
+
+mesh = SubResource("mesh34")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib-1-0.25" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(-0.72, -0.675, 0.13)
+
+mesh = SubResource("mesh35")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib-10.25" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(-0.72, 0.675, 0.13)
+
+mesh = SubResource("mesh36")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Inset1" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(0.72, 0, 0.095)
+
+mesh = SubResource("mesh37")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib1-0.25" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(0.72, -0.675, 0.13)
+
+mesh = SubResource("mesh38")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib10.25" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(0.72, 0.675, 0.13)
+
+mesh = SubResource("mesh39")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="CenterSeam" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(0, 0, 0.12)
+
+mesh = SubResource("mesh40")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="CamPlate" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(0.75, 0, 0.15)
+
+mesh = SubResource("mesh41")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="HandleBar" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(0.75, 0, 0.23)
+
+mesh = SubResource("mesh42")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="HandleStem" type="MeshInstance3D" parent="Architecture/PreparationDoor/Leaf"]
+
+position = Vector3(0.75, 0, 0.2)
+
+mesh = SubResource("mesh43")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="Indicator" type="MeshInstance3D" parent="Architecture/PreparationDoor"]
+
+position = Vector3(0, 2.79, 0.23)
+
+mesh = SubResource("mesh44")
+
+material_override = SubResource("mat_amber")
+
+metadata/pixel_swatch = "metal"
+
+[node name="EntryToDash" type="Node3D" parent="Architecture"]
+
+position = Vector3(6.5, 0, 15)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+script = ExtResource("gate")
+
+width = 3.0
+
+height = 2.7
+
+collision_layer = 4
+
+[node name="Leaf" type="MeshInstance3D" parent="Architecture/EntryToDash"]
+
+position = Vector3(0, 1.35, 0)
+
+mesh = SubResource("mesh45")
+
+material_override = SubResource("mat_metal")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Jamb-1" type="MeshInstance3D" parent="Architecture/EntryToDash"]
+
+position = Vector3(-1.4, 1.35, 0.02)
+
+mesh = SubResource("mesh46")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="JambChamfer-1" type="MeshInstance3D" parent="Architecture/EntryToDash"]
+
+position = Vector3(-1.31, 1.35, 0.21)
+
+mesh = SubResource("mesh47")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+rotation_degrees = Vector3(0, 45, 0)
+
+[node name="Jamb1" type="MeshInstance3D" parent="Architecture/EntryToDash"]
+
+position = Vector3(1.4, 1.35, 0.02)
+
+mesh = SubResource("mesh48")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="JambChamfer1" type="MeshInstance3D" parent="Architecture/EntryToDash"]
+
+position = Vector3(1.31, 1.35, 0.21)
+
+mesh = SubResource("mesh49")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+rotation_degrees = Vector3(0, 45, 0)
+
+[node name="Header" type="MeshInstance3D" parent="Architecture/EntryToDash"]
+
+position = Vector3(0, 2.7600000000000002, 0.02)
+
+mesh = SubResource("mesh50")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Sill" type="MeshInstance3D" parent="Architecture/EntryToDash"]
+
+position = Vector3(0, 0.025, 0.02)
+
+mesh = SubResource("mesh51")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Inset-1" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(-0.72, 0, 0.095)
+
+mesh = SubResource("mesh52")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib-1-0.25" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(-0.72, -0.675, 0.13)
+
+mesh = SubResource("mesh53")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib-10.25" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(-0.72, 0.675, 0.13)
+
+mesh = SubResource("mesh54")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Inset1" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(0.72, 0, 0.095)
+
+mesh = SubResource("mesh55")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib1-0.25" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(0.72, -0.675, 0.13)
+
+mesh = SubResource("mesh56")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib10.25" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(0.72, 0.675, 0.13)
+
+mesh = SubResource("mesh57")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="CenterSeam" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(0, 0, 0.12)
+
+mesh = SubResource("mesh58")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="CamPlate" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(0.75, 0, 0.15)
+
+mesh = SubResource("mesh59")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="HandleBar" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(0.75, 0, 0.23)
+
+mesh = SubResource("mesh60")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="HandleStem" type="MeshInstance3D" parent="Architecture/EntryToDash/Leaf"]
+
+position = Vector3(0.75, 0, 0.2)
+
+mesh = SubResource("mesh61")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="Indicator" type="MeshInstance3D" parent="Architecture/EntryToDash"]
+
+position = Vector3(0, 2.79, 0.23)
+
+mesh = SubResource("mesh62")
+
+material_override = SubResource("mat_amber")
+
+metadata/pixel_swatch = "metal"
+
+[node name="DashToRange" type="Node3D" parent="Architecture"]
+
+position = Vector3(8.5, 0, 7)
+
+rotation_degrees = Vector3(0, 90, 0)
+
+script = ExtResource("gate")
+
+width = 3.0
+
+height = 2.7
+
+collision_layer = 4
+
+[node name="Leaf" type="MeshInstance3D" parent="Architecture/DashToRange"]
+
+position = Vector3(0, 1.35, 0)
+
+mesh = SubResource("mesh63")
+
+material_override = SubResource("mat_metal")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Jamb-1" type="MeshInstance3D" parent="Architecture/DashToRange"]
+
+position = Vector3(-1.4, 1.35, 0.02)
+
+mesh = SubResource("mesh64")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="JambChamfer-1" type="MeshInstance3D" parent="Architecture/DashToRange"]
+
+position = Vector3(-1.31, 1.35, 0.21)
+
+mesh = SubResource("mesh65")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+rotation_degrees = Vector3(0, 45, 0)
+
+[node name="Jamb1" type="MeshInstance3D" parent="Architecture/DashToRange"]
+
+position = Vector3(1.4, 1.35, 0.02)
+
+mesh = SubResource("mesh66")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="JambChamfer1" type="MeshInstance3D" parent="Architecture/DashToRange"]
+
+position = Vector3(1.31, 1.35, 0.21)
+
+mesh = SubResource("mesh67")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+rotation_degrees = Vector3(0, 45, 0)
+
+[node name="Header" type="MeshInstance3D" parent="Architecture/DashToRange"]
+
+position = Vector3(0, 2.7600000000000002, 0.02)
+
+mesh = SubResource("mesh68")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Sill" type="MeshInstance3D" parent="Architecture/DashToRange"]
+
+position = Vector3(0, 0.025, 0.02)
+
+mesh = SubResource("mesh69")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Inset-1" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(-0.72, 0, 0.095)
+
+mesh = SubResource("mesh70")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib-1-0.25" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(-0.72, -0.675, 0.13)
+
+mesh = SubResource("mesh71")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib-10.25" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(-0.72, 0.675, 0.13)
+
+mesh = SubResource("mesh72")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Inset1" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(0.72, 0, 0.095)
+
+mesh = SubResource("mesh73")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib1-0.25" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(0.72, -0.675, 0.13)
+
+mesh = SubResource("mesh74")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib10.25" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(0.72, 0.675, 0.13)
+
+mesh = SubResource("mesh75")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="CenterSeam" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(0, 0, 0.12)
+
+mesh = SubResource("mesh76")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="CamPlate" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(0.75, 0, 0.15)
+
+mesh = SubResource("mesh77")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="HandleBar" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(0.75, 0, 0.23)
+
+mesh = SubResource("mesh78")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="HandleStem" type="MeshInstance3D" parent="Architecture/DashToRange/Leaf"]
+
+position = Vector3(0.75, 0, 0.2)
+
+mesh = SubResource("mesh79")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="Indicator" type="MeshInstance3D" parent="Architecture/DashToRange"]
+
+position = Vector3(0, 2.79, 0.23)
+
+mesh = SubResource("mesh80")
+
+material_override = SubResource("mat_amber")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Exit" type="Node3D" parent="Architecture"]
+
+position = Vector3(11, 0, 0.5)
+
+rotation_degrees = Vector3(0, 0, 0)
+
+script = ExtResource("gate")
+
+width = 3.0
+
+height = 2.7
+
+collision_layer = 4
+
+[node name="Leaf" type="MeshInstance3D" parent="Architecture/Exit"]
+
+position = Vector3(0, 1.35, 0)
+
+mesh = SubResource("mesh81")
+
+material_override = SubResource("mat_metal")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Jamb-1" type="MeshInstance3D" parent="Architecture/Exit"]
+
+position = Vector3(-1.4, 1.35, 0.02)
+
+mesh = SubResource("mesh82")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="JambChamfer-1" type="MeshInstance3D" parent="Architecture/Exit"]
+
+position = Vector3(-1.31, 1.35, 0.21)
+
+mesh = SubResource("mesh83")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+rotation_degrees = Vector3(0, 45, 0)
+
+[node name="Jamb1" type="MeshInstance3D" parent="Architecture/Exit"]
+
+position = Vector3(1.4, 1.35, 0.02)
+
+mesh = SubResource("mesh84")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="JambChamfer1" type="MeshInstance3D" parent="Architecture/Exit"]
+
+position = Vector3(1.31, 1.35, 0.21)
+
+mesh = SubResource("mesh85")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+rotation_degrees = Vector3(0, 45, 0)
+
+[node name="Header" type="MeshInstance3D" parent="Architecture/Exit"]
+
+position = Vector3(0, 2.7600000000000002, 0.02)
+
+mesh = SubResource("mesh86")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Sill" type="MeshInstance3D" parent="Architecture/Exit"]
+
+position = Vector3(0, 0.025, 0.02)
+
+mesh = SubResource("mesh87")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Inset-1" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(-0.72, 0, 0.095)
+
+mesh = SubResource("mesh88")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib-1-0.25" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(-0.72, -0.675, 0.13)
+
+mesh = SubResource("mesh89")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib-10.25" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(-0.72, 0.675, 0.13)
+
+mesh = SubResource("mesh90")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Inset1" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(0.72, 0, 0.095)
+
+mesh = SubResource("mesh91")
+
+material_override = SubResource("mat_wall")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib1-0.25" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(0.72, -0.675, 0.13)
+
+mesh = SubResource("mesh92")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="Rib10.25" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(0.72, 0.675, 0.13)
+
+mesh = SubResource("mesh93")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="CenterSeam" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(0, 0, 0.12)
+
+mesh = SubResource("mesh94")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="CamPlate" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(0.75, 0, 0.15)
+
+mesh = SubResource("mesh95")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="HandleBar" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(0.75, 0, 0.23)
+
+mesh = SubResource("mesh96")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="HandleStem" type="MeshInstance3D" parent="Architecture/Exit/Leaf"]
+
+position = Vector3(0.75, 0, 0.2)
+
+mesh = SubResource("mesh97")
+
+material_override = SubResource("mat_rubber")
+
+metadata/pixel_swatch = "rug"
+
+[node name="Indicator" type="MeshInstance3D" parent="Architecture/Exit"]
+
+position = Vector3(0, 2.79, 0.23)
+
+mesh = SubResource("mesh98")
+
+material_override = SubResource("mat_amber")
+
+metadata/pixel_swatch = "metal"
+
+[node name="ObservationGlass11.2" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(6.44, 1.66, 11.2)
+
+mesh = SubResource("mesh99")
+
+material_override = SubResource("mat_glass")
+
+metadata/pixel_swatch = "metal"
+
+[node name="ObservationTrim11.21.27" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(6.4, 1.27, 11.2)
+
+mesh = SubResource("mesh100")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="ObservationTrim11.22.05" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(6.4, 2.05, 11.2)
+
+mesh = SubResource("mesh101")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="ObservationGlass12.2" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(6.44, 1.66, 12.2)
+
+mesh = SubResource("mesh102")
+
+material_override = SubResource("mat_glass")
+
+metadata/pixel_swatch = "metal"
+
+[node name="ObservationTrim12.21.27" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(6.4, 1.27, 12.2)
+
+mesh = SubResource("mesh103")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="ObservationTrim12.22.05" type="MeshInstance3D" parent="Movement"]
+
+position = Vector3(6.4, 2.05, 12.2)
+
+mesh = SubResource("mesh104")
+
+material_override = SubResource("mat_cap")
+
+metadata/pixel_swatch = "metal"
+
+[node name="RegistrationTask" type="OmniLight3D" parent="."]
+
+position = Vector3(6.5, 1.75, 19.3)
+
+light_color = Color(0.58, 0.36, 0.12, 1)
+
+light_energy = 0.65
+
+omni_range = 3.0
+
+[node name="WeaponTask" type="OmniLight3D" parent="."]
+
+position = Vector3(7, 1.75, 6.7)
+
+light_color = Color(0.2, 0.48, 0.45, 1)
+
+light_energy = 0.65
+
+omni_range = 3.0

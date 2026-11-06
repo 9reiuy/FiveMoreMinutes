@@ -51,14 +51,14 @@ func run() -> void:
 		prompt._process(.02)
 		await frames(1); await shot("motion_%02d" % i)
 	check(not prompt.visible,"Captured close animation completes")
-	for word in ["拾取","替换","进入"]:
+	for word in ["替换","进入","交流"]:
 		prompt.present(word,room.npc_hint_bubble.prompt_anchor(prompt.size),word.hash()); prompt._process(.2); prompt.set_process(false)
 		await frames(2); await shot("action_"+word)
 		check(prompt.text==word and prompt.scale==Vector2.ONE,"Short action keeps original glyph size: "+word)
 	settings.set_setting(&"pixelation_enabled",false); settings.set_palette_enabled(false)
 	room.set_process(true); room.waitress_npc.hint_emotion="nervous"; await frames(12)
 	await shot("talk_native")
-	check(room.interaction_prompt.FRAME_COLOR==Color("396FE2"),"HUD blue is not modified by world palette")
+	check(absf(room.interaction_prompt.FRAME_COLOR.s-Color("396FE2").s*.5)<0.0001,"HUD blue retains its half-saturation colour across palettes")
 	var input:=InputEventAction.new(); input.action="pickup_weapon"; input.pressed=true; Input.parse_input_event(input)
 	await frames(2)
 	input=InputEventAction.new(); input.action="pickup_weapon"; input.pressed=false; Input.parse_input_event(input)

@@ -4,7 +4,7 @@ shader_type spatial;
 // pins ROUGHNESS = 1 and SPECULAR = 0, so it can never look like iron).
 render_mode blend_mix, depth_draw_always, diffuse_burley, specular_schlick_ggx;
 
-uniform sampler2D pixel_texture : source_color, filter_nearest_mipmap, repeat_enable;
+uniform sampler2D pixel_texture : source_color, filter_nearest, repeat_enable;
 uniform vec4 base_color : source_color = vec4(0.6, 0.6, 0.6, 1.0);
 uniform bool object_space = true;
 uniform bool glow = false;

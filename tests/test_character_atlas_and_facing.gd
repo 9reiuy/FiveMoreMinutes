@@ -39,8 +39,8 @@ func test_atlas_texture_and_regions() -> void:
 	var atlas_tex: Texture2D = load("res://art/Dream/dream_chr_32x32.png")
 	assert_true(atlas_tex != null, "dream_chr_32x32.png must exist and load as Texture2D")
 	if atlas_tex != null:
-		assert_eq(atlas_tex.get_width(), 192, "Atlas width should be 192")
-		assert_eq(atlas_tex.get_height(), 191, "Atlas height should be 191")
+		assert_eq(atlas_tex.get_width(), 280, "Atlas width should be 280")
+		assert_eq(atlas_tex.get_height(), 250, "Atlas height should be 250")
 
 func test_player_part_textures_initialized() -> void:
 	var player_scene: PackedScene = load("res://scenes/entities/dream_player.tscn")
@@ -54,15 +54,15 @@ func test_player_part_textures_initialized() -> void:
 	assert_eq(player.player_head_left_frames.size(), 3, "Left head frames should have 3 frames")
 	assert_eq(player.player_head_right_frames.size(), 3, "Right head frames should have 3 frames")
 	assert_true(player.player_head_back_frame != null, "Back head frame must not be null")
-	assert_eq(player.player_head_frames.size(), 3, "player_head_frames should default to 3 frames")
+	assert_eq(player.player_head_frames.size(), 1 if player.character_facing_back else 3, "Rear views stay fixed; other views have three eye frames")
 	
 	# Verify regions
 	var left_open := player.player_head_left_frames[0] as AtlasTexture
 	var right_open := player.player_head_right_frames[0] as AtlasTexture
 	var back_head := player.player_head_back_frame as AtlasTexture
 	assert_eq(left_open.region, Rect2(64, 0, 32, 32), "Head Left Open region")
-	assert_eq(right_open.region, Rect2(96, 0, 32, 32), "Head Right Open region")
-	assert_eq(back_head.region, Rect2(64, 128, 32, 32), "Head Back region")
+	assert_eq(right_open.region, Rect2(192, 0, 32, 32), "Head Right Open region")
+	assert_eq(back_head.region, Rect2(128, 128, 32, 32), "Head Back region")
 	
 	player.queue_free()
 	for i in range(2):
@@ -83,12 +83,12 @@ func test_aim_facing_back() -> void:
 	assert_eq(player.head_part.texture, player.player_head_back_frame, "Head texture should be Head Back")
 	
 	var body_tex := player.body_part.texture as AtlasTexture
-	assert_eq(body_tex.region, Rect2(128, 128, 32, 32), "Body texture should be Body Back")
+	assert_true(body_tex == null and not player.body_part.visible, "Combined upper body has no duplicate back torso")
 	
 	var left_leg_tex := player.left_leg.texture as AtlasTexture
 	var right_leg_tex := player.right_leg.texture as AtlasTexture
-	assert_eq(left_leg_tex.region, Rect2(171, 140, 4, 9), "Left leg should be Legs Back")
-	assert_eq(right_leg_tex.region, Rect2(176, 140, 4, 9), "Right leg should be Legs Back")
+	assert_eq(left_leg_tex.region, Rect2(43, 140, 4, 9), "Left leg should be Legs Back")
+	assert_eq(right_leg_tex.region, Rect2(48, 140, 4, 9), "Right leg should be Legs Back")
 	
 	assert_eq(player.weapon_root.z_index, -1, "weapon_root.z_index should be -1 when facing back")
 	
@@ -114,12 +114,12 @@ func test_aim_facing_left() -> void:
 	assert_eq(head_tex.region, Rect2(64, 0, 32, 32), "Head texture should be Head Left Open")
 	
 	var body_tex := player.body_part.texture as AtlasTexture
-	assert_eq(body_tex.region, Rect2(128, 0, 32, 32), "Body texture should be Body Front")
+	assert_true(body_tex == null and not player.body_part.visible, "Combined upper body has no duplicate front torso")
 	
 	var left_leg_tex := player.left_leg.texture as AtlasTexture
 	var right_leg_tex := player.right_leg.texture as AtlasTexture
-	assert_eq(left_leg_tex.region, Rect2(171, 12, 4, 9), "Left leg should be Legs Front")
-	assert_eq(right_leg_tex.region, Rect2(176, 12, 4, 9), "Right leg should be Legs Front")
+	assert_eq(left_leg_tex.region, Rect2(43, 76, 4, 9), "Left leg should be Legs Front")
+	assert_eq(right_leg_tex.region, Rect2(48, 76, 4, 9), "Right leg should be Legs Front")
 	
 	assert_eq(player.weapon_root.z_index, 0, "weapon_root.z_index should be 0 when facing left")
 	assert_true(player.visual.scale.x > 0.0, "visual.scale.x must remain positive without flipping")
@@ -143,10 +143,10 @@ func test_aim_facing_right() -> void:
 	assert_true(player.character_facing_right, "character_facing_right should be true when aiming right")
 	
 	var head_tex := player.head_part.texture as AtlasTexture
-	assert_eq(head_tex.region, Rect2(96, 0, 32, 32), "Head texture should be Head Right Open")
+	assert_eq(head_tex.region, Rect2(192, 0, 32, 32), "Head texture should be Head Right Open")
 	
 	var body_tex := player.body_part.texture as AtlasTexture
-	assert_eq(body_tex.region, Rect2(128, 0, 32, 32), "Body texture should be Body Front")
+	assert_true(body_tex == null and not player.body_part.visible, "Combined upper body has no duplicate front torso")
 	
 	assert_eq(player.weapon_root.z_index, 0, "weapon_root.z_index should be 0 when facing right")
 	assert_true(player.visual.scale.x > 0.0, "visual.scale.x must remain positive without flipping")
@@ -177,10 +177,10 @@ func test_blinking_for_left_and_right() -> void:
 	player.call("_update_direction_animation", Vector2.ZERO, 0.016)
 	player.call("_set_player_head_frame", 1)
 	var right_blink := player.head_part.texture as AtlasTexture
-	assert_eq(right_blink.region, Rect2(96, 32, 32, 32), "Right head blink frame 1")
+	assert_eq(right_blink.region, Rect2(192, 32, 32, 32), "Right head blink frame 1")
 	player.call("_set_player_head_frame", 2)
 	var right_closed := player.head_part.texture as AtlasTexture
-	assert_eq(right_closed.region, Rect2(96, 64, 32, 32), "Right head closed frame 2")
+	assert_eq(right_closed.region, Rect2(192, 64, 32, 32), "Right head closed frame 2")
 	
 	# Test back view suppresses blink
 	player.set_meta(&"aim_direction_override", Vector2(0, -1))

@@ -1,0 +1,95 @@
+{
+  "date": "2026-11-05",
+  "runs": [
+    {
+      "id": "A1",
+      "scheme": "A",
+      "round": 1,
+      "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_01_A"
+    },
+    {
+      "id": "B1",
+      "scheme": "B",
+      "round": 1,
+      "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_02_B"
+    },
+    {
+      "id": "B2",
+      "scheme": "B",
+      "round": 2,
+      "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_03_B"
+    },
+    {
+      "id": "A2",
+      "scheme": "A",
+      "round": 2,
+      "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_04_A"
+    }
+  ],
+  "visuals": [
+    {
+      "title": "01 · 室内全景",
+      "caption": "A 的大厅地面亮区更强；B 地面更暗，右下家具高光也较弱，灭火器倒影从偏品红变为偏红。灯位、家具与主摄像头匹配。",
+      "A": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\01_interior_overview_main.png",
+      "B": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\01_interior_overview_main.png"
+    },
+    {
+      "title": "02 · 窗边与地面反射",
+      "caption": "两边都保留走廊光带与暗房分区；B 的灭火器倒影偏红。墙脚、地面颗粒及反射有细差，这组静止图不证明移动倒影已经完全稳定。",
+      "A": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\02_window_reflection_main.png",
+      "B": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\02_window_reflection_main.png"
+    },
+    {
+      "title": "03 · 暗室、人物与家具",
+      "caption": "两边都保留暗室、窗光块和家具投影；B 的桌面与部分家具更暗。角色源图逐像素相同，环境并非逐像素一致。",
+      "A": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\03_dark_actor_furniture_main.png",
+      "B": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\03_dark_actor_furniture_main.png"
+    }
+  ],
+  "source_manifest": "E:\\GameProjects\\FiveMinuteMore\\docs\\reports\\perf009-ab-20261105\\timing_frozen_inputs.json",
+  "accepted_revision": "PERF009 visual R1",
+  "test_conditions": "同一台 RTX 5070 Ti / Godot 4.7.1；15 房间、104 家具、25 个办公室灯位、15 盏室内阴影灯；640×360 主画面 + 320×180 逐帧镜像；60 FPS 上限、相同首用准备与原生记录器、WASAPI 静音。按用户要求保留《终末地》运行，顺序 A→B、B→A。",
+  "summary": [
+    "当前 Forward+ 修复版在这次同场景对比中明显更轻：通电战斗平均 30.6 → 48.4 FPS，连续走动 48.4 → 59.9 FPS。全部游玩测量段的绘制中位耗时减少约 46.6%。",
+    "两次原方案累计记录到 38 个严格超过 80ms 的帧，当前方案两次均为 0；但当前方案仍出现最长约 1.52 秒的连续慢帧，尚未达到全程稳定 60 FPS。",
+    "本次按用户要求让《终末地》同时运行。以下是相同地图与操作安排下的实际观测；后台负载未受控，改善百分比不能视为独占环境下的纯渲染因果收益。"
+  ],
+  "limits": [
+    "A为原N3 Compatibility/OpenGL完整方案；B为已认可的R1 Forward+/Vulkan及八份配套修复。结果比较完整方案，不能把全部差值只归因于渲染器名称。",
+    "A/B都使用seed42001、同一初始场景、83个路点的三区路线、840个战斗物理步、真实受击及断复电；开枪数分别为90、89、77、96，原生AI/物理不是逐帧确定性回放。",
+    "四次都使用新的引擎进程与未播种的私有用户缓存；系统和驱动缓存保留，不能称完全冷机器。A2比A1加载快，可能受缓存及背景负载共同影响，未把它全部归为渲染器变化。",
+    "主表合并同名live_*游玩测量段；没有因慢而删除有效样本。全揭幕后含过渡/站位调整的连续慢帧另外列出，其中 B2 的51帧/1.52秒保留。",
+    "两轮都保持游戏前台焦点，使用相同原生性能记录器；图片读取单独进行，未混进FPS计时。",
+    "GPU温度、占用和后台状态只是每轮启停快照，不能证明整个过程中额外负载恒定；两轮反向顺序减少顺序偏差，但不能完全消除它。",
+    "相同准备流程在A中用于控制比较条件，不代表旧正式关卡的原始出厂加载耗时。遮挡等待包含场景加载、准备与交接，不能把准备子项当成全部等待。",
+    "三组截图在暂停的相同场景状态、相同主摄像头和角色姿态下采集；反射摄像头同步属于方案差异。原始角色源图一致，但环境画面不完全一致；静止截图不代替动态返修验收。",
+    "建议继续以B作为当前小样的主要优化方向，同时保留A作兼容性对照。下一步优先处理战斗连续慢帧、重开限制与彩纹现场；本次没有替换正式游戏。"
+  ],
+  "advantages": {
+    "A": [
+      "OpenGL 兼容的设备范围更广，可保留作旧设备对照和后备方案。",
+      "沿用既有素材与原渲染路径，不依赖本次 Forward+ 的局部颜色适配。",
+      "本轮引擎纹理分配峰值约 202–205 MiB，低于 B 的约 278–279 MiB。"
+    ],
+    "B": [
+      "本轮通电战斗平均帧率比 A 高约 58.3%，连续走动高约 23.8%。",
+      "同样保留办公室灯光、阴影、逐帧镜像与完整场景，全部游玩段绘制中位耗时约降低 46.6%。",
+      "两轮中都没有超过80ms的大尖峰；P99从 A 的112.8ms降低到34.1ms。",
+      "采用相同首用准备后，遮挡到交还控制约11.6–11.9秒，低于 A 的30.3–59.6秒。"
+    ]
+  },
+  "disadvantages": {
+    "A": [
+      "本轮通电战斗约30.6 FPS；全可见流程出现最长约5.45秒连续>20ms的帧。",
+      "两轮共38次>80ms，最慢356.3ms；同场景的主画面与镜像处理开销较高。",
+      "相同首用准备的等待更长，两次之间也存在明显加载波动。"
+    ],
+    "B": [
+      "战斗仍有持续掉帧；全可见流程最长连续51帧>20ms，历时约1.52秒。",
+      "恢复供电战斗虽平均帧率较高，1% Low 却从 A 的25.8降至21.2 FPS，P99从37.2升至41.0ms；本次尾部表现没有全面胜出。",
+      "本轮引擎纹理分配峰值较高；未测出整机节电百分比。",
+      "偶发彩色条带尚未稳定复现定位；已知重开楼层时碎片缓存容量保护可能使准备失败。",
+      "需要支持 Vulkan 等现代图形接口的设备，并维护当前项目的颜色/材质适配。"
+    ]
+  }
+}

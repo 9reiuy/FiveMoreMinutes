@@ -1,0 +1,111 @@
+{
+  "finding": "Elevator lobby room 1 was excluded wholesale; restored 140 shadow roof cells, total2354->2494, same layer131072 and SHADOWS_ONLY. All five actual triangle ray probes change false->true. No light moved.",
+  "evidence": [
+    {
+      "case": "R2_B1_roofverify24",
+      "evidence": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_B1_roofverify24\\r2_runtime_binding.json",
+      "sha256": "77FFEE7D05B9F14620CD2E06404FB2AC4C7C71FD7A98F9A39D1751C712C104C1",
+      "roof": [
+        {
+          "cast_shadow": 3,
+          "elevator_room_id": 1,
+          "logical_cells": 2494,
+          "probes": [
+            {
+              "hit": "<null>",
+              "pixel": "(257.0, 216.0)",
+              "roof_blocks": false
+            },
+            {
+              "hit": "<null>",
+              "pixel": "(351.0, 235.0)",
+              "roof_blocks": false
+            },
+            {
+              "hit": "<null>",
+              "pixel": "(405.0, 280.0)",
+              "roof_blocks": false
+            },
+            {
+              "hit": "<null>",
+              "pixel": "(365.0, 155.0)",
+              "roof_blocks": false
+            },
+            {
+              "hit": "<null>",
+              "pixel": "(150.0, 270.0)",
+              "roof_blocks": false
+            }
+          ],
+          "roof_cells": 2354,
+          "roof_layers": 131072,
+          "surface_counts": [
+            {
+              "indices": 5004,
+              "surface": 0,
+              "vertices": 3336
+            }
+          ],
+          "visible_in_tree": true
+        }
+      ],
+      "exit_code": 0,
+      "state": "released",
+      "source_drift": [],
+      "engine_errors": []
+    },
+    {
+      "case": "R2_B2_roofverify25",
+      "evidence": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_B2_roofverify25\\r2_runtime_binding.json",
+      "sha256": "7C429D2640F3B013372091465A670C02EFB64D9C53DA5CDE53B340F0A1E7481D",
+      "roof": [
+        {
+          "cast_shadow": 3,
+          "elevator_room_id": 1,
+          "logical_cells": 2494,
+          "probes": [
+            {
+              "hit": "(27.85534, 2.756747, 57.5)",
+              "pixel": "(257.0, 216.0)",
+              "roof_blocks": true
+            },
+            {
+              "hit": "(29.41104, 2.78, 59.92295)",
+              "pixel": "(351.0, 235.0)",
+              "roof_blocks": true
+            },
+            {
+              "hit": "(29.48076, 2.78, 61.98547)",
+              "pixel": "(405.0, 280.0)",
+              "roof_blocks": true
+            },
+            {
+              "hit": "(31.83208, 2.642263, 58.5)",
+              "pixel": "(365.0, 155.0)",
+              "roof_blocks": true
+            },
+            {
+              "hit": "(24.49894, 2.78, 56.57516)",
+              "pixel": "(150.0, 270.0)",
+              "roof_blocks": true
+            }
+          ],
+          "roof_cells": 2494,
+          "roof_layers": 131072,
+          "surface_counts": [
+            {
+              "indices": 5076,
+              "surface": 0,
+              "vertices": 3384
+            }
+          ],
+          "visible_in_tree": true
+        }
+      ],
+      "exit_code": 0,
+      "state": "released",
+      "source_drift": [],
+      "engine_errors": []
+    }
+  ]
+}

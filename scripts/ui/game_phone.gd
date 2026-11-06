@@ -91,7 +91,7 @@ func can_open()->bool:
 		if bool(_value(_value(world,&"player"),&"dead",false)):return false
 		for key in [&"floor_transition_in_progress",&"elevator_transition_in_progress"]:
 			if bool(_value(world,key,false)):return false
-		for key in [&"dialogue_bubble",&"dialogue_dialog",&"tarot_overlay"]:
+		for key in [&"dialogue_bubble",&"dialogue_dialog",&"tarot_overlay",&"computer_overlay",&"medicine_ui"]:
 			if _visible(_value(world,key)):return false
 		return true
 	var scene:Node=_value(_main,&"current_screen")
@@ -111,6 +111,12 @@ func open_phone()->void:
 	if not can_open():return
 	_world=_value(_main,&"_supported_dream_world") as Node3D
 	_bedroom=null;_backend=null
+	if is_instance_valid(_world) and bool(_world.get_meta(&"story_bedroom",false)):
+		_bedroom=_world
+		# The pixel wrapper reparents CanvasLayers after _ready. The bedroom's
+		# retained reference stays valid when the original node path no longer does.
+		_backend=_value(_world,&"phone") as Control
+		if not is_instance_valid(_backend): _backend=_world.get_node_or_null("PhoneLayer/BedroomPhone") as Control
 	if not is_instance_valid(_world):
 		_bedroom=_main.current_screen
 		_backend=_bedroom.get_node_or_null("PhoneLayer/BedroomPhone") as Control
@@ -127,7 +133,7 @@ func open_phone()->void:
 		character_presentation.bind(_world)
 		_begin_camera(1.0)
 	screen.configure_apps(_main.persistent_day_state,_backend,_clock_data)
-	screen.set_context(&"game" if is_instance_valid(_world) else &"bedroom")
+	screen.set_context(&"bedroom" if is_instance_valid(_backend) else &"game")
 	_fit();canvas.show();_configure_environment();shell.open_phone(true)
 	_last_usec=Time.get_ticks_usec()
 

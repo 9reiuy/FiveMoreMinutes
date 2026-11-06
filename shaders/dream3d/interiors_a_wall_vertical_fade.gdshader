@@ -112,5 +112,5 @@ void fragment() {
 void light() {
 	float noisy_attenuation = apply_light_noise_contour(ATTENUATION, world_pos);
 	float n_dot_l = max(dot(NORMAL, LIGHT), 0.0);
-	DIFFUSE_LIGHT += ALBEDO * LIGHT_COLOR * noisy_attenuation * n_dot_l / PI;
+	DIFFUSE_LIGHT += LIGHT_COLOR * noisy_attenuation * n_dot_l / PI;
 }

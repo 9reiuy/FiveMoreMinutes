@@ -200,6 +200,8 @@ func spawn_wall_tanks() -> void:
 		tank.set_meta(&"wall_edge_key",candidate.edge)
 		tank.set_meta(&"dream_room_id",room)
 		world.key_root.add_child(tank)
+		if world.has_method("register_wall_attachment"):
+			world.register_wall_attachment(tank, world.wall_edges[candidate.edge])
 		counts[room]=int(counts.get(room,0))+1
 		used.append(candidate.point)
 

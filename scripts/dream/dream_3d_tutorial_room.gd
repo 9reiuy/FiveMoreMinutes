@@ -4,10 +4,10 @@ signal tutorial_finished
 signal guide_spawn_completed
 
 const CELL_PIXELS := 32.0
-const ROOM_WIDTH := 22
-const ROOM_HEIGHT := 48
-const DOOR_OPENING_START := 10
-const DOOR_OPENING_END := 13
+const ROOM_WIDTH := 13
+const ROOM_HEIGHT := 24
+const DOOR_OPENING_START := 3
+const DOOR_OPENING_END := 5
 const WALL_HEIGHT := 3.0
 const WALL_THICKNESS := 0.1
 const WALL_COLLISION_THICKNESS := 16.0
@@ -15,7 +15,7 @@ const WALL_COLLISION_THICKNESS := 16.0
 ## player a few cells inside the south wall, then lay every other waypoint out
 ## as a fraction of the real Spawn -> Door travel axis.  This makes the room
 ## lengthening a layout change rather than a root-scale trick.
-const SPAWN_AXIS := float(ROOM_HEIGHT) - 4.0
+const SPAWN_AXIS := 22.0
 const DOOR_AXIS := -0.5
 const WASD_PROGRESS := 0.16
 const GUIDE_TRIGGER_PROGRESS := 0.44
@@ -23,10 +23,10 @@ const GUIDE_PROGRESS := 0.46
 const LIGHT_ONE_PROGRESS := 1.0 / 3.0
 const LIGHT_TWO_PROGRESS := 2.0 / 3.0
 const EXIT_TRIGGER_PROGRESS := 0.92
-const PLAYER_SPAWN := Vector2((ROOM_WIDTH - 1) * 0.5, SPAWN_AXIS) * CELL_PIXELS
-const GUIDE_POSITION := Vector2((ROOM_WIDTH - 1) * 0.5, SPAWN_AXIS - (SPAWN_AXIS - DOOR_AXIS) * GUIDE_PROGRESS) * CELL_PIXELS
-const GUIDE_TRIGGER_POSITION := Vector2((ROOM_WIDTH - 1) * 0.5, SPAWN_AXIS - (SPAWN_AXIS - DOOR_AXIS) * GUIDE_TRIGGER_PROGRESS) * CELL_PIXELS
-const EXIT_TRIGGER_POSITION := Vector2((ROOM_WIDTH - 1) * 0.5, SPAWN_AXIS - (SPAWN_AXIS - DOOR_AXIS) * EXIT_TRIGGER_PROGRESS) * CELL_PIXELS
+const PLAYER_SPAWN := Vector2(4.0, SPAWN_AXIS) * CELL_PIXELS
+const GUIDE_POSITION := Vector2(5.5, 20.3) * CELL_PIXELS
+const GUIDE_TRIGGER_POSITION := Vector2(4.5, 21.0) * CELL_PIXELS
+const EXIT_TRIGGER_POSITION := Vector2(11, 0.9) * CELL_PIXELS
 const INTERACTION_PROMPT_OFFSET := Vector2(-64.0, -32.0)
 const INTERACTION_PROMPT_SIZE := Vector2(128.0, 18.0)
 const WORLD_WALL_LAYER := 4
@@ -36,7 +36,7 @@ const DOOR_SCENE: PackedScene = preload("res://scenes/dream/3d/PhysicalDoor3D.ts
 const ACTOR_DEPTH_BRIDGE_SCENE: PackedScene = preload("res://scenes/dream/3d/ActorDepthBridge3D.tscn")
 const DASH_AIM_PRESENTATION_SCRIPT: Script = preload("res://scripts/dream/dream_dash_aim_presentation.gd")
 const INTERACTION_RESOLVER_SCRIPT: Script = preload("res://scripts/dream/dream_interaction_resolver.gd")
-const CRISP_INTERACTION_FONT: Script = preload("res://scripts/ui/crisp_interaction_font.gd")
+const INTERACTION_PROMPT_STYLE: Script = preload("res://scripts/ui/compact_interaction_prompt.gd")
 const SMOKE_SCRIPT: Script = preload("res://scripts/dream/tutorial_smoke_burst.gd")
 const FLOOR_BATCH_RENDERER: Script = preload("res://scripts/dream/dream_3d_floor_batch_renderer.gd")
 const CEILING_LIGHTING_SCRIPT: Script = preload("res://scripts/dream/dream_3d_ceiling_lighting.gd")
@@ -48,7 +48,7 @@ const DIALOGUE_SPEAKER_FOCUS_MODE := 1
 ## Match the Random Dream gameplay framing without changing the fixed camera
 ## angle or follow authority.  Dialogue's 0.80 factor is composed afterwards.
 const GAMEPLAY_CAMERA_SIZE_MULTIPLIER := 0.5
-const GAMEPLAY_CAMERA_FOV := 40.0
+const GAMEPLAY_CAMERA_FOV := 35.0
 
 @onready var floor_root: Node3D = $TutorialGeometry/FloorRoot
 @onready var wall_root: Node3D = $TutorialGeometry/WallRoot
@@ -89,12 +89,104 @@ var interaction_consumed_until_release := false
 var camera_aim_offset := Vector3.ZERO
 var night_lighting: Node3D
 var tutorial_ceiling_lights: Node3D
+var training_zone_states: Dictionary = {}
+var training_unlit_fixture: StandardMaterial3D
 var dialogue_camera: Node
 var authoritative_camera_size := 0.0
 var authoritative_camera_fov := GAMEPLAY_CAMERA_FOV
 var _unknown_dialogue_speakers: Dictionary = {}
 var dash_aim_presentation: Node2D
 var dash_aim_depth_bridge: Node3D
+var _layout_generation := 1
+var _shell_visual_rng := RandomNumberGenerator.new()
+var enemy_root: Node2D:
+	get: return gameplay_world
+
+func _cell_for_gameplay_position(point: Vector2) -> Vector2i:
+	return Vector2i((point/CELL_PIXELS).round())
+
+func is_player_dash_landing_allowed(point: Vector2) -> bool:
+	var training: Node=get_node_or_null("ChapterTraining")
+	if training==null: return true
+	var cell:=point/CELL_PIXELS
+	if int(training.stage)<2 and Rect2(1.5,9.5,5.,7.).has_point(cell): return false
+	if int(training.stage)<3 and Rect2(-.5,.5,9.,8.).has_point(cell): return false
+	return true
+
+func get_dream_enemies_snapshot() -> Array:
+	return gameplay_world.get_children().filter(func(actor): return actor is EmployeeEnemy)
+
+func resolve_player_hit(enemy: Node,damage: float,origin: Vector2,source: StringName=&"player_projectile") -> Dictionary:
+	if not is_instance_valid(enemy) or not enemy is EmployeeEnemy or enemy.dead: return {}
+	var result: Dictionary=player.calculate_player_damage(damage)
+	enemy.take_damage(float(result.get("damage",damage)),origin,1.,source)
+	return result
+
+func resolve_phase_dash_attack(start: Vector2,end: Vector2,radius: float,damage: float,source: StringName,handled: Variant=null,_feedback: bool=true) -> Dictionary:
+	return preload("res://scripts/dream/phase_dash_combat.gd").resolve(self,player,start,end,radius,damage,source,handled)
+
+func _capture_tutorial_shot_origin(effect: Node2D, shooter: Node2D) -> void:
+	var snapshot: Dictionary = {}
+	if is_instance_valid(shooter):
+		var reference: Variant = shooter.get_meta(&"depth_visual_bridge") if shooter.has_meta(&"depth_visual_bridge") else null
+		var bridge: Node = reference.get_ref() if reference is WeakRef else null
+		if is_instance_valid(bridge): snapshot = bridge.get_weapon_visual_snapshot(effect.global_position)
+	var origin: Vector3 = snapshot.get("world_origin", to_global(Vector3(effect.global_position.x / CELL_PIXELS, .65, effect.global_position.y / CELL_PIXELS)))
+	effect.set_meta(&"shot_visual_origin", origin)
+	effect.set_meta(&"shot_gameplay_origin", snapshot.get("gameplay_origin", effect.global_position))
+	effect.set_meta(&"shot_height_pixels", to_local(origin).y * CELL_PIXELS)
+
+func add_projectile(projectile: Node2D,source: Node2D=null) -> void:
+	projectile.enable_office_ballistics()
+	projectile.add_to_group(&"dream_projectiles")
+	gameplay_world.add_child(projectile)
+	var shooter: Node2D = source if is_instance_valid(source) else projectile._get_live_shooter()
+	_capture_tutorial_shot_origin(projectile, shooter)
+	_tutorial_effect_bridge(projectile,[NodePath("BulletSprite")],.65)
+
+func spawn_weapon_muzzle(point: Vector2,direction: Vector2,kind: StringName,source: Node2D=null) -> void:
+	var flash:=preload("res://scripts/entities/weapon_muzzle_effect.gd").new()
+	flash.setup(direction,kind,.18,Color("ed8e36"),Color("fffbe5"))
+	flash.enable_nyangeon_style()
+	flash.position=point; gameplay_world.add_child(flash)
+	_capture_tutorial_shot_origin(flash, source)
+	flash.set_meta(&"shot_gameplay_direction", direction)
+	_tutorial_effect_bridge(flash,[NodePath(".")],.65)
+
+func spawn_shell_ejection(point: Vector2,direction: Vector2,weapon_id: StringName=&"") -> void:
+	if not DREAM_GUN_ATLAS.ejects_shell(String(weapon_id)): return
+	var effect: Node2D = preload("res://scenes/entities/shell_effect.tscn").instantiate()
+	gameplay_world.add_child(effect)
+	effect.global_position = point - direction.normalized() * 3.
+	effect.setup(DREAM_GUN_ATLAS.get_shell(String(weapon_id)), direction, _shell_visual_rng, CONFIG.shell_effect_lifetime, CONFIG.shell_effect_fake_gravity)
+	var pool: Node3D = actor_depth_bridges_root.get_node_or_null(^"ShellCapturePool")
+	if pool == null:
+		pool = preload("res://scripts/dream/shell_capture_pool.gd").new()
+		pool.name = "ShellCapturePool"; actor_depth_bridges_root.add_child(pool)
+	pool.acquire(effect, camera_3d)
+
+func spawn_combat_feedback(point: Vector2,direction: Vector2=Vector2.ZERO,is_kill: bool=false) -> void:
+	var effect:=preload("res://scenes/entities/combat_feedback_effect.tscn").instantiate()
+	gameplay_world.add_child(effect); effect.global_position=point
+	effect.setup(direction,is_kill,.18); effect.enable_nyangeon_style()
+	_tutorial_effect_bridge(effect,[NodePath(".")],.72)
+
+func request_hit_stop(_level: StringName=&"small") -> void:
+	# Safe exercises share damage/visuals without changing the world's time owner.
+	pass
+
+func _tutorial_effect_bridge(source: Node2D,paths: Array,height: float) -> void:
+	var bridge: Node3D=ACTOR_DEPTH_BRIDGE_SCENE.instantiate()
+	actor_depth_bridges_root.add_child(bridge)
+	bridge.set_world_camera(camera_3d)
+	source.set_meta(&"depth_visual_bridge", weakref(bridge))
+	var viewport: SubViewport = bridge.get_node("ActorDepthViewport")
+	var offset := Vector2(64, 96)
+	if source.has_method(&"flush_office_tracer_update"):
+		# Same full radial history extent as the formal projectile pool.
+		viewport.size = Vector2i(512, 512)
+		offset = Vector2(256, 256)
+	bridge.configure(source,viewport,bridge.get_node("ActorDepthViewport/ActorDepthRenderRoot"),null,paths,height,0.,offset)
 
 
 func configure_tutorial(weapon_id: String, profile: Dictionary) -> void:
@@ -108,8 +200,11 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	preload("res://scripts/app/game_input_actions.gd").configure()
-	interaction_prompt.add_theme_font_override(&"font", CRISP_INTERACTION_FONT.get_font())
-	interaction_prompt.add_theme_font_size_override(&"font_size", 12)
+	interaction_prompt.add_theme_font_override(&"font", INTERACTION_PROMPT_STYLE.PIXEL_FONT.get_font())
+	interaction_prompt.add_theme_color_override(&"font_color", INTERACTION_PROMPT_STYLE.TEXT_COLOR)
+	interaction_prompt.add_theme_color_override(&"font_outline_color", INTERACTION_PROMPT_STYLE.TEXT_OUTLINE_COLOR)
+	interaction_prompt.add_theme_font_size_override(&"font_size", INTERACTION_PROMPT_STYLE.FONT_SIZE)
+	interaction_prompt.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	if camera_3d != null:
 		# Capture the scene-authored value before any dialogue modifier is applied.
 		authoritative_camera_size = camera_3d.size
@@ -121,6 +216,7 @@ func _ready() -> void:
 	camera_rig.add_child(dialogue_camera)
 	dialogue_camera.call("configure", player, Callable(self, "_map_gameplay_to_world"))
 	_build_fixed_room()
+	_configure_collage_layout()
 	_apply_authored_layout()
 	player.set("selected_weapon_id", configured_weapon_id)
 	player.configure_weapon(configured_weapon_id, CONFIG, profile_state.get("permanent_upgrades", {}))
@@ -230,26 +326,10 @@ func _process(delta: float) -> void:
 
 func _build_fixed_room() -> void:
 	floor_cells.clear()
-	for x in ROOM_WIDTH:
-		for y in ROOM_HEIGHT:
-			floor_cells[Vector2i(x, y)] = true
+	for rect in [Rect2i(1,18,8,6),Rect2i(2,10,5,7),Rect2i(0,1,9,8),Rect2i(10,1,3,23),Rect2i(9,20,1,3),Rect2i(7,14,3,3),Rect2i(9,6,1,3)]:
+		for x in range(rect.position.x,rect.end.x):
+			for y in range(rect.position.y,rect.end.y): floor_cells[Vector2i(x,y)]=true
 	FLOOR_BATCH_RENDERER.build(self)
-	for x in ROOM_WIDTH:
-		if x < DOOR_OPENING_START or x > DOOR_OPENING_END:
-			_spawn_wall(Vector3(x, 0.0, -0.5), 0.0, "NorthWall_%02d" % x)
-		_spawn_wall(Vector3(x, 0.0, ROOM_HEIGHT - 0.5), 0.0, "SouthWall_%02d" % x)
-	for y in ROOM_HEIGHT:
-		_spawn_wall(Vector3(-0.5, 0.0, y), PI * 0.5, "WestWall_%02d" % y)
-		_spawn_wall(Vector3(ROOM_WIDTH - 0.5, 0.0, y), PI * 0.5, "EastWall_%02d" % y)
-	_build_gameplay_boundaries()
-	var door := DOOR_SCENE.instantiate() as PhysicalDoor3D
-	if door != null:
-		door.name = "TutorialExitDoor"
-		# Tutorial uses the same four-cell throat as every generated 3D door.
-		door.configure(4.0, WALL_HEIGHT, WALL_THICKNESS, "left", 9001)
-		door.position = Vector3(11.5, 0.0, -0.5)
-		door_root.add_child(door)
-		door.configure_gameplay_collision(collision_root, CELL_PIXELS, WORLD_WALL_LAYER)
 
 
 func _apply_authored_layout() -> void:
@@ -258,6 +338,8 @@ func _apply_authored_layout() -> void:
 	# old trigger, Guide, or exit prompt in the first 16-cell segment.
 	player.global_position = PLAYER_SPAWN
 	guide.global_position = GUIDE_POSITION
+	# Same 2D authority as furniture; the side station has a real stopping edge.
+	_spawn_wall_collision(GUIDE_POSITION + Vector2(0, -13), Vector2(18, 18), "GuideStandingSpace")
 	guide_spawn_trigger.position = GUIDE_TRIGGER_POSITION
 	exit_trigger.position = EXIT_TRIGGER_POSITION
 	if tutorial_floor_prompt != null:
@@ -266,6 +348,34 @@ func _apply_authored_layout() -> void:
 			0.018,
 			SPAWN_AXIS - (SPAWN_AXIS - DOOR_AXIS) * WASD_PROGRESS
 		)
+
+func _configure_collage_layout() -> void:
+	var layout: Node3D=$TutorialGeometry/ChapterLayout
+	# A cut section lies inside the full-height shadow blocker. Keep real light
+	# response on this artificial exposed face without receiving that blocker.
+	var section_material := OfficePixelMaterials.make(Color("6e7d92"),"metal").duplicate() as ShaderMaterial
+	var section_shader := Shader.new()
+	section_shader.code = section_material.shader.code.replace("diffuse_lambert;", "diffuse_lambert, shadows_disabled;")
+	section_material.shader = section_shader
+	for item in layout.find_children("*","Node3D",true,false):
+		if item.name=="AmmunitionDesk": item.set_meta(&"furniture_surface",true)
+		if item.has_meta("solid_size"):
+			var at: Vector3=to_local(item.global_position)
+			_spawn_wall_collision(Vector2(at.x,at.z)*CELL_PIXELS,Vector2(item.get_meta("solid_size")).rotated(item.global_rotation.y).abs()*CELL_PIXELS,"Collage_"+item.name,int(item.get_meta("solid_layer",4)))
+		if item.has_method("bind_gameplay"): item.bind_gameplay(collision_root)
+		if item.has_meta("cutaway"):
+			item.office_section_material=section_material
+			item.set_wall_materials(OfficePixelMaterials.make(Color(.32,.37,.43),"paint"))
+			item.set_cutaway_mode(bool(item.get_meta("cutaway")))
+		if item is MeshInstance3D and item.has_meta("pixel_swatch") and item.name!="Indicator":
+			var mat: StandardMaterial3D=item.material_override
+			item.material_override=OfficePixelMaterials.make_floor(mat.albedo_color,item.get_meta("pixel_swatch")) if item.name=="Floor" else OfficePixelMaterials.make(mat.albedo_color,item.get_meta("pixel_swatch"))
+		if item is MeshInstance3D and item.has_meta("floor_style"):
+			var key: String=item.get_meta("floor_style")
+			item.material_override=DreamRoomEnvironmentTheme.get_sample_base_floor_material({"archetype":key,"sample_key":key,"authored_sample":true})
+	if is_instance_valid(tutorial_floor_prompt): tutorial_floor_prompt.hide()
+	for wall in wall_root.get_children():
+		if String(wall.name).begins_with("SouthWall") and wall.has_method("set_cutaway_mode"): wall.set_cutaway_mode(true)
 
 
 func _axis_at_progress(progress: float) -> float:
@@ -300,10 +410,10 @@ func _build_gameplay_boundaries() -> void:
 	_spawn_wall_collision(Vector2((opening_right + room_right) * 0.5, north_y), Vector2(room_right - opening_right, WALL_COLLISION_THICKNESS), "NorthWallCollisionRight")
 
 
-func _spawn_wall_collision(center: Vector2, size: Vector2, node_name: String) -> void:
+func _spawn_wall_collision(center: Vector2, size: Vector2, node_name: String, layer: int=4) -> void:
 	var body := StaticBody2D.new()
 	body.name = node_name
-	body.collision_layer = WORLD_WALL_LAYER
+	body.collision_layer = layer
 	body.collision_mask = 0
 	var collision := CollisionShape2D.new()
 	var shape := RectangleShape2D.new()
@@ -320,9 +430,10 @@ func _configure_depth_visuals() -> void:
 		actor_depth_viewport,
 		actor_depth_render_root,
 		gameplay_canvas,
-		[NodePath("CharacterVisual")]
+		[NodePath("CharacterVisual"),NodePath("WeaponRoot")]
 	)
 	player_depth_bridge.set_world_camera(camera_3d)
+	player.set_meta(&"depth_visual_bridge",weakref(player_depth_bridge))
 	var guide_bridge := ACTOR_DEPTH_BRIDGE_SCENE.instantiate() as Node3D
 	actor_depth_bridges_root.add_child(guide_bridge)
 	var viewport := guide_bridge.get_node("ActorDepthViewport") as SubViewport
@@ -419,15 +530,22 @@ func _build_tutorial_ceiling_lights() -> void:
 	if tutorial_ceiling_lights == null:
 		return
 	tutorial_ceiling_lights.name = "TutorialCeilingLightRoot"
+	tutorial_ceiling_lights.light_energy=1.6
+	tutorial_ceiling_lights.light_angle=56.
+	tutorial_ceiling_lights.light_range=8.
+	tutorial_ceiling_lights.shadow_enabled=true
+	tutorial_ceiling_lights.spot_attenuation=.8
+	tutorial_ceiling_lights.spot_angle_attenuation=.55
 	lighting_root.add_child(tutorial_ceiling_lights)
 	# Reuse the formal fixture + SpotLight3D implementation and its exported
-	# defaults, but deliberately create exactly two authored lights here.  The
+	# defaults, with one authored fixture per teaching zone. The
 	# random Dungeon's one-light-per-small-room rule is not consulted.
-	var center_x := (ROOM_WIDTH - 1) * 0.5
-	var ceiling_y := WALL_HEIGHT + 0.10
+	var center_x := 4.0
+	var ceiling_y := 2.90
 	for spec in [
-		{"id": 9101, "progress": LIGHT_ONE_PROGRESS},
-		{"id": 9102, "progress": LIGHT_TWO_PROGRESS},
+		{"id": 9101, "progress": 0.04, "zone": 0},
+		{"id": 9102, "progress": 0.40, "zone": 1},
+		{"id": 9103, "progress": 0.76, "zone": 2},
 	]:
 		var axis := _axis_at_progress(float(spec.progress))
 		var cell := Vector2i(roundi(center_x), roundi(axis))
@@ -438,6 +556,64 @@ func _build_tutorial_ceiling_lights() -> void:
 		var holder := tutorial_ceiling_lights.get_child(tutorial_ceiling_lights.get_child_count() - 1) as Node3D
 		if holder != null:
 			holder.position.x = center_x
+			holder.set_meta(&"training_zone",int(spec.zone))
+			var spot: SpotLight3D=holder.get_node("RoomLight")
+			spot.spot_angle=56.; spot.spot_range=8.; spot.shadow_bias=.025; spot.shadow_normal_bias=.12
+			# Actual local bounce reaches vertical wall faces, without illuminating
+			# the whole level or bypassing closed doors.
+			var bounce:=OmniLight3D.new(); bounce.name="FixtureWallBounce"
+			bounce.position.y=-.45; bounce.light_energy=.18; bounce.omni_range=4.8
+			bounce.light_color=spot.light_color; bounce.light_specular=0.
+			bounce.shadow_enabled=true; bounce.shadow_bias=.025; bounce.shadow_normal_bias=.12
+			bounce.light_cull_mask=15; holder.add_child(bounce)
+			var standby:=OmniLight3D.new(); standby.name="StandbyCorner"
+			standby.position=Vector3(-2.5,-1.1,-1.2); standby.light_color=Color("8e282e")
+			standby.light_energy=.06; standby.omni_range=3.5; standby.light_specular=0.
+			standby.shadow_enabled=true; standby.light_cull_mask=15; holder.add_child(standby)
+	for spec in [{"z":21,"zone":0},{"z":15,"zone":1},{"z":11,"zone":1},{"z":7,"zone":2},{"z":3,"zone":2}]:
+		var z: int=spec.z
+		tutorial_ceiling_lights.call("_create_light",9200+z,Vector2i(11,z),ceiling_y)
+		var holder: Node3D=tutorial_ceiling_lights.get_child(tutorial_ceiling_lights.get_child_count()-1)
+		var spot: SpotLight3D=holder.get_node("RoomLight"); spot.light_energy=1.8; spot.spot_range=8.; spot.spot_angle=60.
+		spot.shadow_bias=.025; spot.shadow_normal_bias=.12
+		var wash:=SpotLight3D.new(); wash.name="CorridorWallWash"
+		wash.position=Vector3(-.15,-.3,0); wash.rotation_degrees=Vector3(-25,90,0)
+		wash.light_color=spot.light_color; wash.light_energy=.55; wash.light_specular=0.
+		wash.spot_range=4.; wash.spot_angle=45.; wash.light_cull_mask=15
+		wash.shadow_enabled=true; wash.shadow_bias=.025; wash.shadow_normal_bias=.12
+		holder.add_child(wash)
+		holder.set_meta(&"training_zone",int(spec.zone))
+	# Authored fixtures bypass the shared generator's hiding policy.
+	for holder in tutorial_ceiling_lights.get_children():
+		var fixture: Node3D=holder.get_node_or_null("FixtureMesh")
+		if fixture!=null: fixture.hide()
+
+
+func set_training_zone_enabled(zone: int, enabled: bool) -> void:
+	if training_zone_states.get(zone,null)==enabled: return
+	training_zone_states[zone]=enabled
+	if training_unlit_fixture==null:
+		training_unlit_fixture=StandardMaterial3D.new()
+		training_unlit_fixture.albedo_color=Color(.07,.09,.12)
+		training_unlit_fixture.roughness=.9
+	if is_instance_valid(tutorial_ceiling_lights):
+		for holder in tutorial_ceiling_lights.get_children():
+			if int(holder.get_meta(&"training_zone",-1))!=zone: continue
+			for item in holder.find_children("*","Light3D",true,false):
+				item.visible=not enabled if item.name=="StandbyCorner" else enabled
+			for item in holder.find_children("*","MeshInstance3D",true,false):
+				if not item.has_meta(&"training_on_material"):
+					var material: Material=item.material_override
+					if material is StandardMaterial3D and material.emission_enabled:
+						item.set_meta(&"training_on_material",material)
+				if item.has_meta(&"training_on_material"):
+					item.material_override=item.get_meta(&"training_on_material") if enabled else training_unlit_fixture
+	var task: Light3D=get_node_or_null("TutorialGeometry/ChapterLayout/"+("RegistrationTask" if zone==0 else "WeaponTask")) as Light3D
+	if task!=null and zone!=1: task.visible=enabled
+	if zone==2:
+		var training: Node=get_node_or_null("ChapterTraining")
+		if training!=null: training.set_range_visible(enabled)
+
 
 
 func _update_camera_and_projection(delta: float) -> void:
@@ -467,7 +643,7 @@ func _update_camera_and_projection(delta: float) -> void:
 	# Look-ahead belongs to normal_focus and is blended out exactly once by this
 	# interpolation.  Do not multiply camera_aim_offset by (1 - weight) again.
 	var composed_focus := normal_focus.lerp(dialogue_focus, dialogue_weight)
-	camera_rig.position = composed_focus
+	camera_rig.position = camera_rig.position.lerp(composed_focus,1.-exp(-delta*10.)) if delta>0 else composed_focus
 	if camera_3d.projection == Camera3D.PROJECTION_PERSPECTIVE:
 		camera_3d.fov = authoritative_camera_fov * lerpf(1.0, dialogue_zoom, dialogue_weight)
 	else:
@@ -561,9 +737,11 @@ func _update_interaction_prompt() -> void:
 		interaction_prompt.visible = false
 		return
 	var anchor: Vector2 = state.get("position", Vector2.ZERO)
-	var world_position := Vector3(anchor.x / CELL_PIXELS, 0.0, anchor.y / CELL_PIXELS)
+	var world_position := Vector3(anchor.x / CELL_PIXELS, 1.5, anchor.y / CELL_PIXELS)
 	interaction_prompt.text = str(state.get("text", ""))
-	interaction_prompt.position = (player.get_presentation_hud_position(camera_3d.unproject_position(world_position)) + INTERACTION_PROMPT_OFFSET).round()
+	interaction_prompt.add_theme_constant_override("outline_size", 1)
+	var projected: Vector2 = player.get_presentation_hud_position(camera_3d.unproject_position(world_position)) + Vector2(-110, -24)
+	interaction_prompt.position = Vector2(clampf(projected.x, 8, 504), clampf(projected.y, 12, 326)).round()
 	interaction_prompt.visible = true
 
 
@@ -602,7 +780,8 @@ func _run_optional_guide_dialogue() -> void:
 			var world_pos: Vector3 = Vector3(player.global_position.x / CELL_PIXELS, 0.65, player.global_position.y / CELL_PIXELS)
 			return player.get_presentation_hud_position(camera_3d.unproject_position(world_pos))
 		begin_dialogue_focus(guide, DIALOGUE_CONVERSATION_MODE)
-		dialogue_controller.start_dialogue_sequence(dialogue_bubble, lines, get_guide_hud_pos, {"interrupt_text": "闭嘴"}, get_player_hud_pos)
+		var options: Dictionary={"compact_dialogue":true,"interrupt_text":"","countdown_extra":1.} if has_node("ChapterTraining") else {"interrupt_text":"闭嘴"}
+		dialogue_controller.start_dialogue_sequence(dialogue_bubble, lines, get_guide_hud_pos, options, get_player_hud_pos)
 		while dialogue_controller != null and dialogue_controller.is_active():
 			await get_tree().process_frame
 		end_dialogue_focus()
@@ -619,9 +798,14 @@ func _on_exit_trigger_entered(body: Node) -> void:
 
 
 func _begin_exit_sequence() -> void:
+	if has_node("ChapterTraining") and not $ChapterTraining.can_exit(): return
 	if exit_sequence_started:
 		return
 	exit_sequence_started = true
+	if has_node("ChapterTraining"):
+		interaction_resolver.clear_target(); player.movement_enabled=false; player.set_attacking_enabled(false)
+		await get_tree().create_timer(.25,false).timeout
+		tutorial_finished.emit(); return
 	if dialogue_controller != null and dialogue_controller.is_active():
 		dialogue_controller.dismiss_if_active()
 	interaction_resolver.clear_target()
@@ -643,7 +827,8 @@ func _begin_exit_sequence() -> void:
 		var get_player_hud_pos := func() -> Vector2:
 			var world_pos: Vector3 = Vector3(player.global_position.x / CELL_PIXELS, 0.65, player.global_position.y / CELL_PIXELS)
 			return player.get_presentation_hud_position(camera_3d.unproject_position(world_pos))
-		dialogue_controller.start_dialogue_sequence(dialogue_bubble, lines, get_guide_hud_pos, {"interrupt_text": "闭嘴"}, get_player_hud_pos)
+		var options: Dictionary={"compact_dialogue":true,"interrupt_text":"","countdown_extra":1.} if has_node("ChapterTraining") else {"interrupt_text":"闭嘴"}
+		dialogue_controller.start_dialogue_sequence(dialogue_bubble, lines, get_guide_hud_pos, options, get_player_hud_pos)
 		while dialogue_controller != null and dialogue_controller.is_active():
 			await get_tree().process_frame
 		end_dialogue_focus()

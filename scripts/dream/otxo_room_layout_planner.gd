@@ -100,6 +100,8 @@ static func _plan_office_combat(room: Dictionary, doors: Array, enemy_count: int
 			area += occupied.get_area()
 			furniture.append({"scene": CHAIR if String(spec[0]) == "chair" else LOGIC, "position": position, "rotation": rotation, "collision_rect": local_rect, "half_extents": local_rect.size * .5, "office_kind": String(spec[0]), "functional_group": kind})
 			areas.append({"category": "conference_table" if String(spec[0]) == "table" else "seating" if String(spec[0]) == "sofa" else "storage" if String(spec[0]) in ["cabinet", "shelf", "server"] else "workstation", "center": position, "center_cell": Vector2i((position / cell).round()), "rect": occupied})
+		if valid and not entry_reception:
+			valid=_place_entry_cover(furniture,doors,reserves,bounds,walkable,cell)
 		if not valid or (entry_reception and not _office_entry_lane_clear(bounds, furniture, cell)) or area > bounds.get_area() * .4 or not _office_wide_routes(walkable, furniture, doors, cell) or not _office_group_bypasses(kind, walkable, furniture, cell) or not _has_office_dash_lane(bounds, furniture, cell):
 			if valid:
 				rejected.route += 1
@@ -112,6 +114,37 @@ static func _plan_office_combat(room: Dictionary, doors: Array, enemy_count: int
 		var drops := calculate_roadside_drops(spawn_cells, furniture, enemies, doors, reserves, bounds, drop_count, rng, cell)
 		return {"success": true, "attempt": attempt, "furniture_placements": furniture, "enemy_spawns": enemies, "drop_spawns": drops, "door_reservation_rects": reserves, "functional_areas": areas}
 	return {"success": false, "failure_reason": "approved_group_does_not_fit:" + kind, "rejected_candidates": rejected, "furniture_placements": [], "enemy_spawns": [], "drop_spawns": [], "door_reservation_rects": reserves, "functional_areas": []}
+
+static func _place_entry_cover(furniture: Array,doors: Array,reserves: Array[Rect2],bounds: Rect2,cells: Array,cell: float) -> bool:
+	const CATALOG=preload("res://scripts/dream/office_furniture_catalog.gd")
+	for door in doors:
+		var entry:=Vector2(door.get("inside_cell",Vector2i.ZERO))*cell
+		var inward: Vector2=-Vector2(door.get("outward",Vector2i.ZERO))
+		if inward==Vector2.ZERO: continue
+		var tangent:=Vector2(inward.y,-inward.x)
+		var covered:=false
+		for item in furniture:
+			var delta: Vector2=Vector2(item.position)-entry
+			if CATALOG.size_of(String(item.office_kind)).y<=1.1 and delta.dot(inward)>=cell and delta.dot(inward)<=3.5*cell and absf(delta.dot(tangent))<=4.*cell: covered=true
+		if covered: continue
+		for forward in [2.0,2.5,3.0]:
+			for side in [-2.,2.,-2.3,2.3,-2.6,2.6,-3.,3.]:
+				if covered: break
+				var point: Vector2=entry+inward*cell*forward+tangent*cell*side
+				var rect:=CATALOG.footprint("sorting_table")
+				var occupied:=Rect2(point+rect.position,rect.size)
+				var valid:=bounds.encloses(occupied) and _office_rect_on_floor(occupied,cells,cell)
+				for reserved in reserves:
+					if occupied.intersects(reserved): valid=false
+				for item in furniture:
+					var other: Rect2=item.collision_rect; other.position+=Vector2(item.position)
+					if occupied.grow(8).intersects(other): valid=false
+				if not valid: continue
+				furniture.append({"scene":preload("res://scenes/dream/props/desk.tscn"),"position":point,"rotation":0.,"collision_rect":rect,"half_extents":rect.size*.5,"office_kind":"sorting_table","functional_group":"entry_cover"})
+				if not _office_wide_routes(cells,furniture,doors,cell): furniture.pop_back(); continue
+				covered=true
+		if not covered: return false
+	return true
 
 static func _office_entry_lane_clear(bounds: Rect2, furniture: Array, cell: float) -> bool:
 	var lane := Rect2(Vector2(bounds.get_center().x - cell * 1.5, bounds.position.y), Vector2(cell * 3.0, bounds.size.y))
@@ -275,8 +308,8 @@ static func _office_room_group(kind: String, size: Vector2, reduced: int) -> Arr
 	match kind:
 		"open_office":
 			for x in [-side, side]:
-				for y in [top, 65.0] if reduced == 0 else [top]:
-					specs.append_array([["workstation", Vector2(x, y), 0.0], ["chair", Vector2(x, y + 38), 0.0]])
+				specs.append_array([["workstation",Vector2(x,top),0.0],["chair",Vector2(x,top+38),0.0]])
+				if reduced==0: specs.append(["sorting_table",Vector2(x+(-45 if x<0 else 45),top+56),PI*.5])
 			specs.append(["cabinet", Vector2(0, top), 0.0])
 		"conference_large", "conference", "meeting_small":
 			specs = [["table", Vector2.ZERO, 0.0], ["whiteboard", Vector2(-side - 40, -65), -PI * .5], ["cabinet", Vector2(-side - 40, 65), -PI * .5]]

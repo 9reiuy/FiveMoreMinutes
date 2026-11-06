@@ -305,19 +305,20 @@ func _refresh() -> void:
 	_pool_drawn = not puffs.is_empty()
 	if texture_w <= 0.0:
 		texture_w = float(BODIES[0].get_width())
-	for sprite in fills:
-		sprite.visible = false
-	for sprite in backs:
-		sprite.visible = false
+	# Keep live slots visible instead of invalidating the entire canvas pool.
+	# Allocation still observes the same final visible-slot state after refresh.
+	var live_slots := PackedByteArray()
+	live_slots.resize(LIMIT)
 	for puff in puffs:
 		var slot := int(puff["slot"])
+		live_slots[slot] = 1
 		var fill := fills[slot]
 		var back := backs[slot]
 		# Each puff carries its own texture: plume puffs use the merged cloud bodies,
 		# white dots use the plain circles. Assigning per frame keeps one shared pool.
 		var tex := puff.get("tex", BODIES[slot % BODIES.size()]) as Texture2D
-		fill.texture = tex
-		back.texture = tex
+		if fill.texture != tex: fill.texture = tex
+		if back.texture != tex: back.texture = tex
 		var t := clampf(float(puff["age"]) / float(puff["life"]), 0.0, 1.0)
 		var age := float(puff["age"])
 		# Rises as it drifts: the vertical term accelerates with age.
@@ -340,15 +341,19 @@ func _refresh() -> void:
 			alpha = 1.0 if t < 0.8 else clampf((1.0 - t) / 0.2, 0.0, 1.0)
 			colour.a = alpha
 			fill.modulate = colour
-		fill.visible = true
+		if not fill.visible: fill.visible = true
 		fill.position = mapped[0]
 		fill.scale = Vector2.ONE * scale
 		# The dark copy is drawn one screen pixel wider on every side and sits below
 		# every fill, so the ring is the union's outer edge, not one ring per puff.
-		back.visible = true
+		if not back.visible: back.visible = true
 		back.position = mapped[0]
 		back.scale = Vector2.ONE * (scale + OUTLINE_PX * 2.0 / texture_w)
 		back.modulate = Color(EDGE_COLOUR, alpha)
+	for slot in LIMIT:
+		if live_slots[slot] != 0: continue
+		if fills[slot].visible: fills[slot].visible = false
+		if backs[slot].visible: backs[slot].visible = false
 
 
 ## World point -> overlay pixel position, plus the Sprite2D scale that draws the

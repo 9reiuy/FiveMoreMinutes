@@ -1,0 +1,2525 @@
+{
+  "scope": "Independent central-ceiling regression audit. Same native route and combat command sequence, real nondeterministic AI, concurrent user load retained. Not an isolated renderer attribution.",
+  "visible_scope": "firstuse_reveal through the stage immediately before ab_export_excluded; no reveal, transition, or unfocused frames removed.",
+  "long_frame_ms": "> 80, strictly",
+  "slow_streak_ms": "> 20 in adjacent recorded frames of the same run; distinct runs never joined.",
+  "runs": [
+    {
+      "id": "R3_C7_timing12",
+      "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R3_C7_timing12",
+      "scheme": "C7",
+      "trace_sha256": "6454E1B7C5F0A003DCEAF20FBA18858DC630B0D86B824C24ED42F7F4BEAB2F4C",
+      "receipt": {
+        "state": "released",
+        "exit_code": 0,
+        "private_master": 0,
+        "engine_errors": [],
+        "source_drift": [],
+        "candidate_manifest_sha256": "04827E2A97429CED7562FFA5D32247D5377715CB5BDEB1AEE548E61E6AA95159",
+        "runner_sha256": "55B9917D797924886B16B212E17CB5A6FAA9A246942B99011C3865ABF664E422",
+        "script_sha256": "485ABD3742338C0873C3FB8D5590BBBEA4EB49F971F4A10C82F062ABC83FC461",
+        "before": {
+          "time": "2026-11-06T03:33:57.0612396+08:00",
+          "peers": [],
+          "gpu_csv": "2026/11/06 03:33:57.049, NVIDIA GeForce RTX 5070 Ti, 46, 6, 3164, 1807, 47.02",
+          "gpu_columns": "timestamp,name,temp_C,util_percent,memory_MiB,clock_MHz,power_W"
+        },
+        "after": {
+          "time": "2026-11-06T03:34:56.7574555+08:00",
+          "peers": [],
+          "gpu_csv": "2026/11/06 03:34:56.747, NVIDIA GeForce RTX 5070 Ti, 47, 7, 3167, 2437, 58.01",
+          "gpu_columns": "timestamp,name,temp_C,util_percent,memory_MiB,clock_MHz,power_W"
+        },
+        "concurrent_authorized": true,
+        "strict_gpu_isolation": true,
+        "receipt_io_sha256": "6DC0DD1670E14B850163F6E130799537033AB14F588B8D208284CC435BBE0595",
+        "recovery_sha256": "57DB71FD7CD5A6F9FAA879EE81ECDBB1F87F910DE8CD4F83F0EDA89D8A5B6268",
+        "launcher_error": null
+      },
+      "configuration": {
+        "renderer": "forward_plus",
+        "driver": "vulkan",
+        "seed": 42001,
+        "rooms": 15,
+        "furniture_actual": 104,
+        "enemy_roots_actual": 13,
+        "requested_enemies": 8,
+        "office_spots": 0,
+        "indoor_shadows": 40,
+        "world_viewport": "(640, 360)",
+        "reflection_resolution": "(320, 180)",
+        "reflection_every_draw": true,
+        "fps_cap": 60,
+        "audio_driver": "WASAPI",
+        "test_master_bus_muted": true,
+        "video_adapter": "NVIDIA GeForce RTX 5070 Ti",
+        "enemy_ai": true,
+        "weapon": "assault_rifle",
+        "vsync_mode": 1
+      },
+      "coverage": {
+        "dynamic": {
+          "damaged_or_missing_enemy_nodes": 2,
+          "effective_player_damage_events": 1,
+          "enemy_nodes_after": 8,
+          "enemy_nodes_before": 8,
+          "native_player_shots": 84,
+          "physics_ticks": 840,
+          "power_final": true,
+          "power_initial": true
+        },
+        "movement": {
+          "body_at_stop": [
+            1724.861328125,
+            812.790222167969
+          ],
+          "complete": true,
+          "contacts": [],
+          "detours": [
+            {
+              "attempt": 0,
+              "legs": 3,
+              "portal": "H:25:29",
+              "rejoin": 21,
+              "result": {
+                "complete": true,
+                "distance_px": 141.901867091656
+              }
+            },
+            {
+              "attempt": 0,
+              "legs": 3,
+              "portal": "H:51:29",
+              "rejoin": 75,
+              "result": {
+                "complete": true,
+                "distance_px": 78.6065130233765
+              }
+            }
+          ],
+          "distance_px": 1390.7931368947,
+          "doors": [
+            {
+              "edge": "H:25:29",
+              "id": 5,
+              "locked": false,
+              "opened": true
+            },
+            {
+              "edge": "H:51:29",
+              "id": 6,
+              "locked": false,
+              "opened": true
+            }
+          ],
+          "engagements": [],
+          "reached": 83,
+          "regions": [
+            9,
+            2,
+            3
+          ],
+          "stopped_at": null,
+          "total": 83
+        },
+        "stationary": true
+      },
+      "outcome": "bench_finished",
+      "image_writes": {},
+      "preparation_ms": 5825.062,
+      "cover_to_control_ms": 19405.958,
+      "state_mismatch": [],
+      "groups": {
+        "all_live": {
+          "frame": {
+            "n": 1281,
+            "sum_ms": 32520.843,
+            "mean_ms": 25.387074941451992,
+            "p50_ms": 23.67,
+            "p95_ms": 39.267,
+            "p99_ms": 50.293,
+            "max_ms": 142.721,
+            "average_fps": 39.39012282061692,
+            "one_percent_low_fps": 16.09927057920222,
+            "over16_667": 1181,
+            "over20": 1097,
+            "over80": 2,
+            "over80_per_minute": 3.6899412478329667
+          },
+          "draw_span": {
+            "n": 1281,
+            "sum_ms": 22079.207,
+            "mean_ms": 17.235914910226384,
+            "p50_ms": 18.45,
+            "p95_ms": 22.435,
+            "p99_ms": 25.293,
+            "max_ms": 129.865,
+            "average_fps": 58.01838806982516,
+            "one_percent_low_fps": 23.806166529628605,
+            "over16_667": 1009,
+            "over20": 334,
+            "over80": 2,
+            "over80_per_minute": 5.434977805135846
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 511,
+              "ms": 12614.189999999986
+            },
+            "longest_by_duration": {
+              "frames": 511,
+              "ms": 12614.189999999986
+            }
+          },
+          "focused_frames": 1281,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 1246,
+            "sum_ms": 7642.041997432709,
+            "mean_ms": 6.133260030042303,
+            "p50_ms": 6.63199996948242,
+            "p95_ms": 8.18099975585938,
+            "p99_ms": 9.5319995880127,
+            "max_ms": 98.6910018920898,
+            "average_fps": 163.04542691843164,
+            "one_percent_low_fps": 58.16841064162943,
+            "over16_667": 1,
+            "over20": 1,
+            "over80": 1,
+            "over80_per_minute": 7.851304667019179
+          },
+          "main_gpu": {
+            "n": 1246,
+            "sum_ms": 6428.18100464344,
+            "mean_ms": 5.159053775797304,
+            "p50_ms": 5.63700008392334,
+            "p95_ms": 6.9850001335144,
+            "p99_ms": 7.58099985122681,
+            "max_ms": 8.21300029754639,
+            "average_fps": 193.83399426679856,
+            "one_percent_low_fps": 127.569794538097,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 1246,
+            "sum_ms": 7620.0850012898445,
+            "mean_ms": 6.115638042768736,
+            "p50_ms": 6.72800016403198,
+            "p95_ms": 8.20499992370605,
+            "p99_ms": 9.67599964141846,
+            "max_ms": 11.5749998092651,
+            "average_fps": 163.51523635091877,
+            "one_percent_low_fps": 97.28863962877284,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 1246,
+            "sum_ms": 2776.3669974058867,
+            "mean_ms": 2.2282239144509526,
+            "p50_ms": 2.4210000038147,
+            "p95_ms": 3.0789999961853,
+            "p99_ms": 3.40799999237061,
+            "max_ms": 3.94300007820129,
+            "average_fps": 448.7879308334261,
+            "one_percent_low_fps": 275.4529085366769,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": [
+            {
+              "frame": 596,
+              "stage": "live_native_movement",
+              "ms": 142.721,
+              "focused": true
+            },
+            {
+              "frame": 976,
+              "stage": "live_combat_initial_powered",
+              "ms": 91.945,
+              "focused": true
+            }
+          ]
+        },
+        "stationary": {
+          "frame": {
+            "n": 369,
+            "sum_ms": 8030.931,
+            "mean_ms": 21.764040650406503,
+            "p50_ms": 21.425,
+            "p95_ms": 24.765,
+            "p99_ms": 27.445,
+            "max_ms": 28.765,
+            "average_fps": 45.947350313431905,
+            "one_percent_low_fps": 35.48490117455023,
+            "over16_667": 369,
+            "over20": 354,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 369,
+            "sum_ms": 6464.464,
+            "mean_ms": 17.51887262872629,
+            "p50_ms": 17.237,
+            "p95_ms": 19.765,
+            "p99_ms": 22.047,
+            "max_ms": 23.188,
+            "average_fps": 57.08129861965354,
+            "one_percent_low_fps": 44.482007028157106,
+            "over16_667": 313,
+            "over20": 17,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 130,
+              "ms": 2889.145000000001
+            },
+            "longest_by_duration": {
+              "frames": 130,
+              "ms": 2889.145000000001
+            }
+          },
+          "focused_frames": 369,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 364,
+            "sum_ms": 2323.236994743347,
+            "mean_ms": 6.382519216327877,
+            "p50_ms": 6.29099988937378,
+            "p95_ms": 7.22200012207031,
+            "p99_ms": 9.11999988555908,
+            "max_ms": 9.5319995880127,
+            "average_fps": 156.67794582455494,
+            "one_percent_low_fps": 107.82543304493791,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 364,
+            "sum_ms": 1932.5889992713928,
+            "mean_ms": 5.309310437558771,
+            "p50_ms": 5.28999996185303,
+            "p95_ms": 5.85099983215332,
+            "p99_ms": 6.01700019836426,
+            "max_ms": 6.26999998092651,
+            "average_fps": 188.34837626480953,
+            "one_percent_low_fps": 161.25780894126274,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 364,
+            "sum_ms": 2324.2520022392273,
+            "mean_ms": 6.385307698459416,
+            "p50_ms": 6.29500007629395,
+            "p95_ms": 7.10599994659424,
+            "p99_ms": 8.23700046539307,
+            "max_ms": 9.60099983215332,
+            "average_fps": 156.6095241175723,
+            "one_percent_low_fps": 113.24707343413519,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 364,
+            "sum_ms": 839.8309969902039,
+            "mean_ms": 2.3072280137093513,
+            "p50_ms": 2.2739999294281,
+            "p95_ms": 2.69799995422363,
+            "p99_ms": 2.97000002861023,
+            "max_ms": 3.21399998664856,
+            "average_fps": 433.4205349701398,
+            "one_percent_low_fps": 323.2062074519832,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "movement": {
+          "frame": {
+            "n": 420,
+            "sum_ms": 10482.126,
+            "mean_ms": 24.95744285714286,
+            "p50_ms": 24.761,
+            "p95_ms": 29.169,
+            "p99_ms": 35.172,
+            "max_ms": 142.721,
+            "average_fps": 40.06820753728776,
+            "one_percent_low_fps": 16.15367964668672,
+            "over16_667": 420,
+            "over20": 395,
+            "over80": 1,
+            "over80_per_minute": 5.724029648183966
+          },
+          "draw_span": {
+            "n": 420,
+            "sum_ms": 8268.883,
+            "mean_ms": 19.687816666666667,
+            "p50_ms": 19.574,
+            "p95_ms": 22.461,
+            "p99_ms": 25.474,
+            "max_ms": 129.865,
+            "average_fps": 50.79283380838742,
+            "one_percent_low_fps": 20.230383608533984,
+            "over16_667": 379,
+            "over20": 164,
+            "over80": 1,
+            "over80_per_minute": 7.2561191154839175
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 381,
+              "ms": 9725.044999999995
+            },
+            "longest_by_duration": {
+              "frames": 381,
+              "ms": 9725.044999999995
+            }
+          },
+          "focused_frames": 420,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 415,
+            "sum_ms": 3013.413998603821,
+            "mean_ms": 7.26123855085258,
+            "p50_ms": 7.09000015258789,
+            "p95_ms": 8.48200035095215,
+            "p99_ms": 10.6110000610352,
+            "max_ms": 98.6910018920898,
+            "average_fps": 137.7175523151742,
+            "one_percent_low_fps": 35.04271646501037,
+            "over16_667": 1,
+            "over20": 1,
+            "over80": 1,
+            "over80_per_minute": 19.910971419061333
+          },
+          "main_gpu": {
+            "n": 415,
+            "sum_ms": 2550.9810037612915,
+            "mean_ms": 6.146942177738052,
+            "p50_ms": 6.13800001144409,
+            "p95_ms": 7.35900020599365,
+            "p99_ms": 7.83500003814697,
+            "max_ms": 8.21300029754639,
+            "average_fps": 162.6825128795956,
+            "one_percent_low_fps": 124.22359954114644,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 415,
+            "sum_ms": 2999.4009976387024,
+            "mean_ms": 7.227472283466753,
+            "p50_ms": 7.29699993133545,
+            "p95_ms": 8.52200031280518,
+            "p99_ms": 9.87800025939941,
+            "max_ms": 11.5749998092651,
+            "average_fps": 138.36095951382006,
+            "one_percent_low_fps": 95.13842585797856,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 415,
+            "sum_ms": 1105.5359992980957,
+            "mean_ms": 2.663942166983363,
+            "p50_ms": 2.64299988746643,
+            "p95_ms": 3.24799990653992,
+            "p99_ms": 3.69799995422363,
+            "max_ms": 3.94300007820129,
+            "average_fps": 375.38352461021924,
+            "one_percent_low_fps": 262.42586506101554,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": [
+            {
+              "frame": 596,
+              "stage": "live_native_movement",
+              "ms": 142.721,
+              "focused": true
+            }
+          ]
+        },
+        "combat": {
+          "frame": {
+            "n": 492,
+            "sum_ms": 14007.786,
+            "mean_ms": 28.47110975609756,
+            "p50_ms": 30.716,
+            "p95_ms": 45.198,
+            "p99_ms": 51.617,
+            "max_ms": 91.945,
+            "average_fps": 35.12332355734161,
+            "one_percent_low_fps": 16.389949682854475,
+            "over16_667": 392,
+            "over20": 348,
+            "over80": 1,
+            "over80_per_minute": 4.283332141139221
+          },
+          "draw_span": {
+            "n": 492,
+            "sum_ms": 7345.86,
+            "mean_ms": 14.93060975609756,
+            "p50_ms": 18.653,
+            "p95_ms": 23.384,
+            "p99_ms": 29.507,
+            "max_ms": 81.126,
+            "average_fps": 66.97650104957079,
+            "one_percent_low_fps": 22.630476009432382,
+            "over16_667": 317,
+            "over20": 153,
+            "over80": 1,
+            "over80_per_minute": 8.167865981654973
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 204,
+              "ms": 6662.103999999999
+            },
+            "longest_by_duration": {
+              "frames": 204,
+              "ms": 6662.103999999999
+            }
+          },
+          "focused_frames": 492,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 467,
+            "sum_ms": 2305.3910040855408,
+            "mean_ms": 4.936597439155333,
+            "p50_ms": 6.71799993515015,
+            "p95_ms": 8.24100017547607,
+            "p99_ms": 9.66399955749512,
+            "max_ms": 10.4169998168945,
+            "average_fps": 202.5686745425819,
+            "one_percent_low_fps": 98.95895178195411,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 467,
+            "sum_ms": 1944.611001610756,
+            "mean_ms": 4.164049253984488,
+            "p50_ms": 5.78599977493286,
+            "p95_ms": 6.78399991989136,
+            "p99_ms": 7.47100019454956,
+            "max_ms": 8.21000003814697,
+            "average_fps": 240.15085773616192,
+            "one_percent_low_fps": 130.26600352804587,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 467,
+            "sum_ms": 2296.432001411915,
+            "mean_ms": 4.917413279254635,
+            "p50_ms": 6.78200006484985,
+            "p95_ms": 8.26599979400635,
+            "p99_ms": 10.0600004196167,
+            "max_ms": 10.8319997787476,
+            "average_fps": 203.3589497589628,
+            "one_percent_low_fps": 96.11502887559173,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 467,
+            "sum_ms": 831.0000011175871,
+            "mean_ms": 1.7794432572111072,
+            "p50_ms": 2.38100004196167,
+            "p95_ms": 2.96399998664856,
+            "p99_ms": 3.24499988555908,
+            "max_ms": 3.61899995803833,
+            "average_fps": 561.9735251166614,
+            "one_percent_low_fps": 292.2609298745433,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": [
+            {
+              "frame": 976,
+              "stage": "live_combat_initial_powered",
+              "ms": 91.945,
+              "focused": true
+            }
+          ]
+        },
+        "combat_on": {
+          "frame": {
+            "n": 199,
+            "sum_ms": 6527.694,
+            "mean_ms": 32.80248241206031,
+            "p50_ms": 32.125,
+            "p95_ms": 42.277,
+            "p99_ms": 57.929,
+            "max_ms": 91.945,
+            "average_fps": 30.485497635152626,
+            "one_percent_low_fps": 13.344542749242697,
+            "over16_667": 199,
+            "over20": 199,
+            "over80": 1,
+            "over80_per_minute": 9.191607327181696
+          },
+          "draw_span": {
+            "n": 199,
+            "sum_ms": 4042.801,
+            "mean_ms": 20.315582914572865,
+            "p50_ms": 19.388,
+            "p95_ms": 24.468,
+            "p99_ms": 46.746,
+            "max_ms": 81.126,
+            "average_fps": 49.22329840128169,
+            "one_percent_low_fps": 15.640640640640639,
+            "over16_667": 198,
+            "over20": 81,
+            "over80": 1,
+            "over80_per_minute": 14.841195497873874
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 199,
+              "ms": 6527.693999999999
+            },
+            "longest_by_duration": {
+              "frames": 199,
+              "ms": 6527.693999999999
+            }
+          },
+          "focused_frames": 199,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 194,
+            "sum_ms": 1378.0900044441223,
+            "mean_ms": 7.103556723938775,
+            "p50_ms": 6.94099998474121,
+            "p95_ms": 8.37800025939941,
+            "p99_ms": 10.3660001754761,
+            "max_ms": 10.4169998168945,
+            "average_fps": 140.77454982938755,
+            "one_percent_low_fps": 96.23249774980495,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 194,
+            "sum_ms": 1174.3570017814636,
+            "mean_ms": 6.053386607120946,
+            "p50_ms": 6.03499984741211,
+            "p95_ms": 7.01599979400635,
+            "p99_ms": 7.47399997711182,
+            "max_ms": 8.21000003814697,
+            "average_fps": 165.19678403220482,
+            "one_percent_low_fps": 127.51849005701492,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 194,
+            "sum_ms": 1386.963996887207,
+            "mean_ms": 7.1492989530268405,
+            "p50_ms": 7.03299999237061,
+            "p95_ms": 8.55200004577637,
+            "p99_ms": 10.1389999389648,
+            "max_ms": 10.1780004501343,
+            "average_fps": 139.87385428561834,
+            "one_percent_low_fps": 98.43972838987992,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 194,
+            "sum_ms": 515.8980014324188,
+            "mean_ms": 2.6592680486207154,
+            "p50_ms": 2.67199993133545,
+            "p95_ms": 3.11999988555908,
+            "p99_ms": 3.59400010108948,
+            "max_ms": 3.61899995803833,
+            "average_fps": 376.04332534987236,
+            "one_percent_low_fps": 277.2771362269805,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": [
+            {
+              "frame": 976,
+              "stage": "live_combat_initial_powered",
+              "ms": 91.945,
+              "focused": true
+            }
+          ]
+        },
+        "power_off": {
+          "frame": {
+            "n": 174,
+            "sum_ms": 2954.071,
+            "mean_ms": 16.977419540229885,
+            "p50_ms": 16.107,
+            "p95_ms": 23.777,
+            "p99_ms": 30.752,
+            "max_ms": 33.66,
+            "average_fps": 58.90176640981209,
+            "one_percent_low_fps": 31.05011488542508,
+            "over16_667": 74,
+            "over20": 30,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 174,
+            "sum_ms": 813.217,
+            "mean_ms": 4.67366091954023,
+            "p50_ms": 4.411,
+            "p95_ms": 6.479,
+            "p99_ms": 13.818,
+            "max_ms": 14.656,
+            "average_fps": 213.96503024408,
+            "one_percent_low_fps": 70.23951675212474,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 5,
+              "ms": 134.41
+            },
+            "longest_by_duration": {
+              "frames": 5,
+              "ms": 134.41
+            }
+          },
+          "focused_frames": 174,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 164,
+            "sum_ms": 124.09299993515015,
+            "mean_ms": 0.7566646337509155,
+            "p50_ms": 0.728999972343445,
+            "p95_ms": 1.11500000953674,
+            "p99_ms": 1.41499996185303,
+            "max_ms": 1.43900001049042,
+            "average_fps": 1321.589453762137,
+            "one_percent_low_fps": 700.7708547235123,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 164,
+            "sum_ms": 94.24100029468536,
+            "mean_ms": 0.5746402456993009,
+            "p50_ms": 0.556999981403351,
+            "p95_ms": 0.749000012874603,
+            "p99_ms": 0.785000026226044,
+            "max_ms": 0.836000025272369,
+            "average_fps": 1740.219219736451,
+            "one_percent_low_fps": 1233.8062532146428,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 164,
+            "sum_ms": 101.54300051927565,
+            "mean_ms": 0.6191646373126564,
+            "p50_ms": 0.611000001430511,
+            "p95_ms": 0.908999979496002,
+            "p99_ms": 1.22099995613098,
+            "max_ms": 1.26400005817413,
+            "average_fps": 1615.0793177405496,
+            "one_percent_low_fps": 804.8289692099933,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 164,
+            "sum_ms": 40.86399976909161,
+            "mean_ms": 0.24917073029933912,
+            "p50_ms": 0.244000002741814,
+            "p95_ms": 0.266999989748001,
+            "p99_ms": 0.465000003576279,
+            "max_ms": 0.556999981403351,
+            "average_fps": 4013.3124737350113,
+            "one_percent_low_fps": 1956.9471911879364,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "power_on": {
+          "frame": {
+            "n": 119,
+            "sum_ms": 4526.021,
+            "mean_ms": 38.03378991596639,
+            "p50_ms": 35.86,
+            "p95_ms": 50.493,
+            "p99_ms": 51.617,
+            "max_ms": 51.829,
+            "average_fps": 26.29241004405415,
+            "one_percent_low_fps": 19.333758676024207,
+            "over16_667": 119,
+            "over20": 119,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 119,
+            "sum_ms": 2489.842,
+            "mean_ms": 20.923042016806722,
+            "p50_ms": 20.399,
+            "p95_ms": 24.469,
+            "p99_ms": 31.463,
+            "max_ms": 32.099,
+            "average_fps": 47.79419738280581,
+            "one_percent_low_fps": 31.465340926968945,
+            "over16_667": 119,
+            "over20": 72,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 60,
+              "ms": 2509.6069999999995
+            },
+            "longest_by_duration": {
+              "frames": 60,
+              "ms": 2509.6069999999995
+            }
+          },
+          "focused_frames": 119,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 109,
+            "sum_ms": 803.2079997062683,
+            "mean_ms": 7.368880731250168,
+            "p50_ms": 7.2519998550415,
+            "p95_ms": 8.41199970245361,
+            "p99_ms": 8.67599964141846,
+            "max_ms": 8.71399974822998,
+            "average_fps": 135.70581971277812,
+            "one_percent_low_fps": 115.0086296834788,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 109,
+            "sum_ms": 676.0129995346069,
+            "mean_ms": 6.2019541241707055,
+            "p50_ms": 6.15999984741211,
+            "p95_ms": 6.99300003051758,
+            "p99_ms": 7.61299991607666,
+            "max_ms": 7.61499977111816,
+            "average_fps": 161.2395029016302,
+            "one_percent_low_fps": 131.3370134674874,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 109,
+            "sum_ms": 807.9250040054322,
+            "mean_ms": 7.412156000049837,
+            "p50_ms": 7.19500017166138,
+            "p95_ms": 8.80200004577637,
+            "p99_ms": 10.8120002746582,
+            "max_ms": 10.8319997787476,
+            "average_fps": 134.91351234286978,
+            "one_percent_low_fps": 92.40436125785767,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 109,
+            "sum_ms": 274.23799991607666,
+            "mean_ms": 2.5159449533585017,
+            "p50_ms": 2.54900002479553,
+            "p95_ms": 2.91700005531311,
+            "p99_ms": 3.11700010299683,
+            "max_ms": 3.31100010871887,
+            "average_fps": 397.4649757996944,
+            "one_percent_low_fps": 311.1387576426634,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        }
+      },
+      "all_after_reveal": {
+        "frame": {
+          "n": 1360,
+          "sum_ms": 34712.137,
+          "mean_ms": 25.523630147058824,
+          "p50_ms": 23.685,
+          "p95_ms": 40.042,
+          "p99_ms": 50.413,
+          "max_ms": 142.721,
+          "average_fps": 39.179379823258934,
+          "one_percent_low_fps": 15.81284816503192,
+          "over16_667": 1259,
+          "over20": 1173,
+          "over80": 2,
+          "over80_per_minute": 3.457004102052259
+        },
+        "draw_span": {
+          "n": 1360,
+          "sum_ms": 23667.321,
+          "mean_ms": 17.402441911764704,
+          "p50_ms": 18.465,
+          "p95_ms": 22.988,
+          "p99_ms": 25.64,
+          "max_ms": 129.865,
+          "average_fps": 57.463199996315595,
+          "one_percent_low_fps": 22.808323734830427,
+          "over16_667": 1080,
+          "over20": 365,
+          "over80": 2,
+          "over80_per_minute": 5.070282352616082
+        },
+        "slow_streak": {
+          "longest_by_frames": {
+            "frames": 511,
+            "ms": 12614.189999999986
+          },
+          "longest_by_duration": {
+            "frames": 511,
+            "ms": 12614.189999999986
+          }
+        },
+        "focused_frames": 1360,
+        "unfocused_frames": 0,
+        "main_cpu": {
+          "n": 1309,
+          "sum_ms": 8114.3669962883,
+          "mean_ms": 6.198905268363865,
+          "p50_ms": 6.64400005340576,
+          "p95_ms": 8.26799964904785,
+          "p99_ms": 9.91300010681152,
+          "max_ms": 98.6910018920898,
+          "average_fps": 161.31880658081735,
+          "one_percent_low_fps": 55.529112935896094,
+          "over16_667": 2,
+          "over20": 2,
+          "over80": 1,
+          "over80_per_minute": 7.39429212746298
+        },
+        "main_gpu": {
+          "n": 1309,
+          "sum_ms": 6772.005005002022,
+          "mean_ms": 5.173418644004601,
+          "p50_ms": 5.61800003051758,
+          "p95_ms": 6.97100019454956,
+          "p99_ms": 7.51700019836426,
+          "max_ms": 8.21300029754639,
+          "average_fps": 193.29578153488225,
+          "one_percent_low_fps": 127.94501916221061,
+          "over16_667": 0,
+          "over20": 0,
+          "over80": 0,
+          "over80_per_minute": 0.0
+        },
+        "mirror_cpu": {
+          "n": 1309,
+          "sum_ms": 8053.795001804829,
+          "mean_ms": 6.152631781363506,
+          "p50_ms": 6.73299980163574,
+          "p95_ms": 8.24400043487549,
+          "p99_ms": 9.67599964141846,
+          "max_ms": 11.5749998092651,
+          "average_fps": 162.5320733525819,
+          "one_percent_low_fps": 97.0813184363273,
+          "over16_667": 0,
+          "over20": 0,
+          "over80": 0,
+          "over80_per_minute": 0.0
+        },
+        "mirror_gpu": {
+          "n": 1309,
+          "sum_ms": 2925.8369973152876,
+          "mean_ms": 2.235169593059807,
+          "p50_ms": 2.41300010681152,
+          "p95_ms": 3.07599997520447,
+          "p99_ms": 3.39100003242493,
+          "max_ms": 3.94300007820129,
+          "average_fps": 447.3933446057051,
+          "one_percent_low_fps": 276.7564150061613,
+          "over16_667": 0,
+          "over20": 0,
+          "over80": 0,
+          "over80_per_minute": 0.0
+        },
+        "hitches": [
+          {
+            "frame": 596,
+            "stage": "live_native_movement",
+            "ms": 142.721,
+            "focused": true
+          },
+          {
+            "frame": 976,
+            "stage": "live_combat_initial_powered",
+            "ms": 91.945,
+            "focused": true
+          }
+        ]
+      },
+      "all_stages": {
+        "engine_boot": {
+          "frame": {
+            "n": 0
+          },
+          "draw_span": {
+            "n": 0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 0,
+              "ms": 0.0
+            },
+            "longest_by_duration": {
+              "frames": 0,
+              "ms": 0.0
+            }
+          },
+          "focused_frames": 0,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 0
+          },
+          "main_gpu": {
+            "n": 0
+          },
+          "mirror_cpu": {
+            "n": 0
+          },
+          "mirror_gpu": {
+            "n": 0
+          },
+          "hitches": []
+        },
+        "firstuse_show_loading": {
+          "frame": {
+            "n": 1,
+            "sum_ms": 1.063,
+            "mean_ms": 1.063,
+            "p50_ms": 1.063,
+            "p95_ms": 1.063,
+            "p99_ms": 1.063,
+            "max_ms": 1.063,
+            "average_fps": 940.7337723424272,
+            "one_percent_low_fps": 940.7337723424272,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 2,
+            "sum_ms": 27.822,
+            "mean_ms": 13.911,
+            "p50_ms": 0.514,
+            "p95_ms": 27.308,
+            "p99_ms": 27.308,
+            "max_ms": 27.308,
+            "average_fps": 71.88555819135935,
+            "one_percent_low_fps": 36.619305697963966,
+            "over16_667": 1,
+            "over20": 1,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 0,
+              "ms": 0.0
+            },
+            "longest_by_duration": {
+              "frames": 0,
+              "ms": 0.0
+            }
+          },
+          "focused_frames": 2,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 0
+          },
+          "main_gpu": {
+            "n": 0
+          },
+          "mirror_cpu": {
+            "n": 0
+          },
+          "mirror_gpu": {
+            "n": 0
+          },
+          "hitches": []
+        },
+        "firstuse_covered_floor_load": {
+          "frame": {
+            "n": 0
+          },
+          "draw_span": {
+            "n": 0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 0,
+              "ms": 0.0
+            },
+            "longest_by_duration": {
+              "frames": 0,
+              "ms": 0.0
+            }
+          },
+          "focused_frames": 0,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 0
+          },
+          "main_gpu": {
+            "n": 0
+          },
+          "mirror_cpu": {
+            "n": 0
+          },
+          "mirror_gpu": {
+            "n": 0
+          },
+          "hitches": []
+        },
+        "first_meeting_visible_setup": {
+          "frame": {
+            "n": 1,
+            "sum_ms": 13562.844,
+            "mean_ms": 13562.844,
+            "p50_ms": 13562.844,
+            "p95_ms": 13562.844,
+            "p99_ms": 13562.844,
+            "max_ms": 13562.844,
+            "average_fps": 0.07373084878068346,
+            "one_percent_low_fps": 0.07373084878068346,
+            "over16_667": 1,
+            "over20": 1,
+            "over80": 1,
+            "over80_per_minute": 4.423850926841008
+          },
+          "draw_span": {
+            "n": 1,
+            "sum_ms": 5557.776,
+            "mean_ms": 5557.776,
+            "p50_ms": 5557.776,
+            "p95_ms": 5557.776,
+            "p99_ms": 5557.776,
+            "max_ms": 5557.776,
+            "average_fps": 0.17992808634245067,
+            "one_percent_low_fps": 0.17992808634245067,
+            "over16_667": 1,
+            "over20": 1,
+            "over80": 1,
+            "over80_per_minute": 10.79568518054704
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 1,
+              "ms": 13562.844
+            },
+            "longest_by_duration": {
+              "frames": 1,
+              "ms": 13562.844
+            }
+          },
+          "focused_frames": 1,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 0
+          },
+          "main_gpu": {
+            "n": 0
+          },
+          "mirror_cpu": {
+            "n": 0
+          },
+          "mirror_gpu": {
+            "n": 0
+          },
+          "hitches": [
+            {
+              "frame": 2,
+              "stage": "first_meeting_visible_setup",
+              "ms": 13562.844,
+              "focused": true
+            }
+          ]
+        },
+        "firstuse_covered_native_preparation": {
+          "frame": {
+            "n": 58,
+            "sum_ms": 5818.71,
+            "mean_ms": 100.32258620689655,
+            "p50_ms": 16.42,
+            "p95_ms": 1313.913,
+            "p99_ms": 1676.94,
+            "max_ms": 1676.94,
+            "average_fps": 9.96784510656142,
+            "one_percent_low_fps": 0.5963242572781375,
+            "over16_667": 27,
+            "over20": 16,
+            "over80": 8,
+            "over80_per_minute": 82.4925112267152
+          },
+          "draw_span": {
+            "n": 58,
+            "sum_ms": 5150.858,
+            "mean_ms": 88.80789655172414,
+            "p50_ms": 5.309,
+            "p95_ms": 1307.345,
+            "p99_ms": 1482.846,
+            "max_ms": 1482.846,
+            "average_fps": 11.260259941159317,
+            "one_percent_low_fps": 0.6743788633479134,
+            "over16_667": 14,
+            "over20": 11,
+            "over80": 7,
+            "over80_per_minute": 81.53981336701574
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 6,
+              "ms": 3111.6639999999998
+            },
+            "longest_by_duration": {
+              "frames": 6,
+              "ms": 3111.6639999999998
+            }
+          },
+          "focused_frames": 58,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 53,
+            "sum_ms": 220.94499942660335,
+            "mean_ms": 4.168773574086855,
+            "p50_ms": 0.853999972343445,
+            "p95_ms": 12.168999671936,
+            "p99_ms": 92.234001159668,
+            "max_ms": 92.234001159668,
+            "average_fps": 239.87870346713277,
+            "one_percent_low_fps": 10.841988718117967,
+            "over16_667": 2,
+            "over20": 2,
+            "over80": 1,
+            "over80_per_minute": 271.56079637788616
+          },
+          "main_gpu": {
+            "n": 53,
+            "sum_ms": 253.72399824857712,
+            "mean_ms": 4.787245249973153,
+            "p50_ms": 4.90799999237061,
+            "p95_ms": 5.79400014877319,
+            "p99_ms": 5.93699979782104,
+            "max_ms": 5.93699979782104,
+            "average_fps": 208.88839985910644,
+            "one_percent_low_fps": 168.43524238741153,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 53,
+            "sum_ms": 1701.4480180740381,
+            "mean_ms": 32.10279279384978,
+            "p50_ms": 0.861000001430511,
+            "p95_ms": 106.387001037598,
+            "p99_ms": 1243.99401855469,
+            "max_ms": 1243.99401855469,
+            "average_fps": 31.149937839413745,
+            "one_percent_low_fps": 0.8038623860602082,
+            "over16_667": 5,
+            "over20": 5,
+            "over80": 3,
+            "over80_per_minute": 105.79224171876366
+          },
+          "mirror_gpu": {
+            "n": 53,
+            "sum_ms": 94.72899976372715,
+            "mean_ms": 1.787339618183531,
+            "p50_ms": 1.62000000476837,
+            "p95_ms": 2.51099991798401,
+            "p99_ms": 2.82299995422363,
+            "max_ms": 2.82299995422363,
+            "average_fps": 559.4907592415467,
+            "one_percent_low_fps": 354.2330911142419,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": [
+            {
+              "frame": 3,
+              "stage": "firstuse_covered_native_preparation",
+              "ms": 1348.481,
+              "focused": true
+            },
+            {
+              "frame": 8,
+              "stage": "firstuse_covered_native_preparation",
+              "ms": 1676.94,
+              "focused": true
+            },
+            {
+              "frame": 11,
+              "stage": "firstuse_covered_native_preparation",
+              "ms": 167.544,
+              "focused": true
+            },
+            {
+              "frame": 13,
+              "stage": "firstuse_covered_native_preparation",
+              "ms": 158.089,
+              "focused": true
+            },
+            {
+              "frame": 42,
+              "stage": "firstuse_covered_native_preparation",
+              "ms": 145.137,
+              "focused": true
+            },
+            {
+              "frame": 46,
+              "stage": "firstuse_covered_native_preparation",
+              "ms": 89.444,
+              "focused": true
+            },
+            {
+              "frame": 49,
+              "stage": "firstuse_covered_native_preparation",
+              "ms": 153.876,
+              "focused": true
+            },
+            {
+              "frame": 52,
+              "stage": "firstuse_covered_native_preparation",
+              "ms": 1313.913,
+              "focused": true
+            }
+          ]
+        },
+        "firstuse_reveal": {
+          "frame": {
+            "n": 1,
+            "sum_ms": 14.918,
+            "mean_ms": 14.918,
+            "p50_ms": 14.918,
+            "p95_ms": 14.918,
+            "p99_ms": 14.918,
+            "max_ms": 14.918,
+            "average_fps": 67.0331143584931,
+            "one_percent_low_fps": 67.0331143584931,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 1,
+            "sum_ms": 3.633,
+            "mean_ms": 3.633,
+            "p50_ms": 3.633,
+            "p95_ms": 3.633,
+            "p99_ms": 3.633,
+            "max_ms": 3.633,
+            "average_fps": 275.2546105147261,
+            "one_percent_low_fps": 275.2546105147261,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 0,
+              "ms": 0.0
+            },
+            "longest_by_duration": {
+              "frames": 0,
+              "ms": 0.0
+            }
+          },
+          "focused_frames": 1,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 0
+          },
+          "main_gpu": {
+            "n": 0
+          },
+          "mirror_cpu": {
+            "n": 0
+          },
+          "mirror_gpu": {
+            "n": 0
+          },
+          "hitches": []
+        },
+        "firstuse_control_released": {
+          "frame": {
+            "n": 42,
+            "sum_ms": 1211.878,
+            "mean_ms": 28.854238095238095,
+            "p50_ms": 25.458,
+            "p95_ms": 45.025,
+            "p99_ms": 71.708,
+            "max_ms": 71.708,
+            "average_fps": 34.65695391780361,
+            "one_percent_low_fps": 13.945445417526637,
+            "over16_667": 42,
+            "over20": 42,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 42,
+            "sum_ms": 927.428,
+            "mean_ms": 22.081619047619046,
+            "p50_ms": 20.674,
+            "p95_ms": 36.362,
+            "p99_ms": 40.934,
+            "max_ms": 40.934,
+            "average_fps": 45.286534372479586,
+            "one_percent_low_fps": 24.429569550984514,
+            "over16_667": 42,
+            "over20": 23,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 42,
+              "ms": 1211.878
+            },
+            "longest_by_duration": {
+              "frames": 42,
+              "ms": 1211.878
+            }
+          },
+          "focused_frames": 42,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 37,
+            "sum_ms": 306.4039993286132,
+            "mean_ms": 8.2811891710436,
+            "p50_ms": 7.55900001525879,
+            "p95_ms": 10.3199996948242,
+            "p99_ms": 27.2029991149902,
+            "max_ms": 27.2029991149902,
+            "average_fps": 120.75560397734272,
+            "one_percent_low_fps": 36.76065259469683,
+            "over16_667": 1,
+            "over20": 1,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 37,
+            "sum_ms": 207.00400114059448,
+            "mean_ms": 5.594702733529581,
+            "p50_ms": 5.55800008773804,
+            "p95_ms": 6.07299995422363,
+            "p99_ms": 6.13600015640259,
+            "max_ms": 6.13600015640259,
+            "average_fps": 178.74050644494582,
+            "one_percent_low_fps": 162.97261644567482,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 37,
+            "sum_ms": 268.4290003776551,
+            "mean_ms": 7.254837848044732,
+            "p50_ms": 7.00500011444092,
+            "p95_ms": 9.29199981689453,
+            "p99_ms": 10.5860004425049,
+            "max_ms": 10.5860004425049,
+            "average_fps": 137.83905594382267,
+            "one_percent_low_fps": 94.4643829774275,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 37,
+            "sum_ms": 91.35699963569643,
+            "mean_ms": 2.4691080982620655,
+            "p50_ms": 2.41199994087219,
+            "p95_ms": 2.97199988365173,
+            "p99_ms": 3.25600004196167,
+            "max_ms": 3.25600004196167,
+            "average_fps": 405.00454423355194,
+            "one_percent_low_fps": 307.12530316723263,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "live_stationary": {
+          "frame": {
+            "n": 369,
+            "sum_ms": 8030.931,
+            "mean_ms": 21.764040650406503,
+            "p50_ms": 21.425,
+            "p95_ms": 24.765,
+            "p99_ms": 27.445,
+            "max_ms": 28.765,
+            "average_fps": 45.947350313431905,
+            "one_percent_low_fps": 35.48490117455023,
+            "over16_667": 369,
+            "over20": 354,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 369,
+            "sum_ms": 6464.464,
+            "mean_ms": 17.51887262872629,
+            "p50_ms": 17.237,
+            "p95_ms": 19.765,
+            "p99_ms": 22.047,
+            "max_ms": 23.188,
+            "average_fps": 57.08129861965354,
+            "one_percent_low_fps": 44.482007028157106,
+            "over16_667": 313,
+            "over20": 17,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 130,
+              "ms": 2889.145000000001
+            },
+            "longest_by_duration": {
+              "frames": 130,
+              "ms": 2889.145000000001
+            }
+          },
+          "focused_frames": 369,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 364,
+            "sum_ms": 2323.236994743347,
+            "mean_ms": 6.382519216327877,
+            "p50_ms": 6.29099988937378,
+            "p95_ms": 7.22200012207031,
+            "p99_ms": 9.11999988555908,
+            "max_ms": 9.5319995880127,
+            "average_fps": 156.67794582455494,
+            "one_percent_low_fps": 107.82543304493791,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 364,
+            "sum_ms": 1932.5889992713928,
+            "mean_ms": 5.309310437558771,
+            "p50_ms": 5.28999996185303,
+            "p95_ms": 5.85099983215332,
+            "p99_ms": 6.01700019836426,
+            "max_ms": 6.26999998092651,
+            "average_fps": 188.34837626480953,
+            "one_percent_low_fps": 161.25780894126274,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 364,
+            "sum_ms": 2324.2520022392273,
+            "mean_ms": 6.385307698459416,
+            "p50_ms": 6.29500007629395,
+            "p95_ms": 7.10599994659424,
+            "p99_ms": 8.23700046539307,
+            "max_ms": 9.60099983215332,
+            "average_fps": 156.6095241175723,
+            "one_percent_low_fps": 113.24707343413519,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 364,
+            "sum_ms": 839.8309969902039,
+            "mean_ms": 2.3072280137093513,
+            "p50_ms": 2.2739999294281,
+            "p95_ms": 2.69799995422363,
+            "p99_ms": 2.97000002861023,
+            "max_ms": 3.21399998664856,
+            "average_fps": 433.4205349701398,
+            "one_percent_low_fps": 323.2062074519832,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "live_native_movement": {
+          "frame": {
+            "n": 420,
+            "sum_ms": 10482.126,
+            "mean_ms": 24.95744285714286,
+            "p50_ms": 24.761,
+            "p95_ms": 29.169,
+            "p99_ms": 35.172,
+            "max_ms": 142.721,
+            "average_fps": 40.06820753728776,
+            "one_percent_low_fps": 16.15367964668672,
+            "over16_667": 420,
+            "over20": 395,
+            "over80": 1,
+            "over80_per_minute": 5.724029648183966
+          },
+          "draw_span": {
+            "n": 420,
+            "sum_ms": 8268.883,
+            "mean_ms": 19.687816666666667,
+            "p50_ms": 19.574,
+            "p95_ms": 22.461,
+            "p99_ms": 25.474,
+            "max_ms": 129.865,
+            "average_fps": 50.79283380838742,
+            "one_percent_low_fps": 20.230383608533984,
+            "over16_667": 379,
+            "over20": 164,
+            "over80": 1,
+            "over80_per_minute": 7.2561191154839175
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 381,
+              "ms": 9725.044999999995
+            },
+            "longest_by_duration": {
+              "frames": 381,
+              "ms": 9725.044999999995
+            }
+          },
+          "focused_frames": 420,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 415,
+            "sum_ms": 3013.413998603821,
+            "mean_ms": 7.26123855085258,
+            "p50_ms": 7.09000015258789,
+            "p95_ms": 8.48200035095215,
+            "p99_ms": 10.6110000610352,
+            "max_ms": 98.6910018920898,
+            "average_fps": 137.7175523151742,
+            "one_percent_low_fps": 35.04271646501037,
+            "over16_667": 1,
+            "over20": 1,
+            "over80": 1,
+            "over80_per_minute": 19.910971419061333
+          },
+          "main_gpu": {
+            "n": 415,
+            "sum_ms": 2550.9810037612915,
+            "mean_ms": 6.146942177738052,
+            "p50_ms": 6.13800001144409,
+            "p95_ms": 7.35900020599365,
+            "p99_ms": 7.83500003814697,
+            "max_ms": 8.21300029754639,
+            "average_fps": 162.6825128795956,
+            "one_percent_low_fps": 124.22359954114644,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 415,
+            "sum_ms": 2999.4009976387024,
+            "mean_ms": 7.227472283466753,
+            "p50_ms": 7.29699993133545,
+            "p95_ms": 8.52200031280518,
+            "p99_ms": 9.87800025939941,
+            "max_ms": 11.5749998092651,
+            "average_fps": 138.36095951382006,
+            "one_percent_low_fps": 95.13842585797856,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 415,
+            "sum_ms": 1105.5359992980957,
+            "mean_ms": 2.663942166983363,
+            "p50_ms": 2.64299988746643,
+            "p95_ms": 3.24799990653992,
+            "p99_ms": 3.69799995422363,
+            "max_ms": 3.94300007820129,
+            "average_fps": 375.38352461021924,
+            "one_percent_low_fps": 262.42586506101554,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": [
+            {
+              "frame": 596,
+              "stage": "live_native_movement",
+              "ms": 142.721,
+              "focused": true
+            }
+          ]
+        },
+        "dynamic_meeting_setup": {
+          "frame": {
+            "n": 27,
+            "sum_ms": 622.083,
+            "mean_ms": 23.04011111111111,
+            "p50_ms": 21.938,
+            "p95_ms": 27.534,
+            "p99_ms": 43.168,
+            "max_ms": 43.168,
+            "average_fps": 43.40256846755176,
+            "one_percent_low_fps": 23.165307635285398,
+            "over16_667": 27,
+            "over20": 25,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 27,
+            "sum_ms": 470.072,
+            "mean_ms": 17.410074074074075,
+            "p50_ms": 17.139,
+            "p95_ms": 18.738,
+            "p99_ms": 23.564,
+            "max_ms": 23.564,
+            "average_fps": 57.43800949641757,
+            "one_percent_low_fps": 42.43761670344593,
+            "over16_667": 20,
+            "over20": 1,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 25,
+              "ms": 582.311
+            },
+            "longest_by_duration": {
+              "frames": 25,
+              "ms": 582.311
+            }
+          },
+          "focused_frames": 27,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 22,
+            "sum_ms": 137.33299970626834,
+            "mean_ms": 6.242409077557652,
+            "p50_ms": 6.1399998664856,
+            "p95_ms": 6.79699993133545,
+            "p99_ms": 7.11700010299683,
+            "max_ms": 7.11700010299683,
+            "average_fps": 160.19456392166643,
+            "one_percent_low_fps": 140.50863924800558,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 22,
+            "sum_ms": 112.02799940109252,
+            "mean_ms": 5.092181790958751,
+            "p50_ms": 5.02299976348877,
+            "p95_ms": 5.61899995803833,
+            "p99_ms": 6.21700000762939,
+            "max_ms": 6.21700000762939,
+            "average_fps": 196.37947760928643,
+            "one_percent_low_fps": 160.84928402329388,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 22,
+            "sum_ms": 136.70700025558472,
+            "mean_ms": 6.213954557072032,
+            "p50_ms": 6.15299987792969,
+            "p95_ms": 6.99300003051758,
+            "p99_ms": 7.03399991989136,
+            "max_ms": 7.03399991989136,
+            "average_fps": 160.92811603553025,
+            "one_percent_low_fps": 142.16662089689717,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 22,
+            "sum_ms": 47.11000025272368,
+            "mean_ms": 2.1413636478510765,
+            "p50_ms": 2.12700009346008,
+            "p95_ms": 2.37599992752075,
+            "p99_ms": 2.38499999046326,
+            "max_ms": 2.38499999046326,
+            "average_fps": 466.9921435359802,
+            "one_percent_low_fps": 419.2872134166177,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "live_combat_initial_powered": {
+          "frame": {
+            "n": 199,
+            "sum_ms": 6527.694,
+            "mean_ms": 32.80248241206031,
+            "p50_ms": 32.125,
+            "p95_ms": 42.277,
+            "p99_ms": 57.929,
+            "max_ms": 91.945,
+            "average_fps": 30.485497635152626,
+            "one_percent_low_fps": 13.344542749242697,
+            "over16_667": 199,
+            "over20": 199,
+            "over80": 1,
+            "over80_per_minute": 9.191607327181696
+          },
+          "draw_span": {
+            "n": 199,
+            "sum_ms": 4042.801,
+            "mean_ms": 20.315582914572865,
+            "p50_ms": 19.388,
+            "p95_ms": 24.468,
+            "p99_ms": 46.746,
+            "max_ms": 81.126,
+            "average_fps": 49.22329840128169,
+            "one_percent_low_fps": 15.640640640640639,
+            "over16_667": 198,
+            "over20": 81,
+            "over80": 1,
+            "over80_per_minute": 14.841195497873874
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 199,
+              "ms": 6527.693999999999
+            },
+            "longest_by_duration": {
+              "frames": 199,
+              "ms": 6527.693999999999
+            }
+          },
+          "focused_frames": 199,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 194,
+            "sum_ms": 1378.0900044441223,
+            "mean_ms": 7.103556723938775,
+            "p50_ms": 6.94099998474121,
+            "p95_ms": 8.37800025939941,
+            "p99_ms": 10.3660001754761,
+            "max_ms": 10.4169998168945,
+            "average_fps": 140.77454982938755,
+            "one_percent_low_fps": 96.23249774980495,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 194,
+            "sum_ms": 1174.3570017814636,
+            "mean_ms": 6.053386607120946,
+            "p50_ms": 6.03499984741211,
+            "p95_ms": 7.01599979400635,
+            "p99_ms": 7.47399997711182,
+            "max_ms": 8.21000003814697,
+            "average_fps": 165.19678403220482,
+            "one_percent_low_fps": 127.51849005701492,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 194,
+            "sum_ms": 1386.963996887207,
+            "mean_ms": 7.1492989530268405,
+            "p50_ms": 7.03299999237061,
+            "p95_ms": 8.55200004577637,
+            "p99_ms": 10.1389999389648,
+            "max_ms": 10.1780004501343,
+            "average_fps": 139.87385428561834,
+            "one_percent_low_fps": 98.43972838987992,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 194,
+            "sum_ms": 515.8980014324188,
+            "mean_ms": 2.6592680486207154,
+            "p50_ms": 2.67199993133545,
+            "p95_ms": 3.11999988555908,
+            "p99_ms": 3.59400010108948,
+            "max_ms": 3.61899995803833,
+            "average_fps": 376.04332534987236,
+            "one_percent_low_fps": 277.2771362269805,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": [
+            {
+              "frame": 976,
+              "stage": "live_combat_initial_powered",
+              "ms": 91.945,
+              "focused": true
+            }
+          ]
+        },
+        "live_combat_poweroff_first": {
+          "frame": {
+            "n": 115,
+            "sum_ms": 1953.408,
+            "mean_ms": 16.98615652173913,
+            "p50_ms": 16.137,
+            "p95_ms": 24.419,
+            "p99_ms": 29.08,
+            "max_ms": 30.752,
+            "average_fps": 58.87146975951773,
+            "one_percent_low_fps": 33.426928733787946,
+            "over16_667": 47,
+            "over20": 20,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 115,
+            "sum_ms": 529.117,
+            "mean_ms": 4.601017391304348,
+            "p50_ms": 4.364,
+            "p95_ms": 6.388,
+            "p99_ms": 8.637,
+            "max_ms": 14.656,
+            "average_fps": 217.34323410512232,
+            "one_percent_low_fps": 85.86270553385137,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 5,
+              "ms": 134.41
+            },
+            "longest_by_duration": {
+              "frames": 5,
+              "ms": 134.41
+            }
+          },
+          "focused_frames": 115,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 110,
+            "sum_ms": 81.22399997711182,
+            "mean_ms": 0.7383999997919256,
+            "p50_ms": 0.695999979972839,
+            "p95_ms": 1.11500000953674,
+            "p99_ms": 1.41499996185303,
+            "max_ms": 1.43900001049042,
+            "average_fps": 1354.2795236752315,
+            "one_percent_low_fps": 700.7708547235123,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 110,
+            "sum_ms": 62.50500017404556,
+            "mean_ms": 0.5682272743095051,
+            "p50_ms": 0.555000007152557,
+            "p95_ms": 0.731000006198883,
+            "p99_ms": 0.77700001001358,
+            "max_ms": 0.785000026226044,
+            "average_fps": 1759.85920636276,
+            "one_percent_low_fps": 1280.409701407448,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 110,
+            "sum_ms": 68.33700016140936,
+            "mean_ms": 0.6212454560128124,
+            "p50_ms": 0.611000001430511,
+            "p95_ms": 1.0,
+            "p99_ms": 1.22099995613098,
+            "max_ms": 1.26400005817413,
+            "average_fps": 1609.6697212371664,
+            "one_percent_low_fps": 804.8289692099933,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 110,
+            "sum_ms": 27.315999850630767,
+            "mean_ms": 0.2483272713693706,
+            "p50_ms": 0.24099999666214,
+            "p95_ms": 0.266999989748001,
+            "p99_ms": 0.465000003576279,
+            "max_ms": 0.556999981403351,
+            "average_fps": 4026.9439376739465,
+            "one_percent_low_fps": 1956.9471911879364,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "live_combat_poweron_first": {
+          "frame": {
+            "n": 59,
+            "sum_ms": 2016.414,
+            "mean_ms": 34.17650847457627,
+            "p50_ms": 33.681,
+            "p95_ms": 42.917,
+            "p99_ms": 46.956,
+            "max_ms": 46.956,
+            "average_fps": 29.259864293741266,
+            "one_percent_low_fps": 21.2965329244399,
+            "over16_667": 59,
+            "over20": 59,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 59,
+            "sum_ms": 1182.587,
+            "mean_ms": 20.04384745762712,
+            "p50_ms": 19.745,
+            "p95_ms": 22.085,
+            "p99_ms": 32.099,
+            "max_ms": 32.099,
+            "average_fps": 49.89062115514546,
+            "one_percent_low_fps": 31.153618492787942,
+            "over16_667": 59,
+            "over20": 22,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 59,
+              "ms": 2016.414
+            },
+            "longest_by_duration": {
+              "frames": 59,
+              "ms": 2016.414
+            }
+          },
+          "focused_frames": 59,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 54,
+            "sum_ms": 382.20300102233887,
+            "mean_ms": 7.077833352265535,
+            "p50_ms": 6.97300004959106,
+            "p95_ms": 7.9980001449585,
+            "p99_ms": 8.48499965667725,
+            "max_ms": 8.48499965667725,
+            "average_fps": 141.2861747698413,
+            "one_percent_low_fps": 117.85504307157544,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 54,
+            "sum_ms": 330.35699939727783,
+            "mean_ms": 6.117722211060701,
+            "p50_ms": 6.09999990463257,
+            "p95_ms": 6.74100017547607,
+            "p99_ms": 7.4539999961853,
+            "max_ms": 7.4539999961853,
+            "average_fps": 163.45953044288657,
+            "one_percent_low_fps": 134.15615783629804,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 54,
+            "sum_ms": 381.5410017967224,
+            "mean_ms": 7.065574107346712,
+            "p50_ms": 7.03800010681152,
+            "p95_ms": 7.75400018692017,
+            "p99_ms": 8.92800045013428,
+            "max_ms": 8.92800045013428,
+            "average_fps": 141.5313157582213,
+            "one_percent_low_fps": 112.00716281157443,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 54,
+            "sum_ms": 139.95999979972837,
+            "mean_ms": 2.591851848143118,
+            "p50_ms": 2.59200000762939,
+            "p95_ms": 3.03600001335144,
+            "p99_ms": 3.31100010871887,
+            "max_ms": 3.31100010871887,
+            "average_fps": 385.8245218438819,
+            "one_percent_low_fps": 302.02354792036886,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "live_combat_poweroff_repeat": {
+          "frame": {
+            "n": 59,
+            "sum_ms": 1000.663,
+            "mean_ms": 16.960389830508475,
+            "p50_ms": 16.107,
+            "p95_ms": 22.741,
+            "p99_ms": 33.66,
+            "max_ms": 33.66,
+            "average_fps": 58.96090891738777,
+            "one_percent_low_fps": 29.708853238265007,
+            "over16_667": 27,
+            "over20": 10,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 59,
+            "sum_ms": 284.1,
+            "mean_ms": 4.815254237288136,
+            "p50_ms": 4.42,
+            "p95_ms": 6.741,
+            "p99_ms": 13.818,
+            "max_ms": 13.818,
+            "average_fps": 207.6733544526575,
+            "one_percent_low_fps": 72.36937328122738,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 3,
+              "ms": 80.161
+            },
+            "longest_by_duration": {
+              "frames": 3,
+              "ms": 80.161
+            }
+          },
+          "focused_frames": 59,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 54,
+            "sum_ms": 42.86899995803832,
+            "mean_ms": 0.7938703695933023,
+            "p50_ms": 0.774999976158142,
+            "p95_ms": 1.13199996948242,
+            "p99_ms": 1.20099997520447,
+            "max_ms": 1.20099997520447,
+            "average_fps": 1259.651497652315,
+            "one_percent_low_fps": 832.6394843011967,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 54,
+            "sum_ms": 31.736000120639797,
+            "mean_ms": 0.587703705937774,
+            "p50_ms": 0.559000015258789,
+            "p95_ms": 0.762000024318695,
+            "p99_ms": 0.836000025272369,
+            "max_ms": 0.836000025272369,
+            "average_fps": 1701.5376794405986,
+            "one_percent_low_fps": 1196.1722126434142,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 54,
+            "sum_ms": 33.20600035786628,
+            "mean_ms": 0.6149259325530793,
+            "p50_ms": 0.610000014305115,
+            "p95_ms": 0.805000007152557,
+            "p99_ms": 1.08599996566772,
+            "max_ms": 1.08599996566772,
+            "average_fps": 1626.2121128119472,
+            "one_percent_low_fps": 920.8103421855603,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 54,
+            "sum_ms": 13.547999918460848,
+            "mean_ms": 0.2508888873789046,
+            "p50_ms": 0.25,
+            "p95_ms": 0.266999989748001,
+            "p99_ms": 0.421000003814697,
+            "max_ms": 0.421000003814697,
+            "average_fps": 3985.8281905079016,
+            "one_percent_low_fps": 2375.296890591359,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "live_combat_poweron_repeat": {
+          "frame": {
+            "n": 60,
+            "sum_ms": 2509.607,
+            "mean_ms": 41.82678333333333,
+            "p50_ms": 41.95,
+            "p95_ms": 50.717,
+            "p99_ms": 51.829,
+            "max_ms": 51.829,
+            "average_fps": 23.90812585396837,
+            "one_percent_low_fps": 19.294217523008353,
+            "over16_667": 60,
+            "over20": 60,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 60,
+            "sum_ms": 1307.255,
+            "mean_ms": 21.787583333333334,
+            "p50_ms": 21.394,
+            "p95_ms": 24.469,
+            "p99_ms": 31.463,
+            "max_ms": 31.463,
+            "average_fps": 45.89770167258874,
+            "one_percent_low_fps": 31.783364586975175,
+            "over16_667": 60,
+            "over20": 50,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 60,
+              "ms": 2509.6069999999995
+            },
+            "longest_by_duration": {
+              "frames": 60,
+              "ms": 2509.6069999999995
+            }
+          },
+          "focused_frames": 60,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 55,
+            "sum_ms": 421.00499868392944,
+            "mean_ms": 7.654636339707808,
+            "p50_ms": 7.50699996948242,
+            "p95_ms": 8.48299980163574,
+            "p99_ms": 8.71399974822998,
+            "max_ms": 8.71399974822998,
+            "average_fps": 130.63977903333966,
+            "one_percent_low_fps": 114.75786422912437,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 55,
+            "sum_ms": 345.6560001373291,
+            "mean_ms": 6.284654547951439,
+            "p50_ms": 6.1710000038147,
+            "p95_ms": 7.26700019836426,
+            "p99_ms": 7.61499977111816,
+            "max_ms": 7.61499977111816,
+            "average_fps": 159.11773548889215,
+            "one_percent_low_fps": 131.31976757146555,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 55,
+            "sum_ms": 426.3840022087098,
+            "mean_ms": 7.752436403794723,
+            "p50_ms": 7.50699996948242,
+            "p95_ms": 10.0600004196167,
+            "p99_ms": 10.8319997787476,
+            "max_ms": 10.8319997787476,
+            "average_fps": 128.99170633770206,
+            "one_percent_low_fps": 92.31905653857208,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 55,
+            "sum_ms": 134.27800011634827,
+            "mean_ms": 2.441418183933605,
+            "p50_ms": 2.48300004005432,
+            "p95_ms": 2.83400011062622,
+            "p99_ms": 2.90300011634827,
+            "max_ms": 2.90300011634827,
+            "average_fps": 409.5979978279687,
+            "one_percent_low_fps": 344.47122284580405,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "exit_visible_tail": {
+          "frame": {
+            "n": 9,
+            "sum_ms": 342.415,
+            "mean_ms": 38.04611111111112,
+            "p50_ms": 36.781,
+            "p95_ms": 47.302,
+            "p99_ms": 47.302,
+            "max_ms": 47.302,
+            "average_fps": 26.283895273279498,
+            "one_percent_low_fps": 21.140755147773877,
+            "over16_667": 9,
+            "over20": 9,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "draw_span": {
+            "n": 9,
+            "sum_ms": 186.981,
+            "mean_ms": 20.775666666666666,
+            "p50_ms": 20.777,
+            "p95_ms": 23.722,
+            "p99_ms": 23.722,
+            "max_ms": 23.722,
+            "average_fps": 48.13323278835818,
+            "one_percent_low_fps": 42.15496163898491,
+            "over16_667": 9,
+            "over20": 7,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 9,
+              "ms": 342.415
+            },
+            "longest_by_duration": {
+              "frames": 9,
+              "ms": 342.415
+            }
+          },
+          "focused_frames": 9,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 4,
+            "sum_ms": 28.58799982070923,
+            "mean_ms": 7.146999955177307,
+            "p50_ms": 7.03599977493286,
+            "p95_ms": 7.64400005340576,
+            "p99_ms": 7.64400005340576,
+            "max_ms": 7.64400005340576,
+            "average_fps": 139.91884794620674,
+            "one_percent_low_fps": 130.82155847898682,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "main_gpu": {
+            "n": 4,
+            "sum_ms": 24.79199981689453,
+            "mean_ms": 6.197999954223633,
+            "p50_ms": 6.15999984741211,
+            "p95_ms": 6.30999994277954,
+            "p99_ms": 6.30999994277954,
+            "max_ms": 6.30999994277954,
+            "average_fps": 161.34236969759075,
+            "one_percent_low_fps": 158.47860682539124,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_cpu": {
+            "n": 4,
+            "sum_ms": 28.57399988174438,
+            "mean_ms": 7.143499970436095,
+            "p50_ms": 7.12599992752075,
+            "p95_ms": 7.34600019454956,
+            "p99_ms": 7.34600019454956,
+            "max_ms": 7.34600019454956,
+            "average_fps": 139.9874017132462,
+            "one_percent_low_fps": 136.12850170381975,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "mirror_gpu": {
+            "n": 4,
+            "sum_ms": 11.00300002098083,
+            "mean_ms": 2.7507500052452074,
+            "p50_ms": 2.65700006484985,
+            "p95_ms": 2.90700006484985,
+            "p99_ms": 2.90700006484985,
+            "max_ms": 2.90700006484985,
+            "average_fps": 363.53721642939996,
+            "one_percent_low_fps": 343.99724034806695,
+            "over16_667": 0,
+            "over20": 0,
+            "over80": 0,
+            "over80_per_minute": 0.0
+          },
+          "hitches": []
+        },
+        "ab_export_excluded": {
+          "frame": {
+            "n": 0
+          },
+          "draw_span": {
+            "n": 0
+          },
+          "slow_streak": {
+            "longest_by_frames": {
+              "frames": 0,
+              "ms": 0.0
+            },
+            "longest_by_duration": {
+              "frames": 0,
+              "ms": 0.0
+            }
+          },
+          "focused_frames": 0,
+          "unfocused_frames": 0,
+          "main_cpu": {
+            "n": 0
+          },
+          "main_gpu": {
+            "n": 0
+          },
+          "mirror_cpu": {
+            "n": 0
+          },
+          "mirror_gpu": {
+            "n": 0
+          },
+          "hitches": []
+        }
+      },
+      "memory_engine_allocations_peak": {
+        "texture_bytes": 282959872.0,
+        "buffer_bytes": 79421256.0
+      },
+      "validation_notes": []
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cttktj4kdbhkg"
+path="res://.godot/imported/camera_mount.obj-f1f1ada31fce50b0c55c4fcb7e8b2857.mesh"
+
+[deps]
+
+files=["res://.godot/imported/camera_mount.obj-f1f1ada31fce50b0c55c4fcb7e8b2857.mesh"]
+
+source_file="res://art/story/chapter1/camera_mount.obj"
+dest_files=["res://.godot/imported/camera_mount.obj-f1f1ada31fce50b0c55c4fcb7e8b2857.mesh", "res://.godot/imported/camera_mount.obj-f1f1ada31fce50b0c55c4fcb7e8b2857.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

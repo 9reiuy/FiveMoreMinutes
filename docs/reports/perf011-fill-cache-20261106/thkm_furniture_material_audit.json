@@ -1,0 +1,6243 @@
+{
+  "scope": "Static MeshRenderers whose resolved object names match furniture terms in office levels 12 and 25. Serialized material bindings only. No simulation.",
+  "game_data": "D:\\XDGAME\\The.Hong.Kong.Massacre.v3756588\\THKM_Data",
+  "scenes": {
+    "level12": {
+      "objects": [
+        {
+          "object": "TableWooden_B",
+          "renderer_id": 10063,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10070,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10110,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 10116,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10128,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10150,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet_GridDoors",
+          "renderer_id": 10152,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10156,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 10193,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (1)",
+          "renderer_id": 10198,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 10203,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_MeetingWithChairs",
+          "renderer_id": 10212,
+          "materials": [
+            "sharedassets9.assets:13"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Dining_Wooden_A_Mesh",
+          "renderer_id": 10215,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Drawer",
+          "renderer_id": 10217,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Dining_Wooden_A_Mesh",
+          "renderer_id": 10223,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (3)",
+          "renderer_id": 10230,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 10246,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 10261,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10264,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet (1)",
+          "renderer_id": 10283,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10308,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10333,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10387,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_1seat",
+          "renderer_id": 10388,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10391,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden_B (1)",
+          "renderer_id": 10408,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10425,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10427,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10430,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10435,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_3seat (1)",
+          "renderer_id": 10459,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 10490,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_2seat (2)",
+          "renderer_id": 10495,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 10496,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Office_Cabinett_Low_A_Mesh",
+          "renderer_id": 10519,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (1)",
+          "renderer_id": 10520,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 10531,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 10570,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 10575,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (2)",
+          "renderer_id": 10584,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden_B",
+          "renderer_id": 10605,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10627,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10638,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (1)",
+          "renderer_id": 10647,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (4)",
+          "renderer_id": 10656,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10688,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10693,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice",
+          "renderer_id": 10705,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_3seat (3)",
+          "renderer_id": 10708,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (1)",
+          "renderer_id": 10724,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10747,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10753,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "gastro_fridge_02_Mesh",
+          "renderer_id": 10772,
+          "materials": [
+            "sharedassets3.assets:81",
+            "sharedassets3.assets:82",
+            "sharedassets3.assets:80"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10797,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (6)",
+          "renderer_id": 10805,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 10806,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10809,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 10820,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 10835,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 10864,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (5)",
+          "renderer_id": 10886,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (1)",
+          "renderer_id": 10914,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10921,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10956,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 10962,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (7)",
+          "renderer_id": 10979,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 10982,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_3seat (2)",
+          "renderer_id": 10995,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11059,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 11075,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden_B",
+          "renderer_id": 11081,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 11084,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (5)",
+          "renderer_id": 11092,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11103,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_DrawerSmall",
+          "renderer_id": 11114,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (2)",
+          "renderer_id": 11130,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_2seat (1)",
+          "renderer_id": 11131,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "VendingMachine2_LOD3",
+          "renderer_id": 11138,
+          "materials": [
+            "sharedassets12.assets:18"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 11144,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (2)",
+          "renderer_id": 11151,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 11158,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood (1)",
+          "renderer_id": 11160,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11184,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "gastro_table_small_01_Mesh",
+          "renderer_id": 11187,
+          "materials": [
+            "sharedassets3.assets:86",
+            "sharedassets3.assets:87"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11195,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden_B (2)",
+          "renderer_id": 11208,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11233,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Main",
+          "renderer_id": 11241,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (4)",
+          "renderer_id": 11244,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "VendingMachine1_LOD3",
+          "renderer_id": 11247,
+          "materials": [
+            "sharedassets12.assets:18"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 11253,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (1)",
+          "renderer_id": 11261,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11272,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 11306,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11310,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11338,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 11364,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11382,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 11391,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11406,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 11407,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (3)",
+          "renderer_id": 11439,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11485,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 11501,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11513,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_3seat",
+          "renderer_id": 11517,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 11540,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 11554,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 11556,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 11557,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11564,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (2)",
+          "renderer_id": 11566,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 11587,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11602,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11610,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice",
+          "renderer_id": 11637,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 11644,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11656,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood (1)",
+          "renderer_id": 11665,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 11670,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 11682,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 11686,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11689,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 11694,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 11703,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11704,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (4)",
+          "renderer_id": 11721,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf",
+          "renderer_id": 11728,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Flag (3)",
+          "renderer_id": 11735,
+          "materials": [
+            "sharedassets4.assets:34"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_2seat",
+          "renderer_id": 11737,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11754,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11773,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11791,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11806,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden_B (1)",
+          "renderer_id": 11810,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden_B",
+          "renderer_id": 11850,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 11873,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 11880,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "File_Cabinett_A_Mesh",
+          "renderer_id": 11892,
+          "materials": [
+            "sharedassets12.assets:8"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 11905,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet",
+          "renderer_id": 11971,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 11989,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        }
+      ],
+      "errors": []
+    },
+    "level25": {
+      "objects": [
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12084,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (10)",
+          "renderer_id": 12090,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Drawer",
+          "renderer_id": 12094,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (9)",
+          "renderer_id": 12096,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (5)",
+          "renderer_id": 12112,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 12117,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12118,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (3)",
+          "renderer_id": 12146,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "gastro_fridge_01_Mesh",
+          "renderer_id": 12159,
+          "materials": [
+            "sharedassets3.assets:81",
+            "sharedassets3.assets:82",
+            "sharedassets3.assets:80"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 12172,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (6)",
+          "renderer_id": 12216,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (5)",
+          "renderer_id": 12224,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (17)",
+          "renderer_id": 12233,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair1_LOD2",
+          "renderer_id": 12238,
+          "materials": [
+            "sharedassets25.assets:8"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12252,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 12258,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_MeetingWithChairs",
+          "renderer_id": 12260,
+          "materials": [
+            "sharedassets9.assets:13"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood (1)",
+          "renderer_id": 12266,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableFan_LOD2",
+          "renderer_id": 12277,
+          "materials": [
+            "sharedassets4.assets:68"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 12308,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 12309,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_3seat",
+          "renderer_id": 12321,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 12342,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 12358,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh (1)",
+          "renderer_id": 12366,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12379,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 12385,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12392,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (5)",
+          "renderer_id": 12394,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Flag",
+          "renderer_id": 12401,
+          "materials": [
+            "sharedassets4.assets:34"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (18)",
+          "renderer_id": 12422,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair1_LOD2",
+          "renderer_id": 12429,
+          "materials": [
+            "sharedassets25.assets:8"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (2)",
+          "renderer_id": 12430,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet (4)",
+          "renderer_id": 12441,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (11)",
+          "renderer_id": 12443,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 12448,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (6)",
+          "renderer_id": 12456,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (8)",
+          "renderer_id": 12467,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12471,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12498,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (15)",
+          "renderer_id": 12504,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (9)",
+          "renderer_id": 12514,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_2seat (1)",
+          "renderer_id": 12524,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 12537,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (5)",
+          "renderer_id": 12538,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12546,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12550,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableFan_LOD2",
+          "renderer_id": 12562,
+          "materials": [
+            "sharedassets4.assets:68"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (5)",
+          "renderer_id": 12581,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (1)",
+          "renderer_id": 12590,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12602,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D",
+          "renderer_id": 12603,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12621,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 12640,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (10)",
+          "renderer_id": 12649,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair1_LOD2",
+          "renderer_id": 12666,
+          "materials": [
+            "sharedassets25.assets:8"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden (1)",
+          "renderer_id": 12671,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 12673,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (7)",
+          "renderer_id": 12682,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12686,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet",
+          "renderer_id": 12693,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden",
+          "renderer_id": 12695,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (14)",
+          "renderer_id": 12698,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_2seat",
+          "renderer_id": 12703,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (10)",
+          "renderer_id": 12719,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 12720,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 12731,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12732,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12744,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden_B",
+          "renderer_id": 12769,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableWooden_B (1)",
+          "renderer_id": 12786,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 12804,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (16)",
+          "renderer_id": 12818,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair1_LOD2",
+          "renderer_id": 12820,
+          "materials": [
+            "sharedassets25.assets:8"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (7)",
+          "renderer_id": 12835,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (4)",
+          "renderer_id": 12862,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 12878,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (19)",
+          "renderer_id": 12882,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (14)",
+          "renderer_id": 12885,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12887,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 12907,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (8)",
+          "renderer_id": 12913,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (8)",
+          "renderer_id": 12915,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (12)",
+          "renderer_id": 12927,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12944,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (8)",
+          "renderer_id": 12948,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_1seat (1)",
+          "renderer_id": 12955,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_1seat",
+          "renderer_id": 12957,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 12958,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 12986,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (2)",
+          "renderer_id": 12994,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (2)",
+          "renderer_id": 13012,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet (1)",
+          "renderer_id": 13037,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 13044,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13051,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 13059,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13105,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Wood",
+          "renderer_id": 13114,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13118,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 13125,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (1)",
+          "renderer_id": 13126,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_DrawerSmall",
+          "renderer_id": 13136,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (8)",
+          "renderer_id": 13140,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13143,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair2_LOD2",
+          "renderer_id": 13148,
+          "materials": [
+            "sharedassets25.assets:9"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet (2)",
+          "renderer_id": 13150,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 13170,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13185,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair1_LOD2",
+          "renderer_id": 13202,
+          "materials": [
+            "sharedassets25.assets:8"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair1_LOD2",
+          "renderer_id": 13217,
+          "materials": [
+            "sharedassets25.assets:8"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (2)",
+          "renderer_id": 13219,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (9)",
+          "renderer_id": 13234,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13239,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13243,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13260,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13310,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_1seat (2)",
+          "renderer_id": 13346,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 13410,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (10)",
+          "renderer_id": 13414,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "VendingMachine2_LOD3",
+          "renderer_id": 13433,
+          "materials": [
+            "sharedassets12.assets:18"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (6)",
+          "renderer_id": 13443,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (4)",
+          "renderer_id": 13448,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (12)",
+          "renderer_id": 13449,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (14)",
+          "renderer_id": 13452,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13453,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 13456,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (9)",
+          "renderer_id": 13468,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13481,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 13493,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (7)",
+          "renderer_id": 13521,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (12)",
+          "renderer_id": 13543,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13546,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (4)",
+          "renderer_id": 13551,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_2seat (3)",
+          "renderer_id": 13561,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (1)",
+          "renderer_id": 13565,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (3)",
+          "renderer_id": 13584,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 13585,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13601,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13618,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Main",
+          "renderer_id": 13621,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (6)",
+          "renderer_id": 13630,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (13)",
+          "renderer_id": 13631,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 13644,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13646,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 13652,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13664,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (9)",
+          "renderer_id": 13681,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13707,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13720,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet (7)",
+          "renderer_id": 13722,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair1_LOD2",
+          "renderer_id": 13733,
+          "materials": [
+            "sharedassets25.assets:8"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "gastro_table_small_01_Mesh",
+          "renderer_id": 13739,
+          "materials": [
+            "sharedassets3.assets:86",
+            "sharedassets3.assets:87"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet (6)",
+          "renderer_id": 13743,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableLamp02",
+          "renderer_id": 13766,
+          "materials": [
+            "sharedassets25.assets:7"
+          ],
+          "lightmap_index": 0,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (1)",
+          "renderer_id": 13767,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13790,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (21)",
+          "renderer_id": 13801,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (2)",
+          "renderer_id": 13815,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 13827,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A",
+          "renderer_id": 13836,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 13859,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (20)",
+          "renderer_id": 13863,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (3)",
+          "renderer_id": 13881,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Dining_Wooden_A_Mesh",
+          "renderer_id": 13882,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (5)",
+          "renderer_id": 13883,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (3)",
+          "renderer_id": 13890,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13895,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13916,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet (3)",
+          "renderer_id": 13924,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13932,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice",
+          "renderer_id": 13943,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13949,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 13994,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 13996,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (4)",
+          "renderer_id": 14018,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 14035,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Table_Dining_Wooden_A_Mesh",
+          "renderer_id": 14064,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 14068,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (13)",
+          "renderer_id": 14084,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 14087,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (1)",
+          "renderer_id": 14090,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (11)",
+          "renderer_id": 14113,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf",
+          "renderer_id": 14136,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 14141,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 14148,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 14162,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 14170,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Dining_Wooden_A_Mesh",
+          "renderer_id": 14184,
+          "materials": [
+            "sharedassets3.assets:38"
+          ],
+          "lightmap_index": 65535,
+          "light_probe_usage": 0,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 14186,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 14188,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (1)",
+          "renderer_id": 14198,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk",
+          "renderer_id": 14201,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning",
+          "renderer_id": 14225,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 14239,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (15)",
+          "renderer_id": 14244,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (2)",
+          "renderer_id": 14255,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (11)",
+          "renderer_id": 14264,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (13)",
+          "renderer_id": 14305,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Desk (1)",
+          "renderer_id": 14313,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableFan_LOD2",
+          "renderer_id": 14326,
+          "materials": [
+            "sharedassets4.assets:68"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (6)",
+          "renderer_id": 14338,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair2_LOD2",
+          "renderer_id": 14342,
+          "materials": [
+            "sharedassets25.assets:9"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (7)",
+          "renderer_id": 14346,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice",
+          "renderer_id": 14351,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalCabinet (5)",
+          "renderer_id": 14353,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (11)",
+          "renderer_id": 14356,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_D (3)",
+          "renderer_id": 14358,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Couch_2seat (2)",
+          "renderer_id": 14363,
+          "materials": [
+            "sharedassets9.assets:10"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "TableScreen_A (2)",
+          "renderer_id": 14382,
+          "materials": [
+            "sharedassets9.assets:15"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 14439,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (4)",
+          "renderer_id": 14442,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_Spinning (3)",
+          "renderer_id": 14449,
+          "materials": [
+            "sharedassets4.assets:29"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "MetalShelf_Open_Mesh",
+          "renderer_id": 14464,
+          "materials": [
+            "sharedassets4.assets:32"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "FilingCabinets2_LOD1",
+          "renderer_id": 14469,
+          "materials": [
+            "sharedassets4.assets:63"
+          ],
+          "lightmap_index": 3,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Bookshelf (7)",
+          "renderer_id": 14492,
+          "materials": [
+            "sharedassets9.assets:13",
+            "sharedassets9.assets:12"
+          ],
+          "lightmap_index": 1,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        },
+        {
+          "object": "Chair_LeatherOffice (4)",
+          "renderer_id": 14501,
+          "materials": [
+            "sharedassets4.assets:28"
+          ],
+          "lightmap_index": 2,
+          "light_probe_usage": 1,
+          "reflection_probe_usage": 1,
+          "enabled": true,
+          "cast_shadows": 1,
+          "receive_shadows": 1
+        }
+      ],
+      "errors": []
+    }
+  },
+  "materials": {
+    "sharedassets9.assets:15": {
+      "name": "Table_And_Screen",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets9.assets:75",
+          "name": "Table_and_Screen_n",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets9.assets:93",
+          "name": "Table_and_Screen_d",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "sharedassets9.assets:74",
+          "name": "Table_and_Screen_s",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_OcclusionMap": {
+          "asset": "sharedassets9.assets:49",
+          "name": "Table_and_Screen_ao",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          0.7941176295280457,
+          0.8116349577903748,
+          0.8116349577903748,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets4.assets:32": {
+      "name": "MetalShelf",
+      "shader": "Standard (Specular setup)",
+      "keywords": "_ALPHATEST_ON _NORMALMAP _SPECGLOSSMAP",
+      "queue": 2450,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets4.assets:303",
+          "name": "MetalShelf_n",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets4.assets:172",
+          "name": "MetalShelf_d",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_OcclusionMap": {
+          "asset": "sharedassets4.assets:147",
+          "name": "MetalShelf_ao",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_SpecGlossMap": {
+          "asset": "sharedassets4.assets:276",
+          "name": "MetalShelf_s",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 1.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          0.6838235259056091,
+          0.6838235259056091,
+          0.6838235259056091,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "_SpecColor": [
+          0.20000000298023224,
+          0.20000000298023224,
+          0.20000000298023224,
+          1.0
+        ]
+      }
+    },
+    "sharedassets3.assets:38": {
+      "name": "Wood_Table_A",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets3.assets:134",
+          "name": "Wood_Low_08 - Default_Normal",
+          "size": [
+            2048,
+            2048
+          ],
+          "format": 12,
+          "mips": 12,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets3.assets:342",
+          "name": "Wood_Low_08 - Default_AlbedoTransparency",
+          "size": [
+            2048,
+            2048
+          ],
+          "format": 10,
+          "mips": 12,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "sharedassets3.assets:332",
+          "name": "Wood_Low_08 - Default_MetallicSmoothness",
+          "size": [
+            2048,
+            2048
+          ],
+          "format": 12,
+          "mips": 12,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets12.assets:8": {
+      "name": "File_Cabinett_A",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets12.assets:62",
+          "name": "File_Cabinett_normal",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets12.assets:59",
+          "name": "File_Cabinett_basecolor",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "sharedassets12.assets:46",
+          "name": "File_Cabinett_metallic",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets4.assets:29": {
+      "name": "Desk_and_stools",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP _NORMALMAP _SPECGLOSSMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets4.assets:244",
+          "name": "Desk_and_Stools_n",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets4.assets:193",
+          "name": "Desk_and_Stools_d",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "sharedassets4.assets:300",
+          "name": "Desk_and_Stools_s",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_OcclusionMap": {
+          "asset": "sharedassets4.assets:212",
+          "name": "Desk_and_Stools_ao",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.0,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 0.8700000047683716,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          0.9117646813392639,
+          0.9117646813392639,
+          0.9117646813392639,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "_SpecColor": [
+          0.20000000298023224,
+          0.20000000298023224,
+          0.20000000298023224,
+          1.0
+        ]
+      }
+    },
+    "sharedassets9.assets:13": {
+      "name": "Other_WoodBlack_Tiled",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets9.assets:129",
+          "name": "Other_WoodBlack_Tiled_n",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets9.assets:106",
+          "name": "Other_WoodBlack_Tiled_d",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "sharedassets9.assets:94",
+          "name": "Other_WoodBlack_Tiled_S",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 0.2770000100135803,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          0.8529411554336548,
+          0.8529411554336548,
+          0.8529411554336548,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets9.assets:12": {
+      "name": "Metal_Cleantiled",
+      "shader": "Standard",
+      "keywords": "_NORMALMAP _SPECGLOSSMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets9.assets:123",
+          "name": "Metal_Cleantiled_n",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets9.assets:43",
+          "name": "Metal_Cleantiled_d",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.7699999809265137,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.9599999785423279,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          0.7555146813392639,
+          0.75,
+          0.75,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "_SpecColor": [
+          0.20000000298023224,
+          0.20000000298023224,
+          0.20000000298023224,
+          1.0
+        ]
+      }
+    },
+    "sharedassets9.assets:10": {
+      "name": "CouchLeather",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets9.assets:80",
+          "name": "CouchLeather_n",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets9.assets:101",
+          "name": "CouchLeather_d",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "sharedassets9.assets:122",
+          "name": "CouchLeather_s",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_OcclusionMap": {
+          "asset": "sharedassets9.assets:51",
+          "name": "CouchLeather_ao",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 0.800000011920929,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          0.8602941036224365,
+          0.8602941036224365,
+          0.8602941036224365,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets4.assets:28": {
+      "name": "Chair_and_Dresser",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets4.assets:104",
+          "name": "Chair_and_Dresser_n",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets4.assets:293",
+          "name": "Chair_and_Dresser_d",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "sharedassets4.assets:234",
+          "name": "Chair_and_Dresser_s",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_OcclusionMap": {
+          "asset": "sharedassets4.assets:106",
+          "name": "Chair_and_Dresser_ao",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          0.9264705777168274,
+          0.9264705777168274,
+          0.9264705777168274,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets3.assets:81": {
+      "name": "gastro_kuehlschraenke-metal main",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP",
+      "queue": -1,
+      "textures": {
+        "_MainTex": {
+          "asset": "sharedassets3.assets:414",
+          "name": "grosskueche_kuehlschrank",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 10,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "resources.assets:296",
+          "name": "Base_Metal_Scratched_A_metallic",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 1.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets3.assets:82": {
+      "name": "gastro_kuehlschraenke-plastic",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP",
+      "queue": -1,
+      "textures": {
+        "_MainTex": {
+          "asset": "sharedassets3.assets:414",
+          "name": "grosskueche_kuehlschrank",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 10,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "resources.assets:296",
+          "name": "Base_Metal_Scratched_A_metallic",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 1.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets3.assets:80": {
+      "name": "gastro_kuehlschraenke-metal chromed",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP",
+      "queue": -1,
+      "textures": {
+        "_MainTex": {
+          "asset": "sharedassets3.assets:414",
+          "name": "grosskueche_kuehlschrank",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 10,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "resources.assets:296",
+          "name": "Base_Metal_Scratched_A_metallic",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 1.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets12.assets:18": {
+      "name": "VendingMachine_m",
+      "shader": "Standard",
+      "keywords": "_EMISSION _EMISSIONADD_ON _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets12.assets:20",
+          "name": "VendingMachine_N",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets12.assets:52",
+          "name": "VendingMachine_D",
+          "size": [
+            512,
+            512
+          ],
+          "format": 10,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets3.assets:86": {
+      "name": "gastro_tische-metal main",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP",
+      "queue": -1,
+      "textures": {
+        "_MainTex": {
+          "asset": "sharedassets3.assets:297",
+          "name": "grosskueche_tische",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 10,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "resources.assets:296",
+          "name": "Base_Metal_Scratched_A_metallic",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 1.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets3.assets:87": {
+      "name": "gastro_tische-plastic",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP",
+      "queue": -1,
+      "textures": {
+        "_MainTex": {
+          "asset": "sharedassets3.assets:297",
+          "name": "grosskueche_tische",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 10,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "resources.assets:296",
+          "name": "Base_Metal_Scratched_A_metallic",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 1.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets4.assets:34": {
+      "name": "Office_PropSet",
+      "shader": "Standard",
+      "keywords": "_METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets4.assets:142",
+          "name": "Office_PropSet_n",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets4.assets:168",
+          "name": "Office_PropSet_d",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "sharedassets4.assets:256",
+          "name": "Office_PropSet_s",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          0.9632353186607361,
+          0.9632353186607361,
+          0.9632353186607361,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "sharedassets4.assets:63": {
+      "name": "BulletinBoard_m",
+      "shader": "Standard",
+      "keywords": "_DIRTADD_ON _METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets4.assets:271",
+          "name": "BulletinBoard_N",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets4.assets:301",
+          "name": "BulletinBoard_D",
+          "size": [
+            512,
+            512
+          ],
+          "format": 10,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "resources.assets:296",
+          "name": "Base_Metal_Scratched_A_metallic",
+          "size": [
+            1024,
+            1024
+          ],
+          "format": 12,
+          "mips": 11,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.6899999976158142,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 1.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "_SpecColor": [
+          0.8897058963775635,
+          0.46447882056236267,
+          0.46447882056236267,
+          1.0
+        ]
+      }
+    },
+    "sharedassets25.assets:8": {
+      "name": "NegotiationTable_m",
+      "shader": "Custom/Base",
+      "keywords": "_DIRTADD_ON _METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_Diffuse": {
+          "asset": "sharedassets25.assets:22",
+          "name": "NegotiationTable_D",
+          "size": [
+            512,
+            512
+          ],
+          "format": 10,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_SRM": {
+          "asset": "sharedassets25.assets:39",
+          "name": "NegotiationTable_SRM",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_normal": {
+          "asset": "sharedassets25.assets:14",
+          "name": "NegotiationTable_N",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_Glossiness": 0.25999999046325684,
+        "_Metallic": 1.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "_SpecColor": [
+          0.8897058963775635,
+          0.46447882056236267,
+          0.46447882056236267,
+          1.0
+        ]
+      }
+    },
+    "sharedassets4.assets:68": {
+      "name": "Office_m",
+      "shader": "Standard",
+      "keywords": "_DIRTADD_ON _EMISSION _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets4.assets:143",
+          "name": "Office_N",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets4.assets:255",
+          "name": "Office_D",
+          "size": [
+            512,
+            512
+          ],
+          "format": 10,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.2809999883174896,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.7519999742507935,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "_SpecColor": [
+          0.8897058963775635,
+          0.46447882056236267,
+          0.46447882056236267,
+          1.0
+        ]
+      }
+    },
+    "sharedassets25.assets:9": {
+      "name": "Table_m",
+      "shader": "Custom/Base",
+      "keywords": "_DIRTADD_ON _METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_Diffuse": {
+          "asset": "sharedassets25.assets:11",
+          "name": "Table_D",
+          "size": [
+            512,
+            512
+          ],
+          "format": 10,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_SRM": {
+          "asset": "sharedassets25.assets:12",
+          "name": "Table_SRM",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_normal": {
+          "asset": "sharedassets25.assets:23",
+          "name": "Table_N",
+          "size": [
+            512,
+            512
+          ],
+          "format": 12,
+          "mips": 10,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_Glossiness": 0.25999999046325684,
+        "_Metallic": 1.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "_SpecColor": [
+          0.8897058963775635,
+          0.46447882056236267,
+          0.46447882056236267,
+          1.0
+        ]
+      }
+    },
+    "sharedassets25.assets:7": {
+      "name": "TableLamp02_MAT",
+      "shader": "Standard",
+      "keywords": "_EMISSION _METALLICGLOSSMAP _NORMALMAP",
+      "queue": -1,
+      "textures": {
+        "_BumpMap": {
+          "asset": "sharedassets25.assets:34",
+          "name": "TableLamp02_normal",
+          "size": [
+            2048,
+            2048
+          ],
+          "format": 12,
+          "mips": 12,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 0
+        },
+        "_MainTex": {
+          "asset": "sharedassets25.assets:38",
+          "name": "TableLamp02_albedo",
+          "size": [
+            2048,
+            2048
+          ],
+          "format": 10,
+          "mips": 12,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_MetallicGlossMap": {
+          "asset": "sharedassets25.assets:35",
+          "name": "TableLamp02_metallic",
+          "size": [
+            2048,
+            2048
+          ],
+          "format": 12,
+          "mips": 12,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        },
+        "_OcclusionMap": {
+          "asset": "sharedassets25.assets:33",
+          "name": "TableLamp02_occlusion",
+          "size": [
+            2048,
+            2048
+          ],
+          "format": 10,
+          "mips": 12,
+          "filter_mode": 1,
+          "aniso": 1,
+          "color_space": 1
+        }
+      },
+      "floats": {
+        "_BumpScale": 1.0,
+        "_Cutoff": 0.5,
+        "_GlossMapScale": 1.0,
+        "_Glossiness": 0.5,
+        "_GlossyReflections": 1.0,
+        "_Metallic": 0.0,
+        "_Mode": 0.0,
+        "_OcclusionStrength": 1.0,
+        "_SmoothnessTextureChannel": 0.0,
+        "_SpecularHighlights": 1.0
+      },
+      "colors": {
+        "_Color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "_EmissionColor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    }
+  }
+}

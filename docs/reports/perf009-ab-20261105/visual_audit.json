@@ -1,0 +1,121 @@
+{
+  "frozen_input_copy_matches": true,
+  "source_checked": 100,
+  "helper_checked": 19,
+  "source_mismatches": [],
+  "helper_mismatches": [],
+  "engine_matches": true,
+  "groups": [
+    {
+      "name": "01_interior_overview",
+      "matching": {
+        "name": true,
+        "camera_transform": true,
+        "camera_projection": true,
+        "camera_fov": true,
+        "camera_size": true,
+        "camera_type": true,
+        "player_position": true,
+        "actor_transform": true,
+        "room": true,
+        "main_size": true,
+        "mirror_size": true
+      },
+      "actor_source_pixels_equal": true,
+      "main_files": {
+        "A": {
+          "sha256": "5C00D8DA677436E825BF65D8BAEB1905B8BB77516B0C5C22E8E655572B0E35EA",
+          "dimensions": [
+            640,
+            360
+          ]
+        },
+        "B": {
+          "sha256": "B20B5C0014F61837593D6473458BF8455FE8AC33925E2929EBFE3DE8E708C837",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      }
+    },
+    {
+      "name": "02_window_reflection",
+      "matching": {
+        "name": true,
+        "camera_transform": true,
+        "camera_projection": true,
+        "camera_fov": true,
+        "camera_size": true,
+        "camera_type": true,
+        "player_position": true,
+        "actor_transform": true,
+        "room": true,
+        "main_size": true,
+        "mirror_size": true
+      },
+      "actor_source_pixels_equal": true,
+      "main_files": {
+        "A": {
+          "sha256": "AC7316BBE3CE19F2FDEA1702794CC534769E17C8DD30370A06106FBF11C41A66",
+          "dimensions": [
+            640,
+            360
+          ]
+        },
+        "B": {
+          "sha256": "8AC8509562235E628B6EE659B777E79187500457123A68C7623C791B1EBABE43",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      }
+    },
+    {
+      "name": "03_dark_actor_furniture",
+      "matching": {
+        "name": true,
+        "camera_transform": true,
+        "camera_projection": true,
+        "camera_fov": true,
+        "camera_size": true,
+        "camera_type": true,
+        "player_position": true,
+        "actor_transform": true,
+        "room": true,
+        "main_size": true,
+        "mirror_size": true
+      },
+      "actor_source_pixels_equal": true,
+      "main_files": {
+        "A": {
+          "sha256": "BF0E16D6BB97FAB901B82B26F94E334131EEAEE53104BFC78B77A01437A2C61A",
+          "dimensions": [
+            640,
+            360
+          ]
+        },
+        "B": {
+          "sha256": "B5A61268872335F41696B1EF3A5A7092F1E90BB4EC2E06E423B76389A2CCE9A6",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      }
+    }
+  ],
+  "inventory_matching": {
+    "furniture": true,
+    "lights": true,
+    "logical_floor": true,
+    "mirror_shadow_atlas": true,
+    "mirror_size": true,
+    "physical_fps": true,
+    "world_shadow_atlas": true,
+    "world_size": true
+  },
+  "enemy_note": "Raw enemy names retain Time.get_ticks_usec suffix; full raw positions/process modes were verified by rendering owner. No name edits applied.",
+  "scope": "Three paused actual primary Camera pairs; no motion or combat-artifact certification; source/hash verification only, no new game runs."
+}

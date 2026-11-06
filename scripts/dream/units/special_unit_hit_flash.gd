@@ -7,6 +7,7 @@ func configure(model: Node3D) -> void:
 	white=ShaderMaterial.new()
 	white.shader=preload("res://shaders/dream3d/special_unit_hit_flash.gdshader")
 	for mesh in model.find_children("*","MeshInstance3D",true,false):
+		if bool(mesh.get_meta(&"unit_visual_fx",false)): continue
 		if mesh.find_parent("MuzzleFire")!=null: continue
 		parts.append({"mesh":weakref(mesh),"rest":mesh.material_override})
 	set_process(false)

@@ -19,6 +19,8 @@ uniform vec4 phone_glow_inverse = vec4(1.0,0.0,0.0,1.0);
 uniform float phone_glow_strength = 0.0;
 uniform bool smoke_silhouette = false;
 // Multiplier on 3D diffuse lighting (e.g. 0.50 for characters, 1.0 for props)
+uniform bool office_linear_lighting = false;
+instance uniform bool office_power_cut = false;
 uniform float character_light_scale : hint_range(0.0, 2.0) = 1.0;
 
 global uniform vec4 occlusion_cutout_0;
@@ -104,9 +106,14 @@ void fragment() {
 	DEPTH = reference_fragment_depth(spatial_position, FRAGCOORD.z, PROJECTION_MATRIX);
 	if (reference_depth_enabled) { LIGHT_VERTEX = spatial_position; }
 	ALBEDO = vec3(_srgb_encode(pixel.r), _srgb_encode(pixel.g), _srgb_encode(pixel.b));
+	#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS
+	if (office_linear_lighting) {
+		ALBEDO = mix(pixel.rgb / 12.92, pow((pixel.rgb + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), pixel.rgb));
+	}
+	#endif
 	ALPHA = pixel.a;
-	EMISSION = ALBEDO * max(character_emission_strength, 0.0);
-	if (phone_glow_enabled) {
+	EMISSION = ALBEDO * (office_power_cut ? 0.0 : max(character_emission_strength, 0.0));
+	if (phone_glow_enabled && !office_power_cut) {
 		vec2 p = mat2(phone_glow_inverse.xy,phone_glow_inverse.zw) * (UV*vec2(textureSize(capture_texture,0))-phone_glow_origin) / 32.0;
 		if (all(greaterThanEqual(p,vec2(0.0))) && all(lessThan(p,vec2(1.0)))) {
 			vec4 glow = texture(phone_glow_mask,p);
@@ -138,5 +145,5 @@ void fragment() {
 void light() {
 	// Paper art is readable from either lit face; shadow attenuation remains
 	// the real engine shadow map, including walls and rotating door leaves.
-	DIFFUSE_LIGHT += ALBEDO * LIGHT_COLOR * ATTENUATION * max(abs(dot(NORMAL,LIGHT)),0.45) * character_light_scale / PI;
+	DIFFUSE_LIGHT += (office_linear_lighting ? vec3(1.0) : ALBEDO) * LIGHT_COLOR * ATTENUATION * max(abs(dot(NORMAL,LIGHT)),0.45) * character_light_scale / PI;
 }

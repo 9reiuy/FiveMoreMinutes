@@ -7,12 +7,12 @@ func _ready() -> void:
 	world.set_meta(&"pixel_stability_anchor",world.to_global(Vector3(world.player.global_position.x/32.,0.,world.player.global_position.y/32.)))
 	apply_sample()
 func apply_sample() -> void:
-	palette_material.set_shader_parameter("tonal_sample",tonal_enabled)
+	set_visual_enhancement(tonal_enabled)
 	for component in get_tree().get_nodes_in_group("office_dither_lighting"):
 		if component.get_parent()!=world: continue
 		for material in component.materials.values():
 			if material is ShaderMaterial: material.set_shader_parameter("office_tonal_sample",tonal_enabled)
-	world.set_meta(&"pixel_stability_sample",stability_enabled)
+	world.set_meta(&"pixel_stability_enabled",stability_enabled)
 	if not stability_enabled:
 		world.camera_3d.h_offset=0.; world.camera_3d.v_offset=0.
 	if status_label:

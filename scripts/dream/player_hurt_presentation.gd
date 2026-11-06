@@ -54,7 +54,7 @@ func configure(owner_world: Node3D) -> void:
 func _claim() -> void:
 	if is_instance_valid(player): player.set_meta(&"stylized_player_hurt",weakref(self))
 func _owns_player() -> bool:
-	if not is_instance_valid(player): return false
+	if not is_instance_valid(player) or not player.has_meta(&"stylized_player_hurt"): return false
 	var reference: Variant=player.get_meta(&"stylized_player_hurt",null)
 	return reference is WeakRef and reference.get_ref()==self
 func _active() -> bool:

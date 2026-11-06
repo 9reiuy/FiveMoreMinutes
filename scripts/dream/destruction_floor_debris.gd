@@ -51,11 +51,30 @@ static func spawn(source: Node3D, direction: Vector2, glass: bool) -> bool:
 	owner_world.floor_root.add_child(burst)
 	burst.add_to_group(&"persistent_destruction_debris") # Existing floor cleanup contract.
 	burst.build_from_source(source,direction,glass)
+	if not glass: _spawn_door_dust(owner_world, source, direction)
 	var live: Array = source.get_tree().get_nodes_in_group(&"persistent_destruction_debris").filter(func(n: Node) -> bool: return n.get_parent()==burst.get_parent() and not n.retiring)
 	if live.size()>MAX_BURSTS: live[0].retire()
 	PERF.end(owner_world,"fracture_build",diagnostic_started)
 	PERF.event(owner_world,"glass_break" if glass else "door_break",{"pieces":burst.pieces.size(),"source":String(source.name),"nodes":burst.audit_nodes,"unique_nodes":burst.audit_unique_nodes,"slice_hits":burst.audit_slice_hits,"slice_misses":burst.audit_slice_misses,"geometry_hits":burst.audit_geometry_hits,"geometry_misses":burst.audit_geometry_misses,"outline_hits":burst.audit_outline_hits,"outline_misses":burst.audit_outline_misses,"slice_us":burst.audit_slice_usec,"node_us":burst.audit_node_usec,"outline_us":burst.audit_outline_usec})
 	return true
+
+static func _spawn_door_dust(owner_world: Node, source: Node3D, direction: Vector2) -> void:
+	# Share the already render-prepared wall dust mesh/material. This is one
+	# particle batch, not a second set of door shards or a new shader program.
+	var dust_effect: Node3D = load("res://scripts/dream/shared_wall_break_effect.gd").new()
+	dust_effect.name = "DoorBreakDust"
+	owner_world.floor_root.add_child(dust_effect)
+	dust_effect.global_transform = owner_world.global_transform
+	dust_effect.add_to_group(&"door_break_dust")
+	var source_pose: Transform3D = owner_world.global_transform.affine_inverse() * source.global_transform
+	var center := source_pose * Vector3(0, float(source.door_height) * .43, 0)
+	var heading := direction.normalized() if direction.length_squared() > .0001 else Vector2.RIGHT
+	var tint := Color(.58,.56,.50)
+	for visual in source._visuals:
+		if is_instance_valid(visual) and visual.visible and visual.mesh != null:
+			tint = dust_effect._material_color(visual.get_active_material(0))
+			break
+	dust_effect._make_dust(center, source_pose.basis.x.normalized(), Vector3(heading.x,0,heading.y), tint)
 
 func build_from_source(source: Node3D, direction: Vector2, glass: bool) -> void:
 	random.seed = get_instance_id()
@@ -65,15 +84,15 @@ func build_from_source(source: Node3D, direction: Vector2, glass: bool) -> void:
 		if is_instance_valid(source.glass_pane): nodes.append(source.glass_pane)
 		if is_instance_valid(source.frame_root):
 			for child in source.frame_root.find_children("*","MeshInstance3D",true,false):
-				if child.cast_shadow!=GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY: nodes.append(child)
+				if child.visible and child.cast_shadow!=GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY: nodes.append(child)
 	else:
 		for visual in source._visuals:
-			if not is_instance_valid(visual): continue
+			if not is_instance_valid(visual) or not visual.visible: continue
 			nodes.append(visual)
 			for child in visual.find_children("*","MeshInstance3D",true,false):
-				if child.cast_shadow!=GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY: nodes.append(child)
+				if child.visible and child.cast_shadow!=GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY: nodes.append(child)
 		for handle in source._handle_visuals:
-			if is_instance_valid(handle) and not nodes.has(handle): nodes.append(handle)
+			if is_instance_valid(handle) and handle.visible and not nodes.has(handle): nodes.append(handle)
 	audit_nodes=nodes.size()
 	var distinct:Dictionary={}
 	for node in nodes:distinct[node.get_instance_id()]=true

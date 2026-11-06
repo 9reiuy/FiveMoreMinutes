@@ -1,0 +1,193 @@
+{
+  "scope": "Same fixed image regions; C4 repairs missing lobby roof so matching historical A light footprint is deliberately not required. Encoded luma is visual assistance only.",
+  "data": {
+    "A": {
+      "hall_lit": {
+        "median": 145.2733,
+        "box": [
+          249,
+          208,
+          265,
+          224
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\01_interior_overview_main.png",
+        "sha256": "5C00D8DA677436E825BF65D8BAEB1905B8BB77516B0C5C22E8E655572B0E35EA"
+      },
+      "hall_shadow": {
+        "median": 43.719199999999994,
+        "box": [
+          125,
+          214,
+          141,
+          230
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\01_interior_overview_main.png",
+        "sha256": "5C00D8DA677436E825BF65D8BAEB1905B8BB77516B0C5C22E8E655572B0E35EA"
+      },
+      "dark_window": {
+        "median": 24.795399999999997,
+        "box": [
+          139,
+          104,
+          153,
+          116
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\03_dark_actor_furniture_main.png",
+        "sha256": "BF0E16D6BB97FAB901B82B26F94E334131EEAEE53104BFC78B77A01437A2C61A"
+      },
+      "dark_floor": {
+        "median": 6.8595999999999995,
+        "box": [
+          202,
+          128,
+          216,
+          140
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_A\\03_dark_actor_furniture_main.png",
+        "sha256": "BF0E16D6BB97FAB901B82B26F94E334131EEAEE53104BFC78B77A01437A2C61A"
+      },
+      "hall_difference": 101.5541
+    },
+    "B0": {
+      "hall_lit": {
+        "median": 103.0722,
+        "box": [
+          249,
+          208,
+          265,
+          224
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\01_interior_overview_main.png",
+        "sha256": "B20B5C0014F61837593D6473458BF8455FE8AC33925E2929EBFE3DE8E708C837"
+      },
+      "hall_shadow": {
+        "median": 36.00000000000001,
+        "box": [
+          125,
+          214,
+          141,
+          230
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\01_interior_overview_main.png",
+        "sha256": "B20B5C0014F61837593D6473458BF8455FE8AC33925E2929EBFE3DE8E708C837"
+      },
+      "dark_window": {
+        "median": 29.5828,
+        "box": [
+          139,
+          104,
+          153,
+          116
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\03_dark_actor_furniture_main.png",
+        "sha256": "B5A61268872335F41696B1EF3A5A7092F1E90BB4EC2E06E423B76389A2CCE9A6"
+      },
+      "dark_floor": {
+        "median": 7.7874,
+        "box": [
+          202,
+          128,
+          216,
+          140
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\AB20261105_VIS_B\\03_dark_actor_furniture_main.png",
+        "sha256": "B5A61268872335F41696B1EF3A5A7092F1E90BB4EC2E06E423B76389A2CCE9A6"
+      },
+      "hall_difference": 67.07219999999998
+    },
+    "C2": {
+      "hall_lit": {
+        "median": 148.671,
+        "box": [
+          249,
+          208,
+          265,
+          224
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C2_static08\\01_interior_overview_main.png",
+        "sha256": "1BEDA1DB53858A3BC26F25A30F18BAB0E43BC0CB6D9E490270026BD7F15993A9"
+      },
+      "hall_shadow": {
+        "median": 44.7192,
+        "box": [
+          125,
+          214,
+          141,
+          230
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C2_static08\\01_interior_overview_main.png",
+        "sha256": "1BEDA1DB53858A3BC26F25A30F18BAB0E43BC0CB6D9E490270026BD7F15993A9"
+      },
+      "dark_window": {
+        "median": 34.30199999999999,
+        "box": [
+          139,
+          104,
+          153,
+          116
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C2_static08\\03_dark_actor_furniture_main.png",
+        "sha256": "8376503C1B173B3461F544E173344B97134FEE429223E1EBA3078BFBE9D35CA5"
+      },
+      "dark_floor": {
+        "median": 7.7874,
+        "box": [
+          202,
+          128,
+          216,
+          140
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C2_static08\\03_dark_actor_furniture_main.png",
+        "sha256": "8376503C1B173B3461F544E173344B97134FEE429223E1EBA3078BFBE9D35CA5"
+      },
+      "hall_difference": 103.95179999999999
+    },
+    "C4": {
+      "hall_lit": {
+        "median": 105.85959999999999,
+        "box": [
+          249,
+          208,
+          265,
+          224
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C4_static23\\01_interior_overview_main.png",
+        "sha256": "EA7E480B863AD055B181CA4084DB63088249F7BA7EC952D972029BB6202F7534"
+      },
+      "hall_shadow": {
+        "median": 44.7192,
+        "box": [
+          125,
+          214,
+          141,
+          230
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C4_static23\\01_interior_overview_main.png",
+        "sha256": "EA7E480B863AD055B181CA4084DB63088249F7BA7EC952D972029BB6202F7534"
+      },
+      "dark_window": {
+        "median": 27.510599999999997,
+        "box": [
+          139,
+          104,
+          153,
+          116
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C4_static23\\03_dark_actor_furniture_main.png",
+        "sha256": "0C2D867BAF72574AF7F5A3CE8A4323E5AFC4C49E41A21A4D77478E0717A26B58"
+      },
+      "dark_floor": {
+        "median": 7.7874,
+        "box": [
+          202,
+          128,
+          216,
+          140
+        ],
+        "path": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\R2_C4_static23\\03_dark_actor_furniture_main.png",
+        "sha256": "0C2D867BAF72574AF7F5A3CE8A4323E5AFC4C49E41A21A4D77478E0717A26B58"
+      },
+      "hall_difference": 61.140399999999985
+    }
+  }
+}

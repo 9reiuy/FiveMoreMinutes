@@ -216,7 +216,7 @@ extends Resource
 ## A tiny visibility floor for the pixel carriers of Player and Enemy.  This
 ## is material emission only: it never creates a Light3D or illuminates the
 ## floor/world.  Both actor types use the same configured value.
-@export_range(0.0, 0.25, 0.005) var character_self_emission_strength: float = 0.10
+@export_range(0.0, 0.25, 0.005) var character_self_emission_strength: float = 0.01
 ## Multiplier applied to 3D diffuse lighting on character pixel carriers (Player & Enemies).
 ## Lowers the direct light brightness illuminating the character without changing the cast shadow.
 @export_range(0.0, 2.0, 0.05) var character_light_scale: float = 0.50
@@ -254,8 +254,8 @@ extends Resource
 ## Window fixtures cast cool-toned nocturnal city light with crisp shadows through window apertures.
 ## The dungeon passes topology-derived normals to each wall.
 @export var window_light_enabled: bool = true
-@export_range(0.0, 5.0, 0.05) var window_light_energy: float = 2.2
-@export_range(1.0, 24.0, 0.1) var window_light_range: float = 6.5
+@export_range(0.0, 5.0, 0.05) var window_light_energy: float = 1.35
+@export_range(1.0, 24.0, 0.1) var window_light_range: float = 9.0
 @export_range(20.0, 120.0, 1.0) var window_light_angle: float = 50.0
 @export_range(0.0, 4.0, 0.01) var window_light_attenuation: float = 1.3
 @export var window_light_color: Color = Color(0.52, 0.76, 1.0, 1.0)
@@ -425,7 +425,7 @@ extends Resource
 @export var assault_rifle_projectile_speed: float = 550.0
 @export_range(0.25, 1.0, 0.05) var assault_rifle_projectile_visual_scale: float = 0.60
 @export_range(1, 99, 1) var assault_rifle_magazine_size: int = 30
-@export var assault_rifle_recoil_multiplier: float = 0.8
+@export var assault_rifle_recoil_multiplier: float = 1.5
 @export_group("")
 @export var shotgun_pellet_count: int = 9
 ## 近距离一轮霰弹应明显高于手枪；9 颗弹丸合计最高 36 伤害。
@@ -435,7 +435,7 @@ extends Resource
 ## Original authored shotgun projectile speed: 310 px/s; this pass uses 50%.
 @export var shotgun_projectile_speed: float = 550.0
 @export var shotgun_max_distance: float = 220.0
-@export var shotgun_recoil_multiplier: float = 1.8
+@export var shotgun_recoil_multiplier: float = 2.8
 @export var lucille_damage: float = 30.0
 @export var lucille_attack_range: float = 30.0
 @export_range(1.0, 180.0, 1.0) var lucille_attack_arc_degrees: float = 120.0
@@ -477,11 +477,11 @@ extends Resource
 @export var weapon_recoil_distance: float = 4.0
 @export_range(0.01, 0.2, 0.01) var weapon_recoil_kick_seconds: float = 0.04
 @export_range(0.01, 0.3, 0.01) var weapon_recoil_return_seconds: float = 0.09
-## Physical movement recoil is a small external impulse, separate from visual
-## weapon kick and from airborne knockback. Values are per shot velocity units.
+## Ground recoil in gameplay pixels per second per shot, before the weapon
+## multiplier. Long guns share these values with armed employees.
 @export_range(0.0, 120.0, 1.0) var player_default_firearm_recoil: float = 0.0
-@export_range(0.0, 160.0, 1.0) var player_assault_rifle_recoil: float = 20.0
-@export_range(0.0, 220.0, 1.0) var player_shotgun_recoil: float = 44.0
+@export_range(0.0, 160.0, 1.0) var player_assault_rifle_recoil: float = 55.0
+@export_range(0.0, 220.0, 1.0) var player_shotgun_recoil: float = 155.0
 @export_range(0.0, 100.0, 1.0) var player_melee_furniture_recoil: float = 22.0
 
 @export_group("Employee ranged attack")

@@ -10,11 +10,13 @@ const DEFAULT_PIXEL_SIZE := Vector2i(640, 360)
 @export var initial_selective_enabled := true
 ## Preview comparisons may select 960x540. Formal screens keep 640x360.
 @export var pixel_size := DEFAULT_PIXEL_SIZE
+@export var tonal_enhancement_enabled := true
 
 var world: Node3D
 var world_viewport: SubViewport
 var container: SubViewportContainer
 var palette_material: ShaderMaterial
+var use_native_office_colour := false
 var status_label: Label
 var selective_enabled := true
 var palette_enabled := false
@@ -74,7 +76,10 @@ func _ready() -> void:
 		world.generate_on_ready = false
 		world.persist_profile = false
 		world.enable_game_start_cab_exit = false
+	world.set_meta(&"tonal_enhancement_enabled",tonal_enhancement_enabled)
+	use_native_office_colour = world.has_method("uses_office_real_colour") and world.uses_office_real_colour()
 	world_viewport.add_child(world)
+	_sync_visual_enhancement()
 
 	# Occlusion Cutout is single-pass inside this WorldViewport: occluder
 	# furniture discards its hole core in the transparent list (see
@@ -101,9 +106,15 @@ func _ready() -> void:
 	palette_layer.add_child(palette_rect)
 	palette_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	palette_material = ShaderMaterial.new()
-	palette_material.shader = preload("res://shaders/palette_quantize.gdshader")
-	palette_material.set_shader_parameter(&"palette_scheme", SettingsManager.get_palette_scheme())
-	palette_material.set_shader_parameter(&"palette_enabled", palette_enabled and not bool(world.get_meta(&"preserve_local_palette",false)))
+	palette_material.shader = (preload("res://shaders/world_semantic_decode.gdshader") if use_native_office_colour
+		else preload("res://shaders/palette_quantize.gdshader"))
+	# Smooth the final light ramp only in formal floors/the production-art lab.
+	# Tutorial reveals, standalone samples and the lobby retain their own palette.
+	if not use_native_office_colour: palette_material.set_shader_parameter(&"smooth_light_ramp",not preview_mode and world.has_method("get_current_floor_token") and not world.has_node("ChapterTraining"))
+	if not use_native_office_colour: palette_material.set_shader_parameter(&"tonal_sample",tonal_enhancement_enabled and not bool(world.get_meta(&"preserve_local_palette",false)))
+	if not use_native_office_colour: palette_material.set_shader_parameter(&"palette_scheme", SettingsManager.get_palette_scheme())
+	palette_material.set_shader_parameter(&"tutorial_gate_indicators", world.has_node("ChapterTraining"))
+	if not use_native_office_colour: palette_material.set_shader_parameter(&"palette_enabled", palette_enabled and not bool(world.get_meta(&"preserve_local_palette",false)))
 	palette_rect.material = palette_material
 	if preview_mode:
 		var controls := CanvasLayer.new()
@@ -165,9 +176,25 @@ func _input(event: InputEvent) -> void:
 
 func set_selective_enabled(value: bool) -> void:
 	selective_enabled = value
+	_sync_visual_enhancement()
 	if _initialized:
 		_update_layout(true)
 		_update_status()
+
+func set_visual_enhancement(value: bool) -> void:
+	tonal_enhancement_enabled=value
+	_sync_visual_enhancement()
+	for component in get_tree().get_nodes_in_group("office_dither_lighting"):
+		if component.get_parent()!=world: continue
+		for material in component.materials.values():
+			if material is ShaderMaterial: material.set_shader_parameter("office_tonal_sample",bool(world.get_meta(&"tonal_enhancement_enabled",false)))
+
+func _sync_visual_enhancement() -> void:
+	if not is_instance_valid(world): return
+	var enabled:=tonal_enhancement_enabled and not bool(world.get_meta(&"preserve_local_palette",false))
+	world.set_meta(&"tonal_enhancement_enabled",enabled)
+	world.set_meta(&"pixel_stability_enabled",enabled and selective_enabled and world.has_method("get_current_floor_token"))
+	if not use_native_office_colour and is_instance_valid(palette_material): palette_material.set_shader_parameter("tonal_sample",enabled)
 
 
 func set_preview_pixel_size(value: Vector2i) -> void:
@@ -181,13 +208,13 @@ func set_preview_pixel_size(value: Vector2i) -> void:
 
 func set_palette_enabled(value: bool) -> void:
 	palette_enabled = value
-	if is_instance_valid(palette_material):
+	if not use_native_office_colour and is_instance_valid(palette_material):
 		palette_material.set_shader_parameter(&"palette_enabled", value and not bool(world.get_meta(&"preserve_local_palette",false)))
 	_update_status()
 
 
 func _on_display_setting_changed(key: StringName, value: Variant) -> void:
-	if key == &"palette_scheme" and is_instance_valid(palette_material):
+	if key == &"palette_scheme" and not use_native_office_colour and is_instance_valid(palette_material):
 		palette_material.set_shader_parameter(&"palette_scheme", int(value))
 	if key == &"pixelation_enabled":
 		set_selective_enabled(bool(value))

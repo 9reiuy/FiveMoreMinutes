@@ -78,6 +78,13 @@ static func _validate(layout: Dictionary) -> bool:
 			elif int(connection.b) == int(room.id):
 				room_doors.append(connection.door_b)
 		var plan: Dictionary = layout.plans[room.id]
+		if bool(room.get("combat_room",false)) and not room_doors.is_empty():
+			var bounds:=Rect2((Vector2(room.grid_rect.position)-Vector2.ONE*.5)*32.,Vector2(room.grid_rect.size)*32.)
+			var reserves: Array[Rect2]=PLANNER.get_doorway_reservation_rects(room_doors,32.)
+			for doorway in room_doors:
+				var before: Array=plan.furniture_placements.duplicate(true)
+				if not PLANNER._place_entry_cover(plan.furniture_placements,[doorway],reserves,bounds,room.shape_cells,32.) or not PLANNER._office_wide_routes(room.shape_cells,plan.furniture_placements,room_doors,32.):
+					plan.furniture_placements=before
 		if not PLANNER._office_wide_routes(room.shape_cells,plan.furniture_placements,room_doors,32.0):
 			validation_reason="routes " + String(room.sample_key)
 			return false

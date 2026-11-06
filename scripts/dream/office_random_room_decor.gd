@@ -7,7 +7,7 @@ const THEME = preload("res://scripts/dream/dream_room_environment_theme.gd")
 const ART = preload("res://scripts/dream/office_room_low_pixel_art.gd")
 const EDGES = preload("res://scripts/dream/dream_office_v2_generator.gd")
 
-static func build(room: Dictionary, doors: Array, wall_edges: Dictionary = {}, wall_thickness: float = .5, edge_states: Dictionary = {}, enhanced := true) -> Node3D:
+static func build(room: Dictionary, doors: Array, wall_edges: Dictionary = {}, wall_thickness: float = .5, edge_states: Dictionary = {}, enhanced := true, world: Node3D = null) -> Node3D:
 	var root := Node3D.new()
 	root.name = "ApprovedRandomRoomFixtures_%d" % int(room.get("id", -1))
 	root.set_meta(&"dream_room_id", int(room.get("id", -1)))
@@ -59,6 +59,7 @@ static func build(room: Dictionary, doors: Array, wall_edges: Dictionary = {}, w
 			detail.position=Vector3(point.x,2.05 if tile=="clock" else 1.45,point.y)
 			detail.rotation.y=float(mount.yaw)
 			root.add_child(detail)
+			if world != null: world.register_wall_attachment(detail, mount.edge)
 			continue
 		var display := MeshInstance3D.new()
 		display.name = "WallFixture_" + tile
@@ -69,6 +70,7 @@ static func build(room: Dictionary, doors: Array, wall_edges: Dictionary = {}, w
 		display.rotation.y = float(mount.yaw)
 		display.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		root.add_child(display)
+		if world != null: world.register_wall_attachment(display, mount.edge)
 	return root
 
 static func _find_mount(room: Dictionary, doors: Array, directions: Array[Vector2i], used: Array[Vector2], wall_edges: Dictionary, wall_thickness: float, edge_states: Dictionary) -> Dictionary:

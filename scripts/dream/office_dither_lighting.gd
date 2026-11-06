@@ -12,6 +12,8 @@ static var _shader_has_cutout_uniform: Dictionary = {}
 ## Shader RID/instance_id -> whether code contains sample_capture_pass (wall cutaway etc.).
 static var _shader_has_sample_capture_pass: Dictionary = {}
 var materials: Dictionary = {}
+var furniture_dark_materials: Dictionary = {}
+var furniture_dark_shaders: Dictionary = {}
 var meshes: Array[WeakRef] = []
 var cursor := 0
 var world: Node
@@ -30,9 +32,12 @@ func _ready() -> void:
 func _on_generation_progress(ratio: float, _message: String) -> void:
 	if ratio <= 0.10:
 		materials.clear()
+		furniture_dark_materials.clear()
+		furniture_dark_shaders.clear()
 
 func _on_floor_completed(_floor: int) -> void:
-	materials.clear()
+	# generation_progress already clears old-floor entries before rebuilding.
+	# Keep the new floor's live variants, including their enhancement state.
 	meshes = meshes.filter(func(reference: WeakRef) -> bool: return is_instance_valid(reference.get_ref()))
 	cursor = 0
 
@@ -80,6 +85,7 @@ func _apply(mesh: MeshInstance3D) -> void:
 	# the live ShaderMaterial (not the discarded pre-dither source) gets the flag.
 	if mesh.material_override != null:
 		var replacement := _material(mesh.material_override)
+		if furniture: replacement = _furniture_dark_material(replacement)
 		if replacement != mesh.material_override:
 			mesh.material_override = replacement
 		if furniture and mesh.material_override is ShaderMaterial:
@@ -92,6 +98,7 @@ func _apply(mesh: MeshInstance3D) -> void:
 		for index in mesh.mesh.get_surface_count():
 			var original := mesh.get_active_material(index)
 			var replacement := _material(original)
+			if furniture: replacement = _furniture_dark_material(replacement)
 			if replacement != original:
 				mesh.set_surface_override_material(index, replacement)
 			# GLB/catalogue furniture carries its pixel material on SURFACES, not
@@ -134,6 +141,9 @@ func _is_furniture_occluder(mesh: Node) -> bool:
 		if cursor.has_meta(&"occlusion_cutout_occluder"):
 			result = bool(cursor.get_meta(&"occlusion_cutout_occluder"))
 			break
+		if cursor.has_meta(&"approved_kind") or cursor.has_meta(&"furniture_surface"):
+			result = true
+			break
 		var source: Variant = cursor.get("source_actor")
 		if source is Node2D:
 			result = (source as Node2D).is_in_group(&"damageable_props")
@@ -141,6 +151,37 @@ func _is_furniture_occluder(mesh: Node) -> bool:
 		cursor = cursor.get_parent()
 	mesh.set_meta(&"_dither_is_furn", result)
 	return result
+
+
+func _furniture_dark_material(source: Material) -> Material:
+	# Formal rooms retain their weak environment response on furniture sides;
+	# local fixtures and their shadows still provide the shape and contrast.
+	# The tutorial keeps its deliberate power-on reveal and dark targets.
+	if world.has_method("get_current_floor_token") and not world.has_node("ChapterTraining"):
+		return source
+	# Legacy/tutorial copies are world-owned, never shared assets.
+	if not (world.has_node("ChapterTraining") or world.has_method("get_current_floor_token")):
+		return source
+	if source is ShaderMaterial and source.shader != null:
+		var code: String=source.shader.code
+		if code.contains("unshaded") or code.contains("ambient_light_disabled"): return source
+		if not furniture_dark_materials.has(source):
+			if not furniture_dark_shaders.has(source.shader):
+				var shader:=Shader.new()
+				shader.code=code.replace("render_mode ","render_mode ambient_light_disabled, ")
+				furniture_dark_shaders[source.shader]=shader
+			var copy: ShaderMaterial=source.duplicate()
+			copy.shader=furniture_dark_shaders[source.shader]
+			furniture_dark_materials[source]=copy
+		return furniture_dark_materials[source]
+	if source is StandardMaterial3D:
+		if source.get_flag(BaseMaterial3D.FLAG_DISABLE_AMBIENT_LIGHT): return source
+		if not furniture_dark_materials.has(source):
+			var copy: StandardMaterial3D=source.duplicate()
+			copy.set_flag(BaseMaterial3D.FLAG_DISABLE_AMBIENT_LIGHT,true)
+			furniture_dark_materials[source]=copy
+		return furniture_dark_materials[source]
+	return source
 
 
 func _material(source: Material) -> Material:
@@ -166,7 +207,11 @@ func _material(source: Material) -> Material:
 		copy.set_shader_parameter("office_dither_step", GRID_STEP)
 		copy.set_shader_parameter("office_dither_enabled", true)
 		materials[source] = copy
-	return materials[source]
+	var live: ShaderMaterial=materials[source]
+	var tonal:=bool(world.get_meta(&"tonal_enhancement_enabled",false)) and not bool(world.get_meta(&"preserve_local_palette",false))
+	if live.get_shader_parameter("office_tonal_sample")!=tonal:
+		live.set_shader_parameter("office_tonal_sample",tonal)
+	return live
 
 
 static func _shader_supports_cutout(shader: Shader) -> bool:
@@ -192,7 +237,7 @@ static func _shader(source: Shader) -> Shader:
 		return shader_cache[source]
 	var code := source.code
 	var start := code.find("void light()")
-	var original := "DIFFUSE_LIGHT += ALBEDO * LIGHT_COLOR * ATTENUATION * max(dot(NORMAL, LIGHT), 0.0) / PI;"
+	var original := "DIFFUSE_LIGHT += LIGHT_COLOR * ATTENUATION * max(dot(NORMAL, LIGHT), 0.0) / PI;"
 	if start >= 0:
 		# Find the balanced body instead of assuming light() is the last function.
 		var open := code.find("{", start)
@@ -203,6 +248,9 @@ static func _shader(source: Shader) -> Shader:
 			elif code[end] == "}": depth -= 1
 			end += 1
 		original = code.substr(open + 1, end - open - 2)
+		# Godot 4 multiplies the diffuse irradiance by material ALBEDO itself.
+		# Older/custom wall variants may still contain the Godot 3-style factor.
+		original = original.replace("ALBEDO * LIGHT_COLOR", "LIGHT_COLOR")
 		code = code.substr(0, start) + code.substr(end)
 	code = code.replace("shader_type spatial;", "shader_type spatial;\n#include \"" + INCLUDE + "\"")
 	var vertex := "office_dither_position = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz; office_dither_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);"
@@ -210,7 +258,7 @@ static func _shader(source: Shader) -> Shader:
 		code = code.replace("void vertex() {", "void vertex() {\n" + vertex)
 	else:
 		code += "\nvoid vertex() {" + vertex + "}\n"
-	code += "\nvoid light() { if (!office_dither_enabled) {" + original + "} else { float shade = office_dither_response(ATTENUATION * max(dot(NORMAL, LIGHT), 0.0)); DIFFUSE_LIGHT += ALBEDO * LIGHT_COLOR * shade / PI; }}"
+	code += "\nvoid light() { if (!office_dither_enabled) {" + original + "} else { float shade = office_dither_response(ATTENUATION * max(dot(NORMAL, LIGHT), 0.0)); DIFFUSE_LIGHT += LIGHT_COLOR * shade / PI; }}"
 	var shader := Shader.new()
 	shader.code = code
 	shader_cache[source] = shader

@@ -1,5 +1,40 @@
 extends RefCounted
 
+const BODY_RECOIL_DECAY := 14.0
+const BODY_RECOIL_SETTLE_SPEED := 1.0
+
+
+static func body_recoil_after_shot(
+	config: Resource,
+	weapon_id: StringName,
+	direction: Vector2,
+	current: Vector2,
+	multiplier: float
+) -> Vector2:
+	var strength: float
+	match weapon_id:
+		&"shotgun":
+			strength = _value(config, "player_shotgun_recoil", 155.0)
+		&"assault_rifle":
+			strength = _value(config, "player_assault_rifle_recoil", 55.0)
+		_:
+			return current
+	if strength <= 0.0 or direction.is_zero_approx():
+		return current
+	strength *= maxf(multiplier, 0.5)
+	# Limit rapid-fire stacking without truncating a stronger kick from the
+	# previous weapon if the shooter switches during its recovery.
+	var limit := maxf(strength * 2.0, current.length())
+	return (current - direction.normalized() * strength).limit_length(limit)
+
+
+static func decay_body_recoil(current: Vector2, delta: float) -> Vector2:
+	var remaining := current * exp(-BODY_RECOIL_DECAY * delta)
+	if remaining.length_squared() < BODY_RECOIL_SETTLE_SPEED * BODY_RECOIL_SETTLE_SPEED:
+		return Vector2.ZERO
+	return remaining
+
+
 ## Authoritative base firearm data. Actor upgrades, aim error and cadence jitter
 ## are applied by the caller after this shared lookup.
 static func parameters(config: Resource, weapon_id: StringName) -> Dictionary:

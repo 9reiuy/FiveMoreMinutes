@@ -1,8 +1,8 @@
 shader_type canvas_item;
 
 // This is the final presentation pass. It samples the already composited
-// screen and replaces normal pixels with the nearest entry in the 16-color
-// palette. Blood carriers and warning markers are resolved by semantic
+// screen. Legacy displays use discrete palette entries; formal floors use a
+// continuous brightness ramp with the same palette hues. Blood and warnings use
 // branches; their outputs are deliberately not generic candidates.
 // Palette values are written as normalized screen-space values (the same space
 // returned by the screen texture), so the comparison never mixes raw sRGB
@@ -13,6 +13,10 @@ uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_n
 uniform bool palette_enabled = true;
 uniform int palette_scheme = 1;
 uniform bool tonal_sample = false;
+// Formal-room illumination keeps the palette hue while interpolating adjacent
+// ramp colors. Texture pixels stay nearest-filtered; no screen blur is involved.
+uniform bool smooth_light_ramp = false;
+uniform bool tutorial_gate_indicators = false;
 
 float tonal_threshold(vec2 pixel) {
 	vec2 p = mod(floor(pixel), 4.0);
@@ -82,38 +86,128 @@ float palette_distance_squared(vec3 source, vec3 candidate) {
 	return dot(delta, delta);
 }
 
-void consider_palette(vec3 source, vec3 candidate, inout vec3 best, inout float best_distance) {
+void consider_palette(vec3 source, vec3 candidate, inout vec3 best, inout float best_distance, inout vec3 second, inout float second_distance) {
 	float candidate_distance = palette_distance_squared(source, candidate);
 	if (candidate_distance < best_distance) {
+		second = best;
+		second_distance = best_distance;
 		best_distance = candidate_distance;
 		best = candidate;
+	} else if (candidate_distance < second_distance) {
+		second = candidate;
+		second_distance = candidate_distance;
 	}
 }
 
-vec3 nearest_palette_color(vec3 source) {
+void consider_light_segment(float source_value, vec3 low, vec3 high, inout vec3 mapped) {
+	vec3 weights=vec3(.2126,.7152,.0722);
+	float low_value=dot(low,weights);
+	float high_value=dot(high,weights);
+	if (source_value>=low_value && source_value<=high_value) {
+		mapped=mix(low,high,(source_value-low_value)/max(high_value-low_value,.00001));
+	}
+}
+
+void consider_reference_hue(vec3 chromaticity, vec3 reference, inout vec3 nearest, inout float nearest_distance) {
+	// Match color independently of illumination. Absolute RGB proximity made
+	// scheme 2 disappear whenever the same material was in shade.
+	vec3 difference = chromaticity-reference/(reference.r+reference.g+reference.b);
+	float distance_squared = dot(difference,difference);
+	if (distance_squared < nearest_distance) {
+		nearest_distance = distance_squared;
+		nearest = reference;
+	}
+}
+
+vec3 smooth_reference_hue(vec3 source, vec3 mapped, float source_value) {
+	vec3 chromaticity = source/max(source.r+source.g+source.b,.00001);
+	vec3 reference = vec3(.25,.24,.58);
+	float distance_squared = 1000.;
+	consider_reference_hue(chromaticity,vec3(.25,.24,.58),reference,distance_squared);
+	consider_reference_hue(chromaticity,vec3(.2078431,.2117647,.8431373),reference,distance_squared);
+	consider_reference_hue(chromaticity,vec3(.48,.20,.27),reference,distance_squared);
+	consider_reference_hue(chromaticity,vec3(.59,.34,.55),reference,distance_squared);
+	float maximum = max(source.r,max(source.g,source.b));
+	float saturation = (maximum-min(source.r,min(source.g,source.b)))/max(maximum,.00001);
+	float weight = (1.-smoothstep(.025,.24,sqrt(distance_squared)))*smoothstep(.05,.30,saturation);
+	// Retain the same dark/bright endpoints and continuous light response. Each
+	// authored accent is a fixed point, not a flat posterized lighting band.
+	vec3 accent = source_value>dot(PALETTE_15,vec3(.2126,.7152,.0722)) ? PALETTE_15 : PALETTE_00;
+	consider_light_segment(source_value,PALETTE_00,reference,accent);
+	consider_light_segment(source_value,reference,PALETTE_15,accent);
+	return mix(mapped,accent,weight);
+}
+
+vec3 smooth_palette_color(vec3 source) {
+	// A single monotonic brightness coordinate prevents closest-color changes
+	// from creating circular contour seams. The palette supplies only the hue.
+	float source_value=dot(source,vec3(.2126,.7152,.0722));
+	vec3 best=source_value>dot(PALETTE_15,vec3(.2126,.7152,.0722)) ? PALETTE_15 : PALETTE_00;
+	consider_light_segment(source_value,PALETTE_00,PALETTE_01,best);
+	consider_light_segment(source_value,PALETTE_01,PALETTE_02,best);
+	consider_light_segment(source_value,PALETTE_02,PALETTE_03,best);
+	consider_light_segment(source_value,PALETTE_03,PALETTE_04,best);
+	consider_light_segment(source_value,PALETTE_04,PALETTE_05,best);
+	consider_light_segment(source_value,PALETTE_05,PALETTE_06,best);
+	consider_light_segment(source_value,PALETTE_06,PALETTE_07,best);
+	consider_light_segment(source_value,PALETTE_07,PALETTE_08,best);
+	consider_light_segment(source_value,PALETTE_08,PALETTE_09,best);
+	consider_light_segment(source_value,PALETTE_09,PALETTE_10,best);
+	consider_light_segment(source_value,PALETTE_10,PALETTE_11,best);
+	consider_light_segment(source_value,PALETTE_11,PALETTE_12,best);
+	consider_light_segment(source_value,PALETTE_12,PALETTE_13,best);
+	consider_light_segment(source_value,PALETTE_13,PALETTE_14,best);
+	consider_light_segment(source_value,PALETTE_14,PALETTE_15,best);
+
+	if (palette_scheme == 2) {
+		best=smooth_reference_hue(source,best,source_value);
+	}
+	return best;
+}
+
+vec3 nearest_palette_color(vec3 source, vec2 pixel) {
+	if (smooth_light_ramp) return smooth_palette_color(source);
 	vec3 best = PALETTE_00;
 	float best_distance = palette_distance_squared(source, best);
-	consider_palette(source, PALETTE_01, best, best_distance);
-	consider_palette(source, PALETTE_02, best, best_distance);
-	consider_palette(source, PALETTE_03, best, best_distance);
-	consider_palette(source, PALETTE_04, best, best_distance);
-	consider_palette(source, PALETTE_05, best, best_distance);
-	consider_palette(source, PALETTE_06, best, best_distance);
-	consider_palette(source, PALETTE_07, best, best_distance);
-	consider_palette(source, PALETTE_08, best, best_distance);
-	consider_palette(source, PALETTE_09, best, best_distance);
-	consider_palette(source, PALETTE_10, best, best_distance);
-	consider_palette(source, PALETTE_11, best, best_distance);
-	consider_palette(source, PALETTE_12, best, best_distance);
-	consider_palette(source, PALETTE_13, best, best_distance);
-	consider_palette(source, PALETTE_14, best, best_distance);
-	consider_palette(source, PALETTE_15, best, best_distance);
+	vec3 second = best;
+	float second_distance = 100000.0;
+	consider_palette(source, PALETTE_01, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_02, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_03, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_04, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_05, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_06, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_07, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_08, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_09, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_10, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_11, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_12, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_13, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_14, best, best_distance, second, second_distance);
+	consider_palette(source, PALETTE_15, best, best_distance, second, second_distance);
 	// The alternative extends the original palette with selected reference hues.
 	if (palette_scheme == 2) {
-		consider_palette(source, vec3(.25,.24,.58), best, best_distance);
-		consider_palette(source, vec3(0.2078431, 0.2117647, 0.8431373), best, best_distance); // #3536D7
-		consider_palette(source, vec3(.48,.20,.27), best, best_distance);
-		consider_palette(source, vec3(.59,.34,.55), best, best_distance);
+		consider_palette(source, vec3(.25,.24,.58), best, best_distance, second, second_distance);
+		consider_palette(source, vec3(0.2078431, 0.2117647, 0.8431373), best, best_distance, second, second_distance); // #3536D7
+		consider_palette(source, vec3(.48,.20,.27), best, best_distance, second, second_distance);
+		consider_palette(source, vec3(.59,.34,.55), best, best_distance, second, second_distance);
+	}
+	// Dither BETWEEN neighboring ramp colors instead of posterizing each light.
+	// The selected palette entries stay byte-for-byte unchanged, including #3536D7.
+	// Avoid mixing unrelated hues in scheme 2 or adding speckles to solid texels.
+	vec3 span = second-best;
+	if (dot(span,span) > 0.00001 && dot(normalize(best),normalize(second)) > 0.97) {
+		vec3 error = source-best;
+		float numerator = dot(error,span);
+		float denominator = dot(span,span);
+		if (tonal_sample) {
+			vec3 weights = vec3(.2126,.7152,.0722);
+			numerator = dot(error,weights)*dot(span,weights)*2.0+numerator*.35;
+			denominator = pow(dot(span,weights),2.0)*2.0+denominator*.35;
+		}
+		float coverage = clamp(numerator/max(denominator,0.00001),0.0,0.5);
+		if (tonal_threshold(pixel) < coverage) return second;
 	}
 	return best;
 }
@@ -169,7 +263,9 @@ void fragment() {
 	vec3 output_color;
 	// Semantic presentation resolution must precede palette selection. Reserved
 	// Blood/Charge outputs are intentionally absent from generic palette.
-	if (distance(source.rgb, vec3(0.0, 1.0, 1.0)) < 0.05) {
+	if (tutorial_gate_indicators && distance(source.rgb, vec3(0.0, 1.0, 0.0)) < 0.005) {
+		output_color = vec3(0.28, 0.90, 0.43);
+	} else if (distance(source.rgb, vec3(0.0, 1.0, 1.0)) < 0.05) {
 		output_color = PALETTE_00;
 	} else if (source.r>.995 && source.g<.005 && source.b>=.515 && source.b<=.605 && abs((source.b-.52)/.04-round((source.b-.52)/.04))<.15) {
 		// Extinguisher red paint only; labels and hardware remain scene-lit.
@@ -193,7 +289,7 @@ void fragment() {
 		output_color = muzzle_output_color(muzzle_marker_index(source.rgb));
 	} else if (palette_enabled) {
 		vec3 mapped=source.rgb;
-		if (tonal_sample) {
+		if (tonal_sample && !smooth_light_ramp) {
 			vec2 step_uv=SCREEN_PIXEL_SIZE;
 			vec3 around=(texture(screen_texture,SCREEN_UV+vec2(step_uv.x,0.)).rgb+texture(screen_texture,SCREEN_UV-vec2(step_uv.x,0.)).rgb+texture(screen_texture,SCREEN_UV+vec2(0.,step_uv.y)).rgb+texture(screen_texture,SCREEN_UV-vec2(0.,step_uv.y)).rgb)*.25;
 			mapped+=clamp(mapped-around,vec3(-.025),vec3(.025))*.20;
@@ -201,7 +297,7 @@ void fragment() {
 			mapped+=vec3((tonal_threshold(SCREEN_UV/SCREEN_PIXEL_SIZE)-.5)*.018*amount);
 			mapped=clamp(mapped,vec3(0.),vec3(1.));
 		}
-		output_color = nearest_palette_color(mapped);
+		output_color = nearest_palette_color(mapped,SCREEN_UV/SCREEN_PIXEL_SIZE);
 	} else {
 		output_color = source.rgb;
 	}

@@ -22,7 +22,9 @@ func run() -> void:
 	effect.bind(world)
 	check(effect.frames.size()==6 and effect.frame_index==0,"New six-frame phone art begins at first opening frame")
 	check(effect.frames[4].region==Rect2(128,192,32,32) and effect.frames[5].region==Rect2(160,192,32,32),"Penultimate two character images are the approved looping pair")
-	check(effect.mask.get_image().get_data()==PRESENTATION.ART.get_image().get_region(Rect2i(192,192,32,32)).get_data(),"Light mask uses exact semi-transparent blue pixels, excluding blank canvas margin")
+	var expected_art: Image=PRESENTATION.ART.get_image()
+	if expected_art.is_compressed(): expected_art.decompress()
+	check(effect.mask.get_image().get_data()==expected_art.get_region(Rect2i(192,192,32,32)).get_data(),"Light mask uses exact semi-transparent blue pixels, excluding blank canvas margin")
 	check(not actor.body_pivot.visible and not actor.weapon_root.visible and effect.pose.visible,"Phone art replaces normal body, hands, hair and held gun without duplicate limbs")
 	for i in range(1,4):
 		effect.advance(.08001)

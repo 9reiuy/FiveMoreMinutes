@@ -26,6 +26,17 @@ var impact_played := false
 
 func _strike_segment(point: Vector2) -> void:
 	if not _current(): return
+	# Space's real travelled segment owns destruction. Landing searches and
+	# cancelled previews remain pure; use the body center, not the foot anchor.
+	if world.has_method("queue_dash_wall_breaches"):
+		var collision: CollisionShape2D=player.body_collision
+		var offset:=collision.global_position-player.global_position
+		var radius:=8.0
+		if collision.shape is CircleShape2D or collision.shape is CapsuleShape2D:
+			radius=collision.shape.radius
+		elif collision.shape is RectangleShape2D:
+			radius=collision.shape.size.x*0.5
+		world.queue_dash_wall_breaches(previous_attack_position+offset,point+offset,radius,floor_token)
 	var result: Dictionary = world.resolve_phase_dash_attack(previous_attack_position,point,float(player.runtime_config.phase_dash_attack_radius),damage,source,handled,not impact_played)
 	last_result.hits += int(result.get("hits",0))
 	last_result.kills += int(result.get("kills",0))
@@ -41,13 +52,40 @@ func configure(actor: CharacterBody2D) -> void:
 func _current() -> bool:
 	return is_instance_valid(world) and (floor_token < 0 or int(world.get("_layout_generation"))==floor_token)
 
-func _standable(point: Vector2, mask: int) -> bool:
+func _floor_supported(point: Vector2) -> bool:
 	if not player._dash_floor_position_valid(point): return false
 	var shape: CollisionShape2D = player.body_collision
 	var offset := shape.global_position-player.global_position
 	var radius := float(shape.shape.radius) if shape.shape is CircleShape2D else 8.0
-	for i in 8:
-		if not player._dash_floor_position_valid(point+offset+Vector2.RIGHT.rotated(i*PI/4)*radius): return false
+	var owner_world: Node=world if is_instance_valid(world) else player._dream_world()
+	if not is_instance_valid(owner_world) or not owner_world.has_method("_cell_for_gameplay_position"): return true
+	# A conservative supported box covers the complete circular body, including
+	# diagonal tile corners missed by eight circumference probes. The extra
+	# 1.01px is half the 2px traversal step: neighboring checks cover the entire
+	# swept path rather than allowing a brief corner scrape between samples.
+	for bounds in [Rect2(point-Vector2.ONE*1.01,Vector2.ONE*2.02),Rect2(point+offset-Vector2.ONE*(radius+1.01),Vector2.ONE*(radius+1.01)*2.0)]:
+		var low: Vector2i=owner_world._cell_for_gameplay_position(bounds.position)
+		var high: Vector2i=owner_world._cell_for_gameplay_position(bounds.end)
+		for y in range(low.y,high.y+1):
+			for x in range(low.x,high.x+1):
+				if not player._dash_floor_position_valid(Vector2(x,y)*32.0): return false
+	return true
+
+func _supported_travel_distance(start: Vector2, heading: Vector2, distance: float) -> float:
+	# Walls/glass can be broken, but missing ground is never phaseable. Check
+	# the whole swept footprint, so a safe island beyond void is not a target.
+	if not _floor_supported(start): return 0.0
+	var safe:=0.0
+	for i in range(1,ceili(distance/2.0)+1):
+		var along:=minf(distance,float(i)*2.0)
+		if not _floor_supported(start+heading*along): break
+		safe=along
+	return safe
+
+func _standable(point: Vector2, mask: int) -> bool:
+	if not _floor_supported(point): return false
+	var shape: CollisionShape2D=player.body_collision
+	var offset:=shape.global_position-player.global_position
 	query.shape = shape.shape
 	query.transform = Transform2D(shape.global_rotation,point+offset)
 	query.collision_mask = mask
@@ -55,9 +93,9 @@ func _standable(point: Vector2, mask: int) -> bool:
 	return player.get_world_2d().direct_space_state.intersect_shape(query,1).is_empty()
 
 func find_landing(start: Vector2, heading: Vector2, distance: float, mask: int) -> Vector2:
-	# Walls and void are phaseable; only the landing footprint must be safe.
-	# Search backwards without exceeding range, stopping on this side of an
-	# exterior edge only when no reachable floor exists beyond the gap.
+	# Search only the continuous supported part of the path. Physics obstacles
+	# still constrain the final pose; actual wall/glass contact commits later.
+	distance=_supported_travel_distance(start,heading,distance)
 	var steps := ceili(distance/2.0)
 	for i in range(steps+1):
 		var point := start+heading*maxf(0.0,distance-i*2.0)
@@ -150,6 +188,11 @@ func step(delta: float) -> void:
 		return
 	elapsed += maxf(delta,0.0)
 	var progress := clampf(elapsed/maxf(player.dash_duration,.001),0.0,1.0)
+	var desired:=origin.distance_to(endpoint)*progress
+	var supported:=_supported_travel_distance(origin,direction,desired)
+	if supported+0.01<desired:
+		endpoint=origin+direction*supported
+		progress=1.0
 	player.dash_elapsed = elapsed
 	player.dash_invulnerability_left = maxf(player.dash_duration-elapsed,.001)
 	player.global_position = origin.lerp(endpoint,progress)

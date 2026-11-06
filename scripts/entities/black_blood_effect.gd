@@ -1807,7 +1807,12 @@ func _prepare_ground_merge(other: BlackBloodEffect, extent: float) -> Dictionary
 		return {}
 	# A union never removes target cells. With no new cells, its independently
 	# revalidated compact footprint still fits the original or a larger extent.
-	if _compact_ground_cache_matches_current() and cells.size()==_compact_merge_cells.size() and extent>=_compact_merge_extent:return cells
+	if _compact_ground_cache_matches_current() and extent>=_compact_merge_extent:
+		# Both sets already fit: the cached target fits its recorded extent, and
+		# the incoming footprint passed the exact bounds above. Their union
+		# cannot escape either bound, even when it adds new cells. Legacy order
+		# lacks the incoming precheck and must retain the full scan.
+		if cells.size()==_compact_merge_cells.size() or (not bool(get_meta(&"test_legacy_ground_union_scan",false)) and not bool(get_meta(&"test_legacy_ground_prepare_order",false))):return cells
 	for cell in cells:
 		if cell.x < -extent or cell.y < -extent or cell.x + 1.0 > extent or cell.y + 1.0 > extent:
 			return {}
@@ -1831,7 +1836,7 @@ var _compact_merge_extent:=0.0
 func _compact_ground_cache_matches_current()->bool:
 	return not bool(get_meta(&"test_legacy_compact_ground_cache",false)) and not _compact_merge_cells.is_empty() and ground_visual_scale==1.0 and global_transform==_compact_merge_transform and ground_pixels==_compact_merge_pixels and ground_pixel_types==_compact_merge_types
 
-func _cache_compact_ground_cells(cells:Dictionary,extent:float)->void:
+func _cache_compact_ground_cells(cells:Dictionary,extent:float,validated_prefix:int=0)->void:
 	if bool(get_meta(&"test_legacy_compact_ground_cache",false)):return
 	if _compact_ground_cache_matches_current():return
 	_compact_merge_cells.clear()
@@ -1841,7 +1846,10 @@ func _cache_compact_ground_cells(cells:Dictionary,extent:float)->void:
 	# addition/subtraction error is far below 0.5 pixel here. Affine/huge/nonfinite
 	# data uses the original rasterizer, never a precomposed matrix shortcut.
 	if ground_pixel_types.size()!=ground_pixels.size() or ground_visual_scale!=1.0 or extent<=0.0 or extent>16384.0 or pose.x!=Vector2.RIGHT or pose.y!=Vector2.DOWN or not pose.origin.is_finite() or absf(pose.origin.x)>65536.0 or absf(pose.origin.y)>65536.0:return
-	for cell:Vector2 in cells:
+	# The merge caller may carry forward the exact unchanged cached prefix.
+	# Its keys are still first in the target-first union; fill only appends.
+	# Other callers and invalidated/legacy targets validate the whole set.
+	for cell:Vector2 in cells.keys().slice(validated_prefix):
 		if not cell.is_finite() or cell!=cell.round():return
 		# Two identity-basis transforms normalize a signed zero. Do not retain
 		# an incoming -0 bit pattern as a future raster result, even though
@@ -1913,7 +1921,8 @@ func _absorb_ground_effect_profiled(other:BlackBloodEffect,extent:float)->bool:
 	# The complete target is present and this pipeline only adds cells. After
 	# hole filling, an equal count proves the same set without 8000 callbacks
 	# and membership probes; non-compact/mutated targets retain the old check.
-	if _compact_ground_cache_matches_current() and cells.size()==ground_pixels.size():
+	var compact_current := _compact_ground_cache_matches_current()
+	if compact_current and cells.size()==ground_pixels.size():
 		PERF_TRACE.end(self,"blood_merge_commit",stage_started)
 		return true
 	if is_equal_approx(ground_visual_scale, 1.0) and cells.size() == ground_pixels.size() and ground_pixel_types.all(func(stamp: int) -> bool: return stamp == StampType.PIXEL_CELL):
@@ -1926,6 +1935,7 @@ func _absorb_ground_effect_profiled(other:BlackBloodEffect,extent:float)->bool:
 			_cache_compact_ground_cells(cells,extent)
 			PERF_TRACE.end(self,"blood_merge_commit",stage_started)
 			return true
+	var validated_prefix: int = _compact_merge_cells.size() if compact_current and not bool(get_meta(&"test_legacy_ground_union_scan",false)) else 0
 	ground_pixels.clear()
 	ground_pixel_types.clear()
 	if bool(get_meta(&"test_legacy_ground_commit_loop",false)):
@@ -1938,7 +1948,7 @@ func _absorb_ground_effect_profiled(other:BlackBloodEffect,extent:float)->bool:
 		ground_pixel_types.fill(StampType.PIXEL_CELL)
 	ground_visual_scale = 1.0
 	ground_sampling_scale = 1.0
-	_cache_compact_ground_cells(cells,extent)
+	_cache_compact_ground_cells(cells,extent,validated_prefix)
 	content_version += 1
 	_notify_bridge_dirty()
 	queue_redraw()

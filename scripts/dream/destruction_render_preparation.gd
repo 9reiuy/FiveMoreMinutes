@@ -72,11 +72,15 @@ static func run(tree: SceneTree,world: Node3D) -> Dictionary:
 		materials.append_array(collected.materials);room_firstuse=collected.report
 		room_firstuse["floor_token"]=token
 	var box:=BoxMesh.new(); box.size=Vector3(.5,.5,.5)
+	var wall_break_render_nodes:=0
 	for point_state in 4:
 		for spot_state in 4:
 			var index:=point_state*4+spot_state
 			var layer:=1<<index
 			var origin:=Vector3((index%4-1.5)*3,0,(index/4-1.5)*3)
+			# Draw the actual colored MultiMesh particle families too. A plain
+			# material box cannot prepare the instancing/vertex-color variants.
+			wall_break_render_nodes+=preload("res://scripts/dream/shared_wall_break_effect.gd").prepare_render_parts(space,origin+Vector3(0,.45,.6),layer)
 			for material_index in materials.size():
 				var piece:=MeshInstance3D.new(); piece.mesh=box
 				piece.material_override=materials[material_index]; piece.layers=layer
@@ -107,7 +111,7 @@ static func run(tree: SceneTree,world: Node3D) -> Dictionary:
 	for frame in 2: await tree.process_frame
 	var cancelled:=not is_instance_valid(world) or not world.is_inside_tree()
 	if not cancelled: cancelled=world.get_current_floor_token()!=token
-	return {"elapsed_ms":(Time.get_ticks_usec()-started)/1000.0,"build_ms":build_ms,"geometry_prefill":geometry_prefill,"death_audio_prefill_ms":death_audio_prefill_ms,"draw_wait_ms":draw_wait_ms,"readback_ms":readback_ms,"cleanup_ms":(Time.get_ticks_usec()-cleanup_started)/1000.0,"cancelled":cancelled,"viewport_released":reference.get_ref()==null,"private_image_bytes":image.get_data().size(),"states":16,"material_families":materials.size(),"window_shader_hashes":window_shader_hashes,"room_firstuse":room_firstuse}
+	return {"elapsed_ms":(Time.get_ticks_usec()-started)/1000.0,"build_ms":build_ms,"geometry_prefill":geometry_prefill,"death_audio_prefill_ms":death_audio_prefill_ms,"draw_wait_ms":draw_wait_ms,"readback_ms":readback_ms,"cleanup_ms":(Time.get_ticks_usec()-cleanup_started)/1000.0,"cancelled":cancelled,"viewport_released":reference.get_ref()==null,"private_image_bytes":image.get_data().size(),"states":16,"wall_break_render_nodes":wall_break_render_nodes,"material_families":materials.size(),"window_shader_hashes":window_shader_hashes,"room_firstuse":room_firstuse}
 
 static func _pending_window_materials(tree:SceneTree,world:Node3D)->Array[ShaderMaterial]:
 	var materials:Array[ShaderMaterial]=[]

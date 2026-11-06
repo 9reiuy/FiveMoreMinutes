@@ -1,0 +1,400 @@
+[gd_scene load_steps=20 format=3 uid="uid://c8megaswhitebox01"]
+
+[ext_resource type="Script" path="res://scripts/testing/megastructure_whitebox.gd" id="1_controller"]
+[ext_resource type="PackedScene" path="res://scenes/entities/dream_player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/dream/dream_3d_actor_depth_bridge.gd" id="3_depth_bridge"]
+
+[sub_resource type="Environment" id="Environment_forward_plus"]
+background_mode = 1
+background_color = Color(0.015, 0.02, 0.03, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.06, 0.09, 0.15, 1)
+ambient_light_energy = 0.40
+tonemap_mode = 1
+ssr_enabled = true
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 2.0
+glow_enabled = true
+glow_intensity = 0.5
+glow_strength = 0.80
+glow_bloom = 0.06
+
+[sub_resource type="StandardMaterial3D" id="mat_floor"]
+albedo_color = Color(0.18, 0.22, 0.28, 1)
+roughness = 0.80
+metallic_specular = 0.08
+
+[sub_resource type="StandardMaterial3D" id="mat_wall_solid"]
+albedo_color = Color(0.12, 0.15, 0.20, 1)
+roughness = 0.85
+metallic_specular = 0.05
+
+[sub_resource type="StandardMaterial3D" id="mat_wall_cutaway"]
+albedo_color = Color(0.06, 0.08, 0.12, 1)
+roughness = 0.90
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="mat_wall_cap"]
+albedo_color = Color(0.35, 0.42, 0.52, 1)
+roughness = 0.40
+metallic_specular = 0.4
+
+[sub_resource type="StandardMaterial3D" id="mat_choke_concrete"]
+albedo_color = Color(0.15, 0.19, 0.25, 1)
+roughness = 0.85
+metallic_specular = 0.05
+
+[sub_resource type="StandardMaterial3D" id="mat_alcove_safe_zone"]
+albedo_color = Color(0.05, 0.35, 0.55, 1)
+roughness = 0.50
+emission_enabled = true
+emission = Color(0.08, 0.45, 0.70, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="StandardMaterial3D" id="mat_cover_tactical"]
+albedo_color = Color(0.85, 0.45, 0.10, 1)
+roughness = 0.60
+metallic_specular = 0.1
+
+[sub_resource type="StandardMaterial3D" id="mat_paper_stack"]
+albedo_color = Color(0.60, 0.65, 0.72, 1)
+roughness = 0.92
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="mat_dummy_red"]
+albedo_color = Color(0.90, 0.22, 0.35, 1)
+roughness = 0.50
+emission_enabled = true
+emission = Color(0.6, 0.1, 0.2, 1)
+emission_energy_multiplier = 0.4
+
+[sub_resource type="StandardMaterial3D" id="mat_bullet_glow"]
+albedo_color = Color(1.0, 0.3, 0.1, 1)
+emission_enabled = true
+emission = Color(1.0, 0.4, 0.1, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="StandardMaterial3D" id="mat_laser_sightline"]
+albedo_color = Color(1.0, 0.1, 0.2, 0.6)
+emission_enabled = true
+emission = Color(1.0, 0.15, 0.2, 1)
+emission_energy_multiplier = 2.5
+transparency = 1
+
+[sub_resource type="StandardMaterial3D" id="mat_hazard_extinguisher"]
+albedo_color = Color(0.95, 0.15, 0.15, 1)
+roughness = 0.40
+emission_enabled = true
+emission = Color(0.8, 0.1, 0.1, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="StandardMaterial3D" id="mat_elevator_door"]
+albedo_color = Color(0.12, 0.16, 0.22, 1)
+roughness = 0.50
+metallic = 0.4
+metallic_specular = 0.5
+
+[sub_resource type="StandardMaterial3D" id="mat_elevator_hazard_line"]
+albedo_color = Color(0.95, 0.70, 0.15, 1)
+roughness = 0.60
+
+[sub_resource type="StyleBoxFlat" id="hud_panel_style"]
+bg_color = Color(0.04, 0.07, 0.12, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.45, 0.75, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="MegastructureWhitebox" type="Node3D"]
+script = ExtResource("1_controller")
+
+[node name="TutorialGeometry" type="Node3D" parent="."]
+
+[node name="Floor" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -0.1, 19)
+size = Vector3(12, 0.2, 38)
+material = SubResource("mat_floor")
+
+[node name="Wall_North" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.4, -0.1)
+size = Vector3(12, 2.8, 0.2)
+material = SubResource("mat_wall_solid")
+
+[node name="Wall_South_Base" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.4, 38.1)
+size = Vector3(12, 0.8, 0.2)
+material = SubResource("mat_wall_cutaway")
+
+[node name="Wall_South_Cap" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.82, 38.1)
+size = Vector3(12, 0.04, 0.24)
+material = SubResource("mat_wall_cap")
+
+; CONTINUOUS 3D WALLS (Exact 1:1 Parity with 2D Collision Polygons)
+[node name="West_Wall_Continuous" type="CSGPolygon3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+polygon = PackedVector2Array(-1, -1, 0, 0, 0, 8, 4, 10, 4, 12, 2.5, 13, 2.5, 14, 4, 15, 4, 22, 2.5, 23, 2.5, 24, 4, 25, 4, 28, 0, 30, 0, 38, -1, 39)
+depth = 2.8
+material = SubResource("mat_choke_concrete")
+
+[node name="East_Wall_Continuous" type="CSGPolygon3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+polygon = PackedVector2Array(13, -1, 12, 0, 12, 8, 8, 10, 8, 17, 9.5, 18, 9.5, 19, 8, 20, 8, 28, 12, 30, 12, 38, 13, 39)
+depth = 2.8
+material = SubResource("mat_choke_concrete")
+
+; ALCOVE SAFE ZONE ILLUMINATED FLOORS
+[node name="West_Alcove2_SafeFloor" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 0.01, 23.5)
+size = Vector3(1.5, 0.02, 1.8)
+material = SubResource("mat_alcove_safe_zone")
+
+[node name="East_Alcove1_SafeFloor" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 0.01, 18.5)
+size = Vector3(1.5, 0.02, 1.8)
+material = SubResource("mat_alcove_safe_zone")
+
+[node name="West_Alcove1_SafeFloor" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 0.01, 13.5)
+size = Vector3(1.5, 0.02, 1.8)
+material = SubResource("mat_alcove_safe_zone")
+
+; ZONE 1 PROPS
+[node name="Side_Counter_West" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, 0.45, 32.5)
+size = Vector3(0.7, 0.9, 2.0)
+material = SubResource("mat_cover_tactical")
+
+[node name="Side_Counter_East" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 0.45, 32.5)
+size = Vector3(0.7, 0.9, 2.0)
+material = SubResource("mat_paper_stack")
+
+; ZONE 2 PROPS
+[node name="Extinguisher_Canister" type="CSGCylinder3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.85, 1.3, 16)
+radius = 0.14
+height = 0.6
+sides = 8
+material = SubResource("mat_hazard_extinguisher")
+
+; ZONE 3: ARMED SHOOTER BARRICADE & LASER SIGHTLINE
+[node name="Cover_Shooter_Barricade" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.5, 6)
+size = Vector3(1.5, 1.0, 0.5)
+material = SubResource("mat_cover_tactical")
+
+[node name="Laser_Sightline_Beam" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.85, 16.5)
+size = Vector3(0.06, 0.06, 23.0)
+material = SubResource("mat_laser_sightline")
+visible = false
+
+[node name="Cover_Cargo_West" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.75, 0.6, 4.5)
+size = Vector3(1.5, 1.2, 1.0)
+material = SubResource("mat_cover_tactical")
+
+[node name="Cover_Cargo_East" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.25, 0.6, 4.5)
+size = Vector3(1.5, 1.2, 1.0)
+material = SubResource("mat_cover_tactical")
+
+[node name="Elevator_Hazard_Line" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.01, 1.6)
+size = Vector3(4, 0.02, 0.8)
+material = SubResource("mat_elevator_hazard_line")
+
+[node name="Elevator_Blast_Doors" type="CSGBox3D" parent="TutorialGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.5, 0.5)
+size = Vector3(4.2, 3, 0.4)
+material = SubResource("mat_elevator_door")
+
+; LIGHTING (Forward+ Clustered Lighting)
+[node name="Lighting" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
+environment = SubResource("Environment_forward_plus")
+
+[node name="Light_Zone1" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 3.0, 34)
+light_color = Color(0.88, 0.95, 1, 1)
+light_energy = 2.4
+shadow_enabled = true
+shadow_bias = 0.05
+omni_range = 9.0
+omni_attenuation = 1.4
+
+[node name="Light_Corridor_Entrance" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.8, 28.5)
+light_color = Color(0.85, 0.95, 1, 1)
+light_energy = 2.4
+shadow_enabled = true
+shadow_bias = 0.05
+omni_range = 7.5
+omni_attenuation = 1.4
+
+[node name="Light_Corridor_South" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.8, 23.5)
+light_color = Color(0.85, 0.92, 1, 1)
+light_energy = 2.2
+shadow_enabled = true
+shadow_bias = 0.05
+omni_range = 7.0
+omni_attenuation = 1.4
+
+[node name="Light_Corridor_Mid" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.8, 18.0)
+light_color = Color(0.85, 0.92, 1, 1)
+light_energy = 2.2
+shadow_enabled = true
+shadow_bias = 0.05
+omni_range = 7.0
+omni_attenuation = 1.4
+
+[node name="Light_Corridor_North" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.8, 12.5)
+light_color = Color(0.85, 0.92, 1, 1)
+light_energy = 2.2
+shadow_enabled = true
+shadow_bias = 0.05
+omni_range = 7.0
+omni_attenuation = 1.4
+
+[node name="Light_Zone3_Arena" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 3.2, 5.0)
+light_color = Color(0.90, 0.95, 1, 1)
+light_energy = 2.8
+shadow_enabled = true
+shadow_bias = 0.05
+omni_range = 9.0
+omni_attenuation = 1.3
+
+[node name="Light_Elevator_Spot" type="SpotLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 6, 3.5, 4.0)
+light_color = Color(0.22, 0.74, 0.98, 1)
+light_energy = 3.5
+shadow_enabled = true
+shadow_bias = 0.05
+spot_range = 10.0
+spot_angle = 50.0
+spot_angle_attenuation = 1.2
+
+[node name="Light_Alcove_West2" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 2.2, 23.5)
+light_color = Color(0.1, 0.75, 1.0, 1)
+light_energy = 1.6
+omni_range = 3.5
+omni_attenuation = 1.2
+
+[node name="Light_Alcove_East1" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.8, 2.2, 18.5)
+light_color = Color(0.1, 0.75, 1.0, 1)
+light_energy = 1.6
+omni_range = 3.5
+omni_attenuation = 1.2
+
+[node name="Light_Alcove_West1" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 2.2, 13.5)
+light_color = Color(0.1, 0.75, 1.0, 1)
+light_energy = 1.6
+omni_range = 3.5
+omni_attenuation = 1.2
+
+[node name="ActorDepthBridges" type="Node3D" parent="."]
+
+[node name="ActorDepthViewport" type="SubViewport" parent="."]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(128, 128)
+render_target_update_mode = 4
+
+[node name="ActorDepthRenderRoot" type="Node2D" parent="ActorDepthViewport"]
+
+[node name="PlayerDepthVisual3D" type="Node3D" parent="."]
+script = ExtResource("3_depth_bridge")
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 36)
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 13.5, 13.5)
+current = true
+fov = 35.0
+near = 0.1
+far = 140.0
+
+[node name="GameplayCanvas" type="CanvasLayer" parent="."]
+
+[node name="GameplayWorld" type="Node2D" parent="GameplayCanvas"]
+
+[node name="GeneratedCollisionRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld"]
+
+[node name="WorldEffectsRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld"]
+
+[node name="WorldWeaponRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld"]
+
+[node name="EnemyRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld"]
+
+[node name="DreamPlayer" parent="GameplayCanvas/GameplayWorld" instance=ExtResource("2_player")]
+position = Vector2(192, 1152)
+
+[node name="ElevatorTrigger" type="Area2D" parent="GameplayCanvas/GameplayWorld"]
+position = Vector2(192, 48)
+collision_layer = 0
+collision_mask = 1
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 120
+
+[node name="DamageFlash" type="ColorRect" parent="HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.9, 0.1, 0.1, 0)
+
+[node name="DamageNumbers" type="Node2D" parent="HUD"]
+z_index = 10
+
+[node name="InfoPanel" type="PanelContainer" parent="HUD"]
+offset_left = 860.0
+offset_top = 16.0
+offset_right = 1264.0
+offset_bottom = 150.0
+theme_override_styles/panel = SubResource("hud_panel_style")
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/InfoPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/InfoPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="HUD/InfoPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.22, 0.74, 0.98, 1)
+theme_override_font_sizes/font_size = 13
+text = "【白箱动线 · 无卡顿斜角漏斗与侧翼战术】"
+
+[node name="GuideText" type="Label" parent="HUD/InfoPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.90, 0.96, 1)
+theme_override_font_sizes/font_size = 11
+text = "WASD: 移动 | Space: 冲刺/翻滚 | 鼠标: 瞄准
+① 45°漏斗平滑导入 4 米宽主走廊，直行绝无卡角
+② 3 处避弹壁龛均带 45°出入导角，推W顺畅滑出
+③ 走廊尽头架枪防暴兵，左右预留 5 米宽包抄走廊
+[R] 重置起点 | [ESC] 退出测试"

@@ -7,7 +7,6 @@ uniform float progress = 0.0;
 uniform float opacity = 0.0;
 uniform bool refreshed = false;
 uniform float pulse = 0.0;
-uniform float color_phase = 0.0;
 varying vec2 pixel;
 void vertex(){ pixel = VERTEX.xz*32.0; }
 void fragment(){
@@ -25,5 +24,5 @@ void fragment(){
 	float front = 1.0-step(8.0,abs(p.x-head));
 	float density = ring ? opacity : opacity*mix(.45,.95,max(core,front));
 	if (density<phase_dash_coverage(FRAGCOORD.xy)) discard;
-	ALBEDO = phase_dash_ink(refreshed && ring ? 0.0 : floor((p.x+half_length)/28.0)+color_phase);
+	ALBEDO = PHASE_DASH_WHITE;
 }

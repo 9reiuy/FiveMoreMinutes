@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-06",
+  "scope": "R3 isolated sample only; final independent source and entry audit",
+  "entry": "E:\\GameProjects\\FiveMinuteMore\\Run_PERF009_Candidate.cmd",
+  "entry_hash_unchanged": true,
+  "manifest_sha256": "04827E2A97429CED7562FFA5D32247D5377715CB5BDEB1AEE548E61E6AA95159",
+  "protected_sources_restored": 237,
+  "staged_patches_verified": 17,
+  "installed_helpers_verified": 4,
+  "historical_receipts_unchanged": 75,
+  "mismatches": {
+    "sources": [],
+    "staged": [],
+    "helpers": [],
+    "historical_receipts": []
+  },
+  "entry_session": "E:\\GameProjects\\FiveMinuteMore\\.runtime\\visual004_roles_20261104\\performance_r2\\rendering_path_v1\\options_research_20261105\\PlaySessions\\Play_20261106-033815_startup_check",
+  "receipt": {
+    "state": "released",
+    "exit_code": 0,
+    "engine_errors": [],
+    "source_drift": [],
+    "private_master": 0,
+    "audio": "WASAPI",
+    "r3_manifest_sha256": "04827E2A97429CED7562FFA5D32247D5377715CB5BDEB1AEE548E61E6AA95159"
+  },
+  "entry_checks": {
+    "ok": true,
+    "private_master_zero": true,
+    "native_f4_files_present": true,
+    "native_f4_report_open": true,
+    "native_f8_context_present": true,
+    "native_shots": 4,
+    "automatic_route_in_manual_mode": false,
+    "automatic_timeout_in_manual_mode": false
+  },
+  "native_dash_pass": true,
+  "visual": {
+    "final_run": "R3_C7_final11",
+    "ok": true,
+    "input": {
+      "e_off": true,
+      "e_on": true,
+      "shot_breaker": true
+    },
+    "motion_samples": 40,
+    "stop_samples": 6,
+    "mirror_origin_error_max": 0.0,
+    "stopped_camera_position_span": 0.018430286957515075,
+    "scope": "Static and sampled moving Camera review; stopped camera still settling, not frozen pixel parity."
+  },
+  "performance": "r3_final_timing_review.json",
+  "acceptance": "Meets current user most frames <=80ms criterion. Two live >80ms frames retained; not stable 60fps."
+}

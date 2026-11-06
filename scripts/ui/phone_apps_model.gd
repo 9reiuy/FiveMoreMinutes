@@ -80,7 +80,10 @@ func get_products() -> Array[Dictionary]:
 	]
 
 func can_purchase() -> bool:
-	return is_instance_valid(bedroom_phone)
+	return is_instance_valid(bedroom_phone) and not bool(bedroom_phone.get_meta("chapter_read_only_shop",false))
+
+func purchase_hint() -> String:
+	return "本章暂不开放购物" if is_instance_valid(bedroom_phone) and bool(bedroom_phone.get_meta("chapter_read_only_shop",false)) else "请回卧室购买"
 
 func purchase(index: int) -> bool:
 	if not can_purchase() or index < 0 or index >= 3:

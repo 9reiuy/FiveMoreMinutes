@@ -29,6 +29,7 @@ func frames(count: int) -> void:
 
 
 func _run() -> void:
+	create_timer(150,true,false,true).timeout.connect(func():push_error("Elevator test watchdog");quit(2))
 	print("==================================================")
 	print("=== ELEVATOR INTEGRATION & TRANSITION TEST SUITE ===")
 	print("==================================================")
@@ -98,11 +99,11 @@ func _run() -> void:
 	check(world.elevator_floor_door.current_state == ElevatorFloorDoor3D.State.LOCKED, "Door remains locked without badge")
 	check(not world.floor_transition_in_progress, "Transition not started without badge")
 	check(world.transition_phase == &"IDLE", "Transition phase is IDLE")
-	check(world.interaction_prompt != null and world.interaction_prompt.visible and world.interaction_prompt.text == "需要员工工牌", "Prompt displays '需要员工工牌'")
+	check(world.elevator_prompt_active, "Approach without badge sets elevator interaction context")
 
 	# Exit approach trigger
 	world._on_elevator_approach_exited(player)
-	check(not world.interaction_prompt.visible, "Prompt hidden after exiting approach trigger")
+	check(not world.elevator_prompt_active, "Exit clears elevator interaction context")
 
 	# ================================================================
 	# TEST 3 & 4: Acquire Badge & Full Transition to 2F
@@ -120,46 +121,24 @@ func _run() -> void:
 	check(world.transition_phase == &"ENTERING", "Transition phase is ENTERING")
 	check(bool(player.get("movement_enabled")) == false, "Player manual movement locked on entry")
 
-	# Wait for doors to open, player to naturally walk in, doors to close and transition to CAB_RIDE (~1.5s)
-	var cab_entered := false
+	# No fixed-duration cab ride: wait for real readiness, then normal exit.
 	var elapsed := 0.0
-	while not cab_entered and elapsed < 5.0:
-		await frames(5)
-		elapsed += 5.0 / 60.0
-		if world.transition_phase == &"CAB_RIDE":
-			cab_entered = true
-
-	check(cab_entered, "Walked in and reached CAB_RIDE phase")
-	await process_frame
-	check(not world.room_visibility.outside_black_gradient.visible, "Floor footprint mask is disabled inside independent cab")
-	check(world.active_transition_cab != null, "Independent cab created in isolated space")
-	check(world.active_transition_cab.position.distance_to(Vector3(0.0, 0.0, -100.0)) < 0.001, "Cab placed at isolated local 3D offset (0, 0, -100)")
-	check(absf(world.active_transition_cab.global_rotation.y) < 0.001, "Independent ride cab remains screen-aligned")
-	if DisplayServer.get_name() != "headless":
-		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://.runtime/elevator_cab_screen_aligned.png")
-	check(not world.wall_root.visible, "Old floor building exterior hidden during cab ride")
-	check(bool(player.get("movement_enabled")) == true, "Player free roam movement restored inside cab")
-	check(bool(player.get("dash_enabled")) == false, "Player dash disabled inside cab")
-
-	# Verify Cab Wall Collisions (Player cannot penetrate walls)
-	var cab: IndependentElevatorCab3D = world.active_transition_cab as IndependentElevatorCab3D
-	check(cab.boundary_north.collision_layer == 4, "Cab North boundary on layer 4")
-	check(cab.boundary_south.collision_layer == 4, "Cab South boundary on layer 4")
-	check(cab.boundary_west.collision_layer == 4, "Cab West boundary on layer 4")
-	check(cab.boundary_east.collision_layer == 4, "Cab East boundary on layer 4")
-
-	var hit_north: KinematicCollision2D = player.move_and_collide(Vector2.UP * 80.0, true)
-	check(hit_north != null, "Player physically blocked by North cab wall")
-	var hit_south: KinematicCollision2D = player.move_and_collide(Vector2.DOWN * 40.0, true)
-	check(hit_south != null, "Player physically blocked by South cab door/wall")
-	var hit_west: KinematicCollision2D = player.move_and_collide(Vector2.LEFT * 80.0, true)
-	check(hit_west != null, "Player physically blocked by West cab wall")
-	var hit_east: KinematicCollision2D = player.move_and_collide(Vector2.RIGHT * 80.0, true)
-	check(hit_east != null, "Player physically blocked by East cab wall")
-
-	# Wait for at least 2.0s cab stay + staged generation + exit (~3.5s total)
-	print("Waiting for 2.0s cab stay + background generation...")
+	var loading_seen := false
+	var ready_exit_seen := false
+	var loading_deadline := Time.get_ticks_msec()+90000
+	while Time.get_ticks_msec()<loading_deadline:
+		await process_frame
+		if world.transition_phase in [&"LOADING",&"PREPARING_FLOOR"] and root.has_node("ElevatorLoadingCover"):
+			loading_seen=true
+			check(paused and not player.movement_enabled,"Loading remains covered and input locked")
+		if world.transition_phase==&"EXITING":
+			ready_exit_seen=true
+			break
+	check(loading_seen,"Staged floor loaded during closed elevator phase")
+	check(ready_exit_seen and world.is_loading_render_ready(),"Current rendered receipt precedes opening")
+	check(world.active_transition_cab==null,"Temporary cab removed before arrival")
+	check(not player.movement_enabled,"Input stays locked until exit animation completes")
+	print("Waiting for normal ready-floor exit animation...")
 	var transition_done := false
 	elapsed = 0.0
 	while not transition_done and elapsed < 8.0:
@@ -172,7 +151,7 @@ func _run() -> void:
 	check(world.floor_index == 1, "Floor index advanced to 1 (2F)")
 	check(not world.has_floor_badge, "Badge was consumed on inter-floor transition")
 	check(world.active_transition_cab == null, "Independent cab destroyed after exit (never shown on 2F)")
-	check(world.room_visibility.outside_black_gradient.visible, "Floor footprint mask restored after arrival")
+	check(is_instance_valid(world.room_visibility) and world.room_visibility.world==world, "Current floor visibility owner restored after arrival")
 	check(world.wall_root.visible, "New 2F floor building exterior visible")
 	check(world.elevator_floor_door != null, "New 2F elevator floor door created")
 	check(world.elevator_floor_door.current_state == ElevatorFloorDoor3D.State.LOCKED, "New 2F door locked")

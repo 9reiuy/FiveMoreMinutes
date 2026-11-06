@@ -18,15 +18,9 @@ float office_dither_threshold(vec2 cell) {
 }
 
 float office_dither_response(float response) {
-	if (office_tonal_sample) {
-		// Let final color quantization own the visible steps; keep local lighting
-		// mostly continuous instead of quantizing every light independently.
-		float value = clamp(response, 0.0, 1.0);
-		return mix(value, floor(value * 12.0 + 0.5) / 12.0, 0.15);
-	}
-	vec3 n = abs(office_dither_normal);
-	vec2 plane = n.y > max(n.x, n.z) ? office_dither_position.xz : (n.x > n.z ? office_dither_position.zy : office_dither_position.xy);
-	float scaled = clamp(response, 0.0, 1.0) * 3.0;
-	float coverage = smoothstep(0.30, 0.70, fract(scaled));
-	return (floor(scaled) + step(office_dither_threshold(plane / office_dither_step), coverage)) / 3.0;
+	// Irradiance must stay continuous while lights accumulate. Three bands PER
+	// light produced intersecting rings even with the tonal enhancement enabled
+	// (authored wall materials also missed that flag). The final world palette
+	// owns color quantization and its restrained ordered dither, once per pixel.
+	return clamp(response, 0.0, 1.0);
 }

@@ -23,7 +23,7 @@ void fragment() {
 	vec2 uv = n.y > max(n.x, n.z) ? pattern_position.xz : (n.x > n.z ? pattern_position.zy : pattern_position.xy);
 	ALBEDO = base_color.rgb * texture(pixel_texture, uv).rgb;
 	if (sample_furniture_surface) {
-		ALBEDO *= pattern_normal.y > 0.55 ? 1.16 : (pattern_normal.y < -0.55 ? 0.68 : 0.82);
+		ALBEDO *= pattern_normal.y > 0.6 ? 1.22 : (pattern_normal.y < -0.6 ? 0.56 : (abs(pattern_normal.x) > 0.5 ? 0.78 : 1.0));
 	}
 	if (wall_surface) {
 		float y = floor(architecture_world.y * 32.0) / 32.0;
@@ -39,5 +39,5 @@ void fragment() {
 void light() {
 	float noisy_attenuation = apply_light_noise_contour(ATTENUATION, architecture_world);
 	float n_dot_l = max(dot(NORMAL, LIGHT), 0.0);
-	DIFFUSE_LIGHT += ALBEDO * LIGHT_COLOR * noisy_attenuation * n_dot_l / PI;
+	DIFFUSE_LIGHT += LIGHT_COLOR * noisy_attenuation * n_dot_l / PI;
 }

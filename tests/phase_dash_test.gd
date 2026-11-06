@@ -225,11 +225,11 @@ func run() -> void:
 	var full_floor: Dictionary = world.floor_cells.duplicate()
 	for cell in world.floor_cells.keys():
 		if cell.x>=1 and cell.x<=3: world.floor_cells.erase(cell)
-	check(player.try_start_phase_dash() and player.dash_end.x>=128,"Reachable platform across an exterior gap is a legal dash target")
+	check(player.try_start_phase_dash() and player.dash_end.x<16,"A far platform does not allow skipping intervening exterior void")
 	player._update_dash(.07)
-	check(player.is_phase_dash_active() and not player._dash_floor_position_valid(player.global_position),"Mid-dash can travel above void")
+	check(player.is_phase_dash_active() and player.phase_dash._floor_supported(player.global_position),"Mid-dash remains on the supported side of the void")
 	player._update_dash(.07)
-	check(not player.dashing and player.phase_dash._standable(player.global_position,player.collision_mask),"Cross-gap dash restores collisions on safe platform")
+	check(not player.dashing and player.phase_dash._standable(player.global_position,player.collision_mask),"Void-limited dash restores collisions before the gap")
 	reset()
 	for cell in world.floor_cells.keys():
 		if cell.x>=1: world.floor_cells.erase(cell)
