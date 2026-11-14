@@ -20,9 +20,7 @@ global uniform vec2 occlusion_viewport_size;
 // Hard-open cutout: discard core (<0.35) + soft ALPHA rim. Writing ALPHA keeps
 // this body in the transparent list, so the opaque floor/actors are already in
 // the buffer when it draws (no depth prepass seal).  depth_draw_always writes
-// depth only for the fragments that survive, so the black inverted-hull outline
-// (furniture_pixel_outline, drawn after the body) stays hidden behind the body
-// and only shows as the 1px rim; inside the hole the hull discards too.
+// depth only for surviving fragments. Furniture has no added outline pass.
 uniform bool occlusion_cutout_enabled = false;
 
 // Cutouts use a stylized gradient circular halftone effect.  Numerically

@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/main_menu.tscn" id="1_menu"]
+[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="2_controller"]
+
+[node name="LegacyMenuBaseline" instance=ExtResource("1_menu")]
+script = ExtResource("2_controller")

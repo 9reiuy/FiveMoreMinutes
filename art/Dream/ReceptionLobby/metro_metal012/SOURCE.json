@@ -1,0 +1,49 @@
+{
+  "title": "Metal012",
+  "provider": "ambientCG",
+  "authors": {
+    "ambientCG / Lennart Demes": "All"
+  },
+  "page": "https://ambientcg.com/a/Metal012",
+  "license": "CC0-1.0",
+  "license_url": "https://docs.ambientcg.com/license/",
+  "normal_convention": "OpenGL +Y",
+  "source_dimensions_mm": null,
+  "origin_project": "E:\\GameProjects\\ArtExperiments\\MetroStation_20261108",
+  "usage": "Reception coated furniture frames/kickplates and satin metal hardware",
+  "adaptation": "Original complete maps unchanged; nearest/mipmaps, 32 samples/metre and finish-specific roughness ranges in the lobby material.",
+  "maps": [
+    {
+      "file": "Metal012_1K-PNG_Color.png",
+      "channel": "Color",
+      "url": "https://ambientcg.com/get?file=Metal012_1K-PNG.zip",
+      "origin_path": "project/textures/pbr/Metal012/Metal012_1K-PNG_Color.png",
+      "bytes": 445046,
+      "sha256": "3ee176198f3c3f20a4b328bbb3b5476811f17da5a76f2d8004139f080359265d"
+    },
+    {
+      "file": "Metal012_1K-PNG_NormalGL.png",
+      "channel": "NormalGL",
+      "url": "https://ambientcg.com/get?file=Metal012_1K-PNG.zip",
+      "origin_path": "project/textures/pbr/Metal012/Metal012_1K-PNG_NormalGL.png",
+      "bytes": 4079364,
+      "sha256": "8c04eb729bdf675f23c37a90a141357129a975dd662cfbf8db29d5cd5ac69dcf"
+    },
+    {
+      "file": "Metal012_1K-PNG_Roughness.png",
+      "channel": "Roughness",
+      "url": "https://ambientcg.com/get?file=Metal012_1K-PNG.zip",
+      "origin_path": "project/textures/pbr/Metal012/Metal012_1K-PNG_Roughness.png",
+      "bytes": 425285,
+      "sha256": "9cd0739a076cf2ead6155adc4deeaa1e23c56216130dfa826316740dd5625114"
+    },
+    {
+      "file": "Metal012_1K-PNG_Metalness.png",
+      "channel": "Metalness",
+      "url": "https://ambientcg.com/get?file=Metal012_1K-PNG.zip",
+      "origin_path": "project/textures/pbr/Metal012/Metal012_1K-PNG_Metalness.png",
+      "bytes": 798,
+      "sha256": "a7a42ccdb662efc7af2fc7b96e190ff0aab22ca7038cc70b36dc28e0b80f22fe"
+    }
+  ]
+}

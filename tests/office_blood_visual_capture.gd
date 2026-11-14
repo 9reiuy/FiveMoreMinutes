@@ -42,10 +42,9 @@ func _run() -> void:
 	var overlay := ColorRect.new()
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var palette_material := ShaderMaterial.new()
-	palette_material.shader = preload("res://shaders/palette_quantize.gdshader")
-	palette_material.set_shader_parameter("palette_enabled", true)
-	overlay.material = palette_material
+	var semantic_material := ShaderMaterial.new()
+	semantic_material.shader = preload("res://shaders/world_semantic_decode.gdshader")
+	overlay.material = semantic_material
 	layer.add_child(overlay)
 	root.add_child(layer)
 	for frame in 12:

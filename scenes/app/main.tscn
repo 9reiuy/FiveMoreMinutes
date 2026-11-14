@@ -4,12 +4,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/debug_console.tscn" id="2_console"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="3_pause"]
 [ext_resource type="PackedScene" path="res://scenes/ui/loading_overlay.tscn" id="5_loading"]
-[ext_resource type="Shader" path="res://shaders/palette_quantize.gdshader" id="4_palette"]
 [ext_resource type="Script" path="res://scripts/ui/transition_director.gd" id="6_transition"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_palette"]
-resource_local_to_scene = true
-shader = ExtResource("4_palette")
 
 [node name="Main" type="Node" unique_id=1282173852]
 process_mode = 3
@@ -43,16 +38,3 @@ script = ExtResource("6_transition")
 [node name="PauseMenu" parent="." unique_id=504843113 instance=ExtResource("3_pause")]
 
 [node name="LoadingOverlay" parent="." unique_id=3141592653 instance=ExtResource("5_loading")]
-
-[node name="FinalPaletteLayer" type="CanvasLayer" parent="." unique_id=1165729477]
-layer = 1000
-
-[node name="PaletteOverlay" type="ColorRect" parent="FinalPaletteLayer" unique_id=1941412696]
-material = SubResource("ShaderMaterial_palette")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(1, 1, 1, 1)

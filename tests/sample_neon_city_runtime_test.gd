@@ -327,8 +327,7 @@ func run() -> void:
 		root.add_child(phase_probe)
 	var settings := root.get_node("SettingsManager")
 	var saved: Dictionary=settings.values.duplicate(true)
-	settings.values["pixelation_enabled"]=false; settings.values["palette_enabled"]=false
-	settings.values["palette_scheme"]=1
+	settings.values["pixelation_enabled"]=false
 	world=WORLD.instantiate(); world.generate_on_ready=false
 	if phase_probe!=null:
 		phase_probe.watched_root=world
@@ -379,7 +378,7 @@ func run() -> void:
 	print("CITY_PIXEL_CHECK light=",light_diff," height_haze=",fog_diff)
 	for pixelation in [false,true]:
 		for palette in [false,true]:
-			display.set_selective_enabled(pixelation); display.set_palette_enabled(palette)
+			display.set_selective_enabled(pixelation)
 			await snapshot("city_pixel%d_palette%d" % [int(pixelation),int(palette)])
 			check(city.scene_root.visible and city.window_lights.size()==4,"Display switch loses the exterior city")
 	var selected: Array=city.window_lights.map(func(light: OmniLight3D) -> int: return int(light.get_meta(&"candidate_tower",-1)))

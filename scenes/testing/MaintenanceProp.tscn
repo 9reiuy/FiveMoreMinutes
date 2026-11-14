@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scenes/dream/rooms/chair_01.gd" id="1_physics"]
+[ext_resource type="Script" path="res://scenes/dream/rooms/hurtbox.gd" id="2_hurtbox"]
+
+[sub_resource type="RectangleShape2D" id="Shape"]
+size = Vector2(32, 32)
+
+[node name="MaintenanceProp" type="RigidBody2D" groups=["damageable_props", "pushable_prop"]]
+collision_layer = 8
+collision_mask = 15
+mass = 5.0
+gravity_scale = 0.0
+angular_damp = 9.0
+linear_damp = 8.0
+script = ExtResource("1_physics")
+max_hp = 60.0
+books_drop_category = "none"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Shape")
+
+[node name="Hurtbox" type="Area2D" parent="." groups=["damage_hurtboxes"]]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("2_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("Shape")

@@ -1,8 +1,7 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/dream/world_weapon_pickup.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://art/Dream/weapons/Guns/Luger.png" id="2_guns"]
-[ext_resource type="Texture2D" path="res://art/Dream/shadow.png" id="3_shadow"]
 
 [sub_resource type="RectangleShape2D" id="Rectangle_weapon_body"]
 size = Vector2(26, 12)
@@ -21,11 +20,7 @@ linear_damp = 7.0
 script = ExtResource("1_script")
 
 [node name="Shadow" type="Sprite2D" parent="."]
-modulate = Color(0, 0, 0, 0.42)
-z_index = -1
-position = Vector2(0, 4)
-scale = Vector2(0.48, 0.22)
-texture = ExtResource("3_shadow")
+visible = false
 
 [node name="WeaponSprite" type="Sprite2D" parent="."]
 texture_filter = 1

@@ -1,0 +1,26 @@
+{
+  "provider": "cgbookcase",
+  "page": "https://www.cgbookcase.com/textures/natural-stone-01",
+  "license": "CC0",
+  "normal_convention": "DirectX",
+  "maps": [
+    {
+      "file": "albedo.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/NaturalStone01_1K/NaturalStone01_1K_BaseColor.png",
+      "bytes": 1126179,
+      "sha256": "78a25e766bd50257bd9fde2f45c72bccf1aca271cc51a26eb6e50b5cd4fc7169"
+    },
+    {
+      "file": "normal.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/NaturalStone01_1K/NaturalStone01_1K_Normal.png",
+      "bytes": 66796,
+      "sha256": "423cfcff640acb1781f77acfeda5a1e3410178824377fd971cbd5bffae16e500"
+    },
+    {
+      "file": "roughness.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/NaturalStone01_1K/NaturalStone01_1K_Roughness.png",
+      "bytes": 238008,
+      "sha256": "04c35e0f037be035de3b73212713a45abf93e8f3137ebb9ea533287edda326f9"
+    }
+  ]
+}

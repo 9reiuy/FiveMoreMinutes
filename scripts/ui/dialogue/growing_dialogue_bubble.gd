@@ -76,11 +76,11 @@ func _setup_font() -> void:
 	dialogue_label.add_theme_constant_override(&"outline_size", 1)
 
 
-func present_hint(speaker: Vector2) -> void:
-	if not visible or _is_dismissing:
-		show_dialogue("...", speaker, [])
+func present_hint(speaker: Vector2, text: String = "...") -> void:
+	if not visible or _is_dismissing or _current_text!=text:
+		show_dialogue(text, speaker, [])
 		_hint = true
-		set_typing_progress(0, 3)
+		set_typing_progress(0, text.length())
 		progress_bar_container.hide()
 	set_speaker_hud_position(speaker)
 

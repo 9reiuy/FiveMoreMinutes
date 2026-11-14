@@ -3,8 +3,8 @@ extends Node3D
 ## Two layers of the same 30-frame life that are born together at the barrel:
 ## a white plume that travels forward down the shot, and a cooling plume that
 ## recedes and floats up. Both shrink as they die.
-## Drawn onto a CanvasLayer above WorldPaletteLayer, so the 16-colour palette does
-## not eat the warm ramp and the dark outline keeps its contrast.
+## Drawn onto a CanvasLayer above WorldSemanticLayer to preserve its literal
+## cooling colours and dark outline without effect-code decoding.
 ## Cost of that choice: the plume always sits on top of the scene and can cover a
 ## wall it should have sat behind.
 ## The outline is a layer effect, exactly like the reference's onePixelOutline: a
@@ -29,7 +29,7 @@ const DOTS := [
 ]
 
 ## Cooling phases. These are the final on-screen colours: the plume is drawn on an
-## overlay above the palette pass, so nothing quantises it and no marker is needed.
+## overlay above combat effect-code decoding, so no marker is needed.
 const PHASES := 4
 const RAMP_CURVE := 0.55
 const EDGE_COLOUR := Color("131333")
@@ -56,8 +56,7 @@ var rng := RandomNumberGenerator.new()
 ## Width of one body texture in pixels, read from the art rather than hardcoded so
 ## the outline stays one pixel thick if the sprites are ever re-exported bigger.
 var texture_w := 0.0
-## Drawn on a CanvasLayer above the palette pass: the palette quantises the whole
-## world image, so anything inside it loses its warm ramp and its outline contrast.
+## Drawn above combat effect-code decoding; each puff uses authored RGB directly.
 var overlay: CanvasLayer
 var camera: Camera3D
 var fills: Array[Sprite2D] = []
@@ -71,7 +70,7 @@ var _pool_drawn := false
 var _overlay_enabled := true
 
 
-## Authored cooling ramp. The plume bypasses the palette, so these are literal
+## Authored cooling ramp. The plume bypasses effect decoding, so these are literal
 ## colours: orange -> bright yellow -> purple -> grey. The red step the reference
 ## had is replaced by the bright yellow, which takes its place in the sequence
 ## rather than sitting next to it.
@@ -110,7 +109,7 @@ func _build_overlay() -> void:
 	fills.clear()
 	backs.clear()
 	cursor = 0
-	# Sit one layer above WorldPaletteLayer so the quantiser never touches these.
+	# Sit one layer above WorldSemanticLayer so the quantiser never touches these.
 	overlay = CanvasLayer.new()
 	overlay.name = "MuzzleSmokeOverlay"
 	overlay.layer = 19
@@ -122,15 +121,15 @@ func _build_overlay() -> void:
 	# run ends and reappears, stale, at the start of the next one.
 	overlay.set_meta(&"world_post_effect", true)
 	var host: Node = get_parent()
-	var palette_layer := host.get_node_or_null("WorldPaletteLayer") if host != null else null
-	if palette_layer == null:
+	var semantic_layer := host.get_node_or_null("WorldSemanticLayer") if host != null else null
+	if semantic_layer == null:
 		var tree_root := get_tree().root
-		palette_layer = tree_root.find_child("WorldPaletteLayer", true, false)
-	if palette_layer != null:
-		overlay.layer = int(palette_layer.layer) + 1
+		semantic_layer = tree_root.find_child("WorldSemanticLayer", true, false)
+	if semantic_layer != null:
+		overlay.layer = int(semantic_layer.layer) + 1
 	# Always ours: this node lives under the floor root, so the overlay dies with the
 	# floor and with the world instead of outliving both. It is already inside the
-	# world viewport, which is where it has to draw to stay above the palette pass.
+	# world viewport, where it stays above combat effect-code decoding.
 	add_child(overlay)
 	# Dark copies first, then the fills on top: z_index pins that order for the whole
 	# pool, so a fill never covers the edge of a puff that was emitted later.

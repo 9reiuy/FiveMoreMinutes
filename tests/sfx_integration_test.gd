@@ -9,7 +9,7 @@ const SFX_SCRIPT := preload("res://scripts/audio/sfx_manager.gd")
 
 const EXPECTED_PATHS := {
 	&"forbidden": "res://sfx/禁止选择音效.mp3",
-	&"death": "res://sfx/角色死亡音.mp3",
+	&"death": "res://sfx/death/player_death.wav",
 	&"new_message": "res://sfx/手机新讯息.mp3",
 	&"purchase": "res://sfx/购买音效.mp3",
 	&"home_door": "res://sfx/回家开门音效.mp3",

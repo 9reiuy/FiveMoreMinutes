@@ -15,7 +15,7 @@ func run() -> void:
 	if not world.regenerate(42001): quit(2); return
 	for frame in 20: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true); display._process(0.0)
+	display.set_selective_enabled(true); display._process(0.0)
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED); Engine.max_fps=0; paused=true
 	var source: Node3D
 	var focus: Vector3=world.player_depth_bridge.actor_sprite.global_position

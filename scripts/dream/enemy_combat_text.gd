@@ -4,8 +4,12 @@ const COMIC=preload("res://scripts/ui/comic_pixel_text.gd")
 const HOLD:=.6
 const LIFETIME:=.85
 const MAX_RECORDS:=48
+const KILL_WORD_CHANCE := .35
 const CRITICAL_FILL=preload("res://shaders/comic_critical_fill.gdshader")
-const KILL_WORDS: Array[String]=["干得好","爆了","有意思"]
+const KILL_WORDS: Array[String] = [
+	"干得好", "爆了", "有意思", "就这", "太慢了", "秒了",
+	"拿下", "痛快", "漂亮", "晚安", "下班", "没难度",
+]
 var world: Node3D
 var layer: CanvasLayer
 var surface: Control
@@ -13,6 +17,9 @@ var shadow: Control
 var records: Dictionary={}
 var rng:=RandomNumberGenerator.new()
 var last_kill:=-1
+var kill_streak_count := 0
+var last_kill_timestamp := -INF
+var credited_kills: Dictionary = {}
 var critical_surfaces: Dictionary={}
 
 func configure(owner_world: Node3D) -> void:
@@ -42,8 +49,7 @@ static func health(enemy: Node) -> float:
 		if value!=null: return maxf(0,float(value))
 	return 0
 
-static func capture(world_node: Node3D,enemy: Node) -> Dictionary:
-	if not is_instance_valid(enemy) or not enemy is Node2D: return {}
+static func hit_world_anchor(world_node: Node3D,enemy: Node2D) -> Vector3:
 	var origin: Vector3=world_node.get_gameplay_world_position(enemy.global_position,.8)
 	var drone: Variant=enemy.get("drone")
 	if is_instance_valid(drone) and drone is Node3D: origin=drone.global_position+Vector3.UP*.3
@@ -51,7 +57,11 @@ static func capture(world_node: Node3D,enemy: Node) -> Dictionary:
 	var bridge: Node=reference.get_ref() if reference is WeakRef else null
 	if is_instance_valid(bridge) and bridge.has_method("get_hit_feedback_world_position"):
 		origin=bridge.get_hit_feedback_world_position()
-	return {"id":enemy.get_instance_id(),"health":health(enemy),"origin":origin}
+	return origin
+
+static func capture(world_node: Node3D,enemy: Node) -> Dictionary:
+	if not is_instance_valid(enemy) or not enemy is Node2D: return {}
+	return {"id":enemy.get_instance_id(),"health":health(enemy),"origin":hit_world_anchor(world_node,enemy)}
 
 func accept(snapshot: Dictionary,enemy: Node,result: Dictionary) -> void:
 	if snapshot.is_empty() or not _active(): return
@@ -69,10 +79,24 @@ func accept(snapshot: Dictionary,enemy: Node,result: Dictionary) -> void:
 	var viewport_size:=camera.get_viewport().get_visible_rect().size
 	var hud_width: float=world.player.get_presentation_hud_position(viewport_size).x-world.player.get_presentation_hud_position(Vector2.ZERO).x
 	var units:=camera.project_position(camera.unproject_position(origin)+Vector2(viewport_size.x/maxf(1,hud_width),0),depth).distance_to(origin)
-	var text:=str(roundi(total))
+	var text := ""
+	var show_kill_word := false
 	if killed:
+		if credited_kills.has(id): return
+		credited_kills[id] = true
+		while credited_kills.size() > MAX_RECORDS*6: credited_kills.erase(credited_kills.keys()[0])
+		var now := Time.get_ticks_msec() / 1000.0
+		if now - last_kill_timestamp <= float(world.run_interface.KILL_STREAK_WINDOW):
+			kill_streak_count += 1
+		else:
+			kill_streak_count = 1
+		last_kill_timestamp = now
+		show_kill_word = kill_streak_count > 3 and rng.randf() < KILL_WORD_CHANCE
+	if show_kill_word:
 		last_kill=(last_kill+rng.randi_range(1,KILL_WORDS.size()-1))%KILL_WORDS.size(); text=KILL_WORDS[last_kill]
-	records[id]={"age":0.0,"total":total,"text":text,"origin":origin,"up":camera.global_basis.y.normalized(),"units":units,"critical":critical,"crit_age":0.0 if critical else float(previous.get("crit_age",LIFETIME)),"killed":killed,"scale":1.0 if killed else damage_scale(total)}
+	# Keep the existing critical word, but never create numeric damage text.
+	if text.is_empty() and not critical and not (previous.get("critical",false) and float(previous.get("crit_age",LIFETIME)) < LIFETIME): return
+	records[id]={"age":0.0,"total":total,"text":text,"origin":origin,"up":camera.global_basis.y.normalized(),"units":units,"critical":critical,"crit_age":0.0 if critical else float(previous.get("crit_age",LIFETIME)),"killed":killed,"scale":1.0 if show_kill_word else damage_scale(total)}
 	if not critical and not killed and previous.get("critical",false): records[id].critical=true
 	if records[id].critical and not critical_surfaces.has(id):
 		var canvas:=Control.new(); canvas.mouse_filter=Control.MOUSE_FILTER_IGNORE
@@ -88,6 +112,9 @@ static func damage_scale(total: float) -> float:
 
 func clear() -> void:
 	records.clear()
+	kill_streak_count = 0
+	last_kill_timestamp = -INF
+	credited_kills.clear()
 	for canvas in critical_surfaces.values():
 		if is_instance_valid(canvas): canvas.queue_free()
 	critical_surfaces.clear()
@@ -139,7 +166,7 @@ func _draw(target: Control,shadow_pass: bool) -> void:
 		var point: Vector3=record.origin+record.up*record.units*(22+maxf(0,t-HOLD)*35)
 		if world.camera_3d.is_position_behind(point): continue
 		var position:=_screen_position(record)
-		COMIC.draw(target,record.text,position,t,shadow_pass,record.scale)
+		if not record.text.is_empty(): COMIC.draw(target,record.text,position,t,shadow_pass,record.scale)
 		if shadow_pass and record.critical and record.crit_age<LIFETIME:
 			COMIC.draw(target,"暴击",position+Vector2(0,-24),record.crit_age,true,.8)
 

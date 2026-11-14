@@ -163,7 +163,6 @@ func formal_frame_perf() -> void:
 	for pixelation in [false,true]:
 		for palette in [false,true]:
 			display.set_selective_enabled(pixelation)
-			display.set_palette_enabled(palette)
 			display._process(0.0)
 			var images: Array[Image] = []
 			for legacy in [true,false,true]:
@@ -181,7 +180,6 @@ func formal_frame_perf() -> void:
 		var projected: Vector2 = world.camera_3d.unproject_position(bridge.actor_sprite.global_position)
 		check(world.camera_3d.get_viewport().get_visible_rect().has_point(projected) and not world.camera_3d.is_position_behind(bridge.actor_sprite.global_position),"Blood fixture is inside the formal camera")
 	display.set_selective_enabled(true)
-	display.set_palette_enabled(true)
 	display._process(0.0)
 	for legacy in [true,false,true]:
 		for blood in bloods:

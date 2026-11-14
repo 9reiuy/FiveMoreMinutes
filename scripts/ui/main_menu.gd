@@ -427,7 +427,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			settings.activate_row_delta(-1)
 			get_viewport().set_input_as_handled()
 			return
-		if event.is_action_pressed("ui_accept") or event.is_action_pressed("confirm"):
+		if event.is_action_pressed("ui_accept") or (InputMap.has_action("confirm") and event.is_action_pressed("confirm")):
 			if settings.trigger_active_row() or overlay_option_group.trigger_active():
 				get_viewport().set_input_as_handled()
 			return
@@ -438,7 +438,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("ui_up") or event.is_action_pressed("move_up"):
 		group.activate_delta(-1)
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("ui_accept") or event.is_action_pressed("confirm"):
+	elif event.is_action_pressed("ui_accept") or (InputMap.has_action("confirm") and event.is_action_pressed("confirm")):
 		if group.trigger_active():
 			get_viewport().set_input_as_handled()
 

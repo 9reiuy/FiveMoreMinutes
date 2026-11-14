@@ -27,7 +27,7 @@ func run() -> void:
 	world.player.global_position=world.enemy_root.get_child(0).global_position+Vector2(96,0)
 	world.transition_phase=&"IDLE"; world.camera_aim_offset=Vector3.ZERO
 	world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true); display._process(0.0)
+	display.set_selective_enabled(true); display._process(0.0)
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED); Engine.max_fps=0
 	var start: int=Time.get_ticks_usec()
 	while Time.get_ticks_usec()-start<10000000: await RenderingServer.frame_post_draw

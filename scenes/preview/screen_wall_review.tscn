@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/preview/screen_wall_review.gd" id="1_wall"]
+[ext_resource type="PackedScene" path="res://art/preview/screen_wall/avatar/screen_wall_avatar.tscn" id="2_avatar"]
 
 [node name="ScreenWallReview" type="Node3D"]
 script = ExtResource("1_wall")
+avatar_scene = ExtResource("2_avatar")

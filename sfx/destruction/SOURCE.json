@@ -1,0 +1,27 @@
+{
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "note": "Wall break is the chosen strike and is used in game. The door excerpt was rejected as too sharp and is not used.",
+  "edited_sha256": {
+    "door_break.wav": "e2cbf5e973d688d6a66d20222226b67d908c762bb2ee03f5bb9b899a3b08443e",
+    "wall_break.wav": "1af02cbaf147f98581d68d071a179135f320423ba659003dd48953613791af94"
+  },
+  "sources": [
+    {
+      "author": "djericmark",
+      "page": "https://freesound.org/people/djericmark/sounds/731199/",
+      "preview": "https://cdn.freesound.org/previews/731/731199_8772782-hq.mp3",
+      "description": "A wooden door frame hit with a hammer and peeled off the wall. Zoom H2n.",
+      "used_in": "door_break.wav",
+      "excerpt": "4.48s to 5.22s, one rip as the frame comes away."
+    },
+    {
+      "author": "jerry.berumen",
+      "page": "https://freesound.org/people/jerry.berumen/sounds/827432/",
+      "preview": "https://cdn.freesound.org/previews/827/827432_6753194-hq.mp3",
+      "description": "Sledgehammer breaking a drywall wall in Mexico City. Sony PCM-A10.",
+      "used_in": "wall_break.wav",
+      "excerpt": "3.18s to 3.58s, one hammer strike and its falloff."
+    }
+  ]
+}

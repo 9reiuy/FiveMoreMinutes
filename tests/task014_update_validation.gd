@@ -191,7 +191,6 @@ func render_check() -> void:
 	var output_dir := OS.get_environment("TASK014_OUTPUT_DIR")
 	if not output_dir.is_empty():
 		for enabled in [false, true]:
-			main._apply_palette_enabled(enabled)
 			await frames(4)
 			await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png(output_dir.path_join("room_badge_palette_%s.png" % enabled))

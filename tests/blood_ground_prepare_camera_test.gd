@@ -29,7 +29,7 @@ func run() -> void:
 	for index in 8: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
 	display.set_selective_enabled(not "--no-pixelation" in OS.get_cmdline_user_args())
-	display.set_palette_enabled(not "--no-palette" in OS.get_cmdline_user_args()); display._process(0.0)
+	display._process(0.0)
 	var frozen:=FREEZE.freeze(self)
 	for index in 3: await RenderingServer.frame_post_draw
 	var empty: PackedByteArray=root.get_texture().get_image().get_data()
@@ -64,7 +64,7 @@ func run() -> void:
 		bridge._process(0.0)
 		for index in 3: await RenderingServer.frame_post_draw
 		check(incoming_ref.get_ref()==null,"incoming source consumed exactly once")
-		check(bridge.render_viewport.get_texture().get_image().get_used_rect().has_area(),"blood capture is nonempty")
+		check(bridge.actor_sprite.texture.get_image().get_used_rect().has_area(),"displayed blood mask is nonempty")
 		var picture:Image=root.get_texture().get_image();picture.convert(Image.FORMAT_RGBA8)
 		picture.save_png(directory.path_join("camera_%d.png"%images.size()))
 		images.append(picture.get_data())

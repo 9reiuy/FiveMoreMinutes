@@ -81,6 +81,11 @@ func _check_hotel_robot(world: Node3D, room_id: int) -> void:
 	_check(unit != null, "hotel robot body exists in gameplay world")
 	if unit == null:
 		return
+	# Movement defaults are now 3/6 m/s. Freeze after the spawn sample and let
+	# the normal display callback catch up before comparing the live transforms.
+	unit.set_physics_process(false)
+	await process_frame
+	await process_frame
 
 	_check(unit is CharacterBody2D, "hotel robot is a Player-collidable 2D body")
 	_check(unit.is_in_group(&"dream_enemies"), "hotel robot is in dream_enemies (player bullets can resolve hits)")
@@ -115,7 +120,7 @@ func _check_hotel_robot(world: Node3D, room_id: int) -> void:
 		_check(visual.get_node_or_null("RobotModel") != null, "3D robot model built")
 		_check(visual.get_node_or_null("RobotModel/WeaponRig") != null, "3D robot carries the deployable weapon rig")
 		var expected: Vector3 = world.to_global(Vector3(
-			spawn_position.x / CELL_PIXELS, 0.0, spawn_position.y / CELL_PIXELS))
+			unit.global_position.x / CELL_PIXELS, 0.0, unit.global_position.y / CELL_PIXELS))
 		_check(visual.global_position.distance_to(expected) < 0.05,
 			"3D model sits on the 2D robot position (%.2f)" % visual.global_position.distance_to(expected))
 
@@ -131,9 +136,13 @@ func _check_hotel_robot(world: Node3D, room_id: int) -> void:
 	# 开火：武器展开后会打出正式子弹，并挂上拖尾载体。
 	unit.set("alert", true)
 	unit.set("deploy", 1.0)
+	world.player.set_physics_process(false)
+	world.player.global_position = unit.global_position + Vector2(64,0)
+	world._update_camera_and_actor_projection(1.0)
 	await physics_frame
 	unit.call("_fire", Vector2.RIGHT)
-	await process_frame
+	# Inspect the actual shot before the next physics tick can hit the nearby
+	# target. Camera-bounded projectiles must also originate in the live view.
 	var projectile: Node2D = null
 	for node in get_nodes_in_group(&"dream_projectiles"):
 		if node.get_parent() != null:

@@ -14,18 +14,18 @@ static func build() -> Node3D:
 	wall.add_child(screens)
 	# Position, visible glass size, yaw / pitch / roll, depth, option, tint.
 	var layout := [
-		[Vector3(-2.30, 6.55, 0.45), Vector2(1.90, 1.62), Vector3(-5, 21, -7), "new_game", "新游戏", Color("8bb7c1")],
-		[Vector3(-0.18, 7.60, -0.35), Vector2(2.28, 1.62), Vector3(-4, -3, 3), "", "", Color("c4bdcf")],
-		[Vector3(2.00, 6.76, 0.65), Vector2(1.30, 2.28), Vector3(2, -25, 7), "", "", Color("aab9af")],
-		[Vector3(2.65, 4.58, 1.20), Vector2(2.20, 1.70), Vector3(-3, -31, -6), "continue", "继续", Color("9eafc9")],
-		[Vector3(-3.42, 4.22, 1.65), Vector2(1.36, 2.02), Vector3(5, 44, -4), "", "", Color("acb7c9")],
-		[Vector3(-1.33, 4.65, -0.12), Vector2(2.25, 1.72), Vector3(3, 12, 4), "settings", "设置", Color("c2b49f")],
-		[Vector3(0.50, 5.70, 1.00), Vector2(2.05, 2.05), Vector3(-2, -7, -4), "", "", Color("95b4ac")],
-		[Vector3(0.68, 3.55, 0.30), Vector2(2.36, 1.85), Vector3(4, -6, -3), "quit", "退出游戏", Color("c4a5b1")],
-		[Vector3(-2.57, 1.73, 1.48), Vector2(1.87, 1.43), Vector3(8, 33, 7), "", "", Color("9cb4bc")],
-		[Vector3(-0.38, 1.83, 1.02), Vector2(1.34, 1.20), Vector3(10, 8, -6), "", "", Color("b5a9ba")],
-		[Vector3(-1.67, 2.97, 0.50), Vector2(1.18, 0.94), Vector3(-3, 13, -7), "", "", Color("b1b5a3")],
-		[Vector3(2.65, 1.62, 1.65), Vector2(1.55, 1.38), Vector3(4, -40, 9), "", "", Color("bbb09c")],
+		[Vector3(-2.30, 6.55, 0.45), Vector2(1.90, 1.62), Vector3(-5, 21, -7), "continue", "继续", Color("396fe2")],
+		[Vector3(-0.18, 7.60, -0.35), Vector2(2.28, 1.62), Vector3(-4, -3, 3), "", "", Color("8c73df")],
+		[Vector3(2.00, 6.76, 0.65), Vector2(1.30, 2.28), Vector3(2, -25, 7), "", "", Color("42b8bd")],
+		[Vector3(2.65, 4.58, 1.20), Vector2(2.20, 1.70), Vector3(-3, -31, -6), "", "", Color("597fd7")],
+		[Vector3(-3.42, 4.22, 1.65), Vector2(1.36, 2.02), Vector3(5, 44, -4), "", "", Color("617de1")],
+		[Vector3(-1.33, 4.65, -0.12), Vector2(2.25, 1.72), Vector3(3, 12, 4), "settings", "设置", Color("d6a64f")],
+		[Vector3(0.17, 5.79, 1.00), Vector2(2.75, 1.90), Vector3(-2, -7, -4), "new_game", "新游戏", Color("62b6c9")],
+		[Vector3(0.68, 3.55, 0.30), Vector2(2.36, 1.85), Vector3(4, -6, -3), "", "", Color("b96fa5")],
+		[Vector3(-2.57, 1.73, 1.48), Vector2(1.87, 1.43), Vector3(8, 33, 7), "quit", "退出", Color("3e9fcc")],
+		[Vector3(-0.38, 1.83, 1.02), Vector2(1.34, 1.20), Vector3(10, 8, -6), "", "", Color("9275cf")],
+		[Vector3(-1.67, 2.97, 0.50), Vector2(1.18, 0.94), Vector3(-3, 13, -7), "", "", Color("68b59a")],
+		[Vector3(2.65, 1.62, 1.65), Vector2(1.55, 1.38), Vector3(4, -40, 9), "", "", Color("c2a052")],
 	]
 	for i in layout.size():
 		var row: Array = layout[i]
@@ -35,6 +35,11 @@ static func build() -> Node3D:
 		tv.set_meta("action_id", row[3])
 		tv.set_meta("option_text", row[4])
 		tv.set_meta("screen_tint", row[5])
+		tv.set_meta("navigation_order", {"continue": 0, "new_game": 1, "settings": 2, "quit": 3}.get(row[3], 10 + i))
+		if row[3] == "settings":
+			# The enlarged foreground TV covers this screen's upper-right area.
+			tv.set_meta("option_center_uv", Vector2(0.44, 0.68))
+			tv.set_meta("show_option_caption", false)
 		screens.add_child(tv)
 	var racks := Node3D.new()
 	racks.name = "ServerBanks"

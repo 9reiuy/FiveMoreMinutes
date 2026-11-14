@@ -68,7 +68,7 @@ func run() -> void:
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output_directory()))
 	var settings:=root.get_node("SettingsManager")
-	settings.set_setting(&"pixelation_enabled",true); settings.set_palette_enabled(false)
+	settings.set_setting(&"pixelation_enabled",true)
 	await prepare_world()
 	for enemy in world.enemy_root.get_children(): enemy.set_physics_process(false); enemy.set_process(false)
 	world.player.set_physics_process(false); world.player.set_attacking_enabled(false)
@@ -91,14 +91,13 @@ func run() -> void:
 	await frames(8)
 	check(dust.pool.get_viewport()==world.get_viewport(),"Dust renders in world, not crisp HUD overlay")
 	for palette in [false,true]:
-		settings.set_palette_enabled(palette); dust.material.set_shader_parameter("dust_clock",3.1)
+		dust.material.set_shader_parameter("dust_clock",3.1)
 		dust.set_enabled(false); await frames(); var before:=await shot("palette_%d_off"%int(palette))
 		dust.set_enabled(true); await frames(); var after:=await shot("palette_%d_on"%int(palette))
 		var pixels:=changed(before,after)
 		print("INDOOR_DUST_SCENE_AB_DELTA palette=",palette," changed=",pixels)
 		check(pixels>10,"Dust changes actual final pixels, palette="+str(palette))
 	# Isolated diagnostic through the SAME material: opaque object must hide motes.
-	settings.set_palette_enabled(false)
 	var batches: Array=dust.pool.get_children()
 	for batch in batches: batch.hide()
 	var probe:=MultiMeshInstance3D.new(); dust.pool.add_child(probe)
@@ -121,12 +120,11 @@ func run() -> void:
 	var fleck_pixels:=changed(no_probe.get_region(area),open_probe.get_region(area))
 	print("INDOOR_DUST_PROBE_PIXELS native_palette_off=",fleck_pixels)
 	check(fleck_pixels>0,"Actual small lit dust fleck is visible in its own projected neighbourhood")
-	settings.set_palette_enabled(true); probe.hide(); await frames(); no_probe=await shot("probe_palette_off")
+	probe.hide(); await frames(); no_probe=await shot("probe_palette_off")
 	probe.show(); await frames(); open_probe=await shot("probe_palette_on")
 	fleck_pixels=changed(no_probe.get_region(area),open_probe.get_region(area))
 	print("INDOOR_DUST_PROBE_PIXELS palette1=",fleck_pixels)
 	check(fleck_pixels>0,"The same projected mote survives final Palette 1 processing")
-	settings.set_palette_enabled(false)
 	var blocker:=MeshInstance3D.new(); var box:=BoxMesh.new(); box.size=Vector3(.6,.6,.12); blocker.mesh=box
 	var black:=StandardMaterial3D.new(); black.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED; black.albedo_color=Color("161c29")
 	blocker.material_override=black; blocker.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -141,7 +139,6 @@ func run() -> void:
 	var period:=lerpf(3.2,7.5,custom.a)
 	var peak_time:=fposmod(period*.55-custom.a*11.31,period)
 	for palette in [false,true]:
-		settings.set_palette_enabled(palette)
 		var levels: Array[float]=[]
 		for bright in [false,true]:
 			var time: float=peak_time if bright else peak_time-.35
@@ -171,7 +168,6 @@ func run() -> void:
 	check(centres[0].is_finite() and centres[1].is_finite() and actual_travel>4,"Final rendered mote moves over four physical pixels in 0.7s, not only its analytic projection")
 	probe.free()
 	for batch in batches: batch.show()
-	settings.set_palette_enabled(true)
 	var review:=world.get_node_or_null("FurnitureTextureReviewCoordinator")
 	if review!=null: review.label.hide()
 	# Deterministic effect time, actual sample camera; not realtime FPS footage.
@@ -182,9 +178,8 @@ func run() -> void:
 	settings.set_setting(&"pixelation_enabled",false); await frames(6)
 	await shot("native_on")
 	check(dust.pool.visible,"Dust also displays without world pixelation")
-	settings.set_palette_enabled(false); await frames(); await shot("native_palette_off")
-	check(not display.selective_enabled and not display.palette_enabled,"Native unfiltered comparison uses actual settings")
-	settings.set_palette_enabled(true)
+	await frames(); await shot("native_palette_off")
+	check(not display.selective_enabled and not display.has_method("set_palette_enabled"),"Native unfiltered comparison uses actual settings")
 	settings.set_setting(&"pixelation_enabled",true); await frames(8)
 	var measurements: Array=[]
 	for value in [false,true,false]: measurements.append(await benchmark(value))
@@ -192,7 +187,6 @@ func run() -> void:
 	dust.set_enabled(true); dust.update_samples=0; dust.update_total_usec=0
 	for i in 1000: dust._process(1.0/60.0)
 	print("INDOOR_DUST_CPU avg_update_usec=",float(dust.update_total_usec)/maxi(1,dust.update_samples)," motes=",dust.records.size()," batches=",dust.pool.get_child_count())
-	settings.set_palette_enabled(false)
 	cleanup_root.free(); await frames()
 	print("SAMPLE_INDOOR_DUST_CAMERA checks=",checks," failures=",failures)
 	quit(0 if failures==0 else 1)

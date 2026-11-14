@@ -6,6 +6,7 @@ const PROJECTILE_SCENE := preload("res://scenes/entities/basic_projectile.tscn")
 const FIREARM_RULES := preload("res://scripts/dream/dream_firearm_rules.gd")
 
 signal weapon_fired(recoil_multiplier: float)
+@export_enum("assault_rifle", "mp5") var weapon_id: String = "assault_rifle"
 
 var damage := 3.0
 var attack_interval := 0.15
@@ -29,11 +30,11 @@ var current_spread_degrees := 2.0
 
 
 func configure_weapon(config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
-	var parameters: Dictionary = FIREARM_RULES.parameters(config, &"assault_rifle")
+	var parameters: Dictionary = FIREARM_RULES.parameters(config, StringName(weapon_id))
 	damage = float(parameters.damage)
 	var attack_speed := 1.0 + int(permanent_upgrades.get("prefrontal", 0)) * config.prefrontal_attack_speed_per_level
 	attack_interval = config.weapon_interval_for_rate(float(parameters.interval)) / maxf(attack_speed, 0.01)
-	attack_range = float(parameters.range) + int(permanent_upgrades.get("visual_cortex", 0)) * config.visual_cortex_range_per_level
+	attack_range = float(parameters.range) + int(permanent_upgrades.get("visual_cortex", 0)) * config.visual_cortex_range_per_level * FIREARM_RULES.range_multiplier(StringName(weapon_id))
 	projectile_speed = float(parameters.speed)
 	recoil_multiplier = config.assault_rifle_recoil_multiplier
 	_reset_spread()
@@ -44,9 +45,10 @@ func _process(delta: float) -> void:
 		return
 	cooldown_left -= delta
 	var trigger_held: bool = get_parent().should_trigger_weapon_attack()
+	var spread_scale := FIREARM_RULES.spread_multiplier(StringName(weapon_id))
 	if not trigger_held:
-		var recovery_rate := (maxf(max_spread_degrees, base_spread_degrees) - base_spread_degrees) / maxf(spread_recovery_seconds, 0.001)
-		current_spread_degrees = move_toward(current_spread_degrees, base_spread_degrees, recovery_rate * maxf(delta, 0.0))
+		var recovery_rate := (maxf(max_spread_degrees, base_spread_degrees) - base_spread_degrees) * spread_scale / maxf(spread_recovery_seconds, 0.001)
+		current_spread_degrees = move_toward(current_spread_degrees, base_spread_degrees * spread_scale, recovery_rate * maxf(delta, 0.0))
 	if cooldown_left > 0.0 or not trigger_held:
 		return
 	var empty_before_attempt := false
@@ -77,24 +79,25 @@ func _fire(direction: Vector2, allow_extra: bool) -> void:
 	var projectile := PROJECTILE_SCENE.instantiate()
 	var projectile_spawned := false
 	var shot_direction: Vector2 = FIREARM_RULES.directions(direction, 1, current_spread_degrees)[0]
-	FIREARM_RULES.setup_projectile(projectile, shot_direction, damage, attack_range, projectile_speed, &"player", get_parent() as Node2D, &"assault_rifle")
+	FIREARM_RULES.setup_projectile(projectile, shot_direction, damage, attack_range, projectile_speed, &"player", get_parent() as Node2D, StringName(weapon_id))
 	# Register the bridge only after the real 2D projectile has its muzzle origin;
 	# the projectile itself remains the authoritative moving gameplay object.
 	projectile.global_position = origin
 	if world != null:
 		world.add_projectile(projectile, get_parent() as Node2D)
 		projectile_spawned = projectile.is_inside_tree()
-		world.spawn_weapon_muzzle(origin, direction, &"assault_rifle", get_parent() as Node2D)
-		world.spawn_shell_ejection(origin, direction, &"assault_rifle")
+		world.spawn_weapon_muzzle(origin, direction, StringName(weapon_id), get_parent() as Node2D)
+		world.spawn_shell_ejection(origin, direction, StringName(weapon_id))
 	else:
 		var fallback_parent: Node = get_tree().current_scene if get_tree().current_scene != null else get_tree().root
 		fallback_parent.add_child(projectile)
 		projectile.global_position = origin
 		projectile_spawned = projectile.is_inside_tree()
 	if projectile_spawned:
-		current_spread_degrees = clampf(current_spread_degrees + spread_growth_per_shot, base_spread_degrees, maxf(max_spread_degrees, base_spread_degrees))
+		var spread_scale := FIREARM_RULES.spread_multiplier(StringName(weapon_id))
+		current_spread_degrees = clampf(current_spread_degrees + spread_growth_per_shot * spread_scale, base_spread_degrees * spread_scale, maxf(max_spread_degrees, base_spread_degrees) * spread_scale)
 		if get_parent().has_method("apply_firearm_body_recoil"):
-			get_parent().apply_firearm_body_recoil(&"assault_rifle", direction, recoil_multiplier)
+			get_parent().apply_firearm_body_recoil(StringName(weapon_id), direction, recoil_multiplier)
 		SFX.play_weapon_fire()
 	if allow_extra and randf() < extra_attack_chance:
 		await get_tree().create_timer(extra_attack_delay, false).timeout
@@ -103,7 +106,7 @@ func _fire(direction: Vector2, allow_extra: bool) -> void:
 
 
 func _reset_spread() -> void:
-	current_spread_degrees = base_spread_degrees
+	current_spread_degrees = base_spread_degrees * FIREARM_RULES.spread_multiplier(StringName(weapon_id))
 
 
 func set_extra_attack(chance: float, delay: float) -> void:
@@ -124,4 +127,4 @@ func apply_attack_speed_upgrade(multiplier: float) -> void:
 
 
 func apply_range_upgrade(pixels: float) -> void:
-	attack_range += pixels
+	attack_range += pixels * FIREARM_RULES.range_multiplier(StringName(weapon_id))

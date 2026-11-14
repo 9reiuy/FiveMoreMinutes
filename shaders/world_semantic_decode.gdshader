@@ -4,7 +4,6 @@ render_mode unshaded, blend_disabled;
 // Decode the reserved effect colors emitted by gameplay materials.
 // Every other pixel keeps the composited world color and alpha.
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
-uniform bool tutorial_gate_indicators = false;
 
 const vec3 BLOOD_SEMANTIC_MARKER = vec3(0.8509804, 0.4196078, 0.0941176); // #D96B18
 const vec3 BLOOD_OUTPUT_COLOR = vec3(0.8509804, 0.4196078, 0.0941176);
@@ -86,9 +85,7 @@ void fragment() {
 	vec4 source = texture(screen_texture, SCREEN_UV);
 	vec3 output_color;
 	int muzzle_index = muzzle_marker_index(source.rgb);
-	if (tutorial_gate_indicators && distance(source.rgb, vec3(0.0, 1.0, 0.0)) < 0.005) {
-		output_color = vec3(0.28, 0.90, 0.43);
-	} else if (source.r>.995 && source.g<.005 && source.b>=.515 && source.b<=.605 && abs((source.b-.52)/.04-round((source.b-.52)/.04))<.15) {
+	if (source.r>.995 && source.g<.005 && source.b>=.515 && source.b<=.605 && abs((source.b-.52)/.04-round((source.b-.52)/.04))<.15) {
 		// Extinguisher red paint only; labels and hardware remain scene-lit.
 		int phase=int(round((source.b-.52)/.04));
 		output_color=phase==0 ? vec3(.91,.25,.26) : (phase==1 ? vec3(.72,.12,.18) : vec3(.43,.055,.095));

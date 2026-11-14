@@ -1,0 +1,32 @@
+{
+  "asset": "Caban",
+  "source": "https://polyhaven.com/a/caban",
+  "license": "CC0",
+  "authors": [
+    "Rico Cilliers",
+    "colormass"
+  ],
+  "maps": [
+    {
+      "map": "diff",
+      "path": "E:\\GameProjects\\FiveMinuteMore\\art\\Dream\\ReceptionLobby\\caban\\diff.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/caban/caban_diff_1k.jpg",
+      "bytes": 715554,
+      "sha256": "e6502a2516772c3158d11fc447a4d0972900dc81347334465b99b18f3b09524c"
+    },
+    {
+      "map": "nor_gl",
+      "path": "E:\\GameProjects\\FiveMinuteMore\\art\\Dream\\ReceptionLobby\\caban\\nor_gl.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/caban/caban_nor_gl_1k.jpg",
+      "bytes": 616486,
+      "sha256": "27cd0f98d833648c43d2c85db2e23a151b1ec2b74feaf56964a16b6c0c892f84"
+    },
+    {
+      "map": "rough",
+      "path": "E:\\GameProjects\\FiveMinuteMore\\art\\Dream\\ReceptionLobby\\caban\\rough.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/caban/caban_rough_1k.jpg",
+      "bytes": 1022753,
+      "sha256": "625125e1ba8e741c87da18e45e45ff870bce13fa2bb81fecef2edc6255c79918"
+    }
+  ]
+}

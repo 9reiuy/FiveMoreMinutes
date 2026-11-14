@@ -3,7 +3,6 @@ extends Node3D
 const SOURCE_INKS = preload("res://shaders/preview/hellkind_sample/authored_body_inks.gdshader")
 const ACTOR_INKS = preload("res://shaders/preview/hellkind_sample/two_ink_actor.gdshader")
 const FLOOR_INKS = preload("res://shaders/preview/hellkind_sample/floor_ink_falloff.gdshader")
-const ENVIRONMENT_INKS = preload("res://scripts/preview/sample_environment_halftone.gd")
 const GROUND_LENGTH := 1.62
 
 var bridge: Node3D
@@ -27,8 +26,6 @@ func configure(player_bridge: Node3D, camera: Camera3D) -> void:
 	source_inks = ShaderMaterial.new()
 	source_inks.shader = SOURCE_INKS
 	actor_inks = _make_carrier(original_actor, false)
-	actor_inks.set_shader_parameter(&"room_dark_ink", ENVIRONMENT_INKS.ROOM_DARK_RGB / 255.0)
-	actor_inks.set_shader_parameter(&"room_light_ink", ENVIRONMENT_INKS.ROOM_LIGHT_RGB / 255.0)
 	weapon_inks = _make_carrier(original_weapon, true)
 	process_priority = bridge.process_priority - 1
 	var down := -camera.global_basis.y
@@ -67,9 +64,6 @@ func set_enabled(enabled: bool) -> void:
 	floor_ink.visible = enabled
 	set_process(enabled)
 	if enabled: _process(0.0)
-
-func set_body_palette(enabled: bool) -> void:
-	actor_inks.set_shader_parameter(&"use_room_palette", enabled)
 
 func _process(_delta: float) -> void:
 	var region := head.texture as AtlasTexture

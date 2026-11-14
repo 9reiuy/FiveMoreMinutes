@@ -42,7 +42,7 @@ func _run() -> void:
 	legacy.save(TEST_PATH)
 	settings._load_settings(TEST_PATH)
 	_check(settings.get_shadow_quality() == "standard", "Old config without quality needs default")
-	_check(settings.get_palette_enabled() and settings.get_volume(&"music_volume") == 37, "Other saved choices must survive")
+	_check(not settings.values.has("palette_enabled") and settings.get_volume(&"music_volume") == 37, "Other saved choices must survive")
 	legacy.set_value("graphics", "shadow_quality", "high")
 	legacy.save(TEST_PATH)
 	settings._load_settings(TEST_PATH)

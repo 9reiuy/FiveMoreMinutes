@@ -1,22 +1,30 @@
 extends Node
-## One shared gameplay ray decides all target types; carriers only draw.
+## Enemy cues share melee collision. The aim ray still selects interactable props.
+const MELEE_WEAPON := preload("res://scripts/dream/lucille_weapon.gd")
+const RETAIN_TARGET_ANGLE := 0.06
+const DISTANCE_WEIGHT := 0.04
 var world: Node3D
 var current_target: Node
 var current_carrier: Node
 var last_range := 0.0
+var primary_melee_target: Node2D
 const TARGET_NONE := 0
 const TARGET_WHITE := 1
 const TARGET_GRAY := 2
 var current_state := TARGET_NONE
 var _aim_ray_query: PhysicsRayQueryParameters2D
 var _aim_exclude_rids: Array[RID] = []
-var _melee_carriers: Dictionary={}
+var _melee_carriers: Dictionary = {}
+var _use_aim_ray := true
 
-func configure(owner_world: Node3D) -> void:
+func configure(owner_world: Node3D, use_aim_ray := true) -> void:
 	world = owner_world
+	_use_aim_ray = use_aim_ray
 
 func _physics_process(_delta: float) -> void:
 	_update_melee_highlights()
+	if not _use_aim_ray:
+		return
 	if not is_instance_valid(world) or not is_instance_valid(world.player):
 		_select(null)
 		return
@@ -39,6 +47,9 @@ func _physics_process(_delta: float) -> void:
 			_select(null, TARGET_NONE)
 		return
 	last_range = player.call("get_effective_attack_range")
+	if player.selected_weapon_id.is_empty() or player.get_active_weapon() is MELEE_WEAPON:
+		_select(null, TARGET_NONE)
+		return
 	var origin: Vector2 = player.call("get_aim_origin")
 	if player.has_method("get_projectile_origin") and preload("res://scripts/data/dream_gun_atlas.gd").has_firearm(String(player.get("selected_weapon_id"))):
 		origin = player.call("get_projectile_origin")
@@ -47,25 +58,69 @@ func _physics_process(_delta: float) -> void:
 	_select(target, TARGET_WHITE)
 
 func _update_melee_highlights() -> void:
-	var next: Dictionary={}
-	if is_instance_valid(world) and is_instance_valid(world.player) and is_instance_valid(world.get("enemy_root")) and not world.player.dead:
-		var player: Node2D=world.player
-		if String(player.get("selected_weapon_id")) in ["","lucille","books"]:
-			var max_distance: float=player.get_effective_attack_range()+32.0
-			for enemy in world.enemy_root.get_children():
-				if enemy.get_meta(&"smoke_hidden_from_player",false):continue
-				if not enemy is Node2D or enemy.global_position.distance_squared_to(player.global_position)>max_distance*max_distance: continue
-				if not player.is_enemy_in_melee_preview(enemy): continue
-				var reference: Variant=enemy.get_meta(&"depth_visual_bridge",null)
-				var carrier: Node=reference.get_ref() if reference is WeakRef else null
-				if is_instance_valid(carrier) and carrier.has_method("set_combat_range_highlight"):
-					carrier.set_combat_range_highlight(true)
-					next[carrier.get_instance_id()]=weakref(carrier)
+	var next: Dictionary = {}
+	var chosen: Node2D
+	var chosen_id := 0
+	var player: Node2D = world.player if is_instance_valid(world) else null
+	if (is_instance_valid(player) and not player.dead and player.movement_enabled and player.attacking_enabled
+		and not player.is_throw_aim_active() and world.get("floor_transition_in_progress") != true):
+		var melee := player.get_active_weapon() as MELEE_WEAPON
+		var direction := Vector2.ZERO
+		if melee != null:
+			direction = melee.get_attack_preview_direction()
+		elif player.selected_weapon_id.is_empty():
+			direction = player.punch_direction if player.punch_active else player.get_aim_direction()
+		if not direction.is_zero_approx():
+			var reach: float = maxf(player.get_effective_attack_range(), 1.0)
+			var origin := player.global_position
+			var best := INF
+			for candidate in world.get_dream_enemies_snapshot():
+				if not is_instance_valid(candidate) or not candidate is Node2D:
+					continue
+				var enemy: Node2D = candidate
+				if not _can_highlight(enemy):
+					continue
+				var reference: Variant = enemy.get_meta(&"depth_visual_bridge", null)
+				var carrier: Node = reference.get_ref() if reference is WeakRef else null
+				if not is_instance_valid(carrier) or not carrier.has_method("set_combat_range_highlight"):
+					continue
+				var reachable: bool = (melee.is_target_in_attack_preview(enemy, direction) if melee != null
+					else player.is_enemy_in_melee_preview(enemy, direction))
+				if not reachable:
+					continue
+				var offset := enemy.global_position - origin
+				var angle := absf(direction.angle_to(offset)) if not offset.is_zero_approx() else 0.0
+				var score := angle + DISTANCE_WEIGHT * offset.length() / reach
+				if enemy == primary_melee_target:
+					score -= RETAIN_TARGET_ANGLE
+				var id := carrier.get_instance_id()
+				if score < best:
+					best = score
+					chosen = enemy
+					chosen_id = id
+				next[id] = {"carrier": reference, "primary": false}
+	primary_melee_target = chosen
+	if chosen_id != 0:
+		next[chosen_id].primary = true
 	for id in _melee_carriers:
-		if next.has(id): continue
-		var carrier: Node=_melee_carriers[id].get_ref()
-		if is_instance_valid(carrier): carrier.set_combat_range_highlight(false)
-	_melee_carriers=next
+		if not next.has(id):
+			_set_melee_carrier(_melee_carriers[id], false)
+	for id in next:
+		if not _melee_carriers.has(id) or _melee_carriers[id].primary != next[id].primary:
+			_set_melee_carrier(next[id], true)
+	_melee_carriers = next
+
+func _can_highlight(enemy: Node2D) -> bool:
+	# The 2D source canvas can be hidden while its 3D actor carrier is visible.
+	return (enemy.is_inside_tree() and not enemy.is_queued_for_deletion()
+		and enemy.visible and enemy.get("dead") != true and enemy.has_method("take_damage")
+		and not enemy.get_meta(&"smoke_hidden_from_player", false) and not enemy.get_meta(&"extinguisher_smoke", false)
+		and (not enemy.has_method("is_damage_runtime_active") or enemy.is_damage_runtime_active()))
+
+func _set_melee_carrier(entry: Dictionary, active: bool) -> void:
+	var carrier: Node = entry.carrier.get_ref()
+	if is_instance_valid(carrier):
+		carrier.set_combat_range_highlight(active, active and entry.primary)
 
 func find_target(origin: Vector2, direction: Vector2, attack_range: float, excluded: RID) -> Node:
 	if _aim_ray_query == null:
@@ -118,10 +173,10 @@ func _select(target: Node, state: int = TARGET_WHITE) -> void:
 	current_target = target
 	current_carrier = null
 	current_state = state if is_instance_valid(target) else TARGET_NONE
-	if not is_instance_valid(target):
+	if not is_instance_valid(target) or target.is_in_group(&"dream_enemies"):
 		return
-	# Prefer a target's depth bridge so Enemy/Furniture outlines are drawn by the
-	# same 3D carrier as the visible sprite. Doors expose the state API directly.
+	# Enemy visuals come exclusively from the melee query above.
+	# Furniture still uses the same 3D carrier as the visible sprite.
 	if target.has_meta(&"depth_visual_bridge"):
 		var reference: WeakRef = target.get_meta(&"depth_visual_bridge")
 		var bridge: Variant = reference.get_ref() if reference != null else null

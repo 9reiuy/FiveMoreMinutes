@@ -26,7 +26,7 @@ func run() -> void:
 	AudioServer.set_bus_mute(0,true); root.size=Vector2i(1280,720); Engine.max_fps=60
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT))
 	var settings:=root.get_node("SettingsManager")
-	settings.set_setting(&"pixelation_enabled",true); settings.set_palette_enabled(true)
+	settings.set_setting(&"pixelation_enabled",true)
 	main=load("res://scenes/app/main.tscn").instantiate(); root.add_child(main); await settle()
 	main.persistent_day_state=main._create_initial_state(); main._show_reception("basic"); await settle()
 	room=main._supported_dream_world
@@ -55,7 +55,7 @@ func run() -> void:
 		prompt.present(word,room.npc_hint_bubble.prompt_anchor(prompt.size),word.hash()); prompt._process(.2); prompt.set_process(false)
 		await frames(2); await shot("action_"+word)
 		check(prompt.text==word and prompt.scale==Vector2.ONE,"Short action keeps original glyph size: "+word)
-	settings.set_setting(&"pixelation_enabled",false); settings.set_palette_enabled(false)
+	settings.set_setting(&"pixelation_enabled",false)
 	room.set_process(true); room.waitress_npc.hint_emotion="nervous"; await frames(12)
 	await shot("talk_native")
 	check(absf(room.interaction_prompt.FRAME_COLOR.s-Color("396FE2").s*.5)<0.0001,"HUD blue retains its half-saturation colour across palettes")

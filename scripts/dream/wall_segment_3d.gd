@@ -210,6 +210,8 @@ func _update_wall_materials() -> void:
 				architecture_cap.shader = preload("res://shaders/dream3d/architecture_cap.gdshader")
 			architecture_cap.set_shader_parameter("wall_height", wall_height)
 			wall_mesh.set_surface_override_material(2, office_section_material if office_section_material!=null else architecture_cap)
+	var decorator:Callable=wall_mesh.get_meta(&"office_surface_decorator",Callable())
+	if decorator.is_valid():decorator.call(wall_mesh)
 
 
 ## Only the first wall that flips cutaway in a given process frame walks the

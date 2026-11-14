@@ -18,7 +18,7 @@ func run() -> void:
 	for index in 8: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
 	display.set_selective_enabled(not "--no-pixelation" in OS.get_cmdline_user_args())
-	display.set_palette_enabled(not "--no-palette" in OS.get_cmdline_user_args()); display._process(0.0)
+	display._process(0.0)
 	paused=true
 	for index in 3: await RenderingServer.frame_post_draw
 	var empty: PackedByteArray=display.world_viewport.get_texture().get_image().get_data()
@@ -48,7 +48,7 @@ func run() -> void:
 		bridge._process(0.0)
 		for index in 3: await RenderingServer.frame_post_draw
 		check(incoming_ref.get_ref()==null,"incoming source consumed exactly once")
-		check(bridge.render_viewport.get_texture().get_image().get_used_rect().has_area(),"blood capture is nonempty")
+		check(bridge.actor_sprite.texture.get_image().get_used_rect().has_area(),"displayed blood mask is nonempty")
 		images.append(display.world_viewport.get_texture().get_image().get_data())
 		check(images.back()!=empty,"blood actually visible in formal camera")
 		shapes.append([a.ground_pixels.duplicate(),a.ground_pixel_types.duplicate(),a.ground_visual_scale,a.content_version])

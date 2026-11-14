@@ -33,7 +33,7 @@ func wake_facade_process() -> void:
 
 func _process(_delta: float) -> void:
 	if not is_instance_valid(door) or not is_instance_valid(interior_light): return
-	var leaf_width: float=(door.left_door_mesh.mesh as BoxMesh).size.x
+	var leaf_width: float=door.left_door_mesh.mesh.get_aabb().size.x
 	# The existing animation leaves a 0.10-unit return inside each jamb.
 	# Normalize against that visible aperture, without changing its travel.
 	opening_fraction=clampf((absf(door.left_door_mesh.position.x)-leaf_width*.5)*2.0/(door.opening_width-.20),0.0,1.0)
@@ -117,10 +117,10 @@ func refresh() -> void:
 	warm.position=Vector3(0,2.62,front+.42)
 	warm.light_color=Color("e1ac64"); warm.light_energy=.35
 	warm.omni_range=2.1; warm.shadow_enabled=false; add_child(warm)
-	var leaf_width: float=(door.left_door_mesh.mesh as BoxMesh).size.x
+	var leaf_width: float=door.left_door_mesh.mesh.get_aabb().size.x
 	for i in leaf_displays.size():
 		var plate:=tools()
-		var face: float=(door.left_door_mesh.mesh as BoxMesh).size.z*.5
+		var face: float=door.left_door_mesh.mesh.get_aabb().size.z*.5
 		for side in [-1.0,1.0]:
 			# Steel slab, recessed central field, two broad stiles and end plates.
 			box(plate,0,Vector3(leaf_width-.04,2.48,.14),Vector3(0,0,side*(face+.07)))

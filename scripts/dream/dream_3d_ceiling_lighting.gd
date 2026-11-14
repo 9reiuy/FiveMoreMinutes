@@ -818,6 +818,8 @@ func _fixture_part(parent: Node3D, part_name: String, size: Vector3, offset: Vec
 	part.material_override = _material_cache[material_key]
 	part.position = offset
 	part.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	if luminous:
+		part.set_meta(&"ceiling_fixture_emitter", true)
 	parent.add_child(part)
 	return part
 

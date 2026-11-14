@@ -117,8 +117,10 @@ func _ready() -> void:
 	for arg in OS.get_cmdline_args():
 		if arg in ["--script", "-s"]:
 			script_run = true
-	recording_enabled = not script_run
-	if script_run: current_mode = DisplayMode.HIDDEN
+	var standalone := OS.has_feature("prologue_demo")
+	recording_enabled = not script_run and not standalone
+	if script_run or standalone: current_mode = DisplayMode.HIDDEN
+	if standalone: set_process_input(false)
 	if "--perf-record" in OS.get_cmdline_user_args(): recording_enabled = true
 	session_start_usec = Time.get_ticks_usec()
 	prev_frame_usec = session_start_usec
@@ -141,13 +143,13 @@ func start_recording(base_dir: String = RUNS_PATH) -> Error:
 	if recorder.active: return ERR_ALREADY_IN_USE
 	_phase_trace.clear();_render_requests.clear();_last_trace_usec=0;_traces_written=0;_severe_traces_written=0;_last_severe_trace_usec=0
 	recording_enabled = true
-	var metadata := {"engine": Engine.get_version_info(), "project_version": ProjectSettings.get_setting("application/config/version", ""), "renderer": ProjectSettings.get_setting("rendering/renderer/rendering_method", "gl_compatibility"), "display": DisplayServer.get_name(), "os": OS.get_name(), "resolution": [get_viewport().size.x, get_viewport().size.y], "max_fps": Engine.max_fps, "physics_ticks_per_second": Engine.physics_ticks_per_second, "monitor_sha256": get_script().source_code.sha256_text()}
+	var metadata := {"engine": Engine.get_version_info(), "project_version": ProjectSettings.get_setting("application/config/version", ""), "renderer": RenderingServer.get_current_rendering_method(), "rendering_driver": RenderingServer.get_current_rendering_driver_name(), "display": DisplayServer.get_name(), "os": OS.get_name(), "resolution": [get_viewport().size.x, get_viewport().size.y], "max_fps": Engine.max_fps, "physics_ticks_per_second": Engine.physics_ticks_per_second, "monitor_sha256": get_script().source_code.sha256_text()}
 	var settings := get_node_or_null("/root/SettingsManager")
 	if RenderingServer.has_method("get_video_adapter_name"):
 		metadata.gpu = RenderingServer.call("get_video_adapter_name")
 	if is_instance_valid(settings):
 		metadata.render_settings = {}
-		for key in [&"pixelation_enabled", &"palette_enabled", &"palette_scheme", &"shadow_quality"]:
+		for key in [&"pixelation_enabled", &"shadow_quality"]:
 			metadata.render_settings[String(key)] = settings.get_setting(key)
 		_connect_once(settings, &"setting_changed", _on_setting_changed)
 	var error: Error = recorder.begin(base_dir, metadata)
@@ -402,7 +404,7 @@ func _event_value(value: Variant, kind: String) -> void:
 
 
 func _on_setting_changed(key: StringName, value: Variant) -> void:
-	if key in [&"pixelation_enabled", &"palette_enabled", &"palette_scheme", &"shadow_quality"]:
+	if key in [&"pixelation_enabled", &"shadow_quality"]:
 		record_event("render_setting_changed", {"key": String(key), "value": value})
 
 

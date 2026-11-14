@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/main_menu.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scripts/ui/screen_wall_main_menu.gd" id="2_adapter"]
+
+[node name="ScreenWallMenuCandidate" instance=ExtResource("1_base")]
+script = ExtResource("2_adapter")

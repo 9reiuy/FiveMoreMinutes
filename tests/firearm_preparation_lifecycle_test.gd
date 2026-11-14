@@ -33,7 +33,7 @@ func run() -> void:
 		world.player.global_position=world.get_player_root_position_for_cell(world.spawn_cell)
 		world.transition_phase=&"IDLE"; world.floor_transition_in_progress=false
 		world._update_camera_and_actor_projection(0.0)
-		display.set_selective_enabled(floor_index!=1); display.set_palette_enabled(floor_index!=2); display._process(0.0)
+		display.set_selective_enabled(floor_index!=1); display._process(0.0)
 		world.begin_firearm_render_preparation()
 		await settle()
 		# Pausing before generation prevents the normal bridge process callback.

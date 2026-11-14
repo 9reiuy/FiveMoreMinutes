@@ -239,7 +239,7 @@ func run()->void:
 	DisplayServer.window_set_size(Vector2i(1280,720));DisplayServer.window_set_position(Vector2i(-30000,-30000))
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED);Engine.max_fps=0
 	var settings:Node=root.get_node("SettingsManager")
-	settings.values["shadow_quality"]="high";settings.values["palette_scheme"]=1
+	settings.values["shadow_quality"]="high"
 	lab=load(LAB_PATH).instantiate();root.add_child(lab)
 	while lab.busy or not lab.ready_world:await process_frame
 	sink=SINK.new();root.add_child(sink);PERF._reference=weakref(sink)

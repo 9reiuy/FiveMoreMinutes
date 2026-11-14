@@ -52,9 +52,7 @@ func _run() -> void:
 	for pixels in [false, true]:
 		for palette in [false, true]:
 			settings.values["pixelation_enabled"] = pixels
-			settings.values["palette_enabled"] = palette
 			settings.setting_changed.emit(&"pixelation_enabled", pixels)
-			settings.setting_changed.emit(&"palette_enabled", palette)
 			await frames(2)
 			for material in component.materials.values():
 				check(material.get_shader_parameter("office_dither_enabled") == true, "Display switch changed Dither")

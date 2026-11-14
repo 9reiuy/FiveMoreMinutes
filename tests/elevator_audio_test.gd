@@ -153,7 +153,7 @@ func _test_rumble_loop_configuration(manager: Node) -> void:
 
 	var length := wav.get_length()
 	check(length > 3.90 and length < 4.10,
-		"elevator rumble is the ~4.0s power-station loop (got %.3fs)" % length)
+		"elevator rumble is the 4.0s recorded ride loop (got %.3fs)" % length)
 
 
 # ------------------------------------------------------------------------------

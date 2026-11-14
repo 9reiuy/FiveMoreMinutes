@@ -24,9 +24,7 @@ func floor_measure(world: Node,label: String,room: Dictionary) -> void:
 	paused=true; await frames(3)
 	var original: Image=await capture(label)
 	var display: Node=get_first_node_in_group("dream_display")
-	var palette: bool=display.palette_enabled
-	display.palette_material.set_shader_parameter("palette_enabled",false)
-	display.palette_material.set_shader_parameter("tonal_sample",false)
+	var palette: bool=false
 	var marker:=ShaderMaterial.new(); var marker_shader:=Shader.new()
 	marker_shader.code="shader_type spatial; render_mode unshaded,cull_disabled; uniform vec2 room_center; varying vec3 world; void vertex(){world=(MODEL_MATRIX*vec4(VERTEX,1.)).xyz;} void fragment(){ vec2 d=abs(world.xz-room_center); ALBEDO=(d.x<=1.25 && d.y<=1.25)?vec3(1.,0.,1.):vec3(0.); }"
 	marker.shader=marker_shader; marker.set_shader_parameter("room_center",Vector2(room.center_cell))
@@ -37,7 +35,6 @@ func floor_measure(world: Node,label: String,room: Dictionary) -> void:
 	await frames(3)
 	var mask: Image=await capture(label+"_floor_mask")
 	for entry in replaced: entry[0].material_override=entry[1]
-	display.palette_material.set_shader_parameter("palette_enabled",palette); display.palette_material.set_shader_parameter("tonal_sample",true)
 	var maximum:=0.; var count:=0; var hotspots:=0
 	for y in range(2,original.get_height()-2):
 		for x in range(2,original.get_width()-2):
@@ -92,7 +89,7 @@ func run() -> void:
 		for room in world.rooms:
 			world.player.global_position=Vector2(room.center_cell)*32.; world.activate_room(int(room.id)); await frames(20)
 			for scheme in [1,2]:
-				root.get_node("SettingsManager").set_palette_scheme(scheme); await frames(3)
+				await frames(3)
 				await floor_measure(world,"%s_room%d_palette%d"%[type,int(room.id),scheme],room)
 	var result: Dictionary={"checks":checks,"failures":failures,"metrics":metrics}
 	FileAccess.open(OUT+"/metrics.json",FileAccess.WRITE).store_string(JSON.stringify(result,"\t"))

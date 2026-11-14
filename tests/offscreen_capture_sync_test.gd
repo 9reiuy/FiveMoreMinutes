@@ -89,7 +89,7 @@ func run() -> void:
 	for index in bridges.size(): bridges[index].source_actor.global_position=homes[index]
 	for pixelation in [false,true]:
 		for palette in [false,true]:
-			display.set_selective_enabled(pixelation); display.set_palette_enabled(palette); display._process(0.0)
+			display.set_selective_enabled(pixelation); display._process(0.0)
 			var images: Array[Image]=[]
 			for legacy in [true,false,true]:
 				for index in bridges.size(): bridges[index].source_actor.global_position=homes[index]+Vector2(4000,0)

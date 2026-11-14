@@ -15,10 +15,9 @@ func run() -> void:
 	var palette_rect := ColorRect.new()
 	palette_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	palette_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var palette_material := ShaderMaterial.new()
-	palette_material.shader = preload("res://shaders/palette_quantize.gdshader")
-	palette_material.set_shader_parameter("palette_enabled", false)
-	palette_rect.material = palette_material
+	var semantic_material := ShaderMaterial.new()
+	semantic_material.shader = preload("res://shaders/world_semantic_decode.gdshader")
+	palette_rect.material = semantic_material
 	palette_layer.add_child(palette_rect)
 	root.add_child(palette_layer)
 	var captured: Dictionary = {}
@@ -49,12 +48,10 @@ func run() -> void:
 					if light.is_visible_in_tree():
 						lights += 1
 				print("ROOM METRICS ", kind, " process_ms=", Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0, " visible_lights=", lights)
-				palette_material.set_shader_parameter("palette_enabled", true)
 				for frame in range(3):
 					await process_frame
 				await RenderingServer.frame_post_draw
 				root.get_texture().get_image().save_png(ProjectSettings.globalize_path("res://.runtime/combat_%s_palette1.png" % kind))
-				palette_material.set_shader_parameter("palette_enabled", false)
 	world.queue_free()
 	await process_frame
 	quit()

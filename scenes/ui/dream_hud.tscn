@@ -4,6 +4,7 @@
 [ext_resource type="Resource" uid="uid://b1f2o7rqduk6v" path="res://resources/demo_config.tres" id="2_config"]
 [ext_resource type="Texture2D" uid="uid://utgamwchge0o" path="res://art/icon/dash.png" id="3_dash_icon"]
 [ext_resource type="Shader" uid="uid://du4ml7b22wg1o" path="res://shaders/dash_cooldown_icon.gdshader" id="4_dash_shader"]
+[ext_resource type="PackedScene" path="res://scenes/ui/liquid_health_meter.tscn" id="5_health"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_track"]
 bg_color = Color(0.03, 0.04, 0.06, 0.72)
@@ -28,6 +29,8 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_hud")
 config = ExtResource("2_config")
+
+[node name="LiquidHealthMeter" parent="." instance=ExtResource("5_health")]
 
 [node name="EndlessDayArea" type="Control" parent="." unique_id=1339147320]
 visible = false

@@ -127,7 +127,6 @@ func run() -> void:
 		world.call("_update_camera_and_actor_projection", 0.0)
 		for enabled: bool in [true, false]:
 			# Exercise Main's existing final material without changing saved preferences.
-			app.call("_apply_palette_enabled", enabled)
 			caption.text = "%s | ROOM %d | PALETTE %s | FLASHLIGHT OFF\nCEILING %d / WALL %d" % [archetype.to_upper(), target, "1" if enabled else "OFF", tops, walls]
 			await frames(3)
 			await RenderingServer.frame_post_draw
@@ -219,7 +218,6 @@ func capture_overview(room: Dictionary, archetype: String, tops: int, walls: int
 		if fits: break
 		distance *= 1.1
 	for enabled: bool in [true, false]:
-		app.call("_apply_palette_enabled", enabled)
 		caption.text = "%s | INSPECTION OVERVIEW | PALETTE %s / FLASHLIGHT OFF\nCEILING %d / WALL %d | CAMERA PULLED BACK FOR INSPECTION ONLY" % [archetype.to_upper(), "1" if enabled else "OFF", tops, walls]
 		await frames(3)
 		await RenderingServer.frame_post_draw
@@ -235,7 +233,6 @@ func capture_sconce_ab(manager: Node3D, room_id: int, archetype: String) -> void
 			sconces.append(light)
 			print("SCONCE_RUNTIME visible=", light.is_visible_in_tree(), " position=", light.global_position, " forward=", -light.global_basis.z, " energy=", light.light_energy)
 			if not light.shadow_enabled: failures += 1
-	app.call("_apply_palette_enabled", false)
 	caption.text = "WALL LIGHT A/B | PALETTE OFF | FROZEN SCENE"
 	var camera: Camera3D = world.get("camera_3d")
 	var original_transform := camera.global_transform
@@ -334,7 +331,6 @@ func capture_sconce_detail(plan: Array) -> void:
 	camera.global_position = p + Vector3(inward.x * 2.2, 0.7, inward.y * 2.2)
 	camera.look_at(p)
 	for enabled: bool in [true, false]:
-		app.call("_apply_palette_enabled", enabled)
 		caption.text = "LOUNGE WALL LIGHT DETAIL | PALETTE %s / FLASHLIGHT OFF\nINSPECTION CAMERA ONLY / PRODUCTION LIGHT SETTINGS" % ["1" if enabled else "OFF"]
 		await frames(3)
 		await RenderingServer.frame_post_draw

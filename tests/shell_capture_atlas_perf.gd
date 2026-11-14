@@ -9,7 +9,7 @@ func run() -> void:
 	world.generate_on_ready=false; world.persist_profile=false; world.enable_game_start_cab_exit=false
 	var display: Control=load("res://scenes/dream/preview/SelectivePixelPreview.tscn").instantiate()
 	display.world=world; display.preview_mode=false; root.add_child(display)
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	world.set_meta(&"test_legacy_shell_atlas",true)
 	if not world.regenerate(120): quit(1); return
 	for index in 30: await process_frame

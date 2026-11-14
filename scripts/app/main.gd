@@ -27,7 +27,6 @@ const GAME_PHONE_SCRIPT := preload("res://scripts/ui/game_phone.gd")
 @onready var debug_console = $DebugConsole
 @onready var pause_menu: GlobalPauseMenu = $PauseMenu
 @onready var loading_overlay = $LoadingOverlay
-@onready var palette_overlay: ColorRect = $FinalPaletteLayer/PaletteOverlay
 
 var current_screen: Node
 var _supported_dream_world: Node3D
@@ -59,7 +58,6 @@ func _ready() -> void:
 	cursor_hand_scaled = _scaled_cursor(CURSOR_HAND, 3)
 	Input.set_custom_mouse_cursor(cursor_pointer_scaled, Input.CURSOR_ARROW, Vector2(6, 6))
 	Input.set_custom_mouse_cursor(cursor_hand_scaled, Input.CURSOR_POINTING_HAND, Vector2(15, 6))
-	_configure_palette()
 	if transition_director == null and has_node("TransitionLayer"):
 		if $TransitionLayer.has_node("TransitionDirector"):
 			transition_director = $TransitionLayer.get_node("TransitionDirector") as TransitionDirector
@@ -82,44 +80,6 @@ func _ready() -> void:
 	if not debug_console.dream_jump_requested.is_connected(_on_debug_dream_jump_requested):
 		debug_console.dream_jump_requested.connect(_on_debug_dream_jump_requested)
 	_show_main_menu()
-
-
-func _configure_palette() -> void:
-	# Settings persist globally, but Palette belongs only to the Dream world.
-	_apply_palette_enabled(SettingsManager.get_palette_enabled())
-	var callback := Callable(self, "_on_palette_setting_changed")
-	if not SettingsManager.setting_changed.is_connected(callback):
-		SettingsManager.setting_changed.connect(callback)
-
-
-func _on_palette_setting_changed(setting_name: StringName, value: Variant) -> void:
-	if setting_name == &"palette_enabled":
-		_apply_palette_enabled(bool(value))
-	elif setting_name == &"palette_scheme":
-		_apply_palette_scheme(int(value))
-	elif setting_name == &"pixelation_enabled" and _active_pixelation_screen() != null:
-		_active_pixelation_screen().call("set_selective_enabled", bool(value))
-		_apply_palette_enabled(SettingsManager.get_palette_enabled())
-
-
-func _apply_palette_enabled(enabled: bool) -> void:
-	if palette_overlay != null:
-		palette_overlay.hide()
-		var palette_material := palette_overlay.material as ShaderMaterial
-		if palette_material != null:
-			palette_material.set_shader_parameter(&"palette_enabled", false)
-	var pixel_screen := _active_pixelation_screen()
-	if pixel_screen != null:
-		pixel_screen.call("set_palette_enabled", enabled)
-
-
-func _apply_palette_scheme(scheme: int) -> void:
-	if palette_overlay == null:
-		return
-	var palette_material := palette_overlay.material as ShaderMaterial
-	if palette_material == null or palette_material.get_shader_parameter(&"palette_scheme") == null:
-		return
-	palette_material.set_shader_parameter(&"palette_scheme", scheme)
 
 
 func _input(event: InputEvent) -> void:
@@ -692,8 +652,7 @@ func _set_screen(next_screen: Node) -> void:
 		_supported_dream_world = next_screen as Node3D
 		var pixel_screen := SELECTIVE_PIXEL_SCENE.instantiate()
 		pixel_screen.set(&"preview_mode", false)
-		pixel_screen.set(&"initial_selective_enabled", bool(SettingsManager.get_setting(&"pixelation_enabled", true)))
-		pixel_screen.set(&"palette_enabled", SettingsManager.get_palette_enabled())
+		pixel_screen.set(&"initial_selective_enabled", bool(SettingsManager.get_setting(&"pixelation_enabled", false)))
 		pixel_screen.set(&"world", next_screen)
 		current_screen = pixel_screen
 	else:
@@ -701,7 +660,6 @@ func _set_screen(next_screen: Node) -> void:
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	scene_container.add_child(current_screen)
 	pause_allowed = current_screen.scene_file_path != "res://scenes/ui/main_menu.tscn"
-	_apply_palette_enabled(SettingsManager.get_palette_enabled())
 
 
 func _active_pixelation_screen() -> Node:

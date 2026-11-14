@@ -26,7 +26,7 @@ func run() -> void:
 	world.player.invulnerability_left = 999
 	for frame in 30: await process_frame
 	paused = true
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	Furniture3DDebris.shader_variant_anchors.clear()
 	for floor_number in 3:
 		print("DESTRUCTION_BUDGET_STAGE floor=",floor_number+1," begin")

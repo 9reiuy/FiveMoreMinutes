@@ -1,0 +1,25 @@
+{
+  "id": "precast_concrete_wall",
+  "source": "https://polyhaven.com/a/precast_concrete_wall",
+  "license": "CC0-1.0",
+  "maps": [
+    {
+      "role": "Diffuse",
+      "file": "precast_concrete_wall_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/precast_concrete_wall/precast_concrete_wall_diff_1k.jpg",
+      "sha256": "6de50a734befbddc9f886af99ae8102f6011c88c8d31aa0b34b50f483349093c"
+    },
+    {
+      "role": "nor_gl",
+      "file": "precast_concrete_wall_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/precast_concrete_wall/precast_concrete_wall_nor_gl_1k.jpg",
+      "sha256": "8e6f6ebc27669855588da0d3b982b972fc4d4dc75f313d5cce1c127038285a80"
+    },
+    {
+      "role": "Rough",
+      "file": "precast_concrete_wall_rough_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/precast_concrete_wall/precast_concrete_wall_rough_1k.jpg",
+      "sha256": "b833763459ac5b4914b5dfb54457c9fc7d68928c747ba557e82507eea38c07ae"
+    }
+  ]
+}

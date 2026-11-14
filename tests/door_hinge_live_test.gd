@@ -20,7 +20,6 @@ func run() -> void:
 	var legacy := "--legacy" in OS.get_cmdline_user_args()
 	var output := OUTPUT+("/before" if legacy else "/after")
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
-	root.get_node("SettingsManager").set_palette_enabled(true)
 	root.get_node("SettingsManager").set_setting(&"pixelation_enabled",true)
 	main = load("res://scenes/app/main.tscn").instantiate()
 	root.add_child(main)

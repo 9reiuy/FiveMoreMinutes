@@ -1,0 +1,66 @@
+{
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "author": "Joseph Sardin",
+  "publisher": "BigSoundBank / La Sonothèque",
+  "note": "Attribution is not required. Recorded because this project keeps a source list for third-party material. Edited files are the wavs in this folder. Original downloads were not copied into the game.",
+  "edited_sha256": {
+    "van_engine.wav": "9d527d0cc124356b6dd7041709b0a722da451f7b68ad51ec9fce765f3764052e",
+    "garage_room_tone.wav": "4fb2c292e5116a4191c845747cbc27e66ea9cd3aa89c7fc593f0e78b289c181e",
+    "roller_shutter.wav": "242300541f834250766956cc23eb55db378fb9fd84bd06cfa492872bfe90b4ec",
+    "van_crash.wav": "734965c926c2465806d47097ff4892fe4e0a7c153568c25031220e97ecdd3f0f",
+    "van_doors.wav": "013f5a11fbee22846bbad838ff31d5542ca9f7172eb90cd2ea43ae96bcd8f094",
+    "van_brake.wav": "7f4aa2fbef602645d7567d9361d2c93b133287bbb37df59b847beac069eccb70"
+  },
+  "sources": [
+    {
+      "id": 2475,
+      "page": "https://bigsoundbank.com/manual-roller-shutter-closing-out-2-s2475.html",
+      "download": "https://bigsoundbank.com/UPLOAD/ogg/2475.ogg",
+      "description": "Manual roller shutter closing, one hand, indoor.",
+      "used_in": "roller_shutter.wav",
+      "edit": "Densest 1.05 seconds, short fade, two lowpassed reflections at 29 ms and 53 ms."
+    },
+    {
+      "id": 604,
+      "page": "https://bigsoundbank.com/underground-parking-s0604.html",
+      "download": "https://bigsoundbank.com/UPLOAD/ogg/0604.ogg",
+      "description": "Underground parking in Chartres, stereo soundscape with occasional tire noise.",
+      "used_in": "garage_room_tone.wav",
+      "edit": "Steadiest 18-second region, highpass 50 Hz, lowpass 4200 Hz, 0.45-second loop crossfade."
+    },
+    {
+      "id": 1145,
+      "page": "https://bigsoundbank.com/truck-engine-s1145.html",
+      "download": "https://bigsoundbank.com/UPLOAD/ogg/1145.ogg",
+      "description": "Iveco Daily 3.0 40C14 HPI diesel, recorded outdoors.",
+      "used_in": "van_engine.wav",
+      "edit": "Steadiest 3.2 seconds, highpass 70 Hz, lowpass 3400 Hz so it sits inside concrete, 80 ms loop crossfade."
+    },
+    {
+      "id": 1510,
+      "page": "https://bigsoundbank.com/car-sliding-door-opening-s1510.html",
+      "download": "https://bigsoundbank.com/UPLOAD/ogg/1510.ogg",
+      "description": "Kia Carnival sliding side door opening, recorded inside the vehicle.",
+      "used_in": "van_doors.wav",
+      "edit": "First 0.92 seconds from the opening onset, one short reflection."
+    },
+    {
+      "id": 1778,
+      "page": "https://bigsoundbank.com/fall-2-sheet-steel-bars-3-s1778.html",
+      "download": "https://bigsoundbank.com/UPLOAD/ogg/1778.ogg",
+      "description": "Two sheet-steel bars falling onto a path.",
+      "used_in": "van_crash.wav",
+      "edit": "Loudest hit, pitched-down body, highpassed metal, plus an original 46/71 Hz and lowpassed-noise mass tail. That tail is not from the recording; no CC0 van-into-concrete collision was found."
+    },
+    {
+      "id": 2368,
+      "page": "https://bigsoundbank.com/screeching-tires-1-s2368.html",
+      "download": "https://bigsoundbank.com/UPLOAD/ogg/2368.ogg",
+      "author": "Dorian Clair",
+      "description": "Squeal of four car tires locking up, recorded outdoors.",
+      "used_in": "van_brake.wav",
+      "edit": "1.66 seconds from the sustained lockup, highpass left intact, lowpass 6200 Hz, two short concrete reflections."
+    }
+  ]
+}

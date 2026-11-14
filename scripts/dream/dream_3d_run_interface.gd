@@ -1,5 +1,6 @@
 extends Node
 ## Runtime adapter for the 3D Dream HUD, card, save state and combat flow.
+const PLAYER_CUE = preload("res://scenes/ui/fullscreen_player_cue.tscn")
 const SAVE = preload("res://scripts/app/game_save_store.gd")
 const CONFIG = preload("res://resources/demo_config.tres")
 const SFX = preload("res://scripts/audio/sfx_manager.gd")
@@ -32,6 +33,8 @@ var death_transition_finished := false
 var death_sequence_generation := 0
 var restart_in_progress := false
 var ui_layer: CanvasLayer
+## Created only on an explicit request; no automatic message triggers.
+var player_cue: CanvasLayer
 
 func configure(owner_world: Node3D, ui: CanvasLayer, cursor: Control) -> void:
 	preload("res://scripts/app/game_input_actions.gd").configure()
@@ -71,6 +74,7 @@ func configure(owner_world: Node3D, ui: CanvasLayer, cursor: Control) -> void:
 	player.configure_feedback_audio(CONFIG)
 	hud = preload("res://scenes/ui/dream_hud.tscn").instantiate()
 	ui.add_child(hud)
+	hud.set_health_motion_source(player)
 	player.health_changed.connect(hud.set_health)
 	player.dash_state_changed.connect(hud.set_dash_state)
 	player.skill_state_changed.connect(hud.set_skill_state)
@@ -137,6 +141,8 @@ func set_dungeon_minimap_player(position: Vector2, room_id: int) -> void:
 		hud.call("set_dungeon_minimap_player", position, room_id)
 
 func _process(delta: float) -> void:
+	if is_instance_valid(player_cue) and player_cue.active and not _player_cue_allowed():
+		cancel_player_cue()
 	if not is_instance_valid(world) or get_tree().paused or player.dead:
 		return
 	seconds += delta
@@ -224,6 +230,7 @@ func complete_boss_layer(layer_id: int) -> void:
 	_save()
 
 func _on_death() -> void:
+	cancel_player_cue()
 	var diagnostic_started:=PERF.begin(self)
 	_clear_death_presentation()
 	death_transition_finished = false
@@ -239,7 +246,11 @@ func _on_death() -> void:
 		time_controller.set("tactical_planning_active", false)
 		time_controller.set("dive_bullet_time_active", false)
 		time_controller.set("hitstop_active", false)
-	Engine.time_scale = 1.0
+	var live_scene_clock := Callable()
+	if player.has_method("get_death_shot_elapsed") and float(player.call("get_death_shot_elapsed")) >= 0.0:
+		live_scene_clock = Callable(player, "get_death_shot_elapsed")
+	else:
+		Engine.time_scale = 1.0
 	if is_instance_valid(card) and card.visible:
 		_close_card()
 	if is_instance_valid(crosshair):
@@ -256,7 +267,6 @@ func _on_death() -> void:
 	damage_flash_left = 0.0
 	if is_instance_valid(damage_flash):
 		damage_flash.color.a = 0.0
-	death_sequence_generation += 1
 	var current_gen := death_sequence_generation
 	PERF.end(self,"death_actor_cleanup",diagnostic_started)
 	if player.last_damage_source == &"exterior_fall" and player.get_meta(&"exterior_fall_wilhelm", false):
@@ -272,7 +282,7 @@ func _on_death() -> void:
 	death_effect = crt
 	world.add_child(crt)
 	crt.finished.connect(_finish_death_transition, CONNECT_ONE_SHOT)
-	crt.play(CONFIG.death_crt_effect_seconds)
+	crt.play(CONFIG.death_crt_effect_seconds, live_scene_clock)
 	PERF.end(self,"death_crt_init",diagnostic_started)
 
 func _finish_death_transition() -> void:
@@ -314,6 +324,9 @@ func _clear_death_presentation() -> void:
 func _restart_after_death() -> void:
 	if restart_in_progress: return
 	restart_in_progress=true
+	_clear_death_presentation()
+	if player.has_method("release_death_shot"):
+		player.release_death_shot()
 	death_transition_finished = false
 	damage_flash_left = 0.0
 	if is_instance_valid(damage_flash):
@@ -401,6 +414,33 @@ func _on_healed(amount: float) -> void:
 	world._spawn_depth_bridge(number,[^"."],Vector2(64,64),BaseMaterial3D.BILLBOARD_ENABLED,0.05,0.0)
 
 func _exit_tree() -> void:
+	cancel_player_cue()
+	if is_instance_valid(player_cue):
+		player_cue.queue_free()
+	player_cue = null
 	if is_instance_valid(pause_manager):
 		pause_manager.release_pause(&"SKILLS_MENU")
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func play_player_cue(message: String, seconds: float = -1.0) -> bool:
+	if message.strip_edges().is_empty() or not _player_cue_allowed() or not is_instance_valid(ui_layer):
+		return false
+	# The presentation wrapper promotes the existing HUD to the root viewport.
+	# Wait for that promotion so it cannot reparent an active time owner later.
+	if ui_layer.get_viewport() != get_tree().root:
+		return false
+	if not is_instance_valid(player_cue):
+		player_cue = PLAYER_CUE.instantiate()
+		player_cue.custom_viewport = get_tree().root
+		ui_layer.get_parent().add_child(player_cue)
+	return player_cue.play_cue(message, seconds)
+
+
+func cancel_player_cue() -> void:
+	if is_instance_valid(player_cue):
+		player_cue.cancel()
+
+
+func _player_cue_allowed() -> bool:
+	return is_inside_tree() and not is_queued_for_deletion() and is_instance_valid(world) and is_instance_valid(player) and not get_tree().paused and not player.dead and player.movement_enabled and not restart_in_progress and not world.floor_transition_in_progress and String(world.transition_phase) == "IDLE"

@@ -1,9 +1,12 @@
 extends Node
-## Space's sole gameplay controller. The player remains the only physics actor.
+## Shared movement authority for the fast dash and the dive roll.
 const VISUAL := preload("res://scripts/dream/phase_dash_visual_3d.gd")
+const ROLL_POSE := preload("res://scripts/entities/player_dive_roll_pose.gd")
 const TAIL_DURATION := .24
 var player: CharacterBody2D
 var active := false
+var dive_roll := false
+var landed := false
 var origin := Vector2.ZERO
 var endpoint := Vector2.ZERO
 var direction := Vector2.RIGHT
@@ -26,7 +29,7 @@ var impact_played := false
 
 func _strike_segment(point: Vector2) -> void:
 	if not _current(): return
-	# Space's real travelled segment owns destruction. Landing searches and
+	# The real travelled segment owns destruction. Landing searches and
 	# cancelled previews remain pure; use the body center, not the foot anchor.
 	if world.has_method("queue_dash_wall_breaches"):
 		var collision: CollisionShape2D=player.body_collision
@@ -121,7 +124,7 @@ func _recover_landing(distance: float) -> Vector2:
 			best = cost
 	return nearest
 
-func try_start(target_direction: Vector2 = Vector2.ZERO) -> bool:
+func try_start(target_direction: Vector2 = Vector2.ZERO, use_dive_roll: bool = false) -> bool:
 	if active or not player.can_start_dash_aim(true) or not player.attacking_enabled or player.throw_aim_active or player.tactical_plan_active or player.is_dash_hunger_disabled() or not player._presentation_pointer_input_allowed(): return false
 	world = player._dream_world()
 	if world == null or not world.has_method("resolve_phase_dash_attack"): return false
@@ -140,6 +143,8 @@ func try_start(target_direction: Vector2 = Vector2.ZERO) -> bool:
 	old_mask = player.collision_mask
 	endpoint = find_landing(origin,direction,player.dash_distance,old_mask)
 	if not endpoint.is_finite() or origin.distance_to(endpoint)<1.0: return false
+	dive_roll = use_dive_roll
+	landed = false
 	floor_token = int(world.get("_layout_generation"))
 	source = StringName(player.melee_weapon_id) if not player.melee_weapon_id.is_empty() else &"player_punch"
 	var weapon: Node = player._get_weapon_node(player.melee_weapon_id)
@@ -152,12 +157,12 @@ func try_start(target_direction: Vector2 = Vector2.ZERO) -> bool:
 	player.dash_cooldown_left = player.dash_cooldown
 	player.dash_start = origin
 	player.dash_end = endpoint
-	player.active_dash_duration = player.dash_duration
+	player.active_dash_duration = ROLL_POSE.ROLL_DURATION if dive_roll else player.dash_duration
 	player.dash_elapsed = 0.0
 	player.dash_roll_direction = direction
 	player.dashing = true
 	player.is_diving = false
-	player.dash_invulnerability_left = player.dash_duration
+	player.dash_invulnerability_left = player.active_dash_duration
 	player.collision_layer = 0
 	player.collision_mask = 0
 	player.velocity = Vector2.ZERO
@@ -171,11 +176,17 @@ func try_start(target_direction: Vector2 = Vector2.ZERO) -> bool:
 	active = true
 	body_scale = player.body_pivot.scale
 	if is_instance_valid(player.held_weapon_sprite): player.held_weapon_sprite.visible = not player.selected_weapon_id.is_empty()
-	if not is_instance_valid(effect):
-		effect = VISUAL.new()
-		effect.name = "PlayerPhaseDashVisual"
-		world.floor_root.add_child(effect)
-	effect.begin(world,player,origin,endpoint)
+	if not is_instance_valid(effect): effect = null
+	if dive_roll:
+		if effect != null and effect.visible: effect.fade(0.0)
+		player.dive_roll_pose.begin(direction)
+	else:
+		player.dive_roll_pose.restore()
+		if effect == null:
+			effect = VISUAL.new()
+			effect.name = "PlayerPhaseDashVisual"
+			world.floor_root.add_child(effect)
+		effect.begin(world,player,origin,endpoint)
 	preload("res://scripts/audio/sfx_manager.gd").play_event(&"dash")
 	_strike_segment(origin)
 	player._emit_dash_state()
@@ -187,25 +198,27 @@ func step(delta: float) -> void:
 		cancel()
 		return
 	elapsed += maxf(delta,0.0)
-	var progress := clampf(elapsed/maxf(player.dash_duration,.001),0.0,1.0)
-	var desired:=origin.distance_to(endpoint)*progress
+	var progress := clampf(elapsed/maxf(player.active_dash_duration,.001),0.0,1.0)
+	var travel_progress := ROLL_POSE.travel_progress(progress) if dive_roll else progress
+	var desired := origin.distance_to(endpoint) * travel_progress
 	var supported:=_supported_travel_distance(origin,direction,desired)
 	if supported+0.01<desired:
 		endpoint=origin+direction*supported
 		progress=1.0
+		travel_progress = 1.0
 	player.dash_elapsed = elapsed
-	player.dash_invulnerability_left = maxf(player.dash_duration-elapsed,.001)
-	player.global_position = origin.lerp(endpoint,progress)
+	player.dash_invulnerability_left = maxf(player.active_dash_duration-elapsed,.001)
+	player.global_position = origin.lerp(endpoint, travel_progress)
 	player.velocity = Vector2.ZERO
 	player.visual.rotation = 0.0
 	var snap := sin(pow(progress,.65)*PI)
 	player.body_pivot.rotation = player.body_base_rotation + snap*.32*(-1 if direction.x>0 else 1)
 	player.body_pivot.scale = body_scale*Vector2(1.0+snap*.08,1.0-snap*.06)
-	if is_instance_valid(effect): effect.sync_pose(world,player,progress,1.0,false)
+	if not dive_roll and is_instance_valid(effect): effect.sync_pose(world, player, travel_progress, 1.0, false)
 	if progress < 1.0:
 		_strike_segment(player.global_position)
 		return
-	# A moving prop/enemy can occupy a previously legal endpoint during 140ms.
+	# A moving prop/enemy can occupy a previously legal endpoint during travel.
 	var landing := find_landing(origin,direction,origin.distance_to(endpoint),old_mask)
 	if not landing.is_finite():
 		# Recovery is not a successful dash and must not deal remote damage.
@@ -220,11 +233,13 @@ func step(delta: float) -> void:
 	_strike_segment(endpoint)
 	var killed := int(last_result.get("kills",0))>0
 	_restore()
+	landed = true
 	if killed:
 		player.dash_charges = mini(player.max_dash_charges,player.dash_charges+1)
 		player.dash_cooldown_left = player.dash_cooldown if player.dash_charges<player.max_dash_charges else 0.0
-	tail_left = TAIL_DURATION
-	if is_instance_valid(effect): effect.finish(endpoint,killed)
+	if not dive_roll and is_instance_valid(effect):
+		tail_left = TAIL_DURATION
+		effect.finish(endpoint,killed)
 	player._emit_dash_state()
 
 func _restore() -> void:
@@ -250,6 +265,8 @@ func cancel() -> void:
 			if landing.is_finite(): player.global_position = landing
 			else: return
 		_restore()
+	landed = false
+	if dive_roll: player.dive_roll_pose.restore()
 	tail_left = 0.0
 	if is_instance_valid(effect): effect.fade(0.0)
 

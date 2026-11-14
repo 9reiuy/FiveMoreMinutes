@@ -1,5 +1,6 @@
 extends CompositorEffect
 ## Runs on the sample camera's lit opaque colour before the transparent carriers.
+## Authored preview ink colours; there is no room-colour remap or palette toggle.
 const ROOM_DARK_RGB := Vector3(25.0, 29.0, 46.0)
 const ROOM_LIGHT_RGB := Vector3(255.0, 225.0, 232.0)
 const COMPUTE := """
@@ -32,11 +33,6 @@ float ordered_threshold(ivec2 pixel, int pitch) {
 	);
 	ivec2 cell = (pixel / pitch) % 4;
 	return (float(ranks[cell.y * 4 + cell.x]) + 0.5) / 16.0;
-}
-
-vec3 linear_ink(vec3 bytes) {
-	vec3 srgb = bytes / 255.0;
-	return mix(srgb / 12.92, pow((srgb + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), srgb));
 }
 
 float window_ink_gain(ivec2 pixel, ivec2 size) {
@@ -143,21 +139,6 @@ void main() {
 		ink = step(ordered_threshold(pixel, pitch), coverage);
 	}
 	vec3 color = vec3(ink);
-	if (params.display_options.y > 0.5) {
-		// Preserve the city's existing line color and separate the facade
-		// ink from the warmer indoor palette.
-		bool room = !city && luma > 0.0001;
-		vec3 dark_ink = room ? linear_ink(ROOM_DARK_RGB) : linear_ink(vec3(5.0, 6.0, 10.0));
-		vec3 light_ink = room ? linear_ink(ROOM_LIGHT_RGB) : linear_ink(vec3(156.0, 170.0, 209.0));
-		if (city_wall) {
-			if (own_wall) dark_ink = linear_ink(vec3(10.0, 14.0, 24.0));
-			if (!outline) light_ink = linear_ink(own_wall ? vec3(101.0, 114.0, 142.0) : vec3(72.0, 86.0, 112.0));
-		}
-		if (material_tag == 116) light_ink = linear_ink(vec3(150.0, 231.0, 249.0)); // Robot status ring.
-		if (material_tag == 117) light_ink = linear_ink(vec3(247.0, 87.0, 73.0));   // Drone sensor.
-		if (material_tag == 118) light_ink = linear_ink(vec3(221.0, 130.0, 64.0));  // Drone painted markers.
-		color = mix(dark_ink, light_ink, ink);
-	}
 	if (material_tag == 115) color = vec3(1.0); // Native damage flash stays white.
 	imageStore(scene_color, pixel, vec4(color, source.a));
 }
@@ -172,7 +153,6 @@ var _window_projection_data := PackedFloat32Array()
 var _uploaded_window_data := PackedFloat32Array()
 var _map_from_world := Transform3D.IDENTITY
 var _compiled := false
-var palette_enabled := false
 var window_falloff_enabled := true
 
 func _init() -> void:
@@ -216,8 +196,7 @@ func _render_callback(_callback: int, data: RenderData) -> void:
 	if not _compiled:
 		_compiled = true
 		var source := RDShaderSource.new()
-		source.source_compute = COMPUTE.replace("ROOM_DARK_RGB", "vec3%s" % str(ROOM_DARK_RGB)) \
-			.replace("ROOM_LIGHT_RGB", "vec3%s" % str(ROOM_LIGHT_RGB))
+		source.source_compute = COMPUTE
 		var spirv := _device.shader_compile_spirv_from_source(source)
 		if not spirv.compile_error_compute.is_empty():
 			push_error(spirv.compile_error_compute)
@@ -251,7 +230,7 @@ func _render_callback(_callback: int, data: RenderData) -> void:
 		var clip := projection * Vector4(0.0, 0.0, -38.0, 1.0)
 		var map_from_clip := Projection(_map_from_world * scene.get_cam_transform()) * projection.inverse()
 		var options := PackedFloat32Array([
-			clip.z / clip.w, float(palette_enabled), window_data.size() / 8.0, float(window_falloff_enabled),
+			clip.z / clip.w, 0.0, window_data.size() / 8.0, float(window_falloff_enabled),
 		])
 		for column: Vector4 in [map_from_clip.x, map_from_clip.y, map_from_clip.z, map_from_clip.w]:
 			options.append_array(PackedFloat32Array([column.x, column.y, column.z, column.w]))

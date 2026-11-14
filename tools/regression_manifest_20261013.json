@@ -5,7 +5,9 @@
     "entry_kind": "script",
     "classification": "gpu",
     "timeout_seconds": 180,
-    "user_args": ["--artifact-dir=res://.runtime/hit_feedback_depth_20261016/camera_regression"],
+    "user_args": [
+      "--artifact-dir=res://.runtime/hit_feedback_depth_20261016/camera_regression"
+    ],
     "reason": "Formal Main hit depth, three incoming directions, reused hit/melee slot and real foreground-wall occlusion.",
     "missing_references": []
   },
@@ -45,7 +47,9 @@
     "entry_kind": "script",
     "classification": "gpu",
     "timeout_seconds": 240,
-    "user_args": ["--artifact-dir=res://.runtime/nyangeon_vfx_sample_20261016/camera_final"],
+    "user_args": [
+      "--artifact-dir=res://.runtime/nyangeon_vfx_sample_20261016/camera_final"
+    ],
     "reason": "Background actual Main Camera, production walk/fire/hit clips and controlled smoke cost.",
     "missing_references": []
   },
@@ -3253,26 +3257,6 @@
     "missing_references": []
   },
   {
-    "name": "test_palette_black",
-    "entry": "res://tests/test_palette_black.gd",
-    "entry_kind": "script",
-    "classification": "headless",
-    "timeout_seconds": 120,
-    "user_args": [],
-    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
-    "missing_references": []
-  },
-  {
-    "name": "test_palette_settings_full",
-    "entry": "res://tests/test_palette_settings_full.gd",
-    "entry_kind": "script",
-    "classification": "headless",
-    "timeout_seconds": 120,
-    "user_args": [],
-    "reason": "Assertion regression using engine logic/physics; no required rendered frame wait.",
-    "missing_references": []
-  },
-  {
     "name": "test_pixelation_setting",
     "entry": "res://tests/test_pixelation_setting.gd",
     "entry_kind": "script",
@@ -3581,5 +3565,95 @@
     "entry": "res://tests/passive_npc_dialogue_delivery.gd",
     "name": "passive_npc_dialogue_delivery",
     "reason": "Actual Main GPU Camera delivery, rendered frames and normal input flow."
+  },
+  {
+    "name": "tutorial_maintenance_retirement",
+    "entry": "res://tests/tutorial_maintenance_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "Retired colour-filter settings cannot re-enable; maintenance tutorial display/material/lighting integration.",
+    "missing_references": []
+  },
+  {
+    "name": "tutorial_tv_revision",
+    "entry": "res://tests/tutorial_revision_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 120,
+    "user_args": [],
+    "reason": "TV lesson order, departure power and doors, 50-health mannequin and formal projectile-speed contract.",
+    "missing_references": []
+  },
+  {
+    "name": "rendering_backend_unification_camera",
+    "entry": "res://tests/rendering_backend_unification_camera_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Project-selected Forward+/Vulkan admission through the actual Main, bedroom, reception, elevator journey, two office floors and story bedroom; no renderer CLI override.",
+    "missing_references": []
+  },
+  {
+    "name": "lobby_side_opening_lift",
+    "entry": "res://tests/lobby_side_opening_lift_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 90,
+    "user_args": [],
+    "reason": "Six lobby side-bank lifts: both leaves telescope right, separate rails, fixed stone pockets and real traversable opening/closing collision for A1-A3 and B1-B3.",
+    "missing_references": []
+  },
+  {
+    "name": "reception_lobby_material_camera",
+    "entry": "res://tests/reception_lobby_material_camera_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Actual Main/Camera reference atrium with ring counter, six side-bank lifts, stone/wood/ceiling, full photographic carpets, npc1 single-bubble states, clean furniture noise A/B and real steel SSR A/B.",
+    "missing_references": []
+  },
+  {
+    "name": "reception_npc_hint",
+    "entry": "res://tests/reception_npc_hint_test.gd",
+    "entry_kind": "script",
+    "classification": "headless",
+    "timeout_seconds": 90,
+    "user_args": [],
+    "reason": "Reception npc1 body/blink atlas, formal single bubble, alternating distant emotion/exchange, nearby talk hint and original dialogue signal.",
+    "missing_references": []
+  },
+  {
+    "name": "reception_right_bank_journey",
+    "entry": "res://tests/reception_right_bank_journey_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 300,
+    "user_args": [],
+    "reason": "Opposite lobby lift bank through real Main, rotated cab docking and production office arrival with restored player control.",
+    "missing_references": []
+  },
+  {
+    "name": "reception_lobby_input_route",
+    "entry": "res://tests/art_revision_reception_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Real movement, E reception conversation, tarot card choice and lobby lift approach through Main.",
+    "missing_references": []
+  },
+  {
+    "name": "blood_subpixel_stability_camera",
+    "entry": "res://tests/blood_subpixel_stability_camera_test.gd",
+    "entry_kind": "script",
+    "classification": "gpu",
+    "timeout_seconds": 180,
+    "user_args": [],
+    "reason": "Shared blood subpixel stability at unchanged 640x360, point-alpha A/B, native pixel-mask parity, airborne parity and depth occlusion in 0-1 and a formal floor.",
+    "missing_references": []
   }
 ]

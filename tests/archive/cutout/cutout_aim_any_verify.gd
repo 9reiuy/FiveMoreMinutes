@@ -265,7 +265,6 @@ func run() -> void:
 		L("FAIL entry")
 		quit(1)
 		return
-	main._apply_palette_enabled(false)
 	world.persist_profile = false
 	while world.floor_transition_in_progress:
 		await process_frame

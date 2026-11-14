@@ -192,5 +192,5 @@ func _run() -> void:
 
 	print("EMPLOYEE_PERCEPTION_CHECKS ", checks, " failures ", failures.size())
 	world.queue_free()
-	await process_frame
+	await frames(4)
 	quit(0 if failures.is_empty() else 1)

@@ -126,7 +126,7 @@ func run() -> void:
 	check(weapon.attack_range == 80 and is_equal_approx(weapon.attack_arc_radians, deg_to_rad(160)), "bat unified to 80px/160 degrees")
 	check(weapon.damage == CONFIG.lucille_damage and weapon.attack_interval == CONFIG.weapon_interval_for_rate(CONFIG.lucille_attack_interval), "bat damage/cadence preserved")
 	reset("books")
-	check(weapon.attack_range == 80 and is_equal_approx(weapon.attack_arc_radians, deg_to_rad(150)), "books unified to 80px/150 degrees")
+	check(weapon.attack_range == 40 and is_equal_approx(weapon.attack_arc_radians, deg_to_rad(150)), "books shortened to 40px, original 150-degree arc retained")
 	check(weapon.damage == CONFIG.books_damage and weapon.attack_interval == CONFIG.weapon_interval_for_rate(CONFIG.books_attack_interval), "books damage/cadence preserved")
 	check(CONFIG.lucille_attack_range == 30 and CONFIG.books_attack_range == 30, "enemy reach remains unchanged")
 	check(CONFIG.player_punch_range == 30 and CONFIG.kick_range == 34, "punch and kick unchanged")
@@ -219,10 +219,10 @@ func run() -> void:
 		prop.free()
 		await physics_frame
 	reset("books")
-	var near_book := enemy_at(Vector2(79,0))
-	var far_book := enemy_at(Vector2(81,0))
+	var near_book := enemy_at(Vector2(39,0))
+	var far_book := enemy_at(Vector2(41,0))
 	full_swing()
-	check(near_book.hits == 1 and far_book.hits == 0, "books use the same exact 80px boundary")
+	check(near_book.hits == 1 and far_book.hits == 0, "books use the exact shortened 40px boundary")
 	reset()
 	var interval: float = weapon.attack_interval
 	weapon.apply_attack_speed_upgrade(2.0)

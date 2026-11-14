@@ -65,7 +65,7 @@ func run() -> void:
 		check(counts.x>100 and counts.y>0 and counts.z>0,"Representative walls/windows/doors exist")
 		for pixel in [false,true]:
 			for palette in [false,true]:
-				display.set_selective_enabled(pixel); display.set_palette_enabled(palette)
+				display.set_selective_enabled(pixel)
 				old.refresh_assets()
 				var before: Image=await snapshot()
 				review.refresh_assets()

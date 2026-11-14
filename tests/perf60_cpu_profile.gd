@@ -176,7 +176,6 @@ func _run() -> void:
 	display.preview_mode = false
 	root.add_child(display)
 	display.set_selective_enabled(true)
-	display.set_palette_enabled(false)
 	seed(seed_arg)
 	if not world.regenerate(seed_arg):
 		L("FAIL regenerate"); quit(1); return

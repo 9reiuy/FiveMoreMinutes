@@ -1,28 +1,18 @@
 {
   "dialogues": [
     {
-      "id": "tutorial_guide_intro",
+      "id": "tutorial_tv_intro",
       "lines": [
         {
-          "speaker": "guide",
-          "text": "入职适应训练。听得到吗？……很好。",
-          "expression": "normal",
+          "speaker": "terminal",
+          "text": "这里简单做个入职测试",
           "typewriter_speed": 0.035,
           "text_color": "#D3E0E8",
           "wait_for_input": true
         },
         {
-          "speaker": "guide",
-          "text": "先用 WASD 走动。靠近可以交互的东西时，按 E。",
-          "expression": "normal",
-          "typewriter_speed": 0.035,
-          "text_color": "#D3E0E8",
-          "wait_for_input": true
-        },
-        {
-          "speaker": "guide",
-          "text": "取走手枪，完成射击与换弹。检测结束后，前台在北侧等你。",
-          "expression": "normal",
+          "speaker": "terminal",
+          "text": "到隔壁房间去",
           "typewriter_speed": 0.035,
           "text_color": "#D3E0E8",
           "wait_for_input": true
@@ -30,22 +20,106 @@
       ]
     },
     {
-      "id": "tutorial_exit_sequence",
+      "id": "tutorial_jump_call",
       "lines": [
         {
-          "speaker": "guide",
-          "text": "真没有什么问题吗？",
-          "expression": "panic",
-          "typewriter_speed": 0.045,
-          "text_color": "#FFD5DD",
+          "speaker": "terminal",
+          "text": "请到这边来",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        }
+      ]
+    },
+    {
+      "id": "tutorial_jump_brief",
+      "lines": [
+        {
+          "speaker": "terminal",
+          "text": "这里测试一下跳跃能力",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
           "wait_for_input": true
         },
         {
-          "speaker": "guide",
-          "text": "那祝你有个好梦",
-          "expression": "panic",
-          "typewriter_speed": 0.05,
-          "text_color": "#E7ECF2",
+          "speaker": "terminal",
+          "text": "请在左边线向右边进行起跳",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        }
+      ]
+    },
+    {
+      "id": "tutorial_jump_good",
+      "lines": [
+        {
+          "speaker": "terminal",
+          "text": "好的",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        }
+      ]
+    },
+    {
+      "id": "tutorial_range_call",
+      "lines": [
+        {
+          "speaker": "terminal",
+          "text": "到这边来",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        }
+      ]
+    },
+    {
+      "id": "tutorial_range_brief",
+      "lines": [
+        {
+          "speaker": "terminal",
+          "text": "拿起武器柜里的枪",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        },
+        {
+          "speaker": "terminal",
+          "text": "朝着假人射过去",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        }
+      ]
+    },
+    {
+      "id": "tutorial_range_good",
+      "lines": [
+        {
+          "speaker": "terminal",
+          "text": "好的",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        },
+        {
+          "speaker": "terminal",
+          "text": "训练所用的武器归公司所属，请不要带走",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
+          "wait_for_input": true
+        }
+      ]
+    },
+    {
+      "id": "tutorial_weapon_returned",
+      "lines": [
+        {
+          "speaker": "terminal",
+          "text": "谢谢配合，本次训练的子弹武器磨损费将从本月工资扣除",
+          "typewriter_speed": 0.035,
+          "text_color": "#D3E0E8",
           "wait_for_input": true
         }
       ]

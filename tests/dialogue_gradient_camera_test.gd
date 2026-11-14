@@ -154,14 +154,13 @@ func run() -> void:
 			break
 	check(is_instance_valid(tutorial), "formal Main opens the tutorial scene")
 	if is_instance_valid(tutorial):
-		tutorial._spawn_guide_once()
 		await frames(25)
 		tutorial.player.set_physics_process(false)
-		tutorial.player.global_position = tutorial.guide.global_position + Vector2(24,0)
+		tutorial.player.global_position = tutorial.terminal.global_position + Vector2(36,0)
 		await frames(20)
-		check(tutorial.interaction_resolver.current_target == tutorial.guide, "tutorial guide is selected")
+		check(tutorial.interaction_resolver.current_target == tutorial.terminal, "tutorial television is selected")
 		await tap("pickup_weapon")
-		check(tutorial.dialogue_controller.is_active(), "tutorial guide dialogue starts through interaction")
+		check(tutorial.dialogue_controller.is_active(), "tutorial television dialogue starts through interaction")
 		for _i in range(240):
 			if tutorial.dialogue_controller.typed_chars >= 10:
 				break

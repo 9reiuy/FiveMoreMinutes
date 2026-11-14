@@ -9,6 +9,7 @@ class WorldStub extends Node3D:
 	var token := 1
 	func get_current_floor_token() -> int: return token
 	func get_gameplay_world_position(p: Vector2) -> Vector3: return Vector3(p.x / 32, 0, p.y / 32)
+	func uses_office_night_lighting() -> bool: return false
 class ManagerStub extends Node:
 	var sun: DirectionalLight3D
 	var sparse_lighting_enabled := false
@@ -60,6 +61,16 @@ func run() -> void:
 	policy._before_draw(); check(muzzle.visible, "Functional muzzle retained")
 	var late := OmniLight3D.new(); world.add_child(late); policy._before_draw()
 	check(not late.visible, "New ordinary source suppressed")
+	var flash := OmniLight3D.new()
+	flash.set_meta(&"transient_explosion_light", true)
+	world.add_child(flash); policy._before_draw()
+	check(flash.visible, "Brief explosion flash can illuminate the sparse-lit room")
+	flash.hide(); flash.show()
+	check(flash.visible, "Active flash survives scene visibility enforcement")
+	flash.set_meta(&"transient_explosion_light", false)
+	flash.hide(); flash.show()
+	check(not flash.visible, "Reused flash slot returns to ordinary-source suppression")
+	flash.free(); policy._before_draw()
 	late.free(); policy._before_draw()
 	policy.set_enabled(false)
 	check(lamp.visible and not policy.main.visible and environment.environment == original, "Legacy rollback restores original light/environment")

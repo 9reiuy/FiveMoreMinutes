@@ -64,7 +64,7 @@ func run() -> void:
 	check(world.regenerate(42001),"Formal floor generated")
 	for index in 8: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true); display._process(0.0)
+	display.set_selective_enabled(true); display._process(0.0)
 	paused=true
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED); Engine.max_fps=0
 	var pixel_image:=Image.create(4,4,false,Image.FORMAT_RGBA8)
@@ -150,7 +150,7 @@ func run() -> void:
 		var visual_material_anchors: Array[Material]=[]
 		var original_control := "--visual-control" in OS.get_cmdline_user_args()
 		for mode in [[true,true],[true,false],[false,true],[false,false]]:
-			display.set_selective_enabled(mode[0]); display.set_palette_enabled(mode[1]); display._process(0.0)
+			display.set_selective_enabled(mode[0]); display._process(0.0)
 			for index in 4: await RenderingServer.frame_post_draw
 			var empty: PackedByteArray=display.world_viewport.get_texture().get_image().get_data()
 			var reference: Array[PackedByteArray]=[]

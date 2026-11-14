@@ -168,6 +168,7 @@ var slice_pool: Array[_ClipSliceBand] = []
 var bios_font: FontVariation
 var drone_player: AudioStreamPlayer
 var _drone_triggered := false
+var _live_scene_clock: Callable
 static var _bios_drone_streams:Dictionary={}
 
 static func prepare_audio()->void:
@@ -352,12 +353,14 @@ func _setup_drone_audio() -> void:
 	add_child(drone_player)
 
 
-func play(duration: float = 2.45) -> void:
+func play(duration: float = 2.45, live_scene_clock: Callable = Callable()) -> void:
 	if active or not is_inside_tree():
 		return
 	active = true
 	effect_progress = 0.0
 	effect_duration = maxf(duration, 0.25)
+	_live_scene_clock = live_scene_clock
+	material.set_shader_parameter("live_camera_zoom", _live_scene_clock.is_valid())
 	_drone_triggered = false
 	SFX.play_event(&"crt_off")
 	_set_progress(0.0)
@@ -366,8 +369,15 @@ func play(duration: float = 2.45) -> void:
 func _process(delta: float) -> void:
 	if not active:
 		return
-	var unscaled_delta := delta / maxf(Engine.time_scale, 0.0001)
-	effect_progress += unscaled_delta / effect_duration
+	if _live_scene_clock.is_null():
+		effect_progress += delta / maxf(Engine.time_scale, 0.0001) / effect_duration
+	else:
+		if not _live_scene_clock.is_valid():
+			return
+		var elapsed: float = _live_scene_clock.call()
+		if elapsed < 0.0 or is_equal_approx(effect_progress, elapsed / effect_duration):
+			return
+		effect_progress = elapsed / effect_duration
 	if not _drone_triggered and effect_progress >= 0.32:
 		_drone_triggered = true
 		if is_instance_valid(drone_player) and DisplayServer.get_name() != "headless":
@@ -384,9 +394,13 @@ func _process(delta: float) -> void:
 func _set_progress(value: float) -> void:
 	if is_instance_valid(material):
 		material.set_shader_parameter("progress", value)
+	var terminal_progress := value
+	if not _live_scene_clock.is_null():
+		# Let the player and released weapon separate before the BIOS fills in.
+		terminal_progress = maxf(0.0, value - 0.12 * (1.0 - smoothstep(0.52, 0.78, value)))
 	if is_instance_valid(text_shader_material):
-		text_shader_material.set_shader_parameter("progress", value)
-	_sync_slice_bands(value)
+		text_shader_material.set_shader_parameter("progress", terminal_progress)
+	_sync_slice_bands(terminal_progress)
 
 
 func _resolve_line_text(spec: Dictionary, t: float) -> String:

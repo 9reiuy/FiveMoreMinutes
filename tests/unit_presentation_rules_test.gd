@@ -15,7 +15,11 @@ func run() -> void:
 	AudioServer.set_bus_mute(0,true)
 	world=load("res://scenes/dream/Dream3D_RandomDungeon.tscn").instantiate()
 	world.generate_on_ready=false; world.persist_profile=false; world.spawn_content=false; world.enable_game_start_cab_exit=false
-	root.add_child(world); check(world.regenerate(42001),"Real floor generates")
+	var display: Node = load("res://scenes/dream/preview/SelectivePixelPreview.tscn").instantiate()
+	display.preview_mode = false
+	display.world = world
+	root.add_child(display)
+	check(world.regenerate(42001),"Real floor generates")
 	world.player.set_physics_process(false)
 	var origin:=Vector2(12000,12000)
 	for y in range(368,390):
@@ -71,9 +75,10 @@ func run() -> void:
 	visual.reparent(world)
 	visual.reparent(visuals)
 	check(RenderingServer.frame_pre_draw.is_connected(saved_outline.sync),"Outline resubscribes after stash-style reparenting")
-	visual.outline.set_target_highlight_state(1); check(visual.outline.aimed,"Aim highlight selects white silhouette")
-	visual.outline.set_target_highlight_state(0); visual.outline.set_combat_range_highlight(true)
-	check(visual.outline.melee,"Melee range selects white silhouette independently")
+	check(not saved_outline.border.visible and saved_outline.capture.render_target_update_mode == SubViewport.UPDATE_DISABLED,
+		"Robot has no permanent silhouette or silhouette render work")
+	saved_outline.set_combat_range_highlight(true, true)
+	check(saved_outline.melee and saved_outline.primary_melee_target, "Robot can be the primary melee target")
 	visual.flash_muzzle(-1.0); visual._sync_pose()
 	check(visual.recoil[-1.0]>.05 and visual.recoil[1.0]==0.0,"Only firing robot barrel recoils")
 	victim.defeat_by_parry(origin)
@@ -85,12 +90,12 @@ func run() -> void:
 	check(victim.collision_layer==0 and victim.hurtbox.collision_layer==0,"Death immediately releases gameplay collision")
 	var health: float=world.player.current_health
 	effect.set_process(false); effect._process(.43)
-	check(effect.burst_started and is_instance_valid(effect.elemental),"Landing starts shared outlined particle explosion")
-	check(effect.elemental.effects.outline_banks.size()==3,"Death uses merged particle contours")
+	check(effect.burst_started and is_instance_valid(effect.elemental),"Landing starts shared particle explosion")
+	check(not effect.elemental.effects.explosion.bursts.is_empty(),"Death uses the shared gas explosion")
 	check(effect.find_children("*","CollisionObject3D",true,false).is_empty() and effect.find_children("*","CollisionObject2D",true,false).is_empty(),"Explosion creates no damage or collision bodies")
 	effect._process(.8)
 	effect.elemental.effects.step(.2)
-	check(effect.elemental.effects.particles.any(func(p: Dictionary)->bool:return int(p.kind)==1 and Vector3(p.at).y>0.2),"Shared explosion contains rising smoke")
+	check(effect.elemental.effects.explosion.bursts.any(func(b: Dictionary)->bool:return float(b.age)>0.0),"Shared gas timeline advances after the landing burst")
 	check(world.player.current_health==health,"Visual explosion does not damage nearby player")
 	effect._process(1.9); await frames(2)
 	check(not is_instance_valid(effect),"Death effect retires itself after smoke")

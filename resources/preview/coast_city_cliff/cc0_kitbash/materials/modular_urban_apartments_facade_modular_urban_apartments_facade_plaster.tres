@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://resources/preview/coast_city_cliff/cc0_kitbash/textures/modular_urban_apartments_facade_modular_urban_apartments_facade_plaster_albedo_texture.res" id="1_65m1h"]
+[ext_resource type="Texture2D" path="res://resources/preview/coast_city_cliff/cc0_kitbash/textures/modular_urban_apartments_facade_modular_urban_apartments_facade_plaster_metallic_texture.res" id="2_d53jj"]
+[ext_resource type="Texture2D" path="res://resources/preview/coast_city_cliff/cc0_kitbash/textures/modular_urban_apartments_facade_modular_urban_apartments_facade_plaster_normal_texture.res" id="3_dqfbd"]
+[ext_resource type="Texture2D" path="res://resources/preview/coast_city_cliff/cc0_kitbash/textures/modular_urban_apartments_facade_modular_urban_apartments_facade_plaster_roughness_texture.res" id="4_p1341"]
+
+[resource]
+resource_name = "modular_urban_apartments_facade_plaster"
+albedo_color = Color(0.6156863, 0.70980394, 0.72156864, 1)
+albedo_texture = ExtResource("1_65m1h")
+metallic_specular = 0.08
+metallic_texture = ExtResource("2_d53jj")
+metallic_texture_channel = 2
+roughness = 0.87
+roughness_texture = ExtResource("4_p1341")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.85
+normal_texture = ExtResource("3_dqfbd")
+texture_filter = 2
+metadata/_gltf_primary_texture_coord = 0
+metadata/license = "CC0-1.0"

@@ -21,7 +21,7 @@ func run() -> void:
 	check(world.regenerate(42001),"Generate formal floor")
 	for index in 8: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true); display._process(0.0)
+	display.set_selective_enabled(true); display._process(0.0)
 	paused=true
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED); Engine.max_fps=0
 	var sources: Array[Node2D]=[]

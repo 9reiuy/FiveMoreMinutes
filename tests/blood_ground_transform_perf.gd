@@ -107,7 +107,6 @@ func _frame_perf(target: BlackBloodEffect, source: BlackBloodEffect) -> void:
 	for i in 30:
 		await process_frame
 	display.set_selective_enabled(true)
-	display.set_palette_enabled(true)
 	display._process(0.0)
 	world.room_visibility._update_outside_mask()
 	paused = true

@@ -162,7 +162,6 @@ func run() -> void:
 	world = main._supported_dream_world
 	if not is_instance_valid(world):
 		L("FAIL entry"); quit(1); return
-	main._apply_palette_enabled(false)
 	world.persist_profile = false
 	while world.floor_transition_in_progress:
 		await process_frame

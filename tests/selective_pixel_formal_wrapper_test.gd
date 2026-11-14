@@ -56,14 +56,13 @@ func _run() -> void:
 			_check(prompt_font != null and prompt_font.antialiasing == TextServer.FONT_ANTIALIASING_NONE, "%s interaction font has no smoothing" % name_label)
 		if name_label == "random":
 			_check(external_world.player.suppress_local_weapon_name_label, "random hides the duplicate low-resolution weapon label")
-		wrapper.set_palette_enabled(true)
 		await _frames(2)
-		_check(wrapper.palette_material.get_shader_parameter(&"palette_enabled") == true, "%s native Palette stays inside the world" % name_label)
+		_check(wrapper.semantic_material.get_shader_parameter(&"palette_enabled") == true, "%s native Palette stays inside the world" % name_label)
 		wrapper.set_selective_enabled(true)
 		await _frames(4)
 		_check(wrapper.content_rect == Rect2(Vector2.ZERO, Vector2(640, 360)), "%s pixelated display uses the same canvas rectangle" % name_label)
 		_check(wrapper.world_viewport.size == Vector2i(640, 360), "%s pixelated world uses 640 by 360" % name_label)
-		_check(wrapper.palette_material.get_shader_parameter(&"palette_enabled") == true, "%s Palette remains on the world after toggling" % name_label)
+		_check(wrapper.semantic_material.get_shader_parameter(&"palette_enabled") == true, "%s Palette remains on the world after toggling" % name_label)
 		_check(external_world.get_viewport() == wrapper.world_viewport, "%s toggle does not move gameplay to another viewport" % name_label)
 		if name_label == "random":
 			var next_world: Node3D = (load(scene_path) as PackedScene).instantiate()

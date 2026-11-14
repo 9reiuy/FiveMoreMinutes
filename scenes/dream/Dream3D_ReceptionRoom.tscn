@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" path="res://scripts/dream/dream_3d_reception_room.gd" id="1_controller"]
 [ext_resource type="Script" path="res://scripts/ui/compact_interaction_prompt.gd" id="9_prompt"]
-[ext_resource type="Script" path="res://scripts/ui/npc_emotion_hint.gd" id="10_emotion"]
+[ext_resource type="Script" path="res://scripts/ui/reception_npc_hint_bubble.gd" id="10_emotion"]
 [ext_resource type="PackedScene" path="res://scenes/entities/dream_player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://scenes/dream/reception_waitress_npc.tscn" id="3_waitress"]
-[ext_resource type="Script" path="res://scripts/dream/dream_3d_actor_depth_bridge.gd" id="4_depth_bridge"]
+[ext_resource type="Script" path="res://scripts/dream/reception_actor_depth_bridge.gd" id="4_depth_bridge"]
 [ext_resource type="Theme" path="res://assets/fonts/pixel_theme.tres" id="5_theme"]
 [ext_resource type="PackedScene" path="res://scenes/ui/confirmation_dialog.tscn" id="6_dialogue"]
 [ext_resource type="PackedScene" uid="uid://d3m8y7v4x1q2w" path="res://scenes/ui/tarot/tarot_overlay.tscn" id="7_tarot"]
@@ -16,10 +16,10 @@ background_mode = 1
 background_color = Color(0, 0, 0, 1)
 ambient_light_source = 2
 ambient_light_color = Color(0.4, 0.44, 0.52, 1)
-ambient_light_energy = 0.38
+ambient_light_energy = 0.0
 tonemap_mode = 1
 glow_enabled = true
-glow_intensity = 0.55
+glow_intensity = 0.22
 glow_strength = 0.75
 glow_bloom = 0.06
 
@@ -62,11 +62,11 @@ script = ExtResource("4_depth_bridge")
 [node name="CameraRig" type="Node3D" parent="."]
 
 [node name="Camera3D" type="Camera3D" parent="CameraRig"]
-transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 12, 12)
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.8660254, 0, -0.8660254, 0.5, 0, 15.6, 9)
 projection = 0
 current = true
 size = 13.5
-fov = 40.0
+fov = 35.0
 near = 0.05
 far = 192.0
 
@@ -77,7 +77,7 @@ environment = SubResource("Environment_reception")
 
 [node name="KeyLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(0.88294756, 0.36994863, -0.2890356, 0, 0.6156615, 0.7880107, 0.46947157, -0.6957722, 0.5435968, 0, 0, 0)
-light_energy = 0.025
+light_energy = 0.0
 shadow_enabled = false
 
 [node name="GameplayUI" type="CanvasLayer" parent="."]
@@ -119,5 +119,6 @@ visible = false
 [node name="ConfirmationDialog" parent="DialogueLayer" instance=ExtResource("6_dialogue")]
 visible = false
 
-[node name="NpcHintBubble" type="Control" parent="DialogueLayer"]
+[node name="NpcHintBubble" parent="DialogueLayer" instance=ExtResource("8_bubble")]
 script = ExtResource("10_emotion")
+visible = false

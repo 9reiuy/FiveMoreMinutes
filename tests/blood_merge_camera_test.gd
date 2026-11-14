@@ -18,7 +18,7 @@ func run() -> void:
 	for index in 8: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
 	display.set_selective_enabled(not "--no-pixelation" in OS.get_cmdline_user_args())
-	display.set_palette_enabled(not "--no-palette" in OS.get_cmdline_user_args()); display._process(0.0)
+	display._process(0.0)
 	paused=true
 	for index in 3: await RenderingServer.frame_post_draw
 	var empty: PackedByteArray=display.world_viewport.get_texture().get_image().get_data()
@@ -38,15 +38,27 @@ func run() -> void:
 			check(world._add_3d_blood_effect(blood,world.current_room_id)!=null,"blood enters formal floor")
 			blood.set_process(false)
 		var incoming_ref: WeakRef=weakref(b)
-		world._on_blood_effect_settled(weakref(a)); world._on_blood_effect_settled(weakref(b))
+		world._on_blood_effect_settled(weakref(a))
+		if legacy:
+			world.set_meta(&"test_legacy_blood_ground_capture", true)
+		world._on_blood_effect_settled(weakref(b))
+		world.remove_meta(&"test_legacy_blood_ground_capture")
 		var reference: WeakRef=a.get_meta(&"depth_visual_bridge")
 		var bridge: Node=reference.get_ref()
 		bridge._process(0.0)
 		for index in 3: await RenderingServer.frame_post_draw
+		bridge._process(0.0)
+		await RenderingServer.frame_post_draw
 		check(incoming_ref.get_ref()==null,"incoming source consumed exactly once")
-		check(bridge.render_viewport.get_texture().get_image().get_used_rect().has_area(),"blood capture is nonempty")
+		check(bridge.actor_sprite.texture.get_image().get_used_rect().has_area(),"displayed blood mask is nonempty")
+		check((bridge.actor_sprite.texture is ImageTexture) == not legacy,"reference draws the viewport and candidate publishes a complete mask")
 		images.append(display.world_viewport.get_texture().get_image().get_data())
 		check(images.back()!=empty,"blood actually visible in formal camera")
+		var capture_epoch: int = bridge.furniture_capture_epoch
+		world._set_active_presentation_room(world.current_room_id)
+		bridge._process(0.0)
+		check(bridge.capture_initialized and bridge.actor_sprite.visible and bridge.furniture_capture_epoch == capture_epoch,
+			"repeated room activation keeps a drawn blood capture visible")
 		shapes.append([a.ground_pixels.duplicate(),a.ground_pixel_types.duplicate(),a.ground_visual_scale,a.content_version])
 		a.queue_free()
 		for index in 3: await process_frame

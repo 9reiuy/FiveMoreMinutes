@@ -36,7 +36,7 @@ extends Node3D
 @export var emitter_orbit_use_carrier_footprint := true
 @export var muzzle_duration := 0.080
 const MUZZLE_POOL_SIZE := 6
-const MUZZLE_ENERGY := {&"pistol": 2.6, &"rifle": 3.0, &"assault_rifle": 3.0, &"shotgun": 4.0}
+const MUZZLE_ENERGY := {&"pistol": 2.6, &"rifle": 3.0, &"assault_rifle": 3.0, &"mp5": 3.0, &"shotgun": 4.0}
 const PIXELS_PER_WORLD_UNIT := 32.0
 const EMITTER_COLLISION_MARGIN_PIXELS := 1.5
 ## The Player visible carrier receives light on layer 2.  Its separate

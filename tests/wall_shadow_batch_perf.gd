@@ -21,7 +21,7 @@ func run() -> void:
 	world.transition_phase = &"IDLE"
 	world.camera_aim_offset = Vector3.ZERO
 	world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	display._process(0.0)
 	world.room_visibility._update_outside_mask()
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED); Engine.max_fps = 0

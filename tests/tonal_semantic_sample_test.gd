@@ -8,14 +8,11 @@ func run() -> void:
 		var rect:=ColorRect.new(); rect.position=Vector2(i*40,0); rect.size=Vector2(40,64); rect.color=colors[i]; view.add_child(rect)
 	var layer:=CanvasLayer.new(); layer.layer=18; view.add_child(layer)
 	var output:=ColorRect.new(); output.size=Vector2(320,64); layer.add_child(output)
-	var material:=ShaderMaterial.new(); material.shader=load("res://shaders/palette_quantize.gdshader"); output.material=material
+	var material:=ShaderMaterial.new(); material.shader=load("res://shaders/world_semantic_decode.gdshader"); output.material=material
 	var failures:=0
 	for scheme in [1,2]:
-		material.set_shader_parameter("palette_scheme",scheme)
-		material.set_shader_parameter("tonal_sample",false)
 		await process_frame; await RenderingServer.frame_post_draw
 		var before:=view.get_texture().get_image()
-		material.set_shader_parameter("tonal_sample",true)
 		await process_frame; await RenderingServer.frame_post_draw
 		var after:=view.get_texture().get_image()
 		for i in colors.size():

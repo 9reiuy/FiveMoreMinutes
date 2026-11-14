@@ -19,7 +19,7 @@ func run() -> void:
 	world.player.global_position=world.enemy_root.get_child(0).global_position+Vector2(96,0)
 	world.transition_phase=&"IDLE"; world.camera_aim_offset=Vector3.ZERO; world._update_camera_and_actor_projection(0.0)
 	display.set_selective_enabled(not "--no-pixelation" in OS.get_cmdline_user_args())
-	display.set_palette_enabled(not "--no-palette" in OS.get_cmdline_user_args()); display._process(0.0)
+	display._process(0.0)
 	paused=true
 	var sources: Array[Node2D]=[]
 	var pool: Node3D=world._get_feedback_capture_pool()

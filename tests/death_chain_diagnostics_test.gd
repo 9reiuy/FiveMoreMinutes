@@ -8,8 +8,10 @@ class Player extends Node2D:
 	var last_damage_source:StringName=&"projectile"
 	var attack_enabled:=true
 	var dash_enabled:=true
+	var death_shot_elapsed := -1.0
 	func set_attacking_enabled(value:bool)->void:attack_enabled=value
 	func set_dash_enabled(value:bool)->void:dash_enabled=value
+	func get_death_shot_elapsed() -> float: return death_shot_elapsed
 class World extends Node3D:
 	var persist_profile:=true
 	var resets:=0
@@ -44,6 +46,18 @@ func run()->void:
 	expect(old.get_ref()==null,"quick clear retires old CRT instead of leaving dormant active effect")
 	adapter.profile.balance=43;player.died.emit()
 	expect(host.saved==2 and SAVE.load_game().balance==43,"rapid repeat death preserves save ordering")
+	adapter._clear_death_presentation()
+	player.death_shot_elapsed = 0.0
+	player.died.emit()
+	var live := adapter.death_effect as DeathCrtEffect
+	expect(is_instance_valid(live) and live.active and live.material.get_shader_parameter("live_camera_zoom"),
+		"grounded death starts CRT at the impact and gives the live camera the zoom")
+	player.death_shot_elapsed = 0.46
+	live._process(0.0)
+	var progress := live.effect_progress
+	expect(is_equal_approx(progress, 0.46 / live.effect_duration), "CRT uses the same elapsed time as the shot")
+	live._process(0.5)
+	expect(is_equal_approx(live.effect_progress, progress), "CRT holds while the shot clock is frozen")
 	print("DEATH_CHAIN_STAGES ",JSON.stringify(monitor._stage_ms))
 	monitor.recorder.close("death chain test");monitor.recording_enabled=false
 	world.free();host.free();await process_frame

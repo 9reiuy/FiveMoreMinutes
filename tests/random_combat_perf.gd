@@ -198,7 +198,7 @@ func run() -> void:
 	var display: Control=load("res://scenes/dream/preview/SelectivePixelPreview.tscn").instantiate()
 	display.world=world; display.preview_mode=false
 	root.add_child(display)
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	if "--shadow-selection-trace" in OS.get_cmdline_user_args():
 		if phase_probe==null:
 			push_error("Shadow selection trace requires frame phase profile"); quit(2); return

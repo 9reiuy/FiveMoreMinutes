@@ -3,6 +3,7 @@ extends Node
 signal sfx_played(event_id: StringName)
 
 const CONFIG := preload("res://resources/demo_config.tres")
+const MULTI_KILL_REACTIONS: Array[StringName] = [&"canned_laughter", &"audience_applause", &"golf_clap"]
 const MUSIC_STREAMS := {
 	&"bedroom": preload("res://sfx/卧室背景音乐.mp3"),
 	&"bedroom_short": preload("res://sfx/卧室背景音乐短.mp3"),
@@ -37,12 +38,16 @@ const WEATHER_STREAMS := {
 }
 const STREAMS := {
 	&"forbidden": preload("res://sfx/禁止选择音效.mp3"),
-	&"death": preload("res://sfx/角色死亡音.mp3"),
+	&"death": preload("res://sfx/death/player_death.wav"),
+	&"enemy_fire_cue": preload("res://sfx/combat/enemy_aim_neon.wav"),
+	&"bullet_hit_object": preload("res://sfx/impact/bullet_object_hit.wav"),
+	&"crt_off": preload("res://sfx/preview/screen_wall_power_off.wav"),
 	&"new_message": preload("res://sfx/手机新讯息.mp3"),
 	&"purchase": preload("res://sfx/购买音效.mp3"),
 	&"home_door": preload("res://sfx/回家开门音效.mp3"),
 	&"work": preload("res://sfx/上班音效.mp3"),
 	&"confirm": preload("res://sfx/确定按钮音效.mp3"),
+	&"fullscreen_cue": preload("res://sfx/fullscreen_cue/portal_second.res"),
 	&"experience": preload("res://sfx/获取经验值的音效.mp3"),
 	&"phone_unlock": preload("res://sfx/手机解锁音效.mp3"),
 	&"phone_operation": preload("res://sfx/手机操作按键.mp3"),
@@ -53,6 +58,7 @@ const STREAMS := {
 	&"heal": preload("res://sfx/heal.wav"),
 	&"glass_shatter": preload("res://sfx/glass_shatter.wav"),
 	&"wood_shatter": preload("res://sfx/wood_shatter.wav"),
+	&"wall_break": preload("res://sfx/destruction/wall_break.wav"),
 	&"wilhelm_scream": preload("res://sfx/wilhelm_scream.wav"),
 	&"canned_laughter": preload("res://sfx/canned_laughter.wav"),
 	&"audience_applause": preload("res://sfx/audience_applause.wav"),
@@ -110,7 +116,7 @@ const FOOTSTEP_STREAMS := [
 ## used by gameplay; the source WAVs remain untouched in the art folder.
 ## Each Vector2 stores [start_seconds, end_seconds].
 const MELEE_ENEMY_HIT_SOURCE = preload("res://art/wallpaper/近战击打敌人.wav")
-const MELEE_FURNITURE_HIT_SOURCE = preload("res://art/wallpaper/近战击打家具.wav")
+const MELEE_FURNITURE_HIT_SOURCE = preload("res://sfx/impact/melee_object_hit.wav")
 const BULLET_ENEMY_HIT_SOURCE = preload("res://art/wallpaper/射击被击中.wav")
 const MELEE_SWING_SOURCE = preload("res://art/wallpaper/挥动.wav")
 const MELEE_ENEMY_HIT_REGIONS := [
@@ -122,12 +128,7 @@ const MELEE_ENEMY_HIT_REGIONS := [
 	Vector2(16.90, 20.0),
 ]
 const MELEE_FURNITURE_HIT_REGIONS := [
-	# The first impact begins around 0.66s; subsequent clips begin around 0.42s.
-	Vector2(0.64, 4.0),
-	Vector2(4.90, 8.0),
-	Vector2(8.90, 12.0),
-	Vector2(12.90, 16.0),
-	Vector2(16.90, 20.0),
+	Vector2(0.0, 0.36),
 ]
 const BULLET_ENEMY_HIT_REGIONS := [
 	# The first impact begins around 0.50s; subsequent clips begin around 0.25s.
@@ -169,8 +170,11 @@ const EVENT_BUSES := {
 	&"new_message": &"UI",
 	&"purchase": &"UI",
 	&"confirm": &"UI",
+	# Cut-in audio stays at its authored speed during the absolute 0.05x hold.
+	&"fullscreen_cue": &"UI",
 	&"experience": &"UI",
-	&"death": &"Characters",
+	# Death slow-motion pitches and low-passes the Characters bus. This sting stays at the recorded speed.
+	&"death": &"UI",
 	&"home_door": &"Environment",
 	&"work": &"Environment",
 	&"phone_unlock": &"UI",
@@ -195,7 +199,9 @@ const EVENT_BUSES := {
 	&"melee_hit_furniture": &"Environment",
 	&"glass_shatter": &"Environment",
 	&"wood_shatter": &"Environment",
+	&"wall_break": &"Environment",
 	&"bullet_hit_enemy": &"Characters",
+	&"bullet_hit_object": &"Environment",
 	&"enemy_kill": &"Characters",
 	&"enemy_hit": &"Characters",
 	&"body_impact": &"Characters",
@@ -230,7 +236,7 @@ const EVENT_BUSES := {
 	&"rimshot": &"SFX",
 	&"vinyl_scratch_brake": &"UI"
 }
-const GENERATED_EVENTS := [&"ui_hover", &"player_hurt", &"enemy_hit", &"body_impact", &"wall_impact", &"furniture_impact", &"thunder", &"crt_off", &"text_blip", &"slot_tick", &"watch_tick", &"watch_tick_early", &"enemy_fire_cue"]
+const GENERATED_EVENTS := [&"ui_hover", &"player_hurt", &"enemy_hit", &"body_impact", &"wall_impact", &"furniture_impact", &"thunder", &"text_blip", &"slot_tick", &"watch_tick", &"watch_tick_early"]
 const EVENT_MIN_INTERVALS := {
 	&"enemy_kill": 0.04,
 	&"enemy_hit": 0.025,
@@ -273,6 +279,8 @@ var enemy_kill_pitch_random := 1.0
 var music_player: AudioStreamPlayer
 var weather_player: AudioStreamPlayer
 var elevator_rumble_player: AudioStreamPlayer
+var elevator_start_player: AudioStreamPlayer
+var elevator_stop_player: AudioStreamPlayer
 var elevator_rumble_tween: Tween
 var current_music_id: StringName = &""
 var current_music_owner_id: int = 0
@@ -302,11 +310,15 @@ const DEFAULT_AUDIO_3D_VOICE_COUNT := 12
 
 ## Elevator ride ambience.  A sustained loop is not a one-shot event, so it owns
 ## a dedicated player (mirroring the weather bed) rather than a registry entry:
-## one voice, explicit start/stop, explicit fade in and out.  The clip is
-## authored ring-crossfaded so repeats butt up without a gap or a click -- see
-## scripts/audio/generate_elevator_sfx.py.
-const ELEVATOR_RUMBLE_STREAM := preload("res://sfx/elevator_candidates/rumble_power_station_reuse.wav")
+## one voice, explicit start/stop, explicit fade in and out.  The running clip
+## is a ring-crossfaded slice of a recorded cab so repeats do not click.
+## The start jolt and the stop wind-down are separate one-shots.
+const ELEVATOR_RUMBLE_STREAM := preload("res://sfx/elevator/elevator_run.wav")
+const ELEVATOR_START_STREAM := preload("res://sfx/elevator/elevator_start.wav")
+const ELEVATOR_STOP_STREAM := preload("res://sfx/elevator/elevator_stop.wav")
 const ELEVATOR_RUMBLE_DB := -4.0
+const ELEVATOR_START_DB := -3.0
+const ELEVATOR_STOP_DB := -6.0
 const ELEVATOR_RUMBLE_FADE_IN := 0.55
 const ELEVATOR_RUMBLE_FADE_OUT := 0.40
 
@@ -615,12 +627,21 @@ func _ready() -> void:
 	# the loop flag is asserted here so the clip can never start one-shot.
 	elevator_rumble_player = _create_unique_player("ElevatorRumblePlayer", &"SFX")
 	elevator_rumble_player.stream = ELEVATOR_RUMBLE_STREAM
+	elevator_start_player = _create_unique_player("ElevatorStartPlayer", &"SFX")
+	elevator_start_player.stream = ELEVATOR_START_STREAM
+	elevator_start_player.volume_db = ELEVATOR_START_DB
+	elevator_stop_player = _create_unique_player("ElevatorStopPlayer", &"SFX")
+	elevator_stop_player.stream = ELEVATOR_STOP_STREAM
+	elevator_stop_player.volume_db = ELEVATOR_STOP_DB
 	_create_world_3d_voice_pool()
 	for stream in MUSIC_STREAMS.values():
 		_set_loop(stream, true)
 	for stream in WEATHER_STREAMS.values():
 		_set_loop(stream, true)
 	_set_loop(ELEVATOR_RUMBLE_STREAM, true)
+	var settings := get_node_or_null("/root/SettingsManager")
+	if settings != null:
+		settings.setting_changed.connect(_on_canned_laughter_setting_changed)
 
 
 func _process(_delta: float) -> void:
@@ -801,7 +822,7 @@ func _register_player(event_id: StringName, stream: AudioStream) -> void:
 	player.stream = stream
 	player.bus = EVENT_BUSES[event_id]
 	player.volume_db = _volume_for(event_id)
-	if event_id in [&"gunshot", &"weapon_fire", &"pistol_fire", &"shotgun_fire", &"enemy_kill"]:
+	if event_id in [&"gunshot", &"weapon_fire", &"pistol_fire", &"shotgun_fire", &"enemy_kill", &"bullet_hit_object"]:
 		player.max_polyphony = 8
 	elif event_id in [&"tarot_deal", &"tarot_flip"]:
 		player.max_polyphony = 4
@@ -871,6 +892,10 @@ func _register_sound_set(
 		voices.append(player)
 
 func play(event_id: StringName) -> bool:
+	if event_id in MULTI_KILL_REACTIONS:
+		var settings := get_node_or_null("/root/SettingsManager")
+		if settings != null and not bool(settings.get_setting(&"canned_laughter_enabled", true)):
+			return false
 	if sound_sets.has(event_id):
 		return _play_random_sound_set(event_id)
 	if not players.has(event_id):
@@ -1014,6 +1039,7 @@ func stop(event_id: StringName) -> void:
 
 var battle_track_index: int = 0
 var multi_kill_duck_tween: Tween = null
+var _multi_kill_duck_event: StringName = &""
 
 
 func next_battle_track() -> StringName:
@@ -1025,9 +1051,9 @@ func next_battle_track() -> StringName:
 func play_multi_kill_reaction(reaction_id: StringName = &"") -> void:
 	var chosen: StringName = reaction_id
 	if chosen == &"":
-		var options := [&"canned_laughter", &"audience_applause", &"golf_clap"]
-		chosen = options[randi() % options.size()]
-	play_event(chosen)
+		chosen = MULTI_KILL_REACTIONS[randi() % MULTI_KILL_REACTIONS.size()]
+	if not play(chosen):
+		return
 
 	# Sidechain ducking: 1.5s duck combat BGM by -4.5dB
 	request_music_duck(&"multi_kill_reaction", -4.5, 0.08)
@@ -1036,10 +1062,26 @@ func play_multi_kill_reaction(reaction_id: StringName = &"") -> void:
 	var duck_tw := create_tween()
 	duck_tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	duck_tw.tween_interval(1.5)
-	duck_tw.tween_callback(func() -> void:
-		release_music_duck(&"multi_kill_reaction", 0.4)
-	)
+	duck_tw.tween_callback(_release_multi_kill_duck)
 	multi_kill_duck_tween = duck_tw
+	_multi_kill_duck_event = chosen
+
+
+func _release_multi_kill_duck() -> void:
+	_multi_kill_duck_event = &""
+	multi_kill_duck_tween = null
+	release_music_duck(&"multi_kill_reaction", 0.4)
+
+
+func _on_canned_laughter_setting_changed(setting_name: StringName, value: Variant) -> void:
+	if setting_name != &"canned_laughter_enabled" or bool(value):
+		return
+	for reaction_id in MULTI_KILL_REACTIONS:
+		stop(reaction_id)
+	if _multi_kill_duck_event in MULTI_KILL_REACTIONS:
+		if multi_kill_duck_tween != null and multi_kill_duck_tween.is_valid():
+			multi_kill_duck_tween.kill()
+		_release_multi_kill_duck()
 
 
 func apply_combat_finish(style: String = "") -> void:
@@ -1261,8 +1303,13 @@ func _start_elevator_rumble(fade_in: float = ELEVATOR_RUMBLE_FADE_IN) -> void:
 		resume.tween_property(elevator_rumble_player, "volume_db", ELEVATOR_RUMBLE_DB, duration)
 		elevator_rumble_tween = resume
 		return
+	if is_instance_valid(elevator_stop_player) and elevator_stop_player.playing:
+		elevator_stop_player.stop()
 	elevator_rumble_player.volume_db = -60.0
 	elevator_rumble_player.play()
+	if is_instance_valid(elevator_start_player):
+		elevator_start_player.volume_db = ELEVATOR_START_DB
+		elevator_start_player.play()
 	var tween := create_tween()
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	tween.tween_property(elevator_rumble_player, "volume_db", ELEVATOR_RUMBLE_DB, duration)
@@ -1274,9 +1321,14 @@ func _start_elevator_rumble(fade_in: float = ELEVATOR_RUMBLE_FADE_IN) -> void:
 func _stop_elevator_rumble(fade_out: float = ELEVATOR_RUMBLE_FADE_OUT) -> void:
 	if not is_instance_valid(elevator_rumble_player):
 		return
+	var was_running := elevator_rumble_player.playing
 	if elevator_rumble_tween != null and elevator_rumble_tween.is_valid():
 		elevator_rumble_tween.kill()
 	elevator_rumble_tween = _fade_out_player(elevator_rumble_player, maxf(fade_out, 0.0), null)
+	# A short teardown fade is the scene leaving, not the cab arriving.
+	if was_running and fade_out >= 0.3 and is_instance_valid(elevator_stop_player):
+		elevator_stop_player.volume_db = ELEVATOR_STOP_DB
+		elevator_stop_player.play()
 
 
 ## True while the ride bed is (still) producing sound, including fades.
@@ -1554,11 +1606,13 @@ func _volume_for(event_id: StringName) -> float:
 	match event_id:
 		&"forbidden": return CONFIG.sfx_forbidden_volume_db
 		&"death": return CONFIG.sfx_death_volume_db
+		&"crt_off": return -9.0
 		&"new_message": return CONFIG.sfx_new_message_volume_db
 		&"purchase": return CONFIG.sfx_purchase_volume_db
 		&"home_door": return CONFIG.sfx_home_door_volume_db
 		&"work": return CONFIG.sfx_work_volume_db
 		&"confirm": return CONFIG.sfx_confirm_volume_db
+		&"fullscreen_cue": return -6.0
 		&"experience": return CONFIG.sfx_experience_volume_db
 		&"phone_unlock": return CONFIG.sfx_phone_unlock_volume_db
 		&"phone_operation": return CONFIG.sfx_phone_operation_volume_db
@@ -1576,14 +1630,16 @@ func _volume_for(event_id: StringName) -> float:
 		&"shotgun_fire": return CONFIG.sfx_shotgun_fire_volume_db
 		&"glass_shatter", &"wood_shatter": return CONFIG.sfx_melee_hit_furniture_volume_db
 		&"footstep": return -18.0
-		&"enemy_fire_cue": return -12.0
+		&"enemy_fire_cue": return -6.0
 		&"melee_hit_1", &"melee_hit_2", &"melee_hit_3", &"melee_hit_4", &"melee_hit_enemy": return CONFIG.sfx_melee_hit_enemy_volume_db
 		&"bullet_hit_enemy": return CONFIG.sfx_bullet_hit_enemy_volume_db
+		&"bullet_hit_object": return -10.0
 		&"melee_hit_furniture": return CONFIG.sfx_melee_hit_furniture_volume_db
 		&"enemy_kill": return CONFIG.sfx_enemy_kill_volume_db
 		&"enemy_hit": return CONFIG.sfx_enemy_hit_volume_db
 		&"body_impact": return CONFIG.sfx_body_impact_volume_db
 		&"wall_impact": return CONFIG.sfx_wall_impact_volume_db
+		&"wall_break": return -8.0
 		&"furniture_impact": return CONFIG.sfx_furniture_impact_volume_db
 		&"melee_swing": return CONFIG.sfx_melee_swing_volume_db
 		&"door_knock": return CONFIG.sfx_door_knock_volume_db
@@ -1610,7 +1666,6 @@ func _volume_for(event_id: StringName) -> float:
 
 
 func _create_placeholder_stream(event_id: StringName) -> AudioStreamWAV:
-	if event_id==&"enemy_fire_cue": return _create_enemy_fire_ding()
 	if event_id == &"watch_tick": return _create_watch_tick()
 	if event_id == &"watch_tick_early": return _create_watch_tick_early()
 	var stream := AudioStreamWAV.new()
@@ -1774,22 +1829,6 @@ func _create_watch_tick_early() -> AudioStreamWAV:
 	stream.data = bytes
 	return stream
 
-
-func _create_enemy_fire_ding() -> AudioStreamWAV:
-	# Original short bell, rounded attack and bounded polyphony avoid harsh clicks.
-	var stream:=AudioStreamWAV.new()
-	stream.format=AudioStreamWAV.FORMAT_16_BITS
-	stream.mix_rate=44100
-	var count:=int(.095*stream.mix_rate)
-	var bytes:=PackedByteArray()
-	bytes.resize(count*2)
-	for i in count:
-		var t:=float(i)/stream.mix_rate
-		var envelope:=minf(t/.0015,1.0)*exp(-t*48.0)*clampf((.095-t)/.008,0,1)
-		var bell:=sin(TAU*1480*t)+.28*sin(TAU*2960*t)*exp(-t*25.0)
-		bytes.encode_s16(i*2,int(clampf(bell*envelope*.38,-1,1)*32767))
-	stream.data=bytes
-	return stream
 
 ## 临时程序化手机震动音效（占位，待人工替换 res://sfx/手机震动.wav）：
 ## 低沉（约 145Hz）短包络 buzz，两段振动中间留与视觉震动相同的停顿，

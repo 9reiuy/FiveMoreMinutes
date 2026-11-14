@@ -32,7 +32,6 @@ func run() -> void:
 	world.native_skeleton_type="A1"
 	AudioServer.set_bus_mute(0,true)
 	var saved: Dictionary = root.get_node("SettingsManager").values.duplicate(true)
-	root.get_node("SettingsManager").values["palette_enabled"]=false
 	root.add_child(world)
 	await frames(4)
 	var original_count := 0

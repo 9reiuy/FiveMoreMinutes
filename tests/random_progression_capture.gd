@@ -17,7 +17,6 @@ func matrix(label: String) -> void:
 	for pixel in [false, true]:
 		display.set_selective_enabled(pixel)
 		for palette in [false, true]:
-			main._apply_palette_enabled(palette)
 			await shot(label + ("_pixel" if pixel else "_native") + ("_palette1" if palette else "_off"))
 func _run() -> void:
 	root.size = Vector2i(1920, 1080)
@@ -70,7 +69,6 @@ func _run() -> void:
 	world.player.invulnerability_left = 0
 	world.player.set_physics_process(true)
 	display.set_selective_enabled(true)
-	main._apply_palette_enabled(false)
 	world._begin_elevator_entry_transition()
 	var cab_shot := false
 	for frame in range(600):

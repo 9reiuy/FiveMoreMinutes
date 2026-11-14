@@ -32,7 +32,7 @@ func run() -> void:
 	AudioServer.set_bus_mute(0,true); root.size=Vector2i(1280,720); Engine.max_fps=60
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT))
 	var settings:=root.get_node("SettingsManager")
-	settings.set_setting(&"pixelation_enabled",true); settings.set_palette_enabled(true)
+	settings.set_setting(&"pixelation_enabled",true)
 	main=load("res://scenes/app/main.tscn").instantiate(); root.add_child(main); await settle()
 	main.persistent_day_state=main._create_initial_state(); main._show_dream("basic"); await settle()
 	world=main._supported_dream_world
@@ -76,7 +76,7 @@ func run() -> void:
 			check(fx.records[id].killed and fx.records[id].text in fx.KILL_WORDS,"Formal lethal hit replaces number with readable praise")
 			await shot("kill")
 	check(fx.records.is_empty() and fx.critical_surfaces.is_empty() and not fx.layer.visible,"All text and halftone resources retire after capture")
-	settings.set_setting(&"pixelation_enabled",false); settings.set_palette_enabled(false)
+	settings.set_setting(&"pixelation_enabled",false)
 	var other: Node=world._spawn_regular_employee(world.current_room_id,world.player.global_position+Vector2(20,15),&"employee",false,"luger")
 	other.maximum_health=100; other.current_health=100; other.set_physics_process(false); other.set_process(false)
 	world.player.critical_chance=1; world.resolve_player_hit(other,5,world.player.global_position)

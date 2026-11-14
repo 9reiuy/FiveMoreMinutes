@@ -1,0 +1,518 @@
+[
+  {
+    "bounds": {
+      "position": [
+        -2.0,
+        0.0,
+        -2.0
+      ],
+      "size": [
+        4.0,
+        0.00000999999974737875,
+        4.0
+      ]
+    },
+    "materials": [
+      "MI_Trim_03"
+    ],
+    "meshes": 1,
+    "name": "Platform_Simple",
+    "triangles": 8
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.0,
+        0.0,
+        -2.0
+      ],
+      "size": [
+        4.0,
+        0.00000999999974737875,
+        4.0
+      ]
+    },
+    "materials": [
+      "MI_Trim_03"
+    ],
+    "meshes": 1,
+    "name": "Platform_Simple2",
+    "triangles": 8
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.0,
+        0.0,
+        -2.0
+      ],
+      "size": [
+        4.0,
+        0.00000999999974737875,
+        4.0
+      ]
+    },
+    "materials": [
+      "MI_Trim_02"
+    ],
+    "meshes": 1,
+    "name": "Platform_Metal2",
+    "triangles": 24
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.0,
+        -0.000000434455245112986,
+        -2.0
+      ],
+      "size": [
+        4.0,
+        0.00000999999974737875,
+        4.00000047683716
+      ]
+    },
+    "materials": [
+      "MI_Trim_01",
+      "MI_Trim_02"
+    ],
+    "meshes": 1,
+    "name": "Platform_CenterPlate",
+    "triangles": 10
+  },
+  {
+    "bounds": {
+      "position": [
+        -1.00014781951904,
+        -0.00855785608291626,
+        0.0
+      ],
+      "size": [
+        2.00014781951904,
+        1.00855779647827,
+        2.0727117061615
+      ]
+    },
+    "materials": [
+      "MI_Trim_01_Stairs",
+      "MI_Trim_02"
+    ],
+    "meshes": 1,
+    "name": "Platform_Stairs_2",
+    "triangles": 258
+  },
+  {
+    "bounds": {
+      "position": [
+        -1.00014781951904,
+        0.0,
+        0.0
+      ],
+      "size": [
+        2.00014781951904,
+        1.0,
+        2.0
+      ]
+    },
+    "materials": [
+      "MI_Trim_01_Floor",
+      "MI_Trim_02",
+      "MI_Decal_Grey"
+    ],
+    "meshes": 1,
+    "name": "Platform_Ramp_2",
+    "triangles": 24
+  },
+  {
+    "bounds": {
+      "position": [
+        -1.17921102046967,
+        0.00296717882156372,
+        0.043796718120575
+      ],
+      "size": [
+        2.35842204093933,
+        1.69839644432068,
+        1.89100289344788
+      ]
+    },
+    "materials": [
+      "MI_Trim_02_Rails"
+    ],
+    "meshes": 1,
+    "name": "Platform_Rails_2",
+    "triangles": 1224
+  },
+  {
+    "bounds": {
+      "position": [
+        -1.99999976158142,
+        -0.41330698132515,
+        -2.0
+      ],
+      "size": [
+        3.99999952316284,
+        0.413308471441269,
+        4.0
+      ]
+    },
+    "materials": [
+      "M_Glass",
+      "MI_Trim_03",
+      "MI_Trim_02",
+      "MI_Trim_03_Cables"
+    ],
+    "meshes": 1,
+    "name": "Platform_Window_Wide",
+    "triangles": 508
+  },
+  {
+    "bounds": {
+      "position": [
+        -0.253424644470215,
+        0.0,
+        -0.506219267845154
+      ],
+      "size": [
+        0.50684928894043,
+        4.99999952316284,
+        0.974879443645477
+      ]
+    },
+    "materials": [
+      "MI_Trim_01",
+      "MI_Trim_02"
+    ],
+    "meshes": 1,
+    "name": "Column_Simple",
+    "triangles": 108
+  },
+  {
+    "bounds": {
+      "position": [
+        -0.698236048221588,
+        -0.00322918314486742,
+        -0.838144063949585
+      ],
+      "size": [
+        1.39647209644318,
+        10.0032300949097,
+        1.96217346191406
+      ]
+    },
+    "materials": [
+      "MI_Trim_03",
+      "MI_Trim_01",
+      "MI_Trim_03_Dark",
+      "MI_Trim_02"
+    ],
+    "meshes": 1,
+    "name": "Column_Large_Straight",
+    "triangles": 924
+  },
+  {
+    "bounds": {
+      "position": [
+        -0.163885459303856,
+        -0.00646513700485229,
+        -0.839861750602722
+      ],
+      "size": [
+        0.327770948410034,
+        3.02796125411987,
+        1.20926856994629
+      ]
+    },
+    "materials": [
+      "MI_Trim_03",
+      "MI_Trim_02",
+      "MI_Trim_01"
+    ],
+    "meshes": 1,
+    "name": "Column_Astra",
+    "triangles": 143
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.10000014305115,
+        -0.000000256487027172625,
+        -2.00000047683716
+      ],
+      "size": [
+        0.100000143051147,
+        3.00000023841858,
+        4.00000095367432
+      ]
+    },
+    "materials": [
+      "MI_Trim_03",
+      "MI_Trim_03_Dark",
+      "MI_Trim_02"
+    ],
+    "meshes": 1,
+    "name": "WallAstra_Straight_Flat",
+    "triangles": 124
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.50145173072815,
+        -0.000000256487027172625,
+        -2.00000047683716
+      ],
+      "size": [
+        0.501451730728149,
+        3.00000023841858,
+        4.00000095367432
+      ]
+    },
+    "materials": [
+      "M_Glass",
+      "MI_Trim_03",
+      "MI_Trim_03_Dark",
+      "MI_Trim_02",
+      "MI_Trim_03_Cables"
+    ],
+    "meshes": 1,
+    "name": "WallAstra_Straight_Flat_Window",
+    "triangles": 476
+  },
+  {
+    "bounds": {
+      "position": [
+        -4.43526983261108,
+        -0.00646507740020752,
+        -4.43527173995972
+      ],
+      "size": [
+        4.43527173995972,
+        3.02796077728271,
+        4.43527030944824
+      ]
+    },
+    "materials": [
+      "MI_Trim_03",
+      "MI_Trim_02",
+      "MI_Trim_01",
+      "MI_Decal_Red",
+      "MI_Trim_03_Dark"
+    ],
+    "meshes": 1,
+    "name": "WallAstra_Corner_Square_Outer",
+    "triangles": 686
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.20000028610229,
+        -0.000000325841256199055,
+        -2.00000023841858
+      ],
+      "size": [
+        0.320076107978821,
+        3.18655228614807,
+        4.00000095367432
+      ]
+    },
+    "materials": [
+      "MI_Trim_02",
+      "MI_Trim_01",
+      "M_Glass",
+      "MI_PaddedWall"
+    ],
+    "meshes": 1,
+    "name": "WallWindow_Straight",
+    "triangles": 397
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.06819891929626,
+        0.999999701976776,
+        -2.0
+      ],
+      "size": [
+        0.00000999999974737875,
+        2.00015044212341,
+        4.0
+      ]
+    },
+    "materials": [
+      "M_Glass"
+    ],
+    "meshes": 1,
+    "name": "OriginalGlassSurface",
+    "source_surface": 2,
+    "triangles": 2,
+    "vertices_unchanged": true
+  },
+  {
+    "bounds": {
+      "position": [
+        -4.12007570266724,
+        -0.000000325841256199055,
+        -4.12007570266724
+      ],
+      "size": [
+        4.12007665634155,
+        3.18655228614807,
+        4.12007617950439
+      ]
+    },
+    "materials": [
+      "MI_Trim_02",
+      "MI_Trim_01",
+      "M_Glass",
+      "MI_PaddedWall"
+    ],
+    "meshes": 1,
+    "name": "WallWindow_Corner_Square_Outer",
+    "triangles": 780
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.09876561164856,
+        2.99740624427795,
+        -2.00000023841858
+      ],
+      "size": [
+        0.669285178184509,
+        2.02034068107605,
+        4.00000095367432
+      ]
+    },
+    "materials": [
+      "MI_Trim_02",
+      "M_Glass",
+      "MI_PaddedWall",
+      "MI_Trim_02_Variation"
+    ],
+    "meshes": 1,
+    "name": "TopWindow_Straight",
+    "triangles": 375
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.00000023841858,
+        0.0000000000000776866160919105,
+        -2.00000023841858
+      ],
+      "size": [
+        0.600000143051147,
+        0.0200003255158663,
+        4.00000047683716
+      ]
+    },
+    "materials": [
+      "MI_Trim_03_Dark"
+    ],
+    "meshes": 1,
+    "name": "BottomSimple_Straight",
+    "triangles": 16
+  },
+  {
+    "bounds": {
+      "position": [
+        -2.0,
+        3.0,
+        -1.99999952316284
+      ],
+      "size": [
+        0.0000100135803222656,
+        2.0,
+        4.0
+      ]
+    },
+    "materials": [
+      "MI_Trim_02"
+    ],
+    "meshes": 1,
+    "name": "TopSimple_Straight",
+    "triangles": 6
+  },
+  {
+    "bounds": {
+      "position": [
+        -1.99999952316284,
+        -0.000000317604730071253,
+        -1.99999988079071
+      ],
+      "size": [
+        0.0000100135803222656,
+        2.00185179710388,
+        4.0
+      ]
+    },
+    "materials": [
+      "MI_Trim_03"
+    ],
+    "meshes": 1,
+    "name": "ShortWall_WhitePlate2_Straight",
+    "triangles": 8
+  },
+  {
+    "bounds": {
+      "position": [
+        -1.32024431228638,
+        -0.14768011868,
+        -0.222659707069397
+      ],
+      "size": [
+        1.32024431228638,
+        0.181905344128609,
+        0.445319414138794
+      ]
+    },
+    "materials": [
+      "MI_Trim_01",
+      "M_Light"
+    ],
+    "meshes": 1,
+    "name": "Prop_Light_Wide",
+    "triangles": 160
+  },
+  {
+    "bounds": {
+      "position": [
+        -0.860852837562561,
+        -0.14768011868,
+        -0.222659707069397
+      ],
+      "size": [
+        0.860852837562561,
+        0.181905344128609,
+        0.445319414138794
+      ]
+    },
+    "materials": [
+      "MI_Trim_01",
+      "M_Light"
+    ],
+    "meshes": 1,
+    "name": "Prop_Light_Small",
+    "triangles": 160
+  },
+  {
+    "bounds": {
+      "position": [
+        -0.0322893895208836,
+        0.0000000596046447753906,
+        -3.96284890174866
+      ],
+      "size": [
+        0.0666009187698364,
+        0.862367749214172,
+        3.92569780349731
+      ]
+    },
+    "materials": [
+      "MI_Trim_02_Rails"
+    ],
+    "meshes": 1,
+    "name": "Prop_Rail_4",
+    "triangles": 920
+  }
+]

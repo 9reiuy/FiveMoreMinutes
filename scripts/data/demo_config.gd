@@ -1,6 +1,11 @@
 class_name DemoConfig
 extends Resource
 
+const GAMEPLAY_PIXELS_PER_WORLD_UNIT := 32.0
+const DEFAULT_PLAYER_MOVE_SPEED := 7.0 * GAMEPLAY_PIXELS_PER_WORLD_UNIT
+const DEFAULT_ENEMY_WALK_SPEED := 3.0 * GAMEPLAY_PIXELS_PER_WORLD_UNIT
+const DEFAULT_ENEMY_RUN_MULTIPLIER := 6.0 * GAMEPLAY_PIXELS_PER_WORLD_UNIT / DEFAULT_ENEMY_WALK_SPEED
+
 ## All vertical-slice tuning lives here so later balancing does not touch gameplay code.
 @export_group("Player Vision")
 ## Alpha of the black world overlay outside the combined circle/cone visibility.
@@ -34,8 +39,8 @@ extends Resource
 @export_range(1, 3, 1) var employee_population_refill_batch: int = 3
 @export_range(0.25, 15.0, 0.25) var employee_population_refill_interval: float = 3.0
 @export_range(1, 50, 1) var employee_xp_value: int = 5
-@export_range(20.0, 200.0, 1.0) var employee_movement_speed: float = 100.0
-@export_range(1.0, 3.0, 0.05) var employee_run_speed_multiplier: float = 1.6
+@export_range(20.0, 200.0, 1.0) var employee_movement_speed: float = DEFAULT_ENEMY_WALK_SPEED
+@export_range(1.0, 3.0, 0.05) var employee_run_speed_multiplier: float = DEFAULT_ENEMY_RUN_MULTIPLIER
 
 @export_group("Enemy Perception")
 ## Enemy视觉最大距离。它只负责廉价的候选筛选，不能代替FOV或LOS。
@@ -397,7 +402,7 @@ extends Resource
 ## 玩家和武器基础数值统一由本资源提供，场景脚本只维护运行时强化结果。
 @export var player_base_maximum_health: float = 80.0
 ## Player移动手感：较高的目标速度配合独立加/减速，避免按键松开后滑行。
-@export_range(20.0, 320.0, 1.0) var player_movement_speed: float = 204.0
+@export_range(20.0, 320.0, 1.0) var player_movement_speed: float = DEFAULT_PLAYER_MOVE_SPEED
 @export_range(100.0, 2400.0, 25.0) var player_movement_acceleration: float = 900.0
 @export_range(100.0, 3000.0, 25.0) var player_movement_deceleration: float = 1200.0
 @export_group("Weapons")
@@ -1241,7 +1246,7 @@ func get_furniture_projectile_force_multiplier(weapon_id: StringName) -> float:
 	match weapon_id:
 		&"shotgun":
 			return furniture_shotgun_pellet_force_multiplier
-		&"assault_rifle":
+		&"assault_rifle", &"mp5":
 			return furniture_assault_rifle_force_multiplier
 		_:
 			return furniture_pistol_force_multiplier

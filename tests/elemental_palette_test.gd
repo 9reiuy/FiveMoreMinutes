@@ -18,15 +18,14 @@ func run() -> void:
 	lab.effects.step(.10)
 	var before:=await draw()
 	before.save_png(output+"/native_fire.png")
-	var layer:=CanvasLayer.new();layer.name="WorldPaletteLayer";layer.layer=18;root.add_child(layer)
+	var layer:=CanvasLayer.new();layer.name="WorldSemanticLayer";layer.layer=18;root.add_child(layer)
 	var rect:=ColorRect.new();rect.mouse_filter=Control.MOUSE_FILTER_IGNORE;layer.add_child(rect)
 	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var material:=ShaderMaterial.new();material.shader=load("res://shaders/palette_quantize.gdshader");rect.material=material
+	var material:=ShaderMaterial.new();material.shader=load("res://shaders/world_semantic_decode.gdshader");rect.material=material
 	lab.effects.preserve_flame_colors=true;lab.effects._upload()
 	var max_error:=0
 	var warm_pixels:=0
 	for enabled in [false,true]:
-		material.set_shader_parameter("palette_enabled",enabled)
 		var after:=await draw()
 		after.save_png(output+("/palette_on.png" if enabled else "/palette_off.png"))
 		for y in before.get_height():

@@ -88,8 +88,8 @@ func enable_nyangeon_style()->void:
 
 func _draw_nyangeon()->void:
 	var elapsed:=initial_lifetime-lifetime
-	var wide:=1.4 if effect_kind==&"shotgun" else (.65 if effect_kind in [&"rifle",&"assault_rifle"] else 1.0)
-	var reach:=25.0 if effect_kind in [&"rifle",&"assault_rifle"] else (22.0 if effect_kind==&"shotgun" else 17.0)
+	var wide:=1.4 if effect_kind==&"shotgun" else (.65 if effect_kind in [&"rifle",&"assault_rifle",&"mp5"] else 1.0)
+	var reach:=25.0 if effect_kind in [&"rifle",&"assault_rifle",&"mp5"] else (22.0 if effect_kind==&"shotgun" else 17.0)
 	if elapsed<.075:
 		var shrink:=1.0 if elapsed<.035 else .7
 		var points:=PackedVector2Array()
@@ -111,7 +111,7 @@ func _draw_nyangeon()->void:
 func _draw_office_3d() -> void:
 	var elapsed := initial_lifetime - lifetime
 	var is_shotgun := effect_kind == &"shotgun"
-	var is_rifle := effect_kind == &"assault_rifle" or effect_kind == &"rifle"
+	var is_rifle := effect_kind in [&"assault_rifle", &"rifle", &"mp5"]
 	var width := 6.0 if is_shotgun else (2.0 if is_rifle else 3.0)
 	# Five hand-picked flat shades, with a few integer-sized pixel blocks rather
 	# than noisy procedural texture or a screen-filling additive billboard.

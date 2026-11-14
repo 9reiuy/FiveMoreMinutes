@@ -1,0 +1,22 @@
+{
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "author": "Joseph Sardin",
+  "publisher": "BigSoundBank / La Sonothèque",
+  "note": "Attribution is not required. Recorded because this project keeps a source list for third-party material. Edited files are the wavs in this folder. Original downloads were not copied into the game.",
+  "edited_sha256": {
+    "elevator_start.wav": "ceb0306fc898cffdef72eafbdbea99788ba3462ca2ad811aaee3918a9e590b52",
+    "elevator_run.wav": "157e21f719a80543551f8c31cd88db992099e5bd04e85f57e7626328a4b4f78f",
+    "elevator_stop.wav": "94b4c9e93b575061ecc591b00a5e6b617e6033c55008fb1727f234e07faf96d3"
+  },
+  "sources": [
+    {
+      "id": 1711,
+      "page": "https://bigsoundbank.com/elevator-3-floors-s1711.html",
+      "download": "https://bigsoundbank.com/UPLOAD/ogg/1711.ogg",
+      "description": "Three floors in a small elevator in a Parisian building, recorded inside.",
+      "used_in": ["elevator_start.wav", "elevator_run.wav", "elevator_stop.wav"],
+      "edit": "Start is the motor engagement from 3.36s to 4.12s. Run is the steady travel from 4.12s to 5.22s tiled into a 4.00s ring-crossfaded loop at -20 dBFS RMS. Stop is the wind-down from 5.18s to 6.18s."
+    }
+  ]
+}

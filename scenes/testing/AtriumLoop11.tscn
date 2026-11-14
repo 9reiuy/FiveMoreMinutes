@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/dream/Dream3D_RandomDungeon.tscn" id="1_world"]
+[ext_resource type="Script" path="res://scripts/testing/atrium_loop_1_1/atrium_loop_world.gd" id="2_script"]
+
+[node name="AtriumLoop1_1" instance=ExtResource("1_world")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("2_script")
+persist_profile = false
+seed = 11011
+spawn_content = false
+disable_player_combat = false
+enable_game_start_cab_exit = false
+enable_enemy_population_refill = false
+enhanced_room_dressing = false
+sparse_lighting_enabled = false
+metadata/level_id = "1-1-AtriumLoop"
+
+[node name="CameraRig" parent="." index="8"]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0)

@@ -1,5 +1,7 @@
 extends RefCounted
 
+const MAIN_CAMERA_OPTICS := 1 << 15
+
 static func apply(visual: VisualInstance3D, mask: int) -> void:
 	if visual.layers == mask:
 		return

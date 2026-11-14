@@ -6,8 +6,27 @@ extends RefCounted
 const BASIC_TEXTURE := preload("res://art/Dream/weapons/Guns/Luger.png")
 const SHOTGUN_TEXTURE := preload("res://art/Dream/weapons/Guns/SawedOffShotgun.png")
 const ASSAULT_RIFLE_TEXTURE := preload("res://art/Dream/weapons/Guns/M15.png")
+const MP5_TEXTURE := preload("res://art/Dream/weapons/Guns/MP5.png")
 const LUCILLE_TEXTURE := preload("res://art/Dream/weapons/Weapons/3.png")
 const BOOKS_TEXTURE := preload("res://art/Dream/weapons/Weapons/books.png")
+## Separate inventory identities, sharing Lucille's current combat/motion family.
+const LUCILLE_VARIANT_IDS: Array[String] = ["melee_plank", "melee_pipe", "melee_pipe_wrench", "melee_wrench", "melee_crowbar", "melee_machete"]
+const MELEE_RANGE_MULTIPLIERS := {
+	"melee_pipe": 0.7,
+	"melee_pipe_wrench": 0.7,
+	"melee_wrench": 0.7,
+	"melee_crowbar": 0.7,
+	"books": 0.5,
+}
+## Absolute source pixels on each real handle; same two-hand stack as Lucille.
+const MELEE_GRIP_PIXELS := {
+	"melee_plank": Vector2(14,16),
+	"melee_pipe": Vector2(21,16),
+	"melee_pipe_wrench": Vector2(18,15),
+	"melee_wrench": Vector2(24,16),
+	"melee_crowbar": Vector2(23,15),
+	"melee_machete": Vector2(15,16),
+}
 
 const PISTOL_PROJECTILE := preload("res://art/Dream/weapons/Bullets/PistolAmmoSmall.png")
 const SHOTGUN_PROJECTILE := preload("res://art/Dream/weapons/Bullets/RifleAmmoSmall.png")
@@ -20,26 +39,36 @@ const WEAPON_TEXTURES := {
 	"basic": BASIC_TEXTURE,
 	"shotgun": SHOTGUN_TEXTURE,
 	"assault_rifle": ASSAULT_RIFLE_TEXTURE,
+	"mp5": MP5_TEXTURE,
 	"lucille": LUCILLE_TEXTURE,
 	"books": BOOKS_TEXTURE,
+	"melee_plank": preload("res://art/Dream/weapons/Weapons/6.png"),
+	"melee_pipe": preload("res://art/Dream/weapons/Weapons/11.png"),
+	"melee_pipe_wrench": preload("res://art/Dream/weapons/Weapons/21.png"),
+	"melee_wrench": preload("res://art/Dream/weapons/Weapons/22.png"),
+	"melee_crowbar": preload("res://art/Dream/weapons/Weapons/23.png"),
+	"melee_machete": preload("res://art/Dream/weapons/Weapons/43.png"),
 }
 
 const PROJECTILE_TEXTURES := {
 	"basic": PISTOL_PROJECTILE,
 	"shotgun": SHOTGUN_PROJECTILE,
 	"assault_rifle": ASSAULT_RIFLE_PROJECTILE,
+	"mp5": ASSAULT_RIFLE_PROJECTILE,
 }
 
 const SHELL_TEXTURES := {
 	"basic": PISTOL_SHELL,
 	"shotgun": SHOTGUN_SHELL,
 	"assault_rifle": ASSAULT_RIFLE_SHELL,
+	"mp5": ASSAULT_RIFLE_SHELL,
 }
 
 # TrashCan01未覆盖RigidBody2D.mass，Godot默认值为1.0；以下全部明确低于它。
 const WORLD_MASSES := {
 	"basic": 0.45,
 	"assault_rifle": 0.62,
+	"mp5": 0.62,
 	"shotgun": 0.68,
 	"lucille": 0.78,
 	"books": 0.58,
@@ -53,6 +82,7 @@ const WEAPON_CATEGORIES := {
 	"basic": CATEGORY_RANGED,
 	"shotgun": CATEGORY_RANGED,
 	"assault_rifle": CATEGORY_RANGED,
+	"mp5": CATEGORY_RANGED,
 	"lucille": CATEGORY_MELEE,
 	"books": CATEGORY_MELEE,
 }
@@ -64,8 +94,15 @@ const WEAPON_DISPLAY_NAMES := {
 	"basic": "小手枪",
 	"shotgun": "霰弹枪",
 	"assault_rifle": "突击枪",
+	"mp5": "MP5冲锋枪",
 	"lucille": "露西尔",
 	"books": "Books",
+	"melee_plank": "铁棍",
+	"melee_pipe": "弯管",
+	"melee_pipe_wrench": "管钳",
+	"melee_wrench": "扳手",
+	"melee_crowbar": "撬棍",
+	"melee_machete": "铁棒",
 }
 
 const BOOKS_SKIN_COUNT := 4
@@ -101,19 +138,38 @@ static func has_firearm(weapon_id: String) -> bool:
 	return PROJECTILE_TEXTURES.has(weapon_id)
 
 
+static func uses_lucille_motion(weapon_id: String) -> bool:
+	return weapon_id == "lucille" or weapon_id in LUCILLE_VARIANT_IDS
+
+
+static func get_behavior_id(weapon_id: String) -> String:
+	return "lucille" if uses_lucille_motion(weapon_id) else weapon_id
+
+
+static func get_melee_range_multiplier(weapon_id: String) -> float:
+	return float(MELEE_RANGE_MULTIPLIERS.get(weapon_id, 1.0))
+
+
+static func get_melee_grip_pixels(texture: Texture2D, fallback: Vector2) -> Vector2:
+	for weapon_id in LUCILLE_VARIANT_IDS:
+		if WEAPON_TEXTURES[weapon_id] == texture:
+			return MELEE_GRIP_PIXELS[weapon_id]
+	return fallback
+
+
 static func is_ranged_weapon(weapon_id: String) -> bool:
 	return has_firearm(weapon_id)
 
 
 static func is_automatic_weapon(weapon_id: String) -> bool:
-	# Keep the fire-session rule data-driven at the registry boundary.  The
-	# current formal automatic firearm is the assault rifle.
-	return weapon_id == "assault_rifle"
+	return weapon_id in ["assault_rifle", "mp5"]
 
 
 static func get_category(weapon_id: String) -> StringName:
 	if weapon_id.is_empty():
 		return CATEGORY_FIST
+	if uses_lucille_motion(weapon_id):
+		return CATEGORY_MELEE
 	return WEAPON_CATEGORIES.get(weapon_id, CATEGORY_RANGED) as StringName
 
 
@@ -168,4 +224,4 @@ static func get_shell(weapon_id: String) -> Texture2D:
 
 
 static func get_world_mass(weapon_id: String) -> float:
-	return float(WORLD_MASSES.get(weapon_id, WORLD_MASSES["basic"]))
+	return float(WORLD_MASSES.get(get_behavior_id(weapon_id), WORLD_MASSES["basic"]))

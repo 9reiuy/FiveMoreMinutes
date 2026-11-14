@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/testing/MegastructureWhitebox.tscn" id="1_maintenance"]
+[ext_resource type="Script" path="res://scripts/testing/linked_maintenance_garage.gd" id="2_linked"]
+
+[node name="LinkedMaintenanceGarage" instance=ExtResource("1_maintenance")]
+script = ExtResource("2_linked")
+metadata/level_id = "0-1 → 0-2 → 0-3 → 0-4 → 0-5 → 0-6"

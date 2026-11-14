@@ -11,14 +11,16 @@ const PROJECTILE_SCENE := preload("res://scenes/entities/basic_projectile.tscn")
 const FIREARM_RULES := preload("res://scripts/dream/dream_firearm_rules.gd")
 const BODY_PART_SCENE: PackedScene = preload("res://scenes/entities/enemy_body_part.tscn")
 const CORPSE_CONTACT := preload("res://scripts/entities/corpse_contact_motion.gd")
+const CORPSE_JOINT := preload("res://scripts/entities/corpse_ragdoll_joint.gd")
 const WEAPON_POSE := preload("res://scripts/dream/dream_weapon_pose.gd")
+const HAND_PRESENTATION := preload("res://scripts/entities/enemy_hand_presentation.gd")
+var hand_presentation: RefCounted
 const RANGED_WINDUP_TEXTURE: Texture2D = preload("res://art/Effects/shot.png")
 const CHARGE_VISUAL_SCRIPT: Script = preload("res://scripts/dream/dream_charge_visual.gd")
 const CHARGE_SEMANTIC_SHADER: Shader = preload("res://shaders/charge_semantic.gdshader")
 
-## Employee_men_32x32.png is a 5-column, 3-row atlas.  Column one is the
-## assembled reference only. Employee column two now contains head + torso;
-## hands/feet remain separate. Corpse joints crop the same pixels at the neck.
+## Column two has the front head and torso. The back is in column three,
+## row two. Hands and feet remain separate for both directions.
 const EMPLOYEE_CHARACTER_ATLAS: Texture2D = preload("res://art/Dream/enemy/Employee_men_32x32.png")
 ## Waitress retains its existing separated-part layout and the shared AI;
 ## her art/rig is configured independently from Employee.
@@ -32,6 +34,7 @@ const EMPLOYEE_HEAD_OPEN_REGION: Rect2 = Rect2(32, 0, 28, 32)
 const EMPLOYEE_HEAD_BLINK_REGION: Rect2 = Rect2(32, 32, 28, 32)
 const EMPLOYEE_HEAD_CLOSED_REGION: Rect2 = Rect2(32, 64, 28, 32)
 const EMPLOYEE_BODY_REGION: Rect2 = Rect2(64, 0, 32, 32)
+const EMPLOYEE_BACK_REGION: Rect2 = Rect2(64, 32, 32, 32)
 ## The opaque foot components are at x=12..15 and x=17..20 in column four.
 const EMPLOYEE_LEFT_FOOT_REGION: Rect2 = Rect2(108, 12, 4, 9)
 const EMPLOYEE_RIGHT_FOOT_REGION: Rect2 = Rect2(113, 12, 4, 9)
@@ -73,7 +76,7 @@ enum State {
 	GETTING_UP
 }
 
-@export var movement_speed := 100.0
+@export var movement_speed := DemoConfig.DEFAULT_ENEMY_WALK_SPEED
 ## Legacy serialized compatibility field.  XP is no longer part of the formal
 ## enemy runtime; existing listeners may still receive the historical value.
 @export var experience_drop_count := 1
@@ -90,6 +93,7 @@ enum State {
 @onready var weapon_root: Node2D = $WeaponRoot
 @onready var weapon_motion: Node2D = $WeaponRoot/WeaponMotion
 @onready var melee_trail: Line2D = $WeaponRoot/MeleeTrail
+@onready var melee_trail_base_width: float = melee_trail.width
 @onready var reload_visual_pivot: Node2D = $WeaponRoot/WeaponMotion/ReloadVisualPivot
 @onready var held_weapon_sprite: Sprite2D = $WeaponRoot/WeaponMotion/ReloadVisualPivot/HeldWeaponSprite
 @onready var projectile_origin: Marker2D = $WeaponRoot/WeaponMotion/ProjectileOrigin
@@ -216,6 +220,7 @@ var unarmed_attack_active := false
 var unarmed_attack_elapsed: float = 0.0
 var unarmed_attack_hit_applied := false
 var unarmed_attack_kind: StringName = &""
+var unarmed_attack_direction := Vector2.ZERO
 var next_punch_left := true
 var unarmed_attack_left := true
 
@@ -223,18 +228,25 @@ var search_left := 0.0
 var pickup_pause_left := 0.0
 var attack_cooldown_left := 0.0
 ## Ranged weapons have an explicit per-shot stationary windup.  This is kept
-## separate from pickup_pause_left so melee and empty-hand attacks remain
-## immediate and a cancelled windup never consumes a shot/cooldown.
+## separate from pickup_pause_left and the melee warning/charge clock.
+## A cancelled windup never consumes a shot/cooldown.
 var ranged_attack_windup_left: float = 0.0
 var ranged_attack_windup_pending: bool = false
 var ranged_attack_fire_locked := false
 var ranged_attack_magazine_primed := false
 var ranged_attack_shot_serial := 0
 var ranged_attack_target_snapshot := Vector2.ZERO
+var ranged_attack_shot_spread_degrees := 0.0
 ## Automatic firearms prime once per magazine. Losing attack intent does not
 ## reprime the remaining rounds; reload and weapon replacement reset it.
 var ranged_attack_session_active: bool = false
 var ranged_attack_session_weapon_id: String = ""
+const MELEE_ATTACK_WINDUP_SECONDS := 0.3
+var melee_attack_windup_left := 0.0
+var melee_attack_windup_pending := false
+var melee_attack_windup_weapon_id := ""
+var melee_attack_target_snapshot := Vector2.ZERO
+var melee_attack_fire_locked := false
 var reaction_left := 0.0
 var burst_reset_left := 0.0
 var burst_shot_count := 0
@@ -309,6 +321,9 @@ var strafe_time_left := 0.0
 
 var stuck_elapsed := 0.0
 var stuck_anchor := Vector2.ZERO
+var navigation_progress_waypoint := Vector2(INF,INF)
+var stuck_progress_waypoint := Vector2(INF,INF)
+var stuck_progress_distance := INF
 ## True only when the current ATTACK_PLAYER tick has an actual reposition/chase
 ## intent.  A ranged windup or an intentional in-range firing pause must not be
 ## mistaken for a doorway stall.
@@ -325,6 +340,8 @@ var walk_phase := 0.0
 var facing_back := false
 var enemy_head_frames: Array[Texture2D] = []
 var enemy_corpse_head_frames: Array[Texture2D] = []
+var employee_back_frame: AtlasTexture
+var employee_corpse_back_frame: AtlasTexture
 var combined_upper_body := false
 var corpse_upper_parts_active := false
 var enemy_head_frame_index := 0
@@ -520,10 +537,11 @@ func _ready() -> void:
 
 	_setup_character_parts()
 	# Player and Employee share the same authored visual scale.  This is applied
-	# only to CharacterVisual; the CharacterBody2D and all gameplay colliders stay
-	# at their existing dimensions.
+	# to CharacterVisual. Walking keeps its foot circle; projectile volumes are
+	# refreshed separately to match this rig.
 	base_visual_scale = Vector2.ONE * float(CONFIG.player_visual_scale)
 	character_visual.scale = base_visual_scale
+	refresh_hurtbox_from_visuals()
 
 	left_leg_base_position = left_leg.position
 	right_leg_base_position = right_leg.position
@@ -572,6 +590,9 @@ func _ready() -> void:
 
 	wander_target = global_position
 	stuck_anchor = global_position
+	hand_presentation = HAND_PRESENTATION.new()
+	hand_presentation.bind(self)
+	_update_hand_presentation()
 
 
 func _make_employee_atlas_texture(region: Rect2) -> AtlasTexture:
@@ -588,6 +609,7 @@ func configure_archetype(archetype: StringName) -> void:
 	if is_node_ready():
 		_setup_character_parts()
 		_set_enemy_head_frame(0)
+		_update_hand_presentation()
 
 
 func _setup_character_parts() -> void:
@@ -600,6 +622,9 @@ func _setup_character_parts() -> void:
 		enemy_head_frames.append(_make_employee_atlas_texture(upper_region))
 		if combined_upper_body:
 			enemy_corpse_head_frames.append(_make_employee_atlas_texture(Rect2(32,frame*32,32,EMPLOYEE_NECK_ROW)))
+	employee_back_frame = _make_employee_atlas_texture(EMPLOYEE_BACK_REGION) if combined_upper_body else null
+	var rear_head := Rect2(EMPLOYEE_BACK_REGION.position, Vector2(32, EMPLOYEE_NECK_ROW))
+	employee_corpse_back_frame = _make_employee_atlas_texture(rear_head) if combined_upper_body else null
 
 	head.position = EMPLOYEE_UPPER_POSITION if combined_upper_body else Vector2(-16,-20)
 	body.position = EMPLOYEE_TORSO_POSITION if combined_upper_body else Vector2(-16,-8)
@@ -625,6 +650,23 @@ func _setup_character_parts() -> void:
 	body_base_position = body.position
 	left_hand_base_position = left_hand.position
 	right_hand_base_position = right_hand.position
+	if is_node_ready(): refresh_hurtbox_from_visuals()
+
+
+func refresh_hurtbox_from_visuals() -> void:
+	# Walking still uses the small foot circle. The separate projectile volume
+	# covers this rig's head, torso and legs rather than the retired tall rig.
+	if hurtbox_collision == null or head == null: return
+	var top := character_visual.position.y + (body_pivot.position.y + head.position.y + head.get_rect().position.y) * absf(character_visual.scale.y)
+	var bottom := character_visual.position.y
+	for foot: Sprite2D in [left_leg,right_leg]:
+		bottom = maxf(bottom,character_visual.position.y+(foot.position.y+foot.get_rect().end.y)*absf(character_visual.scale.y))
+	bottom += 4.0
+	var capsule := CapsuleShape2D.new()
+	capsule.radius = 11.0*absf(character_visual.scale.x)
+	capsule.height = maxf(capsule.radius*2.0,bottom-top)
+	hurtbox_collision.shape = capsule
+	hurtbox_collision.position = Vector2(0,(top+bottom)*.5)
 
 
 func _prepare_corpse_upper_parts() -> void:
@@ -633,7 +675,9 @@ func _prepare_corpse_upper_parts() -> void:
 	# The live character is one complete cell. Reuse two adjacent, disjoint
 	# regions only when the existing ragdoll/dismemberment needs neck movement.
 	corpse_upper_parts_active = true
-	body.texture = _make_employee_atlas_texture(Rect2(32,64+EMPLOYEE_NECK_ROW,32,32-EMPLOYEE_NECK_ROW))
+	var upper_region := EMPLOYEE_BACK_REGION if facing_back else Rect2(32, 64, 32, 32)
+	body.texture = _make_employee_atlas_texture(Rect2(
+		upper_region.position + Vector2(0, EMPLOYEE_NECK_ROW), Vector2(32, 32 - EMPLOYEE_NECK_ROW)))
 	body.show()
 	set_meta(&"character_combined_upper_body",false)
 
@@ -650,7 +694,10 @@ func _set_enemy_head_frame(frame_index: int) -> void:
 		0,
 		enemy_head_frames.size() - 1
 	)
-	head.texture = enemy_corpse_head_frames[enemy_head_frame_index] if corpse_upper_parts_active else enemy_head_frames[enemy_head_frame_index]
+	if facing_back and employee_back_frame != null:
+		head.texture = employee_corpse_back_frame if corpse_upper_parts_active else employee_back_frame
+	else:
+		head.texture = enemy_corpse_head_frames[enemy_head_frame_index] if corpse_upper_parts_active else enemy_head_frames[enemy_head_frame_index]
 
 
 func _get_next_enemy_blink_delay() -> float:
@@ -701,11 +748,17 @@ func _update_enemy_blink(delta: float) -> void:
 func _sync_enemy_hands_visibility() -> void:
 	var hands_visible: bool = held_weapon_id.is_empty() or dead
 	var vis_i := 1 if hands_visible else 0
-	if vis_i == _last_hands_visible:
-		return
-	_last_hands_visible = vis_i
-	left_hand.visible = hands_visible
-	right_hand.visible = hands_visible
+	if vis_i != _last_hands_visible:
+		_last_hands_visible = vis_i
+		left_hand.visible = hands_visible
+		right_hand.visible = hands_visible
+	if hand_presentation != null:
+		hand_presentation.refresh_visibility()
+
+
+func _update_hand_presentation() -> void:
+	if hand_presentation != null:
+		hand_presentation.apply(sky_drop_active or knockdown_inertia_active or state in [State.KNOCKED_DOWN,State.GETTING_UP])
 
 
 func configure(
@@ -813,6 +866,7 @@ func _process(delta: float) -> void:
 
 func _process_profiled(delta:float)->void:
 	if dead:
+		if hand_presentation != null: hand_presentation.refresh_visibility()
 		_cancel_ranged_attack_windup()
 		_update_death_presentation(delta, false)
 		return
@@ -928,6 +982,7 @@ func _process_profiled(delta:float)->void:
 		_update_emoji(delta)
 		_update_state_emoji()
 		_update_weapon_aim()
+	_update_hand_presentation()
 	_update_bleeding_trail(delta)
 
 
@@ -988,6 +1043,8 @@ func _physics_process(delta: float) -> void:
 	PERF_TRACE.end(self,"enemy_physics",started)
 
 func _physics_process_profiled(delta:float)->void:
+	if melee_attack_windup_pending and not _can_continue_melee_windup():
+		_cancel_melee_attack_windup()
 	if dead:
 		_update_death_motion(delta)
 		return
@@ -1042,7 +1099,7 @@ func _physics_process_profiled(delta:float)->void:
 		# session.  A later attack intent must earn a fresh windup.
 		_cancel_ranged_attack_windup()
 
-	if not ranged_attack_windup_pending:
+	if not ranged_attack_windup_pending and not melee_attack_windup_pending:
 		_update_local_separation(delta)
 
 	match state:
@@ -1076,7 +1133,7 @@ func _physics_process_profiled(delta:float)->void:
 	# Windup owns the final movement composition for the whole pending attack;
 	# separation/navigation code must not be able to reintroduce a slide after
 	# the initial zeroing above.
-	if ranged_attack_windup_pending:
+	if ranged_attack_windup_pending or melee_attack_windup_pending:
 		velocity = Vector2.ZERO
 
 	if state in [State.KNOCKED_DOWN, State.GETTING_UP, State.ROOM_TRANSIT]:
@@ -1213,7 +1270,10 @@ func _update_direct_target_awareness() -> void:
 	if not hostile:
 		hostile = true
 		_begin_hostile_reaction()
-		state = State.ALERT
+		# Awareness may arrive while a serialized door passage is in progress.
+		# Remember hostility, but finish the passage before choosing combat.
+		if state not in [State.MOVE_TO_DOOR, State.ROOM_TRANSIT]:
+			state = State.ALERT
 
 
 func _update_visual_target_perception() -> void:
@@ -1276,7 +1336,8 @@ func _update_visual_target_perception() -> void:
 		hostile = true
 		panic_counterattack_active = false
 		_begin_hostile_reaction()
-		state = State.ALERT
+		if state not in [State.MOVE_TO_DOOR, State.ROOM_TRANSIT]:
+			state = State.ALERT
 
 
 func _has_target_line_of_sight(candidate_position: Vector2) -> bool:
@@ -1762,11 +1823,19 @@ func _minimum_player_center_distance() -> float:
 	# steering outside that contact radius so two 32px character visuals do not
 	# spend the fight pressed together while still remaining inside melee reach.
 	var physical_contact := _body_collision_radius(self) + _body_collision_radius(target) + 2.0
-	return maxf(physical_contact, separation_radius)
+	var preferred_spacing := separation_radius
+	if _weapon_is_melee() and DREAM_GUN_ATLAS.get_melee_range_multiplier(held_weapon_id) < 1.0:
+		# Short weapons must reach before the personal-space steering turns away.
+		# The physical contact perimeter remains the hard lower bound.
+		preferred_spacing = minf(preferred_spacing, maxf(_weapon_max_range() - 2.0, physical_contact))
+	return maxf(physical_contact, preferred_spacing)
 
 
 func _update_attack_player(delta: float) -> void:
 	attack_movement_intent = false
+	if melee_attack_windup_pending:
+		_update_melee_attack_windup(delta)
+		return
 	if ranged_attack_windup_pending:
 		_update_ranged_attack_windup(delta)
 		return
@@ -1849,7 +1918,7 @@ func _update_attack_player(delta: float) -> void:
 			return
 		velocity = Vector2.ZERO
 		if attack_cooldown_left <= 0.0 and reaction_left <= 0.0 and not unarmed_attack_active:
-			_start_unarmed_counterattack()
+			_begin_melee_attack_windup()
 		return
 
 	var distance := distance_to_target
@@ -1858,7 +1927,7 @@ func _update_attack_player(delta: float) -> void:
 
 	var desired_range := _weapon_desired_range()
 	var shot_world := _get_world()
-	if held_weapon_id not in ["lucille", "books"] and shot_world != null and shot_world.has_method("is_furniture_shot_path_clear"):
+	if not _weapon_is_melee() and shot_world != null and shot_world.has_method("is_furniture_shot_path_clear"):
 		if not shot_world.call("is_furniture_shot_path_clear", get_projectile_origin(), target_position, self):
 			_cancel_ranged_attack_windup()
 			attack_movement_intent = true
@@ -1986,7 +2055,10 @@ func _update_attack_player(delta: float) -> void:
 				ranged_attack_session_active = false
 			return
 		_cancel_ranged_attack_windup()
-		_fire_held_weapon()
+		if _weapon_is_melee():
+			_begin_melee_attack_windup()
+		else:
+			_fire_held_weapon()
 
 
 func _weapon_requires_ranged_windup() -> bool:
@@ -2011,11 +2083,14 @@ func _begin_ranged_attack_windup() -> void:
 	ranged_attack_windup_pending = true
 	ranged_attack_session_active = true
 	ranged_attack_session_weapon_id=held_weapon_id
-	var default_windup: float = 0.25 if held_weapon_id == "assault_rifle" else (0.35 if held_weapon_id == "shotgun" else 0.20)
+	var default_windup: float = 0.25 if DREAM_GUN_ATLAS.is_automatic_weapon(held_weapon_id) else (0.35 if held_weapon_id == "shotgun" else 0.20)
 	ranged_attack_windup_left = .5 if _is_otxo_mode() else clampf(_cfg("employee_ranged_attack_windup", default_windup), 0.0, 5.0)
 	ranged_attack_target_snapshot = _get_known_target_position()
 	velocity = Vector2.ZERO
-	if not _is_otxo_mode(): _show_ranged_charge_visual()
+	if _is_otxo_mode():
+		SFX.play_event(&"enemy_fire_cue")
+	else:
+		_show_ranged_charge_visual()
 
 
 func _update_ranged_attack_windup(delta: float) -> void:
@@ -2052,6 +2127,9 @@ func _update_ranged_attack_windup(delta: float) -> void:
 
 
 func _cancel_ranged_attack_windup() -> void:
+	# Existing callers are shared interruption boundaries: death, disarm,
+	# knockdown, smoke, weapon replacement and region deactivation.
+	_cancel_melee_attack_windup()
 	ranged_attack_windup_left = 0.0
 	ranged_attack_windup_pending = false
 	ranged_attack_target_snapshot = Vector2.ZERO
@@ -2059,11 +2137,82 @@ func _cancel_ranged_attack_windup() -> void:
 	ranged_attack_session_weapon_id = ""
 	_hide_ranged_charge_visual()
 
+func _can_continue_melee_windup() -> bool:
+	var unarmed := held_weapon_id.is_empty() and panic_counterattack_active
+	if not _weapon_is_melee() and not unarmed:
+		return false
+	if dead or state != State.ATTACK_PLAYER or not can_process() or not can_see_target \
+		or not is_instance_valid(target) or not _has_known_target() or _smoke_blocks_target() \
+		or burning_panic or sky_drop_active or knockback_left > 0.0 or pickup_pause_left > 0.0 or reload_left > 0.0:
+		return false
+	return not melee_attack_windup_pending or held_weapon_id == melee_attack_windup_weapon_id
+
+
+func _begin_melee_attack_windup() -> void:
+	if melee_attack_windup_pending or not _can_continue_melee_windup() \
+		or attack_cooldown_left > 0.0 or reaction_left > 0.0 or unarmed_attack_active:
+		return
+	var reach := _cfg("employee_unarmed_attack_range", 30.0) if held_weapon_id.is_empty() else _melee_hit_range(held_weapon_id)
+	if global_position.distance_to(_get_known_target_position()) > reach:
+		return
+	melee_attack_windup_pending = true
+	melee_attack_windup_left = MELEE_ATTACK_WINDUP_SECONDS
+	melee_attack_windup_weapon_id = held_weapon_id
+	melee_attack_target_snapshot = _get_known_target_position()
+	velocity = Vector2.ZERO
+	_firearm_recoil_velocity = Vector2.ZERO
+	_update_weapon_aim()
+
+
+func _update_melee_attack_windup(delta: float) -> void:
+	velocity = Vector2.ZERO
+	if not melee_attack_windup_pending:
+		return
+	if not _can_continue_melee_windup():
+		_cancel_melee_attack_windup()
+		return
+	melee_attack_windup_left = maxf(0.0, melee_attack_windup_left - delta)
+	if melee_attack_windup_left > .000001:
+		return
+	melee_attack_windup_pending = false
+	melee_attack_fire_locked = true
+	_update_weapon_aim()
+	if held_weapon_id.is_empty():
+		_start_unarmed_counterattack()
+	else:
+		_fire_held_weapon()
+	_cancel_melee_attack_windup()
+
+
+func _cancel_melee_attack_windup() -> void:
+	melee_attack_windup_left = 0.0
+	melee_attack_windup_pending = false
+	melee_attack_windup_weapon_id = ""
+	melee_attack_target_snapshot = Vector2.ZERO
+	melee_attack_fire_locked = false
+
+
+func get_melee_telegraph_state() -> Dictionary:
+	if not melee_attack_windup_pending or not _can_continue_melee_windup():
+		return {}
+	var unarmed := held_weapon_id.is_empty()
+	var books := held_weapon_id == "books"
+	var progress := clampf(1.0 - melee_attack_windup_left / MELEE_ATTACK_WINDUP_SECONDS, 0.0, 1.0)
+	return {"start": global_position, "target": melee_attack_target_snapshot, "progress": progress,
+		"radius": _cfg("employee_unarmed_attack_range", 30.0) if unarmed else _melee_hit_range(held_weapon_id),
+		"aperture": _cfg("books_attack_arc_degrees" if books else "lucille_attack_arc_degrees", 120.0)}
+
+
 func get_ranged_telegraph_state() -> Dictionary:
 	if _smoke_blocks_target():return {}
 	if dead or state!=State.ATTACK_PLAYER or not can_see_target or reload_left>0.0 or pickup_pause_left>0.0 or not _weapon_requires_ranged_windup(): return {}
 	if ranged_attack_windup_pending:
-		return {"target":ranged_attack_target_snapshot,"progress":clampf(1.0-ranged_attack_windup_left/.5,0,1)}
+		var result := {"target":ranged_attack_target_snapshot,"progress":clampf(1.0-ranged_attack_windup_left/.5,0,1)}
+		if held_weapon_id == "shotgun":
+			# Both the shared volley aim error and each pellet's independent
+			# spread can reach the edges of this complete warning envelope.
+			result.spread_degrees = float(FIREARM_RULES.parameters(feedback_config, &"shotgun").spread_degrees) + _get_current_weapon_spread_degrees()
+		return result
 	return {}
 
 
@@ -2149,6 +2298,7 @@ func _start_unarmed_counterattack() -> void:
 	unarmed_attack_active = true
 	unarmed_attack_elapsed = 0.0
 	unarmed_attack_hit_applied = false
+	unarmed_attack_direction = global_position.direction_to(melee_attack_target_snapshot if melee_attack_fire_locked else _get_known_target_position())
 	# Punch is the common response; Kick remains an occasional stronger
 	# counterattack and uses the existing Player knockback entry point.
 	unarmed_attack_kind = &"employee_punch" if random.randf() < 0.70 else &"employee_kick"
@@ -2189,7 +2339,8 @@ func _update_unarmed_counterattack(delta: float) -> void:
 		unarmed_attack_hit_applied = true
 		var attack_range := _cfg("employee_unarmed_attack_range", 30.0)
 		var target_position := _get_known_target_position()
-		if global_position.distance_to(target_position) <= attack_range:
+		var target_offset := target_position - global_position
+		if target_offset.length() <= attack_range and absf(unarmed_attack_direction.angle_to(target_offset)) <= deg_to_rad(_cfg("lucille_attack_arc_degrees", 120.0) * .5):
 			var amount_property: StringName = (
 				&"employee_unarmed_kick_damage"
 				if unarmed_attack_kind == &"employee_kick"
@@ -2364,6 +2515,7 @@ func _update_move_to_door() -> void:
 				return
 		state = State.ROOM_TRANSIT
 		transit_exiting = false
+		steering_commit_left = 0.0
 		return
 
 	velocity = _steer_toward(
@@ -2387,12 +2539,7 @@ func _update_room_transit() -> void:
 			destination = route_exit_point
 
 	if global_position.distance_to(destination) > 5.0:
-		velocity = (
-			global_position.direction_to(
-				destination
-			)
-			* _get_current_move_speed()
-		)
+		velocity = _steer_toward(destination, false)
 
 		return
 
@@ -2560,7 +2707,11 @@ func on_room_gunshot(world_position: Vector2, source_room_id: int) -> void:
 	var my_room := int(get_meta(&"dream_room_id", -1))
 	var hearing_world := _get_world()
 	var heard := my_room == source_room_id
-	if not heard and hearing_world != null and hearing_world.has_method("can_employee_hear_gunshot"):
+	# Authored spaces can contain several acoustically separate areas under
+	# one room id. Give the world the sound position before any same-room bypass.
+	if hearing_world != null and hearing_world.has_method("can_employee_hear_gunshot_at"):
+		heard = hearing_world.can_employee_hear_gunshot_at(self,world_position,source_room_id)
+	elif not heard and hearing_world != null and hearing_world.has_method("can_employee_hear_gunshot"):
 		heard = hearing_world.can_employee_hear_gunshot(self, source_room_id)
 	var max_sound_dist: float = _cfg("employee_sound_hearing_range", 700.0)
 	if global_position.distance_to(world_position) > max_sound_dist:
@@ -2807,6 +2958,7 @@ func equip_weapon(
 		held_weapon_sprite.texture = null
 		weapon_root.hide()
 		_sync_enemy_hands_visibility()
+		_update_hand_presentation()
 		return
 
 	held_weapon_id = weapon_id
@@ -2844,7 +2996,7 @@ func equip_weapon(
 				30.0
 			)
 		)
-		if weapon_id == "assault_rifle"
+		if DREAM_GUN_ATLAS.is_automatic_weapon(weapon_id)
 		else (
 			int(
 				_cfg(
@@ -2861,15 +3013,13 @@ func equip_weapon(
 	reload_left = 0.0
 
 	_finish_reload_visual()
+	_update_hand_presentation()
 
 
 func _weapon_is_melee(
 	weapon_id: String = held_weapon_id
 ) -> bool:
-	return weapon_id in [
-		"lucille",
-		"books"
-	]
+	return DREAM_GUN_ATLAS.get_category(weapon_id) == DREAM_GUN_ATLAS.CATEGORY_MELEE
 
 
 func _set_attack_cooldown(base_interval: float) -> void:
@@ -2943,7 +3093,7 @@ func _get_current_weapon_spread_degrees() -> float:
 		)
 		* float(burst_shot_count)
 	)
-	return clampf(
+	return FIREARM_RULES.spread_multiplier(StringName(held_weapon_id)) * clampf(
 		spread,
 		0.0,
 		60.0
@@ -2990,22 +3140,20 @@ func _fire_held_weapon() -> void:
 
 	# Consuming the last round starts reload and clears the windup state. Keep
 	# this shot's committed target before that lifecycle change.
-	var committed_aim_target: Vector2=ranged_attack_target_snapshot if ranged_attack_fire_locked else _get_known_target_position()
-	# Snapshot before the last round starts reload and clears magazine priming.
-	var announce_attack:=not DREAM_GUN_ATLAS.is_automatic_weapon(held_weapon_id) or not ranged_attack_magazine_primed
+	var committed_aim_target: Vector2 = melee_attack_target_snapshot if melee_attack_fire_locked else \
+		(ranged_attack_target_snapshot if ranged_attack_fire_locked else _get_known_target_position())
 	if not _consume_ammo_for_attack():
 		return
 
 	var aim_origin := get_projectile_origin() if _weapon_requires_ranged_windup() else global_position
 	var aim_direction := aim_origin.direction_to(committed_aim_target)
 
+	var aim_spread := 0.0 if _weapon_is_melee() else _get_current_weapon_spread_degrees()
+	ranged_attack_shot_spread_degrees = aim_spread + float(FIREARM_RULES.parameters(feedback_config, &"shotgun").spread_degrees) if held_weapon_id == "shotgun" else 0.0
 	var direction := (
 		aim_direction
-		if held_weapon_id in [
-			"lucille",
-			"books"
-		]
-		else FIREARM_RULES.directions(aim_direction, 1, _get_current_weapon_spread_degrees(), random)[0]
+		if _weapon_is_melee()
+		else FIREARM_RULES.directions(aim_direction, 1, aim_spread, random)[0]
 	)
 	# One event per firearm attack (not per shotgun pellet).  Neutral employees
 	# in this same room react to the room threat; the shooter itself is hostile.
@@ -3014,8 +3162,8 @@ func _fire_held_weapon() -> void:
 		if world != null and world.has_method("notify_gunshot"):
 			world.notify_gunshot(global_position, int(get_meta(&"dream_room_id", -1)))
 
-	match held_weapon_id:
-		"basic", "shotgun", "assault_rifle":
+	match DREAM_GUN_ATLAS.get_behavior_id(held_weapon_id):
+		"basic", "shotgun", "assault_rifle", "mp5":
 			var weapon_kind := StringName(held_weapon_id)
 			var parameters := FIREARM_RULES.parameters(feedback_config, weapon_kind)
 			_set_weapon_attack_cooldown(float(parameters.interval))
@@ -3033,7 +3181,6 @@ func _fire_held_weapon() -> void:
 			if DREAM_GUN_ATLAS.is_automatic_weapon(held_weapon_id):
 				ranged_attack_magazine_primed=current_ammo>0 and reload_left<=0.0
 				if not ranged_attack_magazine_primed: ranged_attack_session_active=false
-			if _is_otxo_mode() and announce_attack: SFX.play_event(&"enemy_fire_cue")
 			_play_enemy_gunshot()
 		"lucille":
 			_set_weapon_attack_cooldown(_cfg(
@@ -3072,11 +3219,7 @@ func _fire_held_weapon() -> void:
 	var world := _get_world()
 
 	if (
-		held_weapon_id in [
-			"basic",
-			"shotgun",
-			"assault_rifle"
-		]
+		DREAM_GUN_ATLAS.has_firearm(held_weapon_id)
 		and world != null
 		and world.has_method(
 			"spawn_weapon_muzzle"
@@ -3114,11 +3257,7 @@ func _fire_held_weapon() -> void:
 func _weapon_uses_ammo(
 	weapon_id: String = held_weapon_id
 ) -> bool:
-	return weapon_id in [
-		"basic",
-		"shotgun",
-		"assault_rifle"
-	]
+	return DREAM_GUN_ATLAS.has_firearm(weapon_id)
 
 
 func _consume_ammo_for_attack() -> bool:
@@ -3273,11 +3412,16 @@ func _spawn_bullet(
 
 
 func _fire_lucille(direction: Vector2) -> void:
-	_fire_melee_swing(direction, "lucille")
+	_fire_melee_swing(direction, held_weapon_id if DREAM_GUN_ATLAS.uses_lucille_motion(held_weapon_id) else "lucille")
 
 
 func _fire_books(direction: Vector2) -> void:
 	_fire_melee_swing(direction, "books")
+
+
+func _melee_hit_range(weapon_id: String) -> float:
+	var property: StringName = &"books_attack_range" if weapon_id == "books" else &"lucille_attack_range"
+	return (_cfg(property, 20.0) + 14.0) * DREAM_GUN_ATLAS.get_melee_range_multiplier(weapon_id)
 
 
 func _fire_melee_swing(direction: Vector2, weapon_id: String) -> void:
@@ -3285,19 +3429,27 @@ func _fire_melee_swing(direction: Vector2, weapon_id: String) -> void:
 	if burning_panic:return
 	if not can_see_target or not _has_known_target():
 		return
-	var range_property: StringName = &"lucille_attack_range"
 	var damage_property: StringName = &"lucille_damage"
 	if weapon_id == "books":
-		range_property = &"books_attack_range"
 		damage_property = &"books_damage"
-	var reach := _cfg(range_property, 20.0) + 14.0
+	var reach := _melee_hit_range(weapon_id)
 
 	var target_position := _get_known_target_position()
 	var melee_origin: Vector2 = projectile_origin.global_position
-	if melee_origin.distance_to(target_position) > reach:
+	if melee_attack_fire_locked:
+		# The committed swing still plays when the player dodges. Its damage
+		# remains inside the complete body-anchored sector shown during charge.
+		_start_enemy_melee_visual(direction, weapon_id)
+		SFX.play_event(&"melee_swing")
+		var offset := target_position - global_position
+		var arc_property: StringName = &"books_attack_arc_degrees" if weapon_id == "books" else &"lucille_attack_arc_degrees"
+		if offset.length() > reach or absf(direction.angle_to(offset)) > deg_to_rad(_cfg(arc_property, 120.0) * .5):
+			return
+	if not melee_attack_fire_locked and melee_origin.distance_to(target_position) > reach:
 		return
-	_start_enemy_melee_visual(direction, weapon_id)
-	SFX.play_event(&"melee_swing")
+	if not melee_attack_fire_locked:
+		_start_enemy_melee_visual(direction, weapon_id)
+		SFX.play_event(&"melee_swing")
 
 	var health_before := float(
 		target.get(
@@ -3307,7 +3459,7 @@ func _fire_melee_swing(direction: Vector2, weapon_id: String) -> void:
 
 	target.receive_damage(
 		_cfg(damage_property, 30.0),
-		StringName("employee_%s" % weapon_id),
+		StringName("employee_%s" % DREAM_GUN_ATLAS.get_behavior_id(weapon_id)),
 		global_position
 	)
 
@@ -3336,6 +3488,7 @@ func _start_enemy_melee_visual(direction: Vector2, weapon_id: String) -> void:
 	melee_visual_elapsed = 0.0
 	melee_visual_duration = 0.24
 	melee_visual_weapon_id = weapon_id
+	melee_trail.width = melee_trail_base_width * DREAM_GUN_ATLAS.get_melee_range_multiplier(weapon_id)
 	melee_trail.clear_points()
 	melee_trail.modulate = Color.WHITE
 	melee_trail.show()
@@ -3399,6 +3552,7 @@ func _update_enemy_melee_visual(delta: float, movement_blocked: bool) -> void:
 		if melee_visual_weapon_id == "books"
 		else _cfg("lucille_trail_radius", 42.0)
 	)
+	trail_radius *= DREAM_GUN_ATLAS.get_melee_range_multiplier(melee_visual_weapon_id)
 	melee_trail.add_point(
 		Vector2(trail_radius, 0.0).rotated(weapon_motion.rotation)
 		+ weapon_motion.position
@@ -3429,10 +3583,7 @@ func _play_weapon_recoil() -> void:
 
 	visual_tween = create_tween()
 
-	if held_weapon_id in [
-		"lucille",
-		"books"
-	]:
+	if _weapon_is_melee():
 		visual_tween.tween_property(
 			weapon_motion,
 			"rotation",
@@ -3449,10 +3600,10 @@ func _play_weapon_recoil() -> void:
 
 	else:
 		var kick_distance := 4.0
-		match held_weapon_id:
+		match DREAM_GUN_ATLAS.get_behavior_id(held_weapon_id):
 			"shotgun":
 				kick_distance = _cfg("weapon_recoil_distance", 4.0) * maxf(_cfg("shotgun_recoil_multiplier", 2.8), 0.1)
-			"assault_rifle":
+			"assault_rifle", "mp5":
 				kick_distance = _cfg("weapon_recoil_distance", 4.0) * maxf(_cfg("assault_rifle_recoil_multiplier", 1.5), 0.1)
 		visual_tween.tween_property(
 			weapon_motion,
@@ -3495,6 +3646,8 @@ func _update_weapon_aim() -> void:
 		# Investigation points at the recorded sound position only.  The neutral
 		# employee must not visually/implicitly acquire the Player through walls.
 		direction = global_position.direction_to(gunshot_threat_position)
+	elif melee_attack_windup_pending or melee_attack_fire_locked:
+		direction = global_position.direction_to(melee_attack_target_snapshot)
 	elif hostile and _has_known_target():
 		var aim_locked: bool=ranged_attack_windup_pending and ranged_attack_windup_left<=.12
 		direction = global_position.direction_to(ranged_attack_target_snapshot if aim_locked else _get_known_target_position())
@@ -3663,7 +3816,7 @@ func _blood_intensity_for_source(source: StringName) -> float:
 		return _cfg("blood_pistol_intensity", 0.82) * 0.5
 	if source_text.contains("shotgun"):
 		return _cfg("blood_shotgun_intensity", 1.45)
-	if source_text.contains("assault_rifle") or source_text.contains("rifle") or source_text.contains("automatic"):
+	if source_text.contains("assault_rifle") or source_text.contains("rifle") or source_text.contains("automatic") or source_text.contains("mp5"):
 		return _cfg("blood_automatic_intensity", 0.68)
 	if _is_gun_damage_source(source):
 		return _cfg("blood_pistol_intensity", 0.82)
@@ -3773,7 +3926,7 @@ func take_damage(
 	# One accepted hit, including lethal attacks, before the death early return.
 	# Capsule dedup, damage, blood and existing hit-stop ownership are untouched.
 	if crescent_hit:
-		world.spawn_melee_hit_feedback(self, direction)
+		world.spawn_melee_hit_feedback(self, direction, damage_source)
 	if sample_gun_hit and (current_health<=0.0 or Time.get_ticks_msec()-last_hit_feedback_msec>=int(float(_cfg("projectile_impact_feedback_min_interval",.04))*1000)):
 		last_hit_feedback_msec=Time.get_ticks_msec()
 		world.spawn_combat_feedback(global_position,direction,current_health<=0.0,true,self)
@@ -4762,26 +4915,10 @@ func _step_ragdoll_part(
 	rot_stiffness: float,
 	rot_damping: float
 ) -> Array:
-	if death_landed:
-		# Keep the anatomical anchor attached but let the joint relax at its
-		# actual landing angle: no spring pulling a dead limb back to standing.
-		max_distance = minf(max_distance,4.0)
-		rot_stiffness = 0.0
-		rot_damping = 4.0
-	var acc := -stiffness * pos - damping * vel
-	vel += acc * dt
-	pos += vel * dt
-	if max_distance > 0.0 and pos.length() > max_distance:
-		pos = pos.limit_length(max_distance)
-		if pos.dot(vel) > 0.0:
-			vel -= pos.normalized() * pos.normalized().dot(vel)
-
-	var rot_acc := -rot_stiffness * rot - rot_damping * rot_vel
-	rot_vel += rot_acc * dt
-	rot += rot_vel * dt
-	rot = clampf(rot, -2.35, 2.35)
-
-	return [pos, vel, rot, rot_vel]
+	return CORPSE_JOINT.step(
+		pos, vel, rot, rot_vel, dt, max_distance, stiffness, damping,
+		rot_stiffness, rot_damping, death_landed
+	)
 
 
 func _step_ragdoll_physics(delta: float) -> void:
@@ -5842,7 +5979,7 @@ func _uses_run_speed() -> bool:
 func _get_current_move_speed() -> float:
 	var speed_multiplier := 1.0
 	if _uses_run_speed():
-		speed_multiplier = _cfg("employee_run_speed_multiplier", 1.5)
+		speed_multiplier = _cfg("employee_run_speed_multiplier", DemoConfig.DEFAULT_ENEMY_RUN_MULTIPLIER)
 	return movement_speed * movement_speed_multiplier * speed_multiplier
 
 
@@ -5853,6 +5990,7 @@ func _steer_toward(
 	var navigation_world := _get_world()
 	if navigation_world != null and navigation_world.has_method("get_employee_navigation_target"):
 		destination = navigation_world.call("get_employee_navigation_target", self, destination)
+	navigation_progress_waypoint = destination
 	var speed_value := _get_current_move_speed()
 
 	if (
@@ -5860,12 +5998,15 @@ func _steer_toward(
 		and global_position.distance_to(
 			steering_waypoint
 		) > 5.0
+		and _steering_point_clear(steering_waypoint, navigation_world)
 	):
+		navigation_progress_waypoint = steering_waypoint
 		return _with_local_separation(
 			global_position.direction_to(
 				steering_waypoint
 			) * speed_value
 		)
+	steering_commit_left = 0.0
 
 	var direct := global_position.direction_to(
 		destination
@@ -5885,13 +6026,10 @@ func _steer_toward(
 	):
 		var probe := (
 			global_position
-			+ direct * 20.0
+			+ direct * minf(20.0, global_position.distance_to(destination))
 		)
 
-		if not world.is_employee_position_clear(
-			probe,
-			self
-		):
+		if not _steering_point_clear(probe, world):
 			# Preserve the pathfinder's destination and solve only this local wall
 			# contact.  Forward-left/right and side candidates are checked against
 			# the authoritative room-floor/wall query; no global position is ever
@@ -5909,16 +6047,18 @@ func _steer_toward(
 			for angle in candidate_angles:
 				var candidate_direction := direct.rotated(float(angle)).normalized()
 				var candidate_point := global_position + candidate_direction * 30.0
-				if not world.is_employee_position_clear(candidate_point, self):
+				if not _steering_point_clear(candidate_point, world):
 					continue
 				var score := candidate_direction.dot(direct)
 				if score > best_score:
 					best_score = score
 					chosen = candidate_direction
 			if chosen == Vector2.ZERO:
+				if not _steering_point_clear(global_position-direct*20.0,world): return Vector2.ZERO
 				chosen = -direct
 
 			steering_waypoint = global_position + chosen * 30.0
+			navigation_progress_waypoint = steering_waypoint
 
 			steering_commit_left = _cfg(
 				"employee_steering_commit_time",
@@ -5934,6 +6074,12 @@ func _steer_toward(
 	return _with_local_separation(
 		direct * speed_value
 	)
+
+
+func _steering_point_clear(point: Vector2, world: Node) -> bool:
+	if world == null: return true
+	if world.has_method("is_employee_position_clear") and not world.is_employee_position_clear(point,self): return false
+	return not world.has_method("is_employee_path_clear") or world.is_employee_path_clear(global_position,point,self)
 
 
 func _update_local_separation(
@@ -6048,10 +6194,14 @@ func _with_local_separation(
 	if desired_velocity.length_squared() <= 0.001:
 		return cached_separation_velocity
 
-	return (
+	var blended := (
 		desired_velocity
 		+ cached_separation_velocity
 	).normalized() * desired_velocity.length()
+	# Crowd separation must not bend a safe navigation segment into a wall.
+	var world := _get_world()
+	if not _steering_point_clear(global_position+blended*0.10,world): return desired_velocity
+	return blended
 
 
 func _update_stuck_detection(
@@ -6069,18 +6219,24 @@ func _update_stuck_detection(
 		]
 	):
 		stuck_elapsed = 0.0
-		stuck_anchor = global_position
+		_reset_stuck_progress_anchor()
 		return
 	# Attack can legitimately hold still while charging or firing from a valid
 	# range.  Only accumulate the shared stuck timer when this tick requested a
 	# real chase/reposition move.
 	if state == State.ATTACK_PLAYER and (ranged_attack_windup_pending or not attack_movement_intent):
 		stuck_elapsed = 0.0
-		stuck_anchor = global_position
+		_reset_stuck_progress_anchor()
 		return
 	if state == State.NEUTRAL_WANDER and global_position.distance_to(wander_target) <= 8.0:
 		stuck_elapsed = 0.0
-		stuck_anchor = global_position
+		_reset_stuck_progress_anchor()
+		return
+	if state == State.MOVE_TO_DOOR and (global_position.distance_to(route_approach_point) <= 7.0
+		or (door_hold_active and door_hold_time_left > 0.0 and global_position.distance_to(route_approach_point) <= 20.0)):
+		# Waiting for the serialized doorway grant / tactical hold is intentional.
+		stuck_elapsed = 0.0
+		_reset_stuck_progress_anchor()
 		return
 
 	stuck_elapsed += delta
@@ -6097,21 +6253,24 @@ func _update_stuck_detection(
 	var moved := global_position.distance_to(
 		stuck_anchor
 	)
+	var same_waypoint := stuck_progress_waypoint.is_finite() and navigation_progress_waypoint.distance_to(stuck_progress_waypoint) <= 8.0
+	var progress := stuck_progress_distance-global_position.distance_to(stuck_progress_waypoint) if same_waypoint else INF
+	var threshold := _cfg("employee_stuck_distance_threshold",2.5)
 
 	stuck_elapsed = 0.0
-	stuck_anchor = global_position
+	_reset_stuck_progress_anchor()
 
 	if (
-		moved
-		>= _cfg(
-			"employee_stuck_distance_threshold",
-			2.5
-		)
+		moved >= threshold
+		and progress >= threshold
 	):
 		return
 
 	steering_commit_left = 0.0
 	decision_cooldown_left = 0.0
+	var navigation_world := _get_world()
+	if navigation_world != null and navigation_world.has_method("invalidate_employee_navigation"):
+		navigation_world.invalidate_employee_navigation(self)
 
 	if state == State.MOVE_TO_DOOR:
 		# Abandon a blocked approach rather than repeatedly steering into the
@@ -6163,6 +6322,12 @@ func _update_stuck_detection(
 		wander_wait_left = 0.25
 
 
+func _reset_stuck_progress_anchor() -> void:
+	stuck_anchor = global_position
+	stuck_progress_waypoint = navigation_progress_waypoint
+	stuck_progress_distance = global_position.distance_to(navigation_progress_waypoint) if navigation_progress_waypoint.is_finite() else INF
+
+
 func _recover_attack_stuck() -> void:
 	steering_commit_left = 0.0
 	decision_cooldown_left = 0.0
@@ -6172,6 +6337,15 @@ func _recover_attack_stuck() -> void:
 	if toward.length_squared() <= 0.001:
 		return
 	var world := _get_world()
+	if world != null and world.has_method("is_employee_path_clear"):
+		# A fresh global route can move away from Player to escape concave walls.
+		# A random local flank would overwrite that route and re-enter the trap.
+		world.invalidate_employee_navigation(self)
+		var waypoint: Vector2 = world.get_employee_navigation_target(self,target_position)
+		if waypoint.distance_to(global_position) > 5.0 and world.is_employee_path_clear(global_position,waypoint,self):
+			steering_waypoint = waypoint
+			steering_commit_left = _cfg("employee_steering_commit_time",0.40)
+		return
 	var candidate_directions: Array[Vector2] = [
 		toward.rotated(PI * 0.5),
 		toward.rotated(-PI * 0.5),
@@ -6184,7 +6358,7 @@ func _recover_attack_stuck() -> void:
 	if world != null and world.has_method("is_employee_position_clear"):
 		for candidate in candidate_directions:
 			var point := global_position + candidate.normalized() * 30.0
-			if not world.is_employee_position_clear(point, self):
+			if not _steering_point_clear(point, world):
 				continue
 			steering_waypoint = point
 			steering_commit_left = _cfg("employee_steering_commit_time", 0.40)
@@ -6250,7 +6424,7 @@ func _update_human_animation(
 		if _uses_run_speed():
 			walk_cycles_per_second *= _cfg(
 				"employee_run_speed_multiplier",
-				1.5
+				DemoConfig.DEFAULT_ENEMY_RUN_MULTIPLIER
 			)
 		walk_phase = fmod(
 			walk_phase
@@ -6395,7 +6569,7 @@ func _update_human_animation(
 func _apply_live_facing(direction: Vector2) -> void:
 	if dead or direction.length_squared() < 0.001: return
 	last_facing_direction = direction.normalized()
-	_set_back_facing(direction.y < -0.2)
+	_set_back_facing(last_facing_direction.y < -0.2)
 	# Exact vertical aim preserves its previous horizontal side.
 	if absf(direction.x) > 0.001:
 		character_visual.scale.x = absf(base_visual_scale.x) * (1.0 if direction.x < 0.0 else -1.0)
@@ -6437,10 +6611,9 @@ func _update_enemy_unarmed_visual(movement_blocked: bool) -> void:
 func _set_back_facing(
 	back: bool
 ) -> void:
+	if dead:
+		return
 	facing_back = back
-	## The new atlas supplies one canonical direction only.  Horizontal facing
-	## is still mirrored by CharacterVisual.scale.x; looking upward therefore
-	## reuses the same pixel parts instead of referencing the removed old atlas.
 	_set_enemy_head_frame(enemy_head_frame_index)
 
 
@@ -6660,42 +6833,27 @@ func _release_weapon_reservation() -> void:
 
 
 func _weapon_desired_range() -> float:
-	match held_weapon_id:
-		"lucille":
-			return 30.0
-
-		"books":
-			return 30.0
-
+	if _weapon_is_melee():
+		return 30.0 * DREAM_GUN_ATLAS.get_melee_range_multiplier(held_weapon_id)
+	match DREAM_GUN_ATLAS.get_behavior_id(held_weapon_id):
 		"shotgun":
 			return 140.0
 
 		"assault_rifle":
 			return 380.0
+		"mp5":
+			return 190.0
 
 	return 250.0
 
 
 func _weapon_max_range() -> float:
-	match held_weapon_id:
-		"lucille":
-			return (
-				_cfg(
-					"lucille_attack_range",
-					30.0
-				)
-				+ 14.0
-			)
-
-		"books":
-			return (
-				_cfg(
-					"books_attack_range",
-					30.0
-				)
-				+ 14.0
-			)
-
+	if _weapon_is_melee():
+		var property: StringName = &"books_attack_range" if held_weapon_id == "books" else &"lucille_attack_range"
+		return (_cfg(property, 30.0) + 14.0) * DREAM_GUN_ATLAS.get_melee_range_multiplier(held_weapon_id)
+	match DREAM_GUN_ATLAS.get_behavior_id(held_weapon_id):
+		"mp5":
+			return float(FIREARM_RULES.parameters(feedback_config, &"mp5").range)
 		"shotgun":
 			return _cfg(
 				"shotgun_max_distance",

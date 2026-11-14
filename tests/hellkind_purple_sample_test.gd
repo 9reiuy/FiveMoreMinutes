@@ -2,7 +2,7 @@ extends SceneTree
 ## Real Camera acceptance for the standalone purple sample. No production writes.
 ## Run natively with isolated APPDATA. Optional: -- --sample-perf for 3 x 5s A/B/A.
 ## --interaction-check reruns only initialization, UI and shader restoration checks.
-const OUT := "res://.runtime/hellkind_purple_sample_20261103/native640_full_validation"
+var OUT := "res://.runtime/hellkind_purple_sample_20261103/native640_full_validation"
 const SCENE := "res://scenes/preview/hellkind_purple_sample.tscn"
 const ORANGE := Color(0.8509804, 0.4196078, 0.0941176, 1.0)
 var checks := 0
@@ -17,6 +17,8 @@ var _done := false
 var interaction_only := OS.get_cmdline_user_args().has("--interaction-check")
 
 func _initialize() -> void:
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--artifact-dir="):OUT=argument.trim_prefix("--artifact-dir=")
 	call_deferred("run")
 
 func check(ok: bool, label: String) -> void:
@@ -256,6 +258,7 @@ func report_and_quit(code: int) -> void:
 		if InputMap.has_action(action):
 			Input.action_release(action)
 	var result := {
+		"pid":OS.get_process_id(),"audio":AudioServer.get_driver_name(),
 		"checks": checks, "failures": failures, "native_camera": DisplayServer.get_name() != "headless",
 		"gpu": RenderingServer.get_video_adapter_name(), "engine": Engine.get_version_info(),
 		"captures": captures, "orange_counts": orange_counts, "performance_runs": performance_runs, "material_evidence": material_evidence,
@@ -272,6 +275,10 @@ func report_and_quit(code: int) -> void:
 	quit(code)
 
 func run() -> void:
+	var master:=AudioServer.get_bus_index(&"Master")
+	if master<0 or not AudioServer.is_bus_mute(master):
+		if master>=0:AudioServer.set_bus_mute(master,true)
+		quit(1);return
 	DirAccess.make_dir_recursive_absolute(OUT)
 	DirAccess.make_dir_recursive_absolute(OUT.path_join("walk"))
 	create_timer(360, true, false, true).timeout.connect(func():
@@ -286,7 +293,6 @@ func run() -> void:
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 	DisplayServer.window_set_size(Vector2i(1280, 720))
 	DisplayServer.window_set_position(Vector2i(-30000, -30000))
-	AudioServer.set_bus_mute(0, true)
 	var scene = load(SCENE)
 	check(scene != null, "Standalone sample scene loads")
 	if scene == null:
@@ -309,8 +315,8 @@ func run() -> void:
 	check(not lab.display.world_viewport.is_ancestor_of(lab.sample_ui), "Sample controls outside world effects")
 	check(lab.world.player.get_script().resource_path == "res://scripts/testing/lab_player.gd", "Original lab player authority retained")
 	check_live_materials("Initial room")
-	check(lab.style_index == 4 and not lab.display.selective_enabled and not lab.display.palette_enabled, "Default two-ink comparison disables pixel mode and palette")
-	check(not lab._lamps_enabled and not lab.retro_material.get_shader_parameter("enabled"), "Default comparison has no indoor lighting or purple post")
+	check(lab.style_index == 4 and not lab.display.selective_enabled and not lab.display.has_method("set_palette_enabled"), "Default two-ink comparison disables pixel mode and palette")
+	check(not lab._lamps_enabled and not lab.display.world_viewport.has_node("PurpleSamplePost"), "Default comparison has no indoor lighting or retired colour filter")
 	check(lab.world.player_depth_bridge.actor_sprite.material_override == lab.character_inks.actor_inks, "Default comparison styles the original player depth carrier")
 	check_actor_resolution("Initial room")
 	lab.toggle_lamps() # Preserve the older comparison fixtures below.

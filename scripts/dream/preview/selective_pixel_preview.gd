@@ -7,7 +7,7 @@ const DEFAULT_PIXEL_SIZE := Vector2i(640, 360)
 @export var preview_seed := 42001
 @export var muted := true
 @export var preview_mode := true
-@export var initial_selective_enabled := true
+@export var initial_selective_enabled := false
 ## Preview comparisons may select 960x540. Formal screens keep 640x360.
 @export var pixel_size := DEFAULT_PIXEL_SIZE
 @export var tonal_enhancement_enabled := true
@@ -15,11 +15,10 @@ const DEFAULT_PIXEL_SIZE := Vector2i(640, 360)
 var world: Node3D
 var world_viewport: SubViewport
 var container: SubViewportContainer
-var palette_material: ShaderMaterial
-var use_native_office_colour := false
+var semantic_material: ShaderMaterial
+var camera_finish: Node
 var status_label: Label
-var selective_enabled := true
-var palette_enabled := false
+var selective_enabled := false
 ## Rectangle in the root viewport's logical canvas coordinates.
 var content_rect := Rect2()
 
@@ -39,8 +38,7 @@ var staging := false
 func _ready() -> void:
 	add_to_group(&"dream_display")
 	process_priority = 1000
-	selective_enabled = bool(SettingsManager.get_setting(&"pixelation_enabled", true))
-	palette_enabled = SettingsManager.get_palette_enabled()
+	selective_enabled = bool(SettingsManager.get_setting(&"pixelation_enabled", false))
 	SettingsManager.setting_changed.connect(_on_display_setting_changed)
 	if not preview_mode and world == null:
 		push_error("Pixelation display requires a gameplay world before entering the tree")
@@ -77,13 +75,12 @@ func _ready() -> void:
 		world.persist_profile = false
 		world.enable_game_start_cab_exit = false
 	world.set_meta(&"tonal_enhancement_enabled",tonal_enhancement_enabled)
-	use_native_office_colour = world.has_method("uses_office_real_colour") and world.uses_office_real_colour()
 	world_viewport.add_child(world)
 	_sync_visual_enhancement()
 
 	# Occlusion Cutout is single-pass inside this WorldViewport: occluder
 	# furniture discards its hole core in the transparent list (see
-	# office_low_pixel*.gdshader / furniture_pixel_outline.gdshader).  No second
+	# office_low_pixel*.gdshader). No second
 	# behind-camera render or full-screen composite overlay is used.
 	if preview_mode:
 		world.regenerate(preview_seed)
@@ -94,28 +91,22 @@ func _ready() -> void:
 				break
 		world.night_lighting.set_flashlight_enabled(false)
 	_install_coordinate_mapping()
-	var palette_layer := CanvasLayer.new()
-	palette_layer.name = "WorldPaletteLayer"
-	# Palette processes the 3D world only; empty regions are now depth-tested
-	# geometry, not a later screen-space floor-footprint overlay.
-	palette_layer.layer = 18
-	world_viewport.add_child(palette_layer)
-	var palette_rect := ColorRect.new()
-	palette_rect.name = "WorldPalette"
-	palette_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	palette_layer.add_child(palette_rect)
-	palette_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	palette_material = ShaderMaterial.new()
-	palette_material.shader = (preload("res://shaders/world_semantic_decode.gdshader") if use_native_office_colour
-		else preload("res://shaders/palette_quantize.gdshader"))
-	# Smooth the final light ramp only in formal floors/the production-art lab.
-	# Tutorial reveals, standalone samples and the lobby retain their own palette.
-	if not use_native_office_colour: palette_material.set_shader_parameter(&"smooth_light_ramp",not preview_mode and world.has_method("get_current_floor_token") and not world.has_node("ChapterTraining"))
-	if not use_native_office_colour: palette_material.set_shader_parameter(&"tonal_sample",tonal_enhancement_enabled and not bool(world.get_meta(&"preserve_local_palette",false)))
-	if not use_native_office_colour: palette_material.set_shader_parameter(&"palette_scheme", SettingsManager.get_palette_scheme())
-	palette_material.set_shader_parameter(&"tutorial_gate_indicators", world.has_node("ChapterTraining"))
-	if not use_native_office_colour: palette_material.set_shader_parameter(&"palette_enabled", palette_enabled and not bool(world.get_meta(&"preserve_local_palette",false)))
-	palette_rect.material = palette_material
+	# Only resolve reserved combat effect codes. Ordinary scene RGB passes
+	# through unchanged; there is no palette, quantizer or colour scheme.
+	var semantic_layer := CanvasLayer.new()
+	semantic_layer.name = "WorldSemanticLayer"
+	semantic_layer.layer = 18
+	world_viewport.add_child(semantic_layer)
+	var semantic_rect := ColorRect.new()
+	semantic_rect.name = "CombatColourResolve"
+	semantic_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	semantic_layer.add_child(semantic_rect)
+	semantic_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	semantic_material = ShaderMaterial.new()
+	semantic_material.shader = preload("res://shaders/world_semantic_decode.gdshader")
+	semantic_rect.material = semantic_material
+	# World-only RGB finish and soft vignette; root HUD/phone stay untouched.
+	camera_finish = preload("res://scripts/dream/world_camera_finish.gd").install(self)
 	if preview_mode:
 		var controls := CanvasLayer.new()
 		controls.layer = 40
@@ -166,12 +157,11 @@ func _input(event: InputEvent) -> void:
 		if event.keycode == KEY_F6:
 			set_selective_enabled(not selective_enabled)
 			get_viewport().set_input_as_handled()
-		elif event.keycode == KEY_F7:
-			set_palette_enabled(not palette_enabled)
-			get_viewport().set_input_as_handled()
-	if _initialized and event.is_action_pressed("dash") and not _pointer_inside():
-		Input.action_release("dash")
-		get_viewport().set_input_as_handled()
+	if _initialized:
+		for action in [&"dash", &"roll"]:
+			if event.is_action_pressed(action) and not _pointer_inside():
+				Input.action_release(action)
+				get_viewport().set_input_as_handled()
 
 
 func set_selective_enabled(value: bool) -> void:
@@ -191,10 +181,9 @@ func set_visual_enhancement(value: bool) -> void:
 
 func _sync_visual_enhancement() -> void:
 	if not is_instance_valid(world): return
-	var enabled:=tonal_enhancement_enabled and not bool(world.get_meta(&"preserve_local_palette",false))
+	var enabled:=tonal_enhancement_enabled and not bool(world.get_meta(&"preserve_authored_colour",false))
 	world.set_meta(&"tonal_enhancement_enabled",enabled)
 	world.set_meta(&"pixel_stability_enabled",enabled and selective_enabled and world.has_method("get_current_floor_token"))
-	if not use_native_office_colour and is_instance_valid(palette_material): palette_material.set_shader_parameter("tonal_sample",enabled)
 
 
 func set_preview_pixel_size(value: Vector2i) -> void:
@@ -206,20 +195,9 @@ func set_preview_pixel_size(value: Vector2i) -> void:
 		_update_status()
 
 
-func set_palette_enabled(value: bool) -> void:
-	palette_enabled = value
-	if not use_native_office_colour and is_instance_valid(palette_material):
-		palette_material.set_shader_parameter(&"palette_enabled", value and not bool(world.get_meta(&"preserve_local_palette",false)))
-	_update_status()
-
-
 func _on_display_setting_changed(key: StringName, value: Variant) -> void:
-	if key == &"palette_scheme" and not use_native_office_colour and is_instance_valid(palette_material):
-		palette_material.set_shader_parameter(&"palette_scheme", int(value))
 	if key == &"pixelation_enabled":
 		set_selective_enabled(bool(value))
-	elif key == &"palette_enabled":
-		set_palette_enabled(bool(value))
 
 
 func _pointer_inside() -> bool:
@@ -340,7 +318,7 @@ func _on_node_added(node: Node) -> void:
 
 func _update_status() -> void:
 	if is_instance_valid(status_label):
-		status_label.text = "F6: %s | F7 Palette: %s | silent" % ["%dx%d world" % [pixel_size.x, pixel_size.y] if selective_enabled else "Native world", "ON" if palette_enabled else "OFF"]
+		status_label.text = "F6: %s | silent" % ["%dx%d world" % [pixel_size.x, pixel_size.y] if selective_enabled else "Native world"]
 
 
 func get_stats() -> Dictionary:

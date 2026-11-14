@@ -27,7 +27,6 @@ func run() -> void:
 	var output := OUTPUT+("/pixel" if pixel else "/native")+("_palette" if palette else "_original")
 	output += "/fracture_v2"
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
-	root.get_node("SettingsManager").set_palette_enabled(palette)
 	root.get_node("SettingsManager").set_setting(&"pixelation_enabled",pixel)
 	main = load("res://scenes/app/main.tscn").instantiate()
 	root.add_child(main)

@@ -53,13 +53,13 @@ func run() -> void:
 			bullet.consumed=phase==2; bullet._update_office_tracer()
 		for pixelation in [false,true]:
 			for palette in [false,true]:
-				display.set_selective_enabled(pixelation); display.set_palette_enabled(palette); display._process(0.0)
+				display.set_selective_enabled(pixelation); display._process(0.0)
 				var images: Array[Image]=[]
 				for size in [512,256,512]: resize_slots(size); images.append(await draw())
 				check(images[0].get_data()==images[1].get_data(),"Capture extent pixels phase%d pixel%d palette%d"%[phase,int(pixelation),int(palette)])
 				check(images[0].get_data()==images[2].get_data(),"Old repeat pixels phase%d"%phase)
 				if phase==1 and pixelation and palette: images[1].save_png("res://.runtime/furniture_face_review/capture_extent_256.png")
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	for bullet in bullets: bullet.consumed=false; bullet._update_office_tracer()
 	for size in [512,256,512]:
 		resize_slots(size); await draw()

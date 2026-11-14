@@ -15,8 +15,10 @@ const DEFAULT_THROW_FAKE_HEIGHT_PEAK_PIXELS := 24.0
 const DEFAULT_THROW_FAKE_HEIGHT_LAUNCH_VELOCITY := 220.0
 const DEFAULT_THROW_FAKE_HEIGHT_GRAVITY := 540.0
 const THROW_COLLISION_SHAPE_SIZE := Vector2(26.0, 12.0)
+const MAX_DROP_SPEED := 240.0
+const DROP_SCENERY_MASK := 4 | (1 << 6)
 
-@export_enum("basic", "shotgun", "lucille", "assault_rifle", "books") var weapon_id := "basic"
+@export_enum("basic", "shotgun", "lucille", "assault_rifle", "mp5", "books", "melee_plank", "melee_pipe", "melee_pipe_wrench", "melee_wrench", "melee_crowbar", "melee_machete") var weapon_id := "basic"
 @export_range(0, 3, 1) var skin_index := 0
 @export_range(16.0, 64.0, 1.0) var interaction_radius := 34.0
 
@@ -59,10 +61,6 @@ var room_saved_interaction_disabled := false
 ## Optional handoff value captured from the Player's effective held Sprite scale.
 ## A negative value means use the shared held-weapon scale for regular drops.
 var visual_scale_override: float = -1.0
-## Shadow is a ground projection, not part of the rotating/fake-height weapon
-## visual.  Keep its authored offset/scale while the rigid body spins.
-var shadow_ground_offset := Vector2.ZERO
-var shadow_base_scale := Vector2.ONE
 ## Encounter drops use the same 2D ground position as every other weapon.  The
 ## vertical arrival is only a visual offset consumed by the shared depth bridge
 ## and never changes the gameplay transform or ownership rules.
@@ -101,6 +99,10 @@ var thrown_hit_targets: Dictionary = {}
 var thrown_weapon_collision_exceptions: Dictionary = {}
 var thrown_collision_exception_refresh_left := 0.0
 var previous_linear_velocity := Vector2.ZERO
+## Cosmetic disarming/scatter is not a damaging player throw. It still stops
+## at walls and floor edges, without making floor loot block any actors.
+var drop_motion_active := false
+var drop_last_safe_position := Vector2.ZERO
 ## A melee weapon gets at most one break roll during one held -> thrown cycle.
 ## Firearms never enter this path.
 var throw_break_checked := false
@@ -151,12 +153,11 @@ func _ready() -> void:
 	sky_drop_base_position = weapon_sprite.position
 	throw_fake_base_position = weapon_sprite.position
 	if shadow != null:
-		shadow_ground_offset = shadow.position
-		shadow_base_scale = shadow.scale
-		shadow.top_level = true
-		shadow.global_position = global_position + shadow_ground_offset
-		shadow.global_rotation = 0.0
-		shadow.global_scale = shadow_base_scale
+		# Retain the empty Shadow endpoint for existing depth-bridge/pool bindings.
+		# Its presence also prevents a fallback shadow proxy; neither this fixed
+		# oval nor a substitute caster should follow a dropped/thrown weapon.
+		shadow.hide()
+		shadow.texture = null
 
 
 func set_room_runtime_active(active: bool) -> void:
@@ -167,6 +168,8 @@ func set_room_runtime_active(active: bool) -> void:
 	restored when the room becomes current again, so authored layer/mask and
 	throw-flight state remain authoritative.
 	"""
+	if not active:
+		set_interaction_targeted(false)
 	if room_runtime_active == active:
 		if not active:
 			visible = false
@@ -262,6 +265,9 @@ func _apply_ground_collision_policy() -> void:
 		# excluded below through the scoped exception policy.
 		set_deferred("collision_layer", thrown_collision_layer)
 		set_deferred("collision_mask", thrown_collision_mask)
+	elif drop_motion_active:
+		set_deferred("collision_layer", 0)
+		set_deferred("collision_mask", DROP_SCENERY_MASK)
 	else:
 		# GROUND and LANDED are never solid gameplay obstacles.  Their separate
 		# InteractionArea remains available for normal pickup detection.
@@ -350,12 +356,6 @@ func _physics_process(delta: float) -> void:
 			)
 		):
 			_finish_throw()
-	if shadow != null:
-		# The rigid body may rotate and bounce; the shadow remains anchored to the
-		# ground projection at the weapon's real world position.
-		shadow.global_position = global_position + shadow_ground_offset
-		shadow.global_rotation = 0.0
-		shadow.global_scale = shadow_base_scale
 	_update_pickup_shine_state()
 
 
@@ -535,36 +535,25 @@ func _update_thrower_exit_state() -> void:
 
 
 func set_interaction_targeted(targeted: bool) -> void:
-	# A pickup can be scanned before its 3D depth bridge is attached.  Do not
-	# treat that early no-op as a completed highlight transition; retry once the
-	# metadata exists on the same target state.
-	if interaction_targeted == targeted and has_meta(&"depth_visual_bridge"):
-		return
+	# Always synchronize the rendered outline, including an idempotent clear
+	# after an Area2D exit or room deactivation.
 	interaction_targeted = targeted
 	# 接近描边与敌人瞄准共用同一条桥接白描边；只有 E 会拾取的最近对象点亮。
 	if not has_meta(&"depth_visual_bridge"):
 		return
 	var reference: Variant = get_meta(&"depth_visual_bridge", null)
 	var bridge: Node = reference.get_ref() if reference is WeakRef else null
-	if bridge != null and bridge.has_method("set_target_highlight"):
+	if is_instance_valid(bridge) and bridge.has_method("set_target_highlight"):
 		bridge.set_target_highlight(targeted)
 
 
-## 交互提示由顶层 HUD 绘制（见 dream_3d_random_dungeon.gd 的 InteractionPrompt）。
-## 这里只提供"是否该显示 + 显示什么 + 世界锚点"，返回值交给 HUD 每帧读取，
-## 因此提示始终是不参与 3D 光照/深度的 CanvasItem。
+## Weapon proximity is communicated by the shared white outline only.
 func get_interaction_prompt_state() -> Dictionary:
-	if _is_throw_airborne() or not interaction_targeted or weapon_sprite == null or not weapon_sprite.visible:
-		return {}
-	if linear_velocity.length() >= 36.0:
-		return {}
-	return {
-		"text": "E 交换为%s" % get_weapon_display_name(),
-		"position": global_position,
-	}
+	return {}
 
 
 func place_after_swap(drop_position: Vector2, impulse: Vector2) -> void:
+	drop_motion_active = false
 	_finish_throw()
 	throw_fake_height = 0.0
 	throw_fake_vertical_velocity = 0.0
@@ -583,10 +572,36 @@ func place_after_swap(drop_position: Vector2, impulse: Vector2) -> void:
 	global_position = drop_position
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0.0
-	_apply_collision_policy()
 	if impulse.length_squared() > 0.0:
-		apply_central_impulse(impulse)
+		drop_motion_active = true
+		drop_last_safe_position = drop_position
+		# Old melee impulses divided by a light weapon's mass launched it through
+		# the whole map while its wall mask was zero. Bound only cosmetic drops.
+		linear_velocity = (impulse / maxf(mass,.01)).limit_length(MAX_DROP_SPEED)
+		continuous_cd = RigidBody2D.CCD_MODE_CAST_SHAPE
+		sleeping = false
 		angular_velocity = clampf(impulse.length() * 0.035, 2.0, 12.0) * (-1.0 if impulse.y < 0.0 else 1.0)
+	_apply_collision_policy()
+
+
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	if not drop_motion_active: return
+	var world := _dream_world()
+	var point := state.transform.origin
+	if is_instance_valid(world) and world.has_method("_is_blood_ground_allowed") and not world._is_blood_ground_allowed(point):
+		var safe := state.transform
+		safe.origin = drop_last_safe_position
+		state.transform = safe
+		state.linear_velocity = Vector2.ZERO
+		state.angular_velocity = 0.0
+	else:
+		drop_last_safe_position = point
+		state.linear_velocity = state.linear_velocity.limit_length(MAX_DROP_SPEED)
+	if state.linear_velocity.length_squared() <= 16.0:
+		drop_motion_active = false
+		state.linear_velocity = Vector2.ZERO
+		continuous_cd = default_continuous_cd
+		_apply_collision_policy()
 
 
 func set_thrown(
@@ -596,6 +611,7 @@ func set_thrown(
 	thrower_id: int,
 	lockout_seconds: float = -1.0
 ) -> void:
+	drop_motion_active = false
 	# Keep any stale pair exceptions from a previous lifecycle out of the new
 	# throw, then install the temporary solid profile after the body is marked
 	# active.  Ground/LANDED pickups never retain this body collision.
@@ -797,7 +813,8 @@ func _break_after_throw_impact() -> void:
 	reserved_by = null
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0.0
-	freeze = true
+	# A thrown melee weapon can break inside body_entered, while queries flush.
+	set_deferred("freeze", true)
 	set_deferred("collision_layer", 0)
 	set_deferred("collision_mask", 0)
 	if interaction_area != null:
@@ -876,4 +893,4 @@ func _on_interaction_body_entered(body: Node) -> void:
 func _on_interaction_body_exited(body: Node) -> void:
 	if body.is_in_group(&"dream_player"):
 		player_in_range = false
-		interaction_targeted = false
+		set_interaction_targeted(false)

@@ -1,6 +1,6 @@
 extends SceneTree
 
-const OUT := "res://.runtime/screen_wall_review_20261106"
+var OUT := "res://.runtime/screen_wall_menu_layout_20261107"
 var checks := 0
 var failures := 0
 var review: Node3D
@@ -8,6 +8,10 @@ var activated_actions: Array[StringName] = []
 
 
 func _initialize() -> void:
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--output-dir="):
+			OUT = arg.trim_prefix("--output-dir=")
+	DirAccess.make_dir_recursive_absolute(OUT)
 	run.call_deferred()
 
 
@@ -78,11 +82,20 @@ func run() -> void:
 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	review = load("res://scenes/preview/screen_wall_review.tscn").instantiate()
+	review.preview_frame_limit = 60
+	review.unfocused_frame_limit = 60
 	review.preview_only = false
 	review.menu_requested.connect(func(id: StringName): activated_actions.append(id))
 	root.add_child(review)
 	await frames(65)
 	check(review.displays.size() == 12, "twelve separate curved screen meshes")
+	check(review.displays[0].action_id == &"continue", "upper-left monitor is Continue")
+	check(review.displays[6].action_id == &"new_game", "expanded central eye monitor is New Game")
+	check(review.displays[5].action_id == &"settings", "middle-left monitor is Settings")
+	check(review.displays[8].action_id == &"quit", "lower-left monitor is Exit")
+	check(review.displays[3].action_id.is_empty() and review.displays[7].action_id.is_empty(), "old right-side and lower-center menu bindings removed")
+	var navigation: Array = review._actionable_displays()
+	check(navigation.map(func(display: Node3D): return display.action_id) == [&"continue",&"new_game",&"settings",&"quit"], "keyboard menu order follows the annotated layout")
 	check(review.model.get_node("ServerBanks").get_child_count() == 6, "six CC0 server racks")
 	check(review.model.get_node("CableHarnesses").get_child_count() >= 35, "modeled hanging, rear and floor cable bundles")
 	check(review.displays[0].effect != review.displays[3].effect, "screen effects have independent material state")
@@ -91,6 +104,10 @@ func run() -> void:
 	check(review.find_children("*", "DirectionalLight3D", true, false).is_empty(), "no overhead or directional lights")
 	var screen_lights := review.find_children("*", "OmniLight3D", true, false)
 	check(screen_lights.size() == 12, "only the twelve screen spill lights illuminate the model")
+	var matched_spill := true
+	for display in review.displays:
+		matched_spill = matched_spill and display.spill_light.light_color.is_equal_approx(display.chassis.get_meta("screen_tint"))
+	check(matched_spill, "all television spill lights use their screen color without added white")
 	var visible_points: Array[Vector2] = []
 	for display in review.displays:
 		var point := find_visible_point(display)
@@ -133,14 +150,14 @@ func run() -> void:
 		await finish()
 		return
 	if "--capture-only" in OS.get_cmdline_user_args():
-		move_pointer(visible_points[0])
+		move_pointer(visible_points[6])
 		await frames(4)
 		await screenshot("static")
 		await frames(32)
 		await screenshot("new_game")
 		await finish()
 		return
-	for index in [0,3,5,7]:
+	for index in [0,6,5,8]:
 		var display: Node3D = review.displays[index]
 		move_pointer(visible_points[index])
 		await frames(3)
@@ -148,7 +165,7 @@ func run() -> void:
 		var action_count := activated_actions.size()
 		await mouse_click(visible_points[index])
 		check(activated_actions.size() == action_count, "static transition blocks accidental activation")
-		if index == 0:
+		if index == 6:
 			await screenshot("static")
 		await frames(34)
 		check(display.phase == "option" and display.option_mix > 0.95, "static resolves to readable option " + String(display.action_id))
@@ -162,7 +179,7 @@ func run() -> void:
 		check(local_hover_count == 1, "one hovered monitor, other mosaics stay idle")
 	move_pointer(Vector2(1,355))
 	await frames(35)
-	check(review.hovered == null and review.displays[7].phase == "idle", "leaving restores the mosaic")
+	check(review.hovered == null and review.displays[8].phase == "idle", "leaving restores the mosaic")
 	check(review.pick_display(Vector2(15,180)) == null, "off-wall click does not activate any screen")
 	# A front-most solid obstruction must win over every screen behind it.
 	var blocked: Node3D = review.displays[0]
@@ -198,9 +215,9 @@ func run() -> void:
 	var timestamps: Array[int] = []
 	for i in 72:
 		if i == 12:
-			move_pointer(visible_points[0])
+			move_pointer(visible_points[6])
 		if i == 36:
-			move_pointer(visible_points[3])
+			move_pointer(visible_points[0])
 		if i == 60:
 			move_pointer(Vector2(1,355))
 		await frames(3)
@@ -245,12 +262,16 @@ func eye_red_centroid() -> Vector2:
 
 func verify_eye_follow() -> void:
 	var eye_screen: Node3D = review.displays[6]
-	check(eye_screen.glass_size.x >= 2.0 and eye_screen.glass_size.y >= 2.0, "eye monitor is enlarged independently")
-	var eye_rect := Rect2(Vector2(615,197),Vector2(76,38))
+	check(eye_screen.glass_size.x >= 2.7 and eye_screen.glass_size.y >= 1.8, "eye monitor is widened to match the red outline")
+	var eye_rect: Rect2 = review.EYE_FRAME
 	var outline_visible := true
 	for corner in [eye_rect.position,eye_rect.position+Vector2(eye_rect.size.x,0),eye_rect.end,eye_rect.position+Vector2(0,eye_rect.size.y)]:
 		outline_visible = outline_visible and review.pick_display(review.source_to_viewport(corner)) == eye_screen
 	check(outline_visible, "complete eye outline fits inside one visible monitor")
+	var projected: PackedVector2Array = eye_screen.visible_polygon(review.camera)
+	var glass_width := ((projected[1]-projected[0]).length() + (projected[2]-projected[3]).length()) * 0.5
+	var eye_width: float = (review.source_to_viewport(eye_rect.position+Vector2(eye_rect.size.x,0))-review.source_to_viewport(eye_rect.position)).length()
+	check(eye_width / glass_width > 0.85 and eye_width / glass_width < 0.97, "complete eye fills most of the New Game glass width")
 	var mask: Image = load("res://art/Home Screen/Home_Screen_chr_eye_mask.png").get_image()
 	var all_visible := true
 	var used := mask.get_used_rect()
@@ -292,7 +313,7 @@ func verify_eye_follow() -> void:
 		if i == 36:
 			move_pointer(center+Vector2(0,-up_distance))
 		if i == 50:
-			move_pointer(find_visible_point(review.displays[0]))
+			move_pointer(find_visible_point(review.displays[6]))
 		await frames(2)
 		await RenderingServer.frame_post_draw
 		timestamps.append(Time.get_ticks_msec())

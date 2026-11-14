@@ -1,5 +1,5 @@
 extends SceneTree
-## Production generated doors/glass, real 2D mirrors and the real Space controller.
+## Production generated doors/glass and the shared swept phase controller.
 const DOORS := preload("res://scripts/dream/dash_door_break.gd")
 const GLASS := preload("res://scripts/dream/dash_glass_break.gd")
 const EFFECT := preload("res://scripts/dream/shared_wall_break_effect.gd")
@@ -114,13 +114,13 @@ func run() -> void:
 		player.max_dash_charges = 1
 		player.dash_charges = 1
 		player.dash_cooldown_left = 0
-		check(player.try_start_phase_dash(heading) and not phase_door.is_destroyed,"Space start does not destroy the future door before contact")
+		check(player.try_start_phase_dash(heading, true) and not phase_door.is_destroyed,"Roll start does not destroy the future door before contact")
 		for i in 16:
 			if not player.is_phase_dash_active(): break
-			player._update_dash(player.dash_duration/14.0)
+			player._update_dash(player.active_dash_duration/14.0)
 			await process_frame
-		check(phase_door.is_destroyed,"actual travelled Space segments break the contacted generated door")
-		check(player.dash_charges == 0 and player.collision_mask != 0 and not player.dashing,"door break preserves normal dash charge and collision lifecycle")
+		check(phase_door.is_destroyed,"actual travelled roll segments break the contacted generated door")
+		check(player.dash_charges == 0 and player.collision_mask != 0 and not player.dashing,"door break preserves the shared charge and collision lifecycle")
 	world.free()
 	await process_frame
 	print("DASH_DOOR_GLASS_DESTRUCTION checks=",checks," failures=",failures)

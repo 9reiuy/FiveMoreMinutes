@@ -66,7 +66,7 @@ func _run() -> void:
 	check(bool(completion_summary.get("boss_defeated", false)), "completion summary records boss")
 	check(int(world.run_interface.profile.get("current_dream_layer", 1)) == 2, "boss completion advances persistent layer interface")
 
-	check(is_equal_approx(CONFIG.player_movement_speed, 204.0), "base movement is old 136 x1.5")
+	check(is_equal_approx(CONFIG.player_movement_speed, 224.0), "shared player speed is 7 world units/s")
 	check(is_equal_approx(CONFIG.dash_distance, 168.0), "roll distance is old 84 x2")
 	check((int(player.collision_mask) & 2) != 0, "Player body collides symmetrically with Enemy layer")
 

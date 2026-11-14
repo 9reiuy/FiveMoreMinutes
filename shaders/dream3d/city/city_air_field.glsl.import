@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://bdp46r61wujcq"
+path="res://.godot/imported/city_air_field.glsl-40b045238635973f46a7b27784946fcb.res"
+
+[deps]
+
+source_file="res://shaders/dream3d/city/city_air_field.glsl"
+dest_files=["res://.godot/imported/city_air_field.glsl-40b045238635973f46a7b27784946fcb.res"]
+
+[params]
+

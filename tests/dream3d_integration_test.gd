@@ -71,7 +71,7 @@ func _run() -> void:
 	var card_root: Node = ui.card
 	check(card_root.find_child("SpeedPlus", true, false) == null, "Speed upgrade button was removed from the card")
 	check(card_root.find_child("SpeedCells", true, false) == null, "Speed segments were removed from the card")
-	check(is_equal_approx(float(player.movement_speed), 200.0), "normal movement speed is fixed at 200")
+	check(is_equal_approx(float(player.movement_speed), 224.0), "normal movement speed is 7 world units/s")
 	ui._close_card()
 	await frames(30)
 	check(ui.crosshair.visible and not paused, "crosshair resumes in UI")

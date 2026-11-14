@@ -241,7 +241,6 @@ func run() -> void:
 		# never touched and the player's saved graphics settings stay intact.
 		for node in root.find_children("*","",true,false):
 			var script_path := String(node.get_script().resource_path) if node.get_script()!=null else ""
-			if script_path.contains("selective_pixel_preview"): node.set_palette_enabled(false)
 		# The unpaletted path can restore the native window size; keep both styles
 		# on the exact same viewport so the crop lines up between runs.
 		root.size=Vector2i(1920,1080)

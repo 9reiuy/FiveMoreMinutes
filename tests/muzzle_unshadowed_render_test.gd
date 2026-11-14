@@ -62,7 +62,6 @@ func run() -> void:
 		if bridge is BRIDGE:
 			bridge._process(0.0)
 	display.set_selective_enabled(true)
-	display.set_palette_enabled(true)
 	display._process(0.0)
 	await settle()
 	var interior: Array = []

@@ -1,7 +1,7 @@
 extends SceneTree
 
 const DUNGEON_SCENE: PackedScene = preload("res://scenes/dream/Dream3D_RandomDungeon.tscn")
-const PALETTE_SHADER: Shader = preload("res://shaders/palette_quantize.gdshader")
+const PALETTE_SHADER: Shader = preload("res://shaders/world_semantic_decode.gdshader")
 const ARTIFACT_DIR := "C:/Users/Administrator/.gemini/antigravity/brain/7b4560e6-4b84-4f9d-aa7f-8e2769c901c9/"
 
 func _init() -> void:
@@ -24,7 +24,6 @@ func _run_capture() -> void:
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var mat := ShaderMaterial.new()
 	mat.shader = PALETTE_SHADER
-	mat.set_shader_parameter("palette_enabled", true)
 	overlay.material = mat
 	canvas_layer.add_child(overlay)
 	root.add_child(canvas_layer)
@@ -78,7 +77,6 @@ func _run_capture() -> void:
 			dungeon.night_lighting.flashlight.light_energy = 0.0
 
 		# Capture with Palette ON
-		mat.set_shader_parameter("palette_enabled", true)
 		await frames(5)
 		var img_on := root.get_viewport().get_texture().get_image()
 		if img_on != null:
@@ -87,7 +85,6 @@ func _run_capture() -> void:
 			print("Saved: ", path_on)
 
 		# Capture with Palette OFF
-		mat.set_shader_parameter("palette_enabled", false)
 		await frames(5)
 		var img_off := root.get_viewport().get_texture().get_image()
 		if img_off != null:
@@ -96,7 +93,6 @@ func _run_capture() -> void:
 			print("Saved: ", path_off)
 
 	# Capture AFTER comparison (Room 2, exact same vantage as before)
-	mat.set_shader_parameter("palette_enabled", true)
 	dungeon.current_room_id = 2
 	dungeon._set_active_presentation_room(2)
 	dungeon._rebuild_active_room_presentation()

@@ -1,0 +1,28 @@
+{
+  "title": "Walnut Veneer",
+  "provider": "Poly Haven",
+  "author": "Jenelle van Heerden",
+  "page": "https://polyhaven.com/a/walnut_veneer",
+  "license": "CC0",
+  "normal_convention": "OpenGL",
+  "maps": [
+    {
+      "file": "albedo.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_diff_1k.jpg",
+      "bytes": 496596,
+      "sha256": "d8c971e403b185b5c350d1e6fa75c3e7fcc36130781c7686263f6bcd23ac4db1"
+    },
+    {
+      "file": "normal.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_nor_gl_1k.jpg",
+      "bytes": 442897,
+      "sha256": "de823c2e9942ea77caeddab08add49688a9792b79aac496640fecaee9fbcb5c4"
+    },
+    {
+      "file": "roughness.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_rough_1k.jpg",
+      "bytes": 556628,
+      "sha256": "5cb9d78ec685155d2b66a1db01abc61049d00953d783d0c78d829512de9ab0b4"
+    }
+  ]
+}

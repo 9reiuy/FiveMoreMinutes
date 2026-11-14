@@ -12,6 +12,16 @@ uniform float scene_time=0.0;
 uniform float moon_visibility=1.0;
 uniform bool ripples_enabled=true;
 uniform float whitecap_strength : hint_range(0.,1.)=.90;
+uniform float tide_band_mix : hint_range(0.,1.)=1.0;
+uniform float tide_body_gain : hint_range(0.,1.)=1.0;
+uniform float shore_foam_gain : hint_range(0.,1.)=1.0;
+uniform float moon_glint_gain : hint_range(0.,1.)=1.0;
+uniform float shore_reflection_gain : hint_range(0.,1.)=0.0;
+uniform bool continuous_surface=false;
+uniform vec3 shore_light_a_position=vec3(0.);
+uniform vec3 shore_light_b_position=vec3(0.);
+uniform vec3 shore_light_a_colour : source_color=vec3(0.);
+uniform vec3 shore_light_b_colour : source_color=vec3(0.);
 #include "res://shaders/preview/coast_shape.gdshaderinc"
 varying vec3 world_position;
 varying float actual_depth;
@@ -40,6 +50,12 @@ float wave_height(vec2 p,float t){
       +.019*sin(dot(q,vec2(.72,-.69))*3.71-t*1.83)
       +.011*sin(dot(q,vec2(-.20,-.98))*5.11+t*2.37);
 }
+vec3 shore_reflection(vec3 emitter,vec3 tint,vec3 normal,vec3 view){
+ vec3 toward_light=normalize(emitter-world_position);
+ float highlight=pow(max(dot(reflect(-toward_light,normal),view),0.),64.);
+ float distance_fade=1.-smoothstep(35.,220.,distance(emitter,world_position));
+ return tint*highlight*distance_fade;
+}
 void vertex(){
  vec3 world=(MODEL_MATRIX*vec4(VERTEX,1.)).xyz;
  office_dither_position=world;
@@ -48,18 +64,22 @@ void vertex(){
  float inside=step(0.,flow_uv.x)*step(flow_uv.x,1.)*step(0.,flow_uv.y)*step(flow_uv.y,1.);
  vec4 state=texture(flow_state,clamp(flow_uv,vec2(0),vec2(1)));
  float wave=wave_height(world.xz,scene_time);
- VERTEX.y=mix(wave,state.g+wave*.28,inside);
+ // Dry cells store the terrain height as their surface. Interpolating those
+ // vertices over the coarse urban water mesh would lift the sea into the bank.
+ float flow_surface=urban_coast ? mix(0.,state.g,step(.015,state.r)) : state.g;
+ VERTEX.y=mix(wave,flow_surface+wave*.28,inside);
  vec2 near_uv=(world.xz-near_origin)/near_size;
  vec4 side_state=texture(near_state,clamp(near_uv,vec2(0),vec2(1)));
  float side_inside=step(0.,near_uv.x)*step(near_uv.x,1.)*step(0.,near_uv.y)*step(near_uv.y,1.)*(1.-inside);
- VERTEX.y=mix(VERTEX.y,side_state.g+wave*.28,side_inside);
+ float side_surface=urban_coast ? mix(0.,side_state.g,step(.015,side_state.r)) : side_state.g;
+ VERTEX.y=mix(VERTEX.y,side_surface+wave*.28,side_inside);
  actual_depth=mix(max(.0,coast_distance(world.xz)*.22),state.r,inside);
  dye_amount=state.b*inside;
  speed=state.a*inside;
  world_position=(MODEL_MATRIX*vec4(VERTEX,1.)).xyz;
 }
 void fragment(){
- vec2 p=floor(world_position.xz*32.)/32.;
+ vec2 p=continuous_surface ? world_position.xz : floor(world_position.xz*32.)/32.;
  float coast=coast_distance(p);
  float t=scene_time;
  float drift=noise(p*vec2(2.1,3.8)+vec2(t*.14,-t*.21));
@@ -69,7 +89,8 @@ void fragment(){
  if(edge<-.15 || coast < -1.) discard;
  // Deep crimson remains crimson in moonlight; cloud cover reduces its value.
  float body=noise(p*.37+vec2(-t*.035,t*.05));
- vec3 sea=mix(vec3(.23,.008,.031),vec3(.30,.014,.043),floor(body*4.)/3.);
+ float body_tone=urban_coast ? body : floor(body*4.)/3.;
+ vec3 sea=mix(vec3(.23,.008,.031),vec3(.30,.014,.043),body_tone)*tide_body_gain;
  float whitecaps=0.;
  float crest_wash=0.;
  if(ripples_enabled){
@@ -117,27 +138,36 @@ void fragment(){
  float road_width=1.4+max(p.y+80.,0.)*.034;
  float road=exp(-pow((p.x-road_center+(drift-.5)*1.8)/road_width,2.));
  float glint=step(.46,wave_height(p,t)/.12)*step(.53,detail);
- sea+=vec3(.30,.25,.25)*road*glint*moon_visibility;
+ sea+=vec3(.30,.25,.25)*road*glint*moon_visibility*moon_glint_gain;
  // Thick, perforated wave front and a narrow older foam contour behind it.
  float foam_width=.42+noise(vec2(p.x*3.1,t*.39))*.55;
  float foam=(1.-step(foam_width,abs(edge-.34)))*step(.32,detail+drift*.16);
  float old=(1.-step(.055,abs(edge-1.35+(detail-.5)*.5)))*step(.49,drift);
- sea=mix(sea,vec3(.43,.27,.32)*mix(.24,1.,moon_visibility),old*.7);
- vec3 cream=mix(vec3(.53,.41,.46),vec3(.86,.80,.81),step(.48,detail));
+ sea=mix(sea,vec3(.43,.27,.32)*mix(.24,1.,moon_visibility)*shore_foam_gain,old*.7);
+ vec3 cream=mix(vec3(.53,.41,.46),vec3(.86,.80,.81),step(.48,detail))*shore_foam_gain;
  float stone_distance=obstacle_distance(p);
  float impact=(1.-smoothstep(.1,.6,stone_distance))*step(-.08,stone_distance);
  impact*=step(.4,detail)*smoothstep(-.7,.4,sin(t*1.5+p.x*.8+p.y*.6));
  foam=max(foam,impact*.9);
  sea=mix(sea,cream*mix(.20,1.,moon_visibility),foam);
  float fragments=(1.-smoothstep(1.,2.5,edge))*smoothstep(.6,.95,edge)*step(.94,hash(floor(p*32.)));
- sea=mix(sea,vec3(.68,.61,.65)*mix(.2,1.,moon_visibility),fragments);
+ sea=mix(sea,vec3(.68,.61,.65)*mix(.2,1.,moon_visibility)*shore_foam_gain,fragments);
  sea=mix(sea,vec3(.38,.022,.044)*mix(.24,1.,moon_visibility),min(dye_amount*.7,.7));
  sea+=min(speed*.012,.025)*vec3(.17,.08,.11);
  if(office_dither_enabled){
   float threshold=office_dither_threshold(p/office_dither_step);
-  sea=floor(sea*31.+vec3(threshold))/31.;
+  sea=mix(sea,floor(sea*31.+vec3(threshold))/31.,tide_band_mix);
  }
  float distance_haze=1.-exp(-max(length(world_position-CAMERA_POSITION_WORLD)-30.,0.)*.005);
  sea=mix(sea,vec3(.008,.012,.016)*mix(.35,1.,moon_visibility),distance_haze*.78);
+ if(shore_reflection_gain>0.){
+  vec2 slope=vec2(.42,.91)*.0702*cos(dot(p,vec2(.42,.91))*1.35-t*.93);
+  slope+=vec2(-.84,.54)*.06293*cos(dot(p,vec2(-.84,.54))*2.17+t*1.31);
+  vec3 normal=normalize(vec3(-slope.x,1.,-slope.y));
+  vec3 view=normalize(CAMERA_POSITION_WORLD-world_position);
+  vec3 reflection=shore_reflection(shore_light_a_position,shore_light_a_colour,normal,view);
+  reflection+=shore_reflection(shore_light_b_position,shore_light_b_colour,normal,view);
+  sea+=reflection*shore_reflection_gain;
+ }
  ALBEDO=sea;
 }

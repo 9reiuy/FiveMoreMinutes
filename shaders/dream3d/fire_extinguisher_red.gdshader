@@ -22,7 +22,7 @@ void fragment() {
 	#if CURRENT_RENDERER == RENDERER_FORWARD_PLUS
 		// FloorReflections reserves CAPTURE_FLAG (bit 18) for its camera
 		// and EXCLUDED (bit 19) for the main camera. The mirror has no
-		// WorldPaletteLayer to decode a paint marker.
+		// WorldSemanticLayer to decode a paint marker.
 		bool mirror_capture = (CAMERA_VISIBLE_LAYERS & 262144u) != 0u
 			&& (CAMERA_VISIBLE_LAYERS & 524288u) == 0u;
 		use_marker = use_marker && !mirror_capture;

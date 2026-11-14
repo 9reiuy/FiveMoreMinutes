@@ -11,7 +11,7 @@ func run() -> void:
 	world.player.global_position=Vector2(800,1536); world.player.invulnerability_left=999
 	for frame in 30: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true); display._process(0.0)
+	display.set_selective_enabled(true); display._process(0.0)
 	paused=true
 	for frame in 8: await RenderingServer.frame_post_draw
 	var characters: Array=[]

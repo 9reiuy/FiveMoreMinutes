@@ -117,7 +117,7 @@ func set_dialogue_speaker(speaker: Node2D = null, mode_override: int = -1) -> vo
 		_focus_transition_active = true
 
 
-func end_dialogue_focus() -> void:
+func end_dialogue_focus(unscaled_exit_duration: float = -1.0) -> void:
 	if not _dialogue_active and state != FocusState.ENTERING and state != FocusState.ACTIVE:
 		return
 	# Freeze the exact composition at the end of the session.  From this point
@@ -144,7 +144,10 @@ func end_dialogue_focus() -> void:
 	# Do not keep a freed node alive through the EXITING transition.
 	conversation_partner = null
 	current_speaker = null
-	_start_weight_tween(0.0, dialogue_exit_duration)
+	var unscaled := unscaled_exit_duration >= 0.0
+	_start_weight_tween(0.0, unscaled_exit_duration if unscaled else dialogue_exit_duration)
+	if unscaled and _weight_tween != null:
+		_weight_tween.set_ignore_time_scale(true)
 
 
 func clear_dialogue_focus() -> void:

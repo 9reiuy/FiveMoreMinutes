@@ -43,7 +43,7 @@ func run() -> void:
 	AudioServer.set_bus_mute(0,true); root.size=Vector2i(1280,720); Engine.max_fps=60
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT))
 	var settings:=root.get_node("SettingsManager")
-	settings.set_setting(&"pixelation_enabled",true); settings.set_palette_enabled(true)
+	settings.set_setting(&"pixelation_enabled",true)
 	settings.set_setting(&"screen_shake_enabled",true)
 	main=load("res://scenes/app/main.tscn").instantiate(); root.add_child(main); await settle()
 	main.persistent_day_state=main._create_initial_state(); main._show_reception("basic"); await settle()
@@ -115,7 +115,7 @@ func run() -> void:
 	Input.action_release(action); world.player.set_physics_process(false)
 	check(world.player.global_position.distance_to(start)>16,"Recording contains actual player movement away from impact")
 	check(not fx.layer.visible and not fx.post_rect.visible,"Recorded feedback retires completely")
-	settings.set_setting(&"pixelation_enabled",false); settings.set_palette_enabled(false)
+	settings.set_setting(&"pixelation_enabled",false)
 	await frames(4); fx._on_damage(1); fx._process(.12); await frames(1); await shot("native")
 	fx.clear(); main.free(); await frames(3)
 	print("PLAYER_HURT_CAMERA checks=",checks," failures=",failures)

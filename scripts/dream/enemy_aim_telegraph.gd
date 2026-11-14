@@ -12,6 +12,8 @@ const FAN_CURVE := [
 	Vector4(2.4, .22, .86, .31), Vector4(0.0, .18, .89, .23),
 ]
 const FAN_INTERVALS := 16
+# Melee has two soft side edges and a charging fill, never an outer arc/core.
+const MELEE_RADIAL_STEPS := 12
 const EDGE_LANES := [-1.0, -.36, 0.0, .36, 1.0]
 const EDGE_COVERAGE := [0.0, .46, 1.0, .46, 0.0]
 const PIXEL_CORE_SHADER := """
@@ -36,6 +38,7 @@ void fragment() {
 }
 """
 static var edge_indices := _make_edge_indices()
+static var melee_indices := _make_melee_indices()
 var world: Node
 var layer: CanvasLayer
 var visible := true:
@@ -107,7 +110,15 @@ static func _shot_range(enemy: EmployeeEnemy) -> float:
 	var parameters := FIREARM_RULES.parameters(enemy.feedback_config, StringName(enemy.held_weapon_id))
 	return maxf(0.0, float(parameters.range))
 
-func record_employee_shot(enemy: EmployeeEnemy, _muzzle_world: Vector3) -> void:
+static func _make_melee_indices(rings: int = MELEE_RADIAL_STEPS + 1) -> PackedInt32Array:
+	var indices := PackedInt32Array()
+	for wedge in FAN_INTERVALS:
+		for ring in rings - 1:
+			var a := wedge * rings * 2 + ring * 2
+			indices.append_array(PackedInt32Array([a, a + 1, a + 2, a + 1, a + 3, a + 2]))
+	return indices
+
+func record_employee_shot(enemy: EmployeeEnemy, muzzle_world: Vector3) -> void:
 	# Called synchronously only by the accepted shot, while the committed
 	# aim target is still available. An empty mag, cancel or repeat shot
 	# never creates a tail.
@@ -118,6 +129,11 @@ func record_employee_shot(enemy: EmployeeEnemy, _muzzle_world: Vector3) -> void:
 			"range": _shot_range(enemy),
 			"weapon": enemy.held_weapon_id, "actor_id": enemy.target.get_instance_id(),
 		}
+		if enemy.held_weapon_id == "shotgun":
+			var tail: Dictionary = shot_tails[enemy.get_instance_id()]
+			tail.origin = muzzle_world
+			tail.start = enemy.get_projectile_origin()
+			tail.spread_degrees = enemy.ranged_attack_shot_spread_degrees
 
 func _process(delta: float) -> void:
 	var real_delta:=delta/maxf(Engine.time_scale,.001)
@@ -143,6 +159,13 @@ func _process(delta: float) -> void:
 	for enemy in world.enemy_root.get_children():
 		var id: int=enemy.get_instance_id()
 		if seen.has(id): continue
+		var melee := melee_area(enemy)
+		if not melee.is_empty():
+			prepared_lines.append(melee)
+			seen[id] = true
+			shot_tails.erase(id)
+			smoothed_points.erase(id)
+			continue
 		var segment:=aim_segment(enemy)
 		if segment.is_empty():
 			if shot_tails.has(id) and _tail_source_visible(enemy) \
@@ -155,6 +178,10 @@ func _process(delta: float) -> void:
 		seen[id]=true
 		shot_tails.erase(id)
 		if segment.has("shot_range"):
+			if segment.has("spread_degrees"):
+				prepared_lines.append(_shotgun_alert(id, segment.start, segment.center_world, segment.target,
+					segment.shot_range, segment.spread_degrees, segment.progress))
+				continue
 			prepared_lines.append(_long_alert(id, segment.start, segment.center_world, segment.target,
 				segment.shot_range, employee_line_style(segment.progress), 1.0))
 			continue
@@ -195,11 +222,25 @@ func _append_tail(id: int) -> void:
 	if clock.time_left <= 0.0:
 		shot_tails.erase(id)
 		return
-	prepared_tails.append(_long_alert(id, tail.start, tail.origin, tail.target, tail.range,
-		FAN_CURVE[-1], clock.time_left / SHOT_TAIL_SECONDS))
+	var life := clock.time_left / SHOT_TAIL_SECONDS
+	if tail.has("spread_degrees"):
+		prepared_tails.append(_shotgun_alert(id, tail.start, tail.origin, tail.target, tail.range, tail.spread_degrees, 1.0, life))
+	else:
+		prepared_tails.append(_long_alert(id, tail.start, tail.origin, tail.target, tail.range, FAN_CURVE[-1], life))
+
+func _shotgun_alert(id: int, gameplay_start: Vector2, muzzle_world: Vector3, target: Vector2,
+		shot_range: float, spread: float, progress: float, life := 1.0) -> Dictionary:
+	var profile := employee_line_style(progress)
+	profile.x = spread
+	profile.y *= life
+	profile.z = 0.0
+	profile.w *= life
+	var area := _long_alert(id, gameplay_start, muzzle_world, target, shot_range, profile, life, true)
+	area.shotgun_spread = true
+	return area
 
 func _long_alert(id: int, gameplay_start: Vector2, body_center: Vector3, target: Vector2,
-		shot_range: float, profile: Vector4, life: float) -> Dictionary:
+		shot_range: float, profile: Vector4, life: float, full_range := false) -> Dictionary:
 	var start := screen_point(body_center)
 	var rays: Array[Dictionary] = []
 	var line := {"id": id, "from": start, "to": start, "profile": profile,
@@ -212,6 +253,19 @@ func _long_alert(id: int, gameplay_start: Vector2, body_center: Vector3, target:
 	var projection := {"camera": camera, "to_viewport": camera.get_viewport().get_visible_rect().size / surface.size,
 		"basis": basis, "to_map": basis.inverse(), "plane": Plane(basis.y.normalized(), body_center),
 		"origin": body_center, "gameplay_start": gameplay_start}
+	if full_range:
+		# Unlike the ranged warning's target overhang, this perimeter always
+		# marks the entire melee reach, independent of target distance/charge.
+		var axis := delta.normalized()
+		var center := _range_ray(projection, axis * shot_range)
+		line.to = center.point
+		line.center = center
+		line.projection = projection
+		var half_arc := deg_to_rad(profile.x * .5)
+		for i in FAN_INTERVALS + 1:
+			var angle := lerpf(-half_arc, half_arc, float(i) / FAN_INTERVALS)
+			rays.append(center if i == FAN_INTERVALS / 2 else _range_ray(projection, axis.rotated(angle) * shot_range))
+		return line
 	# Extend beyond the tracked point in the logical pixel grid, then
 	# clip each ray on the gameplay plane from the stable body anchor.
 	var target_pixels := (_project_displacement(projection, delta) - start) / core_pixel_size
@@ -244,6 +298,9 @@ func _display_ray(projection: Dictionary, start: Vector2, end_offset: Vector2, s
 	var offset := _gameplay_displacement(projection, start + direction * reach).limit_length(shot_range)
 	if offset.is_zero_approx():
 		return {"point": start, "wall": RID(), "distance": 0.0}
+	return _range_ray(projection, offset)
+
+func _range_ray(projection: Dictionary, offset: Vector2) -> Dictionary:
 	var gameplay_start: Vector2 = projection.gameplay_start
 	var trace := _wall_trace(gameplay_start, gameplay_start + offset)
 	var displacement: Vector2 = trace.position - gameplay_start
@@ -296,6 +353,22 @@ func _wall_trace(start: Vector2, end: Vector2) -> Dictionary:
 		return {"position": hit.position, "wall": hit.rid}
 	return {"position": start, "wall": RID()}
 
+func melee_area(enemy: Node) -> Dictionary:
+	if not is_instance_valid(enemy) or not enemy.has_method("get_melee_telegraph_state"):
+		return {}
+	var state: Dictionary = enemy.get_melee_telegraph_state()
+	if state.is_empty() or not _source_not_smoke_hidden(enemy):
+		return {}
+	if wall_end(world.player.global_position, enemy.global_position).distance_to(enemy.global_position) > .5:
+		return {}
+	# Reuse the ranged projection/clipping. Melee keeps its full fixed range,
+	# charging fill and soft side edges, without an outer arc or aim core.
+	var area := _long_alert(enemy.get_instance_id(), state.start, _employee_warning_center(enemy),
+		state.target, state.radius, Vector4(state.aperture, .23, 0.0, 0.0), 1.0, true)
+	area.melee_progress = state.progress
+	return area
+
+
 func aim_segment(enemy: Node) -> Dictionary:
 	if not is_instance_valid(enemy) or not enemy.has_method("get_ranged_telegraph_state"): return {}
 	if not _source_not_smoke_hidden(enemy): return {}
@@ -316,6 +389,14 @@ func aim_segment(enemy: Node) -> Dictionary:
 	elif shot_range >= 0.0:
 		center_world = state.center_world
 	var segment := {"start": start, "end": state.target, "target": state.target, "progress": state.progress}
+	if enemy is EmployeeEnemy and state.has("spread_degrees"):
+		# This weapon warns about the physical cone starting at the same
+		# clamped muzzle and presentation snapshot as its actual projectiles.
+		segment.start = enemy.get_projectile_origin()
+		segment.spread_degrees = state.spread_degrees
+		shot_range = _shot_range(enemy)
+		var snapshot: Dictionary = world._weapon_visual_snapshot(enemy, segment.start)
+		center_world = snapshot.world_origin if not snapshot.is_empty() else world.get_gameplay_world_position(segment.start, .75)
 	if shot_range >= 0.0:
 		segment.shot_range = shot_range
 		segment.center_world = center_world
@@ -347,12 +428,58 @@ func draw_lines() -> void:
 			surface.draw_line(line.from,line.to,line.style.color,line.style.width,true)
 	for tail in prepared_tails:
 		last_drawn_enemy_ids.append(tail.id)
+		if tail.has("shotgun_spread"):
+			_draw_long_fan(tail)
 	for flash in flashes:
 		var center:=screen_point(world.get_gameplay_world_position(flash.point,.75))
 		surface.draw_arc(center,9.0*(1.0-float(flash.left)/.12),0,TAU,12,Color(1,.9,.65),2,false)
 		surface.draw_line(center-Vector2(8,0),center+Vector2(8,0),Color.WHITE,1,false)
 
+func _draw_melee_area(area: Dictionary) -> void:
+	var rays: Array[Dictionary] = area.fan_rays
+	if rays.size() < 2:
+		return
+	var center: Vector2 = area.from
+	var vertices := PackedVector2Array()
+	var colors := PackedColorArray()
+	vertices.resize((rays.size() - 1) * (MELEE_RADIAL_STEPS + 1) * 2)
+	colors.resize(vertices.size())
+	var opacity := PackedFloat32Array()
+	var width := core_pixel_size.x * 3.4
+	for ring in MELEE_RADIAL_STEPS + 1:
+		opacity.append(melee_fill_alpha(float(ring) / MELEE_RADIAL_STEPS, area.melee_progress))
+	for i in rays.size() - 1:
+		var next := i + 1
+		var first: Vector2 = rays[i].point - center
+		var second: Vector2 = rays[next].point - center
+		if rays[i].wall != rays[next].wall and absf(first.length() - second.length()) > 3.0:
+			# A slice that crosses a wall corner must not paint behind that wall.
+			var reach := minf(first.length(), second.length())
+			first = first.limit_length(reach)
+			second = second.limit_length(reach)
+		var offset := i * (MELEE_RADIAL_STEPS + 1) * 2
+		for ring in MELEE_RADIAL_STEPS + 1:
+			var radial := float(ring) / MELEE_RADIAL_STEPS
+			var a := offset + ring * 2
+			vertices[a] = center + first * radial
+			vertices[a + 1] = center + second * radial
+			colors[a] = Color(.96, .19, .15, opacity[ring])
+			colors[a + 1] = Color(.96, .19, .15, opacity[ring])
+	RenderingServer.canvas_item_add_triangle_array(surface.get_canvas_item(), melee_indices, vertices, colors, PackedVector2Array())
+	# Use the exact ranged edge feather, without its central aiming core.
+	_draw_soft_edge(area.projection, center, rays[0], width, .42)
+	_draw_soft_edge(area.projection, center, rays[-1], width, .42)
+
+
+static func melee_fill_alpha(radial: float, progress: float) -> float:
+	var front := lerpf(-.12, 1.0, clampf(progress, 0.0, 1.0))
+	return .27 * (1.0 - smoothstep(front, front + .12, radial)) * (1.0 - smoothstep(.9, 1.0, radial))
+
+
 func _draw_long_fan(line: Dictionary) -> void:
+	if line.has("melee_progress"):
+		_draw_melee_area(line)
+		return
 	var rays: Array[Dictionary] = line.fan_rays
 	if rays.is_empty():
 		return
@@ -409,10 +536,11 @@ func _draw_pixel_cores() -> void:
 	if not _can_draw():
 		return
 	for line in prepared_lines:
-		if line.has("profile"):
+		if line.has("profile") and not line.has("melee_progress") and not line.has("shotgun_spread"):
 			_draw_pixel_core(line)
 	for line in prepared_tails:
-		_draw_pixel_core(line)
+		if not line.has("shotgun_spread"):
+			_draw_pixel_core(line)
 
 func _draw_pixel_core(line: Dictionary) -> void:
 	var start: Vector2 = line.from / core_pixel_size

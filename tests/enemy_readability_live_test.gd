@@ -70,7 +70,6 @@ func run() -> void:
 	for pixel in [false,true]:
 		settings.set_setting(&"pixelation_enabled",pixel)
 		for palette in [false,true]:
-			settings.set_palette_enabled(palette)
 			await frames(8)
 			for enabled in [false,true]:
 				for enemy in fixtures:

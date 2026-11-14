@@ -13,7 +13,7 @@ func run() -> void:
 	var display=load("res://scenes/dream/preview/SelectivePixelPreview.tscn").instantiate()
 	display.world=world; display.preview_mode=false
 	root.add_child(display)
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	paused=true
 	await world.regenerate(41001)
 	world._update_camera_and_actor_projection(0.0)

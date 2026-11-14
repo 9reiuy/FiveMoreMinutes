@@ -1,0 +1,14 @@
+---
+description: Prefer real CC0 recordings when adding game sound effects
+alwaysApply: true
+---
+
+# Sound effects
+
+When a sound effect is needed, choose an existing CC0 field recording first. Do not invent a set of versions by synthesis, pitch-shifting, filtering, or reversal for the user to pick.
+
+A recording counts only when the source describes a real capture (a named device, place, or take). Computer-generated, foley-from-a-tone-generator, and AI-generated files are not substitutes.
+
+Confirm the license on the source page is CC0 or public domain before downloading. Keep the author, page, and license next to the file. Give the user a local audition page of the unmodified recordings and wait for a choice. Do not replace the game's current sound first. Trim leading or trailing silence only after the user has chosen a recording.
+
+If no real CC0 recording fits, say so and ask before making a sound.

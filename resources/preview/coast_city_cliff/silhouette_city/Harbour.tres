@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/coast_city_depth_bands.gdshader" id="1_b1ja4"]
+
+[resource]
+resource_local_to_scene = true
+resource_name = "Harbour"
+render_priority = 0
+shader = ExtResource("1_b1ja4")
+shader_parameter/moon_visibility = null
+shader_parameter/body_colour = Color(0.1254902, 0.16470589, 0.23137255, 1)
+shader_parameter/haze_colour = Color(0.25490198, 0.25490198, 0.35686275, 1)
+shader_parameter/distance_haze = 0.08

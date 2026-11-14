@@ -24,29 +24,58 @@ func reset_actor() -> void:
 	player._auto_vault_cooldown_left=0
 func run() -> void:
 	create_timer(90,true,false,true).timeout.connect(func() -> void: quit(2))
+	print("GAME_ASSISTANCE_PID=", OS.get_process_id(), " audio=", AudioServer.get_driver_name())
+	if not OS.get_user_data_dir().replace("\\", "/").contains("/.runtime/") or not AudioServer.is_bus_mute(0):
+		AudioServer.set_bus_mute(0, true)
+		push_error("Game assistance test needs a pre-muted private profile")
+		quit(2)
+		return
 	var diag:=root.get_node_or_null("_DroneGameDiag")
 	if diag!=null: diag.free()
-	AudioServer.set_bus_mute(0,true)
 	manager=root.get_node("SettingsManager")
-	check(manager.defaults.auto_vault_enabled and manager.defaults.screen_shake_enabled,"Both new options default on")
+	check(manager.defaults.auto_vault_enabled and manager.defaults.screen_shake_enabled,"Movement assistance defaults on")
+	check(manager.get_setting(&"canned_laughter_enabled"), "Existing settings default to enabling audience reactions")
+	var audio := root.get_node("SFXManager")
+	var reactions: Array[StringName] = [&"canned_laughter", &"audience_applause", &"golf_clap"]
+	for reaction in reactions:
+		audio.play_multi_kill_reaction(reaction)
+		check(audio.players[reaction].playing and audio.music_duck_reasons.has(&"multi_kill_reaction"), "Enabled reaction plays and ducks music: " + String(reaction))
+	paused = true
+	manager.set_setting(&"canned_laughter_enabled", false)
+	for reaction in reactions:
+		check(not audio.players[reaction].playing, "Disabling stops overlapping reaction during pause: " + String(reaction))
+	check(not audio.music_duck_reasons.has(&"multi_kill_reaction") and audio.multi_kill_duck_tween == null, "Disabling clears the reaction music duck and pending release")
+	paused = false
+	for reaction in reactions:
+		check(not audio.play(reaction), "Disabled reaction is rejected by direct playback: " + String(reaction))
+		audio.play_multi_kill_reaction(reaction)
+		check(not audio.players[reaction].playing and not audio.music_duck_reasons.has(&"multi_kill_reaction"), "Disabled reaction neither plays nor ducks music: " + String(reaction))
+	audio.play_multi_kill_reaction()
+	check(not audio.music_duck_reasons.has(&"multi_kill_reaction"), "Random reaction selection also respects the combined toggle")
 	manager.set_setting(&"auto_vault_enabled",false)
 	manager.set_setting(&"screen_shake_enabled",false)
 	var reloaded: Node=load("res://scripts/app/settings_manager.gd").new()
 	reloaded.values=reloaded.defaults.duplicate(true)
 	reloaded._load_settings()
 	check(not reloaded.get_setting(&"auto_vault_enabled") and not reloaded.get_setting(&"screen_shake_enabled"),"Both options persist through settings reload")
+	check(not reloaded.get_setting(&"canned_laughter_enabled") and reloaded.get_volume(&"master_volume") == 0, "Saved combined toggle reloads from the existing setting key in the muted profile")
 	var legacy:=ConfigFile.new()
+	legacy.set_value("audio", "master_volume", 0)
 	legacy.set_value("graphics","pixelation_enabled",true)
-	legacy.save("res://.runtime/assistance_legacy.cfg")
+	legacy.save("user://assistance_legacy.cfg")
 	reloaded.values=reloaded.defaults.duplicate(true)
-	reloaded._load_settings("res://.runtime/assistance_legacy.cfg")
+	reloaded._load_settings("user://assistance_legacy.cfg")
 	check(reloaded.get_setting(&"auto_vault_enabled") and reloaded.get_setting(&"screen_shake_enabled"),"Older settings gain safe default values")
+	check(reloaded.get_setting(&"canned_laughter_enabled") and reloaded.get_volume(&"master_volume") == 0, "Legacy settings retain default laughter and private mute")
 	reloaded.free()
 	var panel: Node=load("res://scenes/ui/settings_panel.tscn").instantiate()
 	root.add_child(panel)
 	panel.assistance_button.pressed.emit()
-	check(panel.get_node("AssistanceOptions").visible and not panel.get_node("Master").visible,"Shared menu opens game assistance page")
+	await create_timer(0.2).timeout
+	check(panel.assistance_options.visible and not panel.rows.get_node("Master").visible,"Shared menu opens game assistance page")
 	check(not panel.auto_vault_check.button_pressed and not panel.screen_shake_check.button_pressed,"Checkboxes reflect saved values")
+	check(not panel.canned_laughter_check.button_pressed, "Assistance shows the saved laughter state")
+	check(panel.canned_laughter_desc.text == "罐头笑声和掌声", "Shared menu labels the combined reaction toggle")
 	panel.auto_vault_check.button_pressed=true
 	check(manager.get_setting(&"auto_vault_enabled"),"Menu checkbox changes live setting")
 	var phone: Node=load("res://scripts/ui/phone_settings_screen.gd").new()
@@ -54,12 +83,29 @@ func run() -> void:
 	phone.set_context(&"settings")
 	check(phone._rows().size()==3,"Phone settings includes assistance category")
 	phone._push_page(&"assistance")
-	check(phone._rows().size()==2 and phone.get_control_point(&"auto_vault_enabled").x>=0,"Phone assistance exposes both real controls")
+	check(phone._rows().size() == 3 and phone.get_control_point(&"canned_laughter_enabled").x >= 0 and phone._rows()[2][1] == "罐头笑声和掌声", "Phone assistance includes the same combined reaction control")
 	phone.navigate(&"left")
 	check(not manager.get_setting(&"auto_vault_enabled") and not panel.auto_vault_check.button_pressed,"Phone keyboard controls synchronize shared menu")
 	phone.navigate(&"right")
 	check(manager.get_setting(&"auto_vault_enabled"),"Phone can restore auto jump")
+	phone.navigate(&"down")
+	phone.navigate(&"down")
+	phone.navigate(&"confirm")
+	check(manager.get_setting(&"canned_laughter_enabled") and panel.canned_laughter_check.button_pressed, "Phone confirmation restores audience reactions in the shared menu")
+	for reaction in reactions:
+		audio.play_multi_kill_reaction(reaction)
+		check(audio.players[reaction].playing, "Re-enabling allows the reaction again: " + String(reaction))
+	audio.request_music_duck(&"assistance_test_other", -2.0, 0.0)
+	manager.set_setting(&"canned_laughter_enabled", false)
+	for reaction in reactions:
+		check(not audio.players[reaction].playing, "Combined toggle stops every overlapping reaction: " + String(reaction))
+	check(not audio.music_duck_reasons.has(&"multi_kill_reaction") and audio.music_duck_reasons.has(&"assistance_test_other"), "Disabling releases only the audience reaction music duck")
+	audio.release_music_duck(&"assistance_test_other", 0.0)
+	manager.set_setting(&"canned_laughter_enabled", true)
 	panel.free(); phone.free()
+	if "--settings-only" in OS.get_cmdline_user_args():
+		finish()
+		return
 	world=load("res://scenes/dream/Dream3D_RandomDungeon.tscn").instantiate()
 	world.generate_on_ready=false
 	world.spawn_content=false
@@ -165,5 +211,8 @@ func run() -> void:
 	check(not player.try_auto_vault(Vector2.RIGHT),"Short recovery prevents immediate repeated auto jumps")
 	world.free()
 	await frames(4)
+	finish()
+
+func finish() -> void:
 	print("GAME_ASSISTANCE checks=",checks," failures=",failures)
 	quit(1 if failures else 0)

@@ -135,14 +135,28 @@ func _run() -> void:
 	check(not shotgun.has_method("cancel_charge") and shotgun.get_node_or_null("ShotgunChargeVisual") == null, "shotgun charge API removed")
 	world.clear_shots()
 	shotgun.free()
-	# Seeded volleys must cover every sector without escaping the total cone.
+	# Each pellet may land anywhere in the cone, so a volley can have both
+	# clusters and empty lanes. It must remain bounded and seed-repeatable.
 	var random := RandomNumberGenerator.new()
 	random.seed = 1973
+	var clumped := 0
+	var unordered := 0
 	for volley in range(20):
 		var rays := RULES.directions(Vector2.RIGHT, 9, 30.0, random)
+		var lanes: Array[int] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+		var has_reverse := false
 		for index in range(rays.size()):
 			var degrees := rad_to_deg(rays[index].angle())
-			check(degrees >= -15.0 + index * (30.0 / 9.0) - 0.001 and degrees <= -15.0 + (index + 1) * (30.0 / 9.0) + 0.001, "shotgun sector coverage")
+			check(absf(degrees) <= 15.001 and is_equal_approx(rays[index].length(), 1.0), "shotgun pellet stays inside authored cone")
+			lanes[clampi(int((degrees + 15.0) / (30.0 / 9.0)), 0, 8)] += 1
+			if index > 0 and degrees < rad_to_deg(rays[index - 1].angle()): has_reverse = true
+		if lanes.has(0) and lanes.max() >= 2: clumped += 1
+		if has_reverse: unordered += 1
+	check(clumped >= 18 and unordered >= 18, "Independent pellets create clusters/gaps rather than one per ordered sector")
+	random.seed = 4631
+	var first := RULES.directions(Vector2.UP, 9, 30.0, random)
+	random.seed = 4631
+	check(first == RULES.directions(Vector2.UP, 9, 30.0, random), "Seeded shotgun volleys remain reproducible")
 	world.free()
 	preload("res://scripts/audio/sfx_manager.gd").stop_event(&"gunshot")
 	preload("res://scripts/audio/sfx_manager.gd").stop_event(&"weapon_dry_fire")

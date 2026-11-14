@@ -7,6 +7,8 @@ extends Node
 ## input/action target, short real-time event boosts, hit-stop and lifecycle /
 ## pause state before writing the global scale.
 
+const FULLSCREEN_CUE_TIME_SCALE := 0.05
+const PLAYER_DEATH_SHOT_SECONDS := 1.46
 const DEFAULT_MIN_TIME_SCALE := 0.005
 const DEFAULT_MAX_TIME_SCALE := 1.0
 const DEFAULT_RESUME_TAU := 0.035
@@ -23,6 +25,7 @@ var pause_authority := false
 var bound_player: Node
 var bound_owner: Node
 var runtime_config: DemoConfig
+var _player_death_elapsed := -1.0
 
 ## Public state is intentionally split: callers can inspect the current
 ## player-activity base independently from the resolved hit-stop override.
@@ -37,10 +40,8 @@ var hitstop_remaining_real := 0.0
 ## Keep the legacy state/API for older scene callers, but it is not consulted
 ## by the compositor anymore.
 var throw_aim_active := false
-## T is only the enable/disable switch for the existing activity-driven
-## Superhot time compositor.  It never installs a second time-scale override.
-## Dream sessions start in normal time.  T remains the explicit opt-in toggle
-## for the existing activity-driven Superhot compositor.
+## Manual time-toggle keys are unbound. The existing API remains available
+## for authored opening/dialogue/dodge sequences and temporary combat effects.
 var slow_time_enabled := false
 
 var shot_pulse_remaining_real := 0.0
@@ -62,6 +63,8 @@ var dive_bullet_time_active := false
 var dive_bullet_time_scale := 0.2
 var reaction_remaining_real := 0.0
 var near_miss_cooldown_real := 0.0
+## Absolute presentation override. Owners are weak and do not multiply scales.
+var _fullscreen_cue_owners: Dictionary = {}
 
 func begin_reaction_time(reason: StringName = &"parry") -> bool:
 	if not mode_enabled or not lifecycle_enabled or pause_authority or get_tree().paused: return false
@@ -74,7 +77,7 @@ func begin_reaction_time(reason: StringName = &"parry") -> bool:
 	return true
 
 func is_reaction_time_active() -> bool:
-	return reaction_remaining_real>0 and mode_enabled and lifecycle_enabled and not pause_authority and not get_tree().paused
+	return reaction_remaining_real>0 and mode_enabled and lifecycle_enabled and not pause_authority and not get_tree().paused and not is_fullscreen_cue_time_active()
 
 func clear_reaction_time() -> void:
 	reaction_remaining_real=0.0
@@ -104,8 +107,15 @@ func _process(_scaled_delta: float) -> void:
 		_apply_engine_scale(DEFAULT_MAX_TIME_SCALE)
 		return
 
-	if is_instance_valid(bound_player) and bool(bound_player.get("dead")): clear_reaction_time()
 	if pause_authority or get_tree().paused:
+		_apply_engine_scale(DEFAULT_MAX_TIME_SCALE)
+		return
+
+	if is_instance_valid(bound_player) and bool(bound_player.get("dead")):
+		clear_reaction_time()
+		if _player_death_elapsed >= 0.0:
+			# The CRT keeps using this clock after the slow-motion window ends.
+			_player_death_elapsed += real_delta
 		_apply_engine_scale(DEFAULT_MAX_TIME_SCALE)
 		return
 
@@ -284,6 +294,8 @@ func is_manual_bullet_time_active() -> bool:
 
 
 func enter_dream_time_mode(player: Node, config: DemoConfig = null, owner: Node = null) -> void:
+	_player_death_elapsed = -1.0
+	_fullscreen_cue_owners.clear()
 	clear_reaction_time()
 	if bound_player != null and bound_player != player and is_instance_valid(bound_player):
 		_disconnect_player_signal(bound_player)
@@ -323,6 +335,8 @@ func exit_dream_time_mode(owner: Node = null) -> void:
 	# global reset used by Main/menu lifecycle code.
 	if owner != null and bound_owner != null and bound_owner != owner:
 		return
+	_player_death_elapsed = -1.0
+	_fullscreen_cue_owners.clear()
 	clear_reaction_time()
 	if bound_player != null and is_instance_valid(bound_player):
 		_disconnect_player_signal(bound_player)
@@ -359,11 +373,14 @@ func clear() -> void:
 func set_lifecycle_enabled(enabled: bool) -> void:
 	lifecycle_enabled = enabled
 	if not enabled:
+		_fullscreen_cue_owners.clear()
 		clear_reaction_time()
 		_apply_engine_scale(DEFAULT_MAX_TIME_SCALE)
 
 
 func set_pause_authority(paused: bool) -> void:
+	if paused:
+		_fullscreen_cue_owners.clear()
 	pause_authority = paused
 	_reset_real_clock()
 	if paused:
@@ -514,10 +531,11 @@ func _update_input_edge() -> void:
 
 
 func _update_manual_bullet_time_input() -> void:
-	# Poll a single just-pressed edge so T is a toggle, not a hold-to-slow mode.
-	# `toggle_slow_time` is the preferred name; `bullet_time` remains the
-	# existing project action for backwards-compatible T bindings.
+	# Compatibility actions have no key bindings. Authored time effects call
+	# the compositor directly and do not depend on a manual toggle key.
 	if not mode_enabled or not lifecycle_enabled:
+		return
+	if is_instance_valid(bound_player) and bool(bound_player.get("dead")):
 		return
 	var action_name := "toggle_slow_time" if InputMap.has_action("toggle_slow_time") else "bullet_time"
 	if InputMap.has_action(action_name) and Input.is_action_just_pressed(action_name):
@@ -556,7 +574,7 @@ func _sample_player_activity() -> float:
 		if velocity_variant is Vector2:
 			speed = velocity_variant.length()
 	last_locomotion_speed = speed
-	var reference := _config_float(&"player_movement_speed", 200.0)
+	var reference := _config_float(&"player_movement_speed", DemoConfig.DEFAULT_PLAYER_MOVE_SPEED)
 	if reference <= 0.0:
 		reference = maxf(float(bound_player.get("movement_speed")), 1.0)
 	return clampf(speed / reference, 0.0, 1.0)
@@ -571,6 +589,84 @@ func _config_float(property: StringName, fallback: float) -> float:
 
 
 func _apply_engine_scale(value: float) -> void:
-	var clamped := clampf(value, 0.001, DEFAULT_MAX_TIME_SCALE)
+	var policy := clampf(value, 0.001, DEFAULT_MAX_TIME_SCALE)
+	var clamped := FULLSCREEN_CUE_TIME_SCALE if is_fullscreen_cue_time_active() else policy
+	if is_player_death_shot_playing(bound_player) and not pause_authority and not get_tree().paused:
+		clamped = lerpf(0.29, 1.0, smoothstep(0.68, 1.35, _player_death_elapsed))
+	resolved_time_scale = clamped
 	if not is_equal_approx(Engine.time_scale, clamped):
 		Engine.time_scale = clamped
+
+
+func start_player_death_shot(player: Node) -> void:
+	if player != bound_player or not is_dream_time_mode_enabled():
+		return
+	_player_death_elapsed = 0.0
+	_apply_engine_scale(DEFAULT_MAX_TIME_SCALE)
+
+
+func get_player_death_shot_elapsed(player: Node) -> float:
+	if not is_instance_valid(player) or player != bound_player or not is_dream_time_mode_enabled():
+		return -1.0
+	return _player_death_elapsed
+
+
+func is_player_death_shot_playing(player: Node) -> bool:
+	var elapsed := get_player_death_shot_elapsed(player)
+	return elapsed >= 0.0 and elapsed < PLAYER_DEATH_SHOT_SECONDS
+
+
+func release_player_death_shot(player: Node) -> void:
+	if player != bound_player or _player_death_elapsed < 0.0:
+		return
+	_player_death_elapsed = -1.0
+	_apply_engine_scale(DEFAULT_MAX_TIME_SCALE)
+
+
+func request_fullscreen_cue_time(owner: Node) -> bool:
+	if not is_instance_valid(owner) or not owner.is_inside_tree() or not mode_enabled or not lifecycle_enabled or pause_authority or get_tree().paused:
+		return false
+	if not is_instance_valid(bound_player) or bool(bound_player.get("dead")):
+		return false
+	_fullscreen_cue_owners[owner.get_instance_id()] = weakref(owner)
+	_apply_engine_scale(_current_policy_scale())
+	return true
+
+
+func release_fullscreen_cue_time(owner: Node) -> void:
+	if is_instance_valid(owner):
+		_fullscreen_cue_owners.erase(owner.get_instance_id())
+	_apply_engine_scale(_current_policy_scale())
+
+
+func has_fullscreen_cue_time(owner: Node) -> bool:
+	return is_instance_valid(owner) and is_fullscreen_cue_time_active() and _fullscreen_cue_owners.has(owner.get_instance_id())
+
+
+func is_fullscreen_cue_time_active() -> bool:
+	if _fullscreen_cue_owners.is_empty():
+		return false
+	if not is_instance_valid(bound_player) or bool(bound_player.get("dead")):
+		_fullscreen_cue_owners.clear()
+		return false
+	for id in _fullscreen_cue_owners.keys():
+		var owner: Node = _fullscreen_cue_owners[id].get_ref()
+		if not is_instance_valid(owner) or not owner.is_inside_tree():
+			_fullscreen_cue_owners.erase(id)
+	return not _fullscreen_cue_owners.is_empty() and mode_enabled and lifecycle_enabled and not pause_authority and not get_tree().paused
+
+
+func _current_policy_scale() -> float:
+	# Resolve the current state without advancing timers a second time.
+	# Releasing a card must not restore a stale scale saved at its entrance.
+	if not mode_enabled or not lifecycle_enabled or pause_authority or get_tree().paused:
+		return DEFAULT_MAX_TIME_SCALE
+	if tactical_planning_active:
+		return tactical_planning_scale
+	if reaction_remaining_real > 0.0:
+		return minf(0.2, hitstop_scale if hitstop_active else 1.0)
+	if dive_bullet_time_active:
+		return dive_bullet_time_scale
+	if not slow_time_enabled:
+		return minf(DEFAULT_MAX_TIME_SCALE, hitstop_scale) if hitstop_active else DEFAULT_MAX_TIME_SCALE
+	return current_scale

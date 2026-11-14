@@ -41,7 +41,7 @@ func run() -> void:
 			# Walker's existing runtime-only rig is not an authored lighting node.
 			if str(node.get_path()).contains("SpatialLighting"): owner_ok = false
 	check(owner_ok,"lighting nodes remain editable and owned by saved coast")
-	check(coast.spatial_lighting.lights.size()==7,"seven added light sources bind to shared scene clock")
+	check(coast.spatial_lighting.lights.size()==12,"shore and city lights bind to the shared scene clock")
 	var on := await draw("all_on")
 	var lamps: Array = coast.spatial_lighting.lights.filter(func(light): return light is SpotLight3D or (light is OmniLight3D and str(light.get_path()).contains("ShoreWorklight")))
 	for lamp in lamps: lamp.visible = false
@@ -54,13 +54,24 @@ func run() -> void:
 	measurements.shadows = difference(on,no_shadow)
 	check(measurements.shadows.changed_pixels>200,"actual geometry casts moon shadows")
 	coast.moon_light.shadow_enabled = true
+	# The high arrival Camera sees the lamp housings. Walk beside the second
+	# fixture so its downward-facing luminous core is actually in view.
+	coast.player_position = Vector3(-3,0,6.3) if coast.right_shore else Vector3(4.3,0,8.8)
+	coast._place_character()
+	coast.update_camera(0.0,true)
+	coast._update_light()
+	var lamp_view := await draw("lamp_core_visible")
 	var environment: Environment = coast.get_node("CoastEnvironment").environment
 	environment.glow_enabled = false
 	var no_bloom := await draw("bloom_off")
-	measurements.bloom = difference(on,no_bloom,.0001)
-	check(measurements.bloom.changed_pixels>0,"native Compatibility bloom contributes to actual Camera output")
+	measurements.bloom = difference(lamp_view,no_bloom,.0001)
+	check(measurements.bloom.changed_pixels>0,"native glow contributes to actual Camera output")
 	check(measurements.bloom.mean_delta<.015,"bloom remains restrained across the image")
 	environment.glow_enabled = true
+	coast.player_position = Vector3(-3,0,23)
+	coast._place_character()
+	coast.update_camera(0.0,true)
+	coast._update_light()
 	var volumes: Array[Node] = coast.spatial_lighting.find_children("LocalAirScattering","MeshInstance3D",true,false)
 	for volume in volumes: volume.visible = false
 	var no_air := await draw("air_off")
@@ -79,7 +90,9 @@ func run() -> void:
 	for step in 360:
 		if coast.visibility_at(step*.1)<.0001:
 			coast.clock = step*.1; break
+	coast.atmosphere.configure_city_signal("S")
 	coast._update_light()
+	coast.advance(.08)
 	var horizon := await draw("signal_reading")
 	var visible_signals := 0
 	for node in coast.atmosphere.signal_nodes:
@@ -89,7 +102,7 @@ func run() -> void:
 		for y in range(maxi(0,int(point.y)-4),mini(360,int(point.y)+5)):
 			for x in range(maxi(0,int(point.x)-8),mini(640,int(point.x)+9)):
 				var color := horizon.get_pixel(x,y)
-				if color.r>.1 and color.g>.1 and color.g>color.b*1.03: found = true
+				if color.r>.1 and color.r>color.g*2.0 and color.r>color.b*1.5: found = true
 		if found: visible_signals += 1
 	check(visible_signals==3,"all three chapter Morse lights remain readable under cloud cover")
 	var time: float = coast.clock

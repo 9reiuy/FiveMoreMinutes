@@ -5,7 +5,7 @@ extends Node3D
 ## BlackBloodEffect owns all motion, gravity, collision and landing decisions;
 ## this node only snapshots the current particles into one batched MultiMesh.
 
-const BLOOD_AIRBORNE_SHADER: Shader = preload("res://shaders/dream3d/blood_airborne_semantic.gdshader")
+const BLOOD_AIRBORNE_SHADER: Shader = preload("res://shaders/dream3d/blood_lit_carrier.gdshader")
 
 var source_effect_ref: WeakRef
 var world_ref: WeakRef
@@ -57,6 +57,8 @@ func _create_multimesh() -> void:
 	quad.size = Vector2.ONE * (2.0 / pixels_per_world_cell)
 	var material := ShaderMaterial.new()
 	material.shader = BLOOD_AIRBORNE_SHADER
+	material.set_shader_parameter("use_captured_alpha", false)
+	material.set_shader_parameter("blood_albedo", Color("ff9a2e"))
 	quad.material = material
 	multi_mesh.mesh = quad
 	multi_mesh.instance_count = 0

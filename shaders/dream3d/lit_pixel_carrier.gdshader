@@ -10,6 +10,8 @@ uniform sampler2D capture_texture : filter_nearest, repeat_disable;
 // Light3D and therefore cannot illuminate floors, walls, or other actors.
 // The bridge leaves this at zero for furniture, weapons, blood, and effects.
 uniform float character_emission_strength = 0.0;
+// Opt out in fully dark spaces; the normal rim remains the shared default.
+uniform bool enemy_rim_self_emission = true;
 uniform float hurt_flash_amount = 0.0;
 // Opt-in authored screen light, restricted to the phone pose's original mask.
 uniform bool phone_glow_enabled = false;
@@ -36,6 +38,7 @@ global uniform vec2 occlusion_viewport_size;
 // Only visual occluders such as high furniture opt in. Actor carriers keep
 // their own pixels intact; the wall/door/furniture material receives the hole.
 uniform bool occlusion_cutout_enabled = false;
+#include "res://shaders/dream3d/character_pixel_rim.gdshaderinc"
 
 // Cutouts use a stylized gradient circular halftone effect.
 // The hole is fully transparent at the core and dissolves into a 45-degree
@@ -128,8 +131,8 @@ void fragment() {
 	// gameplay silhouettes are unchanged. The existing reference DEPTH and
 	// alpha scissor apply equally to the rim, so foreground cover still wins.
 	if (enemy_rim_enabled && pixel.a < 0.05 && enemy_rim_alpha(UV) > 0.5) {
-		ALBEDO = enemy_rim_color.rgb * 0.15;
-		EMISSION = enemy_rim_color.rgb * 0.85;
+		ALBEDO = enemy_rim_color.rgb * (enemy_rim_self_emission ? 0.15 : 1.0);
+		EMISSION = enemy_rim_self_emission ? enemy_rim_color.rgb * 0.85 : vec3(0.0);
 		ALPHA = 1.0;
 	}
 	if (occlusion_cutout_enabled) {
@@ -141,9 +144,11 @@ void fragment() {
 	}
 	ALPHA_SCISSOR_THRESHOLD = 0.05;
 	ROUGHNESS = 1.0;
+	actor_pixel_rim_sides = actor_pixel_rim_fragment(UV, ALPHA);
 }
 void light() {
 	// Paper art is readable from either lit face; shadow attenuation remains
 	// the real engine shadow map, including walls and rotating door leaves.
 	DIFFUSE_LIGHT += (office_linear_lighting ? vec3(1.0) : ALBEDO) * LIGHT_COLOR * ATTENUATION * max(abs(dot(NORMAL,LIGHT)),0.45) * character_light_scale / PI;
+	SPECULAR_LIGHT += actor_pixel_rim_light(actor_pixel_rim_sides, LIGHT, NORMAL, LIGHT_COLOR, ATTENUATION);
 }

@@ -181,10 +181,13 @@ static func _variant(id: String, family: String, rarity: String, name: String, d
 static func _weapon_entry(weapon_id: String, config: DemoConfig) -> Dictionary:
 	if not DREAM_GUN_ATLAS.has_weapon(weapon_id):
 		return {}
+	if weapon_id in DREAM_GUN_ATLAS.LUCILLE_VARIANT_IDS:
+		return {"id":"weapon_"+weapon_id, "family":"weapon_"+weapon_id, "rarity":RARITY_PURPLE, "name":DREAM_GUN_ATLAS.get_display_name(weapon_id), "description":"近距离挥击，造成%d伤害并击倒敌人。"%config.lucille_damage, "max_level":1, "reward_type":"weapon", "weapon_id":weapon_id}
 	match weapon_id:
 		"shotgun": return {"id":"weapon_shotgun", "family":"weapon_shotgun", "rarity":RARITY_BLUE, "name":"霰弹枪", "description":"一次发射%d枚散射弹丸。选择后替换当前武器" % config.shotgun_pellet_count, "max_level":1, "reward_type":"weapon", "weapon_id":"shotgun"}
 		"lucille": return {"id":"weapon_lucille", "family":"weapon_lucille", "rarity":RARITY_PURPLE, "name":"露西尔", "description":"20px / 60°扇形近战，30伤害并必定击倒Employee。", "max_level":1, "reward_type":"weapon", "weapon_id":"lucille"}
 		"assault_rifle": return {"id":"weapon_assault_rifle", "family":"weapon_assault_rifle", "rarity":RARITY_PURPLE, "name":"突击枪", "description":"稳定连射的中距离火力。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"assault_rifle"}
+		"mp5": return {"id":"weapon_mp5", "family":"weapon_mp5", "rarity":RARITY_PURPLE, "name":DREAM_GUN_ATLAS.get_display_name("mp5"), "description":"冲锋枪：步枪两倍射速、两倍散射、一半射程。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"mp5"}
 		"books": return {"id":"weapon_books", "family":"weapon_books", "rarity":RARITY_PURPLE, "name":"Books", "description":"近距离扇形近战。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"books"}
 		"basic": return {"id":"weapon_basic", "family":"weapon_basic", "rarity":RARITY_BLUE, "name":"小手枪", "description":"快速发射单发子弹。选择后替换当前武器", "max_level":1, "reward_type":"weapon", "weapon_id":"basic"}
 		_: return {}

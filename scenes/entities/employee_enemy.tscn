@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://df3k48ifj3gue" path="res://art/Dream/enemy/Employee_men_32x32.png" id="2_employee_atlas"]
 [ext_resource type="Texture2D" uid="uid://2w16e5q2moka" path="res://art/Dream/weapons/Guns/Luger.png" id="6_guns"]
 [ext_resource type="Texture2D" uid="uid://db6lxcmlv1yh5" path="res://art/Dream/shadow.png" id="7_shadow"]
-[ext_resource type="Script" uid="uid://c1hu82nwl5nkd" path="res://scenes/dream/rooms/hurtbox.gd" id="8_hurtbox"]
+[ext_resource type="Script" path="res://scripts/entities/employee_hurtbox.gd" id="8_hurtbox"]
 
 [sub_resource type="AtlasTexture" id="Atlas_employee_left_foot"]
 atlas = ExtResource("2_employee_atlas")
@@ -34,8 +34,11 @@ region = Rect2(149, 15, 5, 4)
 radius = 7.0
 
 [sub_resource type="CapsuleShape2D" id="Capsule_hurt"]
+radius = 11.0
+height = 37.0
+
+[sub_resource type="CircleShape2D" id="Circle_torso"]
 radius = 14.0
-height = 46.0
 
 [node name="EmployeeEnemy" type="CharacterBody2D" unique_id=2034524372 groups=["dream_enemies", "employee_enemies"]]
 collision_layer = 2
@@ -100,14 +103,19 @@ position = Vector2(0, -3)
 shape = SubResource("Circle_body")
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1873951874 groups=["damage_hurtboxes"]]
+process_physics_priority = 10
 collision_layer = 16
 collision_mask = 0
 monitoring = false
 script = ExtResource("8_hurtbox")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1089307207]
-position = Vector2(0, -28)
+position = Vector2(0, -14.5)
 shape = SubResource("Capsule_hurt")
+
+[node name="BodyCollision" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, 5)
+shape = SubResource("Circle_torso")
 
 [node name="WeaponRoot" type="Node2D" parent="." unique_id=1541243003]
 z_index = 0

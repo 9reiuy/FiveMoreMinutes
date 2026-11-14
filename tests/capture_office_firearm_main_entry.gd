@@ -36,7 +36,6 @@ func _run() -> void:
 		main.queue_free()
 		get_tree().quit(1)
 		return
-	main._apply_palette_enabled(false)
 	world.persist_profile = false
 	# Wait for the real floor's initial elevator exit before moving the camera.
 	while world.floor_transition_in_progress:
@@ -80,7 +79,6 @@ func _run() -> void:
 	await _capture("06_rifle.png")
 	for frame in 18:
 		await get_tree().process_frame
-	main._apply_palette_enabled(true)
 	player.equip_weapon("basic", world.config, {})
 	player.call("_update_held_weapon_aim")
 	player.auto_weapon._fire(Vector2.RIGHT, false)

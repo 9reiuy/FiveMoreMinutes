@@ -35,7 +35,6 @@ func run() -> void:
 	var pixel:=not "--native" in OS.get_cmdline_user_args()
 	output="res://.runtime/combat_defense_20261022/"+("pixel_palette" if pixel else "native_original")
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
-	root.get_node("SettingsManager").set_palette_enabled(pixel)
 	root.get_node("SettingsManager").set_setting(&"pixelation_enabled",pixel)
 	main=load("res://scenes/app/main.tscn").instantiate()
 	root.add_child(main)

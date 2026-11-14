@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/preview/screen_wall_avatar.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://art/preview/screen_wall/avatar/ung35_folded_pose.scn" id="2_pose"]
+
+[node name="ScreenWallAvatar" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Geometry" parent="." instance=ExtResource("2_pose")]
+position = Vector3(0.30, -2.514, 1.40)
+rotation = Vector3(0, 3.14159265, 0)
+scale = Vector3(5.2, 5.2, 5.2)

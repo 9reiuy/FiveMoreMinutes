@@ -20,15 +20,15 @@ func _check(condition: bool, message: String) -> void:
 func _run() -> void:
 	var settings: Node = SETTINGS.new()
 	settings.values = settings.defaults.duplicate(true)
-	_check(settings.get_setting(&"pixelation_enabled", false) == true, "Pixelation must default to on")
+	_check(settings.get_setting(&"pixelation_enabled", true) == false, "The world must default to native resolution")
 	_check(not settings.defaults.has("pixel_filter_enabled"), "Retired pixel lighting key must be absent")
 	var legacy := ConfigFile.new()
 	legacy.set_value("graphics", "pixel_filter_enabled", false)
 	legacy.set_value("graphics", "palette_enabled", false)
 	_check(legacy.save(TEST_PATH) == OK, "Could not create legacy settings fixture")
 	settings._load_settings(TEST_PATH)
-	_check(settings.get_setting(&"pixelation_enabled", false) == true, "Old lighting setting must not change pixelation default")
-	_check(settings.get_setting(&"palette_enabled", true) == false, "Other graphics settings must still load")
+	_check(settings.get_setting(&"pixelation_enabled", true) == false, "Old graphics settings must use the native-resolution default")
+	_check(not settings.values.has("palette_enabled"), "Other graphics settings must still load")
 	settings.values["pixelation_enabled"] = false
 	settings._save_settings(TEST_PATH)
 	var saved := ConfigFile.new()
@@ -38,9 +38,12 @@ func _run() -> void:
 	var panel := PANEL.instantiate()
 	root.add_child(panel)
 	await process_frame
-	var checkbox := panel.get_node_or_null("Pixelation/ControlRow/Check") as CheckBox
-	_check(checkbox != null, "Settings must expose pixelation checkbox")
-	_check((panel.get_node("Pixelation/Label") as Label).text.begins_with("像素化"), "Pixelation label is missing")
+	# The settings presentation reparents these controls during _ready().
+	var checkbox: CheckBox = panel.pixelation_check
+	var caption: Button = panel.pixelation_desc
+	_check(is_instance_valid(checkbox), "Settings must expose pixelation checkbox")
+	_check(is_instance_valid(caption) and caption.text.begins_with("像素化"), "Pixelation label is missing")
+	_check(is_instance_valid(checkbox) and not checkbox.button_pressed, "The settings UI starts with pixelation off")
 	panel.queue_free()
 	settings.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

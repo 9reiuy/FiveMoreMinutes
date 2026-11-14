@@ -14,10 +14,11 @@ float cutout_factor(vec2 screen_uv, vec4 slot) {
 		return 1.0;
 	}
 	vec2 delta_px = (screen_uv - slot.xy) * occlusion_viewport_size;
-	float distance_px = length(delta_px);
-	if (distance_px >= slot.z) {
+	float distance_squared = dot(delta_px, delta_px);
+	if (distance_squared >= slot.z * slot.z) {
 		return 1.0;
 	}
+	float distance_px = sqrt(distance_squared);
 	float norm_d = distance_px / slot.z;
 	if (norm_d < 0.22) {
 		return 0.0;
@@ -51,4 +52,10 @@ float combined_cutout(vec2 screen_uv) {
 	f = min(f, cutout_factor(screen_uv, occlusion_cutout_6));
 	f = min(f, cutout_factor(screen_uv, occlusion_cutout_7));
 	return f;
+}
+
+bool main_camera_cutout(vec2 screen_uv, float camera_pass) {
+	// Keep shadow and reflection passes solid when the gameplay camera cuts a hole.
+	// Both runtime publishers fill from slot zero, so an empty first slot skips the mask.
+	return camera_pass > 0.5 && occlusion_cutout_0.w > 0.5 && combined_cutout(screen_uv) < 0.35;
 }

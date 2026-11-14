@@ -27,7 +27,6 @@ func run() -> void:
 	check(world.regenerate(120), "Generate sample")
 	for index in 30: await process_frame
 	display.set_selective_enabled(true)
-	display.set_palette_enabled(true)
 	for bridge in world.actor_depth_bridges_root.get_children():
 		if bridge.get("character_projection") == true: bridges.append(bridge)
 	if world.player_depth_bridge != null: bridges.append(world.player_depth_bridge)

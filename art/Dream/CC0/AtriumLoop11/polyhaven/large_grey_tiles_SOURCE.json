@@ -1,0 +1,25 @@
+{
+  "id": "large_grey_tiles",
+  "source": "https://polyhaven.com/a/large_grey_tiles",
+  "license": "CC0-1.0",
+  "maps": [
+    {
+      "role": "Diffuse",
+      "file": "large_grey_tiles_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/large_grey_tiles/large_grey_tiles_diff_1k.jpg",
+      "sha256": "2cd00e2ddd516fdc165169252c194bf67b3ee483f2925442dc428cbae5fd04c8"
+    },
+    {
+      "role": "nor_gl",
+      "file": "large_grey_tiles_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/large_grey_tiles/large_grey_tiles_nor_gl_1k.jpg",
+      "sha256": "9185560cc045b0c90434c1bfe64922759a5bebfdad18a1b6af860ed0e332cfc8"
+    },
+    {
+      "role": "Rough",
+      "file": "large_grey_tiles_rough_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/large_grey_tiles/large_grey_tiles_rough_1k.jpg",
+      "sha256": "2042fd8d9775e4e91ca6474549e504ec08ded4664cb6b59890142d6fe97709c8"
+    }
+  ]
+}

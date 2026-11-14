@@ -1,0 +1,25 @@
+{
+  "id": "concrete_floor_worn_001",
+  "license": "CC0-1.0",
+  "maps": [
+    {
+      "file": "concrete_floor_worn_001_diff_1k.jpg",
+      "role": "Diffuse",
+      "sha256": "6e40c0fc908f4d66431836f5abe203f3a4eb064e88824378a91a46a26e2f464c",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_001/concrete_floor_worn_001_diff_1k.jpg"
+    },
+    {
+      "file": "concrete_floor_worn_001_nor_gl_1k.jpg",
+      "role": "nor_gl",
+      "sha256": "523bd94a1be5dd2f11c2ae2b7d7c77445cf5bd9e41604db515a7c8364dcba067",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_001/concrete_floor_worn_001_nor_gl_1k.jpg"
+    },
+    {
+      "file": "concrete_floor_worn_001_rough_1k.jpg",
+      "role": "Rough",
+      "sha256": "069efe4ca018e0ef61fd8cc9964395ba8272284ae239da68d7f87988e2e9f488",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_001/concrete_floor_worn_001_rough_1k.jpg"
+    }
+  ],
+  "source": "https://polyhaven.com/a/concrete_floor_worn_001"
+}

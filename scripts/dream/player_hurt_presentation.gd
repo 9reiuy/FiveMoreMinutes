@@ -57,6 +57,12 @@ func _owns_player() -> bool:
 	if not is_instance_valid(player) or not player.has_meta(&"stylized_player_hurt"): return false
 	var reference: Variant=player.get_meta(&"stylized_player_hurt",null)
 	return reference is WeakRef and reference.get_ref()==self
+func _world_post_delegated() -> bool:
+	if not is_instance_valid(world) or not world.has_meta(&"world_camera_finish"): return false
+	var reference: Variant=world.get_meta(&"world_camera_finish")
+	if not reference is WeakRef: return false
+	var finish: Node=reference.get_ref()
+	return is_instance_valid(finish) and bool(finish.get("enabled")) and not bool(finish.get("restored"))
 func _active() -> bool:
 	return is_instance_valid(world) and is_instance_valid(player) and is_inside_tree() and world.get("floor_root")==get_parent() and not get_tree().paused and world.get("floor_transition_in_progress")!=true and world.get("elevator_transition_in_progress")!=true
 func _on_damage(amount: float) -> void:
@@ -98,8 +104,11 @@ func _update_pose() -> void:
 	if is_instance_valid(bridge):
 		for material in [bridge.get("lit_material"),bridge.get("attachment_sprite").material_override if is_instance_valid(bridge.get("attachment_sprite")) else null]:
 			if material is ShaderMaterial: material.set_shader_parameter("hurt_flash_amount",1.0 if age<.07 else 0.0)
-	post_rect.visible=age<SHOCK_SECONDS
-	post_copy.copy_mode=BackBufferCopy.COPY_MODE_VIEWPORT if age<SHOCK_SECONDS else BackBufferCopy.COPY_MODE_DISABLED
+	# A world finish combines this impulse with its baseline in one pass.
+	# Standalone worlds without that owner keep the original damage pass.
+	var draw_shock:=age<SHOCK_SECONDS and not _world_post_delegated()
+	post_rect.visible=draw_shock
+	post_copy.copy_mode=BackBufferCopy.COPY_MODE_VIEWPORT if draw_shock else BackBufferCopy.COPY_MODE_DISABLED
 	shock.set_shader_parameter("strength",pow(maxf(0,1.0-age/SHOCK_SECONDS),1.4))
 	shock.set_shader_parameter("phase",age/SHOCK_SECONDS)
 	var settings:=get_node_or_null("/root/SettingsManager")

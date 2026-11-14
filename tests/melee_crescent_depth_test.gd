@@ -70,7 +70,7 @@ func run() -> void:
 	var rect := ColorRect.new()
 	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var palette := ShaderMaterial.new()
-	palette.shader = load("res://shaders/palette_quantize.gdshader")
+	palette.shader = load("res://shaders/world_semantic_decode.gdshader")
 	rect.material = palette
 	layer.add_child(rect)
 	root.add_child(layer)

@@ -6,6 +6,7 @@ uniform float reach = 80.0;
 uniform float facing = 0.0;
 uniform float arc = 2.792527;
 uniform float sweep = 0.0;
+uniform bool sweep_reversed = false;
 uniform float opacity = 0.0;
 uniform float band_width = 14.0;
 uniform bool paper = false;
@@ -18,12 +19,13 @@ void fragment() {
 	float a = atan(p.y, p.x) - facing;
 	a = atan(sin(a), cos(a));
 	float fraction = (a + arc * 0.5) / arc;
-	if (fraction < 0.0 || fraction > sweep || r > reach || opacity < 0.01) { discard; }
+	float travelled = sweep_reversed ? 1.0 - fraction : fraction;
+	if (fraction < 0.0 || fraction > 1.0 || travelled > sweep || r > reach || opacity < 0.01) { discard; }
 	float sample_index = clamp(fraction * 32.0, 0.0, 31.999);
 	int index = int(floor(sample_index));
 	float allowed = min(reach_limits[index], reach_limits[index + 1]);
 	if (r > allowed) { discard; }
-	float age = sweep - fraction;
+	float age = sweep - travelled;
 	float tail = clamp(1.0 - age / 0.52, 0.0, 1.0);
 	if (tail <= 0.0) { discard; }
 	// Connect the readable leading edge to the held weapon instead of drawing

@@ -1,13 +1,13 @@
 extends Control
 
 ## Isolated interactive preview. No project settings or saved user settings.
-## F6: resolution, F7: Palette 1, F8: legacy/new art, Esc: quit.
+## F6: resolution, F8: legacy/new art, Esc: quit.
 const ART = preload("res://scripts/dream/office_low_pixel_art.gd")
 const WORLD = preload("res://scenes/dream/Dream3D_RandomDungeon.tscn")
 var game_view: SubViewport
 var container: SubViewportContainer
 var world: Node3D
-var palette: ShaderMaterial
+var semantic_material: ShaderMaterial
 var low_resolution := true
 var legacy := false
 var rebuilding := false
@@ -48,7 +48,7 @@ func _fit() -> void:
 	container.size = internal
 	container.scale = Vector2.ONE * factor
 	container.position = Vector2(floorf((get_window().size.x - internal.x * factor) * .5), 40 + floorf((available.y - internal.y * factor) * .5))
-	_caption.text = "OPEN OFFICE | %s | %s | F6 resolution / F7 palette / F8 art / Esc quit" % ["640x360 integer" if low_resolution else "1280x720 native", "LEGACY" if legacy else "LOW PIXEL"]
+	_caption.text = "OPEN OFFICE | %s | %s | F6 resolution / F8 art / Esc quit" % ["640x360 integer" if low_resolution else "1280x720 native", "LEGACY" if legacy else "LOW PIXEL"]
 
 func rebuild() -> void:
 	rebuilding = true
@@ -76,10 +76,9 @@ func rebuild() -> void:
 	var overlay := ColorRect.new()
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	palette = ShaderMaterial.new()
-	palette.shader = preload("res://shaders/palette_quantize.gdshader")
-	palette.set_shader_parameter("palette_enabled", false)
-	overlay.material = palette
+	semantic_material = ShaderMaterial.new()
+	semantic_material.shader = preload("res://shaders/world_semantic_decode.gdshader")
+	overlay.material = semantic_material
 	layer.add_child(overlay)
 	world.add_child(layer)
 	rebuilding = false
@@ -91,8 +90,6 @@ func _input(event: InputEvent) -> void:
 	match event.keycode:
 		KEY_F6:
 			set_resolution(not low_resolution)
-		KEY_F7:
-			palette.set_shader_parameter("palette_enabled", palette.get_shader_parameter("palette_enabled") != true)
 		KEY_F8:
 			legacy = not legacy
 			rebuild()
@@ -123,14 +120,11 @@ func capture_comparisons() -> void:
 			world.set_process(false)
 			world.set("camera_aim_offset", Vector3.ZERO)
 			world.call("_update_camera_and_actor_projection", 0.0)
-			for enabled in [false, true]:
-				palette.set_shader_parameter("palette_enabled", enabled)
-				await get_tree().process_frame
-				await RenderingServer.frame_post_draw
-				var filename := "%s_%s_%s.png" % ["before" if old else "after", "640" if low else "native", "palette1" if enabled else "off"]
-				get_viewport().get_texture().get_image().save_png(ProjectSettings.globalize_path("res://.runtime/low_pixel/" + filename))
-				print("LOW_PIXEL_CAPTURE ", filename)
-			palette.set_shader_parameter("palette_enabled", false)
+			await get_tree().process_frame
+			await RenderingServer.frame_post_draw
+			var filename := "%s_%s.png" % ["before" if old else "after", "640" if low else "native"]
+			get_viewport().get_texture().get_image().save_png(ProjectSettings.globalize_path("res://.runtime/low_pixel/" + filename))
+			print("LOW_PIXEL_CAPTURE ", filename)
 			var samples: Array[float] = []
 			for frame in 120:
 				var started := Time.get_ticks_usec()

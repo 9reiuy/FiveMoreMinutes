@@ -147,13 +147,9 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible or state != State.SPINNING or options.is_empty():
 		return
-	# The slot machine is a modal, paused UI.  Space is still the Player's Dash
-	# action during gameplay, but while this panel owns the input it also serves
-	# as the reel-lock confirmation shown by the on-screen prompt.  Keep Enter as
-	# a confirmation alias and handle the shared `dash` action locally instead of
-	# rebinding Space globally (which would make Dash and UI confirmation fight).
+	# Space confirms a reel only while this paused panel owns input.
 	var confirm_pressed := InputMap.has_action(&"confirm") and event.is_action_pressed(&"confirm")
-	var space_pressed := InputMap.has_action(&"dash") and event.is_action_pressed(&"dash")
+	var space_pressed := InputMap.has_action(&"roll") and event.is_action_pressed(&"roll")
 	if (confirm_pressed or space_pressed) and not event.is_echo():
 		_lock_next_reel()
 		get_viewport().set_input_as_handled()

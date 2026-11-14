@@ -2,6 +2,7 @@ shader_type canvas_item;
 
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear_mipmap;
 uniform float progress : hint_range(0.0, 1.0) = 0.0;
+uniform bool live_camera_zoom = false;
 
 float hash11(float p) {
 	p = fract(p * 0.1031);
@@ -50,9 +51,15 @@ void fragment() {
 		float impact_pulse = sin(clamp(t / 0.15, 0.0, 1.0) * 3.14159265);
 		float ghost_phase = smoothstep(0.04, 0.20, t) * (1.0 - smoothstep(0.84, 0.96, t));
 		float blue_collapse = clamp((t - 0.78) / 0.185, 0.0, 1.0);
+		float impact_dispersion = impact_pulse;
+		if (live_camera_zoom) {
+			// Leave the live fall and dropped weapon readable during the push-in.
+			ghost_phase *= mix(0.20, 1.0, smoothstep(0.33, 0.59, t));
+			impact_dispersion *= 0.38;
+		}
 
-		// 1. Continuous Zoom-In on main scene (1.0x -> 1.38x)
-		float main_zoom = 1.0 + 0.07 * impact_pulse + 0.34 * pow(clamp(t / 0.90, 0.0, 1.0), 0.78);
+		// The live shot already magnifies the world through its real camera.
+		float main_zoom = live_camera_zoom ? 1.0 : 1.0 + 0.07 * impact_pulse + 0.34 * pow(clamp(t / 0.90, 0.0, 1.0), 0.78);
 		vec2 main_uv = (uv - center) / main_zoom + center;
 
 		// Subtle horizontal CRT band tear
@@ -66,8 +73,8 @@ void fragment() {
 		main_uv.x += tear_x;
 
 		// 2. Radial & Horizontal RGB Dispersion
-		float radial_disp = 0.025 * impact_pulse + (0.045 + 0.040 * sin(t * 16.0)) * ghost_phase + 0.075 * blue_collapse;
-		float horiz_disp = 0.008 * impact_pulse + 0.015 * ghost_phase + 0.032 * blue_collapse;
+		float radial_disp = 0.025 * impact_dispersion + (0.045 + 0.040 * sin(t * 16.0)) * ghost_phase + 0.075 * blue_collapse;
+		float horiz_disp = 0.008 * impact_dispersion + 0.015 * ghost_phase + 0.032 * blue_collapse;
 		vec3 main_col = sample_rgb_dispersed(screen_texture, main_uv, center, radial_disp, horiz_disp);
 
 		// 3. Dynamic Expanding Background Ghost Layers (Double/Triple Exposure的重影放大效果)
@@ -100,7 +107,8 @@ void fragment() {
 		// 4. Reference Video Left-Side Dark Terminal Panel Contrast (f=90..150):
 		// In the reference video, the left ~48% of the frame has a dark crimson/obsidian CRT shadow
 		// with a vertical split transition around x = 0.44..0.58 so the white BIOS text pops cleanly.
-		float terminal_phase = smoothstep(0.28, 0.36, t);
+		float terminal_start = live_camera_zoom ? 0.40 : 0.28;
+		float terminal_phase = smoothstep(terminal_start, terminal_start + 0.08, t);
 		float left_panel_mask = (1.0 - smoothstep(0.36, 0.64, uv.x)) * terminal_phase;
 		col *= mix(1.0, 0.34, left_panel_mask);
 		// Subtle dark-red tint near the vertical split line (like f=90..138 in reference video)

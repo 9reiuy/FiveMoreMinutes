@@ -1,0 +1,53 @@
+{
+  "source": "https://kenney.nl/assets/smoke-particles",
+  "author": "Kenney Vleugels",
+  "license": "CC0 1.0",
+  "archive_sha256": "97a1d09c66e4fd6c247c8ea87f84c0cc59caaeceae19414c995afb1616a1e1c9",
+  "processing": "Four static white-puff variants, centered in 512-pixel cells without resizing or repainting. Variants are not treated as sequential animation frames.",
+  "puffs": [
+    {
+      "file": "PNG/White puff/whitePuff00.png",
+      "original_size": [
+        381,
+        346
+      ],
+      "atlas_origin": [
+        65,
+        83
+      ]
+    },
+    {
+      "file": "PNG/White puff/whitePuff08.png",
+      "original_size": [
+        419,
+        384
+      ],
+      "atlas_origin": [
+        558,
+        64
+      ]
+    },
+    {
+      "file": "PNG/White puff/whitePuff16.png",
+      "original_size": [
+        361,
+        384
+      ],
+      "atlas_origin": [
+        75,
+        576
+      ]
+    },
+    {
+      "file": "PNG/White puff/whitePuff24.png",
+      "original_size": [
+        370,
+        362
+      ],
+      "atlas_origin": [
+        583,
+        587
+      ]
+    }
+  ]
+}

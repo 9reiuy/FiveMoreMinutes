@@ -10,6 +10,14 @@ const LARGE_LIMIT := 16
 var small_idle: Array[Node3D] = []
 var large_idle: Array[Node3D] = []
 var created := 0
+
+class GroundMerge:
+	var previous: Node3D
+	var staged: Node3D
+	var absorbed: Array[Node2D] = []
+
+var _ground_merges: Dictionary[int, GroundMerge] = {}
+
 func prewarm(camera: Camera3D, height: float,max_new: int=0) -> bool:
 	var added:=0
 	for extent in [64,112]:
@@ -56,6 +64,69 @@ func acquire_surface(source: Node2D, camera: Camera3D, height: float, plane_rota
 	source.set_meta(&"depth_visual_bridge", weakref(bridge))
 	bridge.set_meta(&"dream_room_id", int(source.get_meta(&"dream_room_id", -1)))
 	return bridge
+
+
+func commit_ground_merge(target: Node2D, absorbed: Node2D, camera: Camera3D, height: float, half_extent: int) -> void:
+	absorbed.set_meta(&"blood_merge_registered", true)
+	var id := target.get_instance_id()
+	var merge: GroundMerge = _ground_merges.get(id)
+	if merge != null:
+		# Several deposits can settle before the same rendered frame.
+		merge.absorbed.append(absorbed)
+		merge.staged.request_capture_refresh()
+		return
+	var reference: Variant = target.get_meta(&"depth_visual_bridge") if target.has_meta(&"depth_visual_bridge") else null
+	var previous := reference.get_ref() as Node3D if reference is WeakRef else null
+	if is_instance_valid(previous) and previous.commit_merged_ground_mask(half_extent):
+		_retire_blood_source(absorbed)
+		return
+	merge = GroundMerge.new()
+	merge.absorbed.append(absorbed)
+	merge.previous = previous
+	if is_instance_valid(merge.previous):
+		merge.previous.hold_blood_capture()
+	merge.staged = acquire(target, camera, height)
+	_ground_merges[id] = merge
+	target.tree_exiting.connect(_discard_ground_merge.bind(id), CONNECT_ONE_SHOT)
+	merge.staged.static_capture_ready.connect(_publish_ground_merge.bind(id), CONNECT_ONE_SHOT)
+
+
+func _publish_ground_merge(id: int) -> void:
+	var merge: GroundMerge = _ground_merges[id]
+	var target: Node2D = merge.staged.source_actor
+	_ground_merges.erase(id)
+	target.tree_exiting.disconnect(_discard_ground_merge.bind(id))
+	if not target.is_queued_for_deletion():
+		merge.staged.actor_sprite.show()
+	if is_instance_valid(merge.previous) and merge.previous.source_actor == target:
+		merge.previous.release_blood_capture()
+	_retire_absorbed_blood(merge)
+
+
+func _discard_ground_merge(id: int) -> void:
+	var merge: GroundMerge = _ground_merges[id]
+	_ground_merges.erase(id)
+	if is_instance_valid(merge.staged):
+		merge.staged.static_capture_ready.disconnect(_publish_ground_merge.bind(id))
+	_retire_absorbed_blood(merge)
+
+
+func _retire_absorbed_blood(merge: GroundMerge) -> void:
+	for source in merge.absorbed:
+		_retire_blood_source(source)
+
+
+func _retire_blood_source(source: Node2D) -> void:
+	if not is_instance_valid(source):
+		return
+	source.hide()
+	var reference: Variant = source.get_meta(&"depth_visual_bridge") if source.has_meta(&"depth_visual_bridge") else null
+	var bridge: Node3D = reference.get_ref() if reference is WeakRef else null
+	if is_instance_valid(bridge) and bridge.source_actor == source:
+		bridge.set_room_presentation_active(false)
+	source.queue_free()
+
+
 func release(bridge: Node3D) -> void:
 	if not is_inside_tree() or is_queued_for_deletion(): return
 	bridge.plane_rotation = Vector3(-PI * 0.5, 0.0, 0.0)

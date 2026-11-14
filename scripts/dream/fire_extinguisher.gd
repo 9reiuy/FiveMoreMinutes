@@ -17,7 +17,7 @@ var visual: Node3D
 var contacts: Dictionary={}
 var gas_emit_left:=0.0
 var paint_material: ShaderMaterial
-var palette_check_left:=0.0
+var semantic_check_left:=0.0
 var gas_source_id:=0
 var emission_stopped:=false
 var smoke_silhouette:=false
@@ -38,7 +38,7 @@ func _ready() -> void:
 	var mesh: MeshInstance3D=visual.get_child(0)
 	var paint: ShaderMaterial=mesh.mesh.surface_get_material(1).duplicate()
 	paint_material=paint
-	paint.set_shader_parameter("preserve_red",world.get_viewport().get_node_or_null("WorldPaletteLayer")!=null)
+	paint.set_shader_parameter("preserve_red",world.get_viewport().get_node_or_null("WorldSemanticLayer")!=null)
 	mesh.set_surface_override_material(1,paint)
 	_sync_visual()
 
@@ -57,9 +57,9 @@ func take_damage(amount: float,direction:=Vector2.ZERO,_force:=1.0) -> void:
 
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(world) or world.floor_transition_in_progress:return
-	palette_check_left-=delta
-	if palette_check_left<=0:
-		palette_check_left=.25
+	semantic_check_left-=delta
+	if semantic_check_left<=0:
+		semantic_check_left=.25
 		_sync_paint()
 	if not flying:return
 	if flying:
@@ -138,7 +138,7 @@ func _sync_visual() -> void:
 
 func _sync_paint() -> void:
 	if paint_material==null:return
-	var enabled:=world.get_viewport().get_node_or_null("WorldPaletteLayer")!=null
+	var enabled:=world.get_viewport().get_node_or_null("WorldSemanticLayer")!=null
 	if paint_material.get_shader_parameter("preserve_red")!=enabled:paint_material.set_shader_parameter("preserve_red",enabled)
 
 func set_smoke_silhouette(enabled: bool) -> void:

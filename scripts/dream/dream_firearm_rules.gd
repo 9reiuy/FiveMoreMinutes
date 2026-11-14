@@ -15,7 +15,7 @@ static func body_recoil_after_shot(
 	match weapon_id:
 		&"shotgun":
 			strength = _value(config, "player_shotgun_recoil", 155.0)
-		&"assault_rifle":
+		&"assault_rifle", &"mp5":
 			strength = _value(config, "player_assault_rifle_recoil", 55.0)
 		_:
 			return current
@@ -38,6 +38,12 @@ static func decay_body_recoil(current: Vector2, delta: float) -> Vector2:
 ## Authoritative base firearm data. Actor upgrades, aim error and cadence jitter
 ## are applied by the caller after this shared lookup.
 static func parameters(config: Resource, weapon_id: StringName) -> Dictionary:
+	if weapon_id == &"mp5":
+		# Derive AFTER the world's 3D tuning, retaining the real rifle bullet.
+		var rifle := parameters(config, &"assault_rifle")
+		rifle["interval"] *= 0.5
+		rifle["range"] *= 0.5
+		return rifle
 	var fields: Array[String] = []
 	var defaults: Array[float] = []
 	match weapon_id:
@@ -63,6 +69,14 @@ static func parameters(config: Resource, weapon_id: StringName) -> Dictionary:
 	}
 
 
+static func range_multiplier(weapon_id: StringName) -> float:
+	return 0.5 if weapon_id == &"mp5" else 1.0
+
+
+static func spread_multiplier(weapon_id: StringName) -> float:
+	return 2.0 if weapon_id == &"mp5" else 1.0
+
+
 static func _value(config: Resource, field: String, fallback: float) -> float:
 	if config == null:
 		return fallback
@@ -70,20 +84,18 @@ static func _value(config: Resource, field: String, fallback: float) -> float:
 	return fallback if value == null else float(value)
 
 
-## Spread is the total cone angle. One random trajectory in each equal sector
-## keeps shotgun coverage readable; one pellet gives ordinary aim scatter.
+## Spread is the total cone angle. Pellets sample the entire cone independently,
+## allowing clusters and gaps instead of guaranteeing one pellet in each lane.
+## A single pellet retains the same ordinary aim-scatter sampling as before.
 static func directions(direction: Vector2, pellet_count: int = 1, spread_degrees: float = 0.0, random_source: RandomNumberGenerator = null) -> Array[Vector2]:
 	var result: Array[Vector2] = []
 	var count := maxi(1, pellet_count)
 	var spread := maxf(0.0, spread_degrees)
-	var sector_width := spread / float(count)
 	var center := direction.normalized()
-	for index in range(count):
-		var minimum := -spread * 0.5 + sector_width * float(index)
-		var maximum := minimum + sector_width
+	for _index in range(count):
 		var angle := 0.0
 		if spread > 0.0:
-			angle = random_source.randf_range(minimum, maximum) if random_source != null else randf_range(minimum, maximum)
+			angle = random_source.randf_range(-spread * .5, spread * .5) if random_source != null else randf_range(-spread * .5, spread * .5)
 		result.append(center.rotated(deg_to_rad(angle)))
 	return result
 

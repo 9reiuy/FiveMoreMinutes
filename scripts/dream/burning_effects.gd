@@ -27,7 +27,7 @@ func configure(owner_world: Node3D) -> void:
 	effects=EFFECTS.new()
 	effects.fire_limit=MAX_BURNING
 	add_child(effects)
-	_sync_palette()
+	_sync_semantic_codes()
 
 func clear() -> void:
 	for id in burning.keys():
@@ -37,9 +37,9 @@ func clear() -> void:
 	if is_instance_valid(effects) and effects.has_method("clear"):
 		effects.clear()
 
-func _sync_palette() -> void:
+func _sync_semantic_codes() -> void:
 	if is_instance_valid(world):
-		effects.preserve_flame_colors=world.get_viewport().get_node_or_null("WorldPaletteLayer")!=null
+		effects.preserve_flame_colors=world.get_viewport().get_node_or_null("WorldSemanticLayer")!=null
 
 func canonical(target: Node) -> Node:
 	if not is_instance_valid(target):return null
@@ -120,7 +120,7 @@ func _physics_process(delta: float) -> void:
 
 func advance(delta: float) -> void:
 	if not is_instance_valid(world) or world.get("floor_transition_in_progress")==true:return
-	_sync_palette()
+	_sync_semantic_codes()
 	for index in range(hazards.size()-1,-1,-1):
 		hazards[index].left-=delta
 		if float(hazards[index].left)<=0.0:hazards.remove_at(index)
@@ -203,11 +203,11 @@ func _contact_clear(source: Node,target: Node) -> bool:
 	return gameplay==null or gameplay.get_world_2d().direct_space_state.intersect_ray(query).is_empty()
 
 func muzzle(at: Vector3,direction: Vector3) -> void:
-	_sync_palette()
+	_sync_semantic_codes()
 	effects.emit_muzzle(effects.to_local(at),effects.global_basis.inverse()*direction)
 
 func explosion(at: Vector3) -> void:
-	_sync_palette()
+	_sync_semantic_codes()
 	effects.explode(effects.to_local(at),1.65)
 	if hazards.size()<16:hazards.append({"at":at,"left":.65})
 

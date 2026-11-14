@@ -101,27 +101,27 @@ func _test_boss_door_immutability(failures: Array[String]) -> void:
 func _test_movement_speeds(failures: Array[String]) -> void:
 	print("Running test_movement_speeds...")
 	var cfg := DEMO_CONFIG_TRES.duplicate()
-	if cfg.employee_movement_speed != 100.0:
-		failures.append("demo_config employee_movement_speed should be 100.0, got %f" % cfg.employee_movement_speed)
-	if cfg.employee_run_speed_multiplier != 1.6:
-		failures.append("demo_config employee_run_speed_multiplier should be 1.6, got %f" % cfg.employee_run_speed_multiplier)
+	if cfg.employee_movement_speed != 96.0:
+		failures.append("demo_config employee_movement_speed should be 96.0, got %f" % cfg.employee_movement_speed)
+	if cfg.employee_run_speed_multiplier != 2.0:
+		failures.append("demo_config employee_run_speed_multiplier should be 2.0, got %f" % cfg.employee_run_speed_multiplier)
 
 	var enemy := _make_enemy(cfg)
 
-	if enemy.movement_speed != 100.0:
-		failures.append("Enemy movement_speed not 100.0, got %f" % enemy.movement_speed)
+	if enemy.movement_speed != 96.0:
+		failures.append("Enemy movement_speed should be 96.0, got %f" % enemy.movement_speed)
 
 	# Patrol / Wander move speed
 	enemy.state = EmployeeEnemy.State.NEUTRAL_WANDER
 	var patrol_speed: float = enemy._get_current_move_speed()
-	if not is_equal_approx(patrol_speed, 100.0):
-		failures.append("Enemy patrol speed should be 100.0, got %f" % patrol_speed)
+	if not is_equal_approx(patrol_speed, 96.0):
+		failures.append("Enemy patrol speed should be 96.0, got %f" % patrol_speed)
 
 	# Chase / Attack Player move speed
 	enemy.state = EmployeeEnemy.State.ATTACK_PLAYER
 	var chase_speed: float = enemy._get_current_move_speed()
-	if not is_equal_approx(chase_speed, 160.0):
-		failures.append("Enemy chase speed should be 160.0 (100 * 1.6), got %f" % chase_speed)
+	if not is_equal_approx(chase_speed, 192.0):
+		failures.append("Enemy chase speed should be 192.0 (96 * 2), got %f" % chase_speed)
 
 	enemy.free()
 

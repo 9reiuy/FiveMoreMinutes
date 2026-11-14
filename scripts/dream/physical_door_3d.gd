@@ -982,7 +982,10 @@ func shatter(impact_direction: Vector2 = Vector2.ZERO) -> void:
 
 	door_shattered.emit(self)
 
-	SFX.play_wood_shatter()
+	# Temporary: the door-break takes were too sharp. Use the chosen drywall strike.
+	var break_at := global_position + Vector3(0.0, door_height * 0.5, 0.0)
+	if not SFX.play_world_sfx_3d(&"wall_break", break_at, 0.0, 32.0):
+		SFX.play_event(&"wall_break")
 
 	# Clear 2D collisions
 	for body in _collision_bodies:

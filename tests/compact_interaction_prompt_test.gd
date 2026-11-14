@@ -117,7 +117,7 @@ func run() -> void:
 	pickup.linear_velocity = Vector2.ZERO
 	world.current_world_weapon_target = pickup
 	world._update_interaction_prompt()
-	check(world.interaction_prompt.text == "替换", "Occupied category uses replace")
+	check(not world.interaction_prompt.visible and pickup.get_interaction_prompt_state().is_empty(), "Weapons use outline-only proximity feedback even with an occupied category")
 	check(world.interaction_prompt.get_parent() == world.ui_layer, "Prompt stays in clear HUD")
 	var empty_inventory := EmptyInventory.new()
 	check(PROMPT.pickup_verb(pickup,empty_inventory).is_empty(), "Empty category has no pickup label")
@@ -184,7 +184,6 @@ func run() -> void:
 		world.set_process(false)
 		world.set_physics_process(false)
 		display.set_selective_enabled(true)
-		display.set_palette_enabled(true)
 		await frames(20)
 		var output := "res://.runtime/interaction_ui_20261106"
 		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
@@ -214,8 +213,9 @@ func run() -> void:
 	tutorial.process_mode = Node.PROCESS_MODE_DISABLED
 	root.add_child(tutorial)
 	await frames(2)
-	check(tutorial.interaction_prompt.get_theme_font(&"font").resource_path.ends_with("BoutiqueBitmap9x9_Bold_1.9.ttf"), "tutorial interaction uses bold pixel font")
-	check(tutorial.interaction_prompt.get_theme_font_size(&"font_size") == 14 and tutorial.interaction_prompt.vertical_alignment == VERTICAL_ALIGNMENT_CENTER, "tutorial text is enlarged and centered")
+	var talk_text: Label = tutorial.interaction_prompt.dialogue_label
+	check(talk_text.get_theme_font(&"font").resource_path.ends_with("BoutiqueBitmap9x9_Bold_1.9.ttf"), "tutorial interaction bubble uses bold pixel font")
+	check(talk_text.get_theme_font_size(&"font_size") == 14 and talk_text.vertical_alignment == VERTICAL_ALIGNMENT_CENTER, "tutorial bubble text is enlarged and centered")
 	tutorial.queue_free()
 	await frames(4)
 	print("COMPACT_PROMPT_RESULT checks=",checks," failures=",failures)

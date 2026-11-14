@@ -12,7 +12,7 @@ func run() -> void:
 	for index in 8: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
 	display.set_selective_enabled(not "--no-pixelation" in OS.get_cmdline_user_args())
-	display.set_palette_enabled(not "--no-palette" in OS.get_cmdline_user_args()); display._process(0.0)
+	display._process(0.0)
 	paused=true
 	var pool: Node3D=world._get_blood_ground_capture_pool()
 	var sources: Array[BlackBloodEffect] = []

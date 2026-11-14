@@ -43,8 +43,9 @@ func run() -> void:
 			check(not result.is_empty(),"Formal melee hit accepted")
 			check(effects().size()==1,"One crescent on %s lethal=%s" % [source,lethal])
 			var effect: Node = effects()[0]
-			check(is_equal_approx(float(effect.material.get_shader_parameter("visual_scale")),1.5),"Crescent and cuts use 1.5x visual scale")
-			check(effect.mesh.mesh.size.is_equal_approx(Vector2.ONE*5.25),"Expanded quad contains enlarged cuts without clipping")
+			var factor := 0.5 if source == &"books" else 1.0
+			check(is_equal_approx(float(effect.material.get_shader_parameter("visual_scale")),1.5*factor),"Crescent and cuts use weapon-specific scale")
+			check(effect.mesh.mesh.size.is_equal_approx(Vector2.ONE*5.25*factor),"Quad contains the scaled cuts without clipping")
 			check(effect.get_parent()==world.floor_root,"Effect belongs to current floor")
 			check(effect.line_count>=1 and effect.line_count<=3,"One to three random cuts")
 			var bounded := true

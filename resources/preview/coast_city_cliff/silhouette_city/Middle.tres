@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/coast_city_depth_bands.gdshader" id="1_7eslu"]
+
+[resource]
+resource_local_to_scene = true
+resource_name = "Middle"
+render_priority = 0
+shader = ExtResource("1_7eslu")
+shader_parameter/moon_visibility = null
+shader_parameter/body_colour = Color(0.22745098, 0.2509804, 0.33333334, 1)
+shader_parameter/haze_colour = Color(0.25490198, 0.25490198, 0.35686275, 1)
+shader_parameter/distance_haze = 0.28

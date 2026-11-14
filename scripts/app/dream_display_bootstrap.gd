@@ -47,6 +47,7 @@ func _install(reference: WeakRef) -> void:
 	_ensure_dither(world)
 
 func _ensure_dither(world: Node) -> void:
+	if bool(world.get_meta(&"native_maintenance_environment",false)):return
 	var ancestor := world.get_parent()
 	while ancestor != null:
 		# Keep the independent comparison's 1/2/3 controls meaningful.

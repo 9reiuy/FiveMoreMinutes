@@ -55,16 +55,12 @@ func run() -> void:
 		settings.values["pixelation_enabled"] = true
 		settings.setting_changed.emit(&"pixelation_enabled",true)
 		for palette in [false,true]:
-			settings.values["palette_enabled"] = palette
-			settings.setting_changed.emit(&"palette_enabled",palette)
 			for enabled in [false,true]:
 				preview.set_reference_style(enabled)
 				await frames(30)
 				await RenderingServer.frame_post_draw
 				root.get_texture().get_image().save_png("res://.runtime/face_art/style_%d_palette_%d.png" % [int(enabled),int(palette)])
 		settings.values = saved
-		settings.values["palette_enabled"] = false
-		settings.setting_changed.emit(&"palette_enabled",false)
 		for angle in [0.0,PI/2.0]:
 			preview.set_reference_style(true)
 			preview.set_light_angle(angle)
@@ -73,8 +69,6 @@ func run() -> void:
 			root.get_texture().get_image().save_png("res://.runtime/face_art/light_%d.png" % int(angle*2.0/PI))
 		preview.set_light_angle(0.0)
 		preview.set_reference_style(true)
-		settings.values["palette_enabled"] = false
-		settings.setting_changed.emit(&"palette_enabled",false)
 		Input.action_press(&"move_right")
 		for i in 36:
 			if i == 18:

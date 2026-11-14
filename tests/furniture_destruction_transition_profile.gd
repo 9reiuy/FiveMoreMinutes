@@ -14,7 +14,7 @@ func run() -> void:
 	world.player.global_position=Vector2(800,1536)
 	for frame in 30: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true); display._process(0.0)
+	display.set_selective_enabled(true); display._process(0.0)
 	paused=true; Engine.max_fps=0; DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	if "--prewarm-world-destruction" in OS.get_cmdline_user_args():
 		print("WORLD_DESTRUCTION_WARM ",JSON.stringify(await preload("res://tests/support/destruction_world_warm_probe.gd").run(self,world)))

@@ -19,18 +19,18 @@ func run() -> void:
 	DirAccess.make_dir_recursive_absolute(OUT)
 	Engine.max_fps=60
 	var settings:=root.get_node("SettingsManager")
-	settings.set_setting(&"pixelation_enabled",true); settings.set_setting(&"palette_enabled",true)
+	settings.set_setting(&"pixelation_enabled",true)
 	main=load("res://scenes/app/main.tscn").instantiate(); root.add_child(main); await settle()
 	main.persistent_day_state=main._create_initial_state()
 	main._show_reception("basic"); await settle()
 	var lobby: Node3D=main._supported_dream_world
-	check(not main.current_screen.palette_material.get_shader_parameter("tonal_sample"),"Main reception retains its local palette")
+	check(not main.current_screen.semantic_material.get_shader_parameter("tonal_sample"),"Main reception retains its local palette")
 	main._show_dream("basic"); await settle()
 	var world: Node3D=main._supported_dream_world
 	while world.floor_transition_in_progress: await process_frame
 	await frames(8)
 	var display: Control=main.current_screen
-	check(bool(display.palette_material.get_shader_parameter("tonal_sample")),"actual Main floor enables approved tonal processing")
+	check(bool(display.semantic_material.get_shader_parameter("tonal_sample")),"actual Main floor enables approved tonal processing")
 	check(bool(world.get_meta("pixel_stability_enabled",false)),"actual Main floor enables display stabilization")
 	var live:=0; var enhanced:=0
 	for component in get_nodes_in_group("office_dither_lighting"):
@@ -40,8 +40,8 @@ func run() -> void:
 			if material.get_shader_parameter("office_tonal_sample")==true: enhanced+=1
 	check(live>5 and enhanced==live,"all live floor lighting variants inherit approved enhancement")
 	for scheme in [1,2]:
-		settings.set_setting(&"palette_scheme",scheme); await frames()
-		check(int(display.palette_material.get_shader_parameter("palette_scheme"))==scheme,"formal floor keeps palette scheme %d"%scheme)
+		await frames()
+		check(display.semantic_material.shader.resource_path=="res://shaders/world_semantic_decode.gdshader","formal floor keeps palette scheme %d"%scheme)
 		await RenderingServer.frame_post_draw
 		display.world_viewport.get_texture().get_image().save_png(OUT+"/formal_scheme%d.png"%scheme)
 	settings.set_setting(&"pixelation_enabled",false); await frames()

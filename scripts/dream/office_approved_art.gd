@@ -3,7 +3,7 @@ extends Node3D
 const FURNITURE = preload("res://scripts/dream/preview/furniture_texture_review.gd")
 const FLOORS = preload("res://scripts/dream/preview/sample_floor_texture_review.gd")
 const WALLS = preload("res://scripts/dream/preview/sample_wall_and_desktop_review.gd")
-const CITY = preload("res://scripts/dream/preview/sample_neon_city.gd")
+const CITY = preload("res://scripts/dream/city/depth_shape_city.gd")
 var world: Node
 var furniture: Node
 var floors: Node

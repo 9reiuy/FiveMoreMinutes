@@ -1,0 +1,33 @@
+{
+  "title": "Brushed Iron 01",
+  "provider": "cgbookcase",
+  "page": "https://www.cgbookcase.com/textures/brushed-iron-01",
+  "license": "CC0",
+  "normal_convention": "DirectX",
+  "maps": [
+    {
+      "file": "BrushedIron01_1K_BaseColor.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/BrushedIron01_1K/BrushedIron01_1K_BaseColor.png",
+      "bytes": 467601,
+      "sha256": "3c5eba85782952609b80e2682029f3a3437cc807132ef4123e3fbf256ad8555c"
+    },
+    {
+      "file": "BrushedIron01_1K_Normal.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/BrushedIron01_1K/BrushedIron01_1K_Normal.png",
+      "bytes": 827048,
+      "sha256": "1aa436def44167c940d7a969896cd80198c8e4e30be179b8fe91cade4ad3a62b"
+    },
+    {
+      "file": "BrushedIron01_1K_Roughness.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/BrushedIron01_1K/BrushedIron01_1K_Roughness.png",
+      "bytes": 701056,
+      "sha256": "c9dfca3039ad200f2f426c07034c6e9f6295b02d61213c42aeb3f8f78f11ba11"
+    },
+    {
+      "file": "BrushedIron01_1K_Metallic.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/BrushedIron01_1K/BrushedIron01_1K_Metallic.png",
+      "bytes": 166736,
+      "sha256": "14f7dfb9517953b3df473b81f48a98cc698d05625f114a39e2180c50c9e16e83"
+    }
+  ]
+}

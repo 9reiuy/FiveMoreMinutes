@@ -1,7 +1,7 @@
 extends Node2D
 ## Standalone coast study. No dungeon, combat or save dependencies.
 const TERRAIN_SIZE := Vector2(2400,1800)
-const SPEED := 76.0
+const SPEED := DemoConfig.DEFAULT_PLAYER_MOVE_SPEED
 const ART = preload("res://art/Dream/dream_chr_32x32.png")
 var coast_material: ShaderMaterial
 var camera: Camera2D

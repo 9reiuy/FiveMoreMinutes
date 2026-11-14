@@ -7,38 +7,47 @@ signal weapon_equipped(weapon_id: String)
 const CELL_PIXELS := 32.0
 
 # Room dimensions
-const MAIN_HALL_WIDTH := 14
-const MAIN_HALL_HEIGHT := 8
-const ENTRY_DEPTH := 3
-const ENTRY_START_Z := 3
-const ENTRY_END_Z := 5
+const MAIN_HALL_WIDTH := 24
+const MAIN_HALL_HEIGHT := 21
+const CONCOURSE_HEIGHT := .6
+const STAIR_TOP_Z := 10.5
+const STAIR_BOTTOM_Z := 12.9
+const STAIR_COUNT := 6
+const CONCOURSE_WEST_X := 5.5
+const CONCOURSE_EAST_X := 18.5
 
 # Wall & opening constants
-const WALL_HEIGHT := 3.0
-const WALL_THICKNESS := 0.1
+const WALL_HEIGHT := 5.0
+const WALL_THICKNESS := 0.32
 const WALL_COLLISION_THICKNESS := 16.0
 const ELEVATOR_OPENING_START := 0 # Only lift, at the far left end
-const ELEVATOR_OPENING_END := 3
+const ELEVATOR_OPENING_END := 4
 const WORLD_WALL_LAYER := 4
 
 # Key positions
-const PLAYER_SPAWN := Vector2(16.0, 4.5) * CELL_PIXELS
-const ELEVATOR_POS_3D := Vector3(1.5, 0.0, -0.5)
-const ELEVATOR_POS_2D := Vector2(1.5, -0.5) * CELL_PIXELS
-const RECEPTION_DESK_POS_3D := Vector3(8.0, 0.0, 2.8)
-const RECEPTION_DESK_POS_2D := Vector2(8.0, 2.8) * CELL_PIXELS
-const WAITRESS_NPC_POS_2D := Vector2(8.0, 1.8) * CELL_PIXELS
+const PLAYER_SPAWN := Vector2(17.5, 19.2) * CELL_PIXELS
+const ELEVATOR_POS_3D := Vector3(CONCOURSE_WEST_X, CONCOURSE_HEIGHT, 8.4)
+const ELEVATOR_POS_2D := Vector2(CONCOURSE_WEST_X, 8.4) * CELL_PIXELS
+const RECEPTION_DESK_POS_3D := Vector3(7.2, 0.0, 17.8)
+const RECEPTION_DESK_POS_2D := Vector2(7.2, 17.8) * CELL_PIXELS
+const WAITRESS_NPC_POS_2D := Vector2(7.2, 16.9) * CELL_PIXELS
+const LIFT_BANK_CENTRES:=[1.6,5.0,8.4]
 const DIALOGUE_FOCUS_TARGET_3D := Vector3(RECEPTION_DESK_POS_3D.x, 0.0, RECEPTION_DESK_POS_3D.z + 0.5)
 
 const INTERACTION_PROMPT_OFFSET := Vector2(-64.0, -32.0)
 const COMPACT_PROMPT = preload("res://scripts/ui/compact_interaction_prompt.gd")
-const GAMEPLAY_CAMERA_FOV := 40.0
+const GAMEPLAY_CAMERA_FOV := 35.0
+# Main gameplay camera: (19.5, 11.25) at rig scale 0.8, pitch 60 degrees.
+# Keep this room's authored heading while matching its height and pixel scale.
+const GAMEPLAY_CAMERA_OFFSET := Vector3(0,15.6,9.0)
+const GAMEPLAY_CAMERA_PITCH := -PI/3.0
 const PHONE_CAMERA := preload("res://scripts/dream/phone_camera_presentation.gd")
+const AUTHORED_CUTOUT := preload("res://scripts/dream/authored_occlusion_cutout.gd")
 
 # Preloaded scenes & scripts
 const WALL_SCENE: PackedScene = preload("res://scenes/dream/3d/WallStraight3D.tscn")
-const RECEPTION_DESK_SCENE: PackedScene = preload("res://scenes/dream/3d/props/reception_desk_3d.tscn")
 const ACTOR_DEPTH_BRIDGE_SCENE: PackedScene = preload("res://scenes/dream/3d/ActorDepthBridge3D.tscn")
+const LOBBY_DEPTH_BRIDGE=preload("res://scripts/dream/reception_actor_depth_bridge.gd")
 const FLOOR_BATCH_RENDERER: Script = preload("res://scripts/dream/dream_3d_floor_batch_renderer.gd")
 const DASH_AIM_PRESENTATION_SCRIPT: Script = preload("res://scripts/dream/dream_dash_aim_presentation.gd")
 const INTERACTION_RESOLVER_SCRIPT: Script = preload("res://scripts/dream/dream_interaction_resolver.gd")
@@ -77,6 +86,7 @@ const TAROT_DRAW_CONTROLLER_SCRIPT: Script = preload("res://scripts/dream/tarot/
 @onready var tarot_overlay: TarotOverlay = $TarotLayer/TarotOverlay
 
 var dialogue_controller: DreamDialogueController
+var authored_cutout := AUTHORED_CUTOUT.new()
 var waitress_approached_this_session := false
 var audio_listener_3d: AudioListener3D
 var floor_cells: Dictionary = {}
@@ -103,6 +113,8 @@ var active_tarot_overlay: TarotOverlay:
 
 var interaction_resolver: DreamInteractionResolver
 var interaction_consumed_until_release := false
+var npc_hint_cycle_seconds:=0.0
+var npc_hint_was_near:=false
 var camera_aim_offset := Vector3.ZERO
 var authoritative_camera_fov := GAMEPLAY_CAMERA_FOV
 var phone_camera_weight := 0.0
@@ -114,6 +126,7 @@ var dash_aim_presentation: Node2D
 var dash_aim_depth_bridge: Node3D
 
 var elevator_floor_door: ElevatorFloorDoor3D
+var elevator_doors: Array[ElevatorFloorDoor3D]=[]
 var elevator_approach_active := false
 var elevator_transition_in_progress := false
 var entry_cab: IndependentElevatorCab3D
@@ -121,6 +134,7 @@ var entry_return_position := Vector2.ZERO
 var entry_ride_started_usec := 0
 var entry_camera_weight := 0.0
 var reception_desk: Node3D
+var lobby_art=preload("res://scripts/dream/reception_reference_layout.gd").new()
 
 
 func configure_reception(weapon_id: String, profile: Dictionary, night: Dictionary = {}) -> void:
@@ -131,7 +145,10 @@ func configure_reception(weapon_id: String, profile: Dictionary, night: Dictiona
 
 func _enter_tree() -> void:
 	add_to_group(&"dream_world")
-	set_meta(&"preserve_local_palette",true)
+	set_meta(&"preserve_authored_colour",true)
+	# Reuse the native-material opt-out, keeping office presentation adapters out.
+	set_meta(&"native_maintenance_environment",true)
+	set_meta(&"test_floor_reflections_disabled",true)
 
 
 func _ready() -> void:
@@ -141,13 +158,15 @@ func _ready() -> void:
 	if camera_3d != null:
 		camera_3d.projection = Camera3D.PROJECTION_PERSPECTIVE
 		camera_3d.fov = GAMEPLAY_CAMERA_FOV
-		camera_3d.position = Vector3(0,10.5,10.5)
+		camera_3d.position = GAMEPLAY_CAMERA_OFFSET
+		camera_3d.rotation.x = GAMEPLAY_CAMERA_PITCH
 		authoritative_camera_fov = camera_3d.fov
 
 	_build_room_geometry()
 	_setup_elevator()
 	_setup_reception_desk()
-	preload("res://scripts/dream/tarot_reception_dressing.gd").new().build(self)
+	lobby_art.build(self)
+	_register_lobby_cutout()
 	_apply_authored_layout()
 	_setup_player()
 	_enter_dream_time_mode()
@@ -166,6 +185,7 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if has_meta(&"display_reparenting"):
 		return
+	authored_cutout.clear_slots()
 	if _dialogue_camera_tween != null and _dialogue_camera_tween.is_valid():
 		_dialogue_camera_tween.kill()
 		_dialogue_camera_tween = null
@@ -204,6 +224,7 @@ func _setup_dialogue_controller() -> void:
 
 func _process(delta: float) -> void:
 	_update_camera_and_projection(_get_presentation_delta(delta))
+	authored_cutout.update_slots(camera_3d)
 	_update_dash_aim_presentation()
 
 	if interaction_resolver != null:
@@ -235,7 +256,7 @@ func _process(delta: float) -> void:
 					interaction_consumed_until_release = true
 					target.call("request_interaction", player)
 
-	_update_interaction_prompt()
+	_update_interaction_prompt(_get_presentation_delta(delta))
 
 
 func _get_waitress_hud_pos() -> Vector2:
@@ -243,7 +264,7 @@ func _get_waitress_hud_pos() -> Vector2:
 		return Vector2.ZERO
 	var waitress_world_pos: Vector3
 	if waitress_npc != null and is_instance_valid(waitress_npc):
-		waitress_world_pos = Vector3(waitress_npc.global_position.x / CELL_PIXELS, 1.20, waitress_npc.global_position.y / CELL_PIXELS - 0.70710678)
+		waitress_world_pos = _map_gameplay_to_world(waitress_npc.global_position) + camera_3d.global_basis.y.normalized()*1.25
 	else:
 		waitress_world_pos = RECEPTION_DESK_POS_3D + Vector3(0.0, 1.25, 0.0)
 	return player.get_presentation_hud_position(camera_3d.unproject_position(waitress_world_pos))
@@ -252,7 +273,7 @@ func _get_waitress_hud_pos() -> Vector2:
 func _get_player_hud_pos() -> Vector2:
 	if player == null or camera_3d == null:
 		return Vector2.ZERO
-	var player_world_pos := Vector3(player.global_position.x / CELL_PIXELS, 0.65, player.global_position.y / CELL_PIXELS)
+	var player_world_pos := get_gameplay_world_position(player.global_position,.65)
 	return player.get_presentation_hud_position(camera_3d.unproject_position(player_world_pos))
 
 
@@ -278,42 +299,47 @@ func _build_room_geometry() -> void:
 	room_cells.clear()
 	for x in range(MAIN_HALL_WIDTH):
 		for y in range(MAIN_HALL_HEIGHT):
+			if y<=10 and (x<6 or x>18):continue
 			floor_cells[Vector2i(x, y)] = true
 			room_cells[Vector2i(x, y)] = 0
 
-	# Short arrival vestibule enters from screen right.
-	for x in range(MAIN_HALL_WIDTH, MAIN_HALL_WIDTH + ENTRY_DEPTH):
-		for z in range(ENTRY_START_Z, ENTRY_END_Z + 1):
-			floor_cells[Vector2i(x,z)] = true
-			room_cells[Vector2i(x,z)] = 0
 	FLOOR_BATCH_RENDERER.build(self)
-	# The lobby has its own quiet stone, without changing approved office floors.
-	var stone := ShaderMaterial.new()
-	stone.shader=preload("res://shaders/dream3d/reception_stone.gdshader")
+	# Large honed-stone slabs share the game's stable 32px/m sampling.
 	for mesh in floor_root.find_children("*","MeshInstance3D",true,false):
-		mesh.material_override=stone
+		mesh.material_override=lobby_art.floor_material
+	lobby_art.build_floor_foundation(self)
 
-	# A single visible and functional elevator; every other north bay is solid wall.
+	# Lift banks are on the two inner side walls, with a solid rear wall.
+	for x in range(6,19):
+		_spawn_wall(Vector3(x,0,-.5),0.,"NorthWall_%02d"%x)
+
+	# Reference atrium: raised rear hall, open foreground and wide steps.
+	for y in range(11,MAIN_HALL_HEIGHT):
+		var west_wall:=_spawn_wall(Vector3(-.5,0,y),PI*.5,"MainWestWall_%02d"%y)
+		var east_wall:=_spawn_wall(Vector3(MAIN_HALL_WIDTH-.5,0,y),PI*.5,"MainEastWall_%02d"%y)
+		if y>=13:west_wall.set_cutaway_mode(true);east_wall.set_cutaway_mode(true)
+	# The former lift wings are removed; these are the new outer returns of
+	# the wide foreground, not partitions through the remaining inner hall.
 	for x in range(MAIN_HALL_WIDTH):
-		if x < ELEVATOR_OPENING_START or x > ELEVATOR_OPENING_END:
-			_spawn_wall(Vector3(x, 0.0, -0.5), 0.0, "NorthWall_%02d" % x)
-
-	# 3. West & East Walls of Main Hall
-	for y in range(MAIN_HALL_HEIGHT):
-		_spawn_wall(Vector3(-0.5, 0.0, y), PI * 0.5, "MainWestWall_%02d" % y)
-		if y < ENTRY_START_Z or y > ENTRY_END_Z:
-			var wall := _spawn_wall(Vector3(MAIN_HALL_WIDTH - 0.5, 0.0, y), PI * 0.5, "MainEastWall_%02d" % y)
-			if y > ENTRY_END_Z: wall.set_cutaway_mode(true)
+		if x>=6 and x<=18:continue
+		var return_wall:=_spawn_wall(Vector3(x,0,STAIR_TOP_Z),0.,"ForegroundReturn_%02d"%x)
+		return_wall.position.y=0.0
 
 	# The front edge is cut away so the horizontal arrival route stays visible.
 	for x in range(MAIN_HALL_WIDTH):
 		var wall := _spawn_wall(Vector3(x,0.0,MAIN_HALL_HEIGHT-.5),0.0,"MainSouthWall_%02d"%x)
 		if wall != null and wall.has_method("set_cutaway_mode"): wall.set_cutaway_mode(true)
-	for x in range(MAIN_HALL_WIDTH, MAIN_HALL_WIDTH + ENTRY_DEPTH):
-		_spawn_wall(Vector3(x,0,ENTRY_START_Z-.5),0.,"EntryNorth_%d"%x)
-		var wall := _spawn_wall(Vector3(x,0,ENTRY_END_Z+.5),0.,"EntrySouth_%d"%x)
-		wall.set_cutaway_mode(true)
 	_build_gameplay_boundaries()
+
+
+func _register_lobby_cutout() -> void:
+	for wall in wall_root.get_children():
+		authored_cutout.register_mesh(wall.wall_mesh)
+	for item in props_root.get_children():
+		if not item.has_meta(&"walkable_surface_outline"):
+			authored_cutout.register_tree(item)
+	for lift in elevator_doors:
+		authored_cutout.register_tree(lift, true, [&"DoorSensor"])
 
 
 func _spawn_wall(position_3d: Vector3, yaw: float, node_name: String) -> Node3D:
@@ -321,13 +347,14 @@ func _spawn_wall(position_3d: Vector3, yaw: float, node_name: String) -> Node3D:
 	if wall == null:
 		return null
 	wall.name = node_name
-	wall.position = position_3d
+	wall.position = position_3d+Vector3.UP*get_lobby_floor_height(Vector2(position_3d.x,position_3d.z))
 	wall.rotation.y = yaw
 	wall_root.add_child(wall)
 	if wall.has_method("configure_wall"):
 		wall.call("configure_wall", WALL_HEIGHT, WALL_THICKNESS)
 	if wall.has_method("set_wall_materials"):
-		wall.call("set_wall_materials",OfficePixelMaterials.make(Color(.39,.46,.54),"paint"))
+		wall.office_section_material=lobby_art.section_material
+		wall.call("set_wall_materials",lobby_art.wall_material)
 	return wall
 
 
@@ -336,18 +363,22 @@ func _build_gameplay_boundaries() -> void:
 	var east := (MAIN_HALL_WIDTH-.5) * CELL_PIXELS
 	var north := -.5 * CELL_PIXELS
 	var south := (MAIN_HALL_HEIGHT-.5) * CELL_PIXELS
-	var opening_right := (ELEVATOR_OPENING_END+.5) * CELL_PIXELS
-	_spawn_wall_collision(Vector2((opening_right+east)*.5,north),Vector2(east-opening_right,WALL_COLLISION_THICKNESS),"NorthWallCollisionRight")
-	_spawn_wall_collision(Vector2(west,(north+south)*.5),Vector2(WALL_COLLISION_THICKNESS,south-north),"MainWestWallCollision")
+	var inner_west:=CONCOURSE_WEST_X*CELL_PIXELS
+	var inner_east:=CONCOURSE_EAST_X*CELL_PIXELS
+	var shoulder:=STAIR_TOP_Z*CELL_PIXELS
+	_spawn_wall_collision(Vector2((inner_west+inner_east)*.5,north),Vector2(inner_east-inner_west,WALL_COLLISION_THICKNESS),"NorthWallCollision")
 	_spawn_wall_collision(Vector2((west+east)*.5,south),Vector2(east-west,WALL_COLLISION_THICKNESS),"MainSouthWallCollision")
-	var entry_north := (ENTRY_START_Z-.5) * CELL_PIXELS
-	var entry_south := (ENTRY_END_Z+.5) * CELL_PIXELS
-	var entry_end := east + ENTRY_DEPTH * CELL_PIXELS
-	_spawn_wall_collision(Vector2(east,(north+entry_north)*.5),Vector2(WALL_COLLISION_THICKNESS,entry_north-north),"EastUpperCollision")
-	_spawn_wall_collision(Vector2(east,(entry_south+south)*.5),Vector2(WALL_COLLISION_THICKNESS,south-entry_south),"EastLowerCollision")
-	for z in [entry_north,entry_south]:
-		_spawn_wall_collision(Vector2((east+entry_end)*.5,z),Vector2(entry_end-east,WALL_COLLISION_THICKNESS),"ArrivalSide%d"%int(z))
-	_spawn_wall_collision(Vector2(entry_end,(entry_north+entry_south)*.5),Vector2(WALL_COLLISION_THICKNESS,entry_south-entry_north),"ArrivalEnd")
+	for edge in [[west,inner_west],[inner_east,east]]:
+		_spawn_wall_collision(Vector2((edge[0]+edge[1])*.5,shoulder),Vector2(edge[1]-edge[0],WALL_COLLISION_THICKNESS),"ForegroundReturnCollision")
+	for side_x in [west,east]:
+		_spawn_wall_collision(Vector2(side_x,(shoulder+south)*.5),Vector2(WALL_COLLISION_THICKNESS,south-shoulder),"ForegroundSideCollision")
+	for side_x in [inner_west,inner_east]:
+		var start: float=north
+		for centre in LIFT_BANK_CENTRES:
+			var opening_start: float=(float(centre)-1.0)*CELL_PIXELS
+			_spawn_wall_collision(Vector2(side_x,(start+opening_start)*.5),Vector2(WALL_COLLISION_THICKNESS,opening_start-start),"LiftBankPierCollision")
+			start=(float(centre)+1.0)*CELL_PIXELS
+		_spawn_wall_collision(Vector2(side_x,(start+shoulder)*.5),Vector2(WALL_COLLISION_THICKNESS,shoulder-start),"SideWallCollision")
 
 
 func _spawn_wall_collision(center: Vector2, size: Vector2, node_name: String) -> void:
@@ -369,33 +400,34 @@ func _spawn_wall_collision(center: Vector2, size: Vector2, node_name: String) ->
 # =============================================================================
 
 func _setup_elevator() -> void:
-	elevator_floor_door = ElevatorFloorDoor3D.new(ElevatorFloorDoor3D.Orientation.UP, 0)
-	elevator_floor_door.position = ELEVATOR_POS_3D
-	door_root.add_child(elevator_floor_door)
-	elevator_floor_door.configure_entrance(Vector2.UP, camera_3d)
-	elevator_floor_door.setup_gameplay_2d(collision_root, gameplay_world, ELEVATOR_POS_2D)
-	elevator_floor_door.update_state(ElevatorFloorDoor3D.State.UNLOCKED)
-	# The only bay is 01; its frame carries the entrance identity.
-	elevator_floor_door.indicator_label.hide()
-	elevator_floor_door.industrial_facade.bay_number=1
-	elevator_floor_door.industrial_facade.update_number()
-	elevator_floor_door.approach_entered.connect(_on_elevator_approach_entered)
-	elevator_floor_door.approach_exited.connect(_on_elevator_approach_exited)
+	for bank in 2:
+		for index in 3:
+			var door: ElevatorFloorDoor3D=preload("res://scripts/dream/lobby_elevator_door_3d.gd").new(ElevatorFloorDoor3D.Orientation.UP,0,3.4)
+			door.landing_identifier=("A" if bank==0 else "B")+str(index+1)
+			door.name="LobbyLift"+door.landing_identifier
+			door.position=Vector3(CONCOURSE_WEST_X if bank==0 else CONCOURSE_EAST_X,CONCOURSE_HEIGHT,LIFT_BANK_CENTRES[index])
+			door_root.add_child(door)
+			door.configure_entrance(Vector2.LEFT if bank==0 else Vector2.RIGHT,camera_3d)
+			door.setup_gameplay_2d(collision_root,gameplay_world,Vector2(door.position.x,door.position.z)*CELL_PIXELS)
+			door.update_state(ElevatorFloorDoor3D.State.UNLOCKED);door.indicator_label.hide()
+			door.approach_entered.connect(_on_elevator_approach_entered.bind(door))
+			door.approach_exited.connect(_on_elevator_approach_exited.bind(door))
+			elevator_doors.append(door)
+	elevator_floor_door=elevator_doors[2]
 
 
 func _setup_reception_desk() -> void:
-	reception_desk = RECEPTION_DESK_SCENE.instantiate()
+	reception_desk = Node3D.new()
 	reception_desk.name = "ReceptionDesk3D"
 	reception_desk.position = RECEPTION_DESK_POS_3D
 	props_root.add_child(reception_desk)
-	if reception_desk.has_method("setup_gameplay_2d"):
-		reception_desk.call("setup_gameplay_2d", collision_root, RECEPTION_DESK_POS_2D)
 
 
 func _apply_authored_layout() -> void:
 	player.global_position = PLAYER_SPAWN
 	if waitress_npc != null:
 		waitress_npc.global_position = WAITRESS_NPC_POS_2D
+		waitress_npc.set_character_atlas(preload("res://art/Dream/enemy/npc1.png"))
 
 
 func _setup_player() -> void:
@@ -409,6 +441,8 @@ func _setup_player() -> void:
 
 
 func _configure_depth_visuals() -> void:
+	player_depth_bridge.lobby_height_owner=self
+	player_depth_bridge.office_linear_lighting=RenderingServer.get_current_rendering_method()=="forward_plus"
 	player_depth_bridge.configure(
 		player,
 		actor_depth_viewport,
@@ -417,15 +451,30 @@ func _configure_depth_visuals() -> void:
 		[NodePath("CharacterVisual")]
 	)
 	player_depth_bridge.set_world_camera(camera_3d)
+	authored_cutout.watch_actor(player, player_depth_bridge)
+	_configure_actor_light_response(player_depth_bridge)
 
 	if waitress_npc != null:
 		var npc_bridge := ACTOR_DEPTH_BRIDGE_SCENE.instantiate() as Node3D
+		npc_bridge.set_script(LOBBY_DEPTH_BRIDGE);npc_bridge.lobby_height_owner=self
+		npc_bridge.office_linear_lighting=RenderingServer.get_current_rendering_method()=="forward_plus"
 		actor_depth_bridges_root.add_child(npc_bridge)
 		var viewport := npc_bridge.get_node("ActorDepthViewport") as SubViewport
 		var render_root := npc_bridge.get_node("ActorDepthViewport/ActorDepthRenderRoot") as Node2D
 		npc_bridge.configure(waitress_npc, viewport, render_root, null, [NodePath("CharacterVisual")])
 		npc_bridge.set_world_camera(camera_3d)
+		_configure_actor_light_response(npc_bridge)
 		waitress_npc.set_meta(&"depth_visual_bridge", weakref(npc_bridge))
+		authored_cutout.watch_actor(waitress_npc, npc_bridge)
+
+
+func _configure_actor_light_response(bridge: Node3D) -> void:
+	for field in ["lit_material","weapon_material"]:
+		var material: ShaderMaterial=bridge.get(field)
+		if material!=null:
+			material.set_shader_parameter("character_emission_strength",0.0)
+			material.set_shader_parameter("character_light_scale",1.0)
+			material.set_shader_parameter("enemy_rim_self_emission",false)
 
 
 func _setup_dash_aim_presentation() -> void:
@@ -443,6 +492,7 @@ func _setup_dash_aim_presentation() -> void:
 	if actor_depth_bridges_root != null and ACTOR_DEPTH_BRIDGE_SCENE != null:
 		dash_aim_depth_bridge = ACTOR_DEPTH_BRIDGE_SCENE.instantiate() as Node3D
 		if dash_aim_depth_bridge != null:
+			dash_aim_depth_bridge.set_script(LOBBY_DEPTH_BRIDGE);dash_aim_depth_bridge.lobby_height_owner=self
 			actor_depth_bridges_root.add_child(dash_aim_depth_bridge)
 			var viewport := dash_aim_depth_bridge.get_node_or_null("ActorDepthViewport") as SubViewport
 			var render_root := dash_aim_depth_bridge.get_node_or_null("ActorDepthViewport/ActorDepthRenderRoot") as Node2D
@@ -496,14 +546,18 @@ func _configure_lighting() -> void:
 		env.background_mode = Environment.BG_COLOR
 		env.background_color = Color(0.0, 0.0, 0.0, 1.0)
 		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-		env.ambient_light_color = Color(0.40, 0.44, 0.52, 1.0)
-		env.ambient_light_energy = 0.18
-		env.tonemap_mode = 1
+		env.ambient_light_color = Color.WHITE
+		env.ambient_light_energy = 0.0
+		env.reflected_light_source=Environment.REFLECTION_SOURCE_DISABLED
+		env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+		env.ssr_enabled=true;env.ssao_enabled=true
+		env.ssao_radius=.45;env.ssao_intensity=.65
+		env.glow_enabled=true;env.glow_intensity=.22;env.glow_bloom=.08
 		env.fog_enabled = false
 
 	if key_light != null:
 		key_light.light_cull_mask = night_lighting.WORLD_LIGHT_CULL_MASK
-		key_light.light_energy = 0.025
+		key_light.light_energy = 0.0
 		key_light.shadow_enabled = false
 
 	var player_sprite := player_depth_bridge.get("actor_sprite") as Sprite3D
@@ -519,47 +573,7 @@ func _configure_lighting() -> void:
 
 
 func _build_accent_lights() -> void:
-	# 1. Soft Warm Reception Desk Local Light (illuminates desk & Waitress cleanly without dark shadow bands)
-	var desk_light := SpotLight3D.new()
-	desk_light.name = "ReceptionDeskLight"
-	desk_light.position = Vector3(RECEPTION_DESK_POS_3D.x, 3.1, RECEPTION_DESK_POS_3D.z + 0.2)
-	desk_light.rotation_degrees.x=-90
-	desk_light.light_color = Color("ffaa55")
-	desk_light.light_energy = 1.15
-	desk_light.spot_range = 6.0
-	desk_light.spot_angle = 48.0
-	desk_light.spot_attenuation = 0.85
-	desk_light.spot_angle_attenuation = 0.55
-	desk_light.light_specular=0.
-	desk_light.shadow_enabled = true
-	desk_light.light_cull_mask = night_lighting.WORLD_LIGHT_CULL_MASK
-	lighting_root.add_child(desk_light)
-
-	# 2. Soft Cool Elevator Indicator Accent Light (illuminates elevator doors and floor threshold)
-	var elevator_light := OmniLight3D.new()
-	elevator_light.name = "ElevatorAccentLight"
-	elevator_light.position = Vector3(ELEVATOR_POS_3D.x, 2.8, 0.2)
-	elevator_light.light_color = Color("9ecfc1")
-	elevator_light.light_energy = 0.5
-	elevator_light.omni_range = 4.5
-	elevator_light.omni_attenuation = 1.3
-	elevator_light.shadow_enabled = false
-	elevator_light.light_cull_mask = night_lighting.WORLD_LIGHT_CULL_MASK
-	lighting_root.add_child(elevator_light)
-	for point in [Vector2(3,4),Vector2(8,4),Vector2(13,4)]:
-		var light := SpotLight3D.new()
-		light.name="LobbyAreaLight%d"%lighting_root.get_child_count()
-		light.position=Vector3(point.x,3.1,point.y)
-		light.rotation_degrees.x=-90
-		light.light_color=Color(.87,.91,1.0)
-		# Formal room lighting uses 0.5-energy localized ceiling cones with
-		# a broad falloff shoulder, above the same dark night ambient.
-		light.light_energy=.5; light.spot_range=7.0; light.spot_angle=78
-		light.spot_attenuation=.20; light.spot_angle_attenuation=.15
-		light.shadow_enabled=false
-		light.light_cull_mask=night_lighting.WORLD_LIGHT_CULL_MASK
-		lighting_root.add_child(light)
-
+	lobby_art.build_lighting(self)
 
 
 func _setup_interaction_system() -> void:
@@ -587,7 +601,7 @@ func _update_camera_and_projection(delta: float) -> void:
 	if player == null or camera_3d == null:
 		return
 	var gameplay_position: Vector2 = player.global_position
-	var ground_position := Vector3(gameplay_position.x / CELL_PIXELS, 0.0, gameplay_position.y / CELL_PIXELS)
+	var ground_position := _map_gameplay_to_world(gameplay_position)
 
 	if delta > 0.0 and phone_camera_weight <= 0.0:
 		var aim_delta: Vector2 = get_gameplay_aim_position() - gameplay_position
@@ -597,10 +611,7 @@ func _update_camera_and_projection(delta: float) -> void:
 		var alpha := 1.0 - exp(-maxf(CONFIG.camera_aim_smoothing, 0.01) * delta)
 		camera_aim_offset = camera_aim_offset.lerp(Vector3(target_pixels.x / CELL_PIXELS, 0.0, target_pixels.y / CELL_PIXELS), alpha)
 
-	# Compose the compact right-to-left route as one room, with restrained follow.
-	var room_center := Vector3(7.5,0,3.5)
-	var room_focus := room_center + (ground_position-room_center) * .14 + camera_aim_offset * .15
-	var normal_focus := room_focus.lerp(ground_position,phone_camera_weight)
+	var normal_focus := ground_position + camera_aim_offset * (1.0-phone_camera_weight)
 	var composed_focus := normal_focus.lerp(DIALOGUE_FOCUS_TARGET_3D, dialogue_camera_weight)
 	if is_instance_valid(entry_cab) and entry_ride_started_usec > 0:
 		composed_focus = composed_focus.lerp(entry_cab.get_camera_focus_world(), entry_camera_weight)
@@ -611,6 +622,8 @@ func _update_camera_and_projection(delta: float) -> void:
 
 	if camera_3d.projection == Camera3D.PROJECTION_PERSPECTIVE:
 		camera_3d.fov = phone_fov
+		camera_3d.position=GAMEPLAY_CAMERA_OFFSET.lerp(Vector3(0,10.5,10.5),entry_camera_weight)
+		camera_3d.rotation.x=lerpf(GAMEPLAY_CAMERA_PITCH,-PI/4.0,entry_camera_weight)
 
 	var screen_position := camera_3d.unproject_position(ground_position)
 	gameplay_canvas.transform = Transform2D(Vector2.RIGHT, Vector2.DOWN, screen_position - gameplay_position)
@@ -627,12 +640,31 @@ func refresh_phone_camera_presentation(_delta: float = 0.0) -> void:
 
 
 func _map_gameplay_to_world(gameplay_position: Vector2) -> Vector3:
-	return Vector3(gameplay_position.x / CELL_PIXELS, 0.0, gameplay_position.y / CELL_PIXELS)
+	return Vector3(gameplay_position.x / CELL_PIXELS,get_lobby_floor_height(gameplay_position/CELL_PIXELS),gameplay_position.y / CELL_PIXELS)
+
+func get_lobby_floor_height(point: Vector2) -> float:
+	if point.y<=STAIR_TOP_Z:return CONCOURSE_HEIGHT
+	if point.x<CONCOURSE_WEST_X or point.x>CONCOURSE_EAST_X:return 0.0
+	if point.y>=STAIR_BOTTOM_Z:return 0.0
+	return CONCOURSE_HEIGHT-float(floori((point.y-STAIR_TOP_Z)/((STAIR_BOTTOM_Z-STAIR_TOP_Z)/STAIR_COUNT)))*.1
+
+
+func get_lobby_surface_height(point: Vector2) -> float:
+	var height:=get_lobby_floor_height(point)
+	# Presentation contact includes the real carpet pile, without changing
+	# the flat gameplay authority or the camera's floor-following convention.
+	for rug_name in ["ArrivalRunner","LiftHallCarpet"]:
+		var rug:=props_root.get_node_or_null(NodePath(rug_name))
+		if rug==null:continue
+		var outline:PackedVector2Array=rug.get_meta(&"walkable_surface_outline",PackedVector2Array())
+		if outline.size()>=3 and Geometry2D.is_point_in_polygon(point,outline):
+			return height+float(rug.get_meta(&"walkable_surface_lift",0.0))
+	return height
 
 
 func get_gameplay_world_position(gameplay_position: Vector2, height: float = 0.65) -> Vector3:
 	var mapped := _map_gameplay_to_world(gameplay_position)
-	mapped.y = height
+	mapped.y += height
 	return mapped
 
 
@@ -640,7 +672,8 @@ func get_gameplay_aim_position() -> Vector2:
 	var mouse := get_viewport().get_mouse_position()
 	var origin := camera_3d.project_ray_origin(mouse)
 	var direction := camera_3d.project_ray_normal(mouse)
-	var point: Variant = Plane(Vector3.UP, 0.0).intersects_ray(origin, direction)
+	var floor_height:=get_lobby_floor_height(player.global_position/CELL_PIXELS)
+	var point: Variant = Plane(Vector3.UP,floor_height).intersects_ray(origin, direction)
 	if point is Vector3:
 		return Vector2(point.x, point.z) * CELL_PIXELS
 	var aim_dir: Vector2 = player.last_aim_direction if is_instance_valid(player) and "last_aim_direction" in player else Vector2.DOWN
@@ -652,28 +685,39 @@ func get_vision_occluder_collision_mask() -> int:
 	return WORLD_WALL_LAYER
 
 
-func _update_interaction_prompt() -> void:
+func _update_interaction_prompt(presentation_delta: float=0.0) -> void:
 	var is_ui_blocking: bool = elevator_transition_in_progress or (tarot_overlay != null and tarot_overlay.visible) or (dialogue_dialog != null and dialogue_dialog.visible) or (dialogue_controller != null and dialogue_controller.is_active()) or (dialogue_bubble != null and dialogue_bubble.visible)
 	if is_ui_blocking:
-		npc_hint_bubble.dismiss()
+		npc_hint_bubble.dismiss(0)
 		interaction_prompt.dismiss(true)
 		return
 
 	if elevator_approach_active:
 		npc_hint_bubble.dismiss()
-		var world_pos := ELEVATOR_POS_3D + Vector3(0.0, 1.2, 0.4)
+		var inward: Vector2=elevator_floor_door.get_inward_2d()
+		var world_pos := elevator_floor_door.global_position+Vector3(-inward.x*.4,1.2,-inward.y*.4)
 		var hud_point: Vector2 = player.get_presentation_hud_position(camera_3d.unproject_position(world_pos))
 		interaction_prompt.present("进入", hud_point + INTERACTION_PROMPT_OFFSET, -1)
 		return
 
 	var target := interaction_resolver.current_target if interaction_resolver != null else null
 	var state: Dictionary = {}
-	if target==waitress_npc and is_instance_valid(waitress_npc) and waitress_npc.visible and waitress_npc.interaction_enabled:
-		npc_hint_bubble.present_hint(_get_waitress_hud_pos(),StringName(waitress_npc.hint_emotion))
+	if is_instance_valid(waitress_npc) and waitress_npc.visible and waitress_npc.interaction_enabled:
+		var near: bool=target==waitress_npc
+		if near!=npc_hint_was_near:npc_hint_cycle_seconds=0.0
+		npc_hint_was_near=near
+		if near:
+			npc_hint_bubble.present_word(_get_waitress_hud_pos(),"交谈")
+		else:
+			npc_hint_cycle_seconds=fmod(npc_hint_cycle_seconds+presentation_delta,4.8)
+			if npc_hint_cycle_seconds<2.4:
+				npc_hint_bubble.present_emotion(_get_waitress_hud_pos(),StringName(waitress_npc.hint_emotion))
+			else:
+				npc_hint_bubble.present_word(_get_waitress_hud_pos(),"交流")
 	else:
 		npc_hint_bubble.dismiss()
 	if target==waitress_npc and waitress_npc.conversation_mode==waitress_npc.ConversationMode.PASSIVE:
-		interaction_prompt.present("交流",npc_hint_bubble.prompt_anchor(interaction_prompt.size),waitress_npc.get_instance_id())
+		interaction_prompt.dismiss(true)
 		return
 	if target != null and is_instance_valid(target) and target.has_method("get_interaction_prompt_state"):
 		state = target.call("get_interaction_prompt_state")
@@ -683,7 +727,7 @@ func _update_interaction_prompt() -> void:
 		return
 
 	var anchor: Vector2 = state.get("position", Vector2.ZERO)
-	var world_position := Vector3(anchor.x / CELL_PIXELS, 1.0, anchor.y / CELL_PIXELS)
+	var world_position := get_gameplay_world_position(anchor,1.0)
 	if target.is_in_group(&"reception_npc") or target == waitress_npc:
 		world_position = RECEPTION_DESK_POS_3D + Vector3(0.0, 1.25, 0.0)
 
@@ -700,13 +744,14 @@ func _update_interaction_prompt() -> void:
 # Elevator Interaction Flow
 # =============================================================================
 
-func _on_elevator_approach_entered(body: Node) -> void:
+func _on_elevator_approach_entered(body: Node,door: ElevatorFloorDoor3D=null) -> void:
 	if body == player:
+		if door!=null:elevator_floor_door=door
 		elevator_approach_active = true
 
 
-func _on_elevator_approach_exited(body: Node) -> void:
-	if body == player:
+func _on_elevator_approach_exited(body: Node,door: ElevatorFloorDoor3D=null) -> void:
+	if body == player and (door==null or elevator_floor_door==door):
 		elevator_approach_active = false
 
 
@@ -728,9 +773,10 @@ func _start_elevator_entry() -> void:
 	# The existing cab sits physically behind the lobby door, open to its threshold.
 	entry_cab = preload("res://scripts/dream/independent_elevator_cab_3d.gd").new(-1)
 	entry_cab.name = "ReceptionEntryCab"
-	entry_cab.position = ELEVATOR_POS_3D + Vector3(0, 0, -1.3)
 	add_child(entry_cab)
+	entry_cab.dock_to_floor_door(elevator_floor_door)
 	entry_cab.setup_gameplay_boundaries(gameplay_world, Vector2(entry_cab.position.x, entry_cab.position.z) * CELL_PIXELS)
+	entry_cab.boundary_root_2d.rotation=-entry_cab.rotation.y
 	await entry_cab.open_cab_doors(.30)
 	# Reuse actual locomotion so feet, body and hair receive real walking velocity.
 	var threshold_pos := elevator_floor_door.get_doorway_threshold_position_2d()

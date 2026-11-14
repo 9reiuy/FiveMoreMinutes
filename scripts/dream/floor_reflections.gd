@@ -3,6 +3,7 @@ extends Node3D
 const EXCLUDED:=1<<19
 const CAPTURE_FLAG:=1<<18
 const RENDER_LAYERS := preload("res://scripts/dream/render_layer_mask.gd")
+const OFFICE_OPTICS := preload("res://scripts/dream/office_light_optics.gd")
 const SURFACE_INCLUDE="res://shaders/dream3d/floor_reflection_surface.gdshaderinc"
 const PROFILES={
 	"restroom":Vector4(.23,1.15,.24,.55), "pantry":Vector4(.20,1.25,.20,.60),
@@ -50,9 +51,16 @@ static func install(owner_world:Node3D)->Node3D:
 	var component:=load("res://scripts/dream/floor_reflections.gd").new() as Node3D
 	component.name="FloorReflections"; component.production_mode=true
 	owner_world.add_child(component); component.configure(owner_world)
+	preload("res://scripts/dream/office_furniture_bounce.gd").install(owner_world)
+	preload("res://scripts/dream/office_surface_style.gd").install(owner_world)
+	OFFICE_OPTICS.install(owner_world)
 	return component
 
 static func uninstall(owner_world:Node3D)->void:
+	# Undo the outer shader composition before reflection carriers are restored.
+	OFFICE_OPTICS.uninstall(owner_world)
+	preload("res://scripts/dream/office_surface_style.gd").uninstall(owner_world)
+	preload("res://scripts/dream/office_furniture_bounce.gd").uninstall(owner_world)
 	var component:=owner_world.get_node_or_null("FloorReflections")
 	if is_instance_valid(component): component.restore(); component.free()
 
@@ -83,7 +91,7 @@ func configure(owner_world:Node3D)->void:
 	viewport.msaa_3d=Viewport.MSAA_DISABLED
 	add_child(viewport)
 	camera=Camera3D.new(); camera.name="FloorReflectionCamera"; viewport.add_child(camera)
-	camera.cull_mask=(original_camera_mask&~EXCLUDED)|CAPTURE_FLAG
+	camera.cull_mask=(original_camera_mask&~(EXCLUDED|RENDER_LAYERS.MAIN_CAMERA_OPTICS))|CAPTURE_FLAG
 	if native_office: camera.cull_mask |= 1 << 13
 	camera.current=true
 	var env:WorldEnvironment=world.get_node_or_null("Lighting/WorldEnvironment")
@@ -260,6 +268,7 @@ func _install_scene_carriers()->void:
 		if not installed_ids.has(sprite.get_instance_id()): _exclude(sprite)
 
 func _replace_material(node:GeometryInstance3D,actor:bool)->void:
+	if node.layers==RENDER_LAYERS.MAIN_CAMERA_OPTICS: return
 	if installed_ids.has(node.get_instance_id()): return
 	installed_ids[node.get_instance_id()]=weakref(node)
 	var source:Material=node.material_override

@@ -52,7 +52,7 @@ func run() -> void:
 	var display:=TextureRect.new();display.texture=viewport.get_texture();display.size=Vector2(960,540);display.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
 	root.add_child(display)
 	var palette:=ColorRect.new();palette.size=Vector2(960,540);var material:=ShaderMaterial.new()
-	material.shader=preload("res://shaders/palette_quantize.gdshader");palette.material=material;root.add_child(palette)
+	material.shader=preload("res://shaders/world_semantic_decode.gdshader");palette.material=material;root.add_child(palette)
 	var system:=SYSTEM.install(world);system.set_physics_process(false);system.discharge(Vector2.ZERO)
 	var max_puffs:=0
 	for frame in 66:

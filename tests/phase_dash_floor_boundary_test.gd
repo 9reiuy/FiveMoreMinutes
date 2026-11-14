@@ -24,6 +24,7 @@ class World extends Node3D:
 		return {"hits":0,"kills":0}
 var world: World
 var player: CharacterBody2D
+var use_dive_roll := false
 var checks := 0
 var failures: Array[String] = []
 func _initialize() -> void: call_deferred("run")
@@ -67,13 +68,23 @@ func complete_and_check_path(label: String) -> void:
 	var all_supported := true
 	for i in 16:
 		if not player.is_phase_dash_active(): break
-		player._update_dash(player.dash_duration/14.0)
+		player._update_dash(player.active_dash_duration/14.0)
 		all_supported = all_supported and exact_footprint_supported(player.global_position)
 	check(all_supported, label + " every runtime body footprint stays on floor")
 	check(not player.dashing and player.collision_layer != 0 and player.collision_mask != 0, label + " ends with collision restored")
 	check(player.dash_charges == 1, label + " consumes exactly one charge")
 func run() -> void:
 	AudioServer.set_bus_mute(0,true)
+	for roll in [false, true]:
+		use_dive_roll = roll
+		await verify_phase()
+	print("PHASE_DASH_FLOOR_BOUNDARY checks=",checks," failures=",failures.size()," labels=",failures)
+	quit(0 if failures.is_empty() else 1)
+
+func start_phase(heading: Vector2) -> bool:
+	return player.try_start_phase_dash(heading, use_dive_roll)
+
+func verify_phase() -> void:
 	world = World.new()
 	root.add_child(world)
 	player = load("res://scenes/entities/dream_player.tscn").instantiate()
@@ -87,7 +98,7 @@ func run() -> void:
 		reset()
 		for cell in world.floor_cells.keys():
 			if Vector2(cell).dot(heading) > 1: world.floor_cells.erase(cell)
-		check(player.try_start_phase_dash(heading), "map edge " + str(heading) + " starts only a short supported dash")
+		check(start_phase(heading), "map edge " + str(heading) + " starts only a short supported dash")
 		check(player.dash_end.length() < 48 and exact_footprint_supported(player.dash_end), "map edge " + str(heading) + " endpoint stays fully supported")
 		complete_and_check_path("map edge " + str(heading))
 	# A distant island is not a legal target through an intermediate missing strip.
@@ -96,19 +107,19 @@ func run() -> void:
 		for cell in world.floor_cells.keys():
 			if cell.x >= 1 and cell.x <= width: world.floor_cells.erase(cell)
 		check(world.floor_cells.has(Vector2i(width+1,0)), "gap " + str(width) + " has a real far platform")
-		check(player.try_start_phase_dash(Vector2.RIGHT) and player.dash_end.x < 16, "gap " + str(width) + " cannot be skipped to the far platform")
+		check(start_phase(Vector2.RIGHT) and player.dash_end.x < 16, "gap " + str(width) + " cannot be skipped to the far platform")
 		complete_and_check_path("gap " + str(width))
 	# A broad diagonal gap is rejected using the whole body, not just its foot.
 	reset()
 	world.floor_cells.erase(Vector2i(1,-1))
-	check(player.try_start_phase_dash(Vector2(1,-1)), "diagonal corner starts a shortened supported movement")
+	check(start_phase(Vector2(1,-1)), "diagonal corner starts a shortened supported movement")
 	check(player.dash_end.length() < 16 and exact_footprint_supported(player.dash_end), "diagonal corner endpoint does not enter missing cell")
 	complete_and_check_path("diagonal corner")
 	# The nearest corner lies between the old 0 and -45 degree perimeter probes.
 	reset()
 	world.floor_cells.erase(Vector2i(1,-1))
 	player.global_position = Vector2(0,-.3)
-	check(player.try_start_phase_dash(Vector2.RIGHT), "grazing corner starts before the corner")
+	check(start_phase(Vector2.RIGHT), "grazing corner starts before the corner")
 	check(exact_footprint_supported(player.dash_end), "grazing corner exact circle cannot protrude between perimeter sample angles")
 	complete_and_check_path("grazing corner")
 	# A diagonal can graze a rounded missing-cell corner only between two
@@ -117,7 +128,7 @@ func run() -> void:
 	world.floor_cells.erase(Vector2i(1,-1))
 	player.global_position = Vector2(0,-9.01)
 	var grazing_start := player.global_position
-	check(player.try_start_phase_dash(Vector2(1,1)), "short diagonal graze begins on safe floor")
+	check(start_phase(Vector2(1,1)), "short diagonal graze begins on safe floor")
 	var grazing_end: Vector2 = player.dash_end
 	var swept_safe := true
 	var samples := ceili(grazing_start.distance_to(grazing_end)/.1)
@@ -129,26 +140,26 @@ func run() -> void:
 	reset()
 	world.pit_cells[Vector2i(2,0)] = true
 	world.pit_cells[Vector2i(2,-1)] = true
-	check(player.try_start_phase_dash(Vector2.RIGHT) and player.dash_end.x < 48, "pit truncates the whole swept route")
+	check(start_phase(Vector2.RIGHT) and player.dash_end.x < 48, "pit truncates the whole swept route")
 	complete_and_check_path("pit")
 	reset()
 	world.gate_enabled = true
-	check(player.try_start_phase_dash(Vector2.RIGHT) and player.dash_end.x < world.gate_x-7, "tutorial landing gate also limits the swept body")
+	check(start_phase(Vector2.RIGHT) and player.dash_end.x < world.gate_x-7, "tutorial landing gate also limits the swept body")
 	complete_and_check_path("tutorial gate")
 	# Removing future floor after commit terminates before that new edge.
 	reset()
-	check(player.try_start_phase_dash(Vector2.RIGHT), "dynamic floor starts on an intact route")
-	player._update_dash(player.dash_duration*.35)
+	check(start_phase(Vector2.RIGHT), "dynamic floor starts on an intact route")
+	player._update_dash(player.active_dash_duration*.25)
 	var previous := player.global_position
 	for cell in world.floor_cells.keys():
 		if cell.x >= 3: world.floor_cells.erase(cell)
-	player._update_dash(player.dash_duration)
+	player._update_dash(player.active_dash_duration)
 	check(player.global_position.x >= previous.x and player.global_position.x < 80 and exact_footprint_supported(player.global_position), "future floor disappearance stops before void without travelling backward")
 	check(not player.is_phase_dash_active() and player.collision_mask != 0 and player.dash_charges == 1, "floor disappearance restores body and consumes no additional charge")
 	# Cancellation and entirely rejected attempts cannot silently spend charges.
 	reset()
-	check(player.try_start_phase_dash(Vector2.RIGHT), "cancel fixture starts")
-	player._update_dash(player.dash_duration*.3)
+	check(start_phase(Vector2.RIGHT), "cancel fixture starts")
+	player._update_dash(player.active_dash_duration*.3)
 	player.cancel_dash()
 	player.cancel_dash()
 	check(not player.dashing and exact_footprint_supported(player.global_position) and player.collision_mask != 0 and player.dash_charges == 1, "repeat cancel keeps one spent charge and a safe body")
@@ -157,10 +168,10 @@ func run() -> void:
 		if cell.x >= 1: world.floor_cells.erase(cell)
 	player.global_position = Vector2(8,0)
 	check(exact_footprint_supported(player.global_position), "no-room fixture begins on supported floor")
-	check(not player.try_start_phase_dash(Vector2.RIGHT) and player.dash_charges == 2 and player.dash_cooldown_left == 0, "no supported travel distance consumes no charge or cooldown")
+	check(not start_phase(Vector2.RIGHT) and player.dash_charges == 2 and player.dash_cooldown_left == 0, "no supported travel distance consumes no charge or cooldown")
 	reset()
 	world.floor_cells.clear()
-	check(not player.try_start_phase_dash(Vector2.RIGHT) and player.dash_charges == 2 and player.collision_mask != 0, "unsupported origin consumes nothing and never turns collision off")
+	check(not start_phase(Vector2.RIGHT) and player.dash_charges == 2 and player.collision_mask != 0, "unsupported origin consumes nothing and never turns collision off")
 	# Interior masonry remains phaseable while the ground under it is continuous.
 	reset()
 	var wall := StaticBody2D.new()
@@ -173,12 +184,10 @@ func run() -> void:
 	world.add_child(wall)
 	wall.position = Vector2(64,0)
 	await physics_frame
-	check(player.try_start_phase_dash(Vector2.RIGHT) and is_equal_approx(player.dash_end.x, player.dash_distance), "continuous indoor floor still permits travel through a real wall")
+	check(start_phase(Vector2.RIGHT) and is_equal_approx(player.dash_end.x, player.dash_distance), "continuous indoor floor still permits travel through a real wall")
 	complete_and_check_path("indoor wall")
 	check(is_equal_approx(player.global_position.x,player.dash_distance), "indoor wall reaches the normal full endpoint")
 	world.free()
 	preload("res://scripts/audio/sfx_manager.gd").stop_event(&"dash")
 	await create_timer(.15,true,false,true).timeout
 	for i in 4: await process_frame
-	print("PHASE_DASH_FLOOR_BOUNDARY checks=",checks," failures=",failures.size()," labels=",failures)
-	quit(0 if failures.is_empty() else 1)

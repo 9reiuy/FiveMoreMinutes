@@ -16,12 +16,9 @@ func apply_sample() -> void:
 	if not stability_enabled:
 		world.camera_3d.h_offset=0.; world.camera_3d.v_offset=0.
 	if status_label:
-		status_label.text="F9 层次增强 %s | F10 像素稳定 %s | F11 配色 %d"%["开" if tonal_enabled else "关","开" if stability_enabled else "关",SettingsManager.get_palette_scheme()]
+		status_label.text="F9 层次增强 %s | F10 像素稳定 %s"%["开" if tonal_enabled else "关","开" if stability_enabled else "关"]
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode==KEY_F9: tonal_enabled=not tonal_enabled; apply_sample(); return
 		if event.keycode==KEY_F10: stability_enabled=not stability_enabled; apply_sample(); return
-		if event.keycode==KEY_F11:
-			SettingsManager.set_palette_scheme(1 if SettingsManager.get_palette_scheme()==2 else 2)
-			apply_sample(); return
 	super._input(event)

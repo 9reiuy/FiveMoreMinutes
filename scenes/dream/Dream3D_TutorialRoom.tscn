@@ -1,22 +1,22 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/dream/dream_3d_tutorial_room.gd" id="1_controller"]
 [ext_resource type="PackedScene" path="res://scenes/entities/dream_player.tscn" id="2_player"]
 [ext_resource type="Script" path="res://scripts/dream/dream_3d_actor_depth_bridge.gd" id="3_depth_bridge"]
-[ext_resource type="PackedScene" path="res://scenes/dream/TutorialGuide.tscn" id="4_guide"]
 [ext_resource type="PackedScene" path="res://scenes/ui/confirmation_dialog.tscn" id="5_dialogue"]
-[ext_resource type="Theme" path="res://assets/fonts/pixel_theme.tres" id="6_theme"]
-[ext_resource type="FontFile" path="res://assets/fonts/boutique_bitmap/BoutiqueBitmap9x9_Bold_1.9.ttf" id="7_font"]
 [ext_resource type="PackedScene" path="res://scenes/ui/dialogue/growing_dialogue_bubble.tscn" id="8_bubble"]
 [ext_resource type="PackedScene" path="res://scenes/story/chapter_tutorial_layout.tscn" id="10_layout"]
 [ext_resource type="Script" path="res://scripts/story/chapter_tutorial.gd" id="11_training"]
+[ext_resource type="PackedScene" path="res://scenes/ui/tutorial_control_hint.tscn" id="12_hint"]
+[ext_resource type="PackedScene" path="res://scenes/ui/liquid_health_meter.tscn" id="13_health"]
 
 [sub_resource type="Environment" id="Environment_tutorial"]
 background_mode = 1
 background_color = Color(0, 0, 0, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.38, 0.46, 0.58, 1)
-ambient_light_energy = 0.12
+ambient_light_color = Color(0, 0, 0, 1)
+ambient_light_energy = 0.0
+reflected_light_source = 1
 tonemap_mode = 1
 glow_enabled = true
 glow_intensity = 0.55
@@ -26,9 +26,6 @@ fog_enabled = false
 fog_light_energy = 0.45
 fog_light_color = Color(0.30, 0.34, 0.43, 1)
 fog_density = 0.001
-
-[sub_resource type="RectangleShape2D" id="GuideTriggerShape"]
-size = Vector2(96, 48)
 
 [sub_resource type="RectangleShape2D" id="ExitTriggerShape"]
 size = Vector2(88, 72)
@@ -44,18 +41,6 @@ script = ExtResource("1_controller")
 
 [node name="DoorRoot" type="Node3D" parent="TutorialGeometry"]
 
-[node name="TutorialFloorPrompt" type="Label3D" parent="TutorialGeometry"]
-position = Vector3(10.5, 0.018, 36.88)
-rotation = Vector3(-1.5707963, 0, 0)
-modulate = Color(0.78, 0.91, 1, 0.94)
-outline_modulate = Color(0.015, 0.025, 0.04, 1)
-text = "WASD\nMOVE\n\nTAP SPACE\nROLL / DASH\n\nHOLD SPACE\nAIM DASH"
-font = ExtResource("7_font")
-font_size = 48
-outline_size = 8
-pixel_size = 0.008
-no_depth_test = false
-
 [node name="GameplayCanvas" type="CanvasLayer" parent="."]
 
 [node name="GameplayWorld" type="Node2D" parent="GameplayCanvas"]
@@ -63,16 +48,6 @@ no_depth_test = false
 [node name="GeneratedCollisionRoot" type="Node2D" parent="GameplayCanvas/GameplayWorld"]
 
 [node name="DreamPlayer" parent="GameplayCanvas/GameplayWorld" instance=ExtResource("2_player")]
-
-[node name="TutorialGuide" parent="GameplayCanvas/GameplayWorld" instance=ExtResource("4_guide")]
-
-[node name="GuideSpawnTrigger" type="Area2D" parent="GameplayCanvas/GameplayWorld"]
-position = Vector2(336, 781.44)
-collision_layer = 0
-collision_mask = 1
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="GameplayCanvas/GameplayWorld/GuideSpawnTrigger"]
-shape = SubResource("GuideTriggerShape")
 
 [node name="TutorialExitTrigger" type="Area2D" parent="GameplayCanvas/GameplayWorld"]
 position = Vector2(336, 97.92)
@@ -120,17 +95,12 @@ shadow_enabled = false
 [node name="GameplayUI" type="CanvasLayer" parent="."]
 layer = 20
 
-[node name="InteractionPrompt" type="Label" parent="GameplayUI"]
+[node name="ControlHint" parent="GameplayUI" instance=ExtResource("12_hint")]
+
+[node name="LiquidHealthMeter" parent="GameplayUI" instance=ExtResource("13_health")]
+
+[node name="TalkPrompt" parent="GameplayUI" instance=ExtResource("8_bubble")]
 visible = false
-offset_right = 128.0
-offset_bottom = 18.0
-mouse_filter = 2
-theme = ExtResource("6_theme")
-theme_override_colors/font_color = Color(0.83, 0.93, 0.96, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.04, 0.06, 1)
-theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 12
-horizontal_alignment = 1
 
 [node name="DialogueLayer" type="CanvasLayer" parent="."]
 layer = 60

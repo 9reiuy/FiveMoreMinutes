@@ -1,7 +1,7 @@
 extends SceneTree
 
 const DUNGEON_SCENE: PackedScene = preload("res://scenes/dream/Dream3D_RandomDungeon.tscn")
-const PALETTE_SHADER: Shader = preload("res://shaders/palette_quantize.gdshader")
+const PALETTE_SHADER: Shader = preload("res://shaders/world_semantic_decode.gdshader")
 const ARTIFACT_DIR := "C:/Users/Administrator/.gemini/antigravity/brain/7b4560e6-4b84-4f9d-aa7f-8e2769c901c9/"
 
 func _init() -> void:
@@ -25,7 +25,6 @@ func _run_capture() -> void:
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var mat := ShaderMaterial.new()
 	mat.shader = PALETTE_SHADER
-	mat.set_shader_parameter("palette_enabled", true)
 	overlay.material = mat
 	canvas_layer.add_child(overlay)
 	root.add_child(canvas_layer)

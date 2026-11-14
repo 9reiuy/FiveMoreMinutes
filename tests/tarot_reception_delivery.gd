@@ -69,9 +69,9 @@ func run() -> void:
 	pointer.global_position=pointer.position
 	Input.parse_input_event(pointer)
 	var camera_fov: float=room.camera_3d.fov
-	var requested_palette: bool=root.get_node("SettingsManager").get_palette_enabled()
+	var resolver_path := "res://shaders/world_semantic_decode.gdshader"
 	if validate:
-		check(not bool(main.current_screen.palette_material.get_shader_parameter("palette_enabled")),"Lobby preserves the approved native furniture palette")
+		check(main.current_screen.semantic_material.shader.resource_path==resolver_path,"Lobby preserves the approved native furniture palette")
 		var lobby_doors: Array=[room.elevator_floor_door]
 		check(room.door_root.get_child_count()==1,"Lobby has only one elevator")
 		for i in lobby_doors.size():
@@ -103,15 +103,14 @@ func run() -> void:
 		room.set_process(false)
 		var center: Vector2=room.camera_3d.unproject_position(room.to_global(Vector3(4.8,0,5.8)))
 		var region:=Rect2i(Vector2i(center)-Vector2i(4,4),Vector2i(8,8))
-		main.current_screen.set_palette_enabled(false); await frames(4)
+		await frames(4)
 		capture("palette_off")
 		var before: PackedByteArray=room.camera_3d.get_viewport().get_texture().get_image().get_region(region).get_data()
-		main.current_screen.set_palette_enabled(true); await frames(4)
+		await frames(4)
 		capture("palette_on")
 		var after: PackedByteArray=room.camera_3d.get_viewport().get_texture().get_image().get_region(region).get_data()
 		check(before==after,"Rendered stone floor remains identical when palette toggles")
-		check(not bool(main.current_screen.palette_material.get_shader_parameter("palette_enabled")),"Palette ON request cannot recolour this lobby")
-		main.current_screen.set_palette_enabled(requested_palette)
+		check(main.current_screen.semantic_material.shader.resource_path==resolver_path,"Palette ON request cannot recolour this lobby")
 		room.set_process(true)
 	room.player.global_position=room.RECEPTION_DESK_POS_2D+Vector2(0,45)
 	await frames(30); capture("desk")
@@ -155,7 +154,7 @@ func run() -> void:
 					capture("lobby_elevator_closed"); closed=true
 			if is_instance_valid(main._supported_dream_world) and not main._supported_dream_world is Dream3DReceptionRoom and not main.transition_running: break
 		check(is_instance_valid(main._supported_dream_world) and not main._supported_dream_world is Dream3DReceptionRoom,"Existing elevator enters the actual formal game floor")
-		check(bool(main.current_screen.palette_material.get_shader_parameter("palette_enabled"))==requested_palette,"Formal floor still follows the user's palette setting")
+		check(main.current_screen.semantic_material.shader.resource_path==resolver_path,"Formal floor still follows the user's palette setting")
 		capture("floor_entry")
 		if revision:
 			check(opened and closed,"Actual lobby entry records new door open and closed states")
@@ -173,7 +172,7 @@ func run() -> void:
 			check(is_equal_approx(environment.ambient_light_energy,.38) and is_equal_approx(floor_world.get_node("Lighting/KeyLight").light_energy,.025),"Lobby night baseline matches the actual formal floor")
 			floor_world.player.global_position=Vector2(entry.center_cell)*32
 			await frames(30); capture("floor_reception_palette")
-			main.current_screen.set_palette_enabled(false); await frames(10); capture("floor_reception_native")
+			await frames(10); capture("floor_reception_native")
 			var door: Node3D=floor_world.elevator_floor_door
 			check(door.industrial_facade.has_node("FreightStructuralFrame"),"Formal floor uses the same approved freight facade")
 			floor_world.player.global_position=door.get_corridor_approach_position_2d()-door.get_inward_2d()*32
@@ -188,8 +187,7 @@ func run() -> void:
 			check(door.doors_open,"Formal door opens with industrial panels attached")
 			await door.close_doors(.2); await frames(4)
 			floor_world.set_process(true)
-			main.current_screen.set_palette_enabled(requested_palette)
-	var report := {"main_entry":true,"gpu":RenderingServer.get_video_adapter_name(),"minimized":DisplayServer.window_get_mode()==DisplayServer.WINDOW_MODE_MINIMIZED,"resolution":[1920,1080],"camera_fov":camera_fov,"stats":stats,"checks":checks,"failures":failures,"samples":samples,"requested_palette":requested_palette,"ui_validation":"ordinary movement input; passive NPC E interaction and Esc dismissal without tarot; elevator E input"}
+	var report := {"main_entry":true,"gpu":RenderingServer.get_video_adapter_name(),"minimized":DisplayServer.window_get_mode()==DisplayServer.WINDOW_MODE_MINIMIZED,"resolution":[1920,1080],"camera_fov":camera_fov,"stats":stats,"checks":checks,"failures":failures,"samples":samples,"colour_resolver":resolver_path,"ui_validation":"ordinary movement input; passive NPC E interaction and Esc dismissal without tarot; elevator E input"}
 	var file=FileAccess.open(output+"/report.json",FileAccess.WRITE); file.store_string(JSON.stringify(report,"\t")); file.close()
 	print("RECEPTION_DELIVERY checks=",checks," failures=",failures)
 	main.free(); quit(1 if failures else 0)

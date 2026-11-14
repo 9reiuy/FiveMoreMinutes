@@ -7,6 +7,7 @@ extends Node
 ## this is local illumination approximation, not copied world shadow geometry.
 const BODY_SHADER := preload("res://shaders/ui/phone_body_surface.gdshader")
 const LCD_SHADER := preload("res://shaders/ui/phone_lcd_surface.gdshader")
+const OPTICS_LAYER := preload("res://scripts/dream/render_layer_mask.gd").MAIN_CAMERA_OPTICS
 const FACE_SIZE := Vector2i(64, 64)
 const LIGHT_SCALE := 20.0
 const MAX_LIGHTS := 4
@@ -195,7 +196,7 @@ func get_diagnostics() -> Dictionary:
 func _find_source_environment() -> Environment:
 	var camera := _resolve(_source_camera) as Camera3D
 	if is_instance_valid(camera) and camera.environment != null:
-		return camera.environment
+		return camera.environment.get_meta(&"office_optics_base_environment", camera.environment) as Environment
 	var world := _resolve(_source) as Node3D
 	if not is_instance_valid(world):
 		return null
@@ -228,7 +229,7 @@ func _create_capture_faces() -> void:
 		camera.far = minf(main_camera.far, 24.0)
 		# Existing floor reflection installs capture-aware physical actor planes.
 		# Keep main's floor layer while enabling those existing capture branches.
-		camera.cull_mask = main_camera.cull_mask | (1 << 18)
+		camera.cull_mask = (main_camera.cull_mask | (1 << 18)) & ~OPTICS_LAYER
 		camera.environment = _source_environment
 		face.add_child(camera)
 		camera.current = true

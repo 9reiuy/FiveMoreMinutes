@@ -1,0 +1,1077 @@
+{
+  "blend": {
+    "16k": {
+      "blend": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/blend/16k/walnut_veneer/walnut_veneer_16k.blend",
+        "md5": "bc2587555e876206f408e087f13a8821",
+        "size": 216293,
+        "include": {
+          "textures/walnut_veneer_ao_16k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_ao_16k.jpg",
+            "md5": "ee756fe94c057ebec469c1091e420b13",
+            "size": 87050735
+          },
+          "textures/walnut_veneer_diff_16k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_diff_16k.jpg",
+            "md5": "a9a6ae54a249e3eba38c4a17e4587184",
+            "size": 82982042
+          },
+          "textures/walnut_veneer_disp_16k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/16k/walnut_veneer/walnut_veneer_disp_16k.png",
+            "md5": "c432d4768f93f9a6bbb4780163552e7d",
+            "size": 248781933
+          },
+          "textures/walnut_veneer_nor_gl_16k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_nor_gl_16k.exr",
+            "md5": "ada77e7f6465ded61d112cf550a6cb99",
+            "size": 137831490
+          },
+          "textures/walnut_veneer_rough_16k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_rough_16k.exr",
+            "md5": "81f3ed7c9dcd0b84fd6855fa8bd98388",
+            "size": 289209942
+          }
+        }
+      }
+    },
+    "1k": {
+      "blend": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/blend/1k/walnut_veneer/walnut_veneer_1k.blend",
+        "md5": "5def8b6ea42e3cdba0f405eb45635231",
+        "size": 216099,
+        "include": {
+          "textures/walnut_veneer_ao_1k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_ao_1k.jpg",
+            "md5": "f5586ea6e77b34bfd598f1dcc2acad69",
+            "size": 466570
+          },
+          "textures/walnut_veneer_diff_1k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_diff_1k.jpg",
+            "md5": "70e160b3d44d414728a2fb4194fde2a6",
+            "size": 496596
+          },
+          "textures/walnut_veneer_disp_1k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/walnut_veneer/walnut_veneer_disp_1k.png",
+            "md5": "b8838481119bf98c90ef6fd335622e6f",
+            "size": 1587916
+          },
+          "textures/walnut_veneer_nor_gl_1k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_nor_gl_1k.exr",
+            "md5": "206ca344a75384156376978b73f73976",
+            "size": 921229
+          },
+          "textures/walnut_veneer_rough_1k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_rough_1k.exr",
+            "md5": "e4019ba85e9e9b77da675387edd2a127",
+            "size": 1164059
+          }
+        }
+      }
+    },
+    "2k": {
+      "blend": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/blend/2k/walnut_veneer/walnut_veneer_2k.blend",
+        "md5": "39d07ab458bdd290c9d629d05cc51a2f",
+        "size": 216085,
+        "include": {
+          "textures/walnut_veneer_ao_2k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_ao_2k.jpg",
+            "md5": "bf48bb9c445e3d93bd5af0b51495f3eb",
+            "size": 2032780
+          },
+          "textures/walnut_veneer_diff_2k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_diff_2k.jpg",
+            "md5": "48000eac719ccbae27319f942ab5bf2c",
+            "size": 2060618
+          },
+          "textures/walnut_veneer_disp_2k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/walnut_veneer/walnut_veneer_disp_2k.png",
+            "md5": "6e72f5fd3e82606cc598314c3e4a3a00",
+            "size": 6051358
+          },
+          "textures/walnut_veneer_nor_gl_2k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_nor_gl_2k.exr",
+            "md5": "25a09d3212fd4e97be111fd173c7d7e8",
+            "size": 3912921
+          },
+          "textures/walnut_veneer_rough_2k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_rough_2k.exr",
+            "md5": "ffaba47606066da5be9de7de36573ea1",
+            "size": 4715093
+          }
+        }
+      }
+    },
+    "4k": {
+      "blend": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/blend/4k/walnut_veneer/walnut_veneer_4k.blend",
+        "md5": "c9f7bee548a3346100516674d77ede2c",
+        "size": 216331,
+        "include": {
+          "textures/walnut_veneer_ao_4k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_ao_4k.jpg",
+            "md5": "0e3672ad72ba27a15ffb50042ea741c5",
+            "size": 8267170
+          },
+          "textures/walnut_veneer_diff_4k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_diff_4k.jpg",
+            "md5": "87ff40ee00151386f9db42ee7cd33a9f",
+            "size": 8345790
+          },
+          "textures/walnut_veneer_disp_4k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/4k/walnut_veneer/walnut_veneer_disp_4k.png",
+            "md5": "cc4755630cd131126dc796564e9c9992",
+            "size": 22509972
+          },
+          "textures/walnut_veneer_nor_gl_4k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_nor_gl_4k.exr",
+            "md5": "e0493e579cfa68e6e9319ca5fd673cb3",
+            "size": 14269842
+          },
+          "textures/walnut_veneer_rough_4k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_rough_4k.exr",
+            "md5": "35a7cb99843d15aa14635daf0290041d",
+            "size": 19269482
+          }
+        }
+      }
+    },
+    "8k": {
+      "blend": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/blend/8k/walnut_veneer/walnut_veneer_8k.blend",
+        "md5": "384cac646937b58bdce2b4e8b086223c",
+        "size": 216127,
+        "include": {
+          "textures/walnut_veneer_ao_8k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_ao_8k.jpg",
+            "md5": "da4d17210eab90109ac0bbff91395fc5",
+            "size": 29037326
+          },
+          "textures/walnut_veneer_diff_8k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_diff_8k.jpg",
+            "md5": "9d82074eefcf066c988fff97e76595c9",
+            "size": 28779853
+          },
+          "textures/walnut_veneer_disp_8k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/8k/walnut_veneer/walnut_veneer_disp_8k.png",
+            "md5": "6db8ace971a665bd45a851ed095701db",
+            "size": 78226323
+          },
+          "textures/walnut_veneer_nor_gl_8k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_nor_gl_8k.exr",
+            "md5": "d188d77c2d8acecadeb09ab7d7058e6c",
+            "size": 46669148
+          },
+          "textures/walnut_veneer_rough_8k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_rough_8k.exr",
+            "md5": "43125507b0d0e3822c464705a411790d",
+            "size": 76881353
+          }
+        }
+      }
+    }
+  },
+  "AO": {
+    "16k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_ao_16k.exr",
+        "md5": "f881d1f092fa7466a4c45ded3ab5aeef",
+        "size": 190836175
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_ao_16k.jpg",
+        "md5": "ee756fe94c057ebec469c1091e420b13",
+        "size": 87050735
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/16k/walnut_veneer/walnut_veneer_ao_16k.png",
+        "md5": "de27e29be5568d3460daf05d733bf029",
+        "size": 392920717
+      }
+    },
+    "1k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_ao_1k.exr",
+        "md5": "c6f1b85de325387604a0483eb2f03761",
+        "size": 891811
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_ao_1k.jpg",
+        "md5": "f5586ea6e77b34bfd598f1dcc2acad69",
+        "size": 466570
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/walnut_veneer/walnut_veneer_ao_1k.png",
+        "md5": "c340903781f3c3ebe26588f58c58a592",
+        "size": 1755991
+      }
+    },
+    "2k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_ao_2k.exr",
+        "md5": "b5ebfbcf1c6351d8c0ced73db70f9d02",
+        "size": 3620180
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_ao_2k.jpg",
+        "md5": "bf48bb9c445e3d93bd5af0b51495f3eb",
+        "size": 2032780
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/walnut_veneer/walnut_veneer_ao_2k.png",
+        "md5": "b1739a7568b4726bc1cd79032faf1370",
+        "size": 7040463
+      }
+    },
+    "4k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_ao_4k.exr",
+        "md5": "88b36ed104bb1dcdd1bfd577e7f4b3ae",
+        "size": 14320053
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_ao_4k.jpg",
+        "md5": "0e3672ad72ba27a15ffb50042ea741c5",
+        "size": 8267170
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/4k/walnut_veneer/walnut_veneer_ao_4k.png",
+        "md5": "e225520648e4b6db3fdbf06fd39f5700",
+        "size": 27909446
+      }
+    },
+    "8k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_ao_8k.exr",
+        "md5": "fab3ddfb6bc173e9b5d57bd84a9dfedd",
+        "size": 54150412
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_ao_8k.jpg",
+        "md5": "da4d17210eab90109ac0bbff91395fc5",
+        "size": 29037326
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/8k/walnut_veneer/walnut_veneer_ao_8k.png",
+        "md5": "2c956ee7779a8d67133818de533ff573",
+        "size": 108503971
+      }
+    }
+  },
+  "arm": {
+    "16k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_arm_16k.exr",
+        "md5": "078ca5e8c49161a7fde54c3efa4ba18d",
+        "size": 263597284
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_arm_16k.jpg",
+        "md5": "c70f97eee588e0ffcf2b5790181ae4e8",
+        "size": 156836826
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/16k/walnut_veneer/walnut_veneer_arm_16k.png",
+        "md5": "b8d6100b9fa8056fb2df4cf20af00c0a",
+        "size": 947170573
+      }
+    },
+    "1k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_arm_1k.exr",
+        "md5": "f761ac26e89885edc5ede8360884fba4",
+        "size": 1433194
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_arm_1k.jpg",
+        "md5": "7db3474a1d0d1ed15e0cc349541ac1e3",
+        "size": 641173
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/walnut_veneer/walnut_veneer_arm_1k.png",
+        "md5": "cc91fb288462089c6bd01115c58ba609",
+        "size": 4151468
+      }
+    },
+    "2k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_arm_2k.exr",
+        "md5": "87e82120debf463f7b5d20771289610a",
+        "size": 6302003
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_arm_2k.jpg",
+        "md5": "4206792dd08b6bc72b7d2c4341aa8237",
+        "size": 2825925
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/walnut_veneer/walnut_veneer_arm_2k.png",
+        "md5": "f29577bdfb335bc31a80bfc988dc08f7",
+        "size": 16864485
+      }
+    },
+    "4k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_arm_4k.exr",
+        "md5": "9e38135a3d5719377133bb7d47ebc888",
+        "size": 27135026
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_arm_4k.jpg",
+        "md5": "67efaeb9d65ff40d51230b3e5bd087b2",
+        "size": 12508781
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/4k/walnut_veneer/walnut_veneer_arm_4k.png",
+        "md5": "fc6d8dcb09d262cf24f31cdca2da7f11",
+        "size": 67870347
+      }
+    },
+    "8k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_arm_8k.exr",
+        "md5": "e9a79a60b84bc7909e3a93e61f6a0e13",
+        "size": 97709296
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_arm_8k.jpg",
+        "md5": "2adb786b43d8ae0eb11cbd07b8d57d66",
+        "size": 49452061
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/8k/walnut_veneer/walnut_veneer_arm_8k.png",
+        "md5": "31998c32b9e8cb53c83b4ca3bc288463",
+        "size": 263889166
+      }
+    }
+  },
+  "Diffuse": {
+    "16k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_diff_16k.exr",
+        "md5": "f78615c75d5c0da89a95bd95aa54547d",
+        "size": 126046271
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_diff_16k.jpg",
+        "md5": "a9a6ae54a249e3eba38c4a17e4587184",
+        "size": 82982042
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/16k/walnut_veneer/walnut_veneer_diff_16k.png",
+        "md5": "ee40ea72ecc1c9547bca1343dfdfcbd2",
+        "size": 1176043932
+      }
+    },
+    "1k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_diff_1k.exr",
+        "md5": "a14b51f8e4216745a2a0762930c4d377",
+        "size": 760469
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_diff_1k.jpg",
+        "md5": "70e160b3d44d414728a2fb4194fde2a6",
+        "size": 496596
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/walnut_veneer/walnut_veneer_diff_1k.png",
+        "md5": "c9f3ffc9647cb5d4928ac61d68024555",
+        "size": 5052414
+      }
+    },
+    "2k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_diff_2k.exr",
+        "md5": "5fd8c07123149868fd376bc4d83bb1a0",
+        "size": 3196416
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_diff_2k.jpg",
+        "md5": "48000eac719ccbae27319f942ab5bf2c",
+        "size": 2060618
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/walnut_veneer/walnut_veneer_diff_2k.png",
+        "md5": "99a674031f6ee3974d0d825b9af745a7",
+        "size": 20495792
+      }
+    },
+    "4k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_diff_4k.exr",
+        "md5": "483be5a3ef4b789f96762a5623665d22",
+        "size": 13090059
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_diff_4k.jpg",
+        "md5": "87ff40ee00151386f9db42ee7cd33a9f",
+        "size": 8345790
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/4k/walnut_veneer/walnut_veneer_diff_4k.png",
+        "md5": "9c1d2231c054e4b961094c6c32c2b7e3",
+        "size": 82236847
+      }
+    },
+    "8k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_diff_8k.exr",
+        "md5": "8ad8299794562df8ad452b23d57bc021",
+        "size": 44724344
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_diff_8k.jpg",
+        "md5": "9d82074eefcf066c988fff97e76595c9",
+        "size": 28779853
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/8k/walnut_veneer/walnut_veneer_diff_8k.png",
+        "md5": "cbc8b042e7efd85e2306b75a178611ae",
+        "size": 321091711
+      }
+    }
+  },
+  "Displacement": {
+    "16k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_disp_16k.exr",
+        "md5": "7bd8051ff805bce7a512e8fb255af6da",
+        "size": 105911883
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_disp_16k.jpg",
+        "md5": "31da39b72366f813b7ad285343acc5f0",
+        "size": 26362912
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/16k/walnut_veneer/walnut_veneer_disp_16k.png",
+        "md5": "c432d4768f93f9a6bbb4780163552e7d",
+        "size": 248781933
+      }
+    },
+    "1k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_disp_1k.exr",
+        "md5": "c621755b247793dbde6fff5c7599b2c5",
+        "size": 1130384
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_disp_1k.jpg",
+        "md5": "96606797c7a959ca5410f1b5d71408be",
+        "size": 279385
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/walnut_veneer/walnut_veneer_disp_1k.png",
+        "md5": "b8838481119bf98c90ef6fd335622e6f",
+        "size": 1587916
+      }
+    },
+    "2k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_disp_2k.exr",
+        "md5": "5613c75e6b6225dff5a7344643034f2c",
+        "size": 4039849
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_disp_2k.jpg",
+        "md5": "1bccc6894c29a7c713ec9a194ea3c868",
+        "size": 851317
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/walnut_veneer/walnut_veneer_disp_2k.png",
+        "md5": "6e72f5fd3e82606cc598314c3e4a3a00",
+        "size": 6051358
+      }
+    },
+    "4k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_disp_4k.exr",
+        "md5": "cbdd8574594b9d276ec13a5fd27814c0",
+        "size": 13242260
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_disp_4k.jpg",
+        "md5": "0dbcaa85e0ae9de49ce4be10384f4f8b",
+        "size": 2749496
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/4k/walnut_veneer/walnut_veneer_disp_4k.png",
+        "md5": "cc4755630cd131126dc796564e9c9992",
+        "size": 22509972
+      }
+    },
+    "8k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_disp_8k.exr",
+        "md5": "f005b8722613a6189a8d8af387b77854",
+        "size": 39445630
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_disp_8k.jpg",
+        "md5": "4bf998c3e196d0dbf71c4dd1d2a83b34",
+        "size": 8845045
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/8k/walnut_veneer/walnut_veneer_disp_8k.png",
+        "md5": "6db8ace971a665bd45a851ed095701db",
+        "size": 78226323
+      }
+    }
+  },
+  "nor_dx": {
+    "16k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_nor_dx_16k.exr",
+        "md5": "fab578395c33409c55ee75a7446b0a9e",
+        "size": 137694385
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_nor_dx_16k.jpg",
+        "md5": "22a020bb9e24d71d0845794ed28c3571",
+        "size": 83448617
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/16k/walnut_veneer/walnut_veneer_nor_dx_16k.png",
+        "md5": "d4d17169a9068a3953bfc2ba25b1d563",
+        "size": 1049055479
+      }
+    },
+    "1k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_nor_dx_1k.exr",
+        "md5": "4dcc4e8040c025a1483f3d9a405443e7",
+        "size": 922476
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_nor_dx_1k.jpg",
+        "md5": "4b4727530b61ce041002d8ac2f466c99",
+        "size": 444428
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/walnut_veneer/walnut_veneer_nor_dx_1k.png",
+        "md5": "aa135c96c714cedf3e7e63dc4b01f8d9",
+        "size": 4810056
+      }
+    },
+    "2k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_nor_dx_2k.exr",
+        "md5": "be9c49cab5371bcbea86ad5433b316b7",
+        "size": 3911398
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_nor_dx_2k.jpg",
+        "md5": "a331abdf8baedc96b16d19662f0cbdca",
+        "size": 1892675
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/walnut_veneer/walnut_veneer_nor_dx_2k.png",
+        "md5": "de724a9e374c47245ccdfb7346a8fb39",
+        "size": 19425983
+      }
+    },
+    "4k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_nor_dx_4k.exr",
+        "md5": "0aab0a51f9e07541b81bbb2ac05bbcd0",
+        "size": 14272965
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_nor_dx_4k.jpg",
+        "md5": "aa20330e468ee89271cc4ab824db20d7",
+        "size": 7357420
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/4k/walnut_veneer/walnut_veneer_nor_dx_4k.png",
+        "md5": "0cd09065dccc52d11a0bca7dbb358fc4",
+        "size": 77071473
+      }
+    },
+    "8k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_nor_dx_8k.exr",
+        "md5": "86bc71cd712a3afbd2ac273761a4556a",
+        "size": 46644140
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_nor_dx_8k.jpg",
+        "md5": "264f3ea6a61cb80091a22627df305f1a",
+        "size": 26119234
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/8k/walnut_veneer/walnut_veneer_nor_dx_8k.png",
+        "md5": "fee19af6e19a5033053fb4da7a1ddf26",
+        "size": 298051937
+      }
+    }
+  },
+  "nor_gl": {
+    "16k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_nor_gl_16k.exr",
+        "md5": "ada77e7f6465ded61d112cf550a6cb99",
+        "size": 137831490
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_nor_gl_16k.jpg",
+        "md5": "50b741c9dd82c81e813ecccc06b06cbd",
+        "size": 83457814
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/16k/walnut_veneer/walnut_veneer_nor_gl_16k.png",
+        "md5": "5139c4941a0b7a0797ede2a32571470b",
+        "size": 1053087240
+      }
+    },
+    "1k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_nor_gl_1k.exr",
+        "md5": "206ca344a75384156376978b73f73976",
+        "size": 921229
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_nor_gl_1k.jpg",
+        "md5": "fc0df784c71c1cff9d80d4a6de0b2ab4",
+        "size": 442897
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/walnut_veneer/walnut_veneer_nor_gl_1k.png",
+        "md5": "ff48d6157ea0c32eb55f72d539b3d68d",
+        "size": 4810073
+      }
+    },
+    "2k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_nor_gl_2k.exr",
+        "md5": "25a09d3212fd4e97be111fd173c7d7e8",
+        "size": 3912921
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_nor_gl_2k.jpg",
+        "md5": "987a6cf092f9ab65705416dda264b0ff",
+        "size": 1891517
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/walnut_veneer/walnut_veneer_nor_gl_2k.png",
+        "md5": "33df5375cbc7905d3defe813a5448cbf",
+        "size": 19426444
+      }
+    },
+    "4k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_nor_gl_4k.exr",
+        "md5": "e0493e579cfa68e6e9319ca5fd673cb3",
+        "size": 14269842
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_nor_gl_4k.jpg",
+        "md5": "96a8129dcdf6ee32bfb4076ca4062c3d",
+        "size": 7374841
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/4k/walnut_veneer/walnut_veneer_nor_gl_4k.png",
+        "md5": "a10dd978b6b740581b466675b61a6aee",
+        "size": 77070499
+      }
+    },
+    "8k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_nor_gl_8k.exr",
+        "md5": "d188d77c2d8acecadeb09ab7d7058e6c",
+        "size": 46669148
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_nor_gl_8k.jpg",
+        "md5": "19b1c05ae1f9400a41af485f5945ca9e",
+        "size": 26147091
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/8k/walnut_veneer/walnut_veneer_nor_gl_8k.png",
+        "md5": "ea79316b14952fea96777fe2e767ba06",
+        "size": 298047956
+      }
+    }
+  },
+  "Rough": {
+    "16k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_rough_16k.exr",
+        "md5": "81f3ed7c9dcd0b84fd6855fa8bd98388",
+        "size": 289209942
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_rough_16k.jpg",
+        "md5": "07a5621e3ca913b58d1800aa8a809ea4",
+        "size": 116560212
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/16k/walnut_veneer/walnut_veneer_rough_16k.png",
+        "md5": "957d4503a57c145c10d3ce0c56302888",
+        "size": 443020140
+      }
+    },
+    "1k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_rough_1k.exr",
+        "md5": "e4019ba85e9e9b77da675387edd2a127",
+        "size": 1164059
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_rough_1k.jpg",
+        "md5": "bc27156b65a17eb96f3aef9548584a66",
+        "size": 556628
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/walnut_veneer/walnut_veneer_rough_1k.png",
+        "md5": "9aa6d1393eaf591ee7ac9302d10e4106",
+        "size": 1787902
+      }
+    },
+    "2k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_rough_2k.exr",
+        "md5": "ffaba47606066da5be9de7de36573ea1",
+        "size": 4715093
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_rough_2k.jpg",
+        "md5": "cff9cdcca482f6c71d7ecf49b3789f9e",
+        "size": 2426374
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/walnut_veneer/walnut_veneer_rough_2k.png",
+        "md5": "55802c6bbdd1f358414d3e759fe41688",
+        "size": 7321795
+      }
+    },
+    "4k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_rough_4k.exr",
+        "md5": "35a7cb99843d15aa14635daf0290041d",
+        "size": 19269482
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_rough_4k.jpg",
+        "md5": "31debbbee257cd47dbc9d160dfe82776",
+        "size": 10663086
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/4k/walnut_veneer/walnut_veneer_rough_4k.png",
+        "md5": "cd02dab630c777a945708284039bf8c2",
+        "size": 29806802
+      }
+    },
+    "8k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_rough_8k.exr",
+        "md5": "43125507b0d0e3822c464705a411790d",
+        "size": 76881353
+      },
+      "jpg": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_rough_8k.jpg",
+        "md5": "f37e4392e41f2faaae8215e8e00f4a00",
+        "size": 40438384
+      },
+      "png": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/8k/walnut_veneer/walnut_veneer_rough_8k.png",
+        "md5": "7e5d1310493c3d7a64d6b88a6f9a0021",
+        "size": 117886121
+      }
+    }
+  },
+  "gltf": {
+    "16k": {
+      "gltf": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/16k/walnut_veneer/walnut_veneer_16k.gltf",
+        "md5": "cd22057901c6461b5dc98f5273027646",
+        "size": 2552,
+        "include": {
+          "textures/walnut_veneer_diff_16k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_diff_16k.jpg",
+            "md5": "a9a6ae54a249e3eba38c4a17e4587184",
+            "size": 82982042
+          },
+          "textures/walnut_veneer_arm_16k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_arm_16k.jpg",
+            "md5": "c70f97eee588e0ffcf2b5790181ae4e8",
+            "size": 156836826
+          },
+          "walnut_veneer.bin": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/8k/walnut_veneer/walnut_veneer.bin",
+            "md5": "e5a5ddddec68a2e20f92976e87e297ed",
+            "size": 2368148
+          }
+        }
+      }
+    },
+    "1k": {
+      "gltf": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/1k/walnut_veneer/walnut_veneer_1k.gltf",
+        "md5": "bde7cdd2c429a701d0f6b9f3c632a28e",
+        "size": 2550,
+        "include": {
+          "textures/walnut_veneer_diff_1k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_diff_1k.jpg",
+            "md5": "70e160b3d44d414728a2fb4194fde2a6",
+            "size": 496596
+          },
+          "textures/walnut_veneer_arm_1k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_arm_1k.jpg",
+            "md5": "7db3474a1d0d1ed15e0cc349541ac1e3",
+            "size": 641173
+          },
+          "walnut_veneer.bin": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/8k/walnut_veneer/walnut_veneer.bin",
+            "md5": "e5a5ddddec68a2e20f92976e87e297ed",
+            "size": 2368148
+          }
+        }
+      }
+    },
+    "2k": {
+      "gltf": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/2k/walnut_veneer/walnut_veneer_2k.gltf",
+        "md5": "7ec9dcf1199dc1407c9f011c32483e26",
+        "size": 2550,
+        "include": {
+          "textures/walnut_veneer_diff_2k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_diff_2k.jpg",
+            "md5": "48000eac719ccbae27319f942ab5bf2c",
+            "size": 2060618
+          },
+          "textures/walnut_veneer_arm_2k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_arm_2k.jpg",
+            "md5": "4206792dd08b6bc72b7d2c4341aa8237",
+            "size": 2825925
+          },
+          "walnut_veneer.bin": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/8k/walnut_veneer/walnut_veneer.bin",
+            "md5": "e5a5ddddec68a2e20f92976e87e297ed",
+            "size": 2368148
+          }
+        }
+      }
+    },
+    "4k": {
+      "gltf": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/4k/walnut_veneer/walnut_veneer_4k.gltf",
+        "md5": "57370cf001be0836cab9cbc7e3de49b6",
+        "size": 2550,
+        "include": {
+          "textures/walnut_veneer_diff_4k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_diff_4k.jpg",
+            "md5": "87ff40ee00151386f9db42ee7cd33a9f",
+            "size": 8345790
+          },
+          "textures/walnut_veneer_arm_4k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_arm_4k.jpg",
+            "md5": "67efaeb9d65ff40d51230b3e5bd087b2",
+            "size": 12508781
+          },
+          "walnut_veneer.bin": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/8k/walnut_veneer/walnut_veneer.bin",
+            "md5": "e5a5ddddec68a2e20f92976e87e297ed",
+            "size": 2368148
+          }
+        }
+      }
+    },
+    "8k": {
+      "gltf": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/8k/walnut_veneer/walnut_veneer_8k.gltf",
+        "md5": "db897e4a8729fbba576a77dcac088cb6",
+        "size": 2550,
+        "include": {
+          "textures/walnut_veneer_diff_8k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_diff_8k.jpg",
+            "md5": "9d82074eefcf066c988fff97e76595c9",
+            "size": 28779853
+          },
+          "textures/walnut_veneer_arm_8k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_arm_8k.jpg",
+            "md5": "2adb786b43d8ae0eb11cbd07b8d57d66",
+            "size": 49452061
+          },
+          "walnut_veneer.bin": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/gltf/8k/walnut_veneer/walnut_veneer.bin",
+            "md5": "e5a5ddddec68a2e20f92976e87e297ed",
+            "size": 2368148
+          }
+        }
+      }
+    }
+  },
+  "mtlx": {
+    "16k": {
+      "mtlx": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/mtlx/16k/walnut_veneer/walnut_veneer_16k.mtlx",
+        "md5": "313137b24e3215f983dafad9dc781bcd",
+        "size": 4720,
+        "include": {
+          "textures/walnut_veneer_ao_16k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_ao_16k.jpg",
+            "md5": "ee756fe94c057ebec469c1091e420b13",
+            "size": 87050735
+          },
+          "textures/walnut_veneer_diff_16k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/16k/walnut_veneer/walnut_veneer_diff_16k.jpg",
+            "md5": "a9a6ae54a249e3eba38c4a17e4587184",
+            "size": 82982042
+          },
+          "textures/walnut_veneer_disp_16k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/16k/walnut_veneer/walnut_veneer_disp_16k.png",
+            "md5": "c432d4768f93f9a6bbb4780163552e7d",
+            "size": 248781933
+          },
+          "textures/walnut_veneer_nor_gl_16k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_nor_gl_16k.exr",
+            "md5": "ada77e7f6465ded61d112cf550a6cb99",
+            "size": 137831490
+          },
+          "textures/walnut_veneer_rough_16k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/16k/walnut_veneer/walnut_veneer_rough_16k.exr",
+            "md5": "81f3ed7c9dcd0b84fd6855fa8bd98388",
+            "size": 289209942
+          }
+        }
+      }
+    },
+    "1k": {
+      "mtlx": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/mtlx/1k/walnut_veneer/walnut_veneer_1k.mtlx",
+        "md5": "9ac15fa2b257a862472423fdcf961e92",
+        "size": 4716,
+        "include": {
+          "textures/walnut_veneer_ao_1k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_ao_1k.jpg",
+            "md5": "f5586ea6e77b34bfd598f1dcc2acad69",
+            "size": 466570
+          },
+          "textures/walnut_veneer_diff_1k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/walnut_veneer/walnut_veneer_diff_1k.jpg",
+            "md5": "70e160b3d44d414728a2fb4194fde2a6",
+            "size": 496596
+          },
+          "textures/walnut_veneer_disp_1k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/walnut_veneer/walnut_veneer_disp_1k.png",
+            "md5": "b8838481119bf98c90ef6fd335622e6f",
+            "size": 1587916
+          },
+          "textures/walnut_veneer_nor_gl_1k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_nor_gl_1k.exr",
+            "md5": "206ca344a75384156376978b73f73976",
+            "size": 921229
+          },
+          "textures/walnut_veneer_rough_1k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/1k/walnut_veneer/walnut_veneer_rough_1k.exr",
+            "md5": "e4019ba85e9e9b77da675387edd2a127",
+            "size": 1164059
+          }
+        }
+      }
+    },
+    "2k": {
+      "mtlx": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/mtlx/2k/walnut_veneer/walnut_veneer_2k.mtlx",
+        "md5": "16ef4b1afb6e4d4f1f2b0a577f4efa86",
+        "size": 4716,
+        "include": {
+          "textures/walnut_veneer_ao_2k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_ao_2k.jpg",
+            "md5": "bf48bb9c445e3d93bd5af0b51495f3eb",
+            "size": 2032780
+          },
+          "textures/walnut_veneer_diff_2k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer/walnut_veneer_diff_2k.jpg",
+            "md5": "48000eac719ccbae27319f942ab5bf2c",
+            "size": 2060618
+          },
+          "textures/walnut_veneer_disp_2k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/walnut_veneer/walnut_veneer_disp_2k.png",
+            "md5": "6e72f5fd3e82606cc598314c3e4a3a00",
+            "size": 6051358
+          },
+          "textures/walnut_veneer_nor_gl_2k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_nor_gl_2k.exr",
+            "md5": "25a09d3212fd4e97be111fd173c7d7e8",
+            "size": 3912921
+          },
+          "textures/walnut_veneer_rough_2k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/2k/walnut_veneer/walnut_veneer_rough_2k.exr",
+            "md5": "ffaba47606066da5be9de7de36573ea1",
+            "size": 4715093
+          }
+        }
+      }
+    },
+    "4k": {
+      "mtlx": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/mtlx/4k/walnut_veneer/walnut_veneer_4k.mtlx",
+        "md5": "ebb08d54cd8d871bdc639f3362da8a10",
+        "size": 4716,
+        "include": {
+          "textures/walnut_veneer_ao_4k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_ao_4k.jpg",
+            "md5": "0e3672ad72ba27a15ffb50042ea741c5",
+            "size": 8267170
+          },
+          "textures/walnut_veneer_diff_4k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer/walnut_veneer_diff_4k.jpg",
+            "md5": "87ff40ee00151386f9db42ee7cd33a9f",
+            "size": 8345790
+          },
+          "textures/walnut_veneer_disp_4k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/4k/walnut_veneer/walnut_veneer_disp_4k.png",
+            "md5": "cc4755630cd131126dc796564e9c9992",
+            "size": 22509972
+          },
+          "textures/walnut_veneer_nor_gl_4k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_nor_gl_4k.exr",
+            "md5": "e0493e579cfa68e6e9319ca5fd673cb3",
+            "size": 14269842
+          },
+          "textures/walnut_veneer_rough_4k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/4k/walnut_veneer/walnut_veneer_rough_4k.exr",
+            "md5": "35a7cb99843d15aa14635daf0290041d",
+            "size": 19269482
+          }
+        }
+      }
+    },
+    "8k": {
+      "mtlx": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/mtlx/8k/walnut_veneer/walnut_veneer_8k.mtlx",
+        "md5": "4f4f624f44ab58ece8446999a6a3fb89",
+        "size": 4716,
+        "include": {
+          "textures/walnut_veneer_ao_8k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_ao_8k.jpg",
+            "md5": "da4d17210eab90109ac0bbff91395fc5",
+            "size": 29037326
+          },
+          "textures/walnut_veneer_diff_8k.jpg": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/8k/walnut_veneer/walnut_veneer_diff_8k.jpg",
+            "md5": "9d82074eefcf066c988fff97e76595c9",
+            "size": 28779853
+          },
+          "textures/walnut_veneer_disp_8k.png": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/8k/walnut_veneer/walnut_veneer_disp_8k.png",
+            "md5": "6db8ace971a665bd45a851ed095701db",
+            "size": 78226323
+          },
+          "textures/walnut_veneer_nor_gl_8k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_nor_gl_8k.exr",
+            "md5": "d188d77c2d8acecadeb09ab7d7058e6c",
+            "size": 46669148
+          },
+          "textures/walnut_veneer_rough_8k.exr": {
+            "url": "https://dl.polyhaven.org/file/ph-assets/Textures/exr/8k/walnut_veneer/walnut_veneer_rough_8k.exr",
+            "md5": "43125507b0d0e3822c464705a411790d",
+            "size": 76881353
+          }
+        }
+      }
+    }
+  }
+}

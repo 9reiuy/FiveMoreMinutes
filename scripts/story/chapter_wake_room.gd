@@ -36,10 +36,11 @@ var entry_collision: StaticBody2D
 var wake_camera_weight := 0.
 var wake_hint: Control
 var sleeping_pose: Node2D
+var authored_cutout := preload("res://scripts/dream/authored_occlusion_cutout.gd").new()
 func _enter_tree() -> void:
 	add_to_group(&"dream_world")
 	set_meta(&"story_bedroom",true)
-	set_meta(&"preserve_local_palette",true)
+	set_meta(&"preserve_authored_colour",true)
 func _ready() -> void:
 	if wake_mode: mode="WAKE"
 	preload("res://scripts/app/game_input_actions.gd").configure()
@@ -59,6 +60,13 @@ func _ready() -> void:
 	player.movement_enabled=true
 	player_depth_bridge.configure(player,player_depth_bridge.get_node("ActorDepthViewport"),player_depth_bridge.get_node("ActorDepthViewport/ActorDepthRenderRoot"),gameplay_canvas,[NodePath("CharacterVisual")])
 	player_depth_bridge.set_world_camera(camera_3d)
+	authored_cutout.watch_actor(player, player_depth_bridge)
+	authored_cutout.register_tree($Walls)
+	authored_cutout.register_tree($EntryDoor, true)
+	authored_cutout.register_tree($Vestibule, false, [&"Base"])
+	for fixture in $Furniture.get_children():
+		if fixture.has_meta(&"solid_size"):
+			authored_cutout.register_tree(fixture, false, [&"LCD"])
 	_build_sleeping_self()
 	body.visible=mode=="WAKE"
 	panel=UI.new(); add_child(panel)
@@ -113,6 +121,7 @@ func _build_sleeping_self() -> void:
 	sleeping_material.set_shader_parameter("sleep_texture",body.texture); body.material_override=sleeping_material
 func _process(_delta: float) -> void:
 	_update_projection()
+	authored_cutout.update_slots(camera_3d)
 	_update_entry_collision()
 	phone.visible=not finishing and not computer_overlay.visible and not medicine_ui.visible
 	proximity_hint.hide(); panel.status.hide()
@@ -203,4 +212,6 @@ func restore_after_failed_finish() -> void:
 	player.movement_enabled=true; wake_hint.hide()
 	var head: Sprite2D=sleeping_pose.get("head"); head.region_rect=Rect2(64,64,32,32)
 func _exit_tree() -> void:
+	if not has_meta(&"display_reparenting"):
+		authored_cutout.clear_slots()
 	preload("res://scripts/audio/sfx_manager.gd").stop_music(.2,get_instance_id())

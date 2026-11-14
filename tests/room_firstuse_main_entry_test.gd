@@ -41,7 +41,7 @@ func run()->void:
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	var initial_native:=Engine.get_frames_drawn()
 	var settings:Node=root.get_node("SettingsManager")
-	settings.set_setting(&"pixelation_enabled",true);settings.set_palette_enabled(true);settings.set_palette_scheme(1);settings.set_setting(&"shadow_quality","high")
+	settings.set_setting(&"pixelation_enabled",true); settings.set_setting(&"shadow_quality","high")
 	node_added.connect(added)
 	var main:Node=load("res://scenes/app/main.tscn").instantiate();root.add_child(main)
 	for frame in 4:await process_frame

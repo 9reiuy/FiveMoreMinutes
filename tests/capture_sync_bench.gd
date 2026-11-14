@@ -21,7 +21,6 @@ func run() -> void:
 	world.camera_aim_offset=Vector3.ZERO
 	world._update_camera_and_actor_projection(0.0)
 	display.set_selective_enabled(true)
-	display.set_palette_enabled(true)
 	for index in 4: await process_frame
 	for enemy in world.enemy_root.get_children(): enemy.process_mode=Node.PROCESS_MODE_DISABLED
 	world.player.set_process(false)

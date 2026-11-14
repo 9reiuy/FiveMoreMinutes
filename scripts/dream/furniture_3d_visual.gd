@@ -19,7 +19,6 @@ var _contact_shadow: MeshInstance3D
 var _pixel_sample: bool = false
 static var _contact_shadow_material: ShaderMaterial
 static var _sample_contact_shadow_material: ShaderMaterial
-static var _outline_material: ShaderMaterial
 
 var _cached_actor_sprite: VisualInstance3D
 var _cached_actor_sprite_resolved: bool = false
@@ -109,7 +108,6 @@ func configure(source: Node2D, visual_scene: PackedScene, debris_tex: Texture2D 
 
 	if visual_instance != null:
 		preload("res://scripts/dream/solid_shadow_caster_3d.gd").protect_shader_meshes(visual_instance)
-		_apply_furniture_outline(visual_instance)
 		_cached_seat_root = visual_instance.get_node_or_null("SeatRoot") as Node3D
 		_cached_seat_root_resolved = true
 		var _discard := actor_sprite
@@ -134,22 +132,6 @@ func configure(source: Node2D, visual_scene: PackedScene, debris_tex: Texture2D 
 
 		# Initial transform sync
 		_sync_transform()
-
-func _apply_furniture_outline(root_visual: Node3D) -> void:
-	if _outline_material == null:
-		_outline_material = ShaderMaterial.new()
-		_outline_material.shader = preload("res://shaders/dream3d/furniture_pixel_outline.gdshader")
-	var stack: Array[Node] = [root_visual]
-	while not stack.is_empty():
-		var node: Node = stack.pop_back()
-		if node is MeshInstance3D:
-			var mesh_node := node as MeshInstance3D
-			if mesh_node.mesh != null and mesh_node.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
-				# Existing damage/interaction overlays keep their own priority.
-				if mesh_node.material_overlay == null:
-					mesh_node.material_overlay = _outline_material
-		for child in node.get_children():
-			stack.append(child)
 
 func _sync_transform() -> bool:
 	if target_furniture == null or not is_instance_valid(target_furniture):

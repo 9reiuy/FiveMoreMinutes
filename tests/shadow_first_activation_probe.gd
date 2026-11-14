@@ -11,7 +11,7 @@ func run() -> void:
 	world.generate_on_ready=false; world.persist_profile=false; world.enable_game_start_cab_exit=false
 	var display=load("res://scenes/dream/preview/SelectivePixelPreview.tscn").instantiate()
 	display.world=world; display.preview_mode=false; root.add_child(display); paused=true
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	world.regenerate(41001)
 	world.player.global_position=Vector2(800,1416)
 	world._update_camera_and_actor_projection(0.0)

@@ -9,9 +9,6 @@ uniform bool warm_outline = false;
 uniform bool enemy_rim_enabled = true;
 uniform vec4 enemy_rim_color = vec4(1.0);
 uniform bool smoke_silhouette = false;
-uniform bool use_room_palette = false;
-uniform vec3 room_dark_ink;
-uniform vec3 room_light_ink;
 const vec3 DARK_INK = vec3(0.0);
 const vec3 COOL_INK = vec3(236.0, 239.0, 246.0) / 255.0;
 const vec3 GOLD_EDGE = vec3(249.0, 181.0, 106.0) / 255.0;
@@ -40,8 +37,8 @@ void fragment() {
 	DEPTH = reference_fragment_depth(reference_view_position(VERTEX, INV_VIEW_MATRIX, VIEW_MATRIX), FRAGCOORD.z, PROJECTION_MATRIX);
 	vec3 ink;
 	float opacity = source.a;
-	vec3 body_light = use_room_palette ? room_light_ink : COOL_INK;
-	vec3 body_dark = use_room_palette ? room_dark_ink : DARK_INK;
+	vec3 body_light = COOL_INK;
+	vec3 body_dark = DARK_INK;
 	if (source.a > .05) {
 		float tone = dot(source.rgb, vec3(.2126, .7152, .0722));
 		// Body ink placement was authored in the source sprite pass.

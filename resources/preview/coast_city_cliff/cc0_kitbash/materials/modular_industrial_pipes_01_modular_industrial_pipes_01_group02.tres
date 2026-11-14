@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://resources/preview/coast_city_cliff/cc0_kitbash/textures/modular_industrial_pipes_01_modular_industrial_pipes_01_group02_albedo_texture.res" id="1_juaaa"]
+[ext_resource type="Texture2D" path="res://resources/preview/coast_city_cliff/cc0_kitbash/textures/modular_industrial_pipes_01_modular_industrial_pipes_01_group02_metallic_texture.res" id="2_jyufp"]
+[ext_resource type="Texture2D" path="res://resources/preview/coast_city_cliff/cc0_kitbash/textures/modular_industrial_pipes_01_modular_industrial_pipes_01_group02_normal_texture.res" id="3_g3so2"]
+[ext_resource type="Texture2D" path="res://resources/preview/coast_city_cliff/cc0_kitbash/textures/modular_industrial_pipes_01_modular_industrial_pipes_01_group02_roughness_texture.res" id="4_5gulf"]
+
+[resource]
+resource_name = "modular_industrial_pipes_01_group02"
+albedo_color = Color(0.6901961, 0.7372549, 0.75686276, 1)
+albedo_texture = ExtResource("1_juaaa")
+metallic_specular = 0.08
+metallic_texture = ExtResource("2_jyufp")
+metallic_texture_channel = 2
+roughness = 0.87
+roughness_texture = ExtResource("4_5gulf")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.85
+normal_texture = ExtResource("3_g3so2")
+texture_filter = 2
+metadata/_gltf_primary_texture_coord = 0
+metadata/license = "CC0-1.0"

@@ -76,8 +76,18 @@ func set_power(enabled: bool) -> void:
 		for light in world.ceiling_light_root.find_children("*","Light3D",true,false): lights.append({"node":weakref(light),"energy":light.light_energy})
 		for mesh in world.ceiling_light_root.find_children("*","MeshInstance3D",true,false):
 			if mesh.material_override is StandardMaterial3D:
-				mesh.material_override=mesh.material_override.duplicate()
-				displays.append({"node":weakref(mesh),"emission":mesh.material_override.emission_enabled,"shading":mesh.material_override.shading_mode})
+				var source := mesh.material_override as StandardMaterial3D
+				var local := source.duplicate() as StandardMaterial3D
+				# Godot omits emission when duplicating the unshaded tube material.
+				if source.emission_enabled:
+					local.emission_enabled = true
+					local.emission = source.emission
+					local.emission_energy_multiplier = source.emission_energy_multiplier
+					local.emission_texture = source.emission_texture
+					local.emission_operator = source.emission_operator
+					local.emission_on_uv2 = source.emission_on_uv2
+				displays.append({"node":weakref(mesh),"emission":source.emission_enabled,"shading":source.shading_mode})
+				mesh.material_override = local
 	powered=enabled
 	for record in lights:
 		var light: Light3D=record.node.get_ref()

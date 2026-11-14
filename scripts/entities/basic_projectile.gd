@@ -1,7 +1,9 @@
 extends Node2D
 
 const CONFIG := preload("res://resources/demo_config.tres")
+const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const FURNITURE_CATALOG := preload("res://scripts/dream/office_furniture_catalog.gd")
+const ENEMY_HIT_ANCHOR := preload("res://scripts/dream/enemy_combat_text.gd")
 const PROJECTILE_TRAIL_PATH := NodePath("ProjectileTrail")
 const PROJECTILE_GLOW_SHADER := preload("res://shaders/projectile_visual_glow.gdshader")
 ## Presentation-only multiplier for the compact tracer head. Gameplay
@@ -73,6 +75,14 @@ var _cached_bullet_sprite: Sprite2D
 var _ray_query: PhysicsRayQueryParameters2D
 var _cast_exclude_rids: Array[RID] = []
 var _cached_dream_world: Node
+var _flight_camera: Camera3D
+var _flight_camera_id := 0
+var _flight_to_world := Transform3D.IDENTITY
+var _projected_wall_layer := 0
+var _projected_wall_offset := Vector2.ZERO
+static var _frustum_camera_id := 0
+static var _frustum_tick := -1
+static var _frustum: Array[Plane] = []
 static var _history_texture_pool: Dictionary = {}
 static var _history_image_pool: Dictionary = {}
 const MAX_POOLED_TEXTURES_PER_SIZE := 32
@@ -114,6 +124,63 @@ func enable_office_ballistics() -> void:
 	# Explicit 3D opt-in; old 2D retains its movement and collision contract.
 	office_ballistics = true
 	_update_office_tracer()
+
+
+func limit_flight_to_camera(world: Node3D, fallback_plane: Vector2) -> void:
+	_cached_dream_world = world
+	_flight_camera = world.camera_3d
+	_flight_camera_id = _flight_camera.get_instance_id()
+	var map: Node3D = world.actor_depth_bridges_root
+	var basis := map.global_basis.scaled(Vector3.ONE / float(world.CELL_PIXELS))
+	var origin := map.to_global(Vector3(0.0, fallback_plane.x, fallback_plane.y))
+	# Use the same frozen muzzle point and gameplay travel as the tracer.
+	if has_meta(&"shot_visual_origin"):
+		var muzzle_world: Vector3 = get_meta(&"shot_visual_origin")
+		var muzzle: Vector2 = get_meta(&"shot_gameplay_origin")
+		origin = muzzle_world - basis * Vector3(muzzle.x, 0.0, muzzle.y)
+	_flight_to_world = Transform3D(basis, origin)
+	if world.has_method(&"get_projected_projectile_wall_layer"):
+		_projected_wall_layer = world.get_projected_projectile_wall_layer()
+		if _projected_wall_layer != 0:
+			var local_origin := map.to_local(origin)
+			_projected_wall_offset = Vector2(local_origin.x, local_origin.z) * float(world.CELL_PIXELS)
+
+
+func _flight_frustum() -> Array[Plane]:
+	var tick := Engine.get_physics_frames()
+	if tick != _frustum_tick or _flight_camera_id != _frustum_camera_id:
+		_frustum_tick = tick
+		_frustum_camera_id = _flight_camera_id
+		_frustum = _flight_camera.get_frustum() if is_instance_valid(_flight_camera) and _flight_camera.is_current() else []
+	return _frustum
+
+
+func _visible_flight_fraction(start: Vector2, end: Vector2) -> float:
+	var planes := _flight_frustum()
+	if planes.is_empty():
+		return 0.0
+	var from_world := _flight_to_world * Vector3(start.x, 0.0, start.y)
+	var to_world := _flight_to_world * Vector3(end.x, 0.0, end.y)
+	var fraction := 1.0
+	for plane in planes:
+		var from_distance := plane.distance_to(from_world)
+		if from_distance > 0.00001:
+			return 0.0
+		var to_distance := plane.distance_to(to_world)
+		if to_distance > 0.00001:
+			fraction = minf(fraction, maxf(0.0, from_distance / (from_distance - to_distance)))
+	return fraction
+
+
+func _enemy_in_flight_view(enemy: Node2D) -> bool:
+	var planes := _flight_frustum()
+	if planes.is_empty() or not is_instance_valid(_cached_dream_world):
+		return false
+	var anchor := ENEMY_HIT_ANCHOR.hit_world_anchor(_cached_dream_world, enemy)
+	for plane in planes:
+		if plane.distance_to(anchor) > 0.00001:
+			return false
+	return true
 
 
 func _record_trail_position() -> void:
@@ -331,6 +398,15 @@ func _physics_process_office(delta: float) -> void:
 
 
 func _sweep_office_to(end: Vector2, count_range: bool) -> void:
+	var leaves_view := false
+	if _flight_camera_id != 0:
+		var fraction := _visible_flight_fraction(global_position, end)
+		if fraction <= 0.0:
+			_despawn(false)
+			return
+		leaves_view = fraction < 1.0
+		if leaves_view:
+			end = global_position.lerp(end, fraction)
 	# Requery the SAME tick's remaining segment after each permitted hit. A
 	# glass collider remains registered until deferred removal, so hit_targets
 	# excludes it immediately. No teleport through unseen solid geometry.
@@ -345,13 +421,16 @@ func _sweep_office_to(end: Vector2, count_range: bool) -> void:
 			global_position = end
 			_disperse_smoke_segment(start,global_position)
 			if count_range: traveled += start.distance_to(end)
+			if leaves_view: _despawn()
 			return
 		global_position = hit.get("position",end)
 		_disperse_smoke_segment(start,global_position)
 		if count_range: traveled += start.distance_to(global_position)
 		_handle_collision(hit.get("collider") as Node,hit.get("normal",Vector2.ZERO))
 		if consumed: return
-		if global_position.distance_squared_to(end) < 0.000001: return
+		if global_position.distance_squared_to(end) < 0.000001:
+			if leaves_view: _despawn()
+			return
 	# Fail closed on malformed stacks; never advance past an untested collider.
 	_despawn()
 
@@ -432,7 +511,7 @@ func setup(new_direction: Vector2, new_damage: float, new_max_distance: float = 
 	if new_speed > 0.0:
 		speed = new_speed
 	velocity = direction * speed
-	# max_distance is the formal range authority, but lifetime is also a
+	# max_distance is the weapon's range limit, but lifetime is also a
 	# defensive despawn limit.  After the requested 50% speed reduction, the
 	# old 1.4s limit would otherwise truncate a 270px shot at roughly 217px.
 	# Extend only as far as needed to reach the authored range; fast/custom
@@ -462,7 +541,7 @@ func setup(new_direction: Vector2, new_damage: float, new_max_distance: float = 
 		# Assault Rifle keeps its smaller tracer scale only; the projectile root
 		# and its swept collision path retain their original size/speed.
 		var visual_scale := 1.0
-		if weapon_id == &"assault_rifle":
+		if weapon_id in [&"assault_rifle", &"mp5"]:
 			visual_scale = clampf(
 				float(CONFIG.assault_rifle_projectile_visual_scale),
 				0.25,
@@ -606,6 +685,29 @@ func _dream_world() -> Node:
 	_cached_dream_world = get_tree().get_first_node_in_group(&"dream_world")
 	return _cached_dream_world
 
+
+func _collider_is_person(collider: Node) -> bool:
+	var nodes: Array[Node] = [collider]
+	if collider.has_method("get_damage_owner"):
+		var owner: Variant = collider.call("get_damage_owner")
+		if owner is Node:
+			nodes.append(owner)
+	for node in nodes:
+		if node.is_in_group(&"dream_enemies") or node.is_in_group(&"dream_player"):
+			return true
+	return false
+
+
+func _play_bullet_object_hit() -> void:
+	var world := _dream_world()
+	if world != null and world.has_method("get_gameplay_world_position"):
+		var height_pixels := float(get_meta(&"shot_height_pixels", 0.0))
+		var height := height_pixels / 32.0 if height_pixels > 0.0 else 0.65
+		var world_position: Variant = world.call("get_gameplay_world_position", global_position, height)
+		if world_position is Vector3 and SFX.play_world_sfx_3d(&"bullet_hit_object", world_position, 0.0, 28.0):
+			return
+	SFX.play_event(&"bullet_hit_object")
+
 func _disperse_smoke_segment(from: Vector2,to: Vector2) -> void:
 	var owner_world:=_dream_world()
 	if is_instance_valid(owner_world) and owner_world.has_method("disperse_smoke_segment"):
@@ -614,7 +716,6 @@ func _disperse_smoke_segment(from: Vector2,to: Vector2) -> void:
 
 func _cast_movement_segment(from_position: Vector2, to_position: Vector2) -> Dictionary:
 	_cast_exclude_rids.clear()
-	var furniture_hit: Dictionary = {}
 	var live_shooter := _get_live_shooter()
 	if live_shooter is CollisionObject2D:
 		_cast_exclude_rids.append((live_shooter as CollisionObject2D).get_rid())
@@ -624,14 +725,27 @@ func _cast_movement_segment(from_position: Vector2, to_position: Vector2) -> Dic
 		_ray_query.collide_with_bodies = true
 		_ray_query.collide_with_areas = true
 		_ray_query.hit_from_inside = true
+	# Narrow scenery can opt into the tracer's projected muzzle plane. The
+	# normal gameplay sweep still owns actors, glass and all other obstacles.
+	var nearest_hit: Dictionary = {}
+	var sweep_end := to_position
+	if _projected_wall_layer != 0:
+		_ray_query.from = from_position + _projected_wall_offset
+		_ray_query.to = to_position + _projected_wall_offset
+		_ray_query.collision_mask = _projected_wall_layer
+		_ray_query.exclude = _cast_exclude_rids
+		nearest_hit = space_state.intersect_ray(_ray_query)
+		if not nearest_hit.is_empty():
+			nearest_hit.position -= _projected_wall_offset
+			sweep_end = nearest_hit.position
 	_ray_query.from = from_position
-	_ray_query.to = to_position
+	_ray_query.to = sweep_end
 	_ray_query.collision_mask = PROJECTILE_COLLISION_MASK
 	for _attempt in range(64 if office_ballistics else MAX_IGNORED_COLLIDERS):
 		_ray_query.exclude = _cast_exclude_rids
 		var hit := space_state.intersect_ray(_ray_query)
 		if hit.is_empty():
-			return furniture_hit
+			return nearest_hit
 		var collider := hit.get("collider") as Node
 		if not _should_ignore_collider(collider):
 			var owner_node := _resolve_damage_owner(collider)
@@ -644,24 +758,26 @@ func _cast_movement_segment(from_position: Vector2, to_position: Vector2) -> Dic
 					if shot_height >= FURNITURE_CATALOG.height_offset(owner_node):
 						height_hit = {"position": hit.position}
 				else:
-					height_hit = FURNITURE_CATALOG.shot_hit(owner_node, from_position, to_position, shot_height)
+					height_hit = FURNITURE_CATALOG.shot_hit(owner_node, from_position, sweep_end, shot_height)
 				if not height_hit.is_empty():
 					hit["position"] = height_hit.position
-					if furniture_hit.is_empty() or from_position.distance_squared_to(hit.position) < from_position.distance_squared_to(furniture_hit.position):
-						furniture_hit = hit
+					if nearest_hit.is_empty() or from_position.distance_squared_to(hit.position) < from_position.distance_squared_to(nearest_hit.position):
+						nearest_hit = hit
 			else:
-				return furniture_hit if not furniture_hit.is_empty() and from_position.distance_squared_to(furniture_hit.position) < from_position.distance_squared_to(hit.position) else hit
+				return nearest_hit if not nearest_hit.is_empty() and from_position.distance_squared_to(nearest_hit.position) < from_position.distance_squared_to(hit.position) else hit
 		if collider is CollisionObject2D:
 			_cast_exclude_rids.append((collider as CollisionObject2D).get_rid())
 		else:
 			return {}
-	if office_ballistics and furniture_hit.is_empty():
+	if office_ballistics and nearest_hit.is_empty():
 		return {"position":from_position,"collider":null}
-	return furniture_hit
+	return nearest_hit
 
 
 func _should_ignore_collider(collider: Node) -> bool:
 	if collider == null:
+		return true
+	if _is_projected_wall(collider):
 		return true
 	var target := _resolve_damage_owner(collider)
 	if not is_instance_valid(target):
@@ -674,7 +790,13 @@ func _should_ignore_collider(collider: Node) -> bool:
 		return true
 	if source_faction == &"player" and target.is_in_group(&"dream_player"):
 		return true
-	return false
+	# A hurtbox can protrude over the edge even with its actor out of frame.
+	return _flight_camera_id != 0 and target is Node2D and target.is_in_group(&"dream_enemies") and not _enemy_in_flight_view(target)
+
+
+func _is_projected_wall(collider: Node) -> bool:
+	return _projected_wall_layer != 0 and collider is CollisionObject2D \
+		and (collider.collision_layer & _projected_wall_layer) != 0
 
 
 func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> void:
@@ -689,13 +811,16 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 	# callback and therefore retains its original collision/damage path.
 	if world is Node3D and world.has_method("spawn_firearm_impact_visual"):
 		var visual_normal := hit_normal if hit_normal.length_squared() > 0.0001 else -direction
+		var impact_position := global_position + _projected_wall_offset if _is_projected_wall(collider) else global_position
 		world.call(
 			"spawn_firearm_impact_visual",
-			global_position,
+			impact_position,
 			visual_normal,
 			collider,
 			float(get_meta(&"shot_height_pixels", 0.0))
 		)
+	if not _collider_is_person(collider):
+		_play_bullet_object_hit()
 	# Legacy DoorLeafCollision2D is terminal. Office bullets damage it and pass.
 	# Impacts still use the real hinge; penetrating a locked door does not unlock it.
 	if collider.has_meta(&"physical_door") and bool(collider.get_meta(&"physical_door", false)):
@@ -840,16 +965,17 @@ func _get_live_shooter() -> Node:
 	return instance_from_id(shooter_instance_id) as Node
 
 
-func _despawn() -> void:
+func _despawn(keep_terminal_trail: bool = true) -> void:
 	if consumed: return
 	consumed = true
 	remove_from_group(&"active_basic_projectiles")
 	remove_from_group(&"dream_projectiles")
-	if office_ballistics:
+	if office_ballistics and keep_terminal_trail:
 		_record_trail_position()
 		_request_office_tracer_update()
 		_terminal_trail_remaining = TERMINAL_TRAIL_SECONDS
 		# Remaining ticks only fade presentation: consumed blocks movement/damage.
 	else:
+		if not keep_terminal_trail: hide()
 		set_physics_process(false)
 		queue_free()

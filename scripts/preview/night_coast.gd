@@ -2,6 +2,9 @@ extends Node3D
 ## Runtime controller for the authored, editor-visible night_coast.tscn.
 ## Saved scene nodes own geometry, materials and layout; this script only animates them.
 const FLOW = preload("res://scripts/simulation/surface_flow.gd")
+const BEACH_PROFILE = preload("res://scripts/preview/coast_beach_profile.gd")
+const RIGHT_SHORE_PROFILE = preload("res://scripts/preview/coast_right_shore_profile.gd")
+const PLAYER_MOVE_SPEED := DemoConfig.DEFAULT_PLAYER_MOVE_SPEED / DemoConfig.GAMEPLAY_PIXELS_PER_WORLD_UNIT
 const SLOPE_MOUNDS: Array[Vector4]=[Vector4(-7.4,26.,2.,.80),Vector4(.8,24.8,1.8,.70),Vector4(-7.6,20.4,1.5,.55),Vector4(1.3,18.5,1.8,.65),Vector4(-6.6,15.2,1.6,.60),Vector4(.2,30.,2.1,.85)]
 var slope_dressing: RefCounted
 var flow: RefCounted
@@ -44,8 +47,12 @@ var pixel_materials: Array[ShaderMaterial]=[]
 var atmosphere: RefCounted
 var animated_surfaces: Array[ShaderMaterial]=[]
 var spatial_lighting: Node3D
+var broad_beach := false
+var right_shore := false
 
 func _ready() -> void:
+ broad_beach=bool(get_meta(&"broad_beach",false))
+ right_shore=bool(get_meta(&"right_shore",false))
  layout=preload("res://scripts/preview/coast_authored_layout.gd").new()
  layout.bind(self)
  camera=get_node("CoastCamera")
@@ -111,7 +118,7 @@ func _ready() -> void:
  sand_material.set_shader_parameter("coast_shape",coast_shape_texture)
  _place_character()
  update_camera(0,true)
- set_pixel_enabled(bool(SettingsManager.get_setting(&"pixelation_enabled",true)))
+ set_pixel_enabled(bool(SettingsManager.get_setting(&"pixelation_enabled",false)))
  SettingsManager.setting_changed.connect(_on_pixel_setting)
  _update_light()
 
@@ -197,7 +204,9 @@ func _build_coast_shape() -> void:
    var i: int=(y*256+x)*4
    pixels[i]=surface_height(px,pz)
    var local: Vector3=layout.local_point(px,pz)
-   pixels[i+1]=coast_distance(local.x,local.z)
+   var shore:=coast_distance(local.x,local.z)
+   if right_shore: pixels[i+1]=RIGHT_SHORE_PROFILE.distance(local.x,local.z)
+   else: pixels[i+1]=BEACH_PROFILE.distance(local.x,local.z,shore) if broad_beach else shore
    pixels[i+2]=obstacle_distance(Vector2(px,pz))
    pixels[i+3]=slope_mound_height(px,pz)
  coast_shape_texture=ImageTexture.create_from_image(Image.create_from_data(256,256,false,Image.FORMAT_RGBAF,pixels.to_byte_array()))
@@ -227,8 +236,26 @@ func update_camera(delta: float,snap: bool=false) -> void:
  var look_target:=look_at_player.lerp(look_at_sea,camera_reveal)
  if snap: camera.position=target_position
  else: camera.position=camera.position.lerp(target_position,1.0-exp(-delta*6.0))
+ if broad_beach:
+  camera.position.y=maxf(camera.position.y,surface_height(camera.position.x,camera.position.z)+.27)
  camera.look_at(to_global(look_target))
  camera.basis=camera.basis*camera_basis_adjustment
+ if right_shore:
+  var view_height:=float(get_viewport().get_visible_rect().size.y)
+  var foot: Vector2=camera.unproject_position(to_global(player_position+Vector3(0,-.12,0)))
+  var bottom:=view_height-18.0
+  if foot.y>bottom:
+   var focal:=camera.get_camera_projection().y.y*view_height*.5
+   var correction:=atan((foot.y-view_height*.5)/focal)-atan((bottom-view_height*.5)/focal)
+   camera.rotate_object_local(Vector3.RIGHT,-correction)
+ if right_shore:
+  var view_height:=float(get_viewport().get_visible_rect().size.y)
+  var foot: Vector2=camera.unproject_position(to_global(player_position+Vector3(0,-.12,0)))
+  var bottom:=view_height-18.0
+  if foot.y>bottom:
+   var focal:=camera.get_camera_projection().y.y*view_height*.5
+   var correction:=atan((foot.y-view_height*.5)/focal)-atan((bottom-view_height*.5)/focal)
+   camera.rotate_object_local(Vector3.RIGHT,-correction)
 
 func _unhandled_input(event: InputEvent) -> void:
  if story_mode: return
@@ -268,14 +295,17 @@ func advance(delta: float,direction: Vector2=Vector2.ZERO) -> void:
  if paused: return
  clock+=delta
  var previous:=player_position
- player_position+=Vector3(direction.x,0,direction.y)*delta*1.5
+ player_position+=Vector3(direction.x,0,direction.y)*delta*PLAYER_MOVE_SPEED
  player_position=slope_dressing.resolve_motion(previous,player_position)
  var local: Vector3=layout.local_point(player_position.x,player_position.z)
  local.z=clampf(local.z,6.3,25.0)
  var half_width:=maxf(.10,ridge_width(local.z)-.5)
  if bool(get_meta("cliff_platform_sample",false)):
   half_width=preload("res://scripts/preview/coast_cliff_profile.gd").platform_width(local.z)-.9
+ if broad_beach:
+  half_width=lerpf(8.0,half_width,smoothstep(11.0,17.0,local.z))
  local.x=clampf(local.x,ridge_center(local.z)-half_width,ridge_center(local.z)+half_width)
+ if right_shore: local.x=clampf(local.x,RIGHT_SHORE_PROFILE.edge(local.z)+1.4,4.5)
  player_position=layout.terrain.transform*local
  _place_character()
  update_camera(delta)
@@ -325,6 +355,14 @@ func _update_light() -> void:
  sand_material.set_shader_parameter("moon_visibility",moon_visibility)
  atmosphere.update(clock,moon_visibility,self)
  if spatial_lighting!=null: spatial_lighting.update_lighting(moon_visibility,clock)
+ if right_shore and spatial_lighting!=null:
+  var coast_light_a: Light3D=spatial_lighting.get_node("CoastLocalColours/WestQuayLight")
+  var coast_light_b: Light3D=spatial_lighting.get_node("CoastLocalColours/EastFreightLight")
+  for material in animated_surfaces:
+   material.set_shader_parameter("shore_light_a_position",coast_light_a.global_position)
+   material.set_shader_parameter("shore_light_b_position",coast_light_b.global_position)
+   material.set_shader_parameter("shore_light_a_colour",coast_light_a.light_color*coast_light_a.light_energy)
+   material.set_shader_parameter("shore_light_b_colour",coast_light_b.light_color*coast_light_b.light_energy)
  for material in pixel_materials: material.set_shader_parameter("moon_visibility",moon_visibility)
  var horizon: Vector2=camera.unproject_position(Vector3(camera.global_position.x,0,-800))
  sky_material.set_shader_parameter("horizon_y",clampf(horizon.y/maxf(sky.size.y,1.),0,1))

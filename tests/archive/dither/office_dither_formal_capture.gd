@@ -32,9 +32,7 @@ func _run() -> void:
 	for pixels in [false, true]:
 		for palette in [false, true]:
 			settings.values["pixelation_enabled"] = pixels
-			settings.values["palette_enabled"] = palette
 			settings.setting_changed.emit(&"pixelation_enabled", pixels)
-			settings.setting_changed.emit(&"palette_enabled", palette)
 			await create_timer(1.0).timeout
 			await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png("res://.runtime/dither_formal/pixel_%d_palette_%d.png" % [int(pixels),int(palette)])

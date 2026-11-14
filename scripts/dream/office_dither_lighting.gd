@@ -2,10 +2,7 @@ extends Node
 ## One component per 3D Dream world, sharing compiled variants but not materials.
 const GRID_STEP := 1.0 / 32.0
 const INCLUDE := "res://shaders/dream3d/office_dither_lighting.gdshaderinc"
-const OUTLINE_SHADER_PATH := "res://shaders/dream3d/furniture_pixel_outline.gdshader"
 static var shader_cache: Dictionary = {}
-## Shared outline material -> its cutout-enabled copy (occluder furniture only).
-static var cutout_outline_cache: Dictionary = {}
 ## Shader RID/instance_id -> whether its source declares occlusion_cutout_enabled.
 ## Avoids scanning shader.code (multi-KB string) up to 24 meshes/frame in _apply.
 static var _shader_has_cutout_uniform: Dictionary = {}
@@ -76,11 +73,6 @@ func _apply(mesh: MeshInstance3D) -> void:
 	if mesh.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
 		return
 	var furniture := _is_furniture_occluder(mesh)
-	if furniture:
-		# Furniture keeps its own render layers: the cutout is single-pass (the
-		# body discards its hole core in the transparent list) and needs no
-		# separate behind-camera layer.
-		_enable_outline_cutout(mesh)
 	# Write occlusion_cutout_enabled only AFTER dither material replacement so
 	# the live ShaderMaterial (not the discarded pre-dither source) gets the flag.
 	if mesh.material_override != null:
@@ -111,23 +103,6 @@ func _apply(mesh: MeshInstance3D) -> void:
 				if live_surface != null and live_surface.shader != null and _shader_supports_cutout(live_surface.shader):
 					if live_surface.get_shader_parameter("occlusion_cutout_enabled") != true:
 						live_surface.set_shader_parameter("occlusion_cutout_enabled", true)
-
-
-## The black inverted-hull outline (Furniture3DVisual) is drawn after the body.
-## Inside a cutout hole the body is discarded, so the hull must discard there
-## too or its back faces paint the hole black.  Swap the shared outline for a
-## shared cutout-enabled copy; other overlays (damage/interaction) are untouched.
-func _enable_outline_cutout(mesh: MeshInstance3D) -> void:
-	var overlay := mesh.material_overlay as ShaderMaterial
-	if overlay == null or overlay.shader == null or overlay.shader.resource_path != OUTLINE_SHADER_PATH:
-		return
-	if overlay.get_shader_parameter("occlusion_cutout_enabled") == true:
-		return
-	if not cutout_outline_cache.has(overlay):
-		var copy: ShaderMaterial = overlay.duplicate()
-		copy.set_shader_parameter("occlusion_cutout_enabled", true)
-		cutout_outline_cache[overlay] = copy
-	mesh.material_overlay = cutout_outline_cache[overlay]
 
 
 ## A mesh counts as furniture when one of its ancestors carries the marker set by
@@ -208,7 +183,7 @@ func _material(source: Material) -> Material:
 		copy.set_shader_parameter("office_dither_enabled", true)
 		materials[source] = copy
 	var live: ShaderMaterial=materials[source]
-	var tonal:=bool(world.get_meta(&"tonal_enhancement_enabled",false)) and not bool(world.get_meta(&"preserve_local_palette",false))
+	var tonal:=bool(world.get_meta(&"tonal_enhancement_enabled",false)) and not bool(world.get_meta(&"preserve_authored_colour",false))
 	if live.get_shader_parameter("office_tonal_sample")!=tonal:
 		live.set_shader_parameter("office_tonal_sample",tonal)
 	return live

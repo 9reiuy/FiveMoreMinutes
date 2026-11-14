@@ -1,6 +1,6 @@
 param(
     [ValidateSet('Functional', 'Performance')][string]$Mode = 'Functional',
-    [ValidateSet('gl_compatibility', 'forward_plus', 'mobile')][string]$Renderer = 'gl_compatibility',
+    [ValidateSet('gl_compatibility', 'forward_plus', 'mobile')][string]$Renderer = 'forward_plus',
     [string]$Godot = 'E:\Godot\Godot_v4.7.1-stable_win64.exe',
     [switch]$CheckOnly
 )

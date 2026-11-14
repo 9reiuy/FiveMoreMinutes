@@ -35,7 +35,7 @@ func run() -> void:
 	AudioServer.set_bus_mute(0,true);root.size=Vector2i(1280,720);Engine.max_fps=60
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT))
 	var settings:=root.get_node("SettingsManager")
-	settings.set_setting(&"pixelation_enabled",true);settings.set_palette_enabled(true)
+	settings.set_setting(&"pixelation_enabled",true)
 	main=load("res://scenes/app/main.tscn").instantiate();root.add_child(main);await settle()
 	main.persistent_day_state=main._create_initial_state();main.persistent_day_state.tutorial_completed=true
 	seed(120);main._show_dream("basic");await settle()
@@ -64,17 +64,15 @@ func run() -> void:
 		enemy.set_physics_process(false)
 	var mounted:=await shot("wall_mounted")
 	var cylinder_mesh: MeshInstance3D=tank.visual.get_child(0)
-	print("EXTINGUISHER_PAINT surfaces=",cylinder_mesh.mesh.get_surface_count()," preserve=",cylinder_mesh.get_surface_override_material(1).get_shader_parameter("preserve_red")," vertices=",cylinder_mesh.mesh.surface_get_array_len(1)," palette=",world.get_viewport().get_node_or_null("WorldPaletteLayer")!=null)
+	print("EXTINGUISHER_PAINT surfaces=",cylinder_mesh.mesh.get_surface_count()," preserve=",cylinder_mesh.get_surface_override_material(1).get_shader_parameter("preserve_red")," vertices=",cylinder_mesh.mesh.surface_get_array_len(1)," palette=",world.get_viewport().get_node_or_null("WorldSemanticLayer")!=null)
 	check(cylinder_mesh.get_surface_override_material(1).get_shader_parameter("preserve_red"),"Paint detects palette layer installed after floor generation")
 	check(red_pixels(mounted)>8,"Mounted cylinder remains visibly red with palette enabled")
 	# A clear-space material probe separates palette errors from wall occlusion.
 	var original_position: Vector2=tank.global_position
 	tank.global_position=world.player.global_position+Vector2(28,25);tank._sync_visual()
 	await shot("paint_clear_space")
-	settings.set_palette_enabled(false)
 	var unfiltered:=await shot("paint_filter_off")
 	check(red_pixels(unfiltered)>8,"Red paint survives switching the palette off")
-	settings.set_palette_enabled(true)
 	tank.global_position=original_position;tank._sync_visual()
 	for i in 2:
 		var bullet=load("res://scenes/entities/basic_projectile.tscn").instantiate()
@@ -161,7 +159,7 @@ func run() -> void:
 	system.advance(12)
 	await shot("smoke_cleared")
 	check(not bridge.lit_material.get_shader_parameter("smoke_silhouette"),"Clearing gas restores original player materials")
-	check(bridge.lit_material.get_shader_parameter("enemy_rim_enabled"),"Player white outline returns after gas clears")
+	check(not bridge.lit_material.get_shader_parameter("enemy_rim_enabled"),"Player remains unoutlined after gas clears")
 	check(system.hidden_enemies.is_empty() and not tank.smoke_silhouette,"Expiration clears enemy concealment and cylinder silhouette together")
 	main.free();await frames(3)
 	print("FIRE_EXTINGUISHER_GPU checks=",checks," failures=",failures)

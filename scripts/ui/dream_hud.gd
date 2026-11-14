@@ -3,6 +3,7 @@ extends Control
 @export var config: DemoConfig
 
 @onready var dash_icon: TextureRect = $DashIndicator/DashIcon
+@onready var liquid_health: Control = $LiquidHealthMeter
 @onready var endless_day_area: Control = $EndlessDayArea
 @onready var endless_day_label: Label = $EndlessDayArea/DayLabel
 @onready var endless_day_progress: ProgressBar = $EndlessDayArea/DayProgress
@@ -30,6 +31,7 @@ var vhs_preview_rect: ColorRect = null
 
 
 func _ready() -> void:
+	liquid_health.set_health(health, maximum_health)
 	_update_dash_indicator()
 	endless_day_area.visible = endless_mode
 	dash_icon.visible = false
@@ -99,7 +101,13 @@ func set_endless_day_progress(day: int, progress: float) -> void:
 func set_health(current: float, maximum: float) -> void:
 	health = current
 	maximum_health = maximum
+	if is_instance_valid(liquid_health):
+		liquid_health.set_health(current, maximum)
 	queue_redraw()
+
+
+func set_health_motion_source(actor: Node) -> void:
+	liquid_health.set_motion_source(actor)
 
 
 func set_weapon_state(

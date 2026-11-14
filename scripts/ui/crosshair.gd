@@ -60,6 +60,8 @@ func get_current_crosshair_shape() -> CrosshairShape:
 static func get_shape_for_weapon_id(weapon_id: String) -> CrosshairShape:
 	if weapon_id.is_empty():
 		return CrosshairShape.SQUARE
+	if DreamGunAtlas.get_category(weapon_id) == DreamGunAtlas.CATEGORY_MELEE:
+		return CrosshairShape.SQUARE
 	match weapon_id:
 		"lucille", "books":
 			return CrosshairShape.SQUARE

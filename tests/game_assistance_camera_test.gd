@@ -52,7 +52,6 @@ func run() -> void:
 	if pixel: output+="/pixel_palette"
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	settings.set_setting(&"pixelation_enabled",pixel)
-	settings.set_palette_enabled(pixel)
 	settings.set_setting(&"auto_vault_enabled",true)
 	settings.set_setting(&"screen_shake_enabled",true)
 	main=load("res://scenes/app/main.tscn").instantiate()

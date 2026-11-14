@@ -12,7 +12,6 @@ func run() -> void:
 	display.world=world; display.preview_mode=false; root.add_child(display)
 	world.set_meta(&"test_legacy_shell_atlas","--no-atlas" in OS.get_cmdline_user_args())
 	display.set_selective_enabled(not OS.get_cmdline_user_args().has("--no-pixel"))
-	display.set_palette_enabled(not OS.get_cmdline_user_args().has("--no-palette"))
 	if not world.regenerate(120): quit(1); return
 	for index in 30: await process_frame
 	for room in world.rooms:

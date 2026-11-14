@@ -12,8 +12,8 @@ const HURTBOX_SCRIPT := preload("res://scenes/dream/rooms/hurtbox.gd")
 
 const MAX_HP := 100.0
 const NAV=preload("res://scripts/dream/units/robot_navigation.gd")
-const PATROL_SPEED := 30.0
-const CHASE_SPEED := 46.0
+const PATROL_SPEED := DemoConfig.DEFAULT_ENEMY_WALK_SPEED
+const CHASE_SPEED := PATROL_SPEED * DemoConfig.DEFAULT_ENEMY_RUN_MULTIPLIER
 const DETECT_RANGE := 240.0
 const ENGAGE_RANGE := 190.0
 const DEPLOY_SECONDS := 0.34
@@ -196,9 +196,12 @@ func _engage(delta: float, distance: float) -> void:
 	var dir := to_player.normalized()
 	_face(dir)
 	if _reload_left<=0.0 and not _magazine_primed and _can_see_player():
+		var aim_started := not _aiming
 		_aiming=true
 		if _aim_elapsed<.38: _aim_target=player.global_position
 		_aim_elapsed=minf(.5,_aim_elapsed+delta)
+		if aim_started and world != null and world.SFX != null:
+			world.SFX.play_event(&"enemy_fire_cue")
 	else:
 		_aiming=false
 	# 武器展开完成后才会开火：先从柜口伸出炮管，再射击。
@@ -227,6 +230,7 @@ func get_ranged_telegraph_state() -> Dictionary:
 
 func _move_toward(goal: Vector2, speed_value: float) -> void:
 	goal=goal.clamp(bounds.position+Vector2.ONE*2,bounds.end-Vector2.ONE*2)
+	if not _route.is_empty() and not NAV.segment_clear(self,global_position,_route[0]): _route_time=0.0
 	if _route_time<=0.0 or (_route_goal.distance_squared_to(goal)>4096.0 and _route_time<.25):
 		_route=NAV.path(self,goal); _route_goal=goal; _route_time=.55
 	while not _route.is_empty() and global_position.distance_to(_route[0])<4.0: _route.pop_front()
@@ -292,7 +296,6 @@ func _fire(direction: Vector2) -> void:
 	if world.has_method("add_projectile"):
 		world.call("add_projectile", projectile, self)
 		world.SFX.play_weapon_fire()
-		if not _magazine_primed: world.SFX.play_event(&"enemy_fire_cue")
 	else:
 		projectile.queue_free()
 	_magazine_left-=1

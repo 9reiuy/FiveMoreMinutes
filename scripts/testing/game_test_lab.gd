@@ -3,7 +3,9 @@ extends Control
 const WORLD = preload("res://scenes/testing/LabWorld.tscn")
 const DISPLAY = preload("res://scenes/dream/preview/SelectivePixelPreview.tscn")
 const RECORDER = preload("res://scripts/testing/lab_recorder.gd")
-const WEAPONS := ["","basic","assault_rifle","shotgun","lucille"]
+const WEAPONS := ["","basic","assault_rifle","shotgun","lucille","mp5"]
+@export_file("*.tscn") var presentation_scene_path := ""
+var presentation: Control
 var world: Node3D
 var display: Control
 var recorder = RECORDER.new()
@@ -42,6 +44,12 @@ var _run_scenario := 0
 var _run_duration := 30.0
 
 func _ready() -> void:
+	if not presentation_scene_path.is_empty():
+		_saved_vsync = DisplayServer.window_get_vsync_mode()
+		_saved_max_fps = Engine.max_fps
+		presentation = load(presentation_scene_path).instantiate()
+		add_child(presentation)
+		return
 	DirAccess.make_dir_recursive_absolute(output_root)
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter=Control.MOUSE_FILTER_IGNORE
@@ -74,17 +82,16 @@ func _build_ui() -> void:
 	_toggle(box,"special","机器人 / 无人机（重置）",false)
 	_button(box,"应用配置 / 重建整个场景",rebuild)
 	station=_options(box,["加载中…"]); station.item_selected.connect(func(index:int): teleport(index))
-	weapon=_options(box,["拳头","手枪","步枪","霰弹枪","球棍"]); weapon.select(2)
+	weapon=_options(box,["拳头","手枪","步枪","霰弹枪","球棍","MP5冲锋枪"]); weapon.select(2)
 	weapon.item_selected.connect(func(_i:int): equip())
 	_toggle(box,"invincible","测试无敌（不改正式数值）",true)
 	_toggle(box,"cutout","Occlusion Cutout",true)
 	_toggle(box,"shadows","室内灯投影（不关灯）",true)
 	_toggle(box,"reflections","地面反射",true)
 	_toggle(box,"pixels","游戏像素化",true)
-	_toggle(box,"palette","调色板",false)
 	_toggle(box,"tonal","色调增强",true)
 	_toggle(box,"uncapped","解除垂直同步 / 限帧",true)
-	for key in ["invincible","cutout","shadows","reflections","pixels","palette","tonal","uncapped"]:
+	for key in ["invincible","cutout","shadows","reflections","pixels","tonal","uncapped"]:
 		checks[key].toggled.connect(func(_value:bool): apply_options())
 	_label(box,"功能触发（真实系统）",12)
 	var actions:=[ ["烟雾", "smoke"],["击破灭火器","extinguisher"],["血液飞溅","blood"],["打碎最近门窗","break"],["点燃最近家具","fire"] ]
@@ -117,6 +124,9 @@ func _number(parent:Node,text:String,low:float,high:float,value:float)->SpinBox:
 func _toggle(parent:Node,key:String,text:String,value:bool)->void:
 	var node:=CheckBox.new(); node.text=text; node.button_pressed=value; node.add_theme_font_size_override("font_size",11); parent.add_child(node); checks[key]=node
 
+func _instantiate_world() -> Node3D:
+	return WORLD.instantiate()
+
 func rebuild() -> void:
 	if busy: return
 	if recorder.active: stop_recording("scene_reset")
@@ -126,7 +136,8 @@ func rebuild() -> void:
 	if is_instance_valid(display):
 		display.free(); world=null
 		await get_tree().process_frame
-	world=WORLD.instantiate()
+	world=_instantiate_world()
+	world.set_meta(&"test_office_surface_style_disabled",bool(get_meta(&"office_surface_style_preview_controlled",false)))
 	world.lab_native_layout=mode.selected==2; world.lab_whitebox=mode.selected==0
 	world.approved_sample_art_enabled=not world.lab_whitebox
 	world.lab_enemy_count=int(enemies.value); world.lab_furniture=checks.furniture.button_pressed
@@ -180,7 +191,6 @@ func apply_options()->void:
 	world.player.lab_ignore_damage=world.lab_invulnerable
 	world.set_lab_cutout(checks.cutout.button_pressed)
 	display.set_selective_enabled(checks.pixels.button_pressed)
-	display.set_palette_enabled(checks.palette.button_pressed)
 	display.set_visual_enhancement(checks.tonal.button_pressed)
 	var reflection:=world.get_node_or_null("FloorReflections")
 	if reflection!=null: reflection.set_enabled(checks.reflections.button_pressed and not world.lab_whitebox)
@@ -189,7 +199,7 @@ func apply_options()->void:
 
 func configuration()->Dictionary:
 	var result:=_session_config.duplicate(true)
-	for key in ["invincible","cutout","shadows","reflections","pixels","palette","tonal","uncapped"]: result[key]=checks[key].button_pressed
+	for key in ["invincible","cutout","shadows","reflections","pixels","tonal","uncapped"]: result[key]=checks[key].button_pressed
 	result.merge({"scenario":scenario.selected,"duration_s":duration.value,"station":station.selected,"weapon":WEAPONS[weapon.selected],"engine":Engine.get_version_info(),"display_server":DisplayServer.get_name(),"output_size":str(get_viewport().get_visible_rect().size),"window_size":str(DisplayServer.window_get_size()),"scope":"Controlled lab; fixed seeds/commands, not deterministic physics replay; real F3 monitor remains present; not whole-game acceptance"})
 	if ready_world:
 		result["sparse_lighting"] = is_instance_valid(world.sparse_lighting) and world.sparse_lighting.enabled
@@ -345,6 +355,7 @@ func capture()->void:
 	busy=false; status.text="截图已保存：\n"+ProjectSettings.globalize_path(folder) if error==OK else "截图保存失败"
 
 func _input(event:InputEvent)->void:
+	if not presentation_scene_path.is_empty(): return
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:
 			KEY_F1: panel.visible=not panel.visible
@@ -361,6 +372,9 @@ func _notification(what:int)->void:
 		get_tree().quit()
 
 func _exit_tree()->void:
+	if not presentation_scene_path.is_empty():
+		Engine.max_fps = _saved_max_fps
+		return
 	_release_automation()
 	if recorder.active: recorder.finish(output_root,"scene_exited")
 	if RenderingServer.frame_pre_draw.is_connected(_pre_draw): RenderingServer.frame_pre_draw.disconnect(_pre_draw)

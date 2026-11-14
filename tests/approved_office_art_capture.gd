@@ -46,10 +46,8 @@ func run() -> void:
 		for pixel in [false,true]:
 			for palette in [0,1]:
 				settings.values["pixelation_enabled"]=pixel
-				settings.values["palette_enabled"]=palette==1
 				display.set_selective_enabled(pixel)
-				display.set_palette_enabled(palette==1)
-				check(display.selective_enabled==pixel and display.palette_enabled==(palette==1),"Display setting combinations")
+				check(display.selective_enabled==pixel and not display.has_method("set_palette_enabled"),"Display setting combinations")
 				focus_room(world.rooms[world.spawn_room_id])
 				paused=false
 				await frames(18)

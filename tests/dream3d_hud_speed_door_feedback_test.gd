@@ -110,7 +110,7 @@ func _test_door_outline_topmost() -> void:
 
 
 func _test_movement_speed_fixed() -> void:
-	check(is_equal_approx(float(player.movement_speed), 200.0), "normal movement speed is 200")
+	check(is_equal_approx(float(player.movement_speed), 224.0), "normal movement speed is 7 world units/s")
 	# 旧存档仍带 character_speed_cells 时也不参与移动。
 	world.run_interface.profile["character_speed_cells"] = 10
 	# These two legacy XP keys model an old save; the runtime must ignore them.
@@ -120,7 +120,7 @@ func _test_movement_speed_fixed() -> void:
 		"unspent_stat_points": 0,
 		"experience_total": 1,
 	})
-	check(is_equal_approx(float(player.movement_speed), 200.0), "old save speed cells never multiply movement")
+	check(is_equal_approx(float(player.movement_speed), 224.0), "old save speed cells never multiply movement")
 	var card: Node = world.run_interface.card
 	check(card.find_child("SpeedPlus", true, false) == null, "card no longer offers a Speed button")
 	check(card.find_child("SpeedCells", true, false) == null, "card no longer shows Speed segments")

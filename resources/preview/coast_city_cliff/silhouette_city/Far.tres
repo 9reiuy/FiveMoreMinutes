@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/preview/coast_city_depth_bands.gdshader" id="1_2p8n3"]
+
+[resource]
+resource_local_to_scene = true
+resource_name = "Far"
+render_priority = 0
+shader = ExtResource("1_2p8n3")
+shader_parameter/moon_visibility = null
+shader_parameter/body_colour = Color(0.35686275, 0.34509805, 0.45490196, 1)
+shader_parameter/haze_colour = Color(0.25490198, 0.25490198, 0.35686275, 1)
+shader_parameter/distance_haze = 0.45

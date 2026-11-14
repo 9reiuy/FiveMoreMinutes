@@ -56,7 +56,9 @@ static func spawn(world: Node3D, wall: Node3D, direction: Vector2) -> void:
 	burst._build(wall, source, full, direction)
 	var live: Array = world.get_tree().get_nodes_in_group(GROUP).filter(func(node: Node) -> bool: return node.get_parent() == floor_root and not node.is_queued_for_deletion())
 	if live.size() > MAX_BURSTS: live[0].queue_free()
-	SFX.play_event(&"wall_impact")
+	var break_at: Vector3 = source.global_position
+	if not SFX.play_world_sfx_3d(&"wall_break", break_at, 0.0, 32.0):
+		SFX.play_event(&"wall_break")
 
 func _build(wall: Node3D, source: MeshInstance3D, full: Mesh, direction: Vector2) -> void:
 	random.seed = get_instance_id()

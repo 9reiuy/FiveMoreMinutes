@@ -139,24 +139,6 @@ layout_mode = 2
 size_flags_vertical = 4
 text = ""
 
-[node name="PaletteScheme" type="HBoxContainer" parent="Rows"]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/separation = 12
-
-[node name="Desc" type="Button" parent="Rows/PaletteScheme"]
-layout_mode = 2
-custom_minimum_size = Vector2(128, 0)
-size_flags_horizontal = 0
-flat = true
-alignment = 0
-text = "配色滤镜"
-
-[node name="Option" type="OptionButton" parent="Rows/PaletteScheme"]
-custom_minimum_size = Vector2(120, 20)
-layout_mode = 2
-size_flags_vertical = 4
-
 [node name="ShadowQuality" type="HBoxContainer" parent="Rows"]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -229,6 +211,26 @@ text = "屏幕抖动"
 tooltip_text = "控制战斗和电梯镜头震动，不影响镜头跟随与武器动作。"
 
 [node name="Check" type="CheckBox" parent="Rows/AssistanceOptions/ScreenShake"]
+custom_minimum_size = Vector2(120, 20)
+layout_mode = 2
+size_flags_vertical = 4
+text = ""
+
+[node name="CannedLaughter" type="HBoxContainer" parent="Rows/AssistanceOptions"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
+
+[node name="Desc" type="Button" parent="Rows/AssistanceOptions/CannedLaughter"]
+layout_mode = 2
+custom_minimum_size = Vector2(128, 0)
+size_flags_horizontal = 0
+flat = true
+alignment = 0
+text = "罐头笑声和掌声"
+tooltip_text = "同时控制连杀时播放的罐头笑声和掌声，关闭后立即停止这两类声音。"
+
+[node name="Check" type="CheckBox" parent="Rows/AssistanceOptions/CannedLaughter"]
 custom_minimum_size = Vector2(120, 20)
 layout_mode = 2
 size_flags_vertical = 4

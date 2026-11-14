@@ -13,7 +13,7 @@ func run() -> void:
 	print("DEBRIS_STAGE generated")
 	for index in 20: await process_frame
 	world.transition_phase=&"IDLE"; world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(false); display._process(0.0)
+	display.set_selective_enabled(true); display._process(0.0)
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED); Engine.max_fps=0
 	paused=true
 	print("DEBRIS_STAGE spawn")

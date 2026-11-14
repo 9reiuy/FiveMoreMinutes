@@ -94,7 +94,6 @@ static func run(main: Node, dream: Node3D) -> void:
 	screen.commit_staging()
 	screen.process_mode = Node.PROCESS_MODE_INHERIT
 	dream._enter_dream_time_mode()
-	main._apply_palette_enabled(main.get_tree().root.get_node("SettingsManager").get_palette_enabled())
 	previous.queue_free()
 	await tree.process_frame
 	if not is_instance_valid(dream) or not dream.is_inside_tree():

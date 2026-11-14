@@ -32,8 +32,10 @@ func sync_snapshot(world: Node3D, snapshot: Dictionary, limits: PackedFloat32Arr
 	material.set_shader_parameter("facing", (snapshot.direction as Vector2).angle())
 	material.set_shader_parameter("arc", snapshot.arc)
 	material.set_shader_parameter("sweep", snapshot.sweep)
+	material.set_shader_parameter("sweep_reversed", bool(snapshot.get("sweep_reversed", false)))
 	material.set_shader_parameter("opacity", snapshot.opacity)
-	material.set_shader_parameter("band_width", 18.0 if snapshot.weapon_id == "books" else 22.0)
+	var range_scale := DreamGunAtlas.get_melee_range_multiplier(String(snapshot.weapon_id))
+	material.set_shader_parameter("band_width", (18.0 if snapshot.weapon_id == "books" else 22.0) * range_scale)
 	material.set_shader_parameter("paper", snapshot.weapon_id == "books")
 	material.set_shader_parameter("reach_limits", limits)
 	visible = float(snapshot.opacity) > 0.01 and float(snapshot.sweep) > 0.0

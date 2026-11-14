@@ -1,6 +1,5 @@
 extends "res://scripts/testing/game_test_lab.gd"
 ## Independent production-art lab. Nothing in Main references this sample.
-const SAMPLE_POST = "res://shaders/preview/hellkind_sample/world_post.gdshader"
 const WEATHER_INCLUDE = "res://shaders/preview/hellkind_sample/surface_weathering.gdshaderinc"
 const VISIBILITY_FIELD = preload("res://scripts/preview/woo_polygon_visibility.gd")
 const SHADOW_VISIBILITY_FIELD = preload("res://scripts/preview/woo_visibility_shadow.gd")
@@ -24,10 +23,8 @@ var environment_halftone: ENVIRONMENT_HALFTONE
 var halftone_carriers: Node
 var scene_halftone_enabled := true
 var extinguisher_paint: Array[ShaderMaterial] = []
-var retro_material: ShaderMaterial
 var sample_ui: CanvasLayer
 var style_buttons: Dictionary[int, Button] = {}
-var palette_button: CheckButton
 var pixels_button: CheckButton
 var sample_caption: Label
 var weather_materials: Array[ShaderMaterial] = []
@@ -82,7 +79,6 @@ func _build_ui() -> void:
 	lab_enemy_archetypes = [&"employee", &"waitress"]
 	checks.special.set_pressed_no_signal(true)
 	checks.pixels.button_pressed = true
-	checks.palette.button_pressed = true
 	checks.tonal.button_pressed = false
 	checks.uncapped.button_pressed = false
 	panel.hide()
@@ -120,11 +116,6 @@ func _build_ui() -> void:
 		button.pressed.connect(apply_style.bind(i))
 		row.add_child(button)
 		style_buttons[i] = button
-	palette_button = CheckButton.new()
-	palette_button.text = "调色板"
-	palette_button.focus_mode = Control.FOCUS_NONE
-	palette_button.toggled.connect(set_sample_palette)
-	row.add_child(palette_button)
 	pixels_button = CheckButton.new()
 	pixels_button.text = "像素化"
 	pixels_button.focus_mode = Control.FOCUS_NONE
@@ -172,7 +163,6 @@ func rebuild() -> void:
 	station.select(3)
 	teleport(3)
 	for frame in 8: await get_tree().process_frame
-	_install_post()
 	_install_environment_halftone()
 	_collect_owned_materials()
 	_scan_weather_surfaces()
@@ -366,25 +356,6 @@ func _release_visibility() -> void:
 	if is_instance_valid(visibility_field): visibility_field.free()
 	visibility_field = null
 
-func _install_post() -> void:
-	# Palette is below this layer. Its disabled mode still resolves gameplay
-	# semantic colors; the new pass also recognizes those exact output colors.
-	var layer := CanvasLayer.new()
-	layer.name = "PurpleSamplePost"
-	layer.layer = 19
-	layer.set_meta(&"world_post_effect", true)
-	display.world_viewport.add_child(layer)
-	var copy := BackBufferCopy.new()
-	copy.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
-	layer.add_child(copy)
-	var rect := ColorRect.new()
-	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	layer.add_child(rect)
-	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	retro_material = ShaderMaterial.new()
-	retro_material.shader = load(SAMPLE_POST)
-	rect.material = retro_material
-
 func _install_environment_halftone() -> void:
 	if RenderingServer.get_current_rendering_method() != &"forward_plus": return
 	if environment_halftone == null: environment_halftone = ENVIRONMENT_HALFTONE.new()
@@ -397,32 +368,22 @@ func set_scene_halftone(value: bool) -> void:
 	scene_halftone_enabled = value
 	if environment_halftone != null:
 		environment_halftone.enabled = value and style_index == CHARACTER_INK_STYLE
-	if sample_ready: _apply_sample_palette()
 	_update_sample_caption()
 
 func apply_style(index: int) -> void:
 	if not STYLE_NAMES.has(index): return
-	# Resolution and palette are explicit comparison controls. Changing an art
+	# Resolution is an explicit comparison control. Changing an art
 	# treatment must not silently replace the requested 640x360 camera output.
 	style_index = index
 	if not sample_ready: return
 	var character_ink_enabled := style_index == CHARACTER_INK_STYLE
-	var purple_post_enabled := not character_ink_enabled
+	var weathering_enabled := not character_ink_enabled
 	checks.tonal.set_pressed_no_signal(not character_ink_enabled)
-	retro_material.set_shader_parameter("enabled", purple_post_enabled)
-	retro_material.set_shader_parameter("resolve_blood_only", character_ink_enabled)
 	if environment_halftone != null:
 		visibility_surfaces.set_ink_environment(character_ink_enabled)
 		halftone_carriers.set_enabled(character_ink_enabled)
 	_configure_sample_exterior_light()
 	set_scene_halftone(scene_halftone_enabled)
-	retro_material.set_shader_parameter("sample_strength", 0.88 if style_index == 1 else 1.0)
-	retro_material.set_shader_parameter("levels", 12.0 if style_index == 1 else 8.0)
-	retro_material.set_shader_parameter("dither_strength", 0.52 if style_index == 1 else 0.72)
-	retro_material.set_shader_parameter("exposure", 1.75)
-	retro_material.set_shader_parameter("preserve_signals", true)
-	retro_material.set_shader_parameter("vignette_strength", 0.11)
-	retro_material.set_shader_parameter("palette_variant", 0)
 	character_inks.set_enabled(character_ink_enabled)
 	for paint in extinguisher_paint:
 		paint.set_shader_parameter("sample_ink_enabled", character_ink_enabled)
@@ -432,24 +393,17 @@ func apply_style(index: int) -> void:
 			material.set_shader_parameter("facade_light_gain", 0.056 if character_ink_enabled else 1.0)
 	_apply_sample_display()
 	for material in weather_materials:
-		material.set_shader_parameter("hk_sample_weathering", 0.0 if not purple_post_enabled else (0.50 if style_index == 1 else 0.70))
+		material.set_shader_parameter("hk_sample_weathering", 0.0 if not weathering_enabled else (0.50 if style_index == 1 else 0.70))
 	for i: int in style_buttons: style_buttons[i].set_pressed_no_signal(i == style_index)
 	if is_instance_valid(visibility_surfaces): visibility_surfaces.notify_geometry_dirty()
 
 func _update_sample_caption() -> void:
 	if sample_caption == null: return
 	sample_caption.text = "640×360 · 人物约32像素" if checks.pixels.button_pressed else "原生分辨率"
-	sample_caption.text += " · 调色板" + ("开" if checks.palette.button_pressed else "关")
 	if style_index == CHARACTER_INK_STYLE:
 		sample_caption.text = ("场景半调开" if environment_halftone != null and environment_halftone.enabled else "场景半调关") + " · " + sample_caption.text
 	sample_caption.text += " · " + ("室内灯对照" if _lamps_enabled else "环境光与窗光")
 	sample_caption.text += " · 墙挡视野" + ("开" if vision_enabled else "关")
-
-func set_sample_palette(value: bool) -> void:
-	checks.palette.set_pressed_no_signal(value)
-	if not sample_ready: return
-	_apply_sample_palette()
-	_update_sample_caption()
 
 func set_sample_pixels(value: bool) -> void:
 	checks.pixels.set_pressed_no_signal(value)
@@ -465,17 +419,6 @@ func _apply_sample_display() -> void:
 	if is_instance_valid(world.player_depth_bridge): world.player_depth_bridge._process(0.0)
 	pixels_button.set_pressed_no_signal(pixels)
 	_update_sample_caption()
-
-func _apply_sample_palette() -> void:
-	var palette: bool = checks.palette.button_pressed
-	var ink_pass := environment_halftone != null and environment_halftone.enabled
-	var use_ink_palette := palette and ink_pass
-	display.set_palette_enabled(palette and not ink_pass)
-	if environment_halftone != null: environment_halftone.palette_enabled = use_ink_palette
-	if is_instance_valid(visibility_surfaces): visibility_surfaces.set_ink_palette(use_ink_palette)
-	character_inks.set_body_palette(use_ink_palette)
-	if is_instance_valid(halftone_carriers): halftone_carriers.set_body_palette(use_ink_palette)
-	palette_button.set_pressed_no_signal(palette)
 
 func _calibrate_camera_zoom() -> void:
 	# Calibrate once from the existing body's alpha footprint. This changes

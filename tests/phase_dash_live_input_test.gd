@@ -24,8 +24,6 @@ func run() -> void:
 	if kill_case: OUTPUT += "_kill"
 	if "--contact-proof" in OS.get_cmdline_user_args(): OUTPUT += "_contact_fix"
 	if "--palette-follow" in OS.get_cmdline_user_args(): OUTPUT += "_palette_follow"
-	root.get_node("SettingsManager").set_palette_enabled(palette_on)
-	root.get_node("SettingsManager").set_palette_scheme(1)
 	root.get_node("SettingsManager").set_setting(&"pixelation_enabled",not "--native" in OS.get_cmdline_user_args())
 	preload("res://tests/support/background_gpu.gd").start(self)
 	root.size = Vector2i(1280,720)
@@ -83,8 +81,8 @@ func run() -> void:
 		if sound==&"dash_refresh": refresh_events += 1)
 	var start: Vector2 = player.global_position
 	var event := InputEventKey.new()
-	event.keycode = KEY_SPACE
-	event.physical_keycode = KEY_SPACE
+	event.keycode = KEY_SHIFT
+	event.physical_keycode = KEY_SHIFT
 	event.pressed = true
 	Input.parse_input_event(event)
 	var seen := false

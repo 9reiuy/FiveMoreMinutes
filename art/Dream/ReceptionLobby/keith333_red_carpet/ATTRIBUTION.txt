@@ -1,0 +1,18 @@
+Carpet Texture - Red - Seamless Texture with normalmap
+Author: Keith333
+Source: https://opengameart.org/content/carpet-texture-red-seamless-texture-with-normalmap
+License: Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+https://creativecommons.org/licenses/by/3.0/
+
+The author states that these textures are based on photographs taken by them,
+made seamless and supplied with a generated normal map.
+
+Original files: RedCarpet_S.jpg and RedCarpet_N.jpg, unchanged.
+FiveMinuteMore uses the complete photographic colour and matching normal maps
+with a darker burgundy material tint, mipmaps and the game's pixel sampling.
+The material is applied to new low-poly carpet geometry and folded binding.
+No endorsement by the original author is implied.
+
+Keep this attribution, source and license link with redistributed derivatives.
+The game also includes this credit in data/asset_attributions.txt, which the
+existing export presets include through their data/* filter.

@@ -147,7 +147,7 @@ func close_phone(animated:bool=true)->void:
 
 func _quarantine_held_input()->void:
 	for code in _held_keys:_quarantined_keys[code]=_held_keys[code]
-	for code in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,KEY_E,KEY_Q,KEY_R,KEY_F,KEY_T,KEY_L,KEY_SPACE]:
+	for code in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,KEY_E,KEY_Q,KEY_R,KEY_F,KEY_T,KEY_L,KEY_SPACE,KEY_SHIFT]:
 		if Input.is_physical_key_pressed(code):_quarantined_keys[code]=true
 	if _right_held:_quarantined_buttons[MOUSE_BUTTON_RIGHT]=true
 	for button in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT]:
@@ -292,7 +292,7 @@ func _release_feedback()->void:
 	_held_keys.clear();_right_held=false;_screen_mouse_active=false;shell.set_interaction_frozen(false)
 
 func _clear_game_actions()->void:
-	for action in [&"move_left",&"move_right",&"move_up",&"move_down",&"throw_weapon",&"attack",&"shoot",&"skill_menu",&"reload_weapon",&"pickup_weapon",&"kick",&"dash",&"block",&"weapon_next",&"weapon_previous",&"toggle_flashlight",&"toggle_slow_time",&"bullet_time"]:
+	for action in [&"move_left",&"move_right",&"move_up",&"move_down",&"throw_weapon",&"attack",&"shoot",&"skill_menu",&"reload_weapon",&"pickup_weapon",&"kick",&"dash",&"roll",&"block",&"weapon_next",&"weapon_previous",&"toggle_flashlight",&"toggle_slow_time",&"bullet_time"]:
 		if InputMap.has_action(action):Input.action_release(action)
 
 func _drain_input(event:InputEvent)->bool:

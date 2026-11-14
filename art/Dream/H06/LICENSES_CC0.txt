@@ -1,0 +1,55 @@
+========================================================================
+H06 Hexapod Tactical Crawler (Crawler_H06_20261114)
+CC0 1.0 Asset & Texture Provenance + Attribution / License Notice
+========================================================================
+
+All external materials and kitbash donor geometries used in this deliverable
+are released under CC0 1.0 Universal (Public Domain Dedication).
+
+1. CC0 PBR Surface Materials — ambientCG (Lennart Demes)
+   License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+   Source: https://ambientcg.com/
+   Used Packs (1K-PNG, channel-calibrated into textures/*.png):
+   - Metal032 (https://ambientcg.com/view?id=Metal032)
+     * Role: Calibrated stealth primary/dark chassis armor + anodized crimson caps
+   - Metal046A (https://ambientcg.com/view?id=Metal046A)
+     * Role: Heavy painted dark mechanical chassis, leg beams & turret housing
+   - Metal012 (https://ambientcg.com/view?id=Metal012)
+     * Role: Machined bare steel shafts, hinge pins, muzzle brake & rear roll-bar
+   - Rubber004 (https://ambientcg.com/view?id=Rubber004)
+     * Role: EPDM non-slip claw sole pads & central telescoping neck seal
+   - Metal049A (https://ambientcg.com/view?id=Metal049A)
+     * Role: Fine directional metallic battle micro-scratches & abrasion
+   - SurfaceImperfections017 (https://ambientcg.com/view?id=SurfaceImperfections017)
+     * Role: Weathering grime patina, crevice dirt modulation & terrain dust breakup
+   - SurfaceImperfections018 (https://ambientcg.com/view?id=SurfaceImperfections018)
+     * Role: Rain/oil vertical drip streaks & sharp graze scratch masks
+
+   All ambientCG base and weathering inputs are composited via Blender 5.2.3
+   Cycles GPU OptiX baking (with convex dihedral + ShaderNodeBevel curvature
+   chipping and Cycles Ambient Occlusion) into 4x 2048x2048 portable PBR
+   atlases (textures/weathered/atlas_*_{albedo,orm,normal}.png).
+
+2. CC0 3D Kitbash Geometry — Quaternius Animated Mech Pack
+   Author: Tomas Laulhe (Quaternius)
+   License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+   Source: https://quaternius.com/ / Animated Mech Pack
+   Donor Files Inspected & Extracted into source_assets/cc0_kitbash_parts.blend:
+   - George.blend -> George.Shoulder.L (6x knee drums + howitzer trunnion drum)
+   - Leela.blend  -> Leela.LowerLeg.L (6x structural inner shin beams)
+                  -> Leela.Foot.L     (6x articulated claw feet)
+                  -> Leela.FootBack.L (6x stabilizing heel spurs)
+   - Stan.blend   -> Stan.UpperArm.L  (6x articulated hip structural arms)
+                  -> Stan.Neck        (central telescoping waist collar)
+
+3. Evaluated & Excluded Candidates (Preserved Record Only; Not In Final Model)
+   - PolyHaven security_camera_01 (CC0): 13,571 polys dome CCTV — mismatched silhouette
+   - PolyHaven metal_plate_02 (CC0): Heavy orange rust — unsuited for clean tactical mech
+   - Quaternius Turret Pack (Google Drive): Anonymous quota error (2040-byte HTML stubs)
+
+4. Original Custom Modeling & Rigging Work
+   All procedural hard-surface carapace lofting, Armor Piercer Howitzer receiver/barrel,
+   10-tube Missile Launcher, Sensor//Firearm shoulder pods, recessed red waist dampers,
+   ankle clevis/stanchions, flush Y-channel dorsal glow, 2-bone hexapod IK solver,
+   Godot 4.7.1 preview runtime, and validation scripts in this folder are original work
+   released alongside the project with no restrictive third-party license contamination.

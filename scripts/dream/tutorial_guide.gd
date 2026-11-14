@@ -42,7 +42,7 @@ func get_interaction_prompt_state() -> Dictionary:
 	if not interaction_targeted or not visible or not interaction_enabled:
 		return {}
 	return {
-		"text": "E 交谈",
+		"text": "交谈",
 		"position": global_position,
 	}
 

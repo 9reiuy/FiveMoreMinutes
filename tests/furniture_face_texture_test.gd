@@ -12,7 +12,6 @@ func run() -> void:
 	AudioServer.set_bus_mute(0,true)
 	var settings = root.get_node("SettingsManager")
 	var saved: Dictionary=settings.values.duplicate(true)
-	settings.values["palette_enabled"]=false
 	var world= WORLD.instantiate()
 	world.generate_on_ready=false
 	root.add_child(world)
@@ -378,8 +377,6 @@ func run() -> void:
 			world.set_process(true)
 		review.set_variant_override(-1)
 		# Keep settings changes in memory: never write the player's saved preference.
-		settings.values["palette_enabled"]=true
-		settings.setting_changed.emit(&"palette_enabled",true)
 		review.focus_kind("workstation")
 		await frames(30)
 		await RenderingServer.frame_post_draw
@@ -418,7 +415,6 @@ func run() -> void:
 		check(review.records.all(func(record: Dictionary) -> bool: return is_instance_valid(record.node.get_ref())),"Stale review material record")
 		check(world.furniture_root.get_children().filter(func(node: Node) -> bool: return bool(node.get_meta(&"texture_review_prop",false))).size()==1,"Water sample duplicated after rebuild")
 	settings.values=saved
-	settings.setting_changed.emit(&"palette_enabled",settings.get_palette_enabled())
 	world.queue_free(); await frames(3)
 	print("FACE_TEXTURE_RESULT checks=",checks," failures=",failures)
 	quit(0 if failures==0 else 1)

@@ -1,0 +1,94 @@
+FiveMinuteMore - third-party material credits
+
+Carpet Texture - Red - Seamless Texture with normalmap
+by Keith333
+https://opengameart.org/content/carpet-texture-red-seamless-texture-with-normalmap
+Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+https://creativecommons.org/licenses/by/3.0/
+
+Original photographic colour texture and author-generated normal map are
+unchanged. Adaptation: darker burgundy material tint, nearest/mipmap sampling
+and use on the lobby's continuous low-poly carpet and folded binding.
+No endorsement by the original author is implied.
+
+Additional lobby material sources (CC0):
+Grey Matte Tiles 01 - cgbookcase
+https://www.cgbookcase.com/textures/grey-matte-tiles-01
+Natural Stone 01 - cgbookcase
+https://www.cgbookcase.com/textures/natural-stone-01
+Brushed Iron 01 - cgbookcase
+https://www.cgbookcase.com/textures/brushed-iron-01
+Walnut Veneer - Jenelle van Heerden / Poly Haven
+https://polyhaven.com/a/walnut_veneer
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Original map files are unchanged. Lobby materials adapt tint, stone contrast,
+grain direction, normal strength and roughness. Per-map download URLs and
+hashes are retained in art/Dream/ReceptionLobby/*/SOURCE.json.
+
+Metal012 - ambientCG / Lennart Demes (CC0-1.0)
+https://ambientcg.com/a/Metal012
+https://docs.ambientcg.com/license/
+Original complete 1K Color, NormalGL, Roughness and Metalness maps copied
+unchanged from the local Lower Harbor Metro project. Reception furniture
+adapts tint, finish-specific roughness, normal strength and pixel sampling.
+Per-file hashes and provenance: art/Dream/ReceptionLobby/metro_metal012/SOURCE.json
+
+Parking level 0-2 sound (CC0 1.0) - Joseph Sardin and Dorian Clair, BigSoundBank / La Sonothèque
+https://creativecommons.org/publicdomain/zero/1.0/
+Underground parking #604, Iveco Daily diesel #1145, roller shutter #2475,
+Kia Carnival sliding door #1510, falling sheet-steel bars #1778,
+tire lockup #2368 by Dorian Clair.
+Edited into sfx/parking/*.wav. The crash also has an original low-frequency
+mass tail; that tail is not part of the steel-bar recording.
+Pages, download URLs and edits: sfx/parking/SOURCE.json
+
+Metro level 0-5 train sound (CC0 1.0) - Joseph Sardin, BigSoundBank / La Sonothèque
+https://creativecommons.org/publicdomain/zero/1.0/
+Paris metro arrival, stop and departure #3039, small pneumatic cylinder #1491.
+Edited into sfx/metro/*.wav. Door close is the open release played in reverse.
+Pages, download URLs and edits: sfx/metro/SOURCE.json
+
+Formal elevator ride (CC0 1.0) - Joseph Sardin, BigSoundBank / La Sonothèque
+https://creativecommons.org/publicdomain/zero/1.0/
+Small Paris building elevator, three floors, #1711.
+Edited into sfx/elevator/elevator_start.wav, elevator_run.wav and elevator_stop.wav.
+Pages, download URLs and edits: sfx/elevator/SOURCE.json
+
+Main-menu television power-off (CC0 1.0) - TRP, Freesound
+https://creativecommons.org/publicdomain/zero/1.0/
+CRT turning on and off, Sony M10, 2012. https://freesound.org/people/TRP/sounds/616850/
+The menu cue is the unprocessed excerpt from 3.590s to 3.820s.
+
+Door break and wall break (CC0 1.0)
+https://creativecommons.org/publicdomain/zero/1.0/
+Drywall broken with a sledgehammer, jerry.berumen, Sony PCM-A10, Mexico City.
+https://freesound.org/people/jerry.berumen/sounds/827432/
+The 3.18s–3.58s strike is wired as the wall break. The door-frame rip was rejected as too sharp and is not in the game.
+Details: sfx/destruction/SOURCE.json.
+
+Bullet on an object - aidansamuel, Freesound 540139, CC0
+https://creativecommons.org/publicdomain/zero/1.0/
+Club hammer driving a nail into a wood board, Zoom H6, workshop. One strike, 0.22s–0.48s.
+https://freesound.org/people/aidansamuel/sounds/540139/
+Plays when a bullet hits a wall, door, or piece of furniture. Hits on people stay on the existing enemy impact.
+
+Melee on an object - ldezem, Freesound 386226, CC0
+https://creativecommons.org/publicdomain/zero/1.0/
+One hammer strike on a tree stump, Tascam DR-40 and Sony ECM-NV1. The strike through 0.36s.
+https://freesound.org/people/ldezem/sounds/386226/
+Replaces the furniture-hit set. Hits on people stay on the existing enemy impact.
+
+Player death - 藤條素材库
+Deep Tech_CK_scifi_Texture_Energy Gun Reload.wav
+The cue is 9.74s through 10.76s, where this hit falls to silence. Level was lowered just enough to fit 16-bit.
+
+Ranged enemy aim warning - 藤條素材库
+Deep Tech_DS_Scifi_UI_Modern Neon Breathe.wav
+Played when the red aim line appears, before the shot. The whole 1.31s breathe is used.
+
+0-6 train derailment, temporary - anderlk, Freesound 618489, CC0
+https://creativecommons.org/publicdomain/zero/1.0/
+Exploding washing machine. The blast from 9.05s to 10.40s.
+https://freesound.org/people/anderlk/sounds/618489/
+Played when a carriage explodes and leaves the rail. The parking van crash is unchanged.

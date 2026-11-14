@@ -21,7 +21,7 @@ func register_click() -> void:
 	var controller: Node = world.player._get_dream_time_controller()
 	if chain_ready and controller!=null and controller.is_reaction_time_active():
 		var weapon: Node=world.player._get_weapon_node(world.player.selected_weapon_id)
-		if weapon!=null and world.player.selected_weapon_id in ["lucille","books"]:
+		if weapon!=null and DreamGunAtlas.get_category(world.player.selected_weapon_id) == DreamGunAtlas.CATEGORY_MELEE:
 			weapon.cancel_swing()
 			weapon.cooldown_left=0.0
 			chain_ready=false
@@ -44,7 +44,7 @@ func inspect_segment(bullet: Node, start: Vector2, end: Vector2) -> bool:
 	if not available() or bullet.source_faction!=&"enemy" or bullet.consumed: return false
 	var player: Node=world.player
 	var weapon: Node=player._get_weapon_node(player.selected_weapon_id)
-	if player.selected_weapon_id in ["lucille","books"] and weapon!=null and weapon.melee_action_active and weapon.parry_armed and weapon.swing_elapsed>=weapon.windup_seconds and weapon.swing_elapsed<=weapon.windup_seconds+weapon.strike_seconds and not player.dashing:
+	if DreamGunAtlas.get_category(player.selected_weapon_id) == DreamGunAtlas.CATEGORY_MELEE and weapon!=null and weapon.melee_action_active and weapon.parry_armed and weapon.swing_elapsed>=weapon.windup_seconds and weapon.swing_elapsed<=weapon.windup_seconds+weapon.strike_seconds and not player.dashing:
 		var entry: Variant=circle_entry(start,end,player.global_position,float(weapon.attack_range))
 		if entry is Vector2 and (entry-player.global_position).normalized().dot(weapon.swing_direction)>=cos(weapon.attack_arc_radians*.5) and Vector2(bullet.direction).dot(player.global_position-start)>0:
 			var blocking: Dictionary=bullet._cast_movement_segment(start,entry)

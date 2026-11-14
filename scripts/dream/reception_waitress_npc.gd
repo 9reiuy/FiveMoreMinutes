@@ -18,6 +18,7 @@ enum ConversationMode { ACTIVE, PASSIVE }
 signal interaction_requested
 
 const WAITRESS_ATLAS: Texture2D = preload("res://art/Dream/enemy/waitress.png")
+const NPC1_ATLAS: Texture2D = preload("res://art/Dream/enemy/npc1.png")
 const SHADOW_TEXTURE: Texture2D = preload("res://art/Dream/shadow.png")
 
 const HEAD_OPEN_REGION: Rect2 = Rect2(32, 0, 28, 32)
@@ -28,6 +29,7 @@ const LEFT_FOOT_REGION: Rect2 = Rect2(108, 12, 4, 9)
 const RIGHT_FOOT_REGION: Rect2 = Rect2(113, 12, 4, 9)
 const LEFT_HAND_REGION: Rect2 = Rect2(134, 15, 5, 4)
 const RIGHT_HAND_REGION: Rect2 = Rect2(149, 15, 5, 4)
+var character_atlas: Texture2D=WAITRESS_ATLAS
 
 @export var interaction_enabled: bool = true
 @export_range(16.0, 128.0, 1.0) var interaction_radius: float = 105.0
@@ -45,6 +47,7 @@ var shadow: Sprite2D
 var head_base_pos: Vector2 = Vector2(-16, -20)
 var body_base_pos: Vector2 = Vector2(-16, -8)
 var body_pivot_base_pos: Vector2 = Vector2(0, -16)
+var character_visual_base_position := Vector2(0, -18.25)
 
 var head_frame_open: AtlasTexture
 var head_frame_blink: AtlasTexture
@@ -169,9 +172,36 @@ func _build_visuals() -> void:
 
 func _make_atlas(region: Rect2) -> AtlasTexture:
 	var tex := AtlasTexture.new()
-	tex.atlas = WAITRESS_ATLAS
+	tex.atlas = character_atlas
 	tex.region = region
 	return tex
+
+
+func set_character_atlas(atlas: Texture2D) -> void:
+	character_atlas=atlas if atlas!=null else WAITRESS_ATLAS
+	var npc1_pose := character_atlas == NPC1_ATLAS
+	for frame in [head_frame_open,head_frame_blink,head_frame_closed]:
+		if frame!=null:
+			frame.atlas=character_atlas
+			var region:Rect2 = frame.region
+			region.size.x=32 if npc1_pose else 28
+			frame.region=region
+	for part in [head,body,left_foot,right_foot,left_hand,right_hand]:
+		if is_instance_valid(part) and part.texture is AtlasTexture:
+			part.texture.atlas=character_atlas
+	# Match npc1's assembled reference in the first atlas column. The head cell
+	# is a full 32 pixels; the old waitress offsets cropped the hat and pulled
+	# the legs into the torso. Keep the feet at the gameplay ground baseline.
+	character_visual_base_position=Vector2.ZERO if npc1_pose else Vector2(0,-18.25)
+	body_pivot_base_pos=Vector2.ZERO if npc1_pose else Vector2(0,-16)
+	head_base_pos=Vector2(-16,-39) if npc1_pose else Vector2(-16,-20)
+	body_base_pos=Vector2(-17,-24) if npc1_pose else Vector2(-16,-8)
+	character_visual.position=character_visual_base_position
+	body_pivot.position=body_pivot_base_pos
+	head.position=head_base_pos
+	body.position=body_base_pos
+	left_hand.position=Vector2(-11,-9) if npc1_pose else Vector2(-11,8)
+	right_hand.position=Vector2(4,-9) if npc1_pose else Vector2(4,8)
 
 
 func _process(delta: float) -> void:

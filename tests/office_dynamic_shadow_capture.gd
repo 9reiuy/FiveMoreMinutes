@@ -7,7 +7,7 @@ var quick := false
 var no_sun := false
 var roof_visible := false
 var output_prefix := "shadow_after"
-var palette_material: ShaderMaterial
+var semantic_material: ShaderMaterial
 var origin := Vector2.ZERO
 
 func _initialize() -> void:
@@ -41,10 +41,9 @@ func _run() -> void:
 	var overlay := ColorRect.new()
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	palette_material = ShaderMaterial.new()
-	palette_material.shader = preload("res://shaders/palette_quantize.gdshader")
-	palette_material.set_shader_parameter("palette_enabled", false)
-	overlay.material = palette_material
+	semantic_material = ShaderMaterial.new()
+	semantic_material.shader = preload("res://shaders/world_semantic_decode.gdshader")
+	overlay.material = semantic_material
 	layer.add_child(overlay)
 	root.add_child(layer)
 	var results: Dictionary = {"mode": output_prefix, "gpu": RenderingServer.get_video_adapter_name(), "resolution": "1920x1080", "samples": []}
@@ -72,9 +71,7 @@ func _run() -> void:
 			await process_frame
 		if not combat:
 			await _capture("office_off")
-			palette_material.set_shader_parameter("palette_enabled", true)
 			await _capture("office_palette1")
-			palette_material.set_shader_parameter("palette_enabled", false)
 			world.night_lighting.set_flashlight_enabled(true)
 			await _capture("office_flashlight")
 			world.night_lighting.set_flashlight_enabled(false)

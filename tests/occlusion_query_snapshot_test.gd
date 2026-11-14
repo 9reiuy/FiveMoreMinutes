@@ -26,7 +26,7 @@ func run() -> void:
 	for offset in [window.window_inward_normal*80.0,Vector2(0,80),Vector2(0,-80),Vector2(80,0),Vector2(-80,0)]:
 		if world._content_position_is_clear(origin+offset,12.0): world.player.global_position=origin+offset; break
 	world.camera_aim_offset=Vector3.ZERO; world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	display._process(0.0); world.room_visibility._update_outside_mask()
 	for enemy in world.enemy_root.get_children(): enemy.process_mode=Node.PROCESS_MODE_DISABLED
 	paused=true
@@ -131,7 +131,7 @@ func run() -> void:
 	world.set_meta(&"test_cutout_slots", [])
 	for pixelation in [false,true]:
 		for palette in [false,true]:
-			display.set_selective_enabled(pixelation); display.set_palette_enabled(palette); display._process(0.0)
+			display.set_selective_enabled(pixelation); display._process(0.0)
 			world.room_visibility._update_outside_mask()
 			var slot_results: Array = []
 			var images: Array[PackedByteArray] = []

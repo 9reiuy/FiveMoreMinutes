@@ -83,7 +83,7 @@ func _capture(label: String, room: Dictionary) -> void:
 	manifest.append({"file": filename, "seed": world.active_seed,
 		"shape": String(world.floor_shape), "room": room.get("archetype", ""),
 		"room_id": room.id, "pixelation": display.selective_enabled,
-		"palette": display.palette_enabled, "stats": display.get_stats()})
+		"colour_filter": false, "stats": display.get_stats()})
 
 func _captures(seeds: Dictionary) -> void:
 	var seen := {}
@@ -134,7 +134,6 @@ func _captures(seeds: Dictionary) -> void:
 			for pixel in [false, true]:
 				display.set_selective_enabled(pixel)
 				for palette in [false, true]:
-					main._apply_palette_enabled(palette)
 					await _capture("%s_%s_%s_%s" % [shape, archetype, "pixel" if pixel else "native", "palette1" if palette else "off"], room)
 		print("RANDOM_CAPTURE shape=", shape, " seed=", request.seed, " files=", manifest.size())
 		main._set_screen(Node.new())
@@ -170,7 +169,6 @@ func _clip(fixed_seed: int) -> void:
 	for enemy in world.enemy_root.get_children():
 		enemy.set_physics_process(false)
 	display.set_selective_enabled(true)
-	main._apply_palette_enabled(false)
 	_position_camera(_office_room())
 	world.player.equip_weapon("basic", world.config, {})
 	var clip_dir := OUT + "/clip"
@@ -192,7 +190,6 @@ func _benchmark(fixed_seed: int) -> void:
 		if not await _build(fixed_seed):
 			return
 		display.set_selective_enabled(pixel)
-		main._apply_palette_enabled(false)
 		_position_camera(_office_room())
 		# Real AI stays active for this measurement. No screenshots in timed run.
 		var start := Time.get_ticks_usec()

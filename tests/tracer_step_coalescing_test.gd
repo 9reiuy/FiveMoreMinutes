@@ -84,7 +84,6 @@ func run() -> void:
 	for pixelation in [false,true]:
 		for palette in [false,true]:
 			display.set_selective_enabled(pixelation)
-			display.set_palette_enabled(palette)
 			display._process(0.0)
 			var images: Array[Image] = []
 			for legacy in [true,false,true]:
@@ -100,7 +99,6 @@ func run() -> void:
 	bridge(shot)._process(0.0)
 	check(not shot._office_tracer_update_pending,"Late request is consumed")
 	display.set_selective_enabled(true)
-	display.set_palette_enabled(true)
 	display._process(0.0)
 	if "--frame-perf" in OS.get_cmdline_user_args():
 		for legacy in [true,false,true]:

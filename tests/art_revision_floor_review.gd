@@ -79,7 +79,6 @@ func run() -> void:
 	var adapter: Node=world.get_node("ChapterOneRun")
 	world.player.global_position=adapter.terminal_position+Vector2(0,70)
 	for palette in [1,2]:
-		root.get_node("SettingsManager").set_palette_scheme(palette)
 		await measure("rest_palette%d"%palette)
 	check(not adapter.maintenance_site.is_empty(),"rest floor retains a legal anchored maintenance bay")
 	await key_e(); await frames(3)
@@ -95,7 +94,6 @@ func run() -> void:
 		world.set_current_room_id(room.id); world._rebuild_active_room_presentation(); world.activate_room(room.id)
 		await frames(30)
 		for palette in [1,2]:
-			root.get_node("SettingsManager").set_palette_scheme(palette)
 			await measure("room%d_palette%d"%[room.id,palette])
 		inspected+=1
 		if inspected>=2: break

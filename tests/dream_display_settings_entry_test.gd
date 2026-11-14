@@ -42,14 +42,12 @@ func _run() -> void:
 		for pixels in [false, true]:
 			for palette in [false, true]:
 				settings.values["pixelation_enabled"] = pixels
-				settings.values["palette_enabled"] = palette
 				settings.setting_changed.emit(&"pixelation_enabled", pixels)
-				settings.setting_changed.emit(&"palette_enabled", palette)
 				await process_frame
 				check(display.selective_enabled == pixels, "Pixel settings unsynchronized")
-				check(display.palette_material.get_shader_parameter("palette_enabled") == palette, "Palette settings unsynchronized")
+				check(not display.has_method("set_palette_enabled"), "Palette settings unsynchronized")
 				check(display.world_viewport.size == Vector2i(640,360) if pixels else display.world_viewport.size.x > 640, "Wrong render resolution")
-				check(display.palette_material.get_shader_parameter("palette_enabled") == palette, "Palette must work without pixelation")
+				check(not display.has_method("set_palette_enabled"), "Palette must work without pixelation")
 		node.queue_free()
 		for frame in 4:
 			await process_frame

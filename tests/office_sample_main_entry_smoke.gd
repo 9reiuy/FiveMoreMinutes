@@ -28,12 +28,10 @@ func run() -> void:
 	var passed: bool = is_instance_valid(world) and world.scene_file_path == "res://scenes/dream/Dream3D_RandomDungeon.tscn" and int(world.seed) == expected_seed and not bool(world.use_authored_office_sample) and String(world.floor_shape) in ["rectangle", "l", "t", "cross", "convex"] and is_instance_valid(world.elevator_floor_door) and is_instance_valid(world.elevator_approach_trigger) and not world.rooms.is_empty() and is_instance_valid(world.player)
 	print("RANDOM MAIN ENTRY passed=", passed, " expected_seed=", expected_seed, " actual_seed=", world.seed if is_instance_valid(world) else -1, " floor_shape=", world.floor_shape if is_instance_valid(world) else "none")
 	if passed and not DisplayServer.get_name() == "headless":
-		main._apply_palette_enabled(false)
 		for frame in 3:
 			await process_frame
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png(ProjectSettings.globalize_path("res://.runtime/main_entry_palette_off.png"))
-		main._apply_palette_enabled(true)
 		for frame in 3:
 			await process_frame
 		await RenderingServer.frame_post_draw

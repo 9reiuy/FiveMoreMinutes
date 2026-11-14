@@ -43,11 +43,18 @@ func _run() -> void:
 	screen.navigate(&"confirm")
 	check(screen.get_page_id() == &"sounds", "Settings first row opens sounds")
 	var manager: Node = root.get_node("SettingsManager")
-	for key in [&"master_volume", &"music_volume", &"sfx_volume"]:
+	var master := AudioServer.get_bus_index(&"Master")
+	if master<0 or not AudioServer.is_bus_mute(master):
+		if master>=0:AudioServer.set_bus_mute(master,true)
+		quit(1);return
+	# Automated UI navigation must retain the private profile's muted master.
+	screen.navigate(&"down")
+	for key in [&"music_volume", &"sfx_volume"]:
 		manager.set_volume(key, 45)
 		screen.navigate(&"right")
 		check(manager.get_volume(key) == 50, "Volume row adjusts real manager: " + String(key))
 		screen.navigate(&"down")
+	check(manager.get_volume(&"master_volume")==0 and AudioServer.is_bus_mute(master),"Sound UI test preserves private Master=0")
 	check(screen.get_selected_index() == 2 and screen.get_focus_region() == &"footer", "Last sound row Down enters footer without wrapping its content index")
 	_click(screen.get_control_point(&"sfx_volume_min"), true)
 	check(manager.get_volume(&"sfx_volume") == 0 and screen.get_interaction_locked(), "Slider press writes exact zero and freezes phone tilt")
@@ -55,7 +62,7 @@ func _run() -> void:
 	check(not screen.get_interaction_locked() and feedback.back()[1] == false, "Pointer release clears feedback and interaction lock")
 	screen.navigate(&"back"); screen.navigate(&"down"); screen.navigate(&"confirm")
 	check(screen.get_page_id() == &"graphics", "Graphics page remains reachable")
-	for key in [&"pixelation_enabled", &"palette_enabled"]:
+	for key in [&"pixelation_enabled"]:
 		screen.navigate(&"left"); check(not manager.get_setting(key), "Graphics left selects off: " + String(key))
 		screen.navigate(&"right"); check(manager.get_setting(key), "Graphics right selects on: " + String(key))
 		screen.navigate(&"down")

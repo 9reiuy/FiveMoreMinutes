@@ -103,11 +103,14 @@ func _register_light(light: Light3D) -> void:
 	_suppressed[id] = {"ref":weakref(light), "visible":light.visible}
 	light.visibility_changed.connect(_keep_hidden.bind(id))
 	light.tree_exiting.connect(_forget_light.bind(id), CONNECT_ONE_SHOT)
-	light.hide()
+	if not light.get_meta(&"transient_explosion_light", false): light.hide()
 
 func _keep_hidden(id: int) -> void:
 	if not enabled or not _suppressed.has(id): return
 	var light: Node3D = _suppressed[id].ref.get_ref()
+	# A combat flash is not a persistent room fixture. Its floor-owned
+	# controller clears this role before reusing the same light for fire.
+	if is_instance_valid(light) and light.get_meta(&"transient_explosion_light", false): return
 	if _allow_window_spots and is_instance_valid(light) and light.has_meta(&"window_source_energy"): return
 	# Room/city presentation may request show() later in frame_pre_draw. Apply
 	# the policy synchronously so callback order cannot flash the old sources.

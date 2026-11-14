@@ -48,7 +48,7 @@ func run() -> void:
 	AudioServer.set_bus_mute(0,true); root.size=Vector2i(1280,720); Engine.max_fps=60
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT))
 	var settings:=root.get_node("SettingsManager")
-	settings.set_setting(&"pixelation_enabled",true); settings.set_palette_enabled(true)
+	settings.set_setting(&"pixelation_enabled",true)
 	main=load("res://scenes/app/main.tscn").instantiate(); root.add_child(main); await settle()
 	main.persistent_day_state=main._create_initial_state(); main.persistent_day_state.tutorial_completed=true
 	seed(120); main._show_dream("basic"); await settle()
@@ -153,7 +153,7 @@ func run() -> void:
 		local=world.to_local(drone.global_position)
 		check(not world.floor_cells.has(Vector2i(Vector2(local.x,local.z).round())),"Moving drone stays outside building")
 	check(drone.patrol_points.size()>1 and drone_start.distance_to(drone.global_position)>.02,"Drone moves along actual window run")
-	settings.set_setting(&"pixelation_enabled",false); settings.set_palette_enabled(false)
+	settings.set_setting(&"pixelation_enabled",false)
 	await shot("drone_native")
 	drone.set_physics_process(false); drone._spot_elapsed=.4; drone._aim_target=world.player.global_position
 	# Freeze the recoil pose before measuring the beam; physics aiming is

@@ -7,6 +7,7 @@ var emotion: StringName=&"happy"
 var reveal:=0.0
 var wanted:=false
 var anchor:=Vector2.ZERO
+var draw_frame:=true
 func _ready() -> void:
 	process_mode=Node.PROCESS_MODE_ALWAYS
 	mouse_filter=Control.MOUSE_FILTER_IGNORE
@@ -32,8 +33,9 @@ func prompt_anchor(prompt_size: Vector2) -> Vector2:
 	return (position+Vector2((size.x-prompt_size.x)*.5,-prompt_size.y-8)).round()
 func _draw() -> void:
 	var outline:=PackedVector2Array([Vector2(3,0),Vector2(29,0),Vector2(31,2),Vector2(31,20),Vector2(29,22),Vector2(18,22),Vector2(15,25),Vector2(15,22),Vector2(3,22),Vector2(1,20),Vector2(1,2),Vector2(3,0)])
-	draw_colored_polygon(outline,Color("101823")); draw_polyline(outline,BLUE,1,false)
-	draw_line(Vector2(4,2),Vector2(27,2),Color(BLUE,.45),1)
+	if draw_frame:
+		draw_colored_polygon(outline,Color("101823")); draw_polyline(outline,BLUE,1,false)
+		draw_line(Vector2(4,2),Vector2(27,2),Color(BLUE,.45),1)
 	# All features use integer pixel rectangles, not font-dependent Unicode.
 	match emotion:
 		&"happy":

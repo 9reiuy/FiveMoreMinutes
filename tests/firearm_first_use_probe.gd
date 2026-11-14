@@ -17,7 +17,7 @@ func run() -> void:
 	world.transition_phase=&"IDLE"
 	world.player.equip_weapon("assault_rifle",world.config)
 	world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED); Engine.max_fps=0; paused=true
 	for frame in 8: await RenderingServer.frame_post_draw
 	if "--prime-muzzle-light" in OS.get_cmdline_user_args() or "--prime-shot-visuals" in OS.get_cmdline_user_args():

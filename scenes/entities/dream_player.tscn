@@ -74,7 +74,7 @@ texture = SubResource("Atlas_player_right_foot")
 centered = false
 
 [node name="BodyPivot" type="Node2D" parent="CharacterVisual" unique_id=693012877]
-position = Vector2(0, -16)
+position = Vector2(0, -18)
 
 [node name="Head" type="Sprite2D" parent="CharacterVisual/BodyPivot" unique_id=432219514]
 texture_filter = 1
@@ -128,7 +128,7 @@ texture = SubResource("Atlas_player_right_foot")
 centered = false
 
 [node name="BodyPivot" type="Node2D" parent="HealOverlay" unique_id=1668910884]
-position = Vector2(-1, -16)
+position = Vector2(-1, -18)
 
 [node name="Head" type="Sprite2D" parent="HealOverlay/BodyPivot" unique_id=59218014]
 visible = false
@@ -246,3 +246,7 @@ weapon_id = "books"
 
 [node name="AssaultRifleWeapon" type="Node" parent="." unique_id=1164680813]
 script = ExtResource("7_assault")
+
+[node name="MP5Weapon" type="Node" parent="."]
+script = ExtResource("7_assault")
+weapon_id = "mp5"

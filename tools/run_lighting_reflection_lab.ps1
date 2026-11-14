@@ -7,7 +7,7 @@ if (-not $Godot) { $Godot = 'E:\Godot\Godot_v4.7.1-stable_win64_console.exe' }
 if (-not (Test-Path -LiteralPath $Godot)) { throw 'Godot 4.7.1 is required.' }
 if (-not (Test-Path -LiteralPath (Join-Path $projectPath 'lighting_lab\lab.tscn'))) { throw 'Independent experiment snapshot is missing.' }
 if ($CheckOnly) {
-    Write-Output "Isolated project: $projectPath`nRenderer: Compatibility`nA: current sparse lights; B: clear reflection; C: softer reflection; B/C: one window source`nKeys: 1 / 2 / 3; F1 panel; F6 room; F10 rebuild"
+    Write-Output "Isolated project: $projectPath`nRenderer: Forward+ / Vulkan`nA: current sparse lights; B: clear reflection; C: softer reflection; B/C: one window source`nKeys: 1 / 2 / 3; F1 panel; F6 room; F10 rebuild"
     exit 0
 }
 $dataPath = Join-Path $lab 'user_data'
@@ -17,7 +17,7 @@ $previousLocalAppData = $env:LOCALAPPDATA
 try {
     $env:APPDATA = Join-Path $dataPath 'appdata'
     $env:LOCALAPPDATA = Join-Path $dataPath 'localappdata'
-    $arguments = @('--path', $projectPath, '--rendering-method', 'gl_compatibility')
+    $arguments = @('--path', $projectPath, '--rendering-method', 'forward_plus', '--rendering-driver', 'vulkan')
     if ($ValidationScript) { $arguments += @('--script', $ValidationScript) }
     if ($CheckScript) { $arguments += @('--headless', '--check-only') }
     & $Godot @arguments

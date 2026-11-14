@@ -1,10 +1,16 @@
 extends RefCounted
 ## Timed Morse, in seconds. A dot is one unit; a dash is three.
-const ALPHABET := {"S":"...", "O":"---"}
+const ALPHABET := {"S":"...", "O":"---", "L":".-..", "V":"...-", "E":"."}
 const UNIT := .24
 var pulses: Array[Vector2] = []
 var content_duration := 0.
 var cycle_duration := 0.
+static func code_for(message: String) -> String:
+	var letters:=PackedStringArray()
+	for letter in message.to_upper():
+		var symbols: String=ALPHABET.get(letter,"")
+		if not symbols.is_empty(): letters.append(symbols)
+	return " ".join(letters)
 func configure(message: String) -> void:
 	pulses.clear()
 	var cursor := 0.

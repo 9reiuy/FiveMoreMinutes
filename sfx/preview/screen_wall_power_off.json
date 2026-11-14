@@ -1,0 +1,15 @@
+{
+  "authoring": "Excerpt of TRP's CC0 CRT on/off recording, from 3.590s to 3.820s. No pitch shift or filter. Peak set to the previous menu cue so the click is audible.",
+  "source_page": "https://freesound.org/people/TRP/sounds/616850/",
+  "source_preview": "https://cdn.freesound.org/previews/616/616850_97550-hq.mp3",
+  "license": "CC0 1.0",
+  "author": "TRP",
+  "duration_seconds": 0.23,
+  "rate": 48000,
+  "channels": 2,
+  "pcm_bits": 16,
+  "rms_dbfs": -33.29,
+  "peak_dbfs": -13.2,
+  "output_sha256": "9ca4818b7d594f1347790a0abc4a6218299afe06fa5659104b30bb7f5c69e0be",
+  "playback": "UI bus, same -9 dB player trim as hover, one voice, no overlap gain"
+}

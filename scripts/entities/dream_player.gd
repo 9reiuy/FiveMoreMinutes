@@ -6,11 +6,15 @@ const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const HEAL_EFFECT_SCENE := preload("res://scenes/entities/heal_effect.tscn")
 const ROLL_SPEED_TRAIL_SCRIPT := preload("res://scripts/entities/roll_speed_trail.gd")
+const DIVE_ROLL_POSE := preload("res://scripts/entities/player_dive_roll_pose.gd")
+const DEATH_RAGDOLL := preload("res://scripts/entities/player_death_ragdoll.gd")
 const CONFIG := preload("res://resources/demo_config.tres")
 const FIREARM_RULES := preload("res://scripts/dream/dream_firearm_rules.gd")
 const WEAPON_POSE := preload("res://scripts/dream/dream_weapon_pose.gd")
+const MELEE_WEAPON := preload("res://scripts/dream/lucille_weapon.gd")
 const HAND_PRESENTATION := preload("res://scripts/entities/player_hand_presentation.gd")
 var hand_presentation: RefCounted
+var death_ragdoll: DEATH_RAGDOLL
 const WORLD_WEAPON_PICKUP_SCRIPT := preload("res://scripts/dream/world_weapon_pickup.gd")
 const TACTICAL_GHOST_PREVIEW_SCRIPT := preload("res://scripts/entities/tactical_ghost_preview.gd")
 
@@ -44,7 +48,7 @@ const PLAYER_HEAD_CLOSED_REGION := PLAYER_HEAD_LEFT_CLOSED_REGION
 const PLAYER_BODY_REGION := PLAYER_BODY_FRONT_REGION
 const PLAYER_LEFT_FOOT_REGION := PLAYER_LEFT_FOOT_FRONT_REGION
 const PLAYER_RIGHT_FOOT_REGION := PLAYER_RIGHT_FOOT_FRONT_REGION
-const AMMO_WEAPON_IDS: Array[String] = ["basic", "shotgun", "assault_rifle"]
+const AMMO_WEAPON_IDS: Array[String] = ["basic", "shotgun", "assault_rifle", "mp5"]
 
 signal health_changed(current: float, maximum: float)
 signal died
@@ -56,6 +60,7 @@ signal weapon_fired(recoil_multiplier: float)
 signal confirmed_projectile_fired
 signal skill_state_changed(shielded: bool, dissociation_ready: bool)
 signal effective_damage_taken(amount: float)
+signal projectile_hit
 signal healed(amount: float)
 signal revived
 signal ammo_changed(current: int, capacity: int, reloading: bool)
@@ -84,16 +89,16 @@ enum DashInputState {
 
 ## 普通移动速度的唯一正式来源。Tab 角色卡 Speed 已停用：它不再进入移动计算，
 ## 也不再被任何乘算读取。Roll/翻滚、击退、发射、门撞击各自走独立参数。
-const PLAYER_BASE_MOVE_SPEED := 200.0
 
-@export var movement_speed := 136.0
+@export var movement_speed := DemoConfig.DEFAULT_PLAYER_MOVE_SPEED
 @export var maximum_health := 80.0
 
 @onready var auto_weapon: Node = $AutoWeapon
 @onready var shotgun_weapon: Node = $ShotgunWeapon
-@onready var lucille_weapon: Node = get_node_or_null("LucilleWeapon")
-@onready var books_weapon: Node = get_node_or_null("BooksWeapon")
+@onready var lucille_weapon := get_node_or_null("LucilleWeapon") as MELEE_WEAPON
+@onready var books_weapon := get_node_or_null("BooksWeapon") as MELEE_WEAPON
 @onready var assault_rifle_weapon: Node = get_node_or_null("AssaultRifleWeapon")
+@onready var mp5_weapon: Node = get_node_or_null("MP5Weapon")
 
 @onready var visual: Node2D = $CharacterVisual
 ## Keep the old variable names as aliases so the existing movement code remains one system.
@@ -136,6 +141,7 @@ var scripted_locomotion_direction := Vector2.ZERO
 var scripted_locomotion_speed := 0.0
 ## 与现有枪械 active 开关保持一致；空手拳击也必须尊重菜单/过场禁攻状态。
 var attacking_enabled := true
+var _keep_weapon_pose := false
 var arena_bounds := Rect2(32, 52, 576, 266)
 
 var invulnerability_left := 0.0
@@ -166,6 +172,7 @@ var dash_cooldown_left := 0.0
 var max_dash_charges := 1
 var dash_charges := 1
 var phase_dash: Node
+var dive_roll_pose: Node
 var dashing := false
 var is_diving := false
 var dive_bullet_time_active := false
@@ -407,11 +414,14 @@ func configure_weapon(weapon_id: String, config: DemoConfig, permanent_upgrades:
 	shotgun_weapon.configure_weapon(config, permanent_upgrades)
 
 	if lucille_weapon != null:
+		lucille_weapon.weapon_id = melee_weapon_id if DreamGunAtlas.uses_lucille_motion(melee_weapon_id) else "lucille"
 		lucille_weapon.configure_weapon(config, permanent_upgrades)
 	if books_weapon != null:
 		books_weapon.configure_weapon(config, permanent_upgrades)
 	if assault_rifle_weapon != null:
 		assault_rifle_weapon.configure_weapon(config, permanent_upgrades)
+	if mp5_weapon != null:
+		mp5_weapon.configure_weapon(config, permanent_upgrades)
 
 	critical_chance = clampf(config.player_base_critical_chance, 0.0, 1.0)
 	critical_damage_multiplier = maxf(config.player_critical_damage_multiplier, 1.0)
@@ -517,9 +527,8 @@ func _apply_profile_stats(preserve_current: bool) -> void:
 		current_health = clampf(old_current + maximum_health - old_maximum, 0.0, maximum_health)
 	else:
 		current_health = maximum_health
-	# Profile cards do not multiply movement. Office runs explicitly own their
-	# base speed; tutorial/reception retain the existing default. Roll is separate.
-	movement_speed = float(runtime_config.get_meta("office_player_move_speed", PLAYER_BASE_MOVE_SPEED))
+	# Character-card stats affect health. Locomotion takes the shared run config.
+	movement_speed = runtime_config.player_movement_speed
 
 
 func get_character_card_hp_cells() -> int:
@@ -577,11 +586,14 @@ func equip_weapon(weapon_id: String, config: DemoConfig, permanent_upgrades: Dic
 	shotgun_weapon.configure_weapon(config, permanent_upgrades)
 
 	if lucille_weapon != null:
+		lucille_weapon.weapon_id = melee_weapon_id if DreamGunAtlas.uses_lucille_motion(melee_weapon_id) else "lucille"
 		lucille_weapon.configure_weapon(config, permanent_upgrades)
 	if books_weapon != null:
 		books_weapon.configure_weapon(config, permanent_upgrades)
 	if assault_rifle_weapon != null:
 		assault_rifle_weapon.configure_weapon(config, permanent_upgrades)
+	if mp5_weapon != null:
+		mp5_weapon.configure_weapon(config, permanent_upgrades)
 
 	var weapon := get_active_weapon()
 
@@ -648,11 +660,14 @@ func store_weapon_in_category(
 	auto_weapon.configure_weapon(config, permanent_upgrades)
 	shotgun_weapon.configure_weapon(config, permanent_upgrades)
 	if lucille_weapon != null:
+		lucille_weapon.weapon_id = melee_weapon_id if DreamGunAtlas.uses_lucille_motion(melee_weapon_id) else "lucille"
 		lucille_weapon.configure_weapon(config, permanent_upgrades)
 	if books_weapon != null:
 		books_weapon.configure_weapon(config, permanent_upgrades)
 	if assault_rifle_weapon != null:
 		assault_rifle_weapon.configure_weapon(config, permanent_upgrades)
+	if mp5_weapon != null:
+		mp5_weapon.configure_weapon(config, permanent_upgrades)
 	var stored_weapon := _get_weapon_node(stored_id)
 	if stored_weapon != null:
 		if acquired_damage_multiplier > 1.0:
@@ -756,7 +771,7 @@ func get_active_throw_profile() -> Dictionary:
 		if damage_value != null:
 			base_damage = maxf(float(damage_value), 0.0)
 	if base_damage <= 0.0:
-		match thrown_weapon_id:
+		match DreamGunAtlas.get_behavior_id(thrown_weapon_id):
 			"lucille": base_damage = runtime_config.lucille_damage
 			"books": base_damage = runtime_config.books_damage
 			_: base_damage = runtime_config.basic_weapon_damage
@@ -829,7 +844,7 @@ func take_active_weapon_for_throw() -> Dictionary:
 		if damage_value != null:
 			base_damage = maxf(float(damage_value), 0.0)
 	if base_damage <= 0.0:
-		match thrown_weapon_id:
+		match DreamGunAtlas.get_behavior_id(thrown_weapon_id):
 			"lucille": base_damage = runtime_config.lucille_damage
 			"books": base_damage = runtime_config.books_damage
 			_: base_damage = runtime_config.basic_weapon_damage
@@ -959,20 +974,31 @@ func get_effective_attack_range() -> float:
 	var weapon := get_active_weapon()
 	return float(weapon.attack_range)
 
-func is_enemy_in_melee_preview(enemy: Node2D) -> bool:
-	if dead or not attacking_enabled or not movement_enabled or not is_instance_valid(enemy) or enemy.get("dead")==true: return false
-	if selected_weapon_id in ["lucille","books"]:
-		var weapon:=_get_weapon_node(selected_weapon_id)
-		return weapon!=null and weapon.is_target_in_attack_preview(enemy)
-	if not selected_weapon_id.is_empty(): return false
-	var offset:=global_position.direction_to(enemy.global_position)
-	var direction:=punch_direction if punch_active else get_aim_direction()
-	if absf(direction.angle_to(offset))>deg_to_rad(runtime_config.player_punch_arc_degrees*.5): return false
-	var distance:=global_position.distance_to(enemy.global_position)
-	if enemy.has_method("distance_to_hurtbox"): distance=enemy.distance_to_hurtbox(global_position)
-	if distance>runtime_config.player_punch_range: return false
-	var world:=_dream_world()
-	return world==null or not world.has_method("is_room_projectile_path_clear") or world.is_room_projectile_path_clear(global_position,enemy.global_position)
+func is_enemy_in_melee_preview(enemy: Node2D, direction := Vector2.ZERO) -> bool:
+	if not is_instance_valid(enemy) or enemy.get("dead") == true or is_throw_aim_active():
+		return false
+	if DreamGunAtlas.get_category(selected_weapon_id) == DreamGunAtlas.CATEGORY_MELEE:
+		var weapon := _get_weapon_node(selected_weapon_id)
+		return weapon != null and weapon.is_target_in_attack_preview(enemy, direction)
+	if not selected_weapon_id.is_empty() or _is_punch_blocked():
+		return false
+	if direction.is_zero_approx():
+		direction = punch_direction if punch_active else get_aim_direction()
+	return _punch_target_reachable(enemy, global_position, direction,
+		maxf(runtime_config.player_punch_range, 1.0),
+		deg_to_rad(runtime_config.player_punch_arc_degrees * 0.5), _dream_world())
+
+
+func _punch_target_reachable(enemy: Node2D, origin: Vector2, direction: Vector2,
+		radius: float, half_arc: float, world: Node) -> bool:
+	var to_enemy := origin.direction_to(enemy.global_position)
+	if to_enemy.length_squared() <= 0.0001 or absf(direction.angle_to(to_enemy)) > half_arc:
+		return false
+	var distance := origin.distance_to(enemy.global_position)
+	if enemy.has_method("distance_to_hurtbox"):
+		distance = float(enemy.distance_to_hurtbox(origin))
+	return (distance <= radius and (world == null or not world.has_method("is_room_projectile_path_clear")
+		or bool(world.is_room_projectile_path_clear(origin, enemy.global_position))))
 
 
 func is_dash_hunger_disabled() -> bool:
@@ -1010,6 +1036,8 @@ func _ready() -> void:
 
 	if assault_rifle_weapon != null:
 		assault_rifle_weapon.weapon_fired.connect(_on_weapon_fired)
+	if mp5_weapon != null:
+		mp5_weapon.weapon_fired.connect(_on_weapon_fired)
 
 	configure_weapon("basic", CONFIG)
 
@@ -1022,6 +1050,10 @@ func _ready() -> void:
 	add_child(tactical_preview_overlay)
 	hand_presentation = HAND_PRESENTATION.new()
 	hand_presentation.bind(self)
+	dive_roll_pose = DIVE_ROLL_POSE.new()
+	dive_roll_pose.name = "DiveRollPose"
+	add_child(dive_roll_pose)
+	dive_roll_pose.bind(self)
 
 	queue_redraw()
 
@@ -1179,11 +1211,11 @@ func _sync_heal_part_positions() -> void:
 
 
 func _update_hands_visibility() -> void:
+	if death_ragdoll != null:
+		return
 	## Armed state is derived from the real selected weapon slot, so Pickup/Throw/Break
 	## cannot leave stale hands visible or hidden for a frame.
-	# Safe rooms/cabs hide the equipped gun when attacks are disabled. In that
-	# state show the existing empty-hand sprites, rather than hiding both sets.
-	var hands_visible := (selected_weapon_id.is_empty() or not attacking_enabled) and not dead
+	var hands_visible := not dead and not _has_armed_pose()
 	for root in [visual, heal_overlay]:
 		for part_name in ["BodyPivot/LeftHand", "BodyPivot/RightHand"]:
 			var hand := root.get_node_or_null(part_name) as Sprite2D
@@ -1193,6 +1225,10 @@ func _update_hands_visibility() -> void:
 	_sync_heal_part_positions()
 	if hand_presentation != null:
 		hand_presentation.apply()
+
+
+func _has_armed_pose() -> bool:
+	return not dead and not selected_weapon_id.is_empty() and (attacking_enabled or _keep_weapon_pose)
 
 
 func _update_unarmed_hand_pose() -> void:
@@ -1332,19 +1368,7 @@ func _apply_punch_hits() -> bool:
 		var enemy := enemy_variant as Node2D
 		if enemy == null or not is_instance_valid(enemy) or enemy.get("dead") == true:
 			continue
-		var to_enemy := origin.direction_to(enemy.global_position)
-		if to_enemy.length_squared() <= 0.0001 or absf(punch_direction.angle_to(to_enemy)) > half_arc:
-			continue
-		var distance := origin.distance_to(enemy.global_position)
-		if enemy.has_method("distance_to_hurtbox"):
-			distance = float(enemy.distance_to_hurtbox(origin))
-		if distance > radius:
-			continue
-		if (
-			world != null
-			and world.has_method("is_room_projectile_path_clear")
-			and not bool(world.is_room_projectile_path_clear(origin, enemy.global_position))
-		):
+		if not _punch_target_reachable(enemy, origin, punch_direction, radius, half_arc, world):
 			continue
 		var enemy_id := enemy.get_instance_id()
 		if _punch_handled.has(enemy_id):
@@ -1554,6 +1578,14 @@ func _physics_process(delta: float) -> void:
 	PERF_TRACE.end(self,"player_physics",started)
 
 func _physics_process_profiled(delta:float)->void:
+	if dead:
+		velocity = Vector2.ZERO
+		_time_locomotion_velocity = Vector2.ZERO
+		_time_locomotion_speed = 0.0
+		if death_ragdoll != null:
+			death_ragdoll.step(delta)
+			knockback_height = death_ragdoll.height
+		return
 	delta = combat_action_delta(delta)
 	if not movement_enabled or scripted_locomotion_active or dead or dashing or vault_active or airborne_knockback:
 		_firearm_recoil_velocity = Vector2.ZERO
@@ -1658,7 +1690,7 @@ func _physics_process_profiled(delta:float)->void:
 	_update_kick(delta)
 	_update_held_weapon_aim()
 
-	# Read locomotion once for both normal movement and Space tap direction.
+	# Read locomotion once for movement and both phase actions.
 	# DASH_PENDING deliberately keeps this path live; only DASH_AIM owns movement.
 	var input_vector := Vector2.ZERO
 	if scripted_locomotion_active:
@@ -1667,10 +1699,11 @@ func _physics_process_profiled(delta:float)->void:
 		input_vector = _read_gameplay_movement_input()
 	if input_vector.length_squared() > 0.0001:
 		last_move_direction = input_vector.normalized()
+	var roll_pressed := Input.is_action_just_pressed(&"roll")
 	if (
 		movement_enabled
 		and dash_input_state == DashInputState.IDLE
-		and Input.is_action_just_pressed("dash")
+		and (roll_pressed or Input.is_action_just_pressed(&"dash"))
 		and _presentation_pointer_input_allowed()
 	):
 		var dash_dir := input_vector
@@ -1681,9 +1714,9 @@ func _physics_process_profiled(delta:float)->void:
 				dash_dir = mouse_dir
 			else:
 				dash_dir = get_aim_direction().normalized()
-		try_start_phase_dash(dash_dir)
+		try_start_phase_dash(dash_dir, roll_pressed)
 
-	# Tactical Planning Mode (Hold Space with tactical CD ready)
+	# Legacy tactical planning mode.
 	if dash_input_state == DashInputState.TACTICAL_PLAN or tactical_plan_active:
 		if (
 			dead
@@ -1710,7 +1743,7 @@ func _physics_process_profiled(delta:float)->void:
 			return
 		return
 
-	# A held Space becomes mouse-directed DASH_AIM only after the real-time hold
+	# A held legacy dash becomes mouse-directed DASH_AIM only after the real-time hold
 	# threshold.  Its preview is read-only; release commits the cached path.
 	if dash_input_state == DashInputState.AIM or dash_aim_active:
 		if (
@@ -1769,12 +1802,6 @@ func _physics_process_profiled(delta:float)->void:
 
 	queue_redraw()
 	_update_visual_feedback()
-
-	if dead:
-		velocity = Vector2.ZERO
-		_time_locomotion_velocity = Vector2.ZERO
-		_update_direction_animation(Vector2.ZERO, delta)
-		return
 
 	if airborne_knockback:
 		_time_locomotion_velocity = Vector2.ZERO
@@ -2345,12 +2372,12 @@ func _update_direction_animation(motion: Vector2, delta: float) -> void:
 
 		_set_part_position(
 			left_leg,
-			left_leg_base_position
+			left_leg_base_position + CHARACTER_ATLAS.standing_foot_adjustment(character_facing_index, true)
 		)
 
 		_set_part_position(
 			right_leg,
-			right_leg_base_position
+			right_leg_base_position + CHARACTER_ATLAS.standing_foot_adjustment(character_facing_index, false)
 		)
 
 		var body_breath := roundf(
@@ -2835,15 +2862,20 @@ func _cancel_dash_aim() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not tactical_plan_active:
+	if not (event is InputEventMouseButton and event.pressed):
 		return
-	if event is InputEventMouseButton and event.pressed:
+	if tactical_plan_active:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			_handle_tactical_plan_click()
 			get_viewport().set_input_as_handled()
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			_cancel_tactical_plan()
 			get_viewport().set_input_as_handled()
+		return
+	if event.button_index == MOUSE_BUTTON_LEFT and external_knockback_left <= 0.0 and _presentation_pointer_input_allowed():
+		var melee := get_active_weapon() as MELEE_WEAPON
+		if melee != null:
+			melee.queue_press()
 
 
 func can_start_tactical_plan() -> bool:
@@ -4480,18 +4512,15 @@ func _is_knock_recovery_protected() -> bool:
 
 
 func force_exterior_fall_death() -> void:
-	if dead: return
-	dead = true
+	force_hazard_death(&"exterior_fall")
+
+
+func force_hazard_death(damage_source: StringName) -> void:
+	if dead:
+		return
 	current_health = 0.0
-	last_damage_source = &"exterior_fall"
-	cancel_dash()
-	_cancel_all_reloads()
-	_set_weapon_activity(false)
-	invulnerability_left = 0.0
-	health_changed.emit(current_health,maximum_health)
-	if not get_meta(&"exterior_fall_wilhelm", false):
-		SFX.play_event(&"death")
-	died.emit()
+	last_damage_source = damage_source
+	_commit_death(-get_aim_direction(), true)
 
 func receive_damage(
 	amount: float,
@@ -4521,6 +4550,9 @@ func receive_damage(
 		return
 
 	last_damage_source = damage_source
+
+	if amount > 0.0 and damage_source == &"employee_projectile":
+		projectile_hit.emit()
 
 	if has_shield:
 		has_shield = false
@@ -4628,8 +4660,8 @@ func receive_damage(
 		actual_damage
 	)
 
+	var hurt_dir := Vector2.ZERO
 	if actual_damage > 0.0:
-		var hurt_dir: Vector2 = Vector2.ZERO
 		if source_direction.length_squared() > 0.001:
 			hurt_dir = source_direction.normalized()
 		elif source_position.is_finite() and global_position.distance_squared_to(source_position) > 0.001:
@@ -4655,22 +4687,76 @@ func receive_damage(
 	queue_redraw()
 
 	if current_health <= 0.0:
-		dead = true
-		knockback_recovery_left = 0.0
-
-		cancel_dash()
-		_cancel_all_reloads()
-
-		invulnerability_left = 0.0
-		_set_weapon_activity(false)
-
-		SFX.play_event(&"death")
-		died.emit()
-
+		_commit_death(hurt_dir)
 	else:
 		SFX.play_event(
 			&"player_hurt"
 		)
+
+
+func _commit_death(impact: Vector2, report_health: bool = false) -> void:
+	if dead:
+		return
+	var direction := impact.normalized() if impact.length_squared() > 0.001 else Vector2.DOWN
+	var incoming_velocity := velocity
+	var initial_height := knockback_height
+	var world := _dream_world()
+	if last_damage_source != &"exterior_fall" and visible and is_instance_valid(visual):
+		death_ragdoll = DEATH_RAGDOLL.new()
+		death_ragdoll.detach_weapon(self, world, held_weapon_sprite, direction)
+	dead = true
+	knockback_recovery_left = 0.0
+	_cancel_vault()
+	cancel_dash()
+	_cancel_all_reloads()
+	_cancel_punch()
+	_cancel_melee_visual()
+	invulnerability_left = 0.0
+	hurt_flash_left = 0.0
+	block_active = false
+	if is_instance_valid(player_hp_bar):
+		player_hp_bar.hide_immediately()
+	_set_weapon_activity(false)
+	if hand_presentation != null and is_instance_valid(hand_presentation.grip_root):
+		hand_presentation.grip_root.hide()
+	if death_ragdoll != null:
+		var parts: Array[Node2D] = [body_pivot, left_hand_part, right_hand_part, left_leg, right_leg]
+		death_ragdoll.begin(self, world, visual, visual_home_position, parts, direction, incoming_velocity, initial_height)
+		set_meta(&"player_death_ragdoll", true)
+		var clock := _get_dream_time_controller()
+		if clock != null:
+			clock.start_player_death_shot(self)
+	if report_health:
+		health_changed.emit(current_health, maximum_health)
+	if last_damage_source != &"exterior_fall" or not get_meta(&"exterior_fall_wilhelm", false):
+		SFX.play_event(&"death")
+	died.emit()
+
+
+func is_death_shot_playing() -> bool:
+	var clock := _get_dream_time_controller()
+	return death_ragdoll != null and clock != null and clock.is_player_death_shot_playing(self)
+
+
+func get_death_shot_elapsed() -> float:
+	if death_ragdoll == null:
+		return -1.0
+	var clock := _get_dream_time_controller()
+	return clock.get_player_death_shot_elapsed(self) if clock != null else -1.0
+
+
+func get_death_camera_weight() -> float:
+	return smoothstep(0.0, 0.92, get_death_shot_elapsed())
+
+
+func get_death_camera_focus() -> Vector2:
+	return death_ragdoll.focus_point(global_position) if death_ragdoll != null else global_position
+
+
+func release_death_shot() -> void:
+	var clock := _get_dream_time_controller()
+	if clock != null:
+		clock.release_player_death_shot(self)
 
 
 func revive_for_floor_restart(
@@ -4678,6 +4764,11 @@ func revive_for_floor_restart(
 	config: DemoConfig = runtime_config,
 	permanent_upgrades: Dictionary = runtime_permanent_upgrades
 ) -> void:
+	release_death_shot()
+	if death_ragdoll != null:
+		death_ragdoll.restore()
+		death_ragdoll = null
+		remove_meta(&"player_death_ragdoll")
 	dead = false
 	if has_meta(&"exterior_fall_restore"):
 		var restore: Dictionary = get_meta(&"exterior_fall_restore")
@@ -4695,6 +4786,7 @@ func revive_for_floor_restart(
 		show()
 	movement_enabled = true
 	attacking_enabled = true
+	_keep_weapon_pose = false
 	cancel_dash()
 	_cancel_all_reloads()
 	_cancel_punch()
@@ -5199,6 +5291,8 @@ func configure_consciousness_drift(
 			chance,
 			config.consciousness_drift_extra_delay
 		)
+	if mp5_weapon != null:
+		mp5_weapon.set_extra_attack(chance, config.consciousness_drift_extra_delay)
 
 
 func enable_dissociation(config: DemoConfig) -> void:
@@ -5218,12 +5312,12 @@ func _play_feedback() -> void:
 		feedback_audio.play()
 
 
-func set_attacking_enabled(enabled: bool) -> void:
+func set_attacking_enabled(enabled: bool, keep_weapon_pose := false) -> void:
 	attacking_enabled = enabled
+	_keep_weapon_pose = not enabled and keep_weapon_pose
 	_set_weapon_activity(
 		enabled and not dead
 	)
-	# Cabin disables attacks, not the empty-handed body's presentation.
 	_update_hands_visibility()
 
 
@@ -5254,16 +5348,18 @@ func _set_weapon_activity(enabled: bool) -> void:
 	shotgun_weapon.active = enabled and selected_weapon_id == "shotgun"
 
 	if lucille_weapon != null:
-		lucille_weapon.active = enabled and selected_weapon_id == "lucille"
+		lucille_weapon.active = enabled and DreamGunAtlas.uses_lucille_motion(selected_weapon_id)
 
 	if books_weapon != null:
 		books_weapon.active = enabled and selected_weapon_id == "books"
 
 	if assault_rifle_weapon != null:
 		assault_rifle_weapon.active = enabled and selected_weapon_id == "assault_rifle"
+	if mp5_weapon != null:
+		mp5_weapon.active = enabled and selected_weapon_id == "mp5"
 
 	if held_weapon_sprite != null:
-		held_weapon_sprite.visible = enabled and not selected_weapon_id.is_empty()
+		held_weapon_sprite.visible = (enabled or _keep_weapon_pose) and _has_armed_pose()
 
 
 ## 剧情Dream始终使用鼠标左键手动攻击（飞扑空中可射击，落地翻滚期间禁止射击）。
@@ -5278,11 +5374,17 @@ func should_trigger_weapon_attack() -> bool:
 		and external_knockback_left <= 0.0
 		and not kick_active
 		and not tactical_plan_active
-		and (
-			Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
-			or (InputMap.has_action("attack") and Input.is_action_pressed("attack"))
-			or bool(get_meta(&"force_weapon_attack", false))
-		)
+		and _has_weapon_attack_input()
+	)
+
+
+func _has_weapon_attack_input() -> bool:
+	return (
+		Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
+		or (InputMap.has_action("attack") and Input.is_action_pressed("attack"))
+		or bool(get_meta(&"force_weapon_attack", false))
+		or (lucille_weapon != null and lucille_weapon.active and lucille_weapon.attack_buffered)
+		or (books_weapon != null and books_weapon.active and books_weapon.attack_buffered)
 	)
 
 
@@ -5691,10 +5793,11 @@ func _update_held_weapon_aim_at(mouse_screen: Vector2) -> void:
 	# The formal 3D muzzle depends on the held pose, while the held pose depends
 	# on aim. Resolve once with the previous muzzle, then once with this frame's
 	# muzzle. This avoids a one-frame aim lag when crossing the actor or turning.
+	var melee := get_active_weapon() as MELEE_WEAPON
+	var resolved_direction := Vector2.RIGHT
 	for iteration in 2:
 		var direction := _aim_direction_at(mouse_screen)
-		var melee := get_active_weapon()
-		if melee != null and melee.get("melee_action_active") == true:
+		if melee != null and melee.melee_action_active:
 			direction = melee.swing_direction
 		if direction.length_squared() <= 0.0001:
 			direction = Vector2.RIGHT
@@ -5704,7 +5807,7 @@ func _update_held_weapon_aim_at(mouse_screen: Vector2) -> void:
 			maxf(runtime_config.held_weapon_distance * 0.82, 8.0),
 			runtime_config.held_weapon_distance
 		)
-		var resolved_direction: Vector2 = pose.get("aim_direction", direction)
+		resolved_direction = pose.get("aim_direction", direction)
 		hand_anchor.position = pose.get("orbit_offset", Vector2.ZERO)
 		hand_anchor.rotation = resolved_direction.angle()
 		held_weapon_sprite.flip_v = resolved_direction.x < 0.0
@@ -5715,7 +5818,7 @@ func _update_held_weapon_aim_at(mouse_screen: Vector2) -> void:
 		weapon_origin.position = origin_offset
 		projectile_origin.position = origin_offset
 	if hand_presentation != null:
-		hand_presentation.apply()
+		hand_presentation.apply(melee, resolved_direction)
 
 
 func _on_weapon_fired(multiplier: float) -> void:
@@ -5788,7 +5891,7 @@ func _on_melee_impact(hit_something: bool) -> void:
 	# One cue for the entire sweep, not one long freeze per enemy.
 	var world := _dream_world()
 	if world != null and world.has_method("request_hit_stop"):
-		world.request_hit_stop(&"medium" if selected_weapon_id == "lucille" else &"small")
+		world.request_hit_stop(&"medium" if DreamGunAtlas.uses_lucille_motion(selected_weapon_id) else &"small")
 	_request_combat_camera_impulse(&"small", lucille_attack_direction)
 
 
@@ -5805,13 +5908,13 @@ func _on_melee_furniture_hit(direction: Vector2) -> void:
 func _apply_firearm_recoil(multiplier: float) -> void:
 	if runtime_config == null or selected_weapon_id.is_empty():
 		return
-	var weapon_name := StringName(selected_weapon_id)
+	var weapon_name := StringName(DreamGunAtlas.get_behavior_id(selected_weapon_id))
 	var recoil := 0.0
 	var impulse_level: StringName = &"small"
 	match weapon_name:
 		&"shotgun":
 			impulse_level = &"heavy"
-		&"assault_rifle":
+		&"assault_rifle", &"mp5":
 			impulse_level = &"medium"
 		&"lucille":
 			impulse_level = &"heavy"
@@ -5857,10 +5960,6 @@ func apply_melee_swing_snapshot(snapshot: Dictionary) -> void:
 	var duration: float = snapshot.duration
 	var progress := clampf(elapsed / maxf(duration, 0.001), 0.0, 1.0)
 	_set_lucille_character_animation_progress(progress)
-	var angle: float = snapshot.angle
-	if float(snapshot.opacity) < 1.0:
-		angle *= float(snapshot.opacity)
-	weapon_motion.rotation = angle
 	_update_direction_animation(velocity, 0.0)
 	_update_visual_feedback()
 	_update_held_weapon_aim()
@@ -5873,6 +5972,9 @@ func finish_melee_swing_snapshot() -> void:
 	if is_instance_valid(visual) and runtime_config != null:
 		_update_direction_animation(velocity, 0.0)
 		_update_visual_feedback()
+		var melee := get_active_weapon() as MELEE_WEAPON
+		if melee != null and melee.combo_stage > 0:
+			_update_held_weapon_aim()
 
 
 func _configure_melee_trail_profile() -> void:
@@ -5884,6 +5986,7 @@ func _configure_melee_trail_profile() -> void:
 		if is_books
 		else runtime_config.lucille_trail_width
 	)
+	lucille_trail.width *= DreamGunAtlas.get_melee_range_multiplier(selected_weapon_id)
 	lucille_trail.default_color = Color.WHITE
 	lucille_trail.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	lucille_trail.antialiased = false
@@ -6113,6 +6216,7 @@ func _set_melee_swing_angle(angle: float) -> void:
 		if selected_weapon_id == "books"
 		else runtime_config.lucille_trail_radius
 	)
+	arc_radius *= DreamGunAtlas.get_melee_range_multiplier(selected_weapon_id)
 	var tip := Vector2(
 		arc_radius,
 		0.0
@@ -6213,7 +6317,9 @@ func _update_weapon_name(delta: float) -> void:
 
 
 func get_active_weapon() -> Node:
-	match selected_weapon_id:
+	match DreamGunAtlas.get_behavior_id(selected_weapon_id):
+		"mp5":
+			return mp5_weapon
 		"assault_rifle":
 			return assault_rifle_weapon
 
@@ -6231,7 +6337,9 @@ func get_active_weapon() -> Node:
 
 
 func _get_weapon_node(weapon_id: String) -> Node:
-	match weapon_id:
+	match DreamGunAtlas.get_behavior_id(weapon_id):
+		"mp5":
+			return mp5_weapon
 		"assault_rifle":
 			return assault_rifle_weapon
 		"shotgun":
@@ -6247,7 +6355,7 @@ func _get_weapon_node(weapon_id: String) -> Node:
 
 
 func _get_magazine_capacity(weapon_id: String) -> int:
-	if weapon_id == "assault_rifle":
+	if DreamGunAtlas.is_automatic_weapon(weapon_id):
 		return maxi(
 			1,
 			runtime_config.assault_rifle_magazine_size
@@ -6311,13 +6419,13 @@ func get_time_locomotion_speed() -> float:
 func is_phase_dash_active() -> bool:
 	return is_instance_valid(phase_dash) and phase_dash.active
 
-func try_start_phase_dash(target_direction: Vector2 = Vector2.ZERO) -> bool:
+func try_start_phase_dash(target_direction: Vector2 = Vector2.ZERO, dive_roll: bool = false) -> bool:
 	if not is_instance_valid(phase_dash):
 		phase_dash = preload("res://scripts/entities/player_phase_dash.gd").new()
 		phase_dash.name = "PhaseDash"
 		add_child(phase_dash)
 		phase_dash.configure(self)
-	return phase_dash.try_start(target_direction)
+	return phase_dash.try_start(target_direction, dive_roll)
 
 
 func is_time_activity_active() -> bool:
@@ -6355,8 +6463,8 @@ func is_time_activity_active() -> bool:
 
 
 func get_aim_direction() -> Vector2:
-	if selected_weapon_id in ["lucille", "books"]:
-		var melee := lucille_weapon if selected_weapon_id == "lucille" else books_weapon
+	if DreamGunAtlas.get_category(selected_weapon_id) == DreamGunAtlas.CATEGORY_MELEE:
+		var melee := lucille_weapon if DreamGunAtlas.uses_lucille_motion(selected_weapon_id) else books_weapon
 		if is_instance_valid(melee) and melee.melee_action_active and melee.direction_locked:
 			return melee.swing_direction
 	return _aim_direction_at(get_presentation_pointer_position())
@@ -6429,6 +6537,8 @@ func get_constrained_aim_position() -> Vector2:
 
 
 func _exit_tree() -> void:
+	if death_ragdoll != null:
+		release_death_shot()
 	_cached_dream_world = null
 	_cancel_tactical_plan()
 	_cancel_throw_aim()

@@ -11,15 +11,15 @@ var camera: Camera3D
 var border: MeshInstance3D
 var material: ShaderMaterial
 var records: Array[Dictionary]=[]
-var aimed:=false
 var melee:=false
+var primary_melee_target := false
 var enabled:=true
 
 func configure(owner_world: Node3D, source: Node3D, target: Node2D, offset: Vector3, bound: float) -> void:
 	world=owner_world; model=source; actor=target; center_offset=offset; radius=bound
 	name="UnitSilhouetteOutline"
 	capture=SubViewport.new(); capture.size=Vector2i(256,256); capture.transparent_bg=true
-	capture.world_3d=World3D.new(); capture.render_target_update_mode=SubViewport.UPDATE_ALWAYS
+	capture.world_3d=World3D.new(); capture.render_target_update_mode=SubViewport.UPDATE_DISABLED
 	add_child(capture)
 	camera=Camera3D.new(); capture.add_child(camera); camera.current=true
 	var flat:=StandardMaterial3D.new(); flat.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED; flat.albedo_color=Color.WHITE
@@ -45,22 +45,36 @@ func _enter_tree() -> void:
 func _connect_frame_sync() -> void:
 	if not RenderingServer.frame_pre_draw.is_connected(sync): RenderingServer.frame_pre_draw.connect(sync)
 
-func set_target_highlight_state(state: int) -> void: aimed=state==1
-func set_combat_range_highlight(value: bool) -> void: melee=value
+func set_combat_range_highlight(value: bool, primary := false) -> void:
+	melee = value
+	primary_melee_target = primary
+	if not value:
+		_hide_outline()
+
 func set_enabled(value: bool) -> void:
-	enabled=value
-	if is_instance_valid(border): border.visible=value
-	if is_instance_valid(capture): capture.render_target_update_mode=SubViewport.UPDATE_ALWAYS if value else SubViewport.UPDATE_DISABLED
+	enabled = value
+	if not value:
+		_hide_outline()
+
+func _hide_outline() -> void:
+	if is_instance_valid(border): border.hide()
+	if is_instance_valid(capture): capture.render_target_update_mode = SubViewport.UPDATE_DISABLED
+
+func get_model_center() -> Vector3:
+	return model.get_parent_node_3d().to_global(center_offset)
 
 func sync() -> void:
 	if not is_inside_tree() or not is_instance_valid(world) or not is_instance_valid(world.camera_3d): return
-	if not enabled or not can_process() or not is_instance_valid(model) or not is_instance_valid(actor) or actor.get("dead")==true or actor.get_meta(&"smoke_hidden_from_player",false):
-		border.hide(); capture.render_target_update_mode=SubViewport.UPDATE_DISABLED; return
+	if (not enabled or not melee or not can_process() or not is_instance_valid(model) or not is_instance_valid(actor)
+		or actor.get("dead") == true or actor.get_meta(&"smoke_hidden_from_player", false)
+		or actor.get_meta(&"extinguisher_smoke", false)):
+		_hide_outline()
+		return
 	var real: Camera3D=world.camera_3d
 	# Use the camera's effective, orthonormal render transform, including its
 	# display-only h/v offset. global_transform omits those camera offsets.
 	var effective:=real.get_camera_transform()
-	var center:=model.get_parent_node_3d().to_global(center_offset)
+	var center := get_model_center()
 	var size:=real.get_viewport().get_visible_rect().size
 	var pixel:=real.unproject_position(center).round()
 	var projected_radius:=real.unproject_position(center+effective.basis.x*radius).distance_to(pixel)
@@ -86,7 +100,8 @@ func sync() -> void:
 	border.mesh.size=Vector2(absf((inverse*b).x-(inverse*a).x),absf((inverse*b).y-(inverse*a).y))
 	border.global_transform=Transform3D(effective.basis,real.project_position(pixel,depth))
 	border.force_update_transform()
-	material.set_shader_parameter("rim_color",Color.WHITE if aimed or melee else Color(.55,.58,.62))
+	var color := Color.WHITE if primary_melee_target else Color(0.63, 0.78, 0.88)
+	material.set_shader_parameter("rim_color", color)
 	material.set_shader_parameter("pixel_width",maxf(1.0,size.y/360.0))
 	for record in records:
 		var source: Node3D=record.source.get_ref()

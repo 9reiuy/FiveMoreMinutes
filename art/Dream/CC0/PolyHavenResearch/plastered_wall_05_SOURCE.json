@@ -1,0 +1,25 @@
+{
+  "id": "plastered_wall_05",
+  "license": "CC0-1.0",
+  "maps": [
+    {
+      "file": "plastered_wall_05_diff_1k.jpg",
+      "role": "Diffuse",
+      "sha256": "b10e2fc12c6f6bb8a355fe7c5d6eab19222337414ce055df0701e75f5f603764",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_05/plastered_wall_05_diff_1k.jpg"
+    },
+    {
+      "file": "plastered_wall_05_nor_gl_1k.jpg",
+      "role": "nor_gl",
+      "sha256": "560ca5b81f8c37a1bf9d44f9d20adc983d1cad3a7c6aa23835a1e1c1b63da98f",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_05/plastered_wall_05_nor_gl_1k.jpg"
+    },
+    {
+      "file": "plastered_wall_05_rough_1k.jpg",
+      "role": "Rough",
+      "sha256": "5e9439a03d2895acc902596a6a899509bb2b42dfb16ab4ea10a2a6a22c1329cf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_05/plastered_wall_05_rough_1k.jpg"
+    }
+  ],
+  "source": "https://polyhaven.com/a/plastered_wall_05"
+}

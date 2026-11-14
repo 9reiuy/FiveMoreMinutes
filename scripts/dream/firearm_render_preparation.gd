@@ -36,18 +36,24 @@ static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -
 	var rng_state: int=world._content_rng.state
 	var build_started:=Time.get_ticks_usec()
 	if include_shot_visuals:
-		# CPU-particle instancing needs the formal viewport/material render path;
-		# the private destruction mesh viewport alone leaves its first draw cold.
-		# Covered and paused: deterministic display carriers, never collision hits.
-		for surface in [&"solid",&"metal",&"glass",&"soft"]:
-			var impact=preload("res://scripts/dream/firearm_impact_visual_3d.gd").new()
-			impact.setup(Vector3.UP,surface)
-			world.world_effects_root.add_child(impact)
-			impact.global_position=world.get_gameplay_world_position(world.player.global_position+Vector2(32,32),.8)
-			impact.process_mode=Node.PROCESS_MODE_DISABLED
-			impact._emitter.use_fixed_seed=true; impact._emitter.seed=1234
-			impact._emitter.restart(); impact._emitter.request_particles_process(.07)
-			temporary_sources.append(impact)
+		if world._uses_firearm_flash_fx():
+			# The covered native viewport compiles the same depth-tested batches
+			# used for live contacts, without creating a projectile or changing HP.
+			var point: Vector3 = world.get_gameplay_world_position(world.player.global_position + Vector2(32, 32), 0.8)
+			world._firearm_fx().impact(point, Vector3.RIGHT, &"metal")
+		else:
+			# CPU-particle instancing needs the formal viewport/material render path;
+			# the private destruction mesh viewport alone leaves its first draw cold.
+			# Covered and paused: deterministic display carriers, never collision hits.
+			for surface in [&"solid",&"metal",&"glass",&"soft"]:
+				var impact=preload("res://scripts/dream/firearm_impact_visual_3d.gd").new()
+				impact.setup(Vector3.UP,surface)
+				world.world_effects_root.add_child(impact)
+				impact.global_position=world.get_gameplay_world_position(world.player.global_position+Vector2(32,32),.8)
+				impact.process_mode=Node.PROCESS_MODE_DISABLED
+				impact._emitter.use_fixed_seed=true; impact._emitter.seed=1234
+				impact._emitter.restart(); impact._emitter.request_particles_process(.07)
+				temporary_sources.append(impact)
 		phase_timings["impact_build_ms"]=(Time.get_ticks_usec()-build_started)/1000.0
 		var impact_draw_started:=Time.get_ticks_usec()
 		for frame in 2: await RenderingServer.frame_post_draw
@@ -149,11 +155,4 @@ static func run(tree: SceneTree,world: Node3D,include_shot_visuals: bool=true) -
 
 static func _clear_firearm_render_vfx(world: Variant) -> void:
 	if not is_instance_valid(world): return
-	var host: Node = world.floor_root if is_instance_valid(world.get("floor_root")) else world
-	var burning_node: Node = host.get_node_or_null("BurningEffects") if is_instance_valid(host) else null
-	if is_instance_valid(burning_node) and burning_node.has_method("clear"):
-		burning_node.clear()
-	if world.has_method("_muzzle_smoke"):
-		var smoke: Node = world.call("_muzzle_smoke")
-		if is_instance_valid(smoke) and smoke.has_method("clear"):
-			smoke.clear()
+	world._clear_muzzle_and_burning_vfx()

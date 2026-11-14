@@ -21,8 +21,6 @@ const CONTROL_COL_WIDTH := 120.0
 @onready var sfx_desc: Button = $Rows/SFX/Desc
 @onready var pixelation_check: CheckBox = $Rows/Pixelation/Check
 @onready var pixelation_desc: Button = $Rows/Pixelation/Desc
-@onready var palette_option: OptionButton = $Rows/PaletteScheme/Option
-@onready var palette_desc: Button = $Rows/PaletteScheme/Desc
 @onready var shadow_quality_option: OptionButton = $Rows/ShadowQuality/Option
 @onready var shadow_quality_desc: Button = $Rows/ShadowQuality/Desc
 @onready var assistance_button: Button = $Rows/AssistanceButton
@@ -31,6 +29,8 @@ const CONTROL_COL_WIDTH := 120.0
 @onready var auto_vault_desc: Button = $Rows/AssistanceOptions/AutoVault/Desc
 @onready var screen_shake_check: CheckBox = $Rows/AssistanceOptions/ScreenShake/Check
 @onready var screen_shake_desc: Button = $Rows/AssistanceOptions/ScreenShake/Desc
+@onready var canned_laughter_check: CheckBox = $Rows/AssistanceOptions/CannedLaughter/Check
+@onready var canned_laughter_desc: Button = $Rows/AssistanceOptions/CannedLaughter/Desc
 
 var assistance_open := false
 var syncing := false
@@ -47,24 +47,18 @@ func _ready() -> void:
 	pixelation_check.focus_mode = Control.FOCUS_NONE
 	pixelation_check.mouse_entered.connect(_play_hover)
 	pixelation_check.toggled.connect(_on_pixelation_toggled)
-	palette_option.focus_mode = Control.FOCUS_NONE
-	palette_option.mouse_entered.connect(_play_hover)
-	palette_option.clear()
-	palette_option.add_item("方案 1", 0)
-	palette_option.add_item("方案 2", 1)
-	palette_option.add_item("关闭", 2)
-	palette_option.item_selected.connect(_on_palette_selected)
 	shadow_quality_option.focus_mode = Control.FOCUS_NONE
 	shadow_quality_option.mouse_entered.connect(_play_hover)
 	for quality_name in ["低", "默认", "高"]:
 		shadow_quality_option.add_item(quality_name)
 	shadow_quality_option.item_selected.connect(_on_shadow_quality_selected)
 	assistance_button.pressed.connect(_toggle_assistance)
-	for check in [auto_vault_check, screen_shake_check]:
+	for check in [auto_vault_check, screen_shake_check, canned_laughter_check]:
 		check.focus_mode = Control.FOCUS_NONE
 		check.mouse_entered.connect(_play_hover)
 	auto_vault_check.toggled.connect(_on_assistance_toggled.bind(&"auto_vault_enabled"))
 	screen_shake_check.toggled.connect(_on_assistance_toggled.bind(&"screen_shake_enabled"))
+	canned_laughter_check.toggled.connect(_on_assistance_toggled.bind(&"canned_laughter_enabled"))
 	var sm := _get_sm()
 	if sm != null and sm.has_signal("setting_changed"):
 		sm.connect("setting_changed", _on_setting_changed)
@@ -96,20 +90,20 @@ func _wire_row_selection() -> void:
 	_bind_control_hover(music_slider, music_desc)
 	_bind_control_hover(sfx_slider, sfx_desc)
 	_bind_control_hover(pixelation_check, pixelation_desc)
-	_bind_control_hover(palette_option, palette_desc)
 	_bind_control_hover(shadow_quality_option, shadow_quality_desc)
 	_bind_control_hover(auto_vault_check, auto_vault_desc)
 	_bind_control_hover(screen_shake_check, screen_shake_desc)
+	_bind_control_hover(canned_laughter_check, canned_laughter_desc)
 
 
 func _reregister_row_buttons() -> void:
 	var buttons: Array[Button] = []
 	if assistance_open:
-		buttons = [auto_vault_desc, screen_shake_desc, assistance_button]
+		buttons = [auto_vault_desc, screen_shake_desc, canned_laughter_desc, assistance_button]
 	else:
 		buttons = [
 			master_desc, music_desc, sfx_desc, pixelation_desc,
-			palette_desc, shadow_quality_desc, assistance_button,
+			shadow_quality_desc, assistance_button,
 		]
 	for button in buttons:
 		_style_desc_button(button)
@@ -158,12 +152,12 @@ func _sync_all() -> void:
 		master_slider.value = sm.call("get_volume", &"master_volume")
 		music_slider.value = sm.call("get_volume", &"music_volume")
 		sfx_slider.value = sm.call("get_volume", &"sfx_volume")
-		pixelation_check.set_pressed_no_signal(bool(sm.call("get_setting", &"pixelation_enabled", true)))
-		palette_option.select((1 if int(sm.call("get_palette_scheme")) == 2 else 0) if bool(sm.call("get_palette_enabled")) else 2)
+		pixelation_check.set_pressed_no_signal(bool(sm.call("get_setting", &"pixelation_enabled", false)))
 		var quality_index := SHADOW_QUALITIES.find(String(sm.call("get_setting", &"shadow_quality", "standard")))
 		shadow_quality_option.select(quality_index if quality_index >= 0 else 1)
 		auto_vault_check.set_pressed_no_signal(bool(sm.get_setting(&"auto_vault_enabled", true)))
 		screen_shake_check.set_pressed_no_signal(bool(sm.get_setting(&"screen_shake_enabled", true)))
+		canned_laughter_check.set_pressed_no_signal(bool(sm.get_setting(&"canned_laughter_enabled", true)))
 	_refresh_value_labels()
 	syncing = false
 
@@ -197,17 +191,6 @@ func _on_pixelation_toggled(pressed: bool) -> void:
 	SFX.play_event(&"confirm")
 
 
-func _on_palette_selected(index: int) -> void:
-	if syncing:
-		return
-	var sm := _get_sm()
-	if sm != null:
-		if index < 2: sm.call("set_setting", &"palette_scheme", index + 1)
-		sm.call("set_setting", &"palette_enabled", index < 2)
-	_refresh_one_cycle_caption(palette_option)
-	SFX.play_event(&"confirm")
-
-
 func _on_setting_changed(_setting_name: StringName, _value: Variant) -> void:
 	_sync_all()
 
@@ -222,7 +205,9 @@ func _toggle_assistance() -> void:
 
 
 func _apply_assistance_page() -> void:
-	for section in [$Rows/Master, $Rows/Music, $Rows/SFX, $Rows/Pixelation, $Rows/PaletteScheme, $Rows/ShadowQuality]:
+	# Rows is centered under RowsCenter after ready; keep using its cached node.
+	for name in ["Master","Music","SFX","Pixelation","ShadowQuality"]:
+		var section := rows.get_node(NodePath(name)) as Control
 		section.visible = not assistance_open
 	assistance_options.visible = assistance_open
 	row_select.clear_highlight()
@@ -271,9 +256,9 @@ func _apply_nier_control_styles() -> void:
 			node.add_theme_color_override("font_color", NIER_ACCENT)
 	for slider in [master_slider, music_slider, sfx_slider]:
 		_style_nier_slider(slider)
-	for check in [pixelation_check, auto_vault_check, screen_shake_check]:
+	for check in [pixelation_check, auto_vault_check, screen_shake_check, canned_laughter_check]:
 		_style_nier_checkbox(check)
-	for option in [palette_option, shadow_quality_option]:
+	for option in [shadow_quality_option]:
 		_style_nier_cycle(option)
 	_style_nier_link_button(assistance_button)
 	_refresh_cycle_captions()
@@ -437,7 +422,7 @@ func _queue_nier_checkbox_hover_refresh() -> void:
 
 
 func _refresh_all_nier_checkbox_hovers() -> void:
-	for check in [pixelation_check, auto_vault_check, screen_shake_check]:
+	for check in [pixelation_check, auto_vault_check, screen_shake_check, canned_laughter_check]:
 		if check != null and is_instance_valid(check):
 			_refresh_nier_checkbox_hover_visual(check)
 
@@ -464,6 +449,8 @@ func _desc_for_check(check: CheckBox) -> Button:
 		return auto_vault_desc
 	if check == screen_shake_check:
 		return screen_shake_desc
+	if check == canned_laughter_check:
+		return canned_laughter_desc
 	return null
 
 
@@ -522,6 +509,8 @@ func _style_nier_cycle(option: OptionButton) -> void:
 	option.add_theme_color_override("font_hover_color", Color(0, 0, 0, 0))
 	option.add_theme_color_override("font_pressed_color", Color(0, 0, 0, 0))
 	option.add_theme_color_override("font_focus_color", Color(0, 0, 0, 0))
+	option.add_theme_color_override("font_hover_pressed_color", Color(0, 0, 0, 0))
+	option.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0))
 	if not bool(option.get_meta(&"nier_cycle_wired", false)):
 		option.gui_input.connect(_on_nier_cycle_gui_input.bind(option))
 		var popup := option.get_popup()
@@ -625,7 +614,7 @@ func _apply_cycle_bracket_colors(option: OptionButton) -> void:
 func _refresh_cycle_captions() -> void:
 	if not is_node_ready():
 		return
-	for option in [palette_option, shadow_quality_option]:
+	for option in [shadow_quality_option]:
 		if option != null:
 			_refresh_one_cycle_caption(option)
 
@@ -695,11 +684,11 @@ func _wire_desc_confirm_actions() -> void:
 			screen_shake_check.button_pressed = not screen_shake_check.button_pressed
 		)
 		screen_shake_desc.set_meta(&"nier_desc_confirm", true)
-	if not bool(palette_desc.get_meta(&"nier_desc_confirm", false)):
-		palette_desc.pressed.connect(func() -> void:
-			_cycle_option(palette_option, 1)
+	if not bool(canned_laughter_desc.get_meta(&"nier_desc_confirm", false)):
+		canned_laughter_desc.pressed.connect(func() -> void:
+			canned_laughter_check.button_pressed = not canned_laughter_check.button_pressed
 		)
-		palette_desc.set_meta(&"nier_desc_confirm", true)
+		canned_laughter_desc.set_meta(&"nier_desc_confirm", true)
 	if not bool(shadow_quality_desc.get_meta(&"nier_desc_confirm", false)):
 		shadow_quality_desc.pressed.connect(func() -> void:
 			_cycle_option(shadow_quality_option, 1)
@@ -779,7 +768,7 @@ func _apply_two_column_layout() -> void:
 			(box as HBoxContainer).alignment = BoxContainer.ALIGNMENT_BEGIN
 	var desc_nodes: Array[Button] = [
 		master_desc, music_desc, sfx_desc, pixelation_desc,
-		palette_desc, shadow_quality_desc, auto_vault_desc, screen_shake_desc,
+		shadow_quality_desc, auto_vault_desc, screen_shake_desc, canned_laughter_desc,
 	]
 	for desc in desc_nodes:
 		if desc == null:
@@ -790,10 +779,10 @@ func _apply_two_column_layout() -> void:
 	for slider in [master_slider, music_slider, sfx_slider]:
 		if slider != null:
 			slider.custom_minimum_size = Vector2(CONTROL_COL_WIDTH, maxf(slider.custom_minimum_size.y, 16.0))
-	for check in [pixelation_check, auto_vault_check, screen_shake_check]:
+	for check in [pixelation_check, auto_vault_check, screen_shake_check, canned_laughter_check]:
 		if check != null:
 			check.custom_minimum_size = Vector2(CONTROL_COL_WIDTH, maxf(check.custom_minimum_size.y, 20.0))
-	for option in [palette_option, shadow_quality_option]:
+	for option in [shadow_quality_option]:
 		if option != null:
 			option.custom_minimum_size = Vector2(CONTROL_COL_WIDTH, maxf(option.custom_minimum_size.y, 20.0))
 	# Assistance link sits on the left rail only, but the row itself is centered with peers.
@@ -821,14 +810,14 @@ func _control_for_desc(desc: Button) -> Control:
 		return sfx_slider
 	if desc == pixelation_desc:
 		return pixelation_check
-	if desc == palette_desc:
-		return palette_option
 	if desc == shadow_quality_desc:
 		return shadow_quality_option
 	if desc == auto_vault_desc:
 		return auto_vault_check
 	if desc == screen_shake_desc:
 		return screen_shake_check
+	if desc == canned_laughter_desc:
+		return canned_laughter_check
 	return null
 
 

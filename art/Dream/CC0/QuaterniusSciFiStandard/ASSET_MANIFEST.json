@@ -1,0 +1,173 @@
+[
+  {
+    "name": "Platform_Simple",
+    "original": "glTF\\Platforms\\Platform_Simple.gltf",
+    "gltf_sha256": "0918d17414e3cdb3008575e3e3714d53bf0df7d20ae09999e4403af9df8215c6",
+    "surfaces": 1,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Platform_Simple.scn"
+  },
+  {
+    "name": "Platform_Simple2",
+    "original": "glTF\\Platforms\\Platform_Simple2.gltf",
+    "gltf_sha256": "102721b83b15234872a0f7aef6e4d5e4139b0a9bba76a041440e475c00e34db6",
+    "surfaces": 1,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Platform_Simple2.scn"
+  },
+  {
+    "name": "Platform_Metal2",
+    "original": "glTF\\Platforms\\Platform_Metal2.gltf",
+    "gltf_sha256": "5cf0b1fd6b3ff948bbcefa733fa39f6024dc494acdf4c58a27518208338ad24f",
+    "surfaces": 1,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Platform_Metal2.scn"
+  },
+  {
+    "name": "Platform_CenterPlate",
+    "original": "glTF\\Platforms\\Platform_CenterPlate.gltf",
+    "gltf_sha256": "d31a64b1b5e300cbe38bbc212597e1230a36e17d3d44e0fe43225a419c7b5d04",
+    "surfaces": 2,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Platform_CenterPlate.scn"
+  },
+  {
+    "name": "Platform_Stairs_2",
+    "original": "glTF\\Platforms\\Platform_Stairs_2.gltf",
+    "gltf_sha256": "9419ea5a1e8e382ec8d61d87cd6d8436490f8c88a334ecc2b952ee0e46e3e03d",
+    "surfaces": 2,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Platform_Stairs_2.scn"
+  },
+  {
+    "name": "Platform_Ramp_2",
+    "original": "glTF\\Platforms\\Platform_Ramp_2.gltf",
+    "gltf_sha256": "f3cfd1509cdb7a53f5309e56d01b2f2b94e03ff645a64604fef6160a72d68057",
+    "surfaces": 3,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Platform_Ramp_2.scn"
+  },
+  {
+    "name": "Platform_Rails_2",
+    "original": "glTF\\Platforms\\Platform_Rails_2.gltf",
+    "gltf_sha256": "5f32fc111388f15eebcd6af53bbcae210c264c7435e6855f913d0de3f780d3b9",
+    "surfaces": 1,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Platform_Rails_2.scn"
+  },
+  {
+    "name": "Platform_Window_Wide",
+    "original": "glTF\\Platforms\\Platform_Window_Wide.gltf",
+    "gltf_sha256": "44ccc75a20dd2161b6c7c8bb18dcc6029f1d220ebed3fa71526cf9c5579b5815",
+    "surfaces": 4,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Platform_Window_Wide.scn"
+  },
+  {
+    "name": "Column_Simple",
+    "original": "glTF\\Columns\\Column_Simple.gltf",
+    "gltf_sha256": "6e2db23b3719f52c3ad5d548e3056ba60c26826d32e3edbdee1f504b705e18c5",
+    "surfaces": 2,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Column_Simple.scn"
+  },
+  {
+    "name": "Column_Large_Straight",
+    "original": "glTF\\Columns\\Column_Large_Straight.gltf",
+    "gltf_sha256": "0b2b004682a58321be58c07dda37e6c4909a33a22cb8814f6caac544b0f42464",
+    "surfaces": 4,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Column_Large_Straight.scn"
+  },
+  {
+    "name": "Column_Astra",
+    "original": "glTF\\Columns\\Column_Astra.gltf",
+    "gltf_sha256": "99a71b481b4b10d62b1698d85b1aa7ec843a8f5b14313880c77763db3e8d99e6",
+    "surfaces": 3,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Column_Astra.scn"
+  },
+  {
+    "name": "WallAstra_Straight_Flat",
+    "original": "glTF\\Walls\\WallAstra_Straight_Flat.gltf",
+    "gltf_sha256": "cbb4cb905dcfd6a806217f3b72d57eab42e637d52fcb1faf0edfbaf8b4d89506",
+    "surfaces": 3,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/WallAstra_Straight_Flat.scn"
+  },
+  {
+    "name": "WallAstra_Straight_Flat_Window",
+    "original": "glTF\\Walls\\WallAstra_Straight_Flat_Window.gltf",
+    "gltf_sha256": "37be23fa5756e739a8117c9cc0809b1fd84dd137898f3b44b558cb574115c054",
+    "surfaces": 5,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/WallAstra_Straight_Flat_Window.scn"
+  },
+  {
+    "name": "WallAstra_Corner_Square_Outer",
+    "original": "glTF\\Walls\\WallAstra_Corner_Square_Outer.gltf",
+    "gltf_sha256": "df4c4ab0399dd432a100ded981d3b673cbe0aee4e6ec49db18df9744623caf63",
+    "surfaces": 5,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/WallAstra_Corner_Square_Outer.scn"
+  },
+  {
+    "name": "WallWindow_Straight",
+    "original": "glTF\\Walls\\WallWindow_Straight.gltf",
+    "gltf_sha256": "8963fbfb1431216caf8ed5c41e2bd2463a5583770b276072ae87d66fa7ebaa7a",
+    "surfaces": 4,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/WallWindow_Straight.scn"
+  },
+  {
+    "name": "WallWindow_Corner_Square_Outer",
+    "original": "glTF\\Walls\\WallWindow_Corner_Square_Outer.gltf",
+    "gltf_sha256": "eb86526a013f1d674f242743973c2bafdd258761027dc170fc4e798a120d3469",
+    "surfaces": 4,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/WallWindow_Corner_Square_Outer.scn"
+  },
+  {
+    "name": "TopWindow_Straight",
+    "original": "glTF\\Walls\\TopWindow_Straight.gltf",
+    "gltf_sha256": "dedca17ecd1b3cdf6c87fde4a4973642d63f8d2d1b65e20a077df04ba6b76268",
+    "surfaces": 4,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/TopWindow_Straight.scn"
+  },
+  {
+    "name": "BottomSimple_Straight",
+    "original": "glTF\\Walls\\BottomSimple_Straight.gltf",
+    "gltf_sha256": "36da5630c81f5076d68ac69b1442a217dc2afa16c836d49bf89a3a9e3fbd39fb",
+    "surfaces": 1,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/BottomSimple_Straight.scn"
+  },
+  {
+    "name": "TopSimple_Straight",
+    "original": "glTF\\Walls\\TopSimple_Straight.gltf",
+    "gltf_sha256": "c114644c2f3133e179406eb2a788459fadad956fe1794a216d5ac85cc9e23053",
+    "surfaces": 1,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/TopSimple_Straight.scn"
+  },
+  {
+    "name": "ShortWall_WhitePlate2_Straight",
+    "original": "glTF\\Walls\\ShortWall_WhitePlate2_Straight.gltf",
+    "gltf_sha256": "5596b2a442eefa82a997f43adec90257613e24b6b49bca17cf50306ee5869493",
+    "surfaces": 1,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/ShortWall_WhitePlate2_Straight.scn"
+  },
+  {
+    "name": "Prop_Light_Wide",
+    "original": "glTF\\Props\\Prop_Light_Wide.gltf",
+    "gltf_sha256": "bad2b6ffc330aaa185700edb7487f4c8315291fd23d834844f68d6c1695fff40",
+    "surfaces": 2,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Prop_Light_Wide.scn"
+  },
+  {
+    "name": "Prop_Light_Small",
+    "original": "glTF\\Props\\Prop_Light_Small.gltf",
+    "gltf_sha256": "0f9cbbe00a3ca817278dfac3e9f20eab3feec4c7a74b3d4ca32560a517e6f38a",
+    "surfaces": 2,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Prop_Light_Small.scn"
+  },
+  {
+    "name": "Prop_Rail_4",
+    "original": "glTF\\Props\\Prop_Rail_4.gltf",
+    "gltf_sha256": "8796d4c1b50fb0f7b86d59825af3f98de2c9bce2a65ce25cd01712f3f5efc971",
+    "surfaces": 1,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/Prop_Rail_4.scn"
+  },
+  {
+    "name": "OriginalGlassSurface",
+    "original": "glTF\\Walls\\WallWindow_Straight.gltf",
+    "gltf_sha256": "8963fbfb1431216caf8ed5c41e2bd2463a5583770b276072ae87d66fa7ebaa7a",
+    "derived_from": "WallWindow_Straight M_Glass surface 2",
+    "source_surface": 2,
+    "triangles": 2,
+    "vertices_unchanged": true,
+    "scene": "res://art/Dream/CC0/QuaterniusSciFiStandard/OriginalGlassSurface.scn"
+  }
+]

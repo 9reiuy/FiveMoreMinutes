@@ -13,12 +13,16 @@ const ACTOR_VOLUME_SHADOW := preload("res://scripts/dream/actor_volume_shadow.gd
 const CHARACTER_VISUAL_LAYER := 2
 const PLAYER_SHADOW_LAYER := 4
 const VISUAL_CONFIG: Resource = preload("res://resources/demo_config.tres")
+const BLOOD_SURFACE_SHADER := preload("res://shaders/dream3d/blood_lit_carrier.gdshader")
+const BLOOD_GROUND_SHADER := preload("res://shaders/dream3d/blood_lit_ground_carrier.gdshader")
 const CHARACTER_EMISSION_FALLBACK := 0.01
+const CHARACTER_PIXEL_RIM_ENABLED := true
 const DEFAULT_SOURCE_PATHS: Array[NodePath] = [^"CharacterVisual", ^"HealOverlay", ^"WeaponRoot", ^"PlayerHPBar"]
 var source_actor: Node2D
 var render_viewport: SubViewport
 var render_root: Node2D
 var _snapshot_capture_refresh_pending := false
+signal static_capture_ready
 var actor_sprite: Sprite3D
 ## 正式 World Camera 的显式引用。bridge 的 2D capture 走 SubViewport，
 ## 其所在 Viewport 不一定持有当前 3D 相机，因此显式持有引用，
@@ -37,12 +41,17 @@ var disable_clone_processing := true
 var ground_only := false
 var outline_material: ShaderMaterial
 var floor_contact_lift := 0.0
+var ground_surface_height := 0.0
 var lowest_visible_pixel := 0.0
 var lit_material: ShaderMaterial
 var office_linear_lighting := false
 var office_power_cut := false
 var smoke_silhouette := false
 var blood_material: ShaderMaterial
+var _merged_blood_texture: ImageTexture
+var _merged_blood_version := -1
+var _holding_blood_capture := false
+var _held_blood_capture_visible := false
 var projectile_material: ShaderMaterial
 var feedback_material: ShaderMaterial
 ## Presentation-only charge effects use the same semantic carrier as Blood, but
@@ -122,7 +131,7 @@ var _cached_height_prop_resolved := false
 var _cached_is_enemy := false
 var _enemy_rim_active := false
 var _combat_range_highlight := false
-var _target_highlight_state := 0
+var _combat_range_primary := false
 var _cached_static_capture_source := false
 var _cached_room_gated_prop := false
 var _cached_is_player := false
@@ -193,6 +202,10 @@ func _notification(what: int) -> void:
 	# deletion releases an atlas cell. The floor atlas may already be gone.
 	if what==NOTIFICATION_PREDELETE and capture_atlas_release.is_valid():
 		capture_atlas_release.call()
+	if what==NOTIFICATION_PREDELETE and character_projection:
+		# Release sibling viewport dependencies before either capture is deleted.
+		for material in [lit_material,weapon_material]:
+			if material != null: material.set_shader_parameter("actor_pixel_rim_other_capture",null)
 
 ## Reuse only an already-configured projectile carrier. Character/blood
 ## captures never enter this pool; their state and ownership stay unchanged.
@@ -236,20 +249,85 @@ func rebind_blood_ground(source: Node2D, camera: Camera3D, height: float) -> voi
 	follow_source_rotation = false
 	if actor_sprite != null:
 		actor_sprite.rotation = plane_rotation
+	_set_blood_carrier_shader(BLOOD_GROUND_SHADER)
 	request_capture_refresh()
 	_rebind_capture(source,camera,height,0.0,[source])
+	if bool(source.get_meta(&"blood_merged_ground_mask", false)):
+		commit_merged_ground_mask(int(viewport_offset.x))
 
 func rebind_blood_surface(source: Node2D, camera: Camera3D, height: float, requested_plane_rotation: Vector3, requested_follow_source_rotation: bool = false) -> void:
 	plane_rotation = requested_plane_rotation
 	follow_source_rotation = requested_follow_source_rotation
 	if actor_sprite != null:
 		actor_sprite.rotation = plane_rotation
+	_set_blood_carrier_shader(BLOOD_SURFACE_SHADER)
 	request_capture_refresh()
 	_rebind_capture(source, camera, height, 0.0, [source])
 	if source.has_method("is_visual_settled") and source.is_visual_settled():
 		freeze_pending = true
 		if follow_source_rotation:
 			transform_only = true
+
+func _set_blood_carrier_shader(shader: Shader) -> void:
+	if blood_material.shader == shader:
+		return
+	blood_material.shader = shader
+	blood_material.set_shader_parameter("capture_texture", render_viewport.get_texture())
+
+func hold_blood_capture() -> void:
+	# Keep the committed texture on screen while a separate carrier draws the union.
+	_holding_blood_capture = true
+	_held_blood_capture_visible = actor_sprite.visible
+	_cancel_pending_static_capture()
+	render_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	set_process(false)
+
+func release_blood_capture() -> void:
+	if is_instance_valid(source_actor) and source_actor.tree_exiting.is_connected(_on_source_tree_exiting):
+		source_actor.tree_exiting.disconnect(_on_source_tree_exiting)
+	_on_source_tree_exiting()
+
+func commit_merged_ground_mask(half_extent: int) -> bool:
+	var blood := source_actor as BlackBloodEffect
+	if blood == null or blood_material == null or blood_material.shader != BLOOD_GROUND_SHADER:
+		return false
+	var version := blood.get_capture_content_version()
+	if _merged_blood_version == version:
+		return true
+	var mask := blood.build_merged_ground_mask(half_extent)
+	if mask == null:
+		return false
+	_cancel_pending_static_capture()
+	render_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	# Upload the complete mask on the existing sprite before the incoming stain
+	# is retired. Publication does not depend on a different viewport drawing.
+	if _merged_blood_texture == null or _merged_blood_texture.get_size() != Vector2(mask.get_size()):
+		_merged_blood_texture = ImageTexture.create_from_image(mask)
+		actor_sprite.texture = _merged_blood_texture
+		blood_material.set_shader_parameter("capture_texture", _merged_blood_texture)
+	else:
+		_merged_blood_texture.update(mask)
+	if render_viewport.size != mask.get_size():
+		render_viewport.size = mask.get_size()
+		viewport_offset = Vector2(half_extent, half_extent)
+	blood.record_ground_mask_upload()
+	_merged_blood_version = blood.get_capture_content_version()
+	blood.set_meta(&"blood_merged_ground_mask", true)
+	capture_initialized = true
+	static_visual_frozen = true
+	freeze_pending = false
+	actor_sprite.visible = room_presentation_active and blood.visible
+	set_process(false)
+	return true
+
+func _clear_merged_ground_mask() -> void:
+	if _merged_blood_texture == null:
+		return
+	var texture := render_viewport.get_texture()
+	actor_sprite.texture = texture
+	blood_material.set_shader_parameter("capture_texture", texture)
+	_merged_blood_texture = null
+	_merged_blood_version = -1
 
 func rebind_shell(source: Node2D, camera: Camera3D) -> void:
 	_rebind_capture(source, camera, 0.1, 0.0, [source.get_node(^"ShellSprite")])
@@ -265,6 +343,8 @@ func _rebind_capture(source: Node2D, camera: Camera3D, height: float, depth: flo
 	_last_source_actor_child_count = source_actor.get_child_count() if is_instance_valid(source_actor) else -1
 	configured = true
 	room_presentation_active = true
+	# A retired area may have hidden the bridge itself above the captured sprite.
+	show()
 	static_visual_frozen = false
 	transform_only = false
 	freeze_pending = false
@@ -276,6 +356,9 @@ func _rebind_capture(source: Node2D, camera: Camera3D, height: float, depth: flo
 
 func suspend_projectile() -> void:
 	configured = false
+	_clear_merged_ground_mask()
+	_holding_blood_capture = false
+	_held_blood_capture_visible = false
 	set_process(false)
 	_cancel_pending_static_capture()
 	capture_initialized = false
@@ -345,16 +428,9 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 		actor_sprite.layers = CHARACTER_VISUAL_LAYER
 	var blood_visual := _is_blood_source()
 	var charge_semantic_visual := _is_charge_semantic_source()
-	# Effects/ground overlays stay emissive; real pixel objects receive lighting
-	# and use alpha-cut silhouettes in the light's shadow pass, not quad shadows.
+	# Blood uses its own scene-lit material below, sharing the capture's alpha.
+	# The charge marker retains its reserved colour independently of room lights.
 	var solid_visual := not ground_only and (source_paths.has(^"CharacterVisual") or source_paths.has(^"Sprite2D") or source_paths.has(^"WeaponSprite"))
-	# Non-character effects such as spent casings still use the optional lit
-	# carrier. Blood is the exception: it stays in the same world/depth buffer,
-	# but uses its own unshaded semantic material below so lighting cannot alter
-	# its identity marker.
-	# Blood is intentionally not sent through the shared lit carrier.  It keeps
-	# the main-world Sprite3D/depth path, but writes a reserved semantic marker
-	# for the final palette pass instead of a light-dependent RGB colour.
 	# Projectile tracer carriers are intentionally unshaded.  The projectile's
 	# gameplay Node2D marks this presentation-only path before registration, so
 	# a moving bullet never creates a dynamic Light3D-like lighting dependency or
@@ -396,13 +472,20 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 		# this local to these visual carriers; ordinary actor/furniture bridges
 		# retain their existing billboard policy.
 		actor_sprite.billboard = BaseMaterial3D.BILLBOARD_DISABLED
-	elif blood_visual or charge_semantic_visual:
+	elif blood_visual:
+		actor_sprite.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
+		blood_material = ShaderMaterial.new()
+		_set_blood_carrier_shader(BLOOD_GROUND_SHADER if is_equal_approx(plane_rotation.x, -PI * 0.5) else BLOOD_SURFACE_SHADER)
+		blood_material.set_meta(&"runtime_uniform_owner", true)
+		actor_sprite.material_override = blood_material
+		actor_sprite.shaded = true
+	elif charge_semantic_visual:
 		blood_material = ShaderMaterial.new()
 		blood_material.shader = preload("res://shaders/dream3d/blood_semantic_carrier.gdshader")
 		blood_material.set_shader_parameter("capture_texture", render_viewport.get_texture())
 		blood_material.set_shader_parameter(
 			"semantic_marker",
-			Vector3(0.8509804, 0.4196078, 0.0941176) if blood_visual else CHARGE_SEMANTIC_MARKER
+			CHARGE_SEMANTIC_MARKER
 		)
 		actor_sprite.material_override = blood_material
 		actor_sprite.shaded = false
@@ -414,6 +497,7 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 		# window, flashlight or furniture shadows on the visible character plane.
 		lit_material.shader = carrier_shader
 		lit_material.set_shader_parameter("capture_texture", render_viewport.get_texture())
+		lit_material.set_shader_parameter("actor_pixel_rim_enabled", character_projection and CHARACTER_PIXEL_RIM_ENABLED)
 		lit_material.set_meta(&"runtime_uniform_owner", true)
 		_sync_character_readability()
 		# Keep the visibility floor scoped to the formal Player/Enemy gameplay
@@ -646,6 +730,19 @@ func _create_character_layers() -> void:
 			material.set_shader_parameter("capture_texture", viewport.get_texture())
 			material.set_shader_parameter("projectile_emission_strength", 0.0)
 			sprite.material_override = material
+	# Body and long-gun captures have different sizes but share a centred pixel
+	# coordinate system. Bind their alpha union once, never rescan actors/lights.
+	if lit_material != null and weapon_material != null:
+		var body_size := Vector2(render_viewport.size)
+		var weapon_size := weapon_sprite.texture.get_size()
+		_bind_character_rim_other(lit_material,weapon_sprite.texture,body_size/weapon_size)
+		_bind_character_rim_other(weapon_material,actor_sprite.texture,weapon_size/body_size)
+
+func _bind_character_rim_other(material: ShaderMaterial, texture: Texture2D, uv_scale: Vector2) -> void:
+	material.set_shader_parameter("actor_pixel_rim_has_other_capture",true)
+	material.set_shader_parameter("actor_pixel_rim_other_capture",texture)
+	material.set_shader_parameter("actor_pixel_rim_other_uv_scale",uv_scale)
+	material.set_shader_parameter("actor_pixel_rim_other_uv_offset",(Vector2.ONE-uv_scale)*0.5)
 
 
 func _capture_root_for_path(path: NodePath) -> Node2D:
@@ -664,7 +761,8 @@ func _character_ground() -> Vector3:
 		_cached_collision_shape_resolved = true
 	var collider := _cached_collision_shape if is_instance_valid(_cached_collision_shape) else null
 	var point := collider.global_position if collider != null else source_actor.global_position
-	return get_parent_node_3d().to_global(Vector3(point.x / PIXELS_PER_WORLD_CELL, float(source_actor.get_meta(&"exterior_fall_offset",0.0)), point.y / PIXELS_PER_WORLD_CELL))
+	var floor_y := ground_surface_height + float(source_actor.get_meta(&"exterior_fall_offset", 0.0))
+	return get_parent_node_3d().to_global(Vector3(point.x / PIXELS_PER_WORLD_CELL, floor_y, point.y / PIXELS_PER_WORLD_CELL))
 
 
 func _refresh_body_contact() -> void:
@@ -705,10 +803,16 @@ func _refresh_body_contact() -> void:
 	_contact_right_texture = right_texture
 
 
+func _uses_corpse_contact() -> bool:
+	return (_cached_is_enemy and bool(source_actor.get("dead"))) \
+		or (_cached_is_player and source_actor.has_meta(&"player_death_ragdoll"))
+
+
 func _character_colour_origin(camera: Camera3D, height: float) -> Vector3:
 	var contact_in_capture: Vector2
-	var is_dead_enemy := _cached_is_enemy and bool(source_actor.get("dead"))
-	if is_dead_enemy and lowest_visible_pixel > 0.0:
+	var corpse_contact := _uses_corpse_contact()
+	var player_ragdoll := _cached_is_player and corpse_contact
+	if corpse_contact and (lowest_visible_pixel > 0.0 or (player_ragdoll and is_finite(lowest_visible_pixel))):
 		# A corpse's feet are no longer its lowest visible point once its body and
 		# limbs rotate. Anchor the current opaque silhouette to the floor rather
 		# than reusing the standing foot contact cached before death.
@@ -719,7 +823,7 @@ func _character_colour_origin(camera: Camera3D, height: float) -> Vector3:
 		_refresh_body_contact()
 		contact_in_capture = body_contact_local + viewport_offset - Vector2(render_viewport.size) * 0.5
 	var offset := camera.global_basis.orthonormalized() * Vector3(contact_in_capture.x, -contact_in_capture.y, 0.0) / PIXELS_PER_WORLD_CELL
-	var contact_clearance := 0.012 if is_dead_enemy else floor_contact_lift + STANDING_CONTACT_CLEARANCE
+	var contact_clearance := 0.012 if corpse_contact else floor_contact_lift + STANDING_CONTACT_CLEARANCE
 	return _character_ground() + Vector3.UP * (height / PIXELS_PER_WORLD_CELL + contact_clearance) - offset
 
 
@@ -1100,8 +1204,12 @@ func _process_profiled(_delta:float)->void:
 	if is_inside_tree() and not source_actor.is_inside_tree():
 		_on_source_tree_exiting()
 		return
-	if not room_presentation_active:
+	if not room_presentation_active or _holding_blood_capture:
 		return
+	if _merged_blood_texture != null:
+		if commit_merged_ground_mask(int(viewport_offset.x)):
+			return
+		request_capture_refresh()
 	if _cached_is_enemy or _cached_is_player: _sync_character_readability()
 	if transform_only:
 		# STATIC_CAPTURE_FOLLOW_TRANSFORM：capture 内容已冻结（不再 sync/签名/
@@ -1159,9 +1267,10 @@ func _process_profiled(_delta:float)->void:
 	if character_projection and not is_instance_valid(_cached_character_visual):
 		_cached_character_visual = source_actor.get_node_or_null(^"CharacterVisual") as Node2D
 	var character_body := _cached_character_visual if character_projection else null
-	var is_dead_enemy := _cached_is_enemy and bool(source_actor.get("dead"))
+	var corpse_contact := _uses_corpse_contact()
+	var player_ragdoll := _cached_is_player and corpse_contact
 	var upright_contact := character_projection and camera != null \
-		and not is_dead_enemy \
+		and not corpse_contact \
 		and (character_body == null or absf(character_body.rotation) < 0.1)
 	var skip_capture_sync := false
 	if upright_contact and not bool(get_meta(&"test_legacy_offscreen_capture_sync", false)):
@@ -1258,10 +1367,12 @@ func _process_profiled(_delta:float)->void:
 		# A standing pivot is not a landing pivot after a 90-degree death rotation.
 		# Derive the contact from the actual opaque sprite bounds in the capture.
 		# This adjusts presentation Y only, never gameplay position or fake height.
-		var can_cache_corpse := character_projection and character_body != null and not bool(get_meta(&"test_legacy_contact_scan", false)) and not has_meta(&"test_contact_scan_count")
+		var can_cache_corpse := character_projection and character_body != null and not player_ragdoll and not bool(get_meta(&"test_legacy_contact_scan", false)) and not has_meta(&"test_contact_scan_count")
 		if can_cache_corpse and _corpse_contact_cached and character_body.transform == _last_corpse_body_transform and not clone_roots.is_empty() and clone_roots[0].transform == _last_corpse_copy_transform:
 			lowest_visible_pixel = _cached_lowest_visible_pixel
 		else:
+			if player_ragdoll:
+				lowest_visible_pixel = -INF
 			for copy in clone_roots:
 				if character_projection and copy.name != &"CharacterVisual":
 					continue
@@ -1272,7 +1383,8 @@ func _process_profiled(_delta:float)->void:
 				_last_corpse_copy_transform = clone_roots[0].transform
 				_cached_lowest_visible_pixel = lowest_visible_pixel
 		var up_y := camera.global_basis.y.y if camera != null else 0.70710678
-		floor_contact_lift = lowest_visible_pixel * maxf(up_y, 0.0) / PIXELS_PER_WORLD_CELL
+		if is_finite(lowest_visible_pixel):
+			floor_contact_lift = lowest_visible_pixel * maxf(up_y, 0.0) / PIXELS_PER_WORLD_CELL
 	var target_pos := get_parent_node_3d().to_global(Vector3(position_2d.x / PIXELS_PER_WORLD_CELL,
 		actor_center_height + height / PIXELS_PER_WORLD_CELL + floor_contact_lift,
 		position_2d.y / PIXELS_PER_WORLD_CELL + actor_center_depth_offset))
@@ -1413,6 +1525,7 @@ func _on_static_capture_drawn(epoch: int) -> void:
 	if source_actor.get("room_runtime_active") == false:
 		return
 	capture_initialized = true
+	static_capture_ready.emit()
 
 
 func _capture_signature(node: Node2D) -> int:
@@ -1506,8 +1619,9 @@ func resize_blood_ground_capture(half_extent: float) -> void:
 
 
 func request_capture_refresh() -> void:
-	if transform_only:
+	if transform_only or _holding_blood_capture:
 		return
+	_clear_merged_ground_mask()
 	_cancel_pending_static_capture()
 	static_visual_frozen = false
 	capture_initialized = false
@@ -1529,7 +1643,14 @@ func set_room_presentation_active(active: bool) -> void:
 	_set_character_layer_activity(active and is_instance_valid(source_actor) and source_actor.visible)
 	if not configured:
 		return
+	var was_active := room_presentation_active
 	room_presentation_active = active
+	if _merged_blood_texture != null:
+		actor_sprite.visible = active and is_instance_valid(source_actor) and source_actor.visible
+		return
+	if _holding_blood_capture:
+		actor_sprite.visible = active and _held_blood_capture_visible and is_instance_valid(source_actor) and source_actor.visible
+		return
 	if not active:
 		_cancel_pending_static_capture()
 		render_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
@@ -1547,6 +1668,10 @@ func set_room_presentation_active(active: bool) -> void:
 		return
 	if transform_only:
 		set_process(true)
+		return
+	# Crossing a room boundary can announce activation to every room already
+	# on screen. Keep valid or scheduled blood captures through that broadcast.
+	if was_active and _is_blood_source() and source_actor.visible and (actor_sprite.visible or is_processing()):
 		return
 	request_capture_refresh()
 
@@ -1725,13 +1850,7 @@ func set_target_highlight(enabled: bool) -> void:
 
 
 func set_target_highlight_state(state: int) -> void:
-	if actor_sprite == null:
-		return
-	if _cached_is_enemy:
-		_target_highlight_state=state
-		actor_sprite.material_overlay=null
-		if is_instance_valid(weapon_sprite): weapon_sprite.material_overlay=null
-		_sync_character_readability()
+	if actor_sprite == null or _cached_is_enemy or _cached_is_player:
 		return
 	if state != 0 and outline_material == null:
 		outline_material = ShaderMaterial.new()
@@ -1756,20 +1875,24 @@ func set_target_highlight_state(state: int) -> void:
 			weapon_outline.set_shader_parameter("outline_color", outline_color)
 			CHARACTER_PROJECTION.set_material_plane(weapon_outline, Vector3(0, weapon_reference_height, 0), Vector3.UP)
 
-func set_combat_range_highlight(enabled: bool) -> void:
-	_combat_range_highlight=enabled
+func set_combat_range_highlight(enabled: bool, primary := false) -> void:
+	_combat_range_highlight = enabled
+	_combat_range_primary = primary
 	_sync_character_readability()
 
 func _sync_character_readability() -> void:
 	if lit_material==null or not is_instance_valid(source_actor) or not (_cached_is_enemy or _cached_is_player): return
 	set_smoke_silhouette(bool(source_actor.get_meta(&"extinguisher_smoke",false)))
-	var active: bool=not smoke_silhouette and not bool(source_actor.get_meta(&"smoke_hidden_from_player",false)) and character_projection and (_cached_is_player or (_cached_is_enemy and not bool(source_actor.get("dead"))))
+	var active := (_cached_is_enemy and _combat_range_highlight and character_projection
+		and not smoke_silhouette and not bool(source_actor.get_meta(&"smoke_hidden_from_player", false))
+		and not bool(source_actor.get("dead")))
 	if active!=_enemy_rim_active or lit_material.get_shader_parameter("enemy_rim_enabled")!=active:
 		_enemy_rim_active=active
 		lit_material.set_shader_parameter("enemy_rim_enabled",active)
-	var color:=Color.WHITE if _cached_is_player or _target_highlight_state==1 or _combat_range_highlight else Color(.55,.58,.62,1)
-	if lit_material.get_shader_parameter("enemy_rim_color")!=color:
-		lit_material.set_shader_parameter("enemy_rim_color",color)
+	if active:
+		var color := Color.WHITE if _combat_range_primary else Color(0.63, 0.78, 0.88, 1.0)
+		if lit_material.get_shader_parameter("enemy_rim_color") != color:
+			lit_material.set_shader_parameter("enemy_rim_color", color)
 
 func set_smoke_silhouette(enabled: bool) -> void:
 	smoke_silhouette=enabled

@@ -1,0 +1,26 @@
+{
+  "provider": "cgbookcase",
+  "page": "https://www.cgbookcase.com/textures/grey-matte-tiles-01",
+  "license": "CC0",
+  "normal_convention": "DirectX",
+  "maps": [
+    {
+      "file": "albedo.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/GreyMatteTiles01_1K/GreyMatteTiles01_1K_BaseColor.png",
+      "bytes": 366273,
+      "sha256": "b24c18408370df5ed832e8f9a373680ff6246a2c65b91fc3c94391b2a1989a90"
+    },
+    {
+      "file": "normal.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/GreyMatteTiles01_1K/GreyMatteTiles01_1K_Normal.png",
+      "bytes": 487211,
+      "sha256": "87db22cdb8c899547a833b0d7a99ac83cd9ddf89f99c360fbbd992b8800b54a9"
+    },
+    {
+      "file": "roughness.png",
+      "url": "https://cgbookcase.b-cdn.net/textures/thumbnails/GreyMatteTiles01_1K/GreyMatteTiles01_1K_Roughness.png",
+      "bytes": 453194,
+      "sha256": "7222d309afc3d1995d52bc73139898352ee60d0514045672ebf62773c6f818b7"
+    }
+  ]
+}

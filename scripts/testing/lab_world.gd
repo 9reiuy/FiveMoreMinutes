@@ -1,5 +1,6 @@
 extends "res://scripts/dream/office_skeleton_world_base.gd"
 ## Only the independent lab opts into test policy. Production stays untouched.
+const PLAYER_SHADOW_RECEIVER := preload("res://scripts/testing/lab_player_shadow_receiver.gd")
 var lab_native_layout := false
 var lab_furniture := true
 var lab_enemy_count := 8
@@ -92,7 +93,12 @@ func populate_lab() -> void:
 		for enemy in enemy_root.get_children(): enemy.process_mode=Node.PROCESS_MODE_DISABLED
 	for room in rooms: reveal_room(int(room.id))
 	player_has_left_elevator_cab = true
-	if lab_whitebox: apply_whitebox()
+	if lab_whitebox:
+		apply_whitebox()
+	elif RenderingServer.get_current_rendering_method() == "forward_plus":
+		var receiver := PLAYER_SHADOW_RECEIVER.new()
+		receiver.name = "LabPlayerShadowReceiver"
+		add_child(receiver)
 
 func apply_whitebox() -> void:
 	# Local material overrides, never mutation of a shared imported resource.

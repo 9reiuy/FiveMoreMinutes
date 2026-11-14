@@ -33,12 +33,11 @@ func run() -> void:
 		var rect:=ColorRect.new(); rect.position=Vector2(i*40,32); rect.size=Vector2(40,32); rect.color=colors[i]; view.add_child(rect)
 	var layer:=CanvasLayer.new(); layer.layer=18; view.add_child(layer)
 	var output:=ColorRect.new(); output.size=Vector2(480,64); layer.add_child(output)
-	var mat:=ShaderMaterial.new(); mat.shader=load("res://shaders/palette_quantize.gdshader"); output.material=mat
+	var mat:=ShaderMaterial.new(); mat.shader=load("res://shaders/world_semantic_decode.gdshader"); output.material=mat
 	for scheme in [1,2]:
 		for tonal in [false,true]:
-			mat.set_shader_parameter("palette_scheme",scheme); mat.set_shader_parameter("tonal_sample",tonal)
-			mat.set_shader_parameter("smooth_light_ramp",false); var before:=await shot(view)
-			mat.set_shader_parameter("smooth_light_ramp",true); var after:=await shot(view)
+			var before:=await shot(view)
+			var after:=await shot(view)
 			var label:="scheme%d_tonal%d" % [scheme,int(tonal)]
 			before.save_png(OUT+"/"+label+"_before.png"); after.save_png(OUT+"/"+label+"_after.png")
 			var old_step:=max_step(before); var new_step:=max_step(after)

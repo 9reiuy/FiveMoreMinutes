@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/testing/ParkingGarageDisplay.tscn" id="1_garage"]
+[ext_resource type="Script" path="res://scripts/testing/parking_vehicle_preview.gd" id="2_preview"]
+
+[node name="ParkingVehiclePreview" instance=ExtResource("1_garage")]
+script = ExtResource("2_preview")

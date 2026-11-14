@@ -11,18 +11,19 @@ static func configure() -> void:
 	# binding so a right click cannot trigger two gameplay actions at once.
 	_ensure_mouse_action("throw_weapon", MOUSE_BUTTON_RIGHT)
 	_remove_mouse_action("block", MOUSE_BUTTON_RIGHT)
-	# T toggles the existing activity-driven DreamTimeController; it is sampled
-	# as a just-pressed edge there, never as a hold-to-slow override.
-	_add_key_action("toggle_slow_time", [KEY_T])
-	_add_key_action("bullet_time", [KEY_T])
-	# Space triggers movement-directed (WASD/diagonal) phase dash on press, without hold planning.
+	# Manual fast dash/time toggles are retired. Scripted slow motion and the
+	# Space roll still use their existing runtime APIs.
+	for action: StringName in [&"dash",&"toggle_slow_time",&"bullet_time"]:
+		_add_key_action(action,[])
+		InputMap.action_erase_events(action)
 	# Keep dialogue/UI confirmation on Enter so the gameplay path can never
 	# also submit a confirmation in the same input frame.
 	_add_key_action("confirm", [KEY_ENTER])
 	_remove_key_action("confirm", KEY_SPACE)
 	_add_key_action("restart_demo", [KEY_R])
 	_add_key_action("reload_weapon", [KEY_R])
-	_add_key_action("dash", [KEY_SPACE])
+	_remove_key_action("dash", KEY_SPACE)
+	_add_key_action("roll", [KEY_SPACE])
 	_add_key_action("toggle_flashlight", [KEY_L])
 	# Tab now owns the shared in-game phone. Keep the former card component,
 	# but do not silently relocate it to a new key or phone application.
@@ -30,6 +31,10 @@ static func configure() -> void:
 	_remove_key_action("skill_menu", KEY_TAB)
 	_add_key_action("toggle_phone", [KEY_TAB])
 	_add_key_action("toggle_console", [KEY_QUOTELEFT, KEY_F10])
+	# Also remove stale/custom bindings left in a live InputMap by old entries.
+	for action: StringName in InputMap.get_actions():
+		_remove_key_action(action,KEY_SHIFT)
+		_remove_key_action(action,KEY_T)
 
 
 static func _add_key_action(action: StringName, keys: Array[int]) -> void:

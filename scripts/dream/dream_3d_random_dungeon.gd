@@ -17,6 +17,10 @@ var night_lighting: Node3D
 var shadow_manager: Node3D
 ## Approved sparse profile; disable explicitly for legacy lighting comparisons.
 @export var sparse_lighting_enabled := true
+## Approved surface spray and carved pixel drag; legacy switches are test-only.
+@export var surface_blood_enabled := true
+@export var pixel_drag_enabled := true
+var drag_art_reports: Array[Dictionary] = []
 
 func uses_office_real_colour() -> bool:
 	return approved_sample_art_enabled and not use_authored_office_sample and not has_node("ChapterTraining")
@@ -134,6 +138,7 @@ const BADGE_MARKER_SCRIPT: Script = preload("res://scripts/dream/employee_badge_
 const DASH_AIM_PRESENTATION_SCRIPT: Script = preload("res://scripts/dream/dream_dash_aim_presentation.gd")
 const SHELL_EFFECT_SCENE: PackedScene = preload("res://scenes/entities/shell_effect.tscn")
 const MUZZLE_EFFECT_SCENE: PackedScene = preload("res://scenes/entities/weapon_muzzle_effect.tscn")
+const FIREARM_FLASH_FX := preload("res://scripts/dream/firearm_flash_fx_3d.gd")
 const FIREARM_IMPACT_SCENE: PackedScene = preload("res://scenes/dream/3d/FirearmImpactVisual3D.tscn")
 const MAX_ACTIVE_FIREARM_IMPACT_VISUALS := 24
 const COMBAT_FEEDBACK_SCENE: PackedScene = preload("res://scenes/entities/combat_feedback_effect.tscn")
@@ -331,6 +336,8 @@ const WORLD_WALL_LAYER := 4
 ## Shared screen-space cutout slots. Slot 0 is reserved for Player whenever
 ## the Player is genuinely occluded; the remaining slots are nearest enemies and projectiles.
 const OCCLUSION_CUTOUT_SLOT_COUNT := 8
+const AUTHORED_CUTOUT := preload("res://scripts/dream/authored_occlusion_cutout.gd")
+var authored_cutout: AUTHORED_CUTOUT
 ## Avoid "occlusion_cutout_%d" % index string format every changed slot write.
 var _occlusion_cutout_param_names: Array[StringName] = []
 const _OCCLUSION_VIEWPORT_SIZE_PARAM := &"occlusion_viewport_size"
@@ -920,7 +927,6 @@ var _cached_dream_enemies_frame: int = -1
 var _debris_point_query: PhysicsPointQueryParameters2D
 var _blood_batch_point_query: PhysicsPointQueryParameters2D
 var _player_exclude_rids: Array[RID] = []
-var _employee_exclude_rids: Array[RID] = []
 var _throw_aim_cleared := true
 var _dash_aim_cleared := true
 var _cutout_furniture_mesh_centers := PackedVector3Array()
@@ -971,13 +977,10 @@ var native_damage_numbers_root: Node2D
 var enemy_population_refill_left := 0.0
 var enemy_population_breathing_left: Dictionary = {}
 var reserved_content_cells: Dictionary = {}
-var _employee_clear_shape: CircleShape2D
-var _employee_clear_query: PhysicsShapeQueryParameters2D
 var _placement_clear_shape: CircleShape2D
 var _placement_clear_query: PhysicsShapeQueryParameters2D
 var _room_path_clear_query: PhysicsRayQueryParameters2D
 var _furniture_shot_path_query: PhysicsRayQueryParameters2D
-var _employee_nav_ray: PhysicsRayQueryParameters2D
 var _debris_spray_ray: PhysicsRayQueryParameters2D
 var _door_proximity_ray: PhysicsRayQueryParameters2D
 var _throw_prediction_shape: RectangleShape2D
@@ -985,6 +988,7 @@ var _throw_prediction_query: PhysicsShapeQueryParameters2D
 var _furniture_footprint_shape: RectangleShape2D
 var _furniture_footprint_query: PhysicsShapeQueryParameters2D
 var employee_path_cache: Dictionary = {}
+var _employee_navigation = preload("res://scripts/dream/employee_navigation.gd").new()
 var _floor_path_cache_enabled := false
 var _floor_path_adjacency: Dictionary = {}
 var _floor_path_floor_keys: Array = []
@@ -1130,9 +1134,6 @@ func _apply_3d_firearm_profile(source: DemoConfig) -> void:
 	config.basic_projectile_speed = FIREARM_PROJECTILE_SPEED_3D
 	config.assault_rifle_projectile_speed = FIREARM_PROJECTILE_SPEED_3D
 	config.shotgun_projectile_speed = FIREARM_PROJECTILE_SPEED_3D
-	config.player_movement_speed = 290.0
-	config.set_meta("office_player_move_speed", 290.0)
-	config.employee_movement_speed = 150.0
 	config.basic_weapon_range *= PISTOL_RANGE_SCALE_3D
 	config.assault_rifle_range *= RIFLE_RANGE_SCALE_3D
 	config.shotgun_max_distance *= SHOTGUN_RANGE_SCALE_3D
@@ -1960,6 +1961,12 @@ func _spawn_player_weapon_into_world(drop_data: Dictionary, forced_drop: bool) -
 	_spawn_depth_bridge(pickup, [NodePath("Shadow"), NodePath("WeaponSprite")])
 
 
+func project_player_death_weapon(drop: Node2D, rest_height: float) -> void:
+	if is_instance_valid(drop) and not drop.is_queued_for_deletion():
+		_spawn_depth_bridge(drop, [^"WeaponSprite"], Vector2(64, 64), BaseMaterial3D.BILLBOARD_ENABLED, rest_height, 0.0,
+			Vector3.ZERO, false, true)
+
+
 func _swap_world_weapon(pickup: Node2D) -> void:
 	if pickup == null or not is_instance_valid(pickup) or not player.has_method("equip_weapon"):
 		return
@@ -2243,6 +2250,7 @@ func regenerate(requested_seed: int = seed) -> bool:
 	_configure_dungeon_minimap()
 	preload("res://scripts/dream/combat_vfx.gd").install(self)
 	preload("res://scripts/dream/floor_reflections.gd").install(self)
+	preload("res://scripts/dream/floor_surface_blood.gd").install(self)
 	if not dynamic_shadows_enabled and is_instance_valid(player) and player.has_node("Shadow"):
 		_spawn_depth_bridge(player, [^"Shadow"], Vector2(64, 64), BaseMaterial3D.BILLBOARD_DISABLED, 0.015, 0.0, Vector3(-PI / 2.0, 0, 0))
 	# 灯光与投影体全部就位之后再打层：捕获相机要靠这些位把"灯"和"投影体"
@@ -4682,6 +4690,7 @@ func _can_cross_floor_edge(from_cell: Vector2i, to_cell: Vector2i, ignore_boss_l
 
 
 func _clear_generated_building() -> void:
+	authored_cutout = null
 	_clear_pending_dash_wall_breaches()
 	broken_shared_walls.clear()
 	dash_breach_links.clear()
@@ -4699,6 +4708,7 @@ func _clear_generated_building() -> void:
 	_settled_blood_buckets.clear()
 	_owned_corpse_blood_emitters.clear()
 	_owned_black_blood_stains.clear()
+	drag_art_reports.clear()
 	if is_instance_valid(shadow_manager):
 		shadow_manager.clear_floor()
 	_layout_generation += 1
@@ -6718,11 +6728,6 @@ func _get_actor_cutout_slot(actor: Node2D) -> Dictionary:
 ## / CELL_PIXELS underestimates that billboard (≈0.9 world → ~30px while the
 ## sprite is ~126px tall), so a hole aimed at the visual centre would only dig
 ## near the head and leave the body sealed by furniture.
-const ACTOR_CUTOUT_RADIUS_HEIGHT_SCALE := 0.58  # ~40 vp-px; was 1.0 (~66), still too large per user
-## Fraction of billboard half-height to nudge the hole toward screen-down.
-## Capture viewport keeps more empty headroom, so texture centre sits above body mass.
-const ACTOR_CUTOUT_AIM_DOWN_SCALE := 0.20
-
 func _actor_cutout_world_from_visual(actor: Node2D, center_global: Vector2, bounds_radius: float) -> Dictionary:
 	var world := to_global(Vector3(
 		center_global.x / CELL_PIXELS,
@@ -6736,19 +6741,8 @@ func _actor_cutout_world_from_visual(actor: Node2D, center_global: Vector2, boun
 		if bridge != null and is_instance_valid(bridge):
 			var sprite: Sprite3D = bridge.get(&"actor_sprite") as Sprite3D
 			if sprite != null and is_instance_valid(sprite):
-				world = sprite.global_position
-				var tex: Texture2D = sprite.texture
-				if tex != null:
-					var half_w := sprite.pixel_size * float(tex.get_width()) * 0.5
-					var half_h := sprite.pixel_size * float(tex.get_height()) * 0.5
-					# Half the billboard height (+ small rim pad): covers the body and a
-					# sliver of floor at the feet without hollowing out large furniture.
-					# (Half-diagonal ~93 then half-height ~66; user still wanted smaller.)
-					radius = maxf(radius, half_h * ACTOR_CUTOUT_RADIUS_HEIGHT_SCALE + 0.04)
-					# Nudge hole down on screen: texture centre is above the drawn body.
-					if camera_3d != null and is_instance_valid(camera_3d):
-						var screen_down := -camera_3d.global_transform.basis.y.normalized()
-						world += screen_down * (half_h * ACTOR_CUTOUT_AIM_DOWN_SCALE)
+				world = AUTHORED_CUTOUT.sprite_center(sprite, camera_3d)
+				radius = maxf(radius, AUTHORED_CUTOUT.sprite_radius(sprite))
 			else:
 				var height := 0.70710678
 				var depth := -0.70710678
@@ -6769,40 +6763,7 @@ func _actor_cutout_world_from_visual(actor: Node2D, center_global: Vector2, boun
 	return _cutout_slot_result
 
 func _project_occlusion_cutout(world_center: Vector3, world_radius: float, screen_override: Variant = null) -> Vector4:
-	if camera_3d == null or not is_instance_valid(camera_3d):
-		return Vector4.ZERO
-	var viewport := camera_3d.get_viewport()
-	if viewport == null:
-		return Vector4.ZERO
-	var viewport_size: Vector2 = viewport.get_visible_rect().size
-	if viewport_size.x <= 1.0 or viewport_size.y <= 1.0:
-		return Vector4.ZERO
-	if camera_3d.is_position_behind(world_center):
-		return Vector4.ZERO
-	var center_screen: Vector2 = camera_3d.unproject_position(world_center)
-	# A partially hidden actor keeps its screen centre outside the blocker, so the
-	# hole has to be aimed at the overlap instead of at the actor itself.
-	if screen_override is Vector2:
-		center_screen = screen_override
-	var radius_world: float = maxf(world_radius, 0.01)
-	var camera_right: Vector3 = camera_3d.global_transform.basis.x.normalized()
-	var camera_up: Vector3 = camera_3d.global_transform.basis.y.normalized()
-	var horizontal_edge: Vector2 = camera_3d.unproject_position(world_center + camera_right * radius_world)
-	var vertical_edge: Vector2 = camera_3d.unproject_position(world_center + camera_up * radius_world)
-	# A screen-space circle needs the larger projected extent so it covers the
-	# complete cached visual bounds in both screen axes, including perspective.
-	var radius_px: float = maxf(center_screen.distance_to(horizontal_edge), center_screen.distance_to(vertical_edge)) + 2.0
-	radius_px = maxf(radius_px, 2.0)
-	# Off-screen actors need no global slot. Keep a small margin so a cutout at
-	# the edge can still reveal the visible part of a sprite.
-	if not Rect2(Vector2.ZERO, viewport_size).grow(radius_px).has_point(center_screen):
-		return Vector4.ZERO
-	return Vector4(
-		center_screen.x / viewport_size.x,
-		center_screen.y / viewport_size.y,
-		radius_px,
-		1.0
-	)
+	return AUTHORED_CUTOUT.project(camera_3d, world_center, world_radius, screen_override)
 
 
 ## Screen-space overlap between the actor and the piece of furniture covering it.
@@ -6904,6 +6865,8 @@ func invalidate_actor_occlusion_bounds(actor: Node2D) -> void:
 func _actor_is_occluded_by_wall_or_door(actor_world: Vector3) -> bool:
 	if camera_3d == null or not is_instance_valid(camera_3d):
 		return false
+	if authored_cutout != null and authored_cutout.blocks_view(camera_3d, actor_world):
+		return true
 	var camera_world := camera_3d.global_position
 	var ray := actor_world - camera_world
 	if ray.length_squared() < 0.0001:
@@ -7448,7 +7411,7 @@ func _update_camera_and_actor_projection(delta: float = 0.0) -> void:
 	elif delta > 0.0 and camera_shake_duration > 0.0:
 		camera_shake_amplitude = 0.0
 		camera_shake_duration = 0.0
-	if phone_camera_weight <= 0.0 and not _phone_camera_refresh_only:
+	if phone_camera_weight <= 0.0 and not _phone_camera_refresh_only and not player.dead:
 		camera_aim_offset = _update_camera_aim_offset(gameplay_position, delta)
 	var normal_focus := ground_position + camera_aim_offset * (1.0 - phone_camera_weight)
 	var dialogue_focus := ground_position
@@ -7467,6 +7430,13 @@ func _update_camera_and_actor_projection(delta: float = 0.0) -> void:
 	var phone_fov: float = authoritative_camera_fov * zoom
 	var phone_size: float = authoritative_camera_size * GAMEPLAY_CAMERA_SIZE_MULTIPLIER * zoom
 	composed_focus += PHONE_CAMERA.focus_offset(camera_3d, phone_camera_weight, phone_fov, phone_size)
+	var death_weight: float = player.get_death_camera_weight()
+	if death_weight > 0.0:
+		var point: Vector2 = player.get_death_camera_focus()
+		composed_focus = composed_focus.lerp(Vector3(point.x / CELL_PIXELS, 0.26, point.y / CELL_PIXELS), death_weight)
+		var death_zoom := lerpf(1.0, 0.68, death_weight)
+		phone_fov *= death_zoom
+		phone_size *= death_zoom
 	if transition_phase == &"CAB_RIDE" and active_transition_cab != null and is_instance_valid(active_transition_cab):
 		composed_focus = to_local(active_transition_cab.get_camera_focus_world())
 		camera_impulse_offset = Vector3.ZERO
@@ -7485,7 +7455,7 @@ func _update_camera_and_actor_projection(delta: float = 0.0) -> void:
 		camera_3d.size = phone_size
 	if transition_phase == &"CAB_RIDE" and is_instance_valid(active_transition_cab):
 		active_transition_cab.apply_reference_camera(camera_3d)
-	if bool(get_meta(&"pixel_stability_enabled",false)) and phone_camera_weight<.001 and dialogue_weight<.001 and transition_phase==&"IDLE":
+	if bool(get_meta(&"pixel_stability_enabled",false)) and phone_camera_weight<.001 and dialogue_weight<.001 and death_weight<.001 and transition_phase==&"IDLE":
 		var token:=get_current_floor_token()
 		if int(get_meta(&"pixel_stability_floor",-1))!=token:
 			set_meta(&"pixel_stability_floor",token)
@@ -7689,6 +7659,7 @@ func _on_assistance_setting_changed(key: StringName,value: Variant) -> void:
 
 var _player_melee_damage_depth := 0
 var _phase_dash_damage_depth := 0
+var _melee_contact: Dictionary = {}
 
 func request_combat_impact(knockback_force: float, direction: Vector2, _source: StringName = &"") -> void:
 	# Player sweep aggregates global feedback once, while each enemy retains
@@ -8052,10 +8023,19 @@ func _derive_enemy_equip_seed(room_id: int, entry_index: int) -> int:
 	return maxi(_stable_u32_mix(mixed), 1)
 
 
+func _enemy_initial_weapon_id(weapon_id: String, room_id: int, slot: int) -> String:
+	# Keep melee roles deterministic without consuming layout/encounter RNG.
+	# Lucille remains available to the Player, but is not an Enemy spawn loadout.
+	if weapon_id != "lucille":
+		return weapon_id
+	var variants := WEAPON_VISUALS.LUCILLE_VARIANT_IDS
+	return variants[posmod(_derive_enemy_equip_seed(room_id, slot), variants.size())]
+
+
 func _employee_weapon_pool() -> Array[String]:
 	var pool: Array[String] = []
 	for candidate in WEAPON_VISUALS.get_weapon_ids():
-		if candidate != "books" and _is_pickup_weapon_id_allowed(candidate):
+		if candidate not in ["books", "lucille"] and _is_pickup_weapon_id_allowed(candidate):
 			pool.append(candidate)
 	if pool.is_empty():
 		pool.append("basic")
@@ -8260,7 +8240,7 @@ func _resolve_room_encounter_descriptor(room_id: int) -> bool:
 			# ordinary armed employees, not a new heavy-stat archetype.
 			entry["type"] = &"employee"
 			if archetype == "corridor" or (archetype == "open_office" and entry_index == 0):
-				entry["weapon_id"] = "lucille"
+				entry["weapon_id"] = _enemy_initial_weapon_id("lucille", room_id, entry_index)
 			elif archetype in ["pantry", "restroom"]:
 				entry["weapon_id"] = "books"
 			else:
@@ -8283,6 +8263,7 @@ func _resolve_room_encounter_descriptor(room_id: int) -> bool:
 				var pool := _employee_weapon_pool()
 				entry["weapon_id"] = pool[equip_rng.randi_range(0, pool.size() - 1)]
 				entry["skin_index"] = 0
+		entry["weapon_id"] = _enemy_initial_weapon_id(String(entry.get("weapon_id", "")), room_id, entry_index)
 		enemy_entries[entry_index] = entry
 	encounter["enemy_spawns"] = enemy_entries
 	encounter["drop_spawns"] = drop_entries
@@ -9689,6 +9670,7 @@ func _rollback_failed_transition(token: int, old_floor_idx: int) -> void:
 	_clear_muzzle_and_burning_vfx()
 	_set_muzzle_smoke_visible(true)
 	preload("res://scripts/dream/floor_reflections.gd").install(self)
+	preload("res://scripts/dream/floor_surface_blood.gd").install(self,true)
 
 
 func _regenerate_staged(requested_seed: int, target_floor: int, token: int,retain_rollback: bool=false) -> bool:
@@ -9795,6 +9777,7 @@ func _regenerate_staged(requested_seed: int, target_floor: int, token: int,retai
 	_set_building_exterior_visible(false)
 	preload("res://scripts/dream/floor_reflections.gd").install(self)
 	if not retain_rollback: _clear_floor_stash()
+	preload("res://scripts/dream/floor_surface_blood.gd").install(self)
 	if trace_stages:
 		_trace_floor_generation_stage("exterior_stash_cleanup",stage_started)
 		_trace_floor_generation_stage("pools_visibility_cleanup",final_stage_started)
@@ -11101,6 +11084,7 @@ func _spawn_room_furniture(room_filter: int = -1) -> void:
 func _spawn_regular_employee(room_id: int, position: Vector2, enemy_type: StringName = &"employee", badge_carrier: bool = false, weapon_id: String = "", skin_index: int = 0) -> EmployeeEnemy:
 	if enemy_root == null or EMPLOYEE_SCENE == null:
 		return null
+	weapon_id = _enemy_initial_weapon_id(weapon_id, room_id, enemy_count)
 	var employee := EMPLOYEE_SCENE.instantiate() as EmployeeEnemy
 	if employee == null:
 		return null
@@ -11420,6 +11404,8 @@ func _on_employee_weapon_drop_requested(
 	var placement := at_position if drop_from_pit else (
 		at_position + drop_direction * 12.0 + drop_direction.orthogonal() * _content_rng.randf_range(-4.0, 4.0)
 	)
+	if not _is_blood_ground_allowed(placement):
+		placement = at_position if _is_blood_ground_allowed(at_position) else _nearest_safe_floor_world_position(_cell_for_gameplay_position(at_position))
 	var request := {"weapon_id": weapon_id, "position": placement, "impulse": impulse, "skin_index": skin_index,
 		"room_id": room_id, "from_pit": drop_from_pit, "floor_token": _layout_generation, "root": weakref(world_weapon_root)}
 	# A thrown pickup can kill its target inside body_entered. Adding the new
@@ -11708,26 +11694,15 @@ func get_employee_wander_target(employee: EmployeeEnemy) -> Vector2:
 
 
 func get_employee_navigation_target(employee: EmployeeEnemy, destination: Vector2) -> Vector2:
-	# Keep the formal state machine; only route around concave floor boundaries.
-	if _employee_nav_ray == null:
-		_employee_nav_ray = PhysicsRayQueryParameters2D.new()
-		_employee_nav_ray.collision_mask = WORLD_WALL_LAYER
-		_employee_nav_ray.collide_with_bodies = true
-		_employee_nav_ray.collide_with_areas = false
-	_employee_nav_ray.from = employee.global_position
-	_employee_nav_ray.to = destination
-	if employee.get_world_2d().direct_space_state.intersect_ray(_employee_nav_ray).is_empty():
-		return destination
-	var start := Vector2i((employee.global_position / CELL_PIXELS).round())
-	var finish := Vector2i((destination / CELL_PIXELS).round())
-	var id := employee.get_instance_id()
-	var now := Time.get_ticks_msec()
-	var cached: Dictionary = employee_path_cache.get(id, {})
-	if cached.get("start") != start or cached.get("finish") != finish or now - int(cached.get("time", 0)) > 700:
-		cached = {"start": start, "finish": finish, "time": now, "path": find_floor_path(start, finish, false)}
-		employee_path_cache[id] = cached
-	var path: Array = cached.path
-	return Vector2(path[1])*CELL_PIXELS if path.size() > 1 else destination
+	return _employee_navigation.next_target(self,employee,destination,employee_path_cache)
+
+
+func is_employee_path_clear(from: Vector2, to: Vector2, employee: EmployeeEnemy) -> bool:
+	return _employee_navigation.is_segment_clear(self,employee,from,to)
+
+
+func invalidate_employee_navigation(employee: EmployeeEnemy) -> void:
+	if is_instance_valid(employee): employee_path_cache.erase(employee.get_instance_id())
 
 
 func get_employee_escape_target(employee: EmployeeEnemy, away_direction: Vector2) -> Vector2:
@@ -11750,24 +11725,7 @@ func is_employee_position_clear(candidate: Vector2, employee: EmployeeEnemy) -> 
 		return false
 	if candidate_room != room_id and not are_rooms_openly_connected(room_id, candidate_room):
 		return false
-	if _employee_clear_shape == null:
-		_employee_clear_shape = CircleShape2D.new()
-		_employee_clear_shape.radius = 8.0
-		_employee_clear_query = PhysicsShapeQueryParameters2D.new()
-		_employee_clear_query.shape = _employee_clear_shape
-		_employee_clear_query.collide_with_bodies = true
-		_employee_clear_query.collide_with_areas = false
-	_employee_clear_query.transform = Transform2D(0.0, candidate)
-	_employee_clear_query.collision_mask = WORLD_WALL_LAYER | 8
-	if _employee_exclude_rids.is_empty():
-		_employee_exclude_rids.append(employee.get_rid())
-	else:
-		_employee_exclude_rids[0] = employee.get_rid()
-	_employee_clear_query.exclude = _employee_exclude_rids
-	var space := employee.get_world_2d().direct_space_state if employee.is_inside_tree() else (player.get_world_2d().direct_space_state if player != null and player.is_inside_tree() else null)
-	if space == null:
-		return true
-	return space.intersect_shape(_employee_clear_query, 8).is_empty()
+	return _employee_navigation.is_position_clear(self,employee,candidate)
 
 
 func get_employee_roam_route(employee: EmployeeEnemy) -> Dictionary:
@@ -12177,6 +12135,12 @@ func _next_route_room(from_room: int, destination: int) -> int:
 				return int(first_hop[neighbor])
 			queue.append(neighbor)
 	return -1
+
+
+func can_employee_hear_gunshot_at(employee: EmployeeEnemy, _sound_position: Vector2, source_room_id: int) -> bool:
+	# The default room-graph policy remains intact; authored levels can refine it
+	# using real doors/portals without changing logical navigation room ids.
+	return can_employee_hear_gunshot(employee,source_room_id)
 
 
 func can_employee_hear_gunshot(employee: EmployeeEnemy, source_room_id: int) -> bool:
@@ -12672,13 +12636,17 @@ func _on_blood_effect_settled(reference: WeakRef) -> void:
 				# followed by another check and rasterization inside absorb.
 				if target == blood or not bool(target.call("absorb_ground_effect", blood, BLOOD_MERGE_CAPTURE_EXTENT - 4.0)):
 					continue
-				var bridge_ref: Variant = target.get_meta(&"depth_visual_bridge") if target.has_meta(&"depth_visual_bridge") else null
-				var bridge: Node = bridge_ref.get_ref() if bridge_ref is WeakRef else null
-				if is_instance_valid(bridge):
-					bridge.call("resize_blood_ground_capture", BLOOD_MERGE_CAPTURE_EXTENT)
-					bridge.call("request_capture_refresh")
 				_settled_blood_buckets[key] = live
-				blood.queue_free()
+				if bool(get_meta(&"test_legacy_blood_ground_capture", false)) or DisplayServer.get_name() == "headless":
+					var bridge_ref: Variant = target.get_meta(&"depth_visual_bridge") if target.has_meta(&"depth_visual_bridge") else null
+					var bridge: Node = bridge_ref.get_ref() if bridge_ref is WeakRef else null
+					if is_instance_valid(bridge):
+						bridge.call("resize_blood_ground_capture", BLOOD_MERGE_CAPTURE_EXTENT)
+						bridge.call("request_capture_refresh")
+					blood.queue_free()
+				else:
+					target.set_meta(&"blood_ground_capture_extent", int(BLOOD_MERGE_CAPTURE_EXTENT))
+					_get_blood_ground_capture_pool().commit_ground_merge(target, blood, camera_3d, BLOOD_FLOOR_WORLD_Y, int(BLOOD_MERGE_CAPTURE_EXTENT))
 				return
 			_settled_blood_buckets[key] = live
 	var own_bucket: Array = _settled_blood_buckets.get(bucket, [])
@@ -12800,6 +12768,9 @@ func spawn_corpse_drag_trail(
 	var smear_rng := RandomNumberGenerator.new()
 	smear_rng.state = _content_rng.state
 	blood.call("setup_drag_smear", smear_rng, WORLD_WALL_LAYER, world_start, world_end, intensity, width_pixels)
+	if pixel_drag_enabled and blood is BlackBloodEffect and not blood.ground_pixels.is_empty():
+		var report: Dictionary = preload("res://scripts/dream/pixel_blood_drag.gd").apply(blood,world_start,world_end,width_pixels,intensity)
+		if drag_art_reports.size()<128: drag_art_reports.append(report)
 	_refresh_3d_blood_effect_after_setup(blood, false)
 	return true
 
@@ -12819,6 +12790,9 @@ func spawn_black_blood(
 		return false
 	if not _is_blood_ground_allowed(at_position):
 		return false
+	if surface_blood_enabled:
+		var surface := preload("res://scripts/dream/floor_surface_blood.gd").install(self)
+		if is_instance_valid(surface): return surface.emit_at(at_position,direction,lethal,intensity)
 	var blood := BLACK_BLOOD_EFFECT.new() as Node2D
 	if blood == null:
 		return false
@@ -13371,6 +13345,9 @@ func spawn_weapon_muzzle(at_position: Vector2, direction: Vector2, effect_kind: 
 		else:
 			night_lighting.flash_muzzle(at_position, effect_kind)
 	var flame_direction:=global_basis*Vector3(direction.x,0,direction.y)
+	if _uses_firearm_flash_fx():
+		_firearm_fx().muzzle(muzzle_world, flame_direction, effect_kind)
+		return
 	preload("res://scripts/dream/burning_effects.gd").install(self).muzzle(muzzle_world,flame_direction)
 	if uses_pixel_combat_vfx():
 		# Anchor the smoke exactly where the projectile leaves the gameplay plane, and take
@@ -13385,7 +13362,23 @@ func spawn_weapon_muzzle(at_position: Vector2, direction: Vector2, effect_kind: 
 		return
 
 
+func _uses_firearm_flash_fx() -> bool:
+	return not bool(get_meta(&"test_legacy_firearm_fx", false))
+
+
+func _firearm_fx() -> FIREARM_FLASH_FX:
+	var host: Node3D = floor_root if is_instance_valid(floor_root) else self
+	var fx := host.get_node_or_null("FirearmFlashFX") as FIREARM_FLASH_FX
+	if fx == null:
+		fx = FIREARM_FLASH_FX.new()
+		fx.name = "FirearmFlashFX"
+		host.add_child(fx)
+		fx.configure(camera_3d, preload("res://scripts/dream/floor_reflections.gd").EXCLUDED)
+	return fx
+
+
 ## Floor-owned muzzle smoke. Created on first shot so floors that never fire pay nothing.
+## Floor-owned muzzle smoke.
 func _muzzle_smoke() -> Node3D:
 	var host: Node = floor_root if floor_root != null else self
 	var existing := host.get_node_or_null("MuzzleSmoke")
@@ -13398,21 +13391,13 @@ func _muzzle_smoke() -> Node3D:
 
 
 func _clear_muzzle_and_burning_vfx() -> void:
-	var host: Node = floor_root if floor_root != null else self
-	if is_instance_valid(host):
-		var burning_node: Node = host.get_node_or_null("BurningEffects")
-		if is_instance_valid(burning_node) and burning_node.has_method("clear"):
-			burning_node.clear()
-		var smoke_node: Node = host.get_node_or_null("MuzzleSmoke")
-		if is_instance_valid(smoke_node) and smoke_node.has_method("clear"):
-			smoke_node.clear()
-	if host != self and is_instance_valid(self):
-		var self_burning: Node = get_node_or_null("BurningEffects")
-		if is_instance_valid(self_burning) and self_burning.has_method("clear"):
-			self_burning.clear()
-		var self_smoke: Node = get_node_or_null("MuzzleSmoke")
-		if is_instance_valid(self_smoke) and self_smoke.has_method("clear"):
-			self_smoke.clear()
+	for host: Node in [floor_root, self]:
+		if not is_instance_valid(host):
+			continue
+		for path: NodePath in [^"BurningEffects", ^"MuzzleSmoke", ^"FirearmFlashFX"]:
+			var effect := host.get_node_or_null(path)
+			if is_instance_valid(effect) and effect.has_method("clear"):
+				effect.call("clear")
 
 
 func _set_muzzle_smoke_visible(visible_state: bool) -> void:
@@ -13422,6 +13407,9 @@ func _set_muzzle_smoke_visible(visible_state: bool) -> void:
 		smoke = get_node_or_null("MuzzleSmoke")
 	if is_instance_valid(smoke) and smoke.has_method("set_overlay_visible"):
 		smoke.set_overlay_visible(visible_state)
+	var fx := host.get_node_or_null("FirearmFlashFX") as FIREARM_FLASH_FX if is_instance_valid(host) else null
+	if fx != null:
+		fx.set_effects_visible(visible_state)
 
 
 func spawn_firearm_impact_visual(hit_position: Vector2, hit_normal: Vector2, collider: Node, shot_height_pixels: float) -> void:	# The formal 2D swept hit alone decides whether an impact happened. These
@@ -13452,6 +13440,10 @@ func spawn_firearm_impact_visual(hit_position: Vector2, hit_normal: Vector2, col
 		# move to the low furniture surface rather than floating above it.
 		var top := OfficeFurnitureCatalog.height_offset(target) / CELL_PIXELS + OfficeFurnitureCatalog.size_of(OfficeFurnitureCatalog.resolved_kind(target)).y
 		height = minf(height, top)
+	var contact_world := get_gameplay_world_position(hit_position, height) + normal_world * 0.015
+	if _uses_firearm_flash_fx():
+		_firearm_fx().impact(contact_world, normal_world, surface_kind)
+		return
 	var effect := FIREARM_IMPACT_SCENE.instantiate() as Node3D
 	if effect == null:
 		return
@@ -13460,7 +13452,7 @@ func spawn_firearm_impact_visual(hit_position: Vector2, hit_normal: Vector2, col
 	_active_firearm_impact_count += 1
 	effect.tree_exiting.connect(_on_firearm_impact_exiting, Object.CONNECT_ONE_SHOT)
 	effect.global_basis = Basis.IDENTITY
-	effect.global_position = get_gameplay_world_position(hit_position, height) + normal_world * 0.015
+	effect.global_position = contact_world
 	if effect.has_method("setup"):
 		effect.call("setup", normal_world, surface_kind)
 
@@ -13469,24 +13461,24 @@ func _on_firearm_impact_exiting() -> void:
 	_active_firearm_impact_count = maxi(_active_firearm_impact_count - 1, 0)
 
 
-func spawn_melee_hit_feedback(hit_actor: Node2D, direction: Vector2) -> void:
-	if not is_instance_valid(hit_actor) or not is_instance_valid(camera_3d) or not is_instance_valid(floor_root):
-		return
-	var anchor := get_gameplay_world_position(hit_actor.global_position, 0.65)
-	var normal := Vector3(camera_3d.global_basis.z.x, 0.0, camera_3d.global_basis.z.z).normalized()
-	var plane := {"origin": get_gameplay_world_position(hit_actor.global_position, 0.0) + normal * 0.04, "normal": normal}
-	var reference: Variant = hit_actor.get_meta(&"depth_visual_bridge") if hit_actor.has_meta(&"depth_visual_bridge") else null
-	var bridge: Node = reference.get_ref() if reference is WeakRef else null
-	if is_instance_valid(bridge) and bridge.has_method("get_hit_feedback_world_position"):
-		anchor = bridge.get_hit_feedback_world_position()
-		var body_plane: Dictionary = bridge.get_hit_feedback_depth_plane()
-		if not body_plane.is_empty(): plane = body_plane
-	var a := get_gameplay_world_position(hit_actor.global_position, 0.65)
-	var b := get_gameplay_world_position(hit_actor.global_position + direction, 0.65)
-	var screen_direction := camera_3d.unproject_position(b) - camera_3d.unproject_position(a)
-	var effect := preload("res://scripts/dream/melee_crescent_hit_3d.gd").new()
-	floor_root.add_child(effect)
-	effect.setup(camera_3d, anchor, screen_direction.normalized(), plane)
+func spawn_melee_hit_feedback(hit_actor: Node2D, direction: Vector2, damage_source: StringName = &"") -> Node3D:
+	if not is_instance_valid(hit_actor):
+		return null
+	var contact: Dictionary = {}
+	if (_melee_contact.get("actor", 0) == hit_actor.get_instance_id()
+		and _melee_contact.get("source") == damage_source):
+		if _melee_contact.presented:
+			return null
+		contact = _melee_contact
+		contact.presented = true
+		direction = contact.direction
+	var effect_scale := 1.0
+	if damage_source in [&"lucille", &"books"]:
+		var weapon_id := String(damage_source)
+		if is_instance_valid(player) and WEAPON_VISUALS.get_behavior_id(String(player.selected_weapon_id)) == weapon_id:
+			weapon_id = String(player.selected_weapon_id)
+		effect_scale = WEAPON_VISUALS.get_melee_range_multiplier(weapon_id)
+	return preload("res://scripts/dream/melee_crescent_hit_3d.gd").spawn(self, hit_actor, direction, effect_scale, contact)
 
 
 func is_resolving_phase_dash_hit() -> bool:
@@ -13727,6 +13719,8 @@ func add_projectile(projectile: Node2D, source_actor: Node2D = null) -> void:
 			_capture_shot_visual_origin(projectile, visual_source, snapshot)
 			projectile_plane = _actor_muzzle_visual_plane(visual_source, projectile.global_position, snapshot)
 		projectile.set_meta(&"shot_height_pixels", projectile_plane.x * CELL_PIXELS)
+		if projectile.has_method("limit_flight_to_camera"):
+			projectile.limit_flight_to_camera(self, projectile_plane)
 		# Same capture geometry, texture/shader and formal origin, allocated while
 		# loading rather than on every pellet of a multiplayer volley.
 		if bool(get_meta(&"test_legacy_projectile_capture", false)):
@@ -13819,6 +13813,24 @@ func is_room_projectile_path_clear(from_position: Vector2, to_position: Vector2)
 					continue
 		return false
 	return true
+
+
+func resolve_player_melee_hit(enemy: Node2D, base_damage: float, hit_origin: Vector2,
+		damage_source: StringName, point: Vector2, tangent: Vector2, drop: float) -> Dictionary:
+	if not is_instance_valid(enemy):
+		return {}
+	# The humanoid damage callback can present the contact before the death pose.
+	# Keep this context scoped to that synchronous hit, including nested callbacks.
+	var previous_contact := _melee_contact
+	var contact := {"actor": enemy.get_instance_id(), "source": damage_source,
+		"point": point, "target_origin": enemy.global_position, "direction": tangent, "drop": drop, "presented": false}
+	_melee_contact = contact
+	var result := resolve_player_hit(enemy, base_damage, hit_origin, damage_source)
+	if not result.is_empty() and not contact.presented and is_instance_valid(enemy) and enemy.has_method("take_damage"):
+		# Robots and flying proxies resolve damage without the humanoid callback.
+		spawn_melee_hit_feedback(enemy, tangent, damage_source)
+	_melee_contact = previous_contact
+	return result
 
 
 func resolve_player_hit(enemy: Node, base_damage: float, hit_origin: Vector2, damage_source: StringName = &"player_projectile") -> Dictionary:

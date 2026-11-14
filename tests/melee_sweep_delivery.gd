@@ -218,8 +218,7 @@ func run() -> void:
 	for pixel in [false, true]:
 		for palette in [false, true]:
 			if display.has_method("set_selective_enabled"): display.set_selective_enabled(pixel)
-			if display.has_method("set_palette_enabled"): display.set_palette_enabled(palette)
-			check(display.selective_enabled == pixel and display.palette_enabled == palette, "Actual world display toggles pixel=%s palette=%s" % [pixel,palette])
+			check(display.selective_enabled == pixel and not display.has_method("set_palette_enabled"), "Actual world display toggles pixel=%s palette=%s" % [pixel,palette])
 			equip("lucille")
 			aim = Vector2.RIGHT
 			await record_swing("bat_pixel_%d_palette_%d" % [int(pixel), int(palette)])

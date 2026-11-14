@@ -32,7 +32,7 @@ func run() -> void:
 		bridges[index].source_actor.global_position = office_center + Vector2(index % 4 - 2, index / 4 - 2) * 48
 	world.transition_phase = &"IDLE"; world.camera_aim_offset = Vector3.ZERO
 	world._update_camera_and_actor_projection(0.0)
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	display._process(0.0)
 	world.room_visibility._update_outside_mask()
 	paused = true

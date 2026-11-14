@@ -18,13 +18,21 @@ func run() -> void:
 	for i in 3:
 		enemy._set_enemy_head_frame(i)
 		check(enemy.head.texture.get_image().get_data()==atlas.get_region(Rect2i(32,i*32,32,32)).get_data(),"live frame %d uses every authored upper-body pixel"%i)
+	var back_pixels := atlas.get_region(Rect2i(64, 32, 32, 32)).get_data()
+	enemy._apply_live_facing(Vector2.UP)
+	for i in 3:
+		enemy._set_enemy_head_frame(i)
+		check(enemy.head.texture.get_image().get_data() == back_pixels, "back-facing pose keeps the authored pixels during blinking")
+	enemy._apply_live_facing(Vector2.DOWN)
+	check((enemy.head.texture as AtlasTexture).region == Rect2(32, 64, 32, 32), "turning front restores the selected front frame")
 	check(not enemy.body.visible and enemy.head.visible,"live enemy draws one upper body without old torso")
-	check(enemy.head.position==Vector2(-16,-17) and enemy.left_hand.position.y==6,"new upper body and hands match assembled reference anchors")
+	check(enemy.head.position==Vector2(-16,-17) and enemy.left_hand_base_position.y==6,"new upper body and hands match assembled reference anchors")
 	check(enemy.left_leg.position==Vector2(-5,-9) and enemy.right_leg.position==Vector2(0,-9),"foot sockets stay aligned with authored legs")
 	enemy.configure_archetype(&"waitress")
+	enemy._apply_live_facing(Vector2.UP)
 	check(enemy.body.visible and not enemy.combined_upper_body,"waitress retains its separate torso")
 	check((enemy.head.texture as AtlasTexture).region==Rect2(32,0,28,32) and (enemy.body.texture as AtlasTexture).region==Rect2(64,0,32,32),"waitress retains its previous atlas regions")
-	check(enemy.head.position==Vector2(-16,-20) and enemy.body.position==Vector2(-16,-8) and enemy.left_hand.position.y==7,"waitress retains original rig positions after post-ready configuration")
+	check(enemy.head.position==Vector2(-16,-20) and enemy.body.position==Vector2(-16,-8) and enemy.left_hand_base_position.y==7,"waitress retains original rig positions after post-ready configuration")
 	enemy.configure_archetype(&"employee")
 	check(not enemy.body.visible and enemy.head_base_position==Vector2(-16,-17) and enemy.body_base_position==Vector2(-16,6),"switching back refreshes animation bases and combined torso visibility")
 	enemy.velocity=Vector2(80,0)
@@ -45,6 +53,19 @@ func run() -> void:
 	check((enemy.head.texture as AtlasTexture).region==Rect2(32,64,32,23),"corpse callbacks retain closed eyes and never restore combined body")
 	for i in 12: enemy._update_death_presentation(1./60.)
 	check(enemy.head.position.is_finite() and enemy.body.position==enemy.body_base_position,"ragdoll keeps a valid neck and torso transform")
+	var rear := load("res://scenes/entities/employee_enemy.tscn").instantiate() as EmployeeEnemy
+	arena.add_child(rear)
+	rear._apply_live_facing(Vector2.UP)
+	rear._die()
+	rear.set_physics_process(false)
+	rear.set_process(false)
+	rear._set_back_facing(false)
+	rear._update_enemy_blink(.1)
+	check(rear.head.texture.get_image().get_data() == atlas.get_region(Rect2i(64, 32, 32, 23)).get_data()
+		and rear.body.texture.get_image().get_data() == atlas.get_region(Rect2i(64, 55, 32, 9)).get_data(),
+		"the rear ragdoll preserves the back head and torso through later callbacks")
+	EmployeeEnemy.SFX.stop_event(&"enemy_kill")
 	arena.queue_free(); await process_frame; await process_frame
+	await create_timer(.12).timeout
 	print("EMPLOYEE_COMBINED checks=",checks," failures=",failures)
 	quit(1 if failures else 0)

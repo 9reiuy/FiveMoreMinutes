@@ -117,7 +117,7 @@ func run() -> void:
 	check(shooter.ranged_attack_shot_serial==serial+1 and not shooter.ranged_attack_windup_pending and shooter.attack_cooldown_left>=base_interval*(1-jitter) and shooter.attack_cooldown_left<=base_interval*(1+jitter),"Repeat automatic shot keeps original cadence and jitter without an extra windup")
 	check(cues.size()==1,"Automatic magazine announces only the completed initial windup")
 	var ding: AudioStreamPlayer=root.get_node("SFXManager").players[&"enemy_fire_cue"]
-	check(ding.stream is AudioStreamWAV and ding.stream.get_length()<.1 and ding.bus==&"SFX" and ding.max_polyphony==4,"Short clean bell is bounded and unaffected by slow-time pitch")
+	check(ding.stream is AudioStreamWAV and ding.stream.get_length()>1.2 and ding.stream.get_length()<1.4 and ding.bus==&"SFX" and ding.max_polyphony==4,"Aim cue is the neon breathe and stays off the slow-time bus")
 	ding.stream.save_to_wav("res://.runtime/enemy_fire_cue.wav")
 	shooter._cancel_ranged_attack_windup()
 	shooter.attack_cooldown_left=0

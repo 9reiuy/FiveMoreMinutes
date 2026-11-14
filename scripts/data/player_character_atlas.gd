@@ -42,6 +42,15 @@ static func foot_offset(index: int) -> Vector2:
 		Facing.RIGHT, Facing.DOWN_RIGHT, Facing.UP_LEFT: return Vector2(3,0)
 		Facing.UP: return Vector2(2,0)
 		_: return Vector2.ZERO
+
+# The side-view coat is narrower. Tuck the trailing shoe beneath its hem.
+static func standing_foot_adjustment(index: int, left: bool) -> Vector2:
+	if index == Facing.RIGHT and left:
+		return Vector2(2, 0)
+	if index == Facing.LEFT and not left:
+		return Vector2(-2, 0)
+	return Vector2.ZERO
+
 static func foot_region(back: bool,left: bool) -> Rect2:
 	return Rect2(43 if left else 48,140 if back else 76,4,9)
 static func texture(region: Rect2) -> AtlasTexture:

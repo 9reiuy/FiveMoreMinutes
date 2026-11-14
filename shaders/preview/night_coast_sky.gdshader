@@ -10,6 +10,7 @@ uniform vec3 moon_direction=vec3(.4,.18,-1.);
 uniform vec3 zenith_tint : source_color = vec3(.075,.078,.18);
 uniform vec3 middle_sky_tint : source_color = vec3(.13,.075,.22);
 uniform vec3 horizon_tint : source_color = vec3(.30,.10,.325);
+uniform float distant_stars : hint_range(0.0, 1.0) = 0.0;
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 void fragment(){
  vec2 uv=UV;
@@ -40,6 +41,14 @@ void fragment(){
  cloud_color+=vec3(.008,.006,.015)*max(field,0.);
  cloud_color+=vec3(.035,.044,.056)*halo;
  sky=mix(sky,cloud_color,cloud*.97);
+ if(distant_stars>0.){
+  vec2 star_grid=world_uv*vec2(134.,88.);
+  vec2 cell=floor(star_grid);
+  vec2 offset=vec2(hash(cell+7.2),hash(cell+21.5))*.56+.22;
+  float point=1.-smoothstep(.06,.20,length(fract(star_grid)-offset));
+  float clear_sky=smoothstep(.04,.25,direction.y)*(1.-cloud*.88);
+  sky+=vec3(.49,.58,.72)*point*clear_sky*step(.83,hash(cell))*distant_stars;
+ }
  float haze=exp(-abs(uv.y-horizon_y)*45.)*(.65+.2*sin(uv.x*14.-scene_time*.07));
  sky+=horizon_tint*.22*haze*(.25+.75*moon_visibility);
  COLOR=vec4(sky*reveal,1);

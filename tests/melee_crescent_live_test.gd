@@ -55,7 +55,6 @@ func run() -> void:
 	if "--probe-lines" in OS.get_cmdline_user_args(): output += "/line_probe_run"
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	var settings: Node = root.get_node("SettingsManager")
-	settings.set_palette_enabled(not "--palette-off" in OS.get_cmdline_user_args())
 	settings.set_setting(&"pixelation_enabled",not "--native" in OS.get_cmdline_user_args())
 	main = load("res://scenes/app/main.tscn").instantiate()
 	root.add_child(main)

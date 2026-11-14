@@ -43,7 +43,6 @@ func _run() -> void:
 	pixel_screen = SELECTIVE_PIXEL_SCENE.instantiate()
 	pixel_screen.set(&"preview_mode", false)
 	pixel_screen.set(&"initial_selective_enabled", true)
-	pixel_screen.set(&"palette_enabled", false)
 	pixel_screen.set(&"world", dungeon)
 	var gen_start := Time.get_ticks_usec()
 	var prepare: bool = dungeon.has_method("begin_firearm_render_preparation")

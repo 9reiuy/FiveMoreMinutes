@@ -83,7 +83,7 @@ func _run_flow() -> void:
 	var sm = get_node_or_null("/root/SettingsManager")
 	_check(sm != null, "SettingsManager accessible")
 	if sm != null:
-		_check(main.current_screen.get("palette_enabled") == sm.get_palette_enabled(), "Palette setting applied to display viewport")
+		_check(main.current_screen.get("semantic_material").shader.resource_path == "res://shaders/world_semantic_decode.gdshader", "Palette setting applied to display viewport")
 		_check(main.current_screen.get("selective_enabled") == bool(sm.get_setting(&"pixelation_enabled", true)), "Pixelation setting applied to display viewport")
 
 	# Wait for floor transition

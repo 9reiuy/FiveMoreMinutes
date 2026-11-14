@@ -10,7 +10,6 @@ func check(ok: bool,label: String) -> void:
 	print("PASS " if ok else "FAIL ",label)
 func _initialize() -> void: call_deferred("run")
 func set_enhanced(value: bool) -> void:
-	preview.palette_material.set_shader_parameter("tonal_sample",value)
 	for material in dither_materials: material.set_shader_parameter("office_tonal_sample",value)
 func draw_frame(path: String) -> void:
 	await process_frame; await RenderingServer.frame_post_draw
@@ -20,7 +19,6 @@ func run() -> void:
 	create_timer(180).timeout.connect(func(): quit(2))
 	DirAccess.make_dir_recursive_absolute(OUTPUT)
 	var manager:=root.get_node("SettingsManager")
-	manager.set_setting(&"palette_enabled",true); manager.set_setting(&"palette_scheme",1)
 	preview=load("res://scripts/dream/preview/selective_pixel_preview.gd").new()
 	root.add_child(preview)
 	for i in 16: await process_frame
@@ -31,7 +29,6 @@ func run() -> void:
 			if material is ShaderMaterial and not dither_materials.has(material): dither_materials.append(material)
 	check(dither_materials.size()>5,"actual floor lighting materials found")
 	for scheme in [1,2]:
-		manager.set_setting(&"palette_scheme",scheme)
 		set_enhanced(false); await draw_frame(OUTPUT+"/scheme%d_before.png"%scheme)
 		var before: Image=preview.world_viewport.get_texture().get_image()
 		set_enhanced(true); await draw_frame(OUTPUT+"/scheme%d_after.png"%scheme)
@@ -42,7 +39,6 @@ func run() -> void:
 				if before.get_pixel(x,y)!=after.get_pixel(x,y): changed+=1
 		check(changed>100,"scheme %d enhanced without replacing palette (%d changed pixels)"%[scheme,changed])
 	# Same static room and exactly the same camera route, 4s at normal speed.
-	manager.set_setting(&"palette_scheme",1)
 	var camera: Camera3D=world.camera_3d
 	var start:=camera.global_transform
 	var anchor: Vector3=world.to_global(Vector3(world.player.global_position.x/32.,0,world.player.global_position.y/32.))

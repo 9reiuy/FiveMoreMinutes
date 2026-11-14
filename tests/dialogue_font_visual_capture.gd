@@ -15,7 +15,6 @@ func run() -> void:
 	display.world=room
 	root.add_child(display)
 	display.set_selective_enabled(true)
-	display.set_palette_enabled(true)
 	await frames(30)
 	room.set_process(false)
 	room.set_physics_process(false)

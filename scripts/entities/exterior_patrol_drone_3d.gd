@@ -19,7 +19,7 @@ const MAX_HP := 100.0
 const DETECT_RANGE := 300.0
 const SPOT_SECONDS := 0.5
 const PATROL_HALF_LENGTH := 1.35
-const PATROL_SPEED := 1.15
+const PATROL_SPEED := DemoConfig.DEFAULT_ENEMY_WALK_SPEED / CELL_PIXELS
 const PATROL_LIGHT_ENERGY := 3.2
 const LOCK_LIGHT_ENERGY := 5.2
 const LOCK_LIGHT_COLOR := Color(1.0, 0.08, 0.08)
@@ -38,6 +38,7 @@ var _route_direction:=1
 var _muzzle_3d: Node3D
 var _magazine_left:=0
 var _magazine_primed:=false
+var _aim_warned:=false
 var _reload_left:=0.0
 var _aim_target:=Vector2.ZERO
 var outline: Node3D
@@ -240,6 +241,9 @@ func _update_detection(delta: float) -> void:
 		else:
 			_spot_elapsed = 0.0
 			_aim_target=player.global_position
+			if not _aim_warned and world != null and world.SFX != null:
+				world.SFX.play_event(&"enemy_fire_cue")
+			_aim_warned=true
 
 
 ## 只有在「窗口内侧 → 玩家」真的通视时才开火。
@@ -403,7 +407,9 @@ func _fire() -> void:
 		if is_instance_valid(_muzzle_3d):
 			preload("res://scripts/dream/burning_effects.gd").install(world).muzzle(_muzzle_3d.global_position,world.global_basis*Vector3(direction.x,0,direction.y))
 		world.SFX.play_weapon_fire()
-		if not _magazine_primed: world.SFX.play_event(&"enemy_fire_cue")
+		if not _magazine_primed and not _aim_warned:
+			world.SFX.play_event(&"enemy_fire_cue")
+			_aim_warned=true
 	else:
 		projectile.queue_free()
 	_cooldown = float(rules.interval)
@@ -412,6 +418,7 @@ func _fire() -> void:
 	if _magazine_left<=0:
 		_magazine_left=maxi(1,int(world.config.basic_magazine_size))
 		_magazine_primed=false
+		_aim_warned=false
 		_reload_left=float(world.config.weapon_reload_duration)
 
 

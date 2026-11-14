@@ -1,0 +1,32 @@
+{
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "author": "Joseph Sardin",
+  "publisher": "BigSoundBank / La Sonothèque",
+  "note": "Attribution is not required. Recorded because this project keeps a source list for third-party material. Edited files are the wavs in this folder. Original downloads were not copied into the game.",
+  "edited_sha256": {
+    "metro_roll.wav": "ec79019bbc635b82d37241d94bcdbd9a2053620b9ef0ea5a3d63272325df7a1a",
+    "metro_brake.wav": "b7c91de6229808b49002e71de534d3f63412d305eee00989ad7678ea09c9b798",
+    "metro_start.wav": "4a184fbc7ebcfeffe590881e064efd80ac14dcbe1b391298a83cded0a2c33c34",
+    "door_air_open.wav": "deecbd47a5cfafb1f0389faf02fc781f0d1bde0cc441297af64f302783a3b219",
+    "door_air_close.wav": "827586a75bd8a69748759fdd040d73f42b850b2f38cd72f7f6fc56b4cc6ff442"
+  },
+  "sources": [
+    {
+      "id": 3039,
+      "page": "https://bigsoundbank.com/metro-stopping-and-starting-1-s3039.html",
+      "download": "https://bigsoundbank.com/UPLOAD/ogg/3039.ogg",
+      "description": "An old Paris metro arrives, stops, then leaves, recorded on the platform.",
+      "used_in": ["metro_roll.wav", "metro_brake.wav", "metro_start.wav"],
+      "edit": "Roll is the steady close approach from 13.15s to 16.35s with a 120ms loop crossfade. Brake is the high squeal from 21.15s to 23.35s plus two short platform reflections. Start is the motor release and pull-away from 36.20s to 40.80s."
+    },
+    {
+      "id": 1491,
+      "page": "https://bigsoundbank.com/pneumatic-cylinder-small-1-s1491.html",
+      "download": "https://bigsoundbank.com/UPLOAD/ogg/1491.ogg",
+      "description": "A small pneumatic cylinder, recorded indoors.",
+      "used_in": ["door_air_open.wav", "door_air_close.wav"],
+      "edit": "The same release, slowed slightly so it matches the 0.75-second door travel. Open plays it forward. Close plays it reversed so the air seats at the end of the stroke."
+    }
+  ]
+}

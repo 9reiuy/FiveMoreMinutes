@@ -35,11 +35,14 @@ func _run() -> void:
 
 	print("[TEST 1] Verifying Formal 3D Movement Speeds & Pacing...")
 	print("  Player movement_speed: ", player.movement_speed)
-	assert(player.movement_speed == 290.0, "Player movement speed must be 290.0 (3D formal profile)!")
-	var runtime_cfg = scene.get("runtime_config")
+	assert(player.movement_speed == 224.0, "Player movement speed must be 224 px/s (7 world units/s)!")
+	var runtime_cfg: DemoConfig = scene.config
 	assert(runtime_cfg != null, "Runtime config must exist!")
-	print("  Runtime config employee_movement_speed: ", runtime_cfg.employee_movement_speed)
-	assert(runtime_cfg.employee_movement_speed == 150.0, "Enemy movement speed must be 150.0!")
+	var employee_walk_speed: float = runtime_cfg.employee_movement_speed
+	var employee_run_speed: float = employee_walk_speed * runtime_cfg.employee_run_speed_multiplier
+	print("  Runtime config enemy walk / run: ", employee_walk_speed, " / ", employee_run_speed)
+	assert(employee_walk_speed == 96.0, "Enemy walk speed must be 96 px/s (3 world units/s)!")
+	assert(employee_run_speed == 192.0, "Enemy run speed must be 192 px/s (6 world units/s)!")
 
 	print("\n[TEST 2] Verifying Superhot Slow-motion Standoff & Bullet Buffer Margin...")
 	print("  Engine.time_scale at start: ", Engine.time_scale)

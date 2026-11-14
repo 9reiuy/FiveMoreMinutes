@@ -30,7 +30,7 @@ func run() -> void:
 	display=load("res://scenes/dream/preview/SelectivePixelPreview.tscn").instantiate()
 	display.world=world; display.preview_mode=false
 	root.add_child(display)
-	display.set_selective_enabled(true); display.set_palette_enabled(true)
+	display.set_selective_enabled(true)
 	var reports: Array=[]
 	for approved in [false,true]:
 		paused=false

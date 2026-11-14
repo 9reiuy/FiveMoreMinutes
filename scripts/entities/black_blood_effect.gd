@@ -305,8 +305,15 @@ func copy_depth_visual_state_to(target: Node) -> void:
 	# Use the captured replica counts here so a ground-only target's signature
 	# reflects only ground/wall content (while the normal 2D copy still includes
 	# the source airborne count).
-	var captured_airborne_count := replica.airborne_pixels.size()
-	var payload := replica.ground_pixels.size() * 1000003 + captured_airborne_count * 97
+	_update_capture_payload_signature(replica.ground_pixels.size(), replica.airborne_pixels.size())
+
+
+func record_ground_mask_upload() -> void:
+	_update_capture_payload_signature(ground_pixels.size(), 0)
+
+
+func _update_capture_payload_signature(ground_count: int, airborne_count: int) -> void:
+	var payload := ground_count * 1000003 + airborne_count * 97
 	payload += (1 if fade_started else 0) * 31 + (2 if settled else 0) + int(round(self_modulate.a * 100.0))
 	if payload != _last_payload_signature:
 		_last_payload_signature = payload
@@ -1824,6 +1831,33 @@ func absorb_ground_effect(other: BlackBloodEffect, extent: float = 108.0) -> boo
 	var result:=_absorb_ground_effect_profiled(other,extent)
 	PERF_TRACE.scope_end(self,scope)
 	return result
+
+
+func build_merged_ground_mask(half_extent: int) -> Image:
+	# The merge has already rasterized these marks into unit cells. For an
+	# axis-aligned stain the mask is the same as drawing the cells in the capture.
+	if not is_visual_settled() or ground_visual_scale != 1.0 or fade_started \
+			or global_transform.x != Vector2.RIGHT or global_transform.y != Vector2.DOWN \
+			or modulate.a != 1.0 or self_modulate.a != 1.0 or ground_pixels.size() != ground_pixel_types.size():
+		return null
+	var width := half_extent * 2
+	var clip := office_pool_core and ground_bounds_enabled
+	var bounds := ground_bounds_local.grow(-1.0)
+	var alpha := PackedByteArray()
+	alpha.resize(width * width * 2)
+	var painted := false
+	for index in ground_pixels.size():
+		if ground_pixel_types[index] != StampType.PIXEL_CELL:
+			return null
+		var cell: Vector2 = ground_pixels[index]
+		if clip and not bounds.has_point(cell):
+			continue
+		var pixel := Vector2i(cell.round()) + Vector2i(half_extent, half_extent)
+		if pixel.x < 0 or pixel.y < 0 or pixel.x >= width or pixel.y >= width:
+			return null
+		alpha[(pixel.y * width + pixel.x) * 2 + 1] = 255
+		painted = true
+	return Image.create_from_data(width, width, false, Image.FORMAT_LA8, alpha) if painted else null
 
 const MERGE_NEIGHBORS:Array[Vector2]=[Vector2.LEFT,Vector2.RIGHT,Vector2.UP,Vector2.DOWN]
 var _compact_merge_cells:Dictionary={}

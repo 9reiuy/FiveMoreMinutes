@@ -41,3 +41,7 @@ godot.log
 # Local UI/SFX preview captures (do not commit)
 ui-previews/
 
+# Local source sound library; runtime uses the curated clips under sfx/.
+# Includes source WAVs above GitHub's 100 MiB per-file limit.
+/sfx/Kenno_Deep Tech Vol 1.zip/
+

@@ -129,6 +129,9 @@ func _run() -> void:
 	var remote_plan: Dictionary = world.get_employee_door_plan(route_enemy, remote)
 	check(not remote_plan.is_empty() and world.rooms[from_room].connections.has(int(remote_plan.get("target_room_id",-1))), "remote chase uses adjacent first hop")
 	route_enemy.hostile = false
+	# This case isolates hearing, independently of an earlier direct-awareness
+	# sample acquired during the physical doorway checks above.
+	route_enemy.can_see_target = false
 	route_enemy.equip_weapon("basic")
 	route_enemy.state = EmployeeEnemy.State.NEUTRAL_WANDER
 	var sound: Vector2 = world._door_center_pixels(chosen_edge) + Vector2(10,10)
@@ -136,8 +139,11 @@ func _run() -> void:
 	check(route_enemy.state == EmployeeEnemy.State.INVESTIGATE_GUNSHOT and not route_enemy.hostile, "adjacent armed hearing does not aggro")
 	check(route_enemy.gunshot_threat_position == sound, "hearing stores sound not Player position")
 	route_enemy._update_investigate_gunshot()
-	check(route_enemy.state == EmployeeEnemy.State.MOVE_TO_DOOR, "investigation uses formal door route")
-	check(is_equal_approx(route_enemy._get_current_move_speed(), route_enemy.movement_speed * route_enemy._cfg("employee_run_speed_multiplier", 1.6)), "investigate route runs at run speed multiplier")
+	if world.are_rooms_openly_connected(from_room,destination):
+		check(route_enemy.state == EmployeeEnemy.State.INVESTIGATE_GUNSHOT, "investigation uses local navigation through a broken-open door")
+	else:
+		check(route_enemy.state == EmployeeEnemy.State.MOVE_TO_DOOR, "investigation uses formal door route")
+	check(is_equal_approx(route_enemy._get_current_move_speed(), route_enemy.movement_speed * route_enemy._cfg("employee_run_speed_multiplier", DemoConfig.DEFAULT_ENEMY_RUN_MULTIPLIER)), "investigate route runs at run speed multiplier")
 	route_enemy.free()
 	print("DOOR AI CHECKS ", checks, " failures ", failures.size())
 	world.free()

@@ -15,8 +15,7 @@ func run() -> void:
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var palette := ShaderMaterial.new()
-	palette.shader = preload("res://shaders/palette_quantize.gdshader")
-	palette.set_shader_parameter("palette_enabled", false)
+	palette.shader = preload("res://shaders/world_semantic_decode.gdshader")
 	overlay.material = palette
 	layer.add_child(overlay)
 	root.add_child(layer)
@@ -44,11 +43,9 @@ func run() -> void:
 			await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png(ProjectSettings.globalize_path("res://.runtime/office_rooms_%s_%s_off.png" % [mode, key]))
 			if mode == "after":
-				palette.set_shader_parameter("palette_enabled", true)
 				await process_frame
 				await RenderingServer.frame_post_draw
 				root.get_texture().get_image().save_png(ProjectSettings.globalize_path("res://.runtime/office_rooms_after_%s_palette1.png" % key))
-				palette.set_shader_parameter("palette_enabled", false)
 			world.set_process(true)
 		world.queue_free()
 		await process_frame

@@ -3,6 +3,7 @@ extends Node3D
 ## to this floor-owned node. No damage, physics bodies, audio or global RNG.
 const PARTICLE_SHADER = preload("res://shaders/dream3d/elemental_particle.gdshader")
 const OUTLINE_SHADER = preload("res://shaders/dream3d/elemental_particle_outline.gdshader")
+const EXPLOSION = preload("res://scripts/dream/explosion_particles_3d.gd")
 const LIMIT := 384
 const MAX_FIRES := 8
 const MAX_LIGHTS := 4
@@ -20,8 +21,7 @@ var clock := 0.0
 var preserve_flame_colors := false
 var fire_limit := MAX_FIRES
 var emission_cursor := 0
-var shockwaves: Array[Dictionary] = []
-const WAVE_SHADER=preload("res://shaders/dream3d/elemental_shockwave.gdshader")
+var explosion: Node3D
 
 func _ready() -> void:
 	rng.randomize()
@@ -29,6 +29,9 @@ func _ready() -> void:
 
 func _build() -> void:
 	if not banks.is_empty(): return
+	explosion=EXPLOSION.new()
+	explosion.name="ExplosionParticles"
+	add_child(explosion)
 	for kind in 3:
 		var material := ShaderMaterial.new()
 		material.shader = PARTICLE_SHADER
@@ -111,29 +114,23 @@ func emit_smoke(at: Vector3, count: int=12, strength: float=1.0) -> void:
 		_spawn(1,at+_disk(.18*strength),Vector3(rng.randf_range(-.25,.25),rng.randf_range(.5,1.1),rng.randf_range(-.25,.25)),rng.randf_range(.25,.45)*strength,rng.randf_range(1.6,2.4),false)
 
 func explode(at: Vector3, strength: float=1.0) -> void:
-	if not at.is_finite(): return
+	if not at.is_finite() or not is_finite(strength): return
 	preload("res://scripts/app/performance_markers.gd").event(self,"explosion",{"x":at.x,"y":at.y,"z":at.z,"strength":strength})
 	strength=clampf(strength,.25,3.0)
-	_emit_shockwave(at,strength)
-	for index in 44:
-		var direction:=Vector3(rng.randf_range(-1,1),rng.randf_range(.05,1),rng.randf_range(-1,1)).normalized()
-		_spawn(0,at+_disk(.12),direction*rng.randf_range(1.0,3.5)*strength,rng.randf_range(.30,.60)*strength,rng.randf_range(.30,.65),true)
-	for index in 18:
-		_spawn(1,at+_disk(.18*strength),Vector3(rng.randf_range(-.5,.5),rng.randf_range(.6,1.2),rng.randf_range(-.5,.5)),rng.randf_range(.3,.5)*strength,rng.randf_range(1.6,2.4),true)
-	for index in 26:
-		var direction:=Vector3(rng.randf_range(-1,1),rng.randf_range(.3,1.3),rng.randf_range(-1,1)).normalized()
-		_spawn(2,at,direction*rng.randf_range(2.0,5.0)*strength,rng.randf_range(.035,.075),rng.randf_range(.6,1.3),true)
+	if not explosion.emit(at,strength,rng.randi()): return
+	# The gas backend owns the impact ring and ten sparks. Continuous fire,
+	# muzzle effects and the existing four-light pool remain independent.
+	_upload()
 
 func clear() -> void:
-	for wave in shockwaves:
-		wave.mesh.hide()
-		wave.mesh.queue_free()
-	shockwaves.clear()
+	if is_instance_valid(explosion): explosion.clear()
 	fires.clear()
 	particles.clear()
 	for bank in banks: bank.visible_instance_count=0
 	for bank in outline_banks: bank.visible_instance_count=0
-	for light in lights: light.visible=false
+	for light in lights:
+		light.set_meta(&"transient_explosion_light",false)
+		light.visible=false
 
 func _disk(radius: float) -> Vector3:
 	var angle:=rng.randf()*TAU
@@ -166,18 +163,7 @@ func _advance(dt: float) -> void:
 	var smoke_response:=1.0-exp(-2.4*dt)
 	var fire_response:=1.0-exp(-1.5*dt)
 	var burst_damping:=exp(-2.0*dt)
-	for index in range(shockwaves.size()-1,-1,-1):
-		var wave: Dictionary=shockwaves[index]
-		wave.age+=dt
-		var progress:=float(wave.age)/.42
-		if progress>=1.0:
-			wave.mesh.queue_free()
-			shockwaves.remove_at(index)
-			continue
-		var radius:=lerpf(.20,3.0*float(wave.strength),1.0-pow(1.0-progress,2))
-		wave.mesh.scale=Vector3(radius,1,radius)
-		wave.material.set_shader_parameter("progress",progress)
-		wave.material.set_shader_parameter("flame_color",Color(1,0,.24) if preserve_flame_colors else Color("ffd151"))
+	explosion.advance(dt,wind)
 	var fire_ids:=fires.keys()
 	for offset in fire_ids.size():
 		var id: int=fire_ids[(emission_cursor+offset)%fire_ids.size()]
@@ -224,8 +210,7 @@ func _advance(dt: float) -> void:
 
 func _upload() -> void:
 	if banks.is_empty(): return
-	for wave in shockwaves:
-		wave.material.set_shader_parameter("flame_color",Color(1,0,.24) if preserve_flame_colors else Color("ffd151"))
+	explosion.upload()
 	var counts: Array[int]=[0,0,0]
 	for particle in particles:
 		var kind:=int(particle.kind)
@@ -262,27 +247,29 @@ func _upload() -> void:
 		banks[kind].visible_instance_count=counts[kind]
 		outline_banks[kind].visible_instance_count=counts[kind]
 		outline_materials[kind].set_shader_parameter("contour_world_width",contour_width)
+	# Reset visibility before changing roles, so scene-light suppression also
+	# takes effect when an already-visible flash returns to continuous fire.
+	for light in lights:
+		light.set_meta(&"transient_explosion_light",false)
+		light.visible=false
 	var index:=0
+	for burst in explosion.bursts:
+		if index>=lights.size(): break
+		var energy: float=explosion.flash_energy(burst)
+		if energy<=.01: continue
+		lights[index].position=Vector3(burst.at)+Vector3.UP*.8
+		lights[index].light_color=Color("ffe1a5").lerp(Color("ff8532"),clampf(float(burst.age)/.16,0.0,1.0))
+		lights[index].omni_range=4.5*float(burst.strength)
+		lights[index].light_energy=energy
+		lights[index].set_meta(&"transient_explosion_light",true)
+		lights[index].visible=true
+		index+=1
 	for id in fires:
 		if index>=lights.size(): break
 		lights[index].position=Vector3(fires[id].at)+Vector3.UP*.35
+		lights[index].light_color=Color("ff9b38")
+		lights[index].omni_range=3.0
 		lights[index].light_energy=.55+.12*sin(clock*17.0+float(id))+.07*sin(clock*29.0)
 		lights[index].visible=true
 		index+=1
 	for slot in range(index,lights.size()): lights[slot].visible=false
-
-func _emit_shockwave(at: Vector3,strength: float) -> void:
-	if shockwaves.size()>=8:return
-	var mesh:=MeshInstance3D.new()
-	var plane:=PlaneMesh.new()
-	plane.size=Vector2(2,2)
-	mesh.mesh=plane
-	mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var material:=ShaderMaterial.new()
-	material.shader=WAVE_SHADER
-	material.set_shader_parameter("flame_color",Color(1,0,.24) if preserve_flame_colors else Color("ffd151"))
-	mesh.material_override=material
-	add_child(mesh)
-	mesh.position=at
-	mesh.scale=Vector3(.2,1,.2)
-	shockwaves.append({"mesh":mesh,"material":material,"age":0.0,"strength":strength})
