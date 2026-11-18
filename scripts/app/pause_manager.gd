@@ -8,6 +8,7 @@ const ESC_MENU: StringName = &"ESC_MENU"
 const DIALOGUE: StringName = &"DIALOGUE"
 const MODAL_ANIMATION: StringName = &"MODAL_ANIMATION"
 const SKILLS_MENU: StringName = &"SKILLS_MENU"
+const LOADING_PREP: StringName = &"LOADING_PREP"
 
 var pause_reasons: Dictionary = {}
 
@@ -25,7 +26,8 @@ func request_pause(reason: StringName) -> void:
 
 
 func release_pause(reason: StringName) -> void:
-	pause_reasons.erase(reason)
+	if not pause_reasons.erase(reason):
+		return
 	refresh_pause_state()
 
 

@@ -18,4 +18,6 @@ Neutral matte industrial calibration (`roughness >= 0.68`, `metallic <= 0.18`):
 - `res://art/Dream/CC0/AtriumLoop11/quaternius/Prop_Vent_Wide.scn` — Corridor HVAC ceiling louvers.
 - `res://art/Dream/CC0/AtriumLoop11/quaternius/Prop_Cable_1.scn`, `Prop_Cable_3.scn` — Exposed `1F` bay floor power umbilicals.
 - `res://art/Dream/CC0/AtriumLoop11/quaternius/Prop_Computer.scn` — Dim smoked-glass office suite terminal silhouette (`Dr. Amaral 204`).
-*(Cartoonish Kenney Space Station Kit GLBs are unused in this build.)*
+The standalone Atrium Loop uses the Quaternius modules listed above.
+
+The chapter’s pressure vessels and cradles use Quaternius' Standard `Props/Prop_Barrel_Large.gltf` and `Props/Prop_PipeHolder.gltf`, packed as Godot scenes in `quaternius/` with the original geometry, UVs and shared trim textures. Each scene records the SHA-256 of its source glTF. The staff canteen reuses the transit concourse’s square-tube table frame and painted finish. The duty room uses the main game's open-office workstation.

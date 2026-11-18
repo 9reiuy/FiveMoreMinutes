@@ -3,6 +3,7 @@ extends Control
 @export var config: DemoConfig
 
 @onready var dash_icon: TextureRect = $DashIndicator/DashIcon
+@onready var low_health_blood: Control = get_node_or_null("LowHealthBloodOverlay") as Control
 @onready var liquid_health: Control = $LiquidHealthMeter
 @onready var endless_day_area: Control = $EndlessDayArea
 @onready var endless_day_label: Label = $EndlessDayArea/DayLabel
@@ -31,7 +32,7 @@ var vhs_preview_rect: ColorRect = null
 
 
 func _ready() -> void:
-	liquid_health.set_health(health, maximum_health)
+	_sync_health_displays(true)
 	_update_dash_indicator()
 	endless_day_area.visible = endless_mode
 	dash_icon.visible = false
@@ -101,9 +102,15 @@ func set_endless_day_progress(day: int, progress: float) -> void:
 func set_health(current: float, maximum: float) -> void:
 	health = current
 	maximum_health = maximum
-	if is_instance_valid(liquid_health):
-		liquid_health.set_health(current, maximum)
+	_sync_health_displays(false)
 	queue_redraw()
+
+
+func _sync_health_displays(immediate: bool) -> void:
+	if is_instance_valid(liquid_health):
+		liquid_health.set_health(health, maximum_health)
+	if is_instance_valid(low_health_blood) and low_health_blood.has_method("set_health"):
+		low_health_blood.call("set_health", health, maximum_health, immediate)
 
 
 func set_health_motion_source(actor: Node) -> void:

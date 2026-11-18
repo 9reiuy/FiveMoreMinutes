@@ -171,7 +171,7 @@ func measure_route(combat: bool,center: Vector2,city_active := true,legacy_optim
 		if rng is RandomNumberGenerator: rng.seed = 12000 + enemy_index
 		if "--canonical-identities" in OS.get_cmdline_user_args():
 			enemy.set_meta(&"test_steering_identity",10000+enemy_index)
-			for property in [&"enemy_blink_time_left",&"neutral_emoji_cooldown",&"neutral_room_travel_cooldown_left",&"separation_query_left",&"perception_update_left"]:
+			for property in [&"enemy_blink_time_left",&"neutral_room_travel_cooldown_left",&"separation_query_left",&"perception_update_left"]:
 				enemy.set(property,0.0)
 		enemy_index += 1
 	var capture_cache := not "--uncached-characters" in OS.get_cmdline_user_args()

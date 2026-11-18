@@ -1,0 +1,29 @@
+Selected explosion, container impact and H06 movement sounds
+All four source sounds are CC0 1.0 Universal.
+https://creativecommons.org/publicdomain/zero/1.0/
+
+explosion.res
+"Explosion, Short, Impact, Break gravel, reverb" by julianmateo_
+https://freesound.org/people/julianmateo_/sounds/522696/
+Excerpt: 1.06–3.30 seconds (removes the leading silence).
+
+container_impact.res
+"Metal Impact Container 1 1.wav" by Sheyvan, recorded by Philipp Grzemba
+https://freesound.org/people/Sheyvan/sounds/569409/
+Complete 4.0-second impact with natural decay.
+
+crawler_step.res
+"Big robot footstep" by AudioPapkin
+https://freesound.org/people/AudioPapkin/sounds/813056/
+Excerpt: 0.55–1.48 seconds, aligns the heavy impact with tripod touchdown.
+
+crawler_mechanism.res
+"Sound Design Elements-Robot mechanism-001" by AudioPapkin
+https://freesound.org/people/AudioPapkin/sounds/813060/
+First 3.12 seconds with a 40 ms loop crossfade (3.08-second loop).
+
+All resources derive from the user-selected public HQ MP3 previews, not the
+login-only original WAVs. Converted to mono 48 kHz PCM16, DC removed, peak
+trimmed to -3 dBFS, with short edge fades on one-shots. No new synthesized layers.
+Runtime volumes: explosion -27 dB; container -28 dB; footstep -34 dB; joint -38 dB.
+SOURCES.json preserves original pages, preview URLs and source SHA-256 hashes.

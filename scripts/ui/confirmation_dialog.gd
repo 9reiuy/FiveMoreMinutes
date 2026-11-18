@@ -6,11 +6,9 @@ const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const CHOICE_COLOR := Color("8ebcd8")
 const CHOICE_HOVER_COLOR := Color("d8f1ff")
 const CHOICE_DISABLED_COLOR := Color("56758a")
-const PORTRAIT_IDLE := preload("res://art/Chr/chr.png")
-const PORTRAIT_TALK_A := preload("res://art/Chr/chr__normal_talk.png")
-const PORTRAIT_TALK_B := preload("res://art/Chr/chr__normal_talk2.png")
+const PLAYER_PORTRAITS := preload("res://scripts/ui/dialogue/player_portraits.gd")
+const PORTRAIT_IDLE := PLAYER_PORTRAITS.NORMAL
 const PORTRAIT_OUTLINE_SHADER := preload("res://shaders/sprite_alpha_outline.gdshader")
-const PORTRAIT_PANIC_FILTER := Color("ff7890")
 const DEFAULT_PANEL_POS := Vector2(235.0, 188.0)
 const DEFAULT_PANEL_SIZE := Vector2(385.0, 154.0)
 const CENTERED_PANEL_POS := Vector2(110.0, 188.0)
@@ -55,7 +53,6 @@ var dialogue_target_position := Vector2.ZERO
 var full_prompt_text := ""
 var typewriter_active := false
 var typewriter_accumulator := 0.0
-var visible_talk_character_count := 0
 var dialogue_lines: Array = []
 var dialogue_line_index := 0
 var current_line: Dictionary = {}
@@ -65,6 +62,7 @@ var pre_delay_remaining := 0.0
 var post_delay_remaining := 0.0
 var line_ready := false
 var prompt_tween: Tween
+var portrait_expression: StringName = &"normal"
 
 
 func _ready() -> void:
@@ -79,7 +77,7 @@ func _ready() -> void:
 	confirm_button.pressed.connect(_on_choice_pressed.bind(0))
 	cancel_button.pressed.connect(_on_choice_pressed.bind(1))
 	input_blocker.gui_input.connect(_on_blocker_gui_input)
-	character_art.texture = PORTRAIT_IDLE
+	_refresh_portrait()
 	_apply_portrait_outline()
 	# Keep the text geometry finite even when this shared dialog is instantiated
 	# outside a themed scene. Smart wrapping handles CJK boundaries as well as
@@ -111,18 +109,12 @@ func _apply_portrait_outline() -> void:
 
 
 func _apply_portrait_expression(expression: StringName) -> void:
-	var material := character_art.material as ShaderMaterial
-	if material == null:
-		return
-	var panicked := expression == &"fear" or expression == &"panic"
-	material.set_shader_parameter(
-		"color_filter",
-		PORTRAIT_PANIC_FILTER if panicked else config.dialogue_portrait_filter_color
-	)
-	material.set_shader_parameter(
-		"color_filter_strength",
-		maxf(config.dialogue_portrait_filter_strength, 0.34) if panicked else config.dialogue_portrait_filter_strength
-	)
+	portrait_expression = PLAYER_PORTRAITS.normalize_expression(expression)
+	_refresh_portrait()
+
+
+func _refresh_portrait() -> void:
+	character_art.texture = PLAYER_PORTRAITS.dialogue_texture(portrait_expression)
 
 
 func _process(delta: float) -> void:
@@ -224,7 +216,7 @@ func _animate_in() -> void:
 	session_started.emit()
 	visible = true
 	animating = true
-	# 立绘使用原始 16:9 完整画布，不裁剪、不平移；仅做透明度淡入。
+	# The shared upper-body crop stays fixed; the legacy box only fades it in.
 	portrait.position = Vector2.ZERO
 	portrait.modulate.a = 0.0
 	dialogue_panel.position = dialogue_target_position + Vector2(0.0, 8.0)
@@ -352,7 +344,6 @@ func _begin_typewriter(prompt: String, line_data: Dictionary = {}) -> void:
 	prompt_label.text = full_prompt_text
 	prompt_label.visible_characters = 0
 	typewriter_accumulator = 0.0
-	visible_talk_character_count = 0
 	pre_delay_remaining = maxf(0.0, float(current_line.get("pre_delay", 0.0)))
 	post_delay_remaining = 0.0
 	line_ready = false
@@ -360,8 +351,7 @@ func _begin_typewriter(prompt: String, line_data: Dictionary = {}) -> void:
 	typewriter_active = not full_prompt_text.is_empty() and seconds_per_character > 0.0
 	if not typewriter_active:
 		prompt_label.visible_characters = -1
-	# 每句开始先保持静止图；第一个实际可见字符出现时才切换到 Talk A。
-	character_art.texture = PORTRAIT_IDLE
+	# Select the line's expression once; revealing letters never changes it.
 	_apply_line_presentation()
 	if not typewriter_active and pre_delay_remaining <= 0.0:
 		_complete_typewriter()
@@ -381,14 +371,10 @@ func _reveal_next_character() -> void:
 		return
 	var revealed_character := full_prompt_text.substr(prompt_label.visible_characters, 1)
 	prompt_label.visible_characters += 1
-	# 嘴型与文字 Reveal 使用同一个入口；空白、换行及控制字符不推动说话帧。
+	# Whitespace and control characters remain silent during text reveal.
 	if _is_visible_talk_character(revealed_character):
 		if bool(current_line.get("blip", true)):
 			SFX.play_event(&"text_blip")
-		visible_talk_character_count += 1
-		# 第1、2个可见字使用A，第3、4个使用B；每两个可见字才切换一次。
-		var frame_group := int((visible_talk_character_count - 1) / 2) % 2
-		character_art.texture = PORTRAIT_TALK_A if frame_group == 0 else PORTRAIT_TALK_B
 
 
 func _is_visible_talk_character(character: String) -> bool:
@@ -400,9 +386,6 @@ func _is_visible_talk_character(character: String) -> bool:
 
 func _stop_talking_portrait() -> void:
 	typewriter_active = false
-	visible_talk_character_count = 0
-	if character_art != null:
-		character_art.texture = PORTRAIT_IDLE
 
 
 func _show_current_line() -> void:

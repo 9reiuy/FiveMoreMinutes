@@ -1,0 +1,38 @@
+{
+  "source": "https://drive.google.com/drive/folders/18S8TehLux8Tu6EfF0W3sjg5WXTV4k5z9",
+  "shaders": {
+    "explosion_cloud.gdshader": "a843467d14680419877f5c1b293b371a233ea2aca5e11847d5b138bfc4692e91",
+    "explosion_shock.gdshader": "c80ad1c38d4f292f3a8ab7a5e927e842041e62416ee8f2e2a895773dc920167f",
+    "explosion_streak.gdshader": "47f58dd4f2c036af41447e7af83e5d9f5f57c0580bcbdefd7636aaf0a48d7357",
+    "explosion_cracks.gdshader": "e0403be88f02dc645d474157178d30573183c942f3f199116f83a1d22630de70",
+    "explosion_flash.gdshader": "e14e8f7ed4ce6f3711e00b9fec80425c622f5f2f9d002e8b8656e3df0e985999",
+    "explosion_debris.gdshader": "ce0c75c08bcd588d1e605e02c78045c2033bb3da4ed70ecc16946e9be7c5fdb9"
+  },
+  "original_texture_files": {
+    "T_cloudy_noise_211c.png": "59690b4333962981b82c5315b4756aa37657a4c10be42ae20dbf126518eea220",
+    "T_VFX_Noise_44xainv.png": "2ba09d4fe424054dba7e08460b7461eba9d0742fe43144f71ec88403418b1aa0",
+    "T_MarbleNoise_tiled.png": "d9693b7f9e0749d03a88cd61594ddc6d2315b5ee18a7d8495cc6b738348b2820",
+    "T_4_streaks.png": "23ddf1256a538e6750124a9a200461c79c1f3c2e9bd2058dc2de2b6c387c33f2",
+    "T_vfx_hit122.jpg": "0beca05d71551fc50a9eb0f07414a96237e2f149d6487daa4a3c210f11e8f028",
+    "T_cracks33_E3.jpg": "3fe9c7f60ff46e603373b2104a7a8175f914466c8109dee467886952465425e9"
+  },
+  "resource_texture_files": [
+    "T_cloudy_noise_211c.res",
+    "T_VFX_Noise_44xainv.res",
+    "T_MarbleNoise_tiled.res",
+    "T_4_streaks.res",
+    "T_vfx_hit122.res",
+    "T_cracks33_E3.res"
+  ],
+  "author": "Le Lu",
+  "approved_reference_version": "v2",
+  "commercial_license_documentation": "unverified",
+  "native_texture_sha256": {
+    "T_4_streaks.res": "a28286864f6aa7dc1cb4fa52d0118276cd02b248a79f8ae9b6f63bf3928ac9a4",
+    "T_cloudy_noise_211c.res": "80471e858a693fd5ef870a0aed64ee882d6bfb6db26b784f283104f2eeea84bb",
+    "T_cracks33_E3.res": "467bd1b8d580b0b54ba91a8b75a022ff2327496951729680970bdfa94f6145ff",
+    "T_MarbleNoise_tiled.res": "ad2351110604c82eb30ade493f5fbf125dc2d465e699b0b43e20a6458aded2f7",
+    "T_vfx_hit122.res": "eb9d1207ce6e24781fc8a4b333cecd3f9762a20b0f39d964ba36979a0bdf7b69",
+    "T_VFX_Noise_44xainv.res": "48b2ef7d2dfd77eea6b80b699c6f72c16e70fda6aa643b23044c2ee5b2e7a1fe"
+  }
+}

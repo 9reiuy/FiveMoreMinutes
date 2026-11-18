@@ -99,7 +99,7 @@ func _init(parent: Node3D, cutout: RefCounted, rival: bool) -> void:
 		preload("res://scripts/dream/packed_fixture_sources.gd").mark_tree(car)
 		# Small marker lamps use native bloom and their own local spill. Keep them
 		# out of the existing ceiling-fixture optics binding above.
-		if reference_art != null: reference_art.apply_car(car, index)
+		if reference_art != null: reference_art.apply_car(car, index, true)
 	set_cutaway(not rival)
 
 

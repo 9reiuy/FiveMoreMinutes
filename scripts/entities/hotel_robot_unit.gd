@@ -8,6 +8,7 @@ extends CharacterBody2D
 
 const PROJECTILE_SCENE := preload("res://scenes/entities/basic_projectile.tscn")
 const FIREARM_RULES := preload("res://scripts/dream/dream_firearm_rules.gd")
+const PUNCH := preload("res://scripts/entities/player_punch_motion.gd")
 const HURTBOX_SCRIPT := preload("res://scenes/dream/rooms/hurtbox.gd")
 
 const MAX_HP := 100.0
@@ -30,6 +31,9 @@ var alert := false
 var deploy := 0.0
 var facing := Vector2.DOWN
 var alerted_at_ms := 0
+var punch_height := 0.0
+var punch_vertical_speed := 0.0
+var punch_recovery_left := 0.0
 
 ## 3D 血条由外观节点创建并回绑（2D 层的 CanvasItem 不会上屏，见 billboard_health_bar.gd）。
 var health_bar_3d: Node3D
@@ -135,6 +139,10 @@ func is_damage_runtime_active() -> bool:
 	return not dead
 
 
+func is_standing_for_punch() -> bool:
+	return punch_height <= 0.0 and punch_vertical_speed <= 0.0
+
+
 func get_hurt_radius() -> float:
 	return 30.0*SIZE_RATIO
 
@@ -152,6 +160,21 @@ func _physics_process(delta: float) -> void:
 		return
 	_route_time-=delta
 	_reload_left=maxf(0.0,_reload_left-delta)
+	if punch_recovery_left > 0.0 or not is_standing_for_punch():
+		punch_recovery_left = maxf(0.0, punch_recovery_left - delta)
+		var airborne := not is_standing_for_punch()
+		if airborne:
+			punch_height = maxf(0.0, punch_height + punch_vertical_speed * delta)
+			punch_vertical_speed -= EmployeeEnemy.KNOCKDOWN_GRAVITY * delta
+			if punch_height <= 0.0: punch_vertical_speed = 0.0
+		var motion := velocity * delta
+		if not motion.is_zero_approx():
+			if NAV.segment_clear(self, global_position, global_position + motion):
+				if move_and_collide(motion) != null: velocity = Vector2.ZERO
+			else:
+				velocity = Vector2.ZERO
+			velocity = velocity.move_toward(Vector2.ZERO, (EmployeeEnemy.KNOCKDOWN_AIR_DRAG if airborne else 900.0) * delta)
+		return
 	if player == null or not is_instance_valid(player) or player.get("dead") == true:
 		_patrol(delta)
 		return
@@ -332,12 +355,22 @@ func get_weapon_visual_snapshot(point: Vector2) -> Dictionary:
 
 
 ## 玩家弹道通过 resolve_player_hit 调用，签名固定为四个参数。
-func take_damage(amount: float, _hit_origin: Vector2 = Vector2.ZERO, _force: float = 1.0,
-		_source: StringName = &"") -> void:
+func take_damage(amount: float, hit_origin: Vector2 = Vector2.ZERO, _force: float = 1.0,
+		source: StringName = &"") -> void:
 	if dead:
 		return
 	hp -= amount
 	alert = true
+	var punch := PUNCH.SOURCES.find(source)
+	if amount > 0.0 and hp > 0.0 and punch >= 0:
+		_aiming = false
+		_aim_elapsed = 0.0
+		_magazine_primed = false
+		punch_recovery_left = PUNCH.STAGGER
+		velocity = hit_origin.direction_to(global_position) * PUNCH.HIT_FORCE[punch]
+		if punch == PUNCH.Strike.UPPERCUT:
+			velocity *= EmployeeEnemy.KNOCKDOWN_FORCE_TO_HORIZONTAL_SPEED
+			punch_vertical_speed = PUNCH.LAUNCH_RISE
 	if amount>0.0 and hp>0.0 and is_instance_valid(visual): visual.flash_hit()
 	if is_instance_valid(health_bar_3d) and health_bar_3d.has_method("redraw"):
 		health_bar_3d.call("redraw", hp, MAX_HP)

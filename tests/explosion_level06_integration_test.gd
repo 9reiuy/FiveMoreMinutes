@@ -25,6 +25,7 @@ func run() -> void:
 	root.add_child(display)
 	current_scene=display
 	world=display.world
+	display.set_selective_enabled(true)
 	await world.begin_train_chapter(true)
 	if not AudioServer.is_bus_mute(0):
 		AudioServer.set_bus_mute(0,true)
@@ -51,6 +52,8 @@ func run() -> void:
 	var blast: Vector3=effects.to_global(effects.explosion.bursts[0].at)
 	check(blast.is_equal_approx(coupling),"Explosion originates at the coupling, outside the passenger cabin")
 	check(effects.lights.size()==4,"Real train retains the four-light budget")
+	check(effects.explosion.get_script().get_base_script()==preload("res://scripts/dream/explosion_stylized_pool_3d.gd"),"Real coupling uses the promoted shared backend")
+	check(not effects.explosion.ground_marks,"Coupling gap has no ground receiver")
 	check(effects.explosion.find_children("*","CollisionObject3D",true,false).is_empty(),"Train gas presentation adds no collision bodies")
 	var car: Node3D=train.derailment.wrecks[0].node
 	var base: Transform3D=car.transform
@@ -59,6 +62,7 @@ func run() -> void:
 	# for this evidence clip so the remote tail explosion remains visible.
 	world.camera_rig.position=world.to_local(car.global_position)
 	await frames(3)
+	var glow_host: Node = world.camera_3d.get_node_or_null("_ExplosionCameraGlow")
 	var movie_dir := output.path_join("frames")
 	DirAccess.make_dir_recursive_absolute(movie_dir)
 	for index in 105:
@@ -70,10 +74,12 @@ func run() -> void:
 		await frames(2)
 		await RenderingServer.frame_post_draw
 		var img: Image=display.world_viewport.get_texture().get_image()
-		if index==0:check(img.get_size()==Vector2i(1280,720),"Actual 0-6 Camera keeps native resolution")
+		if index==0:check(img.get_size()==Vector2i(640,360),"Actual 0-6 Camera keeps 640x360 pixel rendering")
+		if index==4:check(not effects.explosion.pool[0].cracks.visible,"No floating ground cracks appear at the real coupling")
 		img.save_png(movie_dir.path_join("frame_%04d.png" % index))
 		if index in [4,10,30]:img.save_png(output.path_join("level06_%04d.png" % index))
 	check(effects.explosion.bursts.is_empty(),"Real train gas expires after its complete tail")
+	check(glow_host != null and glow_host.owned == null and glow_host.owners.is_empty(),"Train explosion releases its glow while live fixture fog keeps Camera ownership")
 	check(effects.lights.all(func(light: OmniLight3D)->bool:return not light.visible),"Train flash lights leave no residue")
 	check(is_instance_valid(car) and car.visible,"Retired carriage stays intact until well beyond the Camera")
 	train.travel=travel_start+train.derailment.RETIRE_DISTANCE

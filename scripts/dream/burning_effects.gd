@@ -209,6 +209,7 @@ func muzzle(at: Vector3,direction: Vector3) -> void:
 func explosion(at: Vector3) -> void:
 	_sync_semantic_codes()
 	effects.explode(effects.to_local(at),1.65)
+	preload("res://scripts/audio/sfx_manager.gd").play_world_sfx_3d(&"explosion",at,0.0,40.0)
 	if hazards.size()<16:hazards.append({"at":at,"left":.65})
 
 func smoke_protected(target: Node) -> bool:

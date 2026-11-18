@@ -805,11 +805,16 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 	if collider == null:
 		_despawn()
 		return
+	var target := _resolve_damage_owner(collider)
+	var stops_at_armor := false
+	if is_instance_valid(target) and target.has_method("blocks_projectile_penetration"):
+		var impact_height := float(get_meta(&"shot_height_pixels", 0.0)) / 32.0
+		stops_at_armor = target.blocks_projectile_penetration(global_position, direction, impact_height)
 	var world := _dream_world()
 	# The 3D office owns presentation mapping. Keep the authoritative 2D hit
 	# point and shot-height snapshot unchanged; a legacy 2D world has no visual
 	# callback and therefore retains its original collision/damage path.
-	if world is Node3D and world.has_method("spawn_firearm_impact_visual"):
+	if not stops_at_armor and world is Node3D and world.has_method("spawn_firearm_impact_visual"):
 		var visual_normal := hit_normal if hit_normal.length_squared() > 0.0001 else -direction
 		var impact_position := global_position + _projected_wall_offset if _is_projected_wall(collider) else global_position
 		world.call(
@@ -819,7 +824,7 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 			collider,
 			float(get_meta(&"shot_height_pixels", 0.0))
 		)
-	if not _collider_is_person(collider):
+	if stops_at_armor or not _collider_is_person(collider):
 		_play_bullet_object_hit()
 	# Legacy DoorLeafCollision2D is terminal. Office bullets damage it and pass.
 	# Impacts still use the real hinge; penetrating a locked door does not unlock it.
@@ -842,7 +847,6 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 			return
 		_despawn()
 		return
-	var target := _resolve_damage_owner(collider)
 	if not is_instance_valid(target):
 		_despawn()
 		return
@@ -930,7 +934,7 @@ func _handle_collision(collider: Node, hit_normal: Vector2 = Vector2.ZERO) -> vo
 				global_position,
 				StringName("player_projectile_%s" % String(source_weapon_id))
 			)
-		if _roll_enemy_penetration():
+		if not stops_at_armor and _roll_enemy_penetration():
 			# Keep the real projectile alive and let the next swept segment find
 			# another target.  hit_targets prevents re-damaging this enemy.
 			return

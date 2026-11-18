@@ -82,7 +82,7 @@ const TAROT_DRAW_CONTROLLER_SCRIPT: Script = preload("res://scripts/dream/tarot/
 @onready var fade_overlay: ColorRect = $GameplayUI/FadeOverlay
 @onready var dialogue_dialog: BedroomConfirmationDialog = $DialogueLayer/ConfirmationDialog
 @onready var npc_hint_bubble = $DialogueLayer/NpcHintBubble
-@onready var dialogue_bubble: DreamDialogueBubble = $DialogueLayer/DreamDialogueBubble
+@onready var dialogue_bubble: Control = $DialogueLayer/DreamDialogueBubble
 @onready var tarot_overlay: TarotOverlay = $TarotLayer/TarotOverlay
 
 var dialogue_controller: DreamDialogueController
@@ -288,6 +288,16 @@ func _handle_waitress_proximity_dialogue() -> void:
 		if dialogue_controller != null and dialogue_controller.is_active():
 			dialogue_controller.dismiss_if_active()
 			_tween_dialogue_camera_weight(0.0,.45)
+
+
+func consume_escape() -> bool:
+	if dialogue_dialog.visible and dialogue_dialog.has_method("consume_escape"):
+		return bool(dialogue_dialog.call("consume_escape"))
+	if dialogue_controller != null and dialogue_controller.is_active():
+		dialogue_controller.dismiss_if_active()
+		dialogue_controller.dialogue_finished.emit(false, &"cancelled")
+		return true
+	return false
 
 # =============================================================================
 # Level Geometry Construction
@@ -903,25 +913,19 @@ func _on_waitress_interaction_requested() -> void:
 	if bool(get_meta(&"chapter_one",false)) and bool(get_meta(&"chapter_dialogue_heard",false)) and not bool(get_meta(&"chapter_tarot_taken",false)):
 		_start_tarot_sequence()
 		return
-	var lines: Array=[
-		"电、电梯在左边……通往办公楼……今晚也请小心。",
-		"只要撑到发奖金就好了……他们都这么说。可上去的人……怎么越来越少了……",
-		"我、我没在数！只是名字要记好……万一奖金算漏了，我就真的……真的……",
-		"啊？！我刚刚说出声了吗？！对不起！您没听见，对吧？对、对吧……？",
-		"祝您今晚工作顺利！您一定会回来的……我、我在这里等……不！不是催您回来！"
+	var lines: Array = [
+		{"text": "电、电梯在左边……通往办公楼……今晚也请小心。", "expression": "talking"},
+		{"text": "只要撑到发奖金就好了……他们都这么说。可上去的人……怎么越来越少了……", "expression": "normal"},
+		{"text": "我、我没在数！只是名字要记好……万一奖金算漏了，我就真的……真的……", "expression": "nervous"},
+		{"text": "啊？！我刚刚说出声了吗？！对不起！您没听见，对吧？对、对吧……？", "expression": "talking"},
+		{"text": "祝您今晚工作顺利！您一定会回来的……我、我在这里等……不！不是催您回来！", "expression": "normal"}
 	]
 	dialogue_controller.start_dialogue_sequence(dialogue_bubble,lines,_get_waitress_hud_pos,
-		{"compact_dialogue":true,"interrupt_text":"","countdown_extra":4.0},_get_player_hud_pos)
+		{"compact_dialogue":true,"countdown_extra":4.0},_get_player_hud_pos)
 	_tween_dialogue_camera_weight(1.0,.40)
 
 func _on_waitress_dialogue_interrupted() -> void:
 	waitress_npc.hint_emotion="angry"
-	tarot_visit_state.selected = true
-	_tween_dialogue_camera_weight(0.0, 0.45)
-	if player != null and is_instance_valid(player):
-		player.movement_enabled = true
-		if player.has_method("set_dash_enabled"):
-			player.set_dash_enabled(true)
 
 
 func _on_waitress_dialogue_option_selected(index: int, choice_data: Dictionary) -> void:
@@ -956,8 +960,6 @@ func _on_waitress_dialogue_finished(interrupted: bool, action_id: Variant) -> vo
 		# Separate E interaction opens cards; never restore dialogue choice buttons.
 		tarot_visit_state.selected=bool(get_meta(&"chapter_tarot_taken",false))
 	if not interrupted: waitress_npc.hint_emotion="happy"
-	if interrupted:
-		tarot_visit_state.selected = true
 	var act_name := StringName(str(action_id))
 	if act_name == &"skip_tarot":
 		tarot_visit_state.selected = true

@@ -136,7 +136,7 @@ func apply_whitebox() -> void:
 		floor_root.add_child(label)
 
 func _paint_static(node: Node, material: Material) -> void:
-	if node.name in [&"FireExtinguisherSystem", &"BurningEffects"]: return
+	if node.name in [&"FireExtinguisherSystem", &"BurningEffects", &"ScientistPotions"]: return
 	if node is GeometryInstance3D: node.material_override = material
 	for child in node.get_children(): _paint_static(child,material)
 

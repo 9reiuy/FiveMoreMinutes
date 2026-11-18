@@ -1,0 +1,45 @@
+extends "res://tests/h06_hangar_crew_entry_test.gd"
+
+func run() -> void:
+	create_timer(150,true,false,true).timeout.connect(func():quit(3))
+	evidence=OS.get_environment("FORKLIFT_EVIDENCE")
+	preload("res://tests/support/background_gpu.gd").start(self)
+	await enter(CHAPTER.Save.ENTRANCE)
+	check(not world.has_meta(&"h06_gallery_topblack_enabled") and world.blockout.wall_root.has_node("GalleryTopBlack"),"ordinary first-chapter entry enables topblack with production defaults")
+	check(world.get_node("Lighting/WorldEnvironment").environment.background_color==Color.BLACK,"normal first visit has a continuous black exterior")
+	world._place_feet(Vector2(5.3,0.7))
+	await frames(40)
+	await photograph("01-topblack-gallery")
+	world._place_feet(Vector2(-5.5,-20.4))
+	await frames(40)
+	await photograph("02-topblack-monitor")
+	var first_caps:WeakRef=weakref(world.blockout.wall_root.get_node("GalleryTopBlack"))
+	await enter(CHAPTER.Save.RETURN_BAY)
+	check(first_caps.get_ref()==null and world.blockout.wall_root.has_node("GalleryTopBlack"),"normal checkpoint reload releases the first shell and restores the return shell")
+	check(world.get_node("Lighting/WorldEnvironment").environment.background_color==Color.BLACK,"normal return visit retains the black exterior")
+	world._place_feet(Vector2(3.4,1.5))
+	await frames(40)
+	await photograph("03-topblack-return")
+	var return_caps:WeakRef=weakref(world.blockout.wall_root.get_node("GalleryTopBlack"))
+	world.gate_state.cargo_access=false
+	world.blockout.set_gate("cargo_access",false)
+	var door:Dictionary=PLAN.PASSAGES[PLAN.Visit.EMPTY_HANGAR]
+	world.previous_feet=door.at-door.forward
+	var feet:Vector2=door.at+door.forward*(PLAN.ENTRY_DEPTH+.4)
+	world._place_feet(feet)
+	world._update_passage(feet)
+	await frames(30)
+	check(world.blockout.visit==PLAN.Visit.FREIGHT and not world.blockout.wall_root.has_node("GalleryTopBlack"),"normal outgoing passage keeps the shell inside 1-1")
+	check(world.get_node("Lighting/WorldEnvironment").environment.background_color==world.get_meta(&"h06_background_before_topblack"),"normal passage restores the next district's background")
+	for i in 900:
+		if return_caps.get_ref()==null:break
+		await frames(1)
+	check(return_caps.get_ref()==null,"normal budgeted unload releases the departed shell")
+	await enter(CHAPTER.Save.ENTRANCE)
+	check(world.blockout.wall_root.has_node("GalleryTopBlack") and world.blockout.hangar_crew.actors.size()==3,"normal restart restores the first shell and the living hangar crew")
+	current_scene.queue_free()
+	await frames(8)
+	var failures:Array=checks.filter(func(row:Dictionary)->bool:return not row.pass)
+	FileAccess.open(evidence.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"pid":OS.get_process_id(),"renderer":RenderingServer.get_current_rendering_method(),"audio":AudioServer.get_driver_name(),"muted":AudioServer.is_bus_mute(0)},"\t"))
+	print("H06_GALLERY_TOPBLACK_ENTRY checks=",checks.size()," failures=",failures.size())
+	quit(0 if failures.is_empty() else 1)

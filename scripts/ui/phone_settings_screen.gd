@@ -133,7 +133,7 @@ func _rows() -> Array:
 			[&"canned_laughter_enabled", "罐头笑声和掌声"],
 		]
 		&"sounds": return [[&"master_volume", "总音量"], [&"music_volume", "音乐"], [&"sfx_volume", "音效"]]
-		&"graphics": return [[&"pixelation_enabled", "像素化"], [&"shadow_quality", "阴影品质"]]
+		&"graphics": return [[&"shadow_quality", "阴影品质"]]
 		&"music": return [[&"playback", "播放 / 暂停"], [&"music_volume", "音乐音量"]]
 	return []
 
@@ -372,6 +372,12 @@ func _card_input(event: InputEvent, index: int) -> void:
 			cancel_interaction()
 			if activate and _page == &"shop": _activate_selection()
 		_refresh_card_selection()
+
+func _input(event:InputEvent)->void:
+	# A drag may release over the scroll container instead of its original
+	# card. Finish after GUI dispatch so real clicks can still buy exactly once.
+	if _pointer_down and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and not event.pressed:
+		call_deferred("cancel_interaction")
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:

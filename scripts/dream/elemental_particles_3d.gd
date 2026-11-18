@@ -107,11 +107,11 @@ func emit_muzzle(at: Vector3, direction: Vector3) -> void:
 		var spread:=Vector3(rng.randf_range(-.45,.45),rng.randf_range(-.15,.40),rng.randf_range(-.45,.45))
 		_spawn(2,at+forward*.18,(forward+spread).normalized()*rng.randf_range(5,9),rng.randf_range(.045,.085),rng.randf_range(.14,.28),true)
 
-func emit_smoke(at: Vector3, count: int=12, strength: float=1.0) -> void:
-	if not at.is_finite() or not is_finite(strength): return
+func emit_smoke(at: Vector3, count: int=12, strength: float=1.0, drift: Vector3=Vector3.ZERO) -> void:
+	if not at.is_finite() or not is_finite(strength) or not drift.is_finite(): return
 	strength=clampf(strength,.25,3.0)
 	for index in clampi(count,0,64):
-		_spawn(1,at+_disk(.18*strength),Vector3(rng.randf_range(-.25,.25),rng.randf_range(.5,1.1),rng.randf_range(-.25,.25)),rng.randf_range(.25,.45)*strength,rng.randf_range(1.6,2.4),false)
+		_spawn(1,at+_disk(.18*strength),Vector3(rng.randf_range(-.25,.25),rng.randf_range(.5,1.1),rng.randf_range(-.25,.25))+drift,rng.randf_range(.25,.45)*strength,rng.randf_range(1.6,2.4),false)
 
 func explode(at: Vector3, strength: float=1.0) -> void:
 	if not at.is_finite() or not is_finite(strength): return

@@ -15,13 +15,32 @@ func check(ok: bool,label: String) -> void:
 	checks+=1
 	if not ok:failures+=1;push_error(label)
 func run() -> void:
+	AudioServer.set_bus_mute(0,true)
+	# Own the display boundary so the automatic bootstrap does not reparent
+	# this manually stepped fixture during its first awaited physics frame.
+	var display := Node.new()
+	display.add_to_group(&"dream_display")
+	root.add_child(display)
 	var world=load("res://scenes/dream/Dream3D_RandomDungeon.tscn").instantiate()
 	world.generate_on_ready=false;world.persist_profile=false;world.spawn_content=false
-	root.add_child(world)
+	display.add_child(world)
 	check(world.regenerate(42001),"Formal floor loads")
+	world.set_process(false);world.set_physics_process(false)
 	world.player.set_physics_process(false)
 	var controller:=BURN.install(world)
 	controller.set_physics_process(false);controller.effects.set_process(false)
+	# Deferred floor render preparation clears transient effects on completion.
+	# Finish that loading boundary before this fixture ignites its actors.
+	for frame in 3: await process_frame
+	var loading_frames := 0
+	while world.floor_transition_in_progress and loading_frames < 300:
+		loading_frames += 1
+		await process_frame
+	check(not world.floor_transition_in_progress,"Loading transaction completes before manual damage steps")
+	if not AudioServer.is_bus_mute(0):
+		AudioServer.set_bus_mute(0,true)
+		quit(2)
+		return
 	controller.spread_left=10000.0
 	var victim:=Victim.new();world.gameplay_world.add_child(victim)
 	victim.global_position=Vector2(20000,20000)
@@ -132,6 +151,6 @@ func run() -> void:
 	employee.configure_boss(true)
 	check(not controller.ignite(employee) and not employee.burning_panic,"Boss does not enter burning panic")
 	check(not robot.has_method("set_burning_panic"),"Robot burning does not use human weapon-drop panic")
-	world.free();await process_frame
+	display.free();await process_frame
 	print("BURNING_DAMAGE checks=",checks," failures=",failures)
 	quit(0 if failures==0 else 1)

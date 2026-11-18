@@ -59,6 +59,16 @@ const STREAMS := {
 	&"glass_shatter": preload("res://sfx/glass_shatter.wav"),
 	&"wood_shatter": preload("res://sfx/wood_shatter.wav"),
 	&"wall_break": preload("res://sfx/destruction/wall_break.wav"),
+	&"explosion": preload("res://sfx/combat_machinery/explosion.res"),
+	&"container_impact": preload("res://sfx/combat_machinery/container_impact.res"),
+	&"h06_plate_shake": preload("res://sfx/h06/plate_shake.res"),
+	&"h06_plate_fall": preload("res://sfx/h06/plate_fall.res"),
+	&"h06_plate_fall_alt": preload("res://sfx/h06/plate_fall_alt.res"),
+	&"h06_deck_collapse": preload("res://sfx/h06/deck_collapse.res"),
+	&"h06_hoist_release": preload("res://sfx/h06/hoist_release.res"),
+	&"h06_shield_hit": preload("res://sfx/h06/shield_hit.res"),
+	&"h06_laser_sweep": preload("res://sfx/h06/laser_sweep.res"),
+	&"h06_hatch_open": preload("res://sfx/h06/hatch_open.res"),
 	&"wilhelm_scream": preload("res://sfx/wilhelm_scream.wav"),
 	&"canned_laughter": preload("res://sfx/canned_laughter.wav"),
 	&"audience_applause": preload("res://sfx/audience_applause.wav"),
@@ -200,6 +210,16 @@ const EVENT_BUSES := {
 	&"glass_shatter": &"Environment",
 	&"wood_shatter": &"Environment",
 	&"wall_break": &"Environment",
+	&"explosion": &"Environment",
+	&"container_impact": &"Environment",
+	&"h06_plate_shake": &"Environment",
+	&"h06_plate_fall": &"Environment",
+	&"h06_plate_fall_alt": &"Environment",
+	&"h06_deck_collapse": &"Environment",
+	&"h06_hoist_release": &"Environment",
+	&"h06_shield_hit": &"Environment",
+	&"h06_laser_sweep": &"Environment",
+	&"h06_hatch_open": &"Environment",
 	&"bullet_hit_enemy": &"Characters",
 	&"bullet_hit_object": &"Environment",
 	&"enemy_kill": &"Characters",
@@ -295,6 +315,11 @@ var music_muffle_tween: Tween
 var last_muffle_paused := false
 
 const WORLD_SFX_BUS: StringName = &"WorldSFX"
+const QUIET_POSITIONAL_EVENTS := [
+	&"explosion", &"container_impact",
+	&"h06_plate_shake", &"h06_plate_fall", &"h06_plate_fall_alt", &"h06_deck_collapse",
+	&"h06_hoist_release", &"h06_shield_hit", &"h06_laser_sweep", &"h06_hatch_open",
+]
 const DEFAULT_AUDIO_WORLD_MIN_SCALE := 0.005
 const DEFAULT_AUDIO_WORLD_MAX_SCALE := 1.0
 const DEFAULT_AUDIO_MIN_PITCH := 0.35
@@ -1241,6 +1266,8 @@ func _check_combat_duck(event_id: StringName) -> void:
 
 
 func play_music(track_id: StringName, owner_id: int = 0, start_offset: float = -1.0) -> void:
+	var settings:=get_node_or_null("/root/SettingsManager")
+	if settings!=null and settings.is_music_suppressed():return
 	if not MUSIC_STREAMS.has(track_id) or not is_instance_valid(music_player):
 		return
 	var owner_changed := owner_id != 0 and owner_id != current_music_owner_id
@@ -1442,6 +1469,10 @@ func _play_world_sfx_3d(
 	selected.stream = stream
 	selected.global_position = world_position
 	selected.volume_db = _volume_for(event_id) + volume_offset_db
+	# The selected quiet effects retain panning and linear range falloff,
+	# without inverse-distance amplification beside the listener. Reset this
+	# on every reuse so the shared pool keeps all other events unchanged.
+	selected.attenuation_model = AudioStreamPlayer3D.ATTENUATION_DISABLED if event_id in QUIET_POSITIONAL_EVENTS else AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
 	if EVENT_BUSES.has(event_id):
 		selected.bus = EVENT_BUSES[event_id]
 	else:
@@ -1640,6 +1671,14 @@ func _volume_for(event_id: StringName) -> float:
 		&"body_impact": return CONFIG.sfx_body_impact_volume_db
 		&"wall_impact": return CONFIG.sfx_wall_impact_volume_db
 		&"wall_break": return -8.0
+		&"explosion": return -27.0
+		&"container_impact": return -28.0
+		&"h06_plate_shake": return -10.0
+		&"h06_plate_fall", &"h06_plate_fall_alt", &"h06_deck_collapse": return -16.0
+		&"h06_hoist_release": return -13.0
+		&"h06_shield_hit": return -16.0
+		&"h06_laser_sweep": return -15.0
+		&"h06_hatch_open": return -14.0
 		&"furniture_impact": return CONFIG.sfx_furniture_impact_volume_db
 		&"melee_swing": return CONFIG.sfx_melee_swing_volume_db
 		&"door_knock": return CONFIG.sfx_door_knock_volume_db

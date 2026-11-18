@@ -13,7 +13,6 @@ var defaults := {
 	"master_volume": 100,
 	"music_volume": 70,
 	"sfx_volume": 80,
-	"pixelation_enabled": false,
 	"shadow_quality": "standard",
 	"auto_vault_enabled": true,
 	"screen_shake_enabled": true,
@@ -21,6 +20,7 @@ var defaults := {
 }
 
 var values: Dictionary
+var _music_suppression_owners:Dictionary={}
 
 
 func _ready() -> void:
@@ -34,7 +34,21 @@ func _ready() -> void:
 
 
 func get_setting(setting_name: StringName, fallback: Variant = null) -> Variant:
+	if setting_name==&"pixelation_enabled":return false # Retired; old callers cannot re-enable it.
 	return values.get(String(setting_name), fallback)
+
+func suppress_music(owner:Node)->void:
+	_music_suppression_owners[owner.get_instance_id()]=weakref(owner)
+	_apply_bus_volume(&"Music",get_volume(&"music_volume"))
+
+func release_music(owner:Node)->void:
+	_music_suppression_owners.erase(owner.get_instance_id())
+	_apply_bus_volume(&"Music",get_volume(&"music_volume"))
+
+func is_music_suppressed()->bool:
+	for id in _music_suppression_owners.keys():
+		if _music_suppression_owners[id].get_ref()==null:_music_suppression_owners.erase(id)
+	return not _music_suppression_owners.is_empty()
 
 
 func get_volume(setting_name: StringName) -> int:
@@ -58,6 +72,7 @@ func set_volume(setting_name: StringName, value: float) -> void:
 ## 通用设置写入（UI 正式入口）。只允许 defaults 里声明过的键，
 ## 持久化到 user://game_settings.cfg 并广播 setting_changed。
 func set_setting(setting_name: StringName, value: Variant) -> void:
+	if setting_name==&"pixelation_enabled":return
 	if not defaults.has(String(setting_name)):
 		push_warning("SettingsManager: unknown setting '%s'" % String(setting_name))
 		return
@@ -70,7 +85,6 @@ func _normalize_setting(setting_name: StringName, value: Variant) -> Variant:
 		return bool(value)
 	var normalized: Variant = value
 	match setting_name:
-		&"pixelation_enabled": normalized = bool(value)
 		&"shadow_quality": normalized = _normalize_shadow_quality(value)
 	return normalized
 
@@ -93,16 +107,12 @@ func _load_settings(path: String = SETTINGS_PATH) -> void:
 	if file.load(path) == OK:
 		for key in AUDIO_KEYS:
 			values[String(key)] = clampi(int(file.get_value("audio", String(key), defaults[String(key)])), 0, 100)
-		# Apply the requested native-resolution default to existing profiles once.
-		# Later explicit changes in Settings remain the player's choice.
-		var native_default_applied := bool(file.get_value("graphics", "native_resolution_default_applied", false))
-		values["pixelation_enabled"] = bool(file.get_value("graphics", "pixelation_enabled", false)) if native_default_applied else false
 		values["shadow_quality"] = _normalize_shadow_quality(
 			file.get_value("graphics", "shadow_quality", "standard")
 		)
 		for key in ACCESSIBILITY_KEYS:
 			values[key] = bool(file.get_value("accessibility", key, defaults[key]))
-		if not native_default_applied:
+		if file.has_section_key("graphics","pixelation_enabled") or file.has_section_key("graphics","native_resolution_default_applied"):
 			_save_settings(path)
 		return
 	_migrate_legacy_settings()
@@ -127,8 +137,6 @@ func _save_settings(path: String = SETTINGS_PATH) -> void:
 	var file := ConfigFile.new()
 	for key in AUDIO_KEYS:
 		file.set_value("audio", String(key), get_volume(key))
-	file.set_value("graphics", "pixelation_enabled", bool(get_setting(&"pixelation_enabled", false)))
-	file.set_value("graphics", "native_resolution_default_applied", true)
 	file.set_value("graphics", "shadow_quality", get_shadow_quality())
 	for key in ACCESSIBILITY_KEYS:
 		file.set_value("accessibility", key, bool(get_setting(StringName(key), defaults[key])))
@@ -163,5 +171,5 @@ func _apply_bus_volume(bus_name: StringName, percent: int) -> void:
 	if bus_index < 0:
 		return
 	var normalized := clampf(float(percent) / 100.0, 0.0, 1.0)
-	AudioServer.set_bus_mute(bus_index, normalized <= 0.0)
+	AudioServer.set_bus_mute(bus_index, normalized <= 0.0 or (bus_name==&"Music" and is_music_suppressed()))
 	AudioServer.set_bus_volume_db(bus_index, linear_to_db(maxf(normalized, 0.0001)))

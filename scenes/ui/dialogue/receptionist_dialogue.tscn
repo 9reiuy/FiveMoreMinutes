@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue/cinematic_dialogue.tscn" id="1_dialogue"]
+[ext_resource type="Texture2D" path="res://art/characters/receptionist/portraits/receptionist_normal.png" id="2_normal"]
+[ext_resource type="Texture2D" path="res://art/characters/receptionist/portraits/receptionist_talking.png" id="3_talking"]
+[ext_resource type="Texture2D" path="res://art/characters/receptionist/portraits/receptionist_nervous.png" id="4_nervous"]
+
+[node name="ReceptionistDialogue" instance=ExtResource("1_dialogue")]
+right_portrait = ExtResource("2_normal")
+right_portrait_states = Dictionary[StringName, Texture2D]({
+&"nervous": ExtResource("4_nervous"),
+&"talking": ExtResource("3_talking")
+})
+right_source_region = Rect2(0, 0, 555, 885)
+default_speaker_side = "right"
+two_person_dialogue = true
+externally_driven = true

@@ -1,6 +1,6 @@
 extends Control
-## One gameplay world and one full-world rendering viewport. The root retains
-## the project's 640x360 canvas for crisp HUD; only the 3D world changes size.
+## One native-resolution gameplay viewport. 640x360 is only the logical HUD
+## canvas; the former low-resolution rendering path is permanently retired.
 const WORLD = preload("res://scenes/dream/Dream3D_RandomDungeon.tscn")
 const DEFAULT_PIXEL_SIZE := Vector2i(640, 360)
 
@@ -8,7 +8,7 @@ const DEFAULT_PIXEL_SIZE := Vector2i(640, 360)
 @export var muted := true
 @export var preview_mode := true
 @export var initial_selective_enabled := false
-## Preview comparisons may select 960x540. Formal screens keep 640x360.
+## Legacy scene metadata, ignored by rendering. Layout bases never downsample.
 @export var pixel_size := DEFAULT_PIXEL_SIZE
 @export var tonal_enhancement_enabled := true
 
@@ -18,7 +18,8 @@ var container: SubViewportContainer
 var semantic_material: ShaderMaterial
 var camera_finish: Node
 var status_label: Label
-var selective_enabled := false
+var selective_enabled := false:
+	set(_value):selective_enabled=false
 ## Rectangle in the root viewport's logical canvas coordinates.
 var content_rect := Rect2()
 
@@ -38,10 +39,9 @@ var staging := false
 func _ready() -> void:
 	add_to_group(&"dream_display")
 	process_priority = 1000
-	selective_enabled = bool(SettingsManager.get_setting(&"pixelation_enabled", false))
-	SettingsManager.setting_changed.connect(_on_display_setting_changed)
+	selective_enabled = false
 	if not preview_mode and world == null:
-		push_error("Pixelation display requires a gameplay world before entering the tree")
+		push_error("World display requires a gameplay world before entering the tree")
 		return
 	var master := AudioServer.get_bus_index(&"Master")
 	if master >= 0 and muted and preview_mode:
@@ -75,6 +75,9 @@ func _ready() -> void:
 		world.persist_profile = false
 		world.enable_game_start_cab_exit = false
 	world.set_meta(&"tonal_enhancement_enabled",tonal_enhancement_enabled)
+	if world.has_signal(&"level_msaa_changed"):
+		world_viewport.msaa_3d = world.level_msaa_3d
+		world.level_msaa_changed.connect(world_viewport.set_msaa_3d)
 	world_viewport.add_child(world)
 	_sync_visual_enhancement()
 
@@ -153,10 +156,6 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouse:
 		_pointer_window = event.position
 		_pointer_seen = true
-	if preview_mode and event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_F6:
-			set_selective_enabled(not selective_enabled)
-			get_viewport().set_input_as_handled()
 	if _initialized:
 		for action in [&"dash", &"roll"]:
 			if event.is_action_pressed(action) and not _pointer_inside():
@@ -164,8 +163,9 @@ func _input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 
 
-func set_selective_enabled(value: bool) -> void:
-	selective_enabled = value
+func set_selective_enabled(_value: bool) -> void:
+	# Compatibility for archived previews. The low-resolution path is retired.
+	selective_enabled = false
 	_sync_visual_enhancement()
 	if _initialized:
 		_update_layout(true)
@@ -183,7 +183,7 @@ func _sync_visual_enhancement() -> void:
 	if not is_instance_valid(world): return
 	var enabled:=tonal_enhancement_enabled and not bool(world.get_meta(&"preserve_authored_colour",false))
 	world.set_meta(&"tonal_enhancement_enabled",enabled)
-	world.set_meta(&"pixel_stability_enabled",enabled and selective_enabled and world.has_method("get_current_floor_token"))
+	world.set_meta(&"pixel_stability_enabled",false)
 
 
 func set_preview_pixel_size(value: Vector2i) -> void:
@@ -193,11 +193,6 @@ func set_preview_pixel_size(value: Vector2i) -> void:
 	if _initialized:
 		_update_layout(true)
 		_update_status()
-
-
-func _on_display_setting_changed(key: StringName, value: Variant) -> void:
-	if key == &"pixelation_enabled":
-		set_selective_enabled(bool(value))
 
 
 func _pointer_inside() -> bool:
@@ -235,14 +230,13 @@ func _update_layout(force := false) -> void:
 	var physical_size := to_physical * logical_size - physical_top_left
 	if logical_size.x <= 0.0 or logical_size.y <= 0.0 or physical_size.x <= 0.0 or physical_size.y <= 0.0:
 		return
-	var factor := floori(minf(physical_size.x / float(pixel_size.x), physical_size.y / float(pixel_size.y)))
-	var fit := float(factor) if factor >= 1 else minf(physical_size.x / float(pixel_size.x), physical_size.y / float(pixel_size.y))
+	var fit := minf(physical_size.x / float(pixel_size.x), physical_size.y / float(pixel_size.y))
 	var display_physical := Vector2(pixel_size) * fit
 	var physical_origin := physical_top_left + ((physical_size - display_physical) * 0.5).floor()
 	var from_physical := to_physical.affine_inverse()
 	var logical_origin := from_physical * physical_origin
 	var next := Rect2(logical_origin, from_physical * (physical_origin + display_physical) - logical_origin)
-	var next_world_size := pixel_size if selective_enabled else Vector2i(display_physical.round())
+	var next_world_size := Vector2i(display_physical.round())
 	if not force and next == content_rect and world_viewport.size == next_world_size:
 		return
 	var previous_size := world_viewport.size
@@ -318,7 +312,7 @@ func _on_node_added(node: Node) -> void:
 
 func _update_status() -> void:
 	if is_instance_valid(status_label):
-		status_label.text = "F6: %s | silent" % ["%dx%d world" % [pixel_size.x, pixel_size.y] if selective_enabled else "Native world"]
+		status_label.text = "Native world | silent"
 
 
 func get_stats() -> Dictionary:
@@ -330,8 +324,6 @@ func get_stats() -> Dictionary:
 
 
 func _exit_tree() -> void:
-	if SettingsManager.setting_changed.is_connected(_on_display_setting_changed):
-		SettingsManager.setting_changed.disconnect(_on_display_setting_changed)
 	_initialized = false
 	if is_instance_valid(world):
 		var player: Node = world.get("player")

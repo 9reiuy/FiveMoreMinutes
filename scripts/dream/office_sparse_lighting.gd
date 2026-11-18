@@ -94,6 +94,7 @@ func _node_added(node: Node) -> void:
 
 func _register_light(light: Light3D) -> void:
 	if not is_instance_valid(light) or is_ancestor_of(light): return
+	if light.get_meta(&"stylized_cloud_key",false):return
 	var path := String(world.get_path_to(light))
 	for fragment in ["Elevator", "elevator", "NightLighting", "ExteriorPatrolDrones", "HotelRobot", "Muzzle", "Flashlight"]:
 		if path.contains(fragment): return
@@ -108,6 +109,7 @@ func _register_light(light: Light3D) -> void:
 func _keep_hidden(id: int) -> void:
 	if not enabled or not _suppressed.has(id): return
 	var light: Node3D = _suppressed[id].ref.get_ref()
+	if is_instance_valid(light) and light.get_meta(&"stylized_cloud_key",false):return
 	# A combat flash is not a persistent room fixture. Its floor-owned
 	# controller clears this role before reusing the same light for fire.
 	if is_instance_valid(light) and light.get_meta(&"transient_explosion_light", false): return

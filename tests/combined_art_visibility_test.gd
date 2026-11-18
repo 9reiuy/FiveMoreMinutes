@@ -29,7 +29,7 @@ func run() -> void:
 	evidence["entry_configuration"] = lab.configuration()
 	check(lab.style_index == 4 and lab.environment_halftone.enabled, "Shared entry starts with latest art half-tone")
 	check(not lab.display.has_method("set_palette_enabled"), "Latest room palette enabled by default")
-	check(lab.checks.pixels.button_pressed and lab.world.get_viewport().size == Vector2i(640,360), "Shared entry renders the complete camera at 640 by 360")
+	check(not lab.checks.has("pixels") and lab.world.get_viewport().size == Vector2i(1280,720), "Shared entry renders the complete camera at native resolution")
 	check(lab.use_volume_visibility and lab.visibility_field.get_script() == FIELD and lab.vision_enabled, "Shared entry uses full three-dimensional wall shadows")
 	check(not lab._lamps_enabled and lab._sample_city_bounce != null, "Original exterior sun and city bounce are retained")
 	check(not lab.configuration().actor_composite, "Original character path has no added display overlay")

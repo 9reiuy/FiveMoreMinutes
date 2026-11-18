@@ -1,0 +1,26 @@
+[
+  {
+    "original_name": "前台_前台立绘.png",
+    "file": "receptionist_base.png",
+    "sha256": "80F4712F3BE1B95724EE9D551EAE2D4A0C0A98234C8E03D644810319411A0BE6",
+    "bytes": 1488482
+  },
+  {
+    "original_name": "前台_正常表情.png",
+    "file": "expressions/receptionist_normal.png",
+    "sha256": "2EC5AE36814AF102899341146D7DA58DDD8E00BAF775508DDF1A7221EF703374",
+    "bytes": 61047
+  },
+  {
+    "original_name": "前台_说话.png",
+    "file": "expressions/receptionist_talking.png",
+    "sha256": "425B46209C94561ADBA32A8240B9803649073421CF116632C4FD99FF66E88A7F",
+    "bytes": 63252
+  },
+  {
+    "original_name": "前台_闭眼紧张.png",
+    "file": "expressions/receptionist_nervous.png",
+    "sha256": "D0FB8D789AC2EE950D0E7A0990FAB59D99111DF71CF676589F770C38354C5A89",
+    "bytes": 64547
+  }
+]

@@ -71,6 +71,7 @@ var _speaker_hud_pos_getter: Callable = Callable()
 var _player_hud_pos_getter: Callable = Callable()
 var _sequence_options: Dictionary = {}
 var _line_start_frame:=0
+var _line_revision := 0
 var _is_transitioning_line: bool = false
 
 
@@ -88,6 +89,9 @@ func _process(delta: float) -> void:
 			var player_pos_variant: Variant = _player_hud_pos_getter.call()
 			if player_pos_variant is Vector2:
 				set_player_hud_position(player_pos_variant)
+
+	if _waiting_for_view_entrance():
+		return
 
 	# Special case: instant typing
 	if typewriter_speed <= 0.0:
@@ -140,6 +144,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		if Engine.get_process_frames()<=_line_start_frame: return
+	if _waiting_for_view_entrance():
+		get_viewport().set_input_as_handled()
+		return
 	if state == State.TYPING_INTERRUPT:
 		return # Red interrupt window active: do not advance on player inputs
 	if _is_transitioning_line:
@@ -171,6 +178,7 @@ func start_dialogue(
 	options: Dictionary = {},
 	player_hud_pos: Vector2 = Vector2.ZERO
 ) -> void:
+	_line_revision += 1
 	if not _is_playing_sequence_line:
 		_is_in_sequence = false
 
@@ -219,7 +227,12 @@ func start_dialogue(
 		if current_bubble.has_method("set_player_hud_position") and current_player_hud_pos != Vector2.ZERO:
 			current_bubble.set_player_hud_position(current_player_hud_pos)
 
-		if current_bubble.has_method("show_dialogue"):
+		if current_bubble.has_method("set_next_dialogue_expression"):
+			current_bubble.set_next_dialogue_expression(StringName(str(options.get("expression", "normal"))))
+		if current_bubble is CinematicDialogue:
+			var interrupt_text := str(options.get("interrupt_text", CinematicDialogue.INTERRUPT_TEXT))
+			current_bubble.show_dialogue(text, speaker_hud_pos, choices, interrupt_text if typewriter_duration > 0.0 else "")
+		elif current_bubble.has_method("show_dialogue"):
 			if options.has("interrupt_text"):
 				current_bubble.show_dialogue(text, speaker_hud_pos, choices, options["interrupt_text"])
 			else:
@@ -272,6 +285,7 @@ func start_dialogue_sequence(
 func advance_sequence() -> void:
 	if not _is_in_sequence or _is_transitioning_line:
 		return
+	if _waiting_for_view_entrance(): return
 	if state == State.TYPING_INTERRUPT or state == State.INTERRUPTED or state == State.CLOSED or state == State.IDLE:
 		return
 
@@ -279,13 +293,34 @@ func advance_sequence() -> void:
 
 
 func trigger_interrupt() -> void:
-	if state != State.TYPING_INTERRUPT:
+	if not can_interrupt():
 		return
 
+	var interrupted_line := _line_revision
 	state = State.INTERRUPTED
 	_is_in_sequence = false
 	_is_transitioning_line = false
 
+	var cinematic := current_bubble as CinematicDialogue
+	if cinematic != null:
+		cinematic.dismiss_interrupted()
+	else:
+		_scatter_bubble_text()
+	SFX.play_event(interrupt_sound)
+	dialogue_interrupted.emit()
+
+	if cinematic == null and get_tree() != null:
+		await get_tree().create_timer(0.5).timeout
+	if interrupted_line != _line_revision or state != State.INTERRUPTED:
+		return
+	if cinematic == null and is_instance_valid(current_bubble) and current_bubble.has_method("dismiss"):
+		current_bubble.dismiss()
+	_cleanup_bubble_connections()
+	state = State.CLOSED
+	dialogue_finished.emit(true, &"interrupt")
+
+
+func _scatter_bubble_text() -> void:
 	var source_label: Label = null
 	if is_instance_valid(current_bubble):
 		if current_bubble.has_method("get_dialogue_label"):
@@ -299,11 +334,6 @@ func trigger_interrupt() -> void:
 		source_label.visible = false
 		var fx_parent: Node = current_bubble.get_parent() if current_bubble.get_parent() != null else current_bubble
 		GlyphFallFX.spawn_from_label(fx_parent, source_label, typed_chars)
-
-	SFX.play_event(interrupt_sound)
-	dialogue_interrupted.emit()
-
-	_handle_interrupt_dismiss()
 
 
 func select_option(index: int) -> void:
@@ -368,6 +398,8 @@ func set_player_hud_position(pos: Vector2) -> void:
 
 
 func can_interrupt() -> bool:
+	if is_instance_valid(current_bubble) and current_bubble is CinematicDialogue:
+		return (state == State.TYPING_INTERRUPT or state == State.NORMAL_OPTIONS) and current_bubble.can_interrupt_typing()
 	return state == State.TYPING_INTERRUPT
 
 
@@ -381,6 +413,10 @@ func is_waiting_input() -> bool:
 
 func is_active() -> bool:
 	return state != State.IDLE and state != State.CLOSED
+
+
+func _waiting_for_view_entrance() -> bool:
+	return is_instance_valid(current_bubble) and current_bubble.has_method("is_dialogue_entering") and bool(current_bubble.call("is_dialogue_entering"))
 
 
 func _update_bubble_progress() -> void:
@@ -457,12 +493,16 @@ func _advance_to_next_sequence_line() -> void:
 		return
 
 	_is_transitioning_line = true
-	if bool(_sequence_options.get("compact_dialogue",false)) and is_instance_valid(current_bubble):
+	var ending_line := _line_revision
+	var keep_presentation := is_instance_valid(current_bubble) and current_bubble.has_method("keeps_dialogue_presentation_between_lines") and bool(current_bubble.call("keeps_dialogue_presentation_between_lines"))
+	if bool(_sequence_options.get("compact_dialogue",false)) and is_instance_valid(current_bubble) and not keep_presentation:
 		current_bubble.dismiss(.10)
 
 	var tree: SceneTree = get_tree()
 	if tree != null:
 		await tree.create_timer(0.10).timeout
+	if ending_line != _line_revision:
+		return
 
 	_is_transitioning_line = false
 
@@ -481,19 +521,6 @@ func _finish_sequence() -> void:
 	state = State.CLOSED
 	dialogue_sequence_finished.emit()
 	dialogue_finished.emit(false, &"sequence_finished")
-
-
-func _handle_interrupt_dismiss() -> void:
-	var tree: SceneTree = get_tree()
-	if tree != null:
-		await tree.create_timer(0.5).timeout
-
-	if is_instance_valid(current_bubble) and current_bubble.has_method("dismiss"):
-		current_bubble.dismiss()
-
-	_cleanup_bubble_connections()
-	state = State.CLOSED
-	dialogue_finished.emit(true, &"interrupt")
 
 
 func _on_bubble_option_pressed(index: int) -> void:

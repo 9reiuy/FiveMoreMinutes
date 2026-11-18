@@ -4,6 +4,13 @@ const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
 @export var prop_push_force: float = 250.0
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
+const SAFETY_HELMET := preload("res://scripts/entities/safety_helmet.gd")
+var safety_helmet: RefCounted
+var helmet_equipped := false:
+	set(value):
+		helmet_equipped = value
+		if safety_helmet != null:
+			safety_helmet.refresh()
 const HEAL_EFFECT_SCENE := preload("res://scenes/entities/heal_effect.tscn")
 const ROLL_SPEED_TRAIL_SCRIPT := preload("res://scripts/entities/roll_speed_trail.gd")
 const DIVE_ROLL_POSE := preload("res://scripts/entities/player_dive_roll_pose.gd")
@@ -13,6 +20,7 @@ const FIREARM_RULES := preload("res://scripts/dream/dream_firearm_rules.gd")
 const WEAPON_POSE := preload("res://scripts/dream/dream_weapon_pose.gd")
 const MELEE_WEAPON := preload("res://scripts/dream/lucille_weapon.gd")
 const HAND_PRESENTATION := preload("res://scripts/entities/player_hand_presentation.gd")
+const PUNCH := preload("res://scripts/entities/player_punch_motion.gd")
 var hand_presentation: RefCounted
 var death_ragdoll: DEATH_RAGDOLL
 const WORLD_WEAPON_PICKUP_SCRIPT := preload("res://scripts/dream/world_weapon_pickup.gd")
@@ -136,6 +144,7 @@ var current_health := 80.0
 ## start of a Dream and are kept separate from the temporary card upgrades.
 var profile_hp_cells := 4
 var movement_enabled := true
+var mounted_vehicle: CharacterBody2D
 var scripted_locomotion_active := false
 var scripted_locomotion_direction := Vector2.ZERO
 var scripted_locomotion_speed := 0.0
@@ -307,13 +316,20 @@ var body_base_rotation := 0.0
 ## 空手拳击与其它视觉动作共用同一Player主攻击输入。
 var punch_active := false
 var punch_elapsed := 0.0
+var punch_contact_time := 0.0
+var punch_end_time := 0.0
 var punch_hit_applied := false
 var punch_direction := Vector2.RIGHT
-var punch_left_hand := true
-var next_punch_left_hand := true
+var punch_move := PUNCH.Strike.JAB
+var punch_next := 0
+var punch_taps := 0
+var punch_wait_for_release := false
+var punch_assist_target: WeakRef
+var punch_assist_left := 0.0
+var punch_pose := PUNCH.key(0)
+var punch_screen_direction := Vector2.RIGHT
 var punch_left_hand_offset := Vector2.ZERO
 var punch_right_hand_offset := Vector2.ZERO
-var punch_body_lean_rotation := 0.0
 var punch_cooldown_left := 0.0
 
 ## Kick。
@@ -387,6 +403,7 @@ const HEAL_EFFECT_THROTTLE_MSEC := 700
 
 
 func configure_weapon(weapon_id: String, config: DemoConfig, permanent_upgrades: Dictionary = {}) -> void:
+	_cancel_punch()
 	runtime_config = config
 	runtime_permanent_upgrades = permanent_upgrades.duplicate(true)
 	weapon_id = DreamGunAtlas.sanitize_weapon_id(weapon_id)
@@ -484,6 +501,10 @@ func configure_weapon(weapon_id: String, config: DemoConfig, permanent_upgrades:
 
 	_refresh_held_weapon_visual()
 	_emit_ammo_state()
+
+
+func equip_safety_helmet() -> bool:
+	return not dead and safety_helmet != null and safety_helmet.equip()
 
 
 ## Applies persistent CharacterCard levels without changing the Player's
@@ -923,6 +944,7 @@ func get_weapon_skin_index(weapon_id: String = selected_weapon_id) -> int:
 func switch_weapon_slot(direction: int = 1) -> bool:
 	if dead:
 		return false
+	_cancel_punch()
 	_cancel_throw_aim()
 	var categories: Array[StringName] = [
 		DreamGunAtlas.CATEGORY_RANGED,
@@ -982,6 +1004,8 @@ func is_enemy_in_melee_preview(enemy: Node2D, direction := Vector2.ZERO) -> bool
 		return weapon != null and weapon.is_target_in_attack_preview(enemy, direction)
 	if not selected_weapon_id.is_empty() or _is_punch_blocked():
 		return false
+	if not _punch_target_standing(enemy):
+		return false
 	if direction.is_zero_approx():
 		direction = punch_direction if punch_active else get_aim_direction()
 	return _punch_target_reachable(enemy, global_position, direction,
@@ -992,13 +1016,20 @@ func is_enemy_in_melee_preview(enemy: Node2D, direction := Vector2.ZERO) -> bool
 func _punch_target_reachable(enemy: Node2D, origin: Vector2, direction: Vector2,
 		radius: float, half_arc: float, world: Node) -> bool:
 	var to_enemy := origin.direction_to(enemy.global_position)
-	if to_enemy.length_squared() <= 0.0001 or absf(direction.angle_to(to_enemy)) > half_arc:
+	if not to_enemy.is_zero_approx() and absf(direction.angle_to(to_enemy)) > half_arc:
 		return false
 	var distance := origin.distance_to(enemy.global_position)
 	if enemy.has_method("distance_to_hurtbox"):
 		distance = float(enemy.distance_to_hurtbox(origin))
-	return (distance <= radius and (world == null or not world.has_method("is_room_projectile_path_clear")
-		or bool(world.is_room_projectile_path_clear(origin, enemy.global_position))))
+	return distance <= radius and _punch_path_clear(origin, enemy.global_position, world)
+
+
+func _punch_path_clear(origin: Vector2, point: Vector2, world: Node) -> bool:
+	if world != null and world.has_method("is_room_projectile_path_clear"):
+		return world.is_room_projectile_path_clear(origin, point)
+	# The tutorial shares the wall / furniture physics layers without the dungeon's ray helper.
+	var query := PhysicsRayQueryParameters2D.create(origin, point, 4 | 8)
+	return get_world_2d().direct_space_state.intersect_ray(query).is_empty()
 
 
 func is_dash_hunger_disabled() -> bool:
@@ -1009,6 +1040,7 @@ func _ready() -> void:
 	# Direct Player instances (tests/tutorial previews) must use the same action
 	# authority as Main and both Dream world roots.
 	preload("res://scripts/app/game_input_actions.gd").configure()
+	get_window().focus_exited.connect(_cancel_punch)
 	add_to_group(&"dream_player")
 	_ensure_weapon_switch_input_actions()
 
@@ -1016,6 +1048,8 @@ func _ready() -> void:
 	health_changed.emit(current_health, maximum_health)
 
 	_setup_character_parts()
+	safety_helmet = SAFETY_HELMET.new()
+	safety_helmet.attach(self, head_part)
 
 	auto_weapon.weapon_fired.connect(_on_weapon_fired)
 	shotgun_weapon.weapon_fired.connect(_on_weapon_fired)
@@ -1246,6 +1280,11 @@ func _is_punch_blocked() -> bool:
 		or airborne_knockback
 		or vault_active
 		or kick_active
+		or tactical_plan_active
+		or scripted_locomotion_active
+		or dash_aim_active
+		or is_instance_valid(mounted_vehicle)
+		or knockback_recovery_left > 0.0
 		or not movement_enabled
 		or not attacking_enabled
 		or external_knockback_left > 0.0
@@ -1253,12 +1292,20 @@ func _is_punch_blocked() -> bool:
 
 
 func _cancel_punch() -> void:
+	_finish_punch()
+	punch_next = 0
+	punch_taps = 0
+	punch_wait_for_release = _has_weapon_attack_input()
+
+
+func _finish_punch() -> void:
 	punch_active = false
+	punch_assist_target = null
+	punch_assist_left = 0.0
 	punch_elapsed = 0.0
 	punch_hit_applied = false
 	punch_left_hand_offset = Vector2.ZERO
 	punch_right_hand_offset = Vector2.ZERO
-	punch_body_lean_rotation = 0.0
 
 
 func _cancel_melee_visual() -> void:
@@ -1280,21 +1327,29 @@ func _cancel_melee_visual() -> void:
 
 
 func _start_punch() -> bool:
-	if _is_punch_blocked() or not selected_weapon_id.is_empty():
+	if punch_active or _is_punch_blocked() or not selected_weapon_id.is_empty():
 		return false
 
+	punch_direction = get_aim_direction()
 	punch_active = true
 	preload("res://scripts/app/performance_markers.gd").event(self,"player_melee",{"weapon":"fist"})
 	punch_elapsed = 0.0
 	punch_hit_applied = false
-	punch_left_hand = next_punch_left_hand
-	next_punch_left_hand = not next_punch_left_hand
-	punch_direction = get_aim_direction()
+	punch_move = PUNCH.ORDER[punch_next]
+	punch_next = (punch_next + 1) % PUNCH.ORDER.size()
+	punch_taps = maxi(punch_taps - 1, 0)
+	# Each motion has its own contact frame. Existing profile timing sliders scale the two halves.
+	var half_strike := runtime_config.player_punch_strike_seconds * 0.5
+	var contact_scale := (runtime_config.player_punch_windup_seconds + half_strike) / PUNCH.BASE_CONTACT_TIME
+	var recovery_scale := (runtime_config.player_punch_recover_seconds + half_strike) / PUNCH.BASE_RECOVERY_TIME
+	punch_contact_time = maxf(0.001, PUNCH.CONTACT[punch_move] / PUNCH.FPS * contact_scale)
+	punch_end_time = punch_contact_time + maxf(0.001, (PUNCH.END[punch_move] - PUNCH.CONTACT[punch_move]) / PUNCH.FPS * recovery_scale)
 	if punch_direction.length_squared() <= 0.0001:
 		punch_direction = last_aim_direction
 	if punch_direction.length_squared() <= 0.0001:
 		punch_direction = Vector2.RIGHT
 	punch_direction = punch_direction.normalized()
+	_acquire_punch_target()
 	punch_cooldown_left = maxf(runtime_config.player_punch_interval, 0.01)
 
 	SFX.play_event(&"melee_swing")
@@ -1304,33 +1359,88 @@ func _start_punch() -> bool:
 
 func _update_punch(delta: float) -> void:
 	punch_cooldown_left = maxf(punch_cooldown_left - delta, 0.0)
-
-	if punch_active:
-		if _is_punch_blocked() or not selected_weapon_id.is_empty():
+	if punch_wait_for_release and not _has_weapon_attack_input():
+		punch_wait_for_release = false
+	if not selected_weapon_id.is_empty() or _is_punch_blocked() or not _presentation_pointer_input_allowed():
+		if punch_active or punch_taps > 0:
 			_cancel_punch()
-			return
-
+		return
+	if punch_active:
+		if not punch_hit_applied:
+			_advance_punch_assist(delta, punch_contact_time - punch_elapsed)
 		punch_elapsed += delta
-		var windup := maxf(runtime_config.player_punch_windup_seconds, 0.01)
-		var strike := maxf(runtime_config.player_punch_strike_seconds, 0.01)
-		var recover := maxf(runtime_config.player_punch_recover_seconds, 0.01)
-		var impact_time := windup + strike * 0.5
-		if not punch_hit_applied and punch_elapsed >= impact_time:
+		if not punch_hit_applied and punch_elapsed + 0.000001 >= punch_contact_time:
 			punch_hit_applied = true
 			if _apply_punch_hits():
 				_request_combat_camera_impulse(&"small", punch_direction)
 
-		if punch_elapsed >= windup + strike + recover:
-			_cancel_punch()
-		return
-
-	if (
-		selected_weapon_id.is_empty()
-		and punch_cooldown_left <= 0.0
-		and should_trigger_weapon_attack()
-	):
+		if punch_elapsed + 0.000001 < punch_end_time:
+			return
+		_finish_punch()
+	if punch_cooldown_left <= 0.000001 and (punch_taps > 0 or (not punch_wait_for_release and _has_weapon_attack_input())):
 		_start_punch()
 
+
+func is_using_fists() -> bool:
+	if not selected_weapon_id.is_empty():
+		return false
+	if punch_active or punch_taps > 0 or punch_cooldown_left > 0.000001:
+		return true
+	return not punch_wait_for_release and not _is_punch_blocked() and should_trigger_weapon_attack()
+
+
+func _punch_candidates(world: Node) -> Array:
+	if world != null and world.has_method("get_dream_enemies_snapshot"):
+		return world.get_dream_enemies_snapshot()
+	return get_tree().get_nodes_in_group(&"dream_enemies")
+
+
+func _punch_target_standing(enemy: Node2D) -> bool:
+	if not is_instance_valid(enemy) or enemy.is_queued_for_deletion() or enemy.get("dead") == true or enemy.get_meta(&"exterior_flying", false):
+		return false
+	if enemy.has_method("is_standing_for_punch") and not enemy.is_standing_for_punch():
+		return false
+	return not enemy.has_method("is_damage_runtime_active") or bool(enemy.is_damage_runtime_active())
+
+
+func _acquire_punch_target() -> void:
+	var world := _dream_world()
+	var best_distance := PUNCH.ASSIST_RANGE
+	var target: Node2D
+	for candidate in _punch_candidates(world):
+		if not is_instance_valid(candidate) or not _punch_target_standing(candidate):
+			continue
+		var distance := global_position.distance_to(candidate.global_position)
+		if distance <= 0.001 or distance > best_distance:
+			continue
+		if not _punch_path_clear(global_position, candidate.global_position, world):
+			continue
+		best_distance = distance
+		target = candidate
+	if target != null:
+		punch_direction = global_position.direction_to(target.global_position)
+		punch_assist_target = weakref(target)
+		punch_assist_left = maxf(best_distance - PUNCH.STANDOFF, 0.0)
+
+
+func _advance_punch_assist(delta: float, time_to_hit: float) -> void:
+	if punch_assist_left <= 0.0 or punch_assist_target == null:
+		return
+	var target := punch_assist_target.get_ref() as Node2D
+	if not _punch_target_standing(target):
+		punch_assist_left = 0.0
+		return
+	var to_target := target.global_position - global_position
+	var distance := to_target.length()
+	if distance <= PUNCH.STANDOFF or distance > PUNCH.ASSIST_RANGE or to_target.dot(punch_direction) <= 0.0:
+		punch_assist_left = 0.0
+		return
+	var travel := minf(distance - PUNCH.STANDOFF, punch_assist_left) * clampf(delta / maxf(time_to_hit, 0.000001), 0.0, 1.0)
+	var motion := to_target * (travel / distance)
+	if not _dash_floor_position_valid(global_position + motion) or move_and_collide(motion) != null:
+		punch_assist_left = 0.0
+	else:
+		punch_assist_left -= travel
 
 
 
@@ -1359,15 +1469,10 @@ func _apply_punch_hits() -> bool:
 	var hit_furniture := false
 	_punch_handled.clear()
 
-	var enemies: Array
-	if world != null and world.has_method("get_dream_enemies_snapshot"):
-		enemies = world.call("get_dream_enemies_snapshot")
-	else:
-		enemies = get_tree().get_nodes_in_group(&"dream_enemies")
-	for enemy_variant in enemies:
-		var enemy := enemy_variant as Node2D
-		if enemy == null or not is_instance_valid(enemy) or enemy.get("dead") == true:
+	for enemy_variant in _punch_candidates(world):
+		if not is_instance_valid(enemy_variant) or not _punch_target_standing(enemy_variant):
 			continue
+		var enemy := enemy_variant as Node2D
 		if not _punch_target_reachable(enemy, origin, punch_direction, radius, half_arc, world):
 			continue
 		var enemy_id := enemy.get_instance_id()
@@ -1379,7 +1484,7 @@ func _apply_punch_hits() -> bool:
 				enemy,
 				runtime_config.player_punch_damage,
 				origin,
-				&"player_punch"
+				PUNCH.SOURCES[punch_move]
 			)
 			if not result.is_empty():
 				hit_something = true
@@ -1425,52 +1530,21 @@ func _apply_punch_hits() -> bool:
 	return hit_something
 
 
-func _update_punch_visual() -> void:
+func _update_punch_visual(screen_direction: Vector2) -> void:
 	if not punch_active:
-		punch_left_hand_offset = Vector2.ZERO
-		punch_right_hand_offset = Vector2.ZERO
-		punch_body_lean_rotation = 0.0
 		return
-
-	var windup := maxf(runtime_config.player_punch_windup_seconds, 0.01)
-	var strike := maxf(runtime_config.player_punch_strike_seconds, 0.01)
-	var recover := maxf(runtime_config.player_punch_recover_seconds, 0.01)
-	var total := windup + strike + recover
-	var local_forward := punch_direction
-	if visual.scale.x < 0.0:
-		local_forward.x = -local_forward.x
-	if local_forward.length_squared() <= 0.0001:
-		local_forward = Vector2.LEFT
-	local_forward = local_forward.normalized()
-
-	var progress := clampf(punch_elapsed / maxf(total, 0.001), 0.0, 1.0)
-	var windup_end := windup / total
-	var strike_end := (windup + strike) / total
-	var reach := 8.0
-	var active_hand_offset := Vector2.ZERO
-	if progress < windup_end:
-		var t := sin(clampf(progress / windup_end, 0.0, 1.0) * PI * 0.5)
-		active_hand_offset = -local_forward * reach * t * 0.45
-		punch_body_lean_rotation = _get_lucille_lean_sign(punch_direction) * deg_to_rad(5.0) * t
-	elif progress < strike_end:
-		var t := 1.0 - pow(1.0 - clampf((progress - windup_end) / maxf(strike_end - windup_end, 0.001), 0.0, 1.0), 2.0)
-		active_hand_offset = (-local_forward * reach * 0.45).lerp(local_forward * reach, t)
-		punch_body_lean_rotation = lerpf(
-			_get_lucille_lean_sign(punch_direction) * deg_to_rad(5.0),
-			-_get_lucille_lean_sign(punch_direction) * deg_to_rad(3.0),
-			t
-		)
+	punch_screen_direction = screen_direction
+	var frame: float
+	if punch_elapsed <= punch_contact_time:
+		frame = PUNCH.CONTACT[punch_move] * punch_elapsed / punch_contact_time
 	else:
-		var t := 1.0 - pow(1.0 - clampf((progress - strike_end) / maxf(1.0 - strike_end, 0.001), 0.0, 1.0), 2.0)
-		active_hand_offset = (local_forward * reach).lerp(Vector2.ZERO, t)
-		punch_body_lean_rotation = lerpf(-_get_lucille_lean_sign(punch_direction) * deg_to_rad(3.0), 0.0, t)
-
-	if punch_left_hand:
-		punch_left_hand_offset = active_hand_offset
-		punch_right_hand_offset = Vector2.ZERO
-	else:
-		punch_left_hand_offset = Vector2.ZERO
-		punch_right_hand_offset = active_hand_offset
+		frame = remap(punch_elapsed, punch_contact_time, punch_end_time, PUNCH.CONTACT[punch_move], PUNCH.END[punch_move])
+	PUNCH.sample(punch_move, frame, punch_pose)
+	var extension := clampf(maxf(punch_pose.fist.x / 6.0, punch_pose.fist.z / 9.0), 0.0, 1.0)
+	var guard := Vector3(0, 0, extension * 2.0)
+	var left_strikes: bool = PUNCH.HAND[punch_move] == PUNCH.LEAD
+	punch_left_hand_offset = PUNCH.hand_travel(PUNCH.LEAD, screen_direction, punch_pose.fist if left_strikes else guard)
+	punch_right_hand_offset = PUNCH.hand_travel(PUNCH.REAR, screen_direction, guard if left_strikes else punch_pose.fist)
 
 
 func _set_player_head_frame(frame_index: int) -> void:
@@ -1617,12 +1691,19 @@ func _physics_process_profiled(delta:float)->void:
 	_update_ammo(delta)
 	_update_weapon_name(delta)
 	_update_player_blink(delta)
-	_update_punch(delta)
-
+	if is_instance_valid(mounted_vehicle):
+		velocity = Vector2.ZERO
+		_time_locomotion_velocity = mounted_vehicle.velocity
+		_time_locomotion_speed = mounted_vehicle.velocity.length()
+		_update_direction_animation(Vector2.ZERO, delta)
+		_apply_driving_pose()
+		return
 	if not dead and Input.is_action_just_pressed("weapon_next"):
 		switch_weapon_slot(1)
 	elif not dead and Input.is_action_just_pressed("weapon_previous"):
 		switch_weapon_slot(-1)
+
+	_update_punch(delta)
 
 	if not dead and Input.is_action_just_pressed("reload_weapon"):
 		request_reload()
@@ -1879,6 +1960,10 @@ func _physics_process_profiled(delta:float)->void:
 		_emit_dash_state()
 		return
 
+	# During the short assisted approach the punch owns the step. Dash and knockback still take priority.
+	if punch_active and not punch_hit_applied and punch_assist_target != null:
+		input_vector = Vector2.ZERO
+		_time_locomotion_velocity = Vector2.ZERO
 	if try_auto_vault(input_vector):
 		_time_locomotion_velocity=Vector2.ZERO
 		velocity=Vector2.ZERO
@@ -2244,6 +2329,8 @@ func _update_direction_animation(motion: Vector2, delta: float) -> void:
 	var facing_changed := facing_index != character_facing_index
 	character_facing_back = facing_back
 	character_facing_right = facing_right
+	if safety_helmet != null:
+		safety_helmet.sprite.flip_h = screen_direction.x > 0.1
 
 	if facing_changed:
 		character_facing_back = facing_back
@@ -2261,7 +2348,7 @@ func _update_direction_animation(motion: Vector2, delta: float) -> void:
 	)
 
 	heal_overlay.scale = visual.scale
-	_update_punch_visual()
+	_update_punch_visual(screen_direction)
 
 	var suppress_idle_motion := dead or dashing or airborne_knockback or kick_active
 	if moving and not suppress_idle_motion:
@@ -2409,8 +2496,25 @@ func _update_direction_animation(motion: Vector2, delta: float) -> void:
 	## Kick优先；只有没有Kick时才叠加其它上半身动作。
 	if not kick_active:
 		body_pivot.rotation += lucille_body_lean_rotation
-		body_pivot.rotation += punch_body_lean_rotation
+		if punch_active:
+			var forward := Vector2(screen_direction.x, screen_direction.y * 0.56)
+			body_pivot.position += (forward * punch_pose.body.x + Vector2(0, punch_pose.body.y)).round()
+			left_leg.position += (forward * punch_pose.feet.x).round()
+			right_leg.position.y -= roundf(punch_pose.feet.y)
 
+	_sync_heal_part_positions()
+
+
+func _apply_driving_pose() -> void:
+	var facing := character_screen_direction(get_aim_direction())
+	# Fold the legs into the footwell and bring both hands to the steering wheel.
+	left_leg.position += Vector2(facing.x * 3.0, -2.0 + facing.y * 2.0)
+	right_leg.position += Vector2(facing.x * 3.0, -2.0 + facing.y * 2.0)
+	body_pivot.position += Vector2(0.0, 3.0)
+	left_hand_part.position = Vector2(facing.x * 4.0 - 2.0, 4.0 + facing.y * 2.0)
+	right_hand_part.position = Vector2(facing.x * 4.0 + 2.0, 4.0 + facing.y * 2.0)
+	left_hand_part.show()
+	right_hand_part.show()
 	_sync_heal_part_positions()
 
 
@@ -2862,6 +2966,8 @@ func _cancel_dash_aim() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_instance_valid(mounted_vehicle):
+		return
 	if not (event is InputEventMouseButton and event.pressed):
 		return
 	if tactical_plan_active:
@@ -2873,6 +2979,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		return
 	if event.button_index == MOUSE_BUTTON_LEFT and external_knockback_left <= 0.0 and _presentation_pointer_input_allowed():
+		if selected_weapon_id.is_empty() and not _is_punch_blocked():
+			punch_wait_for_release = false
+			punch_taps = mini(punch_taps + 1, PUNCH.ORDER.size())
+			return
 		var melee := get_active_weapon() as MELEE_WEAPON
 		if melee != null:
 			melee.queue_press()
@@ -4528,6 +4638,9 @@ func receive_damage(
 	source_position: Vector2 = Vector2.INF,
 	source_direction: Vector2 = Vector2.ZERO
 ) -> void:
+	if is_instance_valid(mounted_vehicle) and not dead:
+		mounted_vehicle.call("take_damage", amount, source_direction, 1.0)
+		return
 	if (
 		dead
 		or dashing
@@ -4574,6 +4687,8 @@ func receive_damage(
 		0.0,
 		current_health - amount
 	)
+	if helmet_equipped and safety_helmet != null:
+		next_health = safety_helmet.protect(next_health)
 
 	if next_health <= 0.0 and dissociation_ready:
 		dissociation_ready = false
@@ -5313,6 +5428,8 @@ func _play_feedback() -> void:
 
 
 func set_attacking_enabled(enabled: bool, keep_weapon_pose := false) -> void:
+	if not enabled:
+		_cancel_punch()
 	attacking_enabled = enabled
 	_keep_weapon_pose = not enabled and keep_weapon_pose
 	_set_weapon_activity(
@@ -6433,6 +6550,9 @@ func is_time_activity_active() -> bool:
 	## is a real gameplay activity; DashAim itself remains preview-only.
 	if dead:
 		return false
+	if is_instance_valid(mounted_vehicle):
+		return mounted_vehicle.velocity.length_squared() > 1.0 \
+			or not is_zero_approx(Input.get_axis(&"move_down", &"move_up"))
 	# Throw aim is presentation-only while RMB is held. It is deliberately not
 	# treated as locomotion activity; the separate T action owns manual time.
 	if throw_aim_active:
@@ -6463,6 +6583,10 @@ func is_time_activity_active() -> bool:
 
 
 func get_aim_direction() -> Vector2:
+	if is_instance_valid(mounted_vehicle):
+		return mounted_vehicle.call("get_forward_direction")
+	if punch_active:
+		return punch_direction
 	if DreamGunAtlas.get_category(selected_weapon_id) == DreamGunAtlas.CATEGORY_MELEE:
 		var melee := lucille_weapon if DreamGunAtlas.uses_lucille_motion(selected_weapon_id) else books_weapon
 		if is_instance_valid(melee) and melee.melee_action_active and melee.direction_locked:

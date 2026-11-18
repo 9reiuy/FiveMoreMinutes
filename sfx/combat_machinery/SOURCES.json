@@ -1,0 +1,46 @@
+[
+  {
+    "role": "01_explosion",
+    "title": "Explosion, Short, Impact, Break gravel, reverb",
+    "author": "julianmateo_",
+    "url": "https://freesound.org/people/julianmateo_/sounds/522696/",
+    "license": "CC0 1.0",
+    "preview_url": "https://cdn.freesound.org/previews/522/522696_11584853-hq.mp3",
+    "bytes": 68160,
+    "sha256": "44978b06ca870285ada1c6ffc7b0924535381eb4f7f963a46b8048a8c55c32ea",
+    "selected_preview_filename": "01_explosion.mp3"
+  },
+  {
+    "role": "02_container_impact",
+    "title": "Metal Impact Container 1 1.wav",
+    "author": "Sheyvan / Philipp Grzemba",
+    "url": "https://freesound.org/people/Sheyvan/sounds/569409/",
+    "license": "CC0 1.0",
+    "preview_url": "https://cdn.freesound.org/previews/569/569409_3248005-hq.mp3",
+    "bytes": 82848,
+    "sha256": "08ad8e98687f9ac490ea787a5890f037ebfc1f6a0d08c5d03bccbc92e43382d7",
+    "selected_preview_filename": "02_container_impact.mp3"
+  },
+  {
+    "role": "03_hexapod_footstep",
+    "title": "Big robot footstep",
+    "author": "AudioPapkin",
+    "url": "https://freesound.org/people/AudioPapkin/sounds/813056/",
+    "license": "CC0 1.0",
+    "preview_url": "https://cdn.freesound.org/previews/813/813056_8698658-hq.mp3",
+    "bytes": 47664,
+    "sha256": "ec26ca783f6133d9e6e1408387884f862ac9ff7c9dfb94c2bbfe1fc5cc4a1aff",
+    "selected_preview_filename": "03_hexapod_footstep.mp3"
+  },
+  {
+    "role": "04_hexapod_mechanism",
+    "title": "Sound Design Elements-Robot mechanism-001",
+    "author": "AudioPapkin",
+    "url": "https://freesound.org/people/AudioPapkin/sounds/813060/",
+    "license": "CC0 1.0",
+    "preview_url": "https://cdn.freesound.org/previews/813/813060_8698658-hq.mp3",
+    "bytes": 91248,
+    "sha256": "2816bfb28b0a9d751409694fd60d7cb79f659f90f79def9ceae5b84d68265c69",
+    "selected_preview_filename": "04_hexapod_mechanism.mp3"
+  }
+]

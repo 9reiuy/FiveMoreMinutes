@@ -54,6 +54,7 @@ func spawn_shooter(at: Vector2) -> EmployeeEnemy:
 	actor.attack_cooldown_left = 0.0
 	actor.reaction_left = 0.0
 	actor._update_weapon_aim()
+	actor._update_visual_target_perception()
 	return actor
 
 
@@ -66,7 +67,12 @@ func windup(weapon := "shotgun") -> void:
 	enemy.last_known_target_position = world.player.global_position
 	enemy.last_known_target_velocity = Vector2.ZERO
 	enemy.velocity = Vector2.ZERO
-	enemy._update_weapon_aim()
+	for frame in 120:
+		enemy._update_target_perception_clock(1.0 / 60.0)
+		enemy._update_weapon_aim()
+		var heading := enemy.global_position.angle_to_point(world.player.global_position)
+		if enemy.can_see_target and absf(angle_difference(enemy.weapon_root.rotation, heading)) < 0.001:
+			break
 	enemy._begin_ranged_attack_windup()
 
 
@@ -97,7 +103,7 @@ func validate(mode: int) -> void:
 	await frames(8)
 	check(enemy.get_ranged_telegraph_state().is_empty(), "No shotgun warning before windup")
 	windup()
-	check(enemy.ranged_attack_windup_pending, "Production shotgun begins existing half-second windup")
+	check(enemy.ranged_attack_windup_pending and is_equal_approx(enemy.ranged_warning_seconds,.70), "Production shotgun begins its ordinary gunner warning")
 	var parameters := RULES.parameters(enemy.feedback_config, &"shotgun")
 	var initial: Dictionary = presenter.aim_segment(enemy)
 	var expected: float = parameters.spread_degrees + enemy._get_current_weapon_spread_degrees()
@@ -111,7 +117,7 @@ func validate(mode: int) -> void:
 	check(enemy.random.state == rng_state, "Warning never samples or advances shot randomness")
 	var start_points: Array[Vector2] = []
 	for progress in [0.0, .5, 1.0]:
-		enemy.ranged_attack_windup_left = .5 * (1.0 - progress)
+		enemy.ranged_attack_windup_left = enemy.ranged_warning_seconds * (1.0 - progress)
 		presenter._process(0.0)
 		var lines: Array = presenter.prepared_lines.filter(func(line: Dictionary) -> bool: return line.id == enemy.get_instance_id())
 		check(lines.size() == 1, "One shotgun warning per actor")
@@ -144,7 +150,7 @@ func validate(mode: int) -> void:
 	var axis: Vector2 = (warning.target - warning.start).normalized()
 	enemy.random.seed = 1973
 	var serial := enemy.ranged_attack_shot_serial
-	enemy._update_ranged_attack_windup(.51)
+	enemy._update_ranged_attack_windup(enemy.ranged_warning_seconds)
 	var bullets := actor_bullets(enemy)
 	check(bullets.size() == int(parameters.pellets) and enemy.ranged_attack_shot_serial == serial + 1, "Accepted enemy shot spawns the authored pellet count once")
 	var angles: Array[float] = []
@@ -251,7 +257,6 @@ func run() -> void:
 	if not lab.ready_world: check(false, "Lab initial load"); quit(1); return
 	events.append({"event": "first_load", "ms": (Time.get_ticks_usec() - start) / 1000.0})
 	lab.enemies.value = 0
-	lab.checks.pixels.button_pressed = false
 	for mode in [0, 1]:
 		var old_layer: WeakRef = weakref(lab.world.floor_root.get_node("EnemyAimTelegraph").layer)
 		lab.mode.select(mode)

@@ -222,6 +222,8 @@ func _unhandled_input(event: InputEvent) -> void:
 ## 电脑界面打开时，ESC 先关闭电脑界面而不是打开暂停菜单。
 ## 返回 true 表示已消费本次 ESC。
 func consume_escape() -> bool:
+	if confirmation_dialog.visible and confirmation_dialog.has_method("consume_escape"):
+		return bool(confirmation_dialog.call("consume_escape"))
 	if computer_overlay.visible:
 		_close_computer()
 		return true

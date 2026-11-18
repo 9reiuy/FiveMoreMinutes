@@ -31,6 +31,10 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 
+# Python-generated cache
+__pycache__/
+*.py[cod]
+
 # 日志和崩溃报告
 *.log
 godot.log

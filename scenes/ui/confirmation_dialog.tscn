@@ -2,11 +2,16 @@
 
 [ext_resource type="Script" uid="uid://y8delcqnxbu7" path="res://scripts/ui/confirmation_dialog.gd" id="1_dialog"]
 [ext_resource type="Resource" path="res://resources/demo_config.tres" id="2_config"]
-[ext_resource type="Texture2D" uid="uid://7ncaeqa0mrp3" path="res://art/Chr/chr.png" id="3_character"]
+[ext_resource type="Texture2D" path="res://art/characters/player/portraits/player_normal.png" id="3_character"]
 [ext_resource type="Script" uid="uid://cxjnqjiip4wp1" path="res://scripts/ui/dialogue_frame.gd" id="4_frame"]
 [ext_resource type="Script" path="res://scripts/ui/pixel_option_group.gd" id="5_option"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_choice"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_portrait"]
+atlas = ExtResource("3_character")
+region = Rect2(0, 0, 1099, 1752)
+filter_clip = true
 
 [node name="ConfirmationDialog" type="Control"]
 visible = false
@@ -46,17 +51,18 @@ offset_bottom = 360.0
 mouse_filter = 2
 
 [node name="CharacterArt" type="TextureRect" parent="Portrait"]
-texture_filter = 1
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+texture_filter = 4
+layout_mode = 0
+offset_left = 16.0
+offset_top = 24.0
+offset_right = 228.0
+offset_bottom = 362.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("3_character")
+texture = SubResource("AtlasTexture_portrait")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 0
 
 [node name="DialoguePanel" type="Control" parent="."]
 layout_mode = 0

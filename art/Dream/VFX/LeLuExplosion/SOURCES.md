@@ -1,0 +1,11 @@
+# Le Lu explosion texture sources
+
+**2026-11-17 follow-up:** the author's official [Free Textures Pack 1](https://leluvfx.gumroad.com/l/freeTextures) explicitly permits commercial projects and modification without mandatory attribution, while prohibiting resale/redistribution of the asset pack. Its separate 13.8MB archive has not yet been compared with the six Drive images used here. Therefore the production-file license chain remains pending that match; the official commercial terms have now been located. See [current research and remaining check](../../../../docs/reports/explosion-license-review-20261117.md). Do not infer an unrestricted CC0 grant solely from the page's CC0 label, because it also lists a pack-redistribution restriction.
+
+Author: **Le Lu**. Tutorial: [GODOT 4 - Explosion 3D for beginners](https://www.youtube.com/watch?v=miQ7DO1QUVE), published 2024-09-29. Texture source: the author's [Textures (Free) folder](https://drive.google.com/drive/folders/18S8TehLux8Tu6EfF0W3sjg5WXTV4k5z9), retrieved 2026-11-16.
+
+Six original images are embedded, without resampling or color editing, in the native ImageTexture resources under `textures/`: T_cloudy_noise_211c, T_VFX_Noise_44xainv, T_MarbleNoise_tiled, T_4_streaks, T_vfx_hit122, and T_cracks33_E3. The source filenames and hashes are in `source-manifest.json`. Native resources make export independent of development folders and raw image import state. Shader sampling remains Nearest.
+
+The original YouTube page labels the video **Creative Commons Attribution (reuse allowed)**. Its separate texture folder is described as **Free**, but supplies no independent license or commercial redistribution statement. **Texture commercial-license documentation remains unverified.** Do not label these images CC0 or assume the video's license automatically covers every separately distributed texture. This notice records attribution and the unresolved documentation; it does not grant rights.
+
+The user approved the second visual study for project integration on 2026-11-16. The effect code and meshes are our own reconstruction, not the author's source project; it follows the observed bright cloud, smoke, flying streaks, shock shell and crack timing. Commercial publication is a separate step from this source integration.

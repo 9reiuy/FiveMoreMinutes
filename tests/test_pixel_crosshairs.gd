@@ -61,6 +61,7 @@ func _run() -> void:
 	check(CrosshairClass.get_shape_for_weapon_id("sniper") == CrosshairClass.CrosshairShape.CIRCLE, "Sniper maps to CIRCLE")
 
 	check(CrosshairClass.get_shape_for_weapon_id("assault_rifle") == CrosshairClass.CrosshairShape.T_SHAPE, "Assault Rifle maps to T_SHAPE")
+	check(CrosshairClass.get_shape_for_weapon_id("mp5") == CrosshairClass.CrosshairShape.T_SHAPE, "MP5 maps to T_SHAPE")
 	check(CrosshairClass.get_shape_for_weapon_id("smg") == CrosshairClass.CrosshairShape.T_SHAPE, "SMG maps to T_SHAPE")
 	check(CrosshairClass.get_shape_for_weapon_id("machine_gun") == CrosshairClass.CrosshairShape.T_SHAPE, "Machine gun maps to T_SHAPE")
 
@@ -71,41 +72,48 @@ func _run() -> void:
 	check(CrosshairClass.get_shape_for_weapon_id("books") == CrosshairClass.CrosshairShape.SQUARE, "Books maps to SQUARE")
 	check(CrosshairClass.get_shape_for_weapon_id("") == CrosshairClass.CrosshairShape.SQUARE, "Unarmed / fist maps to SQUARE")
 
-	# Test 2: Geometry Generation & Symmetry
-	print("\n--- Test 2: Geometry Generation & Symmetry ---")
+	# Test 2: Solid Vector Shader & Recoil / Reload Uniforms
+	print("\n--- Test 2: Solid Vector Surface & Uniforms ---")
+	var dummy_world := PointerWorld.new()
+	root.add_child(dummy_world)
+	dummy_world.add_to_group(&"dream_world")
+	var dummy_player := MockPlayer.new()
+	dummy_world.add_child(dummy_player)
+
 	var crosshair_dummy: Control = crosshair_script.new()
 	crosshair_dummy.config = CONFIG.duplicate(true)
+	crosshair_dummy.size = Vector2(640, 360)
+	root.add_child(crosshair_dummy)
+	crosshair_dummy.set_process(false)
+	crosshair_dummy.configure(dummy_player)
 
-	var center := Vector2i(100, 100)
-	for shape_idx in range(4):
-		var shape: int = shape_idx
-		var rects_idle: Array[Rect2i] = crosshair_dummy._get_shape_pixel_rects(shape, center, 0.0)
-		check(not rects_idle.is_empty(), "Shape %d produces non-empty rects" % shape)
+	check(crosshair_dummy.style_variant == CrosshairClass.StyleVariant.HAIRLINE_WHITE, "Default crosshair style is HAIRLINE_WHITE (Variant A)")
+	var surface := crosshair_dummy.get_node_or_null("ReticleSurface") as ColorRect
+	check(surface != null and surface.material is ShaderMaterial, "ReticleSurface and ShaderMaterial are created")
+	var mat := surface.material as ShaderMaterial
+	check(is_equal_approx(float(mat.get_shader_parameter(&"outline_width")), 0.50), "Variant A uses subtle 0.50 hairline backing")
 
-		# Check all rects have positive dimensions
-		var all_positive := true
-		for r in rects_idle:
-			if r.size.x <= 0 or r.size.y <= 0:
-				all_positive = false
-		check(all_positive, "Shape %d all rects have positive size" % shape)
+	for weapon_pair in [["basic", CrosshairClass.CrosshairShape.CIRCLE], ["assault_rifle", CrosshairClass.CrosshairShape.T_SHAPE], ["shotgun", CrosshairClass.CrosshairShape.BRACKET], ["lucille", CrosshairClass.CrosshairShape.SQUARE]]:
+		dummy_player.selected_weapon_id = weapon_pair[0]
+		crosshair_dummy._process(0.0)
+		check(int(mat.get_shader_parameter(&"shape_type")) == int(weapon_pair[1]), "Shader shape_type matches weapon %s" % weapon_pair[0])
 
-		# Check center pip is present
-		var has_center_pip := false
-		for r in rects_idle:
-			if r.has_point(center):
-				has_center_pip = true
-				break
-		check(has_center_pip, "Shape %d has center aim pip" % shape)
+	dummy_player.selected_weapon_id = "basic"
+	dummy_player.cooldown_progress = 1.0
+	crosshair_dummy._process(0.0)
+	var idle_recoil := float(mat.get_shader_parameter(&"recoil_px"))
+	crosshair_dummy._trigger_recoil(1.0)
+	dummy_player.cooldown_progress = 0.25
+	crosshair_dummy._process(0.0)
+	var kicked_recoil := float(mat.get_shader_parameter(&"recoil_px"))
+	check(kicked_recoil > idle_recoil, "Firing increases shader recoil_px expansion")
 
-		# Test recoil expansion
-		var rects_recoil: Array[Rect2i] = crosshair_dummy._get_shape_pixel_rects(shape, center, 4.0)
-		check(rects_recoil.size() == rects_idle.size(), "Shape %d maintains element count during recoil" % shape)
+	dummy_player.ammo = {"uses_ammo": true, "current": 4, "capacity": 12, "reloading": true, "reload_left": crosshair_dummy.config.weapon_reload_duration * 0.5}
+	crosshair_dummy._process(0.0)
+	check(float(mat.get_shader_parameter(&"reloading")) > 0.5 and is_equal_approx(float(mat.get_shader_parameter(&"reload_progress")), 0.5), "Reload updates radial sweep progress shader uniform")
 
-		# Find bounding box of idle vs recoil
-		var bbox_idle := _calc_bbox(rects_idle)
-		var bbox_recoil := _calc_bbox(rects_recoil)
-		check(bbox_recoil.size.x >= bbox_idle.size.x and bbox_recoil.size.y >= bbox_idle.size.y, "Shape %d expands during recoil kick" % shape)
 	crosshair_dummy.free()
+	dummy_world.free()
 
 	# Test 3: Dynamic Weapon Switching
 	print("\n--- Test 3: Dynamic Weapon Switching & Redraw Integration ---")
@@ -165,16 +173,3 @@ func _run() -> void:
 	print("PIXEL CROSSHAIR TEST COMPLETED: %d checks, %d failures" % [checks, failures.size()])
 	print("========================================================")
 	quit(0 if failures.is_empty() else 1)
-
-
-func _calc_bbox(rects: Array[Rect2i]) -> Rect2i:
-	if rects.is_empty():
-		return Rect2i()
-	var min_p := rects[0].position
-	var max_p := rects[0].position + rects[0].size
-	for r in rects:
-		min_p.x = mini(min_p.x, r.position.x)
-		min_p.y = mini(min_p.y, r.position.y)
-		max_p.x = maxi(max_p.x, r.position.x + r.size.x)
-		max_p.y = maxi(max_p.y, r.position.y + r.size.y)
-	return Rect2i(min_p, max_p - min_p)

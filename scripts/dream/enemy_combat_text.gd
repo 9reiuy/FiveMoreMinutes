@@ -4,6 +4,7 @@ const COMIC=preload("res://scripts/ui/comic_pixel_text.gd")
 const HOLD:=.6
 const LIFETIME:=.85
 const MAX_RECORDS:=48
+const ALERT_INK := Color("#ff4149")
 const KILL_WORD_CHANCE := .35
 const CRITICAL_FILL=preload("res://shaders/comic_critical_fill.gdshader")
 const KILL_WORDS: Array[String] = [
@@ -15,6 +16,7 @@ var layer: CanvasLayer
 var surface: Control
 var shadow: Control
 var records: Dictionary={}
+var status_marks: Dictionary = {}
 var rng:=RandomNumberGenerator.new()
 var last_kill:=-1
 var kill_streak_count := 0
@@ -32,6 +34,42 @@ func configure(owner_world: Node3D) -> void:
 	var material:=ShaderMaterial.new(); material.shader=COMIC.HALFTONE; shadow.material=material
 	shadow.draw.connect(_draw.bind(shadow,true)); surface.draw.connect(_draw.bind(surface,false))
 	layer.hide()
+	var enemies: Node = world.get("enemy_root")
+	if is_instance_valid(enemies):
+		enemies.child_entered_tree.connect(_watch_status_marks)
+		for enemy in enemies.get_children():
+			_watch_status_marks(enemy)
+
+func _watch_status_marks(node: Node) -> void:
+	if get_parent() == world.floor_root and node is EmployeeEnemy and not node.status_mark_requested.is_connected(_on_status_mark):
+		node.status_mark_requested.connect(_on_status_mark)
+
+func _on_status_mark(enemy: EmployeeEnemy, mark: EmployeeEnemy.StatusMark) -> void:
+	if not _active() or enemy.dead or not enemy.visible or enemy.get_parent() != world.enemy_root:
+		return
+	var id := enemy.get_instance_id()
+	var existing: Dictionary = status_marks.get(id, {})
+	if existing.get("mark") == mark:
+		return
+	if status_marks.size() >= MAX_RECORDS and existing.is_empty():
+		status_marks.erase(status_marks.keys()[0])
+	status_marks[id] = {"mark": mark, "age": 0.0, "position": Vector2.INF}
+	layer.show()
+
+func _status_position(enemy: EmployeeEnemy) -> Vector2:
+	# The gameplay canvas is hidden on purpose. Use the visible 3D body and the
+	# same viewport-to-HUD mapping as the weapon popup, even when the camera zooms.
+	if not enemy.visible or enemy.get_meta(&"smoke_hidden_from_player", false) or not enemy.has_meta(&"depth_visual_bridge"):
+		return Vector2.INF
+	var reference: WeakRef = enemy.get_meta(&"depth_visual_bridge")
+	var bridge: Node3D = reference.get_ref()
+	if not is_instance_valid(bridge) or not is_instance_valid(bridge.actor_sprite) or not bridge.actor_sprite.is_visible_in_tree():
+		return Vector2.INF
+	var camera: Camera3D = world.camera_3d
+	var top: Vector3 = bridge.get_status_mark_world_position()
+	if not camera.is_position_in_frustum(top) or world.is_overhead_text_occluded(top):
+		return Vector2.INF
+	return world.player.get_presentation_hud_position(camera.unproject_position(top)).round() + Vector2(0, -3)
 
 func _active() -> bool:
 	return is_instance_valid(world) and is_inside_tree() and world.get("floor_root")==get_parent() and not get_tree().paused and world.get("floor_transition_in_progress")!=true and world.get("elevator_transition_in_progress")!=true and is_instance_valid(world.player) and not world.player.dead
@@ -112,6 +150,7 @@ static func damage_scale(total: float) -> float:
 
 func clear() -> void:
 	records.clear()
+	status_marks.clear()
 	kill_streak_count = 0
 	last_kill_timestamp = -INF
 	credited_kills.clear()
@@ -129,11 +168,19 @@ func _remove(id: int) -> void:
 
 func _process(delta: float) -> void:
 	if not _active(): clear(); return
-	if records.is_empty(): return
+	if records.is_empty() and status_marks.is_empty(): return
 	for id in records.keys():
 		var record: Dictionary=records[id]; record.age+=delta; record.crit_age+=delta
 		if record.age>=LIFETIME: _remove(id)
-	if records.is_empty(): layer.hide()
+	for id: int in status_marks.keys():
+		var mark: Dictionary = status_marks[id]
+		mark.age += delta
+		var enemy := instance_from_id(id) as EmployeeEnemy
+		if mark.age >= LIFETIME or not is_instance_valid(enemy) or enemy.dead or enemy.is_queued_for_deletion() or enemy.get_parent() != world.enemy_root:
+			status_marks.erase(id)
+		else:
+			mark.position = _status_position(enemy)
+	if records.is_empty() and status_marks.is_empty(): layer.hide()
 	_redraw()
 
 func _redraw() -> void:
@@ -160,6 +207,10 @@ func _draw_critical(canvas: Control,id: int) -> void:
 
 func _draw(target: Control,shadow_pass: bool) -> void:
 	if not _active(): return
+	for mark: Dictionary in status_marks.values():
+		if mark.position == Vector2.INF: continue
+		var alert: bool = mark.mark == EmployeeEnemy.StatusMark.ALERT
+		COMIC.draw(target, "!!!" if alert else "？", mark.position, mark.age, shadow_pass, 1.0, ALERT_INK if alert else COMIC.INK, LIFETIME)
 	for record in records.values():
 		var t: float=record.age
 		# Hold by the fixed impact position, then float away after the last hit.

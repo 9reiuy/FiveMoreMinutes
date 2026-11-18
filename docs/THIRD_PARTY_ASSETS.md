@@ -93,3 +93,45 @@ https://pingupollas.itch.io/crawling-depths
 
 - 素材包内 `License.txt` 实测为 **CC-0（公共领域）**，无需署名即可商用与修改。
 - 为稳妥起见仍在本文档登记来源：`res://art/Monster/Huntress 2/License.txt`。
+
+## 叉车驾驶音效（2026-11-17）
+
+| 用途 / 资源 | 原素材与作者 | 来源 | 许可 |
+|---|---|---|---|
+| 开动及行驶 `sfx/forklift/motor.res` | Electric motor engine start stop — kentspublicdomain | https://freesound.org/people/kentspublicdomain/sounds/476943/ | CC0 1.0 |
+| Shift 加速 `sfx/forklift/boost.res` | Engine Rev.wav — PieTheAnimator45 | https://freesound.org/people/PieTheAnimator45/sounds/608652/ | CC BY 4.0，必须保留作者、来源、许可及修改说明 |
+| 手刹漂移 `sfx/forklift/skid.res` | tire_skid_02 — loganzsound | https://freesound.org/people/loganzsound/sounds/774265/ | CC0 1.0 |
+
+三条均由用户选定的公开 HQ MP3 试听制作；运行时使用工程内独立音频资源，不读取下载目录或网络。
+修改包含单声道 48 kHz 转换、裁切、短交叉淡化与电平调整；加速录音截取 3.9–6.9 秒并保持音高压缩至 0.75 秒。
+完整来源、下载散列与署名见 `sfx/forklift/SOURCES.json` 和 `sfx/forklift/ATTRIBUTION.txt`。
+
+发行时保留以下署名及链接：
+
+```text
+"Engine Rev.wav" by PieTheAnimator45 (Freesound), CC BY 4.0.
+https://freesound.org/people/PieTheAnimator45/sounds/608652/
+https://creativecommons.org/licenses/by/4.0/
+Adapted for FiveMinuteMore: cropped, time compressed, faded and level adjusted.
+```
+
+## 爆炸、集装箱与六足机器人音效（2026-11-18）
+
+| 用途 / 资源 | 原素材与作者 | 原始来源 |
+|---|---|---|
+| 爆炸 `sfx/combat_machinery/explosion.res` | Explosion, Short, Impact, Break gravel, reverb — julianmateo_ | https://freesound.org/people/julianmateo_/sounds/522696/ |
+| 集装箱落地 `sfx/combat_machinery/container_impact.res` | Metal Impact Container 1 1.wav — Sheyvan / Philipp Grzemba | https://freesound.org/people/Sheyvan/sounds/569409/ |
+| 六足落脚 `sfx/combat_machinery/crawler_step.res` | Big robot footstep — AudioPapkin | https://freesound.org/people/AudioPapkin/sounds/813056/ |
+| 六足关节 `sfx/combat_machinery/crawler_mechanism.res` | Sound Design Elements-Robot mechanism-001 — AudioPapkin | https://freesound.org/people/AudioPapkin/sounds/813060/ |
+
+四条均为 **CC0 1.0**，允许免费商用与修改，无强制署名要求。用户已确认选用。
+由公开 HQ MP3 试听转为单声道 48 kHz PCM，去除直流偏置、整理峰值和淡化边缘；爆炸与落脚去掉前置等待，关节声制作短交叉淡化循环。
+来源、下载散列、具体裁切位置和制作说明保存在 `sfx/combat_machinery/SOURCES.json` 与 `ATTRIBUTION.txt`。
+
+## H06 关卡音效与快步（2026-11-19）
+
+已选用 A–I 的钢板、吊具、斜轨平台、护盾、扫射和检修盖音效。平台运行段经过交叉淡化，随平台运动循环。
+
+H06 当前的两条短脚步来自 Artem_Zaitsev 的 [Heavy Robot Footsteps](https://freesound.org/people/Artem_Zaitsev/sounds/837389/)，各保留 112 毫秒。
+
+全部采用 CC0 1.0。作者、源页、下载散列及裁切位置见 [SOURCES.json](../sfx/h06/SOURCES.json)。

@@ -1,0 +1,209 @@
+[
+  {
+    "title": "Dropping sheet metal",
+    "author": "SamsterBirdies",
+    "page": "https://freesound.org/people/SamsterBirdies/sounds/587442/",
+    "license": "CC0 1.0",
+    "asset_url": "https://cdn.freesound.org/previews/587/587442_5487341-hq.mp3",
+    "source_format": "Publisher's public high-quality MP3 preview",
+    "source_slice_seconds": [
+      2.92,
+      3.53
+    ],
+    "selection": "A",
+    "source_sha256": "78e0316be4bb9e4f316d8e9ce4bf123bf7c6a0b6e3ec39940ed4db69bc14406e",
+    "resource": "plate_fall.res",
+    "edit": "User-approved cropped, faded and level-adjusted take.",
+    "frames": 29280,
+    "loop": false,
+    "pcm_sha256": "fb83935f8653e79c7669bfb829a9d55df42e092dfb6935393e982415b59213de"
+  },
+  {
+    "title": "metalic_fall",
+    "author": "Chuksums",
+    "page": "https://freesound.org/people/Chuksums/sounds/768295/",
+    "license": "CC0 1.0",
+    "asset_url": "https://cdn.freesound.org/previews/768/768295_16240532-hq.mp3",
+    "source_format": "Publisher's public high-quality MP3 preview",
+    "source_slice_seconds": [
+      1.82,
+      2.47
+    ],
+    "selection": "B",
+    "source_sha256": "58dcec871e68707a068d9561d25c9906a82b537994cdc352d4e186c727729baa",
+    "resource": "deck_collapse.res",
+    "edit": "User-approved cropped, faded and level-adjusted take.",
+    "frames": 31200,
+    "loop": false,
+    "pcm_sha256": "160812799fd84d583ed36adfe2b88a924416b85cda030843bd7a75c29f31c15f"
+  },
+  {
+    "title": "Fall 2 sheet steel bars #3",
+    "author": "Joseph Sardin",
+    "page": "https://bigsoundbank.com/fall-2-sheet-steel-bars-3-s1778.html",
+    "license": "CC0 1.0",
+    "asset_url": "https://bigsoundbank.com/UPLOAD/bwf-en/1778.wav",
+    "source_format": "Publisher's publicly downloadable audio",
+    "source_slice_seconds": [
+      0.055,
+      0.53
+    ],
+    "selection": "C",
+    "source_sha256": "cd02e5abbca7d756fbfc30a0604ed089a03fe19bc5db7e5ddcb20ca11790992a",
+    "resource": "plate_fall_alt.res",
+    "edit": "User-approved cropped, faded and level-adjusted take.",
+    "frames": 22800,
+    "loop": false,
+    "pcm_sha256": "85ed0c9bb81f248d3980fd27a3f6d9a62944349db4a63c51ba9f1d4c7df6f15a"
+  },
+  {
+    "title": "Bending Metal",
+    "author": "NachtmahrTV",
+    "page": "https://freesound.org/people/NachtmahrTV/sounds/556714/",
+    "license": "CC0 1.0",
+    "asset_url": "https://cdn.freesound.org/previews/556/556714_5620304-hq.mp3",
+    "source_format": "Publisher's public high-quality MP3 preview",
+    "source_slice_seconds": [
+      0.33,
+      1.48
+    ],
+    "selection": "D",
+    "source_sha256": "e3120c2e9cde983a7cd83d936d627fb6094e2c7599c43e970a58b8e1277f12ad",
+    "resource": "plate_shake.res",
+    "edit": "User-approved cropped, faded and level-adjusted take.",
+    "frames": 55200,
+    "loop": false,
+    "pcm_sha256": "b3bfaf92d9465143f99d394feb3f391946c1dac694774531151ad5c46dec3ea0"
+  },
+  {
+    "title": "Manual chain hoist, mounted",
+    "author": "Joseph Sardin",
+    "page": "https://bigsoundbank.com/manual-chain-hoist-mounted-s1133.html",
+    "license": "CC0 1.0",
+    "asset_url": "https://bigsoundbank.com/UPLOAD/bwf-en/1133.wav",
+    "source_format": "Publisher's publicly downloadable audio",
+    "source_slice_seconds": [
+      24.25,
+      24.63
+    ],
+    "selection": "E",
+    "source_sha256": "1e376d588f5f0e763b4f9b59bc393207747db0193618bc6347dd76d27d02f4c2",
+    "resource": "hoist_release.res",
+    "edit": "User-approved cropped, faded and level-adjusted take.",
+    "frames": 18240,
+    "loop": false,
+    "pcm_sha256": "a0aeb93be3cc8af6f421995c0b3b7d220881e3595c7dc0480842f6f58669d3e4"
+  },
+  {
+    "title": "Hydraulics Moving (shorter)",
+    "author": "Autobot8299",
+    "page": "https://freesound.org/people/Autobot8299/sounds/835133/",
+    "license": "CC0 1.0",
+    "asset_url": "https://cdn.freesound.org/previews/835/835133_18079032-hq.mp3",
+    "source_format": "Publisher's public high-quality MP3 preview",
+    "source_slice_seconds": [
+      0.43,
+      3.94
+    ],
+    "selection": "F",
+    "source_sha256": "17a56818662ae0ca9c718bfe43d292c41fafafe9df083f13cbadc39d30a27fc7",
+    "resource": "lift_motor.res",
+    "edit": "User-approved motor take; .18 to 3.29 s of audition, .17 s wrap crossfade.",
+    "frames": 141120,
+    "loop": true,
+    "pcm_sha256": "f28c3bc515a3f8814c3054c455b013c1ee3dc618400905126b611136e7a3cad1"
+  },
+  {
+    "title": "Shield Hit",
+    "author": "JustInvoke",
+    "page": "https://freesound.org/people/JustInvoke/sounds/138487/",
+    "license": "CC0 1.0",
+    "asset_url": "https://cdn.freesound.org/previews/138/138487_758593-hq.mp3",
+    "source_format": "Publisher's public high-quality MP3 preview",
+    "source_slice_seconds": [
+      0.0,
+      0.216833
+    ],
+    "selection": "G",
+    "source_sha256": "b87cacafe003c519ed6d154cf0e38d608b495b6e7c1b4d929c41ad17f1926e75",
+    "resource": "shield_hit.res",
+    "edit": "User-approved cropped, faded and level-adjusted take.",
+    "frames": 10408,
+    "loop": false,
+    "pcm_sha256": "fc6e9fe752d74b90b81f28eefad13a226b30c3628fb6ad6a0fc9f508d943763a"
+  },
+  {
+    "title": "laser",
+    "author": "bullsquid_",
+    "page": "https://freesound.org/people/bullsquid_/sounds/768431/",
+    "license": "CC0 1.0",
+    "asset_url": "https://cdn.freesound.org/previews/768/768431_16462787-hq.mp3",
+    "source_format": "Publisher's public high-quality MP3 preview",
+    "source_slice_seconds": [
+      0.08,
+      0.62
+    ],
+    "selection": "H",
+    "source_sha256": "115c7142fdf48ebfd451782172bbb0a441ca3b7685aa3ebd77446d984780c898",
+    "resource": "laser_sweep.res",
+    "edit": "User-approved cropped, faded and level-adjusted take.",
+    "frames": 25920,
+    "loop": false,
+    "pcm_sha256": "c0cf7e562b4a35b7e2e0130360d18e8c016f0c1455d88f3ecb83396957f3a125"
+  },
+  {
+    "title": "hatchopen2.wav",
+    "author": "Mihacappy",
+    "page": "https://freesound.org/people/Mihacappy/sounds/828129/",
+    "license": "CC0 1.0",
+    "asset_url": "https://cdn.freesound.org/previews/828/828129_10594370-hq.mp3",
+    "source_format": "Publisher's public high-quality MP3 preview",
+    "source_slice_seconds": [
+      0.005,
+      0.64
+    ],
+    "selection": "I",
+    "source_sha256": "9e9584c155cc178b2fe874f02dfdc6032ae14955c4ac7e95ed788e1612a0b103",
+    "resource": "hatch_open.res",
+    "edit": "User-approved cropped, faded and level-adjusted take.",
+    "frames": 30480,
+    "loop": false,
+    "pcm_sha256": "d6ad5892371a6e931a2c5aa178f12539ed34de04e7b9eb73f70105b079588b1c"
+  },
+  {
+    "title": "Heavy Robot Footsteps",
+    "author": "Artem_Zaitsev",
+    "page": "https://freesound.org/people/Artem_Zaitsev/sounds/837389/",
+    "license": "CC0 1.0",
+    "asset_url": "https://cdn.freesound.org/previews/837/837389_15618458-hq.mp3",
+    "source_format": "Publisher's public high-quality MP3 preview",
+    "source_sha256": "fad7cc0c1e40e848c9b4405954cffdcb0c9e89f429f479d98e5ed35261dcb172",
+    "source_slice_seconds": [
+      0.333,
+      0.445
+    ],
+    "resource": "quick_step_1.res",
+    "edit": "Short synthetic metal-and-weight impact. Mono, edge fade, -8 dBFS peak.",
+    "frames": 5376,
+    "loop": false,
+    "pcm_sha256": "c9da20ecc170d4f2cab2dabe7010addac229926a2b866e8901b9373c02e4398f"
+  },
+  {
+    "title": "Heavy Robot Footsteps",
+    "author": "Artem_Zaitsev",
+    "page": "https://freesound.org/people/Artem_Zaitsev/sounds/837389/",
+    "license": "CC0 1.0",
+    "asset_url": "https://cdn.freesound.org/previews/837/837389_15618458-hq.mp3",
+    "source_format": "Publisher's public high-quality MP3 preview",
+    "source_sha256": "fad7cc0c1e40e848c9b4405954cffdcb0c9e89f429f479d98e5ed35261dcb172",
+    "source_slice_seconds": [
+      9.89,
+      10.002
+    ],
+    "resource": "quick_step_2.res",
+    "edit": "Short synthetic metal-and-weight impact. Mono, edge fade, -8 dBFS peak.",
+    "frames": 5376,
+    "loop": false,
+    "pcm_sha256": "687decc37e41018da32f244da30ddbb074330e8b4a4a93c1bce692e876de2a5d"
+  }
+]

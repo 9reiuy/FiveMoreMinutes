@@ -6,6 +6,7 @@ const CAMERA_LAYER := preload("res://scripts/dream/render_layer_mask.gd").MAIN_C
 const SURFACE := preload("res://shaders/dream3d/office_fixture_optics.gdshader")
 const AIR := preload("res://shaders/dream3d/office_fixture_fog.gdshader")
 const DIRT := preload("res://scripts/dream/office_lens_dirt_mask.gd")
+const EXPLOSION_GLOW := preload("res://scripts/dream/explosion_camera_glow.gd")
 const BASE_ENVIRONMENT := &"office_optics_base_environment"
 const FIXTURE_LIMIT := 2
 const FADE_SECONDS := 0.14
@@ -18,8 +19,10 @@ class Emitter:
 	var follow_override := false
 	func luminous_material() -> BaseMaterial3D:
 		return mesh.material_override as BaseMaterial3D if follow_override else material
+	func scaled_extent() -> Vector3:
+		return bounds.size * mesh.global_basis.get_scale().abs()
 	func frame() -> Transform3D:
-		var extent := bounds.size
+		var extent := scaled_extent()
 		var axis := Vector3.RIGHT if extent.x >= maxf(extent.y, extent.z) else (Vector3.UP if extent.y >= extent.z else Vector3.BACK)
 		axis = (mesh.global_basis * axis).normalized()
 		var up := Vector3.FORWARD if absf(axis.dot(Vector3.UP)) > .99 else Vector3.UP
@@ -27,7 +30,7 @@ class Emitter:
 		var world_bounds: AABB = mesh.global_transform * bounds
 		return Transform3D(Basis(axis, side.cross(axis), side), world_bounds.get_center() + Vector3.UP * (world_bounds.size.y * .5 + .022))
 	func half_length() -> float:
-		var size := bounds.size * mesh.global_basis.get_scale().abs()
+		var size := scaled_extent()
 		return maxf(.08, maxf(size.x, maxf(size.y, size.z)) * .5)
 
 class Fixture:
@@ -37,6 +40,7 @@ class Fixture:
 	var sources: Array[Emitter] = []
 	var gain := 0.0
 	var reference_energy := 1.0
+	var floor_height := -INF
 
 class Slot:
 	var root: Node3D
@@ -57,12 +61,13 @@ var _fog_environment: Environment
 var _added_camera_layer := false
 var _last_draw_usec := 0
 var _authored := false
+var _keep_fog_environment := false
 var _fixtures_dirty := false
 var _active_fog_keys: Array[Light3D] = []
 var enabled := true
 
 
-static func install(world: Node3D, authored := false) -> Node3D:
+static func install(world: Node3D, authored := false, keep_fog_environment := false) -> Node3D:
 	if world.get_meta(&"test_office_light_optics_disabled", false):
 		return null
 	if not authored and (not world.has_method("uses_office_night_lighting") or not world.uses_office_night_lighting()):
@@ -74,6 +79,7 @@ static func install(world: Node3D, authored := false) -> Node3D:
 	var optics := new() as Node3D
 	optics.name = NODE_NAME
 	optics._authored = authored
+	optics._keep_fog_environment = keep_fog_environment
 	host.add_child(optics)
 	optics._configure(world)
 	return optics
@@ -86,17 +92,18 @@ static func uninstall(world: Node3D) -> void:
 			if optics != null: optics.free()
 
 
-static func mark_fixture(housing: Node3D, light: Light3D, meshes: Array) -> void:
+static func mark_fixture(housing: Node3D, light: Light3D, meshes: Array, floor_height := -INF) -> void:
 	var sources: Array[Dictionary] = []
 	for mesh: MeshInstance3D in meshes:
 		var material := mesh.material_override as BaseMaterial3D
 		if material != null:
 			sources.append({"mesh": weakref(mesh), "bounds": mesh.get_aabb(), "material": material, "follow_override": true})
-	mark_sources(housing, light, sources)
+	mark_sources(housing, light, sources, floor_height)
 
 
-static func mark_sources(housing: Node3D, light: Light3D, sources: Array[Dictionary]) -> void:
-	light.set_meta(AUTHORED_SOURCES, {"housing": weakref(housing), "sources": sources, "energy": light.light_energy})
+static func mark_sources(housing: Node3D, light: Light3D, sources: Array[Dictionary], floor_height := -INF) -> void:
+	light.set_meta(AUTHORED_SOURCES, {"housing": weakref(housing), "sources": sources,
+		"energy": light.light_energy, "floor_height": floor_height})
 
 
 func _configure(world: Node3D) -> void:
@@ -111,7 +118,7 @@ func _configure(world: Node3D) -> void:
 		_create_slot(quad, index)
 	_added_camera_layer = (_camera.cull_mask & CAMERA_LAYER) == 0
 	_camera.cull_mask |= CAMERA_LAYER
-	_camera_environment = _camera.environment
+	_camera_environment = EXPLOSION_GLOW.scene_environment(_camera)
 	for light in world.find_children("*", "Light3D", true, false):
 		_register_light(light)
 	get_tree().node_added.connect(_register_light)
@@ -207,6 +214,7 @@ func _discover_authored(reference: WeakRef) -> void:
 	fixture.key = light
 	fixture.housing = info.housing.get_ref()
 	fixture.reference_energy = maxf(.001, light.light_energy if light.light_energy > 0.0 else float(info.energy))
+	fixture.floor_height = float(info.get("floor_height", -INF))
 	for source: Dictionary in info.sources:
 		var mesh := source.mesh.get_ref() as MeshInstance3D
 		if not is_instance_valid(mesh): continue
@@ -272,7 +280,9 @@ func _before_draw() -> void:
 	for light in fog_keys:
 		if not _active_fog_keys.has(light): light.light_volumetric_fog_energy = 2.5
 	_active_fog_keys = fog_keys
-	_sync_camera_environment(has_fog)
+	# Removing the fog override as the last source leaves the viewport can flash
+	# the clear background for one frame. The local volumes can still fade out.
+	_sync_camera_environment(has_fog or (_keep_fog_environment and _camera.is_current()))
 
 
 func _visible_fixtures() -> Array[Fixture]:
@@ -289,6 +299,8 @@ func _visible_fixtures() -> Array[Fixture]:
 		if not is_instance_valid(emitter.mesh) or not emitter.mesh.is_visible_in_tree() or (_authored and (emitter.mesh.layers & _camera.cull_mask) == 0):
 			continue
 		var at := emitter.frame().origin if _authored else emitter.mesh.global_position
+		if _authored and is_finite(fixture.floor_height) and at.y < _world.global_position.y + fixture.floor_height + .90:
+			continue
 		if _camera.is_position_behind(at): continue
 		var point := _camera.unproject_position(at)
 		if not fringe.has_point(point):
@@ -348,7 +360,10 @@ func _sync_pose(slot: Slot) -> void:
 		var material := mesh.material_override as ShaderMaterial
 		if material.get_shader_parameter("half_length") != half_length: material.set_shader_parameter("half_length", half_length)
 		if material.get_shader_parameter("fixture_tint") != tint: material.set_shader_parameter("fixture_tint", tint)
-	var depth := maxf(0.8, slot.root.global_position.y - (_world.global_position.y if _authored else global_position.y) - 0.18)
+	# Authored fixtures on raised decks end their local fog at the deck they light.
+	var floor_offset := fixture.floor_height if is_finite(fixture.floor_height) else 0.0
+	var floor_y := _world.global_position.y + floor_offset if _authored else global_position.y
+	var depth := maxf(0.8, slot.root.global_position.y - floor_y - 0.18)
 	var air_y := -depth * 0.5 - 0.10
 	var air_size := Vector3(4.0, depth, 3.2)
 	if not is_equal_approx(slot.air.position.y, air_y): slot.air.position.y = air_y
@@ -378,12 +393,13 @@ func _sync_slot(slot: Slot) -> void:
 func _sync_camera_environment(active: bool) -> void:
 	if not is_instance_valid(_camera):
 		return
+	var current := EXPLOSION_GLOW.scene_environment(_camera)
 	if not active:
-		if _fog_environment != null and _camera.environment == _fog_environment:
-			_camera.environment = _camera_environment
+		if _fog_environment != null and current == _fog_environment:
+			EXPLOSION_GLOW.set_scene_environment(_camera, _camera_environment)
 		return
-	if _camera.environment != _fog_environment:
-		_camera_environment = _camera.environment
+	if current != _fog_environment:
+		_camera_environment = current
 	var source := _camera_environment if _camera_environment != null else _camera.get_world_3d().environment
 	if source == null:
 		return
@@ -399,10 +415,16 @@ func _sync_camera_environment(active: bool) -> void:
 		_fog_environment.volumetric_fog_ambient_inject = 0.0
 		_fog_environment.volumetric_fog_gi_inject = 0.0
 		_fog_environment.volumetric_fog_temporal_reprojection_amount = 0.62
-	if _camera.environment != _fog_environment:
-		_camera.environment = _fog_environment
+	if current != _fog_environment:
+		EXPLOSION_GLOW.set_scene_environment(_camera, _fog_environment)
 	if _authored:
 		# Connected regions adjust the same Environment in place.
+		if _fog_environment.background_mode != source.background_mode:
+			_fog_environment.background_mode = source.background_mode
+		if _fog_environment.background_color != source.background_color:
+			_fog_environment.background_color = source.background_color
+		if _fog_environment.background_energy_multiplier != source.background_energy_multiplier:
+			_fog_environment.background_energy_multiplier = source.background_energy_multiplier
 		_fog_environment.ambient_light_color = source.ambient_light_color
 		_fog_environment.ambient_light_energy = source.ambient_light_energy
 
@@ -419,7 +441,7 @@ func _exit_tree() -> void:
 		if is_instance_valid(light):
 			_restore_light(light)
 	_fog_lights.clear()
-	if is_instance_valid(_camera) and _camera.environment == _fog_environment:
-		_camera.environment = _camera_environment
+	if is_instance_valid(_camera) and EXPLOSION_GLOW.scene_environment(_camera) == _fog_environment:
+		EXPLOSION_GLOW.set_scene_environment(_camera, _camera_environment)
 	if _added_camera_layer and is_instance_valid(_camera):
 		_camera.cull_mask &= ~CAMERA_LAYER

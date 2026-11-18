@@ -41,6 +41,8 @@ var _hot: MultiMeshInstance3D
 var _smoke: MultiMeshInstance3D
 var _hot_particles: Array[Particle] = []
 var _smoke_particles: Array[Particle] = []
+var _primed := false
+var _primed_viewport_id := 0
 
 
 func _ready() -> void:
@@ -60,6 +62,33 @@ func configure(camera: Camera3D, main_only_layer: int) -> void:
 	if is_instance_valid(camera) and camera.cull_mask & main_only_layer:
 		_hot.layers = main_only_layer
 		_smoke.layers = main_only_layer
+
+
+func prewarm(camera: Camera3D) -> void:
+	if not is_instance_valid(camera) or DisplayServer.get_name() == "headless": return
+	var viewport_id := camera.get_viewport().get_instance_id()
+	if _primed and _primed_viewport_id == viewport_id: return
+	_primed = true
+	_primed_viewport_id = viewport_id
+	# Submit both existing pipelines during loading. Zero-strength particles
+	# compile the normal depth-tested passes without a visible flash or RNG use.
+	var hot := Particle.new(Vector3.ZERO, Vector3.RIGHT, Vector2.ONE * 0.02, 3600, 1, 0, FLASH, 0, 0)
+	var smoke := Particle.new(Vector3.ZERO, Vector3.UP, Vector2.ONE * 0.02, 3600, 1, 0, 0, 0, 0)
+	_push(_hot_particles, HOT_LIMIT, hot)
+	_push(_smoke_particles, SMOKE_LIMIT, smoke)
+	# Floor generation and the display wrapper still relocate the camera.
+	# Place the transparent markers from its final pose, not the build-time pose.
+	for i in 2:
+		await RenderingServer.frame_pre_draw
+		if not is_instance_valid(camera): break
+		var point := camera.global_position - camera.global_basis.z * maxf(camera.near + 1.0, 2.0)
+		hot.origin = point
+		smoke.origin = point
+		_present()
+		await RenderingServer.frame_post_draw
+	_hot_particles.erase(hot)
+	_smoke_particles.erase(smoke)
+	_present()
 
 
 func muzzle(point: Vector3, forward: Vector3, weapon: StringName) -> void:
@@ -103,7 +132,7 @@ func muzzle(point: Vector3, forward: Vector3, weapon: StringName) -> void:
 	_present()
 
 
-func impact(point: Vector3, normal: Vector3, surface: StringName) -> void:
+func impact(point: Vector3, normal: Vector3, surface: StringName, strength := 1.0, smoke_scale := 1.0) -> void:
 	if not visible:
 		return
 	var side := Vector3.UP.cross(normal).normalized()
@@ -121,20 +150,25 @@ func impact(point: Vector3, normal: Vector3, surface: StringName) -> void:
 			count = 6
 			smoke_size = 0.78
 			smoke_strength = 0.63
+	strength = clampf(strength, 0.25, 1.5)
+	var size_scale := sqrt(strength)
+	count = maxi(1, roundi(count * strength))
+	smoke_size *= size_scale
 	var start := point + normal * 0.055
 	var flash_size := Vector2(0.55, 0.48) if surface == &"metal" else Vector2(0.30, 0.25)
+	flash_size *= size_scale
 	if surface != &"soft":
 		_push(_hot_particles, HOT_LIMIT, Particle.new(start, normal * 0.55, flash_size,
 			0.058, 2.5, 0.0, FLASH, _rng.randf(), 0.80 if surface == &"metal" else 0.58))
 	for index in count:
 		var direction := (normal * _rng.randf_range(0.30, 1.0) + side * _rng.randf_range(-1.1, 1.1)
 			+ Vector3.UP * _rng.randf_range(-0.10, 0.74)).normalized()
-		var motion := direction * _rng.randf_range(3.1, 9.5)
-		var size := Vector2(_rng.randf_range(0.12, 0.34), _rng.randf_range(0.036, 0.063))
-		var strength := 0.87 if surface == &"metal" else (0.34 if surface == &"soft" else 0.65)
+		var motion := direction * _rng.randf_range(3.1, 9.5) * size_scale
+		var size := Vector2(_rng.randf_range(0.12, 0.34), _rng.randf_range(0.036, 0.063)) * size_scale
+		var opacity := 0.87 if surface == &"metal" else (0.34 if surface == &"soft" else 0.65)
 		_push(_hot_particles, HOT_LIMIT, Particle.new(start, motion, size,
-			_rng.randf_range(0.10, 0.21), 5.3, -13.0, SPARK, _rng.randf(), strength))
-	for index in 4:
+			_rng.randf_range(0.10, 0.21), 5.3, -13.0, SPARK, _rng.randf(), opacity))
+	for index in maxi(0, roundi(4 * smoke_scale)):
 		var motion := (normal * _rng.randf_range(0.6, 2.25) + side * _rng.randf_range(-1.1, 1.1)
 			+ Vector3.UP * _rng.randf_range(0.27, 1.32))
 		var smoke_tint := 1.0 if surface == &"glass" else 0.54

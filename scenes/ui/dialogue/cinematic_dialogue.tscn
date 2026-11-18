@@ -1,0 +1,97 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/confirmation_dialog.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scripts/ui/dialogue/cinematic_dialogue.gd" id="2_cinematic"]
+[ext_resource type="Script" path="res://scripts/ui/dialogue/cinematic_choice_list.gd" id="3_choices"]
+
+[node name="CinematicDialogue" instance=ExtResource("1_base")]
+script = ExtResource("2_cinematic")
+use_side_choices = true
+
+[node name="DimBackground" parent="." index="1"]
+color = Color(0, 0, 0, 0.38)
+
+[node name="CharacterArt" parent="Portrait" index="0"]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 35.0
+offset_top = 108.0
+offset_right = 205.0
+offset_bottom = 379.376
+grow_horizontal = 1
+grow_vertical = 1
+flip_h = true
+stretch_mode = 0
+
+[node name="RightCharacterArt" type="TextureRect" parent="Portrait" index="1"]
+texture_filter = 4
+layout_mode = 0
+offset_left = 435.0
+offset_top = 137.0
+offset_right = 605.0
+offset_bottom = 408.376
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 0
+
+[node name="ArcVeil" type="ColorRect" parent="." index="3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="DialoguePanel" parent="." index="4"]
+offset_left = 114.0
+offset_top = 299.0
+offset_right = 536.0
+offset_bottom = 351.0
+script = null
+
+[node name="ChoiceOptionGroup" parent="DialoguePanel" index="0"]
+show_selection_frame = false
+enable_hover_scale = false
+
+[node name="Margin" parent="DialoguePanel" index="1"]
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="Content" parent="DialoguePanel/Margin" index="0"]
+theme_override_constants/separation = 4
+
+[node name="Prompt" parent="DialoguePanel/Margin/Content" index="0"]
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.956863, 0.956863, 0.956863, 1)
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 0
+
+[node name="ChoiceContainer" parent="DialoguePanel/Margin/Content" index="1"]
+theme_override_constants/separation = 2
+
+[node name="ConfirmChoice" parent="DialoguePanel/Margin/Content/ChoiceContainer" index="0"]
+custom_minimum_size = Vector2(170, 18)
+theme_override_font_sizes/font_size = 12
+
+[node name="CancelChoice" parent="DialoguePanel/Margin/Content/ChoiceContainer" index="1"]
+custom_minimum_size = Vector2(170, 18)
+theme_override_font_sizes/font_size = 12
+
+[node name="SideChoiceList" type="Control" parent="." index="5"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("3_choices")
+
+[node name="InterruptChoice" type="Button" parent="SideChoiceList"]
+visible = false
+layout_mode = 0
+text = "闭嘴"

@@ -42,7 +42,10 @@ func run() -> void:
 	world.spawn_content=false
 	world.persist_profile=false
 	world.enable_game_start_cab_exit=false
-	root.add_child(world)
+	var display := preload("res://scenes/dream/preview/SelectivePixelPreview.tscn").instantiate()
+	display.preview_mode = false
+	display.world = world
+	root.add_child(display)
 	check(world.regenerate(42001),"Formal floor generates with combat and power services")
 	await frames(3)
 	world.set_process(false)
@@ -52,7 +55,7 @@ func run() -> void:
 	check(controller!=null and controller.mode_enabled,"Single time authority bound to formal player")
 	var breaker: Node=world.key_root.get_node_or_null("FloorPowerSwitch")
 	check(breaker!=null,"One utility-room power switch is generated")
-	if breaker==null: world.free(); quit(1); return
+	if breaker==null: display.free(); quit(1); return
 	var fixed_lights: Array=world.ceiling_light_root.find_children("*","Light3D",true,false)
 	check(not fixed_lights.is_empty(),"Formal indoor fixed lights exist")
 	var flashlight: Node=world.night_lighting.get("flashlight")
@@ -89,21 +92,24 @@ func run() -> void:
 	var cues: Array=[]
 	root.get_node("SFXManager").sfx_played.connect(func(event: StringName) -> void:
 		if event==&"enemy_fire_cue": cues.append(event))
+	shooter._update_weapon_aim()
+	shooter._update_visual_target_perception()
 	shooter._begin_ranged_attack_windup()
-	check(shooter.ranged_attack_windup_pending and is_equal_approx(shooter.ranged_attack_windup_left,.5),"Formal enemy earns a half-second initial aiming windup")
+	check(shooter.ranged_attack_windup_pending and is_equal_approx(shooter.ranged_attack_windup_left,.70),"Ordinary gunner earns the full initial warning")
 	check(get_nodes_in_group(&"active_basic_projectiles").size()==shot_count,"Beginning windup never fires early")
-	shooter._update_ranged_attack_windup(.39)
+	shooter._update_ranged_attack_windup(.51)
 	var locked: Vector2=shooter.ranged_attack_target_snapshot
 	shooter.last_known_target_position=origin+Vector2(0,80)
 	shooter._update_ranged_attack_windup(.03)
-	check(shooter.ranged_attack_target_snapshot==locked,"Final 0.12 seconds lock the aim instead of tracking dodge")
+	check(shooter.ranged_attack_target_snapshot==locked,"Final 0.20 seconds keep the announced direction")
+	shooter._update_visual_target_perception()
 	var telegraph: Node=world.floor_root.get_node("EnemyAimTelegraph")
 	check(not telegraph.aim_segment(shooter).is_empty(),"Aiming enemy supplies clear HUD line independently of palette")
-	shooter._update_ranged_attack_windup(.1)
+	shooter._update_ranged_attack_windup(.17)
 	check(not shooter.ranged_attack_windup_pending and shooter.ranged_attack_session_active and shooter.ranged_attack_session_weapon_id=="assault_rifle","Automatic firearm preserves session after first windup")
 	var interval: float=shooter.attack_cooldown_left
 	var next_line: Dictionary=telegraph.aim_segment(shooter)
-	check(next_line.is_empty() and shooter.ranged_attack_magazine_primed,"Automatic fire has no repeated windup line inside one magazine")
+	check(next_line.is_empty() and shooter.ranged_attack_magazine_primed,"Follow-up shots in a rifle burst share its first warning")
 	shooter.attack_cooldown_left=interval*.2
 	var pale: Dictionary=telegraph.line_style(0)
 	var dark: Dictionary=telegraph.line_style(.8)
@@ -115,24 +121,25 @@ func run() -> void:
 	var base_interval: float=preload("res://scripts/dream/dream_firearm_rules.gd").parameters(world.config,&"assault_rifle").interval/maxf(float(world.config.weapon_fire_rate_multiplier),.001)
 	var jitter: float=shooter._cfg("employee_attack_cadence_jitter_ratio",.12)
 	check(shooter.ranged_attack_shot_serial==serial+1 and not shooter.ranged_attack_windup_pending and shooter.attack_cooldown_left>=base_interval*(1-jitter) and shooter.attack_cooldown_left<=base_interval*(1+jitter),"Repeat automatic shot keeps original cadence and jitter without an extra windup")
-	check(cues.size()==1,"Automatic magazine announces only the completed initial windup")
+	check(cues.size()==1,"Two rounds in the same burst share one audio cue")
 	var ding: AudioStreamPlayer=root.get_node("SFXManager").players[&"enemy_fire_cue"]
 	check(ding.stream is AudioStreamWAV and ding.stream.get_length()>1.2 and ding.stream.get_length()<1.4 and ding.bus==&"SFX" and ding.max_polyphony==4,"Aim cue is the neon breathe and stays off the slow-time bus")
-	ding.stream.save_to_wav("res://.runtime/enemy_fire_cue.wav")
+	if ding.stream.format in [AudioStreamWAV.FORMAT_8_BITS, AudioStreamWAV.FORMAT_16_BITS]:
+		ding.stream.save_to_wav("res://.runtime/enemy_fire_cue.wav")
 	shooter._cancel_ranged_attack_windup()
 	shooter.attack_cooldown_left=0
 	serial=shooter.ranged_attack_shot_serial
 	shooter._update_attack_player(.001)
-	check(shooter.ranged_attack_shot_serial==serial+1 and not shooter.ranged_attack_windup_pending,"Brief attack-session interruption does not re-prime the same magazine")
+	check(shooter.ranged_attack_shot_serial==serial and shooter.ranged_attack_windup_pending and is_equal_approx(shooter.ranged_attack_windup_left,.45),"Interrupted rifle re-aims before using the same magazine")
 	shooter.current_ammo=1
 	shooter.attack_cooldown_left=0
-	shooter._update_attack_player(.001)
+	shooter._update_attack_player(.46)
 	check(shooter.reload_left>0 and not shooter.ranged_attack_magazine_primed and telegraph.aim_segment(shooter).is_empty(),"Empty magazine clears readiness and hides aim during reload")
 	shooter._update_reload(100)
 	shooter.attack_cooldown_left=0
 	serial=shooter.ranged_attack_shot_serial
 	shooter._update_attack_player(.001)
-	check(shooter.ranged_attack_windup_pending and shooter.ranged_attack_shot_serial==serial and is_equal_approx(shooter.ranged_attack_windup_left,.5),"Reloaded magazine earns exactly one new windup before firing")
+	check(shooter.ranged_attack_windup_pending and shooter.ranged_attack_shot_serial==serial and is_equal_approx(shooter.ranged_attack_windup_left,.70),"Reloaded magazine earns a fresh initial warning")
 	telegraph._process(1.0/60.0)
 	var owned_lines: Array=telegraph.prepared_lines.filter(func(line: Dictionary) -> bool: return line.id==shooter.get_instance_id())
 	check(owned_lines.size()==1,"Presenter publishes exactly one line for one enemy")
@@ -152,7 +159,7 @@ func run() -> void:
 	obstacle.free()
 	shooter.current_ammo=1
 	var committed: Vector2=shooter.ranged_attack_target_snapshot
-	shooter._update_ranged_attack_windup(.6)
+	shooter._update_ranged_attack_windup(.71)
 	var final_round: Node=get_nodes_in_group(&"active_basic_projectiles")[-1]
 	check(Vector2(final_round.direction).dot(shooter.global_position.direction_to(committed))>.9,"Last-round reload cleanup cannot erase the committed shot target")
 	shooter._cancel_ranged_attack_windup()
@@ -161,7 +168,7 @@ func run() -> void:
 	shooter.attack_cooldown_left=0
 	var before_pellets: int=cues.size()
 	shooter._begin_ranged_attack_windup()
-	shooter._update_ranged_attack_windup(.6)
+	shooter._update_ranged_attack_windup(.71)
 	check(cues.size()==before_pellets+1,"Shotgun plays one cue per shot, never one per pellet")
 	shooter.equip_weapon("assault_rifle")
 	for shot in get_nodes_in_group(&"active_basic_projectiles"): shot.queue_free()
@@ -256,7 +263,7 @@ func run() -> void:
 		var test_shot:=bullet(world.player.global_position+Vector2(120,0))
 		test_shot._handle_collision(switches[0])
 		check(switches[0].broken and not switches[0].powered,"Actual projectile collision permanently cuts supply")
-	world.free()
+	display.free()
 	await frames(3)
 	print("COMBAT_DEFENSE_POWER checks=",checks," failures=",failures)
 	quit(1 if failures else 0)

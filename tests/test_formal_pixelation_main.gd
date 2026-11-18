@@ -63,7 +63,7 @@ func _run() -> void:
 	_check(root.content_scale_size == initial_scale, "Pixelation preserves the original UI canvas scale")
 	SettingsManager.set_setting(&"pixelation_enabled", true)
 	await _frames(4)
-	_check((screen.get("world_viewport") as SubViewport).size == Vector2i(640, 360), "Pixelated tutorial renders its world at 640 by 360")
+	_check((screen.get("world_viewport") as SubViewport).size != Vector2i(640, 360) or root.size==Vector2i(640,360), "Retired enable requests keep the tutorial at native resolution")
 	await _frames(2)
 	_check(not main.has_node("FinalPaletteLayer"), "3D mode leaves the final UI palette off")
 	_check((screen.get("semantic_material") as ShaderMaterial).shader.resource_path == "res://shaders/world_semantic_decode.gdshader", "World RGB uses only reserved combat-colour resolution")
@@ -79,7 +79,7 @@ func _run() -> void:
 	await _capture("tutorial_native")
 	SettingsManager.set_setting(&"pixelation_enabled", true)
 	await _frames(2)
-	_check(screen.get("selective_enabled") == true, "Setting ON restores the 640 by 360 world")
+	_check(screen.get("selective_enabled") == false, "Retired enable requests cannot restore pixelation")
 	var dungeon := DUNGEON.instantiate()
 	dungeon.generate_on_ready = false
 	dungeon.persist_profile = false

@@ -29,6 +29,10 @@ static func run(tree: SceneTree, world: Node3D) -> Dictionary:
 		receipt["skipped"]="headless" if DisplayServer.get_name()=="headless" else "diagnostic_baseline"
 		receipt["ready"]=true; receipt["cancelled"]=false
 	else:
+		if world.has_method("prepare_chapter_streaming"):
+			var chapter:Dictionary=await world.prepare_chapter_streaming()
+			receipt["chapter_streaming"]=chapter
+			if not matches(world,receipt) or bool(chapter.get("cancelled",false)):return receipt
 		var pools: Dictionary=await EXIT.prepare_pools(tree,world,receipt.floor_token,receipt.transition_token)
 		receipt["capture_pools"]=pools
 		if not matches(world,receipt) or bool(pools.get("cancelled",true)): return receipt

@@ -261,7 +261,6 @@ func run() -> void:
 	while lab.busy: await process_frame
 	if not lab.ready_world: check(false, "Initial lab load"); quit(1); return
 	lab.enemies.value = 0
-	lab.checks.pixels.button_pressed = false
 	if case_name == "performance":
 		await prepare(1)
 		stop_audio()

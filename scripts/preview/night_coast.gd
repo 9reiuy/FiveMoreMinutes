@@ -118,8 +118,7 @@ func _ready() -> void:
  sand_material.set_shader_parameter("coast_shape",coast_shape_texture)
  _place_character()
  update_camera(0,true)
- set_pixel_enabled(bool(SettingsManager.get_setting(&"pixelation_enabled",false)))
- SettingsManager.setting_changed.connect(_on_pixel_setting)
+ set_pixel_enabled(false)
  _update_light()
 
 func _resize_sky() -> void:
@@ -128,12 +127,9 @@ func _resize_sky() -> void:
 func surface_height(x: float,z: float) -> float:
  return layout.height_at(x,z)
 
-func _on_pixel_setting(key: StringName,value: Variant) -> void:
- if key==&"pixelation_enabled": set_pixel_enabled(bool(value))
-
-func set_pixel_enabled(value: bool) -> void:
+func set_pixel_enabled(_value: bool) -> void:
  for material in pixel_materials:
-  material.set_shader_parameter("office_dither_enabled",value)
+  material.set_shader_parameter("office_dither_enabled",false)
   material.set_shader_parameter("office_dither_step",1.0/32.0)
 
 static func coast_edge_x(z: float,side: int) -> float:

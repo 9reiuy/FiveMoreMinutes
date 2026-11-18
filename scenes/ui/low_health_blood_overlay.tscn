@@ -1,0 +1,65 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/low_health_blood_overlay.gd" id="1_script"]
+[ext_resource type="Shader" path="res://shaders/ui/low_health_blood_overlay.gdshader" id="2_shader"]
+[ext_resource type="Texture2D" uid="uid://cnrk03yg1te64" path="res://art/ui/low_health_overlay/cc0_health_blotches.png" id="3_blotches"]
+[ext_resource type="Texture2D" uid="uid://bs02sddm472k8" path="res://art/ui/low_health_overlay/cc0_health_vignette.png" id="4_vignette"]
+[ext_resource type="Shader" path="res://shaders/ui/low_health_blood_absorb.gdshader" id="5_absorb_shader"]
+[ext_resource type="Texture2D" uid="uid://c07m2l6tx0c2n" path="res://art/ui/low_health_overlay/cc0_health_splats.png" id="6_splats"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_absorb"]
+resource_local_to_scene = true
+shader = ExtResource("5_absorb_shader")
+shader_parameter/vignette_texture = ExtResource("4_vignette")
+shader_parameter/splat_texture = ExtResource("6_splats")
+shader_parameter/intensity = 0.0
+shader_parameter/severity = 0.0
+shader_parameter/pulse_phase = 0.0
+shader_parameter/absorb_tint = Color(0.58, 0.06, 0.09, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blood_overlay"]
+resource_local_to_scene = true
+shader = ExtResource("2_shader")
+shader_parameter/blotch_texture = ExtResource("3_blotches")
+shader_parameter/vignette_texture = ExtResource("4_vignette")
+shader_parameter/splat_texture = ExtResource("6_splats")
+shader_parameter/intensity = 0.0
+shader_parameter/severity = 0.0
+shader_parameter/pulse_phase = 0.0
+shader_parameter/outer_blood_color = Color(0.14, 0.008, 0.018, 1)
+shader_parameter/inner_blood_color = Color(0.32, 0.018, 0.036, 1)
+
+[node name="LowHealthBloodOverlay" type="Control"]
+visible = false
+z_index = -1
+texture_filter = 2
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="AbsorbRect" type="ColorRect" parent="."]
+texture_filter = 2
+material = SubResource("ShaderMaterial_absorb")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="OverlayRect" type="ColorRect" parent="."]
+texture_filter = 2
+material = SubResource("ShaderMaterial_blood_overlay")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

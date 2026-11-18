@@ -21,14 +21,15 @@ const WAITRESS_ATLAS: Texture2D = preload("res://art/Dream/enemy/waitress.png")
 const NPC1_ATLAS: Texture2D = preload("res://art/Dream/enemy/npc1.png")
 const SHADOW_TEXTURE: Texture2D = preload("res://art/Dream/shadow.png")
 
-const HEAD_OPEN_REGION: Rect2 = Rect2(32, 0, 28, 32)
-const HEAD_BLINK_REGION: Rect2 = Rect2(32, 32, 28, 32)
-const HEAD_CLOSED_REGION: Rect2 = Rect2(32, 64, 28, 32)
-const BODY_REGION: Rect2 = Rect2(64, 0, 32, 32)
-const LEFT_FOOT_REGION: Rect2 = Rect2(108, 12, 4, 9)
-const RIGHT_FOOT_REGION: Rect2 = Rect2(113, 12, 4, 9)
-const LEFT_HAND_REGION: Rect2 = Rect2(134, 15, 5, 4)
-const RIGHT_HAND_REGION: Rect2 = Rect2(149, 15, 5, 4)
+const HEAD_OPEN_REGION: Rect2 = Rect2(32, 0, 32, 32)
+const HEAD_BLINK_REGION: Rect2 = Rect2(32, 32, 32, 32)
+const HEAD_CLOSED_REGION: Rect2 = Rect2(32, 64, 32, 32)
+const BODY_REGION: Rect2 = Rect2(32, 23, 32, 9)
+const LEFT_FOOT_REGION: Rect2 = Rect2(108, 76, 4, 9)
+const RIGHT_FOOT_REGION: Rect2 = Rect2(113, 76, 4, 9)
+const LEFT_HAND_REGION: Rect2 = Rect2(102, 47, 5, 4)
+const RIGHT_HAND_REGION: Rect2 = Rect2(117, 47, 5, 4)
+const NPC1_STANCE_BODY_REGION := Rect2(0, 30, 32, 11)
 var character_atlas: Texture2D=WAITRESS_ATLAS
 
 @export var interaction_enabled: bool = true
@@ -168,6 +169,7 @@ func _build_visuals() -> void:
 	right_hand.texture = _make_atlas(RIGHT_HAND_REGION)
 	right_hand.centered = false
 	body_pivot.add_child(right_hand)
+	set_character_atlas(character_atlas)
 
 
 func _make_atlas(region: Rect2) -> AtlasTexture:
@@ -184,24 +186,37 @@ func set_character_atlas(atlas: Texture2D) -> void:
 		if frame!=null:
 			frame.atlas=character_atlas
 			var region:Rect2 = frame.region
-			region.size.x=32 if npc1_pose else 28
+			region.size.x=32
 			frame.region=region
 	for part in [head,body,left_foot,right_foot,left_hand,right_hand]:
 		if is_instance_valid(part) and part.texture is AtlasTexture:
 			part.texture.atlas=character_atlas
-	# Match npc1's assembled reference in the first atlas column. The head cell
-	# is a full 32 pixels; the old waitress offsets cropped the hat and pulled
-	# the legs into the torso. Keep the feet at the gameplay ground baseline.
+	body.texture.region=NPC1_STANCE_BODY_REGION if npc1_pose else BODY_REGION
+	left_foot.texture.region=Rect2(108,12,4,9) if npc1_pose else LEFT_FOOT_REGION
+	right_foot.texture.region=Rect2(113,12,4,9) if npc1_pose else RIGHT_FOOT_REGION
+	left_hand.texture.region=Rect2(134,15,5,4) if npc1_pose else LEFT_HAND_REGION
+	right_hand.texture.region=Rect2(149,15,5,4) if npc1_pose else RIGHT_HAND_REGION
+	body.visible=npc1_pose
+	# Use the assembled sprite's exact suit, hands and shoes below the head.
+	# The foot nodes retain their authored contact points for the depth bridge.
+	for limb in [left_foot, right_foot, left_hand, right_hand]:
+		limb.visible = not npc1_pose
+	set_meta(&"character_combined_upper_body",not npc1_pose)
+	set_meta(&"character_upper_torso_center",Vector2(14,27))
+	# The head cells match rows 4–29 of the assembled sprite. Both halves
+	# use the original texels, with the last row of the shoes at ground level.
 	character_visual_base_position=Vector2.ZERO if npc1_pose else Vector2(0,-18.25)
 	body_pivot_base_pos=Vector2.ZERO if npc1_pose else Vector2(0,-16)
-	head_base_pos=Vector2(-16,-39) if npc1_pose else Vector2(-16,-20)
-	body_base_pos=Vector2(-17,-24) if npc1_pose else Vector2(-16,-8)
+	head_base_pos=Vector2(-16,-39) if npc1_pose else Vector2(-16,-17)
+	body_base_pos=Vector2(-16,-11) if npc1_pose else Vector2(-16,6)
 	character_visual.position=character_visual_base_position
 	body_pivot.position=body_pivot_base_pos
 	head.position=head_base_pos
 	body.position=body_base_pos
-	left_hand.position=Vector2(-11,-9) if npc1_pose else Vector2(-11,8)
-	right_hand.position=Vector2(4,-9) if npc1_pose else Vector2(4,8)
+	left_foot.position=Vector2(-5,-9) if npc1_pose else body_pivot_base_pos+head_base_pos+Vector2(10,27)
+	right_foot.position=Vector2(0,-9) if npc1_pose else body_pivot_base_pos+head_base_pos+Vector2(15,27)
+	left_hand.position=Vector2(-11,-9) if npc1_pose else Vector2(-12,7)
+	right_hand.position=Vector2(4,-9) if npc1_pose else Vector2(3,7)
 
 
 func _process(delta: float) -> void:

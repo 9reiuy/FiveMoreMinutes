@@ -2,8 +2,7 @@ extends Node3D
 ## 送餐机器人的 3D 外观：把 `hotel_robot_unit` 的 2D 逻辑位置映射到 3D 世界，
 ## 驱动颜文字表情与左右武器展开。
 ##
-## 位置换算使用地牢自己的约定：2D 像素 / CELL_PIXELS = 3D 米，模型原点在脚底，
-## 因此不做假高度抬升（那是给 2D 立绘用的 screen-space 补偿）。
+## 模型原点在脚底。地面位移和击飞高度都以玩法像素计，除以 CELL_PIXELS 得到 3D 米。
 
 const ROBOT_BUILDER := preload("res://scripts/dream/units/hotel_robot_builder.gd")
 const CELL_PIXELS := 32.0
@@ -77,7 +76,7 @@ func _sync_transform() -> void:
 	if world == null or not is_instance_valid(world):
 		return
 	var flat: Vector2 = unit.global_position
-	global_position = world.to_global(Vector3(flat.x / CELL_PIXELS, 0.0, flat.y / CELL_PIXELS))
+	global_position = world.to_global(Vector3(flat.x, unit.punch_height, flat.y) / CELL_PIXELS)
 	var facing: Vector2 = unit.get("facing")
 	if facing.length_squared() > 0.0001:
 		# 模型正面是 +Z，2D 的 +Y 对应 3D 的 +Z，所以直接 atan2(x, y)。

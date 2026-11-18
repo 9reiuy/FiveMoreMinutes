@@ -1,0 +1,64 @@
+{
+	"height": 0.045,
+	"layout": "hangar_crew.gd LONG_TRAILS / SCATTERED",
+	"source": "BlackBloodEffect.setup_drag_smear + pixel_blood_drag + exact ground-mask compaction",
+	"stamp_count": 7,
+	"stamps": [
+		{
+			"at": [
+				-6.80000019073486,
+				2.40000009536743
+			],
+			"path": "res://art/Dream/SceneDressing/HangarCrew/drag_00.res",
+			"pixels": 711
+		},
+		{
+			"at": [
+				-7.5,
+				5.19999980926514
+			],
+			"path": "res://art/Dream/SceneDressing/HangarCrew/drag_01.res",
+			"pixels": 713
+		},
+		{
+			"at": [
+				0.649999976158142,
+				-1.10000002384186
+			],
+			"path": "res://art/Dream/SceneDressing/HangarCrew/drag_02.res",
+			"pixels": 1343
+		},
+		{
+			"at": [
+				-2.75,
+				-3.63000011444092
+			],
+			"path": "res://art/Dream/SceneDressing/HangarCrew/drag_03.res",
+			"pixels": 358
+		},
+		{
+			"at": [
+				0.850000023841858,
+				4.40000009536743
+			],
+			"path": "res://art/Dream/SceneDressing/HangarCrew/drag_04.res",
+			"pixels": 710
+		},
+		{
+			"at": [
+				0.050000011920929,
+				7.42500019073486
+			],
+			"path": "res://art/Dream/SceneDressing/HangarCrew/drag_05.res",
+			"pixels": 809
+		},
+		{
+			"at": [
+				0.25,
+				10.6000003814697
+			],
+			"path": "res://art/Dream/SceneDressing/HangarCrew/drag_06.res",
+			"pixels": 463
+		}
+	]
+}

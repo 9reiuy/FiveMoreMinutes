@@ -47,3 +47,4 @@ func burst() -> void:
 		elemental=preload("res://scripts/dream/elemental_particles_3d.gd").new()
 		add_child(elemental)
 		elemental.explode(elemental.to_local(at),1.65)
+		preload("res://scripts/audio/sfx_manager.gd").play_world_sfx_3d(&"explosion",at,0.0,40.0)

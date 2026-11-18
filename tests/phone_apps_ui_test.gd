@@ -62,10 +62,7 @@ func _run() -> void:
 	check(not screen.get_interaction_locked() and feedback.back()[1] == false, "Pointer release clears feedback and interaction lock")
 	screen.navigate(&"back"); screen.navigate(&"down"); screen.navigate(&"confirm")
 	check(screen.get_page_id() == &"graphics", "Graphics page remains reachable")
-	for key in [&"pixelation_enabled"]:
-		screen.navigate(&"left"); check(not manager.get_setting(key), "Graphics left selects off: " + String(key))
-		screen.navigate(&"right"); check(manager.get_setting(key), "Graphics right selects on: " + String(key))
-		screen.navigate(&"down")
+	check(screen.get_control_point(&"pixelation_enabled")==Vector2(-1,-1),"Retired pixelation control is absent from the phone")
 	manager.set_setting(&"shadow_quality", "high")
 	screen.navigate(&"right")
 	check(manager.get_shadow_quality() == "high", "Shadow quality clamps at upper edge")

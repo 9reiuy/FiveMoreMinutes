@@ -50,14 +50,18 @@ func tutorial_finished() -> void:
 	if commit("tutorial"):
 		resume()
 func prepare_world(world: Node3D) -> void:
+	world.set_meta(&"chapter_one",true)
+	if not str(state.tarot_id).is_empty():
+		world.set_meta("has_tarot_card",true); world.set_meta("selected_tarot_card_id",StringName(state.tarot_id)); world.set_meta("selected_tarot_reversed",bool(state.tarot_reversed))
+	if world.has_signal(&"chapter_completed"):
+		if not world.is_connected(&"chapter_completed", Callable(self, &"h06_returned")):
+			world.connect(&"chapter_completed", Callable(self, &"h06_returned"), CONNECT_ONE_SHOT)
+		return
 	world.floor_index=int(state.floor)
 	world.base_floor_seed=int(state.seed)
 	world.seed=world._derive_floor_seed(int(state.floor))
-	world.set_meta(&"chapter_one",true)
 	var adapter:=preload("res://scripts/story/chapter_run.gd").new()
 	adapter.coordinator=self; adapter.name="ChapterOneRun"; world.add_child(adapter)
-	if not str(state.tarot_id).is_empty():
-		world.set_meta("has_tarot_card",true); world.set_meta("selected_tarot_card_id",StringName(state.tarot_id)); world.set_meta("selected_tarot_reversed",bool(state.tarot_reversed))
 func prepare_tutorial(world: Node3D) -> void:
 	if world.has_node("ChapterTraining"): return
 	var training:=preload("res://scripts/story/chapter_tutorial.gd").new(); training.name="ChapterTraining"; world.add_child(training)
@@ -107,6 +111,8 @@ func show_coast() -> void:
 	main._transition_to(coast)
 func returned() -> void:
 	if commit("returned"): resume()
+func h06_returned() -> void:
+	if commit("h06_exit"): resume()
 func message(title: String,text: String) -> void:
 	var panel:=UI.new(); main.add_child(panel)
 	panel.offer(title,text,[["close","继续"]]); panel.choice_selected.connect(func(_id): panel.queue_free())

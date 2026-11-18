@@ -7,5 +7,7 @@ static func start(tree: SceneTree) -> void:
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MINIMIZED)
 	# Minimized windows suppress the automatic render loop. Request actual
 	# frames, including SubViewports, through the engine's rendering API.
-	tree.process_frame.connect(func() -> void: RenderingServer.force_draw(false))
+	tree.process_frame.connect(func() -> void:
+		if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_MINIMIZED:
+			RenderingServer.force_draw(false))
 	print("BACKGROUND_GPU native_window_minimized=",DisplayServer.window_get_mode()==DisplayServer.WINDOW_MODE_MINIMIZED," gpu=",RenderingServer.get_video_adapter_name())

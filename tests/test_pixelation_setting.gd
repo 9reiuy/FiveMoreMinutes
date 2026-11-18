@@ -25,25 +25,24 @@ func _run() -> void:
 	var legacy := ConfigFile.new()
 	legacy.set_value("graphics", "pixel_filter_enabled", false)
 	legacy.set_value("graphics", "palette_enabled", false)
+	legacy.set_value("graphics", "pixelation_enabled", true)
+	legacy.set_value("graphics", "native_resolution_default_applied", true)
 	_check(legacy.save(TEST_PATH) == OK, "Could not create legacy settings fixture")
 	settings._load_settings(TEST_PATH)
 	_check(settings.get_setting(&"pixelation_enabled", true) == false, "Old graphics settings must use the native-resolution default")
 	_check(not settings.values.has("palette_enabled"), "Other graphics settings must still load")
-	settings.values["pixelation_enabled"] = false
+	settings.set_setting(&"pixelation_enabled",true)
+	_check(not settings.get_setting(&"pixelation_enabled",true),"Retired setting cannot be enabled")
 	settings._save_settings(TEST_PATH)
 	var saved := ConfigFile.new()
 	_check(saved.load(TEST_PATH) == OK, "Could not reload settings")
-	_check(saved.get_value("graphics", "pixelation_enabled", true) == false, "Pixelation toggle must persist")
+	_check(not saved.has_section_key("graphics", "pixelation_enabled"), "Retired setting must not be saved")
 	_check(not saved.has_section_key("graphics", "pixel_filter_enabled"), "Retired key must not be saved")
 	var panel := PANEL.instantiate()
 	root.add_child(panel)
 	await process_frame
-	# The settings presentation reparents these controls during _ready().
-	var checkbox: CheckBox = panel.pixelation_check
-	var caption: Button = panel.pixelation_desc
-	_check(is_instance_valid(checkbox), "Settings must expose pixelation checkbox")
-	_check(is_instance_valid(caption) and caption.text.begins_with("像素化"), "Pixelation label is missing")
-	_check(is_instance_valid(checkbox) and not checkbox.button_pressed, "The settings UI starts with pixelation off")
+	_check(not panel.has_node("Rows/Pixelation"),"Settings must not expose a pixelation control")
+	_check(is_instance_valid(panel.shadow_quality_option),"Shadow quality control is retained")
 	panel.queue_free()
 	settings.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

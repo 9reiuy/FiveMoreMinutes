@@ -3,6 +3,7 @@ extends Node3D
 const QUERY_LAYER := 1 << 29
 const RECEIVER_LAYER := 1 << 16
 const LAYERS := preload("res://scripts/dream/render_layer_mask.gd")
+const MARK := preload("res://scripts/dream/surface_blood_mark.gd")
 const MAX_DROPS := 192
 const MAX_FACES := 36
 const DENSITY := 32.0
@@ -34,6 +35,18 @@ var mixed_splatters := 0
 var emitted_large_drops := 0
 var tapered_splatters := 0
 var stamp_shapes: Array[Dictionary] = []
+var use_surface_meshes := true
+
+func set_surface_meshes(enabled: bool) -> void:
+	if use_surface_meshes == enabled: return
+	use_surface_meshes = enabled
+	if enabled and is_inside_tree(): MARK.prewarm(self, camera)
+	for face in faces:
+		var old: Node3D = face.ref.get_ref()
+		var receiver: Dictionary = receivers[face.receiver]
+		if not is_instance_valid(old) or not is_instance_valid(receiver.owner.get_ref()): continue
+		face.ref = weakref(_face_visual(receiver, face))
+		old.free()
 
 func _enter_tree() -> void:
 	if _filter_users == 0:
@@ -43,6 +56,7 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	rng.seed = 813615
+	if use_surface_meshes: MARK.prewarm(self, camera)
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_custom_data = true
@@ -67,6 +81,7 @@ func register_receiver(owner: Node3D, label: String, include_hidden := false) ->
 	var bounds := AABB(); var first := true
 	for item in mesh_nodes:
 		var mesh_node := item as MeshInstance3D
+		if bool(mesh_node.get_meta(&"surface_blood_excluded", false)): continue
 		if mesh_node.mesh == null or (not include_hidden and not mesh_node.is_visible_in_tree()): continue
 		if mesh_node.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY: continue
 		var node_name := String(mesh_node.name).to_lower()
@@ -227,7 +242,7 @@ func deposit(hit: Dictionary, radius := 2.5) -> void:
 			for i in faces.size():
 				if faces[i].ref.get_ref() == null: oldest = i; break
 				if float(faces[i].get("last_used",0.0)) < float(faces[oldest].get("last_used",0.0)): oldest = i
-			var retired: Decal = faces[oldest].ref.get_ref()
+			var retired: Node3D = faces[oldest].ref.get_ref()
 			if is_instance_valid(retired): retired.free()
 			faces.remove_at(oldest); recycled_faces += 1
 		face = _new_face(index,normal,plane,key,tile)
@@ -235,7 +250,7 @@ func deposit(hit: Dictionary, radius := 2.5) -> void:
 	face.last_used = elapsed
 	var origin: Vector3 = face.origin
 	var local := point-origin
-	# Godot decal UV uses +X and +Z, with the image's top at -Z.
+	# Both renderers use the same local face UVs and painted image.
 	var uv := Vector2(local.dot(face.u),local.dot(face.v)) * DENSITY + Vector2(face.dimensions)*.5
 	var pixel := Vector2i(roundi(uv.x),roundi(uv.y))
 	var velocity: Vector3 = hit.get("spray_velocity",Vector3.ZERO)
@@ -277,16 +292,24 @@ func _new_face(index: int, normal: Vector3, plane: float, key: String, tile: Vec
 	var image := Image.create(dimensions.x,dimensions.y,false,Image.FORMAT_RGBA8)
 	image.fill(Color(0,0,0,0))
 	var texture := ImageTexture.create_from_image(image)
+	var face := {"key":key,"receiver":index,"image":image,"texture":texture,"dimensions":dimensions,"u":u,"v":v,"origin":origin,"dirty":false,"paint_count":0,"last_used":elapsed}
+	face.ref = weakref(_face_visual(receiver, face))
+	return face
+
+func _face_visual(receiver: Dictionary, face: Dictionary) -> Node3D:
+	if use_surface_meshes: return MARK.create(receiver, face)
+	var owner: Node3D = receiver.owner.get_ref()
 	var decal := Decal.new(); decal.name = "AttachedOrangeBlood"
-	decal.texture_albedo = texture; decal.texture_emission = texture
+	decal.texture_albedo = face.texture; decal.texture_emission = face.texture
 	decal.emission_energy = .42
 	decal.cull_mask = RECEIVER_LAYER
 	decal.normal_fade = .75; decal.upper_fade = 0.0; decal.lower_fade = 0.0
-	decal.size = Vector3(dimensions.x/DENSITY,.065,dimensions.y/DENSITY)
+	decal.size = Vector3(face.dimensions.x/DENSITY,.065,face.dimensions.y/DENSITY)
 	decal.distance_fade_enabled = false
 	owner.add_child(decal)
-	decal.transform = Transform3D(Basis(u,normal,v),origin+normal*.008)
-	return {"key":key,"receiver":index,"ref":weakref(decal),"image":image,"texture":texture,"dimensions":dimensions,"u":u,"v":v,"origin":origin,"dirty":false,"paint_count":0,"last_used":elapsed}
+	var normal: Vector3 = Vector3(face.v).cross(face.u).normalized()
+	decal.transform = Transform3D(Basis(face.u,normal,face.v),face.origin+normal*.008)
+	return decal
 
 func _power_two(value: int) -> int:
 	var result := 16
@@ -425,8 +448,11 @@ func _flush_faces() -> void:
 			# A mutable ImageTexture upload alone leaves Godot's decal atlas cache
 			# stale. Rebind the merged face, not one Decal per blood droplet.
 			var texture := ImageTexture.create_from_image(face.image)
-			var decal: Decal = face.ref.get_ref()
-			decal.texture_albedo = texture; decal.texture_emission = texture
+			var visual: Node3D = face.ref.get_ref()
+			if visual is Decal:
+				visual.texture_albedo = texture; visual.texture_emission = texture
+			elif visual is MeshInstance3D:
+				visual.material_override.set_shader_parameter(&"blood_texture", texture)
 			face.texture = texture; face.dirty = false; atlas_uploads += 1
 
 func _draw_drops() -> void:
@@ -476,7 +502,7 @@ func clear_blood() -> void:
 	drops.clear(); impacts.clear()
 	stamp_shapes.clear(); mixed_splatters = 0; emitted_large_drops = 0; tapered_splatters = 0
 	for face in faces:
-		var node: Decal = face.ref.get_ref()
+		var node: Node3D = face.ref.get_ref()
 		if is_instance_valid(node): node.free()
 	faces.clear()
 	if is_instance_valid(batch): batch.multimesh.visible_instance_count = 0

@@ -1,0 +1,10 @@
+﻿Low Health Screen-Edge Blood Overlay Textures (CC0 1.0 Public Domain)
+
+Source Page: https://opengameart.org/content/health-overlay-images
+Package File: health_overlay_gfg.zip
+License: CC0 1.0 Universal (Public Domain Dedication) - no attribution required.
+
+Included Files (unmodified 1920x1080 RGBA PNGs from the CC0 archive):
+- cc0_health_blotches.png  (originally Health_blotches.png)
+- cc0_health_vignette.png  (originally Health_Brush_3_2.png)
+- cc0_health_splats.png    (originally Health_Spalts.png)

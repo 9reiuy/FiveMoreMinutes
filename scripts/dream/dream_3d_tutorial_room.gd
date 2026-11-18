@@ -299,6 +299,10 @@ func _ready() -> void:
 	liquid_health.set_motion_source(player)
 	player.health_changed.connect(liquid_health.set_health)
 	liquid_health.set_health(player.current_health, player.maximum_health)
+	var low_health_blood: Control = get_node_or_null("GameplayUI/LowHealthBloodOverlay") as Control
+	if is_instance_valid(low_health_blood) and low_health_blood.has_method("set_health"):
+		player.health_changed.connect(low_health_blood.set_health)
+		low_health_blood.call("set_health", player.current_health, player.maximum_health, true)
 
 
 func _exit_tree() -> void:

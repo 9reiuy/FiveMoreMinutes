@@ -4,6 +4,7 @@ const PERF_TRACE=preload("res://scripts/app/performance_markers.gd")
 
 const SFX := preload("res://scripts/audio/sfx_manager.gd")
 const CONFIG := preload("res://resources/demo_config.tres")
+const SAFETY_HELMET := preload("res://scripts/entities/safety_helmet.gd")
 const OUTLINE_CONTROLLER := preload("res://scripts/entities/enemy_outline_controller.gd")
 const WORLD_HEALTH_BAR := preload("res://scripts/ui/player_world_health_bar.gd")
 const DREAM_GUN_ATLAS := preload("res://scripts/data/dream_gun_atlas.gd")
@@ -14,6 +15,7 @@ const CORPSE_CONTACT := preload("res://scripts/entities/corpse_contact_motion.gd
 const CORPSE_JOINT := preload("res://scripts/entities/corpse_ragdoll_joint.gd")
 const WEAPON_POSE := preload("res://scripts/dream/dream_weapon_pose.gd")
 const HAND_PRESENTATION := preload("res://scripts/entities/enemy_hand_presentation.gd")
+const PUNCH := preload("res://scripts/entities/player_punch_motion.gd")
 var hand_presentation: RefCounted
 const RANGED_WINDUP_TEXTURE: Texture2D = preload("res://art/Effects/shot.png")
 const CHARGE_VISUAL_SCRIPT: Script = preload("res://scripts/dream/dream_charge_visual.gd")
@@ -22,19 +24,18 @@ const CHARGE_SEMANTIC_SHADER: Shader = preload("res://shaders/charge_semantic.gd
 ## Column two has the front head and torso. The back is in column three,
 ## row two. Hands and feet remain separate for both directions.
 const EMPLOYEE_CHARACTER_ATLAS: Texture2D = preload("res://art/Dream/enemy/Employee_men_32x32.png")
-## Waitress retains its existing separated-part layout and the shared AI;
-## her art/rig is configured independently from Employee.
+## Waitress also has a combined upper body, with her own rear and limb cells.
 const WAITRESS_CHARACTER_ATLAS: Texture2D = preload("res://art/Dream/enemy/waitress.png")
-## Legacy separated regions remain the waitress layout; do not migrate her art
-## when updating Employee. Employee uses the full 32px cell without edge crop.
 const EMPLOYEE_NECK_ROW := 23
 const EMPLOYEE_UPPER_POSITION := Vector2(-16,-17)
 const EMPLOYEE_TORSO_POSITION := Vector2(-16,6)
-const EMPLOYEE_HEAD_OPEN_REGION: Rect2 = Rect2(32, 0, 28, 32)
-const EMPLOYEE_HEAD_BLINK_REGION: Rect2 = Rect2(32, 32, 28, 32)
-const EMPLOYEE_HEAD_CLOSED_REGION: Rect2 = Rect2(32, 64, 28, 32)
-const EMPLOYEE_BODY_REGION: Rect2 = Rect2(64, 0, 32, 32)
 const EMPLOYEE_BACK_REGION: Rect2 = Rect2(64, 32, 32, 32)
+const WAITRESS_BACK_REGION := Rect2(64, 0, 32, 32)
+const WAITRESS_BACK_UPPER_OFFSET := Vector2(-3, 0)
+const WAITRESS_LEFT_FOOT_REGION := Rect2(108, 76, 4, 9)
+const WAITRESS_RIGHT_FOOT_REGION := Rect2(113, 76, 4, 9)
+const WAITRESS_LEFT_HAND_REGION := Rect2(102, 47, 5, 4)
+const WAITRESS_RIGHT_HAND_REGION := Rect2(117, 47, 5, 4)
 ## The opaque foot components are at x=12..15 and x=17..20 in column four.
 const EMPLOYEE_LEFT_FOOT_REGION: Rect2 = Rect2(108, 12, 4, 9)
 const EMPLOYEE_RIGHT_FOOT_REGION: Rect2 = Rect2(113, 12, 4, 9)
@@ -42,11 +43,8 @@ const EMPLOYEE_RIGHT_FOOT_REGION: Rect2 = Rect2(113, 12, 4, 9)
 const EMPLOYEE_LEFT_HAND_REGION: Rect2 = Rect2(134, 15, 5, 4)
 const EMPLOYEE_RIGHT_HAND_REGION: Rect2 = Rect2(149, 15, 5, 4)
 
-const EMOJI_NEUTRAL := preload("res://art/icon/emoji/Emoji_Face_Neutral.png")
-const EMOJI_HIT := preload("res://art/icon/emoji/Emoji_Face_Surprised_Shocked.png")
-const EMOJI_FLEE := preload("res://art/icon/emoji/Emoji_Face_Sad_Frown.png")
-const EMOJI_ATTACK := preload("res://art/icon/emoji/Emoji_Face_Angry_Anger.png")
-const EMOJI_KNOCKED_DOWN := preload("res://art/icon/emoji/Emoji_Face_Sleeping_Tired.png")
+enum StatusMark { NONE, QUESTION, ALERT }
+signal status_mark_requested(enemy: EmployeeEnemy, mark: StatusMark)
 
 ## Emitted for death/room lifecycle consumers.  The legacy reward count is
 ## retained in the signal signature for old scene/test compatibility, but the
@@ -102,7 +100,6 @@ enum State {
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var hurtbox_collision: CollisionShape2D = $Hurtbox/CollisionShape2D
-@onready var emoji_sprite: Sprite2D = $EmojiAnchor/EmojiSprite
 
 var ranged_charge_visual: AnimatedSprite2D
 var ranged_charge_visual_frame_count: int = 1
@@ -114,9 +111,7 @@ var uses_visual_perception: bool = true
 var lkp_search_time_left: float = 0.0
 var door_kick_cooldown_left: float = 0.0
 
-## Formal target-awareness state. Bosses populate this through the sampled
-## perception layer; ordinary Employees populate the same cache through their
-## direct room-awareness path. Combat consumers therefore keep one data flow.
+## Last observation shared by combat, search and door traversal.
 var can_see_target: bool = false
 var has_last_known_target_position: bool = false
 var last_known_target_position := Vector2.ZERO
@@ -142,6 +137,12 @@ var room_bounds := arena_bounds
 
 var current_health := 10.0
 var maximum_health := 10.0
+var safety_helmet: RefCounted
+var helmet_equipped := false:
+	set(value):
+		helmet_equipped = value
+		if safety_helmet != null:
+			safety_helmet.refresh()
 var contact_damage := 0.0
 
 var dead := false
@@ -231,6 +232,8 @@ var attack_cooldown_left := 0.0
 ## separate from pickup_pause_left and the melee warning/charge clock.
 ## A cancelled windup never consumes a shot/cooldown.
 var ranged_attack_windup_left: float = 0.0
+var ranged_warning_seconds := 0.5
+var ranged_aim_lock_seconds := 0.12
 var ranged_attack_windup_pending: bool = false
 var ranged_attack_fire_locked := false
 var ranged_attack_magazine_primed := false
@@ -387,11 +390,7 @@ var knockdown_left := 0.0
 var knockdown_rotation_target := 0.0
 
 var state_before_knockdown := State.NEUTRAL_WANDER
-var observed_state := State.NEUTRAL_WANDER
-
-var emoji_time_left := 0.0
-var emoji_priority := 0
-var neutral_emoji_cooldown := 0.0
+var last_status_mark := StatusMark.NONE
 
 var last_hit_feedback_msec := -100000
 
@@ -577,12 +576,6 @@ func _ready() -> void:
 	held_weapon_sprite.hide()
 	left_hand.show()
 	right_hand.show()
-	emoji_sprite.hide()
-
-	neutral_emoji_cooldown = random.randf_range(
-		4.0,
-		8.0
-	)
 	neutral_room_travel_cooldown_left = random.randf_range(
 		2.0,
 		5.0
@@ -597,9 +590,15 @@ func _ready() -> void:
 
 func _make_employee_atlas_texture(region: Rect2) -> AtlasTexture:
 	var texture: AtlasTexture = AtlasTexture.new()
-	texture.atlas = WAITRESS_CHARACTER_ATLAS if enemy_archetype == &"waitress" else EMPLOYEE_CHARACTER_ATLAS
+	texture.atlas = _character_atlas()
 	texture.region = region
 	return texture
+
+func _character_atlas() -> Texture2D:
+	return WAITRESS_CHARACTER_ATLAS if enemy_archetype == &"waitress" else EMPLOYEE_CHARACTER_ATLAS
+
+func _back_atlas_region() -> Rect2:
+	return WAITRESS_BACK_REGION if enemy_archetype == &"waitress" else EMPLOYEE_BACK_REGION
 
 
 func configure_archetype(archetype: StringName) -> void:
@@ -613,30 +612,37 @@ func configure_archetype(archetype: StringName) -> void:
 
 
 func _setup_character_parts() -> void:
-	combined_upper_body = enemy_archetype != &"waitress"
+	var waitress := enemy_archetype == &"waitress"
+	combined_upper_body = true
 	corpse_upper_parts_active = false
 	enemy_head_frames.clear()
 	enemy_corpse_head_frames.clear()
 	for frame in 3:
-		var upper_region := Rect2(32,frame*32,32 if combined_upper_body else 28,32)
+		var upper_region := Rect2(32,frame*32,32,32)
 		enemy_head_frames.append(_make_employee_atlas_texture(upper_region))
-		if combined_upper_body:
-			enemy_corpse_head_frames.append(_make_employee_atlas_texture(Rect2(32,frame*32,32,EMPLOYEE_NECK_ROW)))
-	employee_back_frame = _make_employee_atlas_texture(EMPLOYEE_BACK_REGION) if combined_upper_body else null
-	var rear_head := Rect2(EMPLOYEE_BACK_REGION.position, Vector2(32, EMPLOYEE_NECK_ROW))
-	employee_corpse_back_frame = _make_employee_atlas_texture(rear_head) if combined_upper_body else null
+		enemy_corpse_head_frames.append(_make_employee_atlas_texture(Rect2(32,frame*32,32,EMPLOYEE_NECK_ROW)))
+	employee_back_frame = _make_employee_atlas_texture(_back_atlas_region())
+	var rear_head := Rect2(_back_atlas_region().position, Vector2(32, EMPLOYEE_NECK_ROW))
+	employee_corpse_back_frame = _make_employee_atlas_texture(rear_head)
 
-	head.position = EMPLOYEE_UPPER_POSITION if combined_upper_body else Vector2(-16,-20)
-	body.position = EMPLOYEE_TORSO_POSITION if combined_upper_body else Vector2(-16,-8)
+	head.position = EMPLOYEE_UPPER_POSITION
+	body.position = EMPLOYEE_TORSO_POSITION
+	var draw_offset := WAITRESS_BACK_UPPER_OFFSET if waitress and facing_back else Vector2.ZERO
+	head.offset = draw_offset
+	body.offset = draw_offset
 	head.texture = enemy_head_frames[0]
-	body.texture = _make_employee_atlas_texture(Rect2(32,EMPLOYEE_NECK_ROW,32,32-EMPLOYEE_NECK_ROW) if combined_upper_body else EMPLOYEE_BODY_REGION)
-	body.visible = not combined_upper_body
-	left_leg.texture = _make_employee_atlas_texture(EMPLOYEE_LEFT_FOOT_REGION)
-	right_leg.texture = _make_employee_atlas_texture(EMPLOYEE_RIGHT_FOOT_REGION)
-	left_hand.texture = _make_employee_atlas_texture(EMPLOYEE_LEFT_HAND_REGION)
-	right_hand.texture = _make_employee_atlas_texture(EMPLOYEE_RIGHT_HAND_REGION)
-	left_hand.position = Vector2(-11,6 if combined_upper_body else 7)
-	right_hand.position = Vector2(4,6 if combined_upper_body else 7)
+	body.texture = _make_employee_atlas_texture(Rect2(32,EMPLOYEE_NECK_ROW,32,32-EMPLOYEE_NECK_ROW))
+	body.hide()
+	left_leg.texture = _make_employee_atlas_texture(WAITRESS_LEFT_FOOT_REGION if waitress else EMPLOYEE_LEFT_FOOT_REGION)
+	right_leg.texture = _make_employee_atlas_texture(WAITRESS_RIGHT_FOOT_REGION if waitress else EMPLOYEE_RIGHT_FOOT_REGION)
+	left_hand.texture = _make_employee_atlas_texture(WAITRESS_LEFT_HAND_REGION if waitress else EMPLOYEE_LEFT_HAND_REGION)
+	right_hand.texture = _make_employee_atlas_texture(WAITRESS_RIGHT_HAND_REGION if waitress else EMPLOYEE_RIGHT_HAND_REGION)
+	# The assembled waitress cell is shifted (+1,+1) from the upper-body cell.
+	var upper_anchor := (body_pivot_base_position if is_node_ready() else body_pivot.position) + head.position
+	left_leg.position = upper_anchor + Vector2(10,27) if waitress else Vector2(-5,-9)
+	right_leg.position = upper_anchor + Vector2(15,27) if waitress else Vector2(0,-9)
+	left_hand.position = Vector2(-12,7) if waitress else Vector2(-11,6)
+	right_hand.position = Vector2(3,7) if waitress else Vector2(4,6)
 	set_meta(&"character_combined_upper_body",combined_upper_body)
 	# Both authored employee/waitress cells face left before horizontal mirroring.
 	set_meta(&"character_authored_facing_x",-1.0)
@@ -648,6 +654,8 @@ func _setup_character_parts() -> void:
 	# configure_archetype can run after _ready; refresh visual bases on both paths.
 	head_base_position = head.position
 	body_base_position = body.position
+	left_leg_base_position = left_leg.position
+	right_leg_base_position = right_leg.position
 	left_hand_base_position = left_hand.position
 	right_hand_base_position = right_hand.position
 	if is_node_ready(): refresh_hurtbox_from_visuals()
@@ -675,7 +683,7 @@ func _prepare_corpse_upper_parts() -> void:
 	# The live character is one complete cell. Reuse two adjacent, disjoint
 	# regions only when the existing ragdoll/dismemberment needs neck movement.
 	corpse_upper_parts_active = true
-	var upper_region := EMPLOYEE_BACK_REGION if facing_back else Rect2(32, 64, 32, 32)
+	var upper_region := _back_atlas_region() if facing_back else Rect2(32, 64, 32, 32)
 	body.texture = _make_employee_atlas_texture(Rect2(
 		upper_region.position + Vector2(0, EMPLOYEE_NECK_ROW), Vector2(32, 32 - EMPLOYEE_NECK_ROW)))
 	body.show()
@@ -778,6 +786,7 @@ func configure(
 	boss_variant = false
 	uses_visual_perception = true
 	can_see_target = false
+	last_status_mark = StatusMark.NONE
 	has_last_known_target_position = false
 	last_known_target_position = Vector2.ZERO
 	last_known_target_velocity = Vector2.ZERO
@@ -973,14 +982,13 @@ func _process_profiled(delta:float)->void:
 			)
 		)
 
-	# Crowd CPU: blink/emoji/aim presentation can share alternate frames when
+	# Crowd CPU: blink, status and aim presentation can share alternate frames when
 	# many employees are active; locomotion/AI stay on physics.
 	var visual_tick := ((Engine.get_process_frames() + get_instance_id()) & 1) == 0
 	_update_human_animation(delta)
 	if visual_tick:
 		_update_enemy_blink(delta)
-		_update_emoji(delta)
-		_update_state_emoji()
+		_update_status_mark()
 		_update_weapon_aim()
 	_update_hand_presentation()
 	_update_bleeding_trail(delta)
@@ -1138,6 +1146,7 @@ func _physics_process_profiled(delta:float)->void:
 
 	if state in [State.KNOCKED_DOWN, State.GETTING_UP, State.ROOM_TRANSIT]:
 		_firearm_recoil_velocity = Vector2.ZERO
+	velocity = _avoid_ground_hazards(velocity)
 	var locomotion_velocity := velocity
 	var firearm_recoil := _firearm_recoil_velocity
 	if firearm_recoil != Vector2.ZERO:
@@ -1183,6 +1192,9 @@ func _physics_process_profiled(delta:float)->void:
 
 	_update_stuck_detection(delta)
 
+func _avoid_ground_hazards(proposed: Vector2) -> Vector2:
+	return proposed
+
 
 func _perception_update_interval() -> float:
 	return clampf(
@@ -1224,11 +1236,8 @@ func _update_direct_target_awareness() -> void:
 	if _smoke_blocks_target():
 		_lose_target_in_smoke()
 		return
-	## Ordinary Employees do not have visual discovery constraints.  While their
-	## room simulation is active, the valid Player target is an authoritative
-	## gameplay fact: cache its current ground position and room for the normal
-	## chase/attack pipeline.  This path deliberately performs no FOV or LOS
-	## query; projectile collision remains authoritative in the projectile world.
+	# Actors explicitly configured for direct awareness use the active room
+	# and its open connections to locate the player.
 	if (
 		dead
 		or not room_runtime_active
@@ -1240,7 +1249,7 @@ func _update_direct_target_awareness() -> void:
 		has_last_known_target_position = false
 		return
 
-	var candidate_position: Vector2 = target.global_position
+	var candidate_position := _sample_combat_target_position()
 	if not candidate_position.is_finite():
 		can_see_target = false
 		has_last_known_target_position = false
@@ -1264,9 +1273,7 @@ func _update_direct_target_awareness() -> void:
 	_remember_target_position(candidate_position, room_id)
 	can_see_target = true
 
-	# Direct room awareness is also the ordinary Employee's discovery event.
-	# Do not disturb an already active flee/attack/route state; only promote a
-	# neutral actor once so the existing hostile decision pipeline takes over.
+	# Newly alerted actors enter the same hostile decision pipeline.
 	if not hostile:
 		hostile = true
 		_begin_hostile_reaction()
@@ -1280,9 +1287,7 @@ func _update_visual_target_perception() -> void:
 	if _smoke_blocks_target():
 		_lose_target_in_smoke()
 		return
-	# Keep this guard even for direct/internal callers (debug fixtures and older
-	# integrations may invoke the named method explicitly). Ordinary Employees
-	# must never fall through to the FOV/LOS ray implementation.
+	# Direct callers also respect the actor's configured perception mode.
 	if not uses_visual_perception:
 		_update_direct_target_awareness()
 		return
@@ -1299,7 +1304,7 @@ func _update_visual_target_perception() -> void:
 
 	# This is the only normal gameplay path allowed to sample the Player's
 	# live position.  Every combat consumer below reads the cached result.
-	var candidate_position: Vector2 = target.global_position
+	var candidate_position := _sample_combat_target_position()
 	var candidate_velocity := Vector2.ZERO
 	if target is CharacterBody2D:
 		candidate_velocity = (target as CharacterBody2D).velocity
@@ -1370,12 +1375,22 @@ func _has_target_line_of_sight(candidate_position: Vector2) -> bool:
 		if hit.is_empty():
 			return true
 		var collider: Object = hit.get("collider", null)
+		if collider is Node2D and collider.has_method("is_combat_target_for") \
+			and bool(collider.call("is_combat_target_for", self)):
+			return true
 		if collider is Node and (collider.is_in_group(&"glass_windows") or collider.is_in_group(&"breakable_glass_windows")):
 			_los_exclude_rids.append(hit.get("rid"))
 			_los_query.exclude = _los_exclude_rids
 			continue
 		return false
 	return false
+
+
+func _sample_combat_target_position() -> Vector2:
+	var vehicle: Variant = target.get("mounted_vehicle")
+	if is_instance_valid(vehicle) and vehicle.has_method("get_combat_target_position"):
+		return vehicle.call("get_combat_target_position", global_position)
+	return target.global_position
 
 
 func _get_gameplay_facing_direction() -> Vector2:
@@ -1568,11 +1583,6 @@ func _choose_hostile_action() -> void:
 
 	if _can_use_flee_behavior():
 		state = State.FLEE
-		show_emoji(
-			&"flee",
-			1.1,
-			3
-		)
 		return
 
 	# Ordinary employees never flee.  With no weapon plan available they remain
@@ -1878,32 +1888,39 @@ func _update_attack_player(delta: float) -> void:
 
 	if not can_see_target:
 		_cancel_ranged_attack_windup()
-		# Lost LOS: search only the remembered ground position.  Do not fire or
-		# perform melee damage until a later perception sample reacquires Player.
-		if global_position.distance_to(target_position) > 10.0:
-			attack_movement_intent = true
-			velocity = _steer_toward(target_position)
-			lkp_search_time_left = 2.0
-		else:
-			velocity = Vector2.ZERO
-			lkp_search_time_left -= delta
-			if lkp_search_time_left > 0.0:
-				var sweep_angle := sin(lkp_search_time_left * PI * 2.0) * deg_to_rad(45.0)
-				last_facing_direction = (target_position - global_position).normalized().rotated(sweep_angle)
-				if last_facing_direction.length_squared() < 0.01:
-					last_facing_direction = Vector2.RIGHT.rotated(sweep_angle)
-				_set_back_facing(last_facing_direction.y < -0.2)
-				if character_visual != null:
-					_apply_live_facing(last_facing_direction)
-			else:
-				lkp_search_time_left = 0.0
-				has_last_known_target_position = false
-				hostile = false
-				state = State.NEUTRAL_WANDER
-				wander_target = _request_wander_target()
-				wander_wait_left = 1.0
+		_search_last_known_position(target_position, delta)
 		return
 
+	_engage_visible_target(target_position, distance_to_target, delta)
+
+func _search_last_known_position(target_position: Vector2, delta: float) -> void:
+	if global_position.distance_to(target_position) > 10.0:
+		attack_movement_intent = true
+		velocity = _steer_toward(target_position)
+		lkp_search_time_left = 2.0
+		return
+	velocity = Vector2.ZERO
+	lkp_search_time_left -= delta
+	if lkp_search_time_left <= 0.0:
+		_finish_target_search()
+		return
+	var sweep_angle := sin(lkp_search_time_left * PI * 2.0) * deg_to_rad(45.0)
+	last_facing_direction = (target_position - global_position).normalized().rotated(sweep_angle)
+	if last_facing_direction.length_squared() < 0.01:
+		last_facing_direction = Vector2.RIGHT.rotated(sweep_angle)
+	_set_back_facing(last_facing_direction.y < -0.2)
+	if character_visual != null:
+		_apply_live_facing(last_facing_direction)
+
+func _finish_target_search() -> void:
+	lkp_search_time_left = 0.0
+	has_last_known_target_position = false
+	hostile = false
+	state = State.NEUTRAL_WANDER
+	wander_target = _request_wander_target()
+	wander_wait_left = 1.0
+
+func _engage_visible_target(target_position: Vector2, distance_to_target: float, _delta: float) -> void:
 	if held_weapon_id.is_empty():
 		_cancel_ranged_attack_windup()
 		if not panic_counterattack_active or not is_instance_valid(target):
@@ -2050,7 +2067,7 @@ func _update_attack_player(delta: float) -> void:
 					return
 			# Automatic firearms stay in the same attack session after the
 			# first windup; their ordinary cooldown governs each next shot.
-			_fire_held_weapon()
+			_try_fire_ranged_attack()
 			if not DREAM_GUN_ATLAS.is_automatic_weapon(held_weapon_id):
 				ranged_attack_session_active = false
 			return
@@ -2084,8 +2101,8 @@ func _begin_ranged_attack_windup() -> void:
 	ranged_attack_session_active = true
 	ranged_attack_session_weapon_id=held_weapon_id
 	var default_windup: float = 0.25 if DREAM_GUN_ATLAS.is_automatic_weapon(held_weapon_id) else (0.35 if held_weapon_id == "shotgun" else 0.20)
-	ranged_attack_windup_left = .5 if _is_otxo_mode() else clampf(_cfg("employee_ranged_attack_windup", default_windup), 0.0, 5.0)
-	ranged_attack_target_snapshot = _get_known_target_position()
+	ranged_attack_windup_left = ranged_warning_seconds if _is_otxo_mode() else clampf(_cfg("employee_ranged_attack_windup", default_windup), 0.0, 5.0)
+	ranged_attack_target_snapshot = _tracked_aim_point(_get_known_target_position())
 	velocity = Vector2.ZERO
 	if _is_otxo_mode():
 		SFX.play_event(&"enemy_fire_cue")
@@ -2111,20 +2128,24 @@ func _update_ranged_attack_windup(delta: float) -> void:
 	if global_position.distance_to(target_position) > _weapon_max_range():
 		_cancel_ranged_attack_windup()
 		return
-	if ranged_attack_windup_left>.12: ranged_attack_target_snapshot = target_position
+	if ranged_attack_windup_left > ranged_aim_lock_seconds:
+		ranged_attack_target_snapshot = _tracked_aim_point(target_position)
 	ranged_attack_windup_left = maxf(ranged_attack_windup_left - delta, 0.0)
 	if ranged_attack_windup_left > 0.0:
 		return
 	ranged_attack_windup_pending = false
 	_hide_ranged_charge_visual()
 	ranged_attack_fire_locked=true
-	_fire_held_weapon()
+	_try_fire_ranged_attack()
 	ranged_attack_fire_locked=false
 	ranged_attack_target_snapshot=Vector2.ZERO
 	if not DREAM_GUN_ATLAS.is_automatic_weapon(ranged_attack_session_weapon_id):
 		ranged_attack_session_active = false
 		ranged_attack_session_weapon_id = ""
 
+
+func _tracked_aim_point(target_position: Vector2) -> Vector2:
+	return target_position
 
 func _cancel_ranged_attack_windup() -> void:
 	# Existing callers are shared interruption boundaries: death, disarm,
@@ -2207,7 +2228,7 @@ func get_ranged_telegraph_state() -> Dictionary:
 	if _smoke_blocks_target():return {}
 	if dead or state!=State.ATTACK_PLAYER or not can_see_target or reload_left>0.0 or pickup_pause_left>0.0 or not _weapon_requires_ranged_windup(): return {}
 	if ranged_attack_windup_pending:
-		var result := {"target":ranged_attack_target_snapshot,"progress":clampf(1.0-ranged_attack_windup_left/.5,0,1)}
+		var result := {"target":ranged_attack_target_snapshot,"progress":clampf(1.0-ranged_attack_windup_left/ranged_warning_seconds,0,1)}
 		if held_weapon_id == "shotgun":
 			# Both the shared volley aim error and each pellet's independent
 			# spread can reach the edges of this complete warning envelope.
@@ -2309,7 +2330,6 @@ func _start_unarmed_counterattack() -> void:
 		_cfg("employee_unarmed_attack_interval", 0.45)
 	)
 	SFX.play_event(&"melee_swing")
-	show_emoji(&"attack", 0.45, 2)
 
 
 func _update_unarmed_counterattack(delta: float) -> void:
@@ -2745,7 +2765,7 @@ func on_room_gunshot(world_position: Vector2, source_room_id: int) -> void:
 		gunshot_flee_left = 0.0
 		gunshot_investigate_left = _cfg("employee_gunshot_investigate_duration", 2.5)
 		state = State.INVESTIGATE_GUNSHOT
-		show_emoji(&"attack", 0.8, 2)
+		_update_status_mark()
 		return
 	# Unarmed civilians make one panic decision: 20% counterattack, otherwise
 	# stay in the ordinary weapon-search path.  Only Bosses retain flee panic.
@@ -2758,17 +2778,17 @@ func on_room_gunshot(world_position: Vector2, source_room_id: int) -> void:
 		gunshot_flee_left = 0.0
 		_begin_hostile_reaction()
 		state = State.ATTACK_PLAYER
-		show_emoji(&"attack", 1.1, 3)
+		_update_status_mark()
 		return
 	panic_counterattack_active = false
 	gunshot_flee_left = 0.0
 	if _can_use_flee_behavior():
 		gunshot_flee_left = _cfg("employee_gunshot_flee_duration", 5.0)
 		state = State.FLEE
-		show_emoji(&"flee", 1.1, 3)
 	else:
 		state = State.SEEK_WEAPON
 		search_left = maxf(search_left, _cfg("employee_weapon_search_interval", 0.30))
+	_update_status_mark()
 
 
 func collect_reserved_weapon_offscreen() -> bool:
@@ -2924,12 +2944,6 @@ func _collect_weapon(
 	)
 
 	state = State.ATTACK_PLAYER
-
-	show_emoji(
-		&"attack",
-		1.0,
-		2
-	)
 
 
 ## Called only by DreamWorld after it has committed this Enemy's deterministic
@@ -3120,6 +3134,11 @@ func _play_enemy_gunshot() -> void:
 	SFX.play_event(&"gunshot")
 
 
+func _try_fire_ranged_attack() -> void:
+	# AI release point. Scripted sequences can stage a round already in flight.
+	_fire_held_weapon()
+
+
 func _fire_held_weapon() -> void:
 	if _smoke_blocks_target():
 		_lose_target_in_smoke()
@@ -3142,6 +3161,8 @@ func _fire_held_weapon() -> void:
 	# this shot's committed target before that lifecycle change.
 	var committed_aim_target: Vector2 = melee_attack_target_snapshot if melee_attack_fire_locked else \
 		(ranged_attack_target_snapshot if ranged_attack_fire_locked else _get_known_target_position())
+	if not ranged_attack_fire_locked and _weapon_requires_ranged_windup():
+		committed_aim_target = _tracked_aim_point(committed_aim_target)
 	if not _consume_ammo_for_attack():
 		return
 
@@ -3636,25 +3657,7 @@ func _update_weapon_aim() -> void:
 	weapon_root.show_behind_parent = false
 	_sync_enemy_hands_visibility()
 
-	# Keep a held weapon visible even during the short frames where the target is
-	# unavailable (for example while a room simulation is being refreshed).  The
-	# old implementation hid WeaponRoot in that case, leaving an armed Employee
-	# with both the weapon and hands invisible.  Aim falls back to actual motion
-	# and finally to the current horizontal facing; no gameplay state changes.
-	var direction := last_facing_direction
-	if state == State.INVESTIGATE_GUNSHOT and gunshot_threat_position.length_squared() > 0.001:
-		# Investigation points at the recorded sound position only.  The neutral
-		# employee must not visually/implicitly acquire the Player through walls.
-		direction = global_position.direction_to(gunshot_threat_position)
-	elif melee_attack_windup_pending or melee_attack_fire_locked:
-		direction = global_position.direction_to(melee_attack_target_snapshot)
-	elif hostile and _has_known_target():
-		var aim_locked: bool=ranged_attack_windup_pending and ranged_attack_windup_left<=.12
-		direction = global_position.direction_to(ranged_attack_target_snapshot if aim_locked else _get_known_target_position())
-	elif velocity.length_squared() > 0.001:
-		direction = velocity.normalized()
-	if direction.length_squared() <= 0.001:
-		direction = Vector2.RIGHT
+	var direction := _weapon_aim_direction()
 	last_facing_direction = direction.normalized()
 
 	weapon_root.rotation = direction.angle()
@@ -3673,6 +3676,20 @@ func _update_weapon_aim() -> void:
 		direction.x < 0.0
 	)
 	_apply_live_facing(direction)
+
+
+func _weapon_aim_direction() -> Vector2:
+	var direction := last_facing_direction
+	if state == State.INVESTIGATE_GUNSHOT and gunshot_threat_position.length_squared() > 0.001:
+		direction = global_position.direction_to(gunshot_threat_position)
+	elif melee_attack_windup_pending or melee_attack_fire_locked:
+		direction = global_position.direction_to(melee_attack_target_snapshot)
+	elif hostile and _has_known_target():
+		var aim_locked := ranged_attack_windup_pending and ranged_attack_windup_left <= ranged_aim_lock_seconds
+		direction = global_position.direction_to(ranged_attack_target_snapshot if aim_locked else _get_known_target_position())
+	elif velocity.length_squared() > 0.001:
+		direction = velocity.normalized()
+	return Vector2.RIGHT if direction.length_squared() <= 0.001 else direction
 
 
 # ============================================================
@@ -3750,7 +3767,8 @@ func _is_player_awareness_source(source: StringName) -> bool:
 			&"kick",
 			&"lucille",
 			&"books",
-			&"player_punch"
+			&"player_punch",
+			&"player_vehicle_impact"
 		]
 	)
 
@@ -3761,7 +3779,7 @@ func _remember_player_damage_awareness() -> void:
 		return
 	# Damage is an event-time awareness source.  This is deliberately the only
 	# non-perception combat path that samples the live target position.
-	var position: Vector2 = target.global_position
+	var position := _sample_combat_target_position()
 	var room_id := last_known_room
 	var world := _get_world()
 	if world != null and world.has_method("get_current_room_id"):
@@ -3796,6 +3814,7 @@ func _should_spawn_directional_blood(source: StringName) -> bool:
 		&"employee_lucille",
 		&"employee_books",
 		&"furniture_impact",
+		&"player_vehicle_impact",
 		&"secondary_collision"
 	]
 
@@ -3808,7 +3827,7 @@ func _blood_intensity_for_source(source: StringName) -> float:
 		return _cfg("blood_pistol_intensity", 0.82)
 	if source == &"kick":
 		return _cfg("blood_kick_intensity", 0.90)
-	if source == &"furniture_impact":
+	if source in [&"furniture_impact", &"player_vehicle_impact"]:
 		return _cfg("blood_furniture_intensity", 1.05)
 	if source == &"secondary_collision":
 		return _cfg("blood_pistol_intensity", 0.75)
@@ -3842,8 +3861,22 @@ func take_damage(
 		0.0,
 		current_health - amount
 	)
+	if helmet_equipped and safety_helmet != null:
+		current_health = safety_helmet.protect(current_health)
 
 	var actual := before - current_health
+	var punch := PUNCH.SOURCES.find(damage_source)
+	if punch >= 0:
+		# All four contacts share the existing fist blood, sound, awareness and death paths.
+		damage_source = &"player_punch"
+		if actual > 0.0:
+			_knockback_force = _interrupt_with_punch(punch, hit_origin)
+	if damage_source == &"scientist_poison":
+		if current_health <= 0.0:
+			_die()
+		elif health_bar != null and feedback_config != null:
+			health_bar.show_after_damage(current_health, maximum_health, feedback_config.enemy_hp_bar_visible_duration)
+		return
 	if actual > 0.0:
 		if not room_runtime_active:
 			set_room_runtime_active(true)
@@ -3920,7 +3953,7 @@ func take_damage(
 	# return, so nonlethal and lethal hits share the same presentation event.
 	var sample_gun_hit: bool=world!=null and world.has_method("uses_pixel_combat_vfx") and bool(world.uses_pixel_combat_vfx()) and _is_gun_damage_source(damage_source)
 	var crescent_hit := actual > 0.0 and world != null and world.has_method("spawn_melee_hit_feedback") and (
-		damage_source in [&"lucille", &"books"]
+		damage_source in [&"lucille", &"books", &"player_vehicle_impact"]
 		or (damage_source == &"player_punch" and world.has_method("is_resolving_phase_dash_hit") and bool(world.is_resolving_phase_dash_hit()))
 	)
 	# One accepted hit, including lethal attacks, before the death early return.
@@ -4005,11 +4038,7 @@ func take_damage(
 		else 0.12
 	)
 
-	show_emoji(
-		&"hit",
-		0.9,
-		4
-	)
+	status_mark_requested.emit(self, StatusMark.ALERT)
 
 	var hit_force := (
 		_knockback_force
@@ -4038,6 +4067,8 @@ func take_damage(
 		direction,
 		hit_force
 	)
+	if punch >= 0 and actual > 0.0:
+		knockback_left = maxf(knockback_left, PUNCH.STAGGER)
 
 	var now_msec := Time.get_ticks_msec()
 
@@ -4125,6 +4156,8 @@ func take_damage(
 			)
 		)
 
+	elif punch == PUNCH.Strike.UPPERCUT and actual > 0.0:
+		start_knockdown(direction, damage_source, PUNCH.LAUNCH_FORCE, PUNCH.LAUNCH_RISE)
 	elif damage_source == &"lucille":
 		start_knockdown(
 			direction,
@@ -4135,6 +4168,19 @@ func take_damage(
 				else 1200.0
 			)
 		)
+
+
+func _interrupt_with_punch(punch: int, origin: Vector2) -> float:
+	_cancel_ranged_attack_windup()
+	unarmed_attack_active = false
+	unarmed_attack_elapsed = 0.0
+	unarmed_attack_hit_applied = false
+	unarmed_attack_kind = &""
+	attack_cooldown_left = maxf(attack_cooldown_left, PUNCH.STAGGER)
+	if punch == PUNCH.Strike.WRIST:
+		var direction := _resolve_hit_direction(origin, &"player_punch")
+		_drop_held_weapon(direction.rotated(0.62) * 57.0)
+	return PUNCH.HIT_FORCE[punch]
 
 
 func start_knockdown(
@@ -4262,11 +4308,7 @@ func start_knockdown(
 
 	secondary_collision_cooldown_left = 0.0
 
-	show_emoji(
-		&"knockdown",
-		1.0,
-		5
-	)
+	_update_status_mark()
 
 	if source in [
 		&"kick",
@@ -4576,13 +4618,17 @@ func force_pit_death(pit_position: Vector2 = Vector2.INF) -> void:
 
 func defeat_by_parry(hit_origin: Vector2) -> void:
 	if dead: return
+	var had_helmet := helmet_equipped
 	take_damage(maxf(current_health,1.0),hit_origin,1.0,&"player_projectile_parry")
-	if not dead:
+	if not dead and not (had_helmet and not helmet_equipped):
 		current_health=0.0
 		_die()
 
 func _die() -> void:
 	if dead:
+		return
+	if helmet_equipped and safety_helmet != null and not bool(get_meta(&"pit_death", false)):
+		current_health = safety_helmet.protect(0.0)
 		return
 	_cancel_ranged_attack_windup()
 
@@ -4690,7 +4736,6 @@ func _die() -> void:
 	knockdown_height = death_fake_height
 	death_landed = false
 	character_visual.show()
-	emoji_sprite.hide()
 	weapon_root.hide()
 	_sync_enemy_hands_visibility()
 	left_hand.show()
@@ -5207,6 +5252,10 @@ func set_room_runtime_active(
 		add_to_group(
 			&"dormant_room_enemy"
 		)
+
+
+func is_standing_for_punch() -> bool:
+	return not sky_drop_active and state not in [State.KNOCKED_DOWN, State.GETTING_UP]
 
 
 func is_damage_runtime_active() -> bool:
@@ -5893,6 +5942,8 @@ func _apply_secondary_collision_damage(
 		0.0,
 		current_health - amount
 	)
+	if helmet_equipped and safety_helmet != null:
+		current_health = safety_helmet.protect(current_health)
 
 	var actual := before - current_health
 
@@ -5937,11 +5988,7 @@ func _apply_secondary_collision_damage(
 		else 0.12
 	)
 
-	show_emoji(
-		&"hit",
-		0.6,
-		4
-	)
+	status_mark_requested.emit(self, StatusMark.ALERT)
 
 	var world := _get_world()
 
@@ -6614,126 +6661,28 @@ func _set_back_facing(
 	if dead:
 		return
 	facing_back = back
+	if enemy_archetype == &"waitress":
+		var draw_offset := WAITRESS_BACK_UPPER_OFFSET if back else Vector2.ZERO
+		head.offset = draw_offset
+		body.offset = draw_offset
 	_set_enemy_head_frame(enemy_head_frame_index)
 
 
-func show_emoji(
-	emoji_type: StringName,
-	duration: float,
-	priority: int
-) -> void:
-	if (
-		emoji_sprite == null
-		or (
-			emoji_sprite.visible
-			and priority < emoji_priority
-		)
-	):
-		return
-
-	match emoji_type:
-		&"neutral":
-			emoji_sprite.texture = EMOJI_NEUTRAL
-
-		&"hit":
-			emoji_sprite.texture = EMOJI_HIT
-
-		&"flee":
-			emoji_sprite.texture = EMOJI_FLEE
-
-		&"attack":
-			emoji_sprite.texture = EMOJI_ATTACK
-
-		&"knockdown":
-			emoji_sprite.texture = EMOJI_KNOCKED_DOWN
-
-		_:
-			return
-
-	emoji_sprite.texture_filter = (
-		CanvasItem.TEXTURE_FILTER_NEAREST
-	)
-
-	emoji_sprite.visible = true
-
-	emoji_time_left = maxf(
-		duration,
-		0.05
-	)
-
-	emoji_priority = priority
-
-
-func _update_emoji(
-	delta: float
-) -> void:
-	if emoji_sprite.visible:
-		emoji_time_left = maxf(
-			0.0,
-			emoji_time_left - delta
-		)
-
-		if emoji_time_left <= 0.0:
-			emoji_sprite.hide()
-			emoji_priority = 0
-
-	if (
-		state != State.NEUTRAL_WANDER
-		or emoji_sprite.visible
-	):
-		return
-
-	neutral_emoji_cooldown -= delta
-
-	if neutral_emoji_cooldown <= 0.0:
-		show_emoji(
-			&"neutral",
-			random.randf_range(
-				0.8,
-				1.5
-			),
-			1
-		)
-
-		neutral_emoji_cooldown = random.randf_range(
-			6.0,
-			12.0
-		)
-
-
-func _update_state_emoji() -> void:
-	if state == observed_state:
-		return
-
-	observed_state = state
-
-	match state:
-		State.FLEE:
-			show_emoji(
-				&"flee",
-				1.1,
-				3
-			)
-
-		State.ATTACK_PLAYER:
-			show_emoji(
-				&"attack",
-				1.0,
-				2
-			)
-
-		State.KNOCKED_DOWN:
-			show_emoji(
-				&"knockdown",
-				minf(
-					_cfg(
-						"employee_knockdown_duration",
-						1.2
-					),
-					1.0
-				),
-				5
-			)
+func _update_status_mark() -> void:
+	var mark := StatusMark.NONE
+	if state in [State.FLEE, State.KNOCKED_DOWN] or (hostile and can_see_target):
+		mark = StatusMark.ALERT
+	elif state == State.ATTACK_PLAYER:
+		if panic_counterattack_active:
+			mark = StatusMark.ALERT
+		elif has_last_known_target_position:
+			mark = StatusMark.QUESTION
+	elif state == State.INVESTIGATE_GUNSHOT or (state == State.SEEK_WEAPON and not hostile and gunshot_source_room_id >= 0):
+		mark = StatusMark.QUESTION
+	if mark != last_status_mark:
+		last_status_mark = mark
+		if mark != StatusMark.NONE:
+			status_mark_requested.emit(self, mark)
 
 
 func _setup_health_bar() -> void:

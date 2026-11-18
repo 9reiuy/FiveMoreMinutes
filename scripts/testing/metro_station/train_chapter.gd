@@ -106,6 +106,8 @@ func build(whitebox := false) -> void:
 	environment.ambient_light_energy = .19 if not whitebox else .52
 	art = ART.new(world, whitebox)
 	art.build()
+	if art.root.get_meta(&"train_reference_art_enabled"):
+		world.level_msaa_3d = Viewport.MSAA_2X
 	derailment = DERAILMENT.new()
 	art.root.add_child(derailment)
 	derailment.configure(world,art.player_train)
@@ -129,6 +131,7 @@ func build(whitebox := false) -> void:
 
 
 func reset() -> void:
+	world.level_msaa_3d = Viewport.MSAA_DISABLED
 	_finish_dodge_intro()
 	_clear_taunt_presentation()
 	if is_instance_valid(world.player):
@@ -315,7 +318,7 @@ func _start_approach() -> void:
 	if not world.spawn_content:
 		return
 	boss = world._spawn_regular_employee(RIVAL_ROOM, _pixels(Vector2(BOSS_START_X + art.rival_train.root.position.x,BOSS_WINDOW_Z)),
-		&"employee", false, BOSS_WEAPON)
+		&"boss", false, BOSS_WEAPON)
 	if boss == null:
 		push_error("The rival train Boss could not spawn")
 		return

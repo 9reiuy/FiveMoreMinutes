@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://dul6slt4a55xv"
+path="res://.godot/imported/interactive_gas.glsl-cb1f1b1fbc6ed1213efb141126bb81d7.res"
+
+[deps]
+
+source_file="res://shaders/testing/interactive_gas.glsl"
+dest_files=["res://.godot/imported/interactive_gas.glsl-cb1f1b1fbc6ed1213efb141126bb81d7.res"]
+
+[params]
+

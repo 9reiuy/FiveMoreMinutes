@@ -178,7 +178,7 @@ func _reset_actor_node_caches() -> void:
 	_cached_bullet_sprite_resolved = false
 	_cached_height_prop = &""
 	_cached_height_prop_resolved = false
-	_cached_is_enemy = source_actor != null and is_instance_valid(source_actor) and source_actor.is_in_group(&"dream_enemies")
+	_cached_is_enemy = source_actor != null and is_instance_valid(source_actor) and (source_actor.is_in_group(&"dream_enemies") or bool(source_actor.get_meta(&"narrative_character_pose",false)))
 	_cached_is_player = source_actor != null and is_instance_valid(source_actor) and source_actor.is_in_group(&"dream_player")
 	_last_source_actor_child_count = -1
 	_corpse_contact_cached = false
@@ -387,10 +387,8 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 		for path in requested_source_paths:
 			if path is NodePath or path is String:
 				source_paths.append(NodePath(path))
-	if source_paths.has(^"CharacterVisual"):
-		for extra in [^"EnemyHPBar", ^"EmojiAnchor"]:
-			if source.has_node(extra) and not source_paths.has(extra):
-				source_paths.append(extra)
+	if source_paths.has(^"CharacterVisual") and source.has_node(^"EnemyHPBar") and not source_paths.has(^"EnemyHPBar"):
+		source_paths.append(^"EnemyHPBar")
 	actor_center_height = requested_center_height
 	actor_center_depth_offset = requested_depth_offset
 	viewport_offset = requested_viewport_offset
@@ -422,8 +420,7 @@ func configure(source: Node2D, viewport: SubViewport, root: Node2D,
 	# Environment geometry remains on layer 1; directional room/window lights can
 	# therefore target characters without producing the old floor cone artifact.
 	if source_paths.has(^"CharacterVisual") and (
-		source_actor.is_in_group(&"dream_player")
-		or source_actor.is_in_group(&"dream_enemies")
+		_cached_is_player or _cached_is_enemy
 	):
 		actor_sprite.layers = CHARACTER_VISUAL_LAYER
 	var blood_visual := _is_blood_source()
@@ -615,7 +612,7 @@ func _create_character_local_light() -> void:
 	if not source_actor.is_in_group(&"dream_player") and not source_actor.is_in_group(&"dream_enemies"):
 		return
 	var enabled_variant: Variant = VISUAL_CONFIG.get(&"character_local_light_enabled")
-	character_local_light_enabled = true if enabled_variant == null else bool(enabled_variant)
+	character_local_light_enabled = false if enabled_variant == null else bool(enabled_variant)
 	if not character_local_light_enabled:
 		return
 	var energy_variant: Variant = VISUAL_CONFIG.get(&"character_local_light_energy")
@@ -893,9 +890,28 @@ func get_hit_feedback_world_position() -> Vector3:
 	if torso==null: return actor_sprite.global_position
 	var center: Vector2=source_actor.get_meta(&"character_upper_torso_center",Vector2(16,25)) if combined else _opaque_rect(torso).get_center()
 	var point:=source_actor.to_local(torso.to_global(center))
+	return _actor_pixel_world_position(camera, point, .035)
+
+## Anchor the clear HUD to the top of the displayed head, including a knockdown or turn.
+func get_status_mark_world_position() -> Vector3:
+	var camera := _active_world_camera()
+	var enemy := source_actor as EmployeeEnemy
+	if camera == null or enemy == null or not is_instance_valid(enemy.head):
+		return global_position
+	var head_to_actor := enemy.global_transform.affine_inverse() * enemy.head.global_transform
+	var bounds: Rect2 = head_to_actor * enemy.head.get_rect()
+	return _actor_pixel_world_position(camera, Vector2(bounds.get_center().x, bounds.position.y))
+
+func _actor_pixel_world_position(camera: Camera3D, point: Vector2, depth_offset: float = 0.0) -> Vector3:
 	var capture:=point+viewport_offset-Vector2(render_viewport.size)*.5
 	var basis:=camera.global_basis.orthonormalized()
-	return _character_colour_origin(camera,_source_fake_height_pixels())+basis*Vector3(capture.x,-capture.y,0)/PIXELS_PER_WORLD_CELL+basis.z*.035
+	return _character_colour_origin(camera,_source_fake_height_pixels())+basis*Vector3(capture.x,-capture.y,0)/PIXELS_PER_WORLD_CELL+basis.z*depth_offset
+
+func get_attached_part_world_position(part: Node2D) -> Vector3:
+	var camera := _active_world_camera()
+	if camera == null or not is_instance_valid(source_actor):
+		return global_position
+	return _actor_pixel_world_position(camera, source_actor.to_local(part.global_position))
 
 func get_hit_feedback_depth_plane() -> Dictionary:
 	var camera:=_active_world_camera()
@@ -1336,7 +1352,8 @@ func _process_profiled(_delta:float)->void:
 					var screen_heading := _cached_weapon_root.global_rotation + weapon_capture_rotation_delta
 					var horizontal := cos(screen_heading)
 					var authored_side := float(source_actor.get_meta(&"character_authored_facing_x",1.0))
-					if absf(horizontal) > 0.001 and capture.determinant() * horizontal * authored_side < 0.0:
+					# Zero leaves the source rig in charge of its screen facing (hand-thrown bottles).
+					if authored_side != 0.0 and absf(horizontal) > 0.001 and capture.determinant() * horizontal * authored_side < 0.0:
 						capture.x = -capture.x
 			capture.origin += viewport_offset
 			if not optimize_capture_transform or copy.transform != capture:

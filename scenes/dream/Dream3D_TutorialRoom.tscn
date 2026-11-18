@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/dream/dream_3d_tutorial_room.gd" id="1_controller"]
 [ext_resource type="PackedScene" path="res://scenes/entities/dream_player.tscn" id="2_player"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://scripts/story/chapter_tutorial.gd" id="11_training"]
 [ext_resource type="PackedScene" path="res://scenes/ui/tutorial_control_hint.tscn" id="12_hint"]
 [ext_resource type="PackedScene" path="res://scenes/ui/liquid_health_meter.tscn" id="13_health"]
+[ext_resource type="PackedScene" path="res://scenes/ui/low_health_blood_overlay.tscn" id="14_blood_overlay"]
 
 [sub_resource type="Environment" id="Environment_tutorial"]
 background_mode = 1
@@ -95,9 +96,12 @@ shadow_enabled = false
 [node name="GameplayUI" type="CanvasLayer" parent="."]
 layer = 20
 
+[node name="LowHealthBloodOverlay" parent="GameplayUI" instance=ExtResource("14_blood_overlay")]
+
 [node name="ControlHint" parent="GameplayUI" instance=ExtResource("12_hint")]
 
 [node name="LiquidHealthMeter" parent="GameplayUI" instance=ExtResource("13_health")]
+visible = false
 
 [node name="TalkPrompt" parent="GameplayUI" instance=ExtResource("8_bubble")]
 visible = false

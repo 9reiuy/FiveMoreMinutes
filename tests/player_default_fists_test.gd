@@ -22,7 +22,8 @@ func run() -> void:
 		player.set_meta("aim_direction_override",direction)
 		player._update_direction_animation(Vector2.ZERO,1.0/60)
 		check(player.left_hand_part.visible and player.right_hand_part.visible,"Fists visible in every facing")
-		check(player.left_hand_part.position==player.left_hand_base_position+Vector2(0,-3),"Empty guard pose persists through direction changes")
+		var grip := preload("res://scripts/entities/humanoid_hand_pose.gd").orbit_center(direction.angle() - 0.8)
+		check(player.left_hand_part.position.is_equal_approx(grip - player.left_hand_part.texture.get_size() * 0.5),"Empty guard follows the facing on its original orbit")
 	var overlay = player.get_node("HealOverlay/BodyPivot/LeftHand")
 	check(overlay.position==player.left_hand_part.position and overlay.visible,"Heal capture mirrors fist pose")
 	player.left_hand_part.hide()
@@ -36,9 +37,10 @@ func run() -> void:
 	check(player.left_hand_part.position==player.left_hand_base_position,"Armed state does not keep fist guard offset")
 	player.equip_weapon("",config)
 	check(player.left_hand_part.visible and player.right_hand_part.visible,"Removing last weapon restores fists immediately")
+	var neutral: Vector2 = player.left_hand_part.position
 	player.punch_left_hand_offset = Vector2(8,-1)
 	player._update_hands_visibility()
-	check(player.left_hand_part.position==player.left_hand_base_position+Vector2(8,-4),"Punch offset adds to fist guard without changing combat")
+	check(player.left_hand_part.position.is_equal_approx(neutral+Vector2(8,-1)),"Punch offset adds to the current unarmed guard")
 	player.dead = true
 	player._update_hands_visibility()
 	check(not player.left_hand_part.visible and not overlay.visible,"Dead player does not resurrect fist overlay")

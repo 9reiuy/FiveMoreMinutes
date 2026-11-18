@@ -94,6 +94,10 @@ func run() -> void:
 			if not str(light.name).begins_with("ReferenceRedSpill"):
 				work_neutral = work_neutral and light.light_color.b >= light.light_color.g
 		check(work_neutral, "Interior and work lights carry no green bias")
+		for end_name in ["Front", "Rear"]:
+			var signal_light: OmniLight3D = car.get_node("ReferenceRedSpill_" + end_name)
+			check(is_zero_approx(signal_light.position.z) and is_equal_approx(signal_light.light_energy, .48)
+				and signal_light.light_cull_mask == 10, "0-5 keeps its station signal lighting")
 	report["added_triangles_per_car"] = triangles
 	original.free()
 	root.add_child(styled)
@@ -193,6 +197,11 @@ func run() -> void:
 	await process_frame
 	for consist in consists[1]:
 		check(consist.reference_art != null, "Both 0-6 trains receive art")
+		for i in CONSIST.CAR_COUNT:
+			for end_name in ["Front", "Rear"]:
+				var signal_light: OmniLight3D = consist._car(i).get_node("ReferenceRedSpill_" + end_name)
+				check(is_equal_approx(signal_light.position.z, -1.30) and is_equal_approx(signal_light.light_energy, 1.15)
+					and signal_light.light_cull_mask == 11, "0-6 signal lights illuminate the near-side doors")
 		consist.set_cutaway(true)
 		check(not consist._car(2).get_node(^"Roof/ReferenceRoofEquipment").is_visible_in_tree(), "Roof extras follow combat cutaway")
 		consist.set_cutaway(false)

@@ -1,0 +1,44 @@
+[
+  {
+    "original_name": "无表情.png",
+    "file": "player_base.png",
+    "sha256": "C0FF9DC30B58641B27C8FB76F503CAB9E3338D234D1C33D8AFCBF6C79D5AE4B7",
+    "bytes": 1554004
+  },
+  {
+    "original_name": "闭嘴.png",
+    "file": "expressions/player_mouth_closed.png",
+    "sha256": "3910F792FBBAC571AF3B84192A99A076A7BD3A262EABC4DE5584090B02A3875A",
+    "bytes": 80217
+  },
+  {
+    "original_name": "张嘴.png",
+    "file": "expressions/player_mouth_open.png",
+    "sha256": "206AD57C99962F3DBA7E275B5BEF2480F965043D4BC0BD117201877C5B1ED0F1",
+    "bytes": 86656
+  },
+  {
+    "original_name": "闭眼.png",
+    "file": "expressions/player_eyes_closed.png",
+    "sha256": "050AFD3E48BB7C3AEBDE5B5AD1838C11DE1EFC90976F737E85AB9E9D2423163C",
+    "bytes": 80415
+  },
+  {
+    "original_name": "猫眼.png",
+    "file": "expressions/player_cat_eyes.png",
+    "sha256": "6D4110B559F989565461A164E90DE714AA73271350364838E239CE1EDE4352CE",
+    "bytes": 83057
+  },
+  {
+    "original_name": "难以置信.png",
+    "file": "expressions/player_disbelief.png",
+    "sha256": "5990687F8FF62F823D15CCB5E399B1B03E03C768CFF40F83DBA34A3BC88D1545",
+    "bytes": 91303
+  },
+  {
+    "original_name": "受伤.png",
+    "file": "expressions/player_injured.png",
+    "sha256": "43E6DB205566323E8D8BD1EE24AD3B2CE2A424815281C19BF5041ADAC135A0EA",
+    "bytes": 90563
+  }
+]

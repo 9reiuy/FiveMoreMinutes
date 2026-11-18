@@ -18,6 +18,15 @@ var _native_compiled_layout: Dictionary = {}
 var office_wall_cutaway: RefCounted
 
 func _ready() -> void:
+	if not use_authored_office_sample and scene_file_path == "res://scenes/dream/Dream3D_RandomDungeon.tscn":
+		# Optics and floor reflections derive their camera environments during setup.
+		# Several other levels inherit this scene's packed Environment resource.
+		var owner_node: WorldEnvironment = $Lighting/WorldEnvironment
+		var office_environment := owner_node.environment.duplicate() as Environment
+		office_environment.tonemap_mode = Environment.TONE_MAPPER_AGX
+		office_environment.tonemap_exposure = 1.30
+		owner_node.environment = office_environment
+		level_msaa_3d = Viewport.MSAA_2X
 	super._ready()
 
 func regenerate(requested_seed: int = seed) -> bool:

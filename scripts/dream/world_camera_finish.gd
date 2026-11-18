@@ -3,6 +3,7 @@ extends Node
 const NODE_NAME := &"WorldCameraFinish"
 const META := &"world_camera_finish"
 const SHADER = preload("res://shaders/dream3d/world_camera_finish.gdshader")
+const AIR := preload("res://scripts/dream/explosion_airwave.gd")
 const BASE_STRENGTH := 0.16
 const VIGNETTE_STRENGTH := 0.24
 var world: Node3D
@@ -79,6 +80,10 @@ func sync() -> void:
 	surface.visible = enabled
 	screen_copy.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT if enabled else BackBufferCopy.COPY_MODE_DISABLED
 	if not enabled: return
+	var camera: Camera3D = world.get("camera_3d")
+	var air: Node = camera.get_node_or_null(NodePath(String(AIR.HOST_NAME))) if is_instance_valid(camera) else null
+	if air != null: air.publish(material)
+	else: material.set_shader_parameter("air_count", 0)
 	var strength := 0.0
 	var owner := damage_owner()
 	if owner != null and float(owner.age) < float(owner.SHOCK_SECONDS):

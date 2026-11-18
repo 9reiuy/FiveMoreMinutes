@@ -1,5 +1,6 @@
 shader_type canvas_item;
 render_mode unshaded, blend_disabled;
+#include "res://shaders/dream3d/explosion_airwave.gdshaderinc"
 
 // Keep the accepted 640x360 discrete sampling. No blur kernel or new palette.
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
@@ -22,7 +23,7 @@ void fragment() {
 	vec2 warp = centered * radial * 0.022;
 	warp += vec2(sin(centered.y * 9.0 + phase * 12.0), 0.0) * 0.003;
 	warp += (SCREEN_UV - hit_center) * 0.012;
-	vec2 uv = clamp(SCREEN_UV + warp * shock_strength * distort_strength, vec2(0.001), vec2(0.999));
+	vec2 uv = clamp(SCREEN_UV + explosion_air_displacement(SCREEN_UV, SCREEN_PIXEL_SIZE) + warp * shock_strength * distort_strength, vec2(0.001), vec2(0.999));
 	vec2 direction = normalize(centered + vec2(0.001));
 	// A maximum, not two passes: baseline displacement is at most 0.96 px.
 	vec2 shift = direction * SCREEN_PIXEL_SIZE * (2.0 + 4.0 * edge) * max(baseline, shock_strength);

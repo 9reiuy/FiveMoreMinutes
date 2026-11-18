@@ -91,7 +91,8 @@ func flush_presentation(force:=false)->void:
 static func install(owner_world: Node3D) -> Node3D:
 	var existing: Node=owner_world.floor_root.get_node_or_null("FireExtinguisherSystem")
 	if existing!=null:return existing
-	var system:=load("res://scripts/dream/fire_extinguisher_system.gd").new() as Node3D
+	var path:="res://scripts/dream/stylized_extinguisher_system.gd" if bool(owner_world.get_meta(&"test_stylized_extinguisher",true)) else "res://scripts/dream/fire_extinguisher_system.gd"
+	var system:=load(path).new() as Node3D
 	system.name="FireExtinguisherSystem"
 	owner_world.floor_root.add_child(system)
 	system.configure(owner_world)
@@ -113,6 +114,10 @@ func configure(owner_world: Node3D) -> void:
 	mask_image.fill(Color.BLACK)
 	mask_texture=ImageTexture.create_from_image(mask_image)
 	cache_links()
+	configure_visuals()
+	spawn_wall_tanks()
+
+func configure_visuals()->void:
 	fusion_field_image=Image.create(FIELD_NEIGHBORS*2,MAX_PUFFS,false,Image.FORMAT_RGBAF)
 	fusion_field_image.fill(Color(0,0,0,0))
 	fusion_field_texture=ImageTexture.create_from_image(fusion_field_image)
@@ -148,7 +153,6 @@ func configure(owner_world: Node3D) -> void:
 		var outer_carrier:=MultiMeshInstance3D.new();outer_carrier.multimesh=outer_bank
 		outer_carrier.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(outer_carrier);outer_banks.append(outer_bank);materials.append(outer_material)
-	spawn_wall_tanks()
 
 func measure_smallest_room() -> void:
 	var counts: Dictionary={}
@@ -270,12 +274,16 @@ func advance(delta: float,immediate_present:=true) -> void:
 		if float(sources[index].age)>=DURATION:sources.remove_at(index)
 	if sources.is_empty() and cells.is_empty() and puffs.is_empty():return
 	refresh_left-=delta
+	var rebuilt:=false
 	if refresh_left<=0:
+		rebuilt=true
 		refresh_left=.1
 		var diagnostic_started:=PERF.begin(self)
 		rebuild_field()
 		PERF.end(self,"smoke_rebuild",diagnostic_started)
-		diagnostic_started=PERF.begin(self)
+	var coverage_changed:=prepare_coverage(delta)
+	if rebuilt or coverage_changed:
+		var diagnostic_started:=PERF.begin(self)
 		apply_coverage()
 		PERF.end(self,"smoke_coverage",diagnostic_started)
 	else:
@@ -284,6 +292,12 @@ func advance(delta: float,immediate_present:=true) -> void:
 		var diagnostic_started:=PERF.begin(self)
 		update_enemy_visibility()
 		PERF.end(self,"smoke_visibility",diagnostic_started)
+	advance_presentation(delta,immediate_present)
+
+func prepare_coverage(_delta:float)->bool:
+	return false
+
+func advance_presentation(delta:float,immediate_present:bool)->void:
 	for index in range(puffs.size()-1,-1,-1):
 		puffs[index].age+=delta
 		if float(puffs[index].age)>=float(puffs[index].life):puffs.remove_at(index)

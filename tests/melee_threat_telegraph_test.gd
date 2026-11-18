@@ -56,8 +56,6 @@ func stage(at: Vector2, weapon: String = "lucille") -> EmployeeEnemy:
 	actor.reaction_left = 0.0
 	actor.reload_left = 0.0
 	actor.pickup_pause_left = 0.0
-	actor.emoji_time_left = 0.0
-	actor.emoji_sprite.hide()
 	actor._update_weapon_aim()
 	return actor
 
@@ -281,7 +279,6 @@ func run() -> void:
 	if not lab.ready_world: check(false, "Independent lab loads"); quit(1); return
 	event("first_load", start)
 	lab.enemies.value = 0
-	lab.checks.pixels.button_pressed = false
 	for mode in [0, 1]:
 		var old_layer: WeakRef = weakref(lab.world.floor_root.get_node("EnemyAimTelegraph").layer)
 		lab.mode.select(mode)

@@ -20,9 +20,10 @@ class GlyphData:
 
 var elapsed: float = 0.0
 var _glyphs: Array[GlyphData] = []
+var _initial_alpha := 1.0
 
 
-static func spawn_from_label(parent: Node, source_label: Label, visible_count: int) -> Node:
+static func spawn_from_label(parent: Node, source_label: Label, visible_count: int, lift: float = 0.0) -> Control:
 	if source_label == null:
 		return null
 
@@ -31,6 +32,8 @@ static func spawn_from_label(parent: Node, source_label: Label, visible_count: i
 	fx.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fx.top_level = true
 	fx.position = Vector2.ZERO
+	fx._initial_alpha = source_label.modulate.a * source_label.self_modulate.a
+	fx.modulate.a = fx._initial_alpha
 
 	if parent != null:
 		parent.add_child(fx)
@@ -67,17 +70,17 @@ static func spawn_from_label(parent: Node, source_label: Label, visible_count: i
 		glyph_label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		glyph_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-		var start_pos: Vector2 = source_label.global_position + bounds.position
-		glyph_label.global_position = start_pos
+		var start_pos: Vector2 = source_label.get_global_transform() * bounds.position
 		if bounds.size.x > 0.0 and bounds.size.y > 0.0:
 			glyph_label.pivot_offset = bounds.size * 0.5
 
 		fx.add_child(glyph_label)
+		glyph_label.global_position = start_pos
 
 		var g := GlyphData.new()
 		g.label = glyph_label
 		g.pos = start_pos
-		g.vel = Vector2(randf_range(-40.0, 40.0), randf_range(20.0, 60.0))
+		g.vel = Vector2(randf_range(-40.0, 40.0), randf_range(20.0, 60.0) - lift)
 		g.angular_velocity = randf_range(-5.0, 5.0)
 		fx._glyphs.append(g)
 
@@ -96,7 +99,7 @@ func _process(delta: float) -> void:
 
 	if elapsed > FADE_START:
 		var alpha: float = clampf((LIFETIME - elapsed) / FADE_DURATION, 0.0, 1.0)
-		modulate.a = alpha
+		modulate.a = _initial_alpha * alpha
 
 	if elapsed >= LIFETIME:
 		queue_free()

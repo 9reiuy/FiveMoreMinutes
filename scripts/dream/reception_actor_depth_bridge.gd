@@ -20,15 +20,45 @@ func _process(delta: float) -> void:
 	if configured and is_instance_valid(actor_sprite) and is_instance_valid(source_actor) and source_actor.is_in_group(&"reception_npc"):
 		var camera := _active_world_camera()
 		if camera != null:
-			# Peaceful NPCs stay outside combat groups, but use the same authored
-			# foot contact as characters instead of the generic prop-plane offset.
-			actor_sprite.global_position=_character_colour_origin(camera,0.0)
+			_place_npc_on_pixel_grid(camera)
 		_sync_contact_shadow()
 		return
 	# Other presentation planes use the generic carrier branch.
 	if configured and is_instance_valid(actor_sprite) and not character_projection and not (ground_only and (_cached_is_player or _cached_is_enemy)):
 		actor_sprite.global_position.y+=_lobby_height()
 	_sync_contact_shadow()
+
+func _place_npc_on_pixel_grid(camera: Camera3D) -> void:
+	var original_origin := _character_colour_origin(camera, 0.0)
+	var facing := camera.global_basis.orthonormalized()
+	var texel_world := actor_sprite.pixel_size
+	var center := Vector2(render_viewport.size) * 0.5
+	var contact := body_contact_local + viewport_offset - center
+	var local_foot := Vector3(contact.x, -contact.y, 0.0) * texel_world
+	var world_foot := original_origin + facing * local_foot
+	if camera.is_position_behind(world_foot):
+		actor_sprite.global_position = original_origin
+		return
+
+	var foot_px := camera.unproject_position(world_foot)
+	var next_px := camera.unproject_position(world_foot + facing.x * texel_world)
+	var pixels_per_texel := next_px.x - foot_px.x
+	if pixels_per_texel <= 0.001:
+		actor_sprite.global_position = original_origin
+		return
+
+	# Resize the full capture uniformly around its foot contact. Each source
+	# texel maps to a whole square of display pixels at the native resolution.
+	var integer_pixels := maxf(1.0, roundf(pixels_per_texel))
+	var ratio := integer_pixels / pixels_per_texel
+	var fitted := Basis(facing.x * ratio, facing.y * ratio, facing.z)
+	var origin := world_foot - fitted * local_foot
+	var local_corner := Vector3(-center.x, center.y, 0.0) * texel_world
+	var corner_px := camera.unproject_position(origin + fitted * local_corner)
+	var snap := corner_px.round() - corner_px
+	origin += (facing.x * snap.x - facing.y * snap.y) * (texel_world / pixels_per_texel)
+	actor_sprite.global_transform = Transform3D(fitted, origin)
+
 
 func _sync_contact_shadow() -> void:
 	if not configured or not is_instance_valid(source_actor) or not source_paths.has(^"CharacterVisual"):return

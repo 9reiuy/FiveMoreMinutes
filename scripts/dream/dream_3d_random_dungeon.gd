@@ -8,6 +8,15 @@ signal elevator_floor_transition_completed(new_floor_index: int)
 signal firearm_render_preparation_finished(report: Dictionary)
 signal floor_exit_render_preparation_finished(report: Dictionary)
 signal floor_loading_render_preparation_finished(report: Dictionary)
+signal level_msaa_changed(mode: Viewport.MSAA)
+
+## The display owns the world viewport. Retain the level's request across
+## staging and standalone reparenting without changing the window or the HUD.
+var level_msaa_3d: Viewport.MSAA = Viewport.MSAA_DISABLED:
+	set(mode):
+		if level_msaa_3d != mode:
+			level_msaa_3d = mode
+			level_msaa_changed.emit(mode)
 
 var room_visibility: Node
 var target_highlight: Node
@@ -84,6 +93,10 @@ const WALL_SCENE: PackedScene = preload("res://scenes/dream/3d/WallStraight3D.ts
 const THEME_SCRIPT: Script = preload("res://scripts/dream/dream_room_environment_theme.gd")
 const DOOR_SCENE: PackedScene = preload("res://scenes/dream/3d/PhysicalDoor3D.tscn")
 const EMPLOYEE_SCENE: PackedScene = preload("res://scenes/entities/employee_enemy.tscn")
+const RANGED_EMPLOYEE_SCENE := preload("res://scenes/entities/ranged_employee.tscn")
+const SCIENTIST_SCENE := preload("res://scenes/entities/scientist_enemy.tscn")
+const ENGINEER_SCENE := preload("res://scenes/entities/engineer_enemy.tscn")
+const SAFETY_HELMET_PICKUP := preload("res://scripts/dream/safety_helmet_pickup.gd")
 const EMPLOYEE_CONFIG: DemoConfig = preload("res://resources/demo_config.tres")
 var config: DemoConfig = EMPLOYEE_CONFIG
 var _3d_firearm_profile_applied := false
@@ -1321,7 +1334,7 @@ func _ready() -> void:
 	interaction_resolver = preload("res://scripts/dream/dream_interaction_resolver.gd").new()
 	interaction_resolver.name = "DreamInteractionResolver"
 	add_child(interaction_resolver)
-	interaction_resolver.configure(player, [&"world_weapon_pickups", &"employee_badge_pickup", &"floor_power_switches"])
+	interaction_resolver.configure(player, [&"world_weapon_pickups", &"world_equipment_pickups", &"employee_badge_pickup", &"floor_power_switches"])
 	run_interface = preload("res://scripts/dream/dream_3d_run_interface.gd").new()
 	add_child(run_interface)
 	run_interface.configure(self, ui, crosshair)
@@ -1651,6 +1664,11 @@ func _update_world_weapon_interaction() -> void:
 	current_world_weapon_target = nearest
 	if nearest == null:
 		return
+	if nearest.is_in_group(&"world_equipment_pickups"):
+		if Input.is_action_just_pressed("pickup_weapon") and not weapon_interaction_consumed_until_release:
+			weapon_interaction_consumed_until_release = true
+			nearest.call("collect")
+		return
 	if nearest.is_in_group(&"floor_power_switches"):
 		if Input.is_action_just_pressed("pickup_weapon") and not weapon_interaction_consumed_until_release:
 			weapon_interaction_consumed_until_release=true
@@ -1682,6 +1700,11 @@ func _update_world_weapon_interaction() -> void:
 			else String(player.get("selected_weapon_id")).is_empty()
 		)
 		if empty_handed:
+			# A disarmed pistol can land at the player's feet in the middle of a combo.
+			if player.has_method("is_using_fists") and player.is_using_fists():
+				if not Input.is_action_just_pressed("pickup_weapon") or weapon_interaction_consumed_until_release:
+					return
+				weapon_interaction_consumed_until_release = true
 			_swap_world_weapon(nearest)
 			return
 		# Automatic pickup fills an empty category without changing the active
@@ -6595,12 +6618,7 @@ func _begin_cutout_query_snapshot() -> void:
 
 	if is_instance_valid(door_root):
 		if numeric_furniture_scan and not legacy_wall_scan:
-			var door_child_count := door_root.get_child_count()
-			if door_child_count != _last_door_root_child_count:
-				_last_door_root_child_count = door_child_count
-				_static_cutout_door_candidates.clear()
-				_collect_static_cutout_door_candidates(door_root)
-			for visual in _static_cutout_door_candidates:
+			for visual in _get_cutout_door_candidates():
 				if is_instance_valid(visual) and visual.visible:
 					_cutout_query_doors.append(visual)
 		else:
@@ -6628,6 +6646,14 @@ func _ensure_cutout_query_furniture() -> void:
 		var visual := visual_value as VisualInstance3D if is_instance_valid(visual_value) else null
 		_cutout_furniture_visuals.append(visual)
 		_cutout_furniture_positions.append(visual.global_position if is_instance_valid(visual) else Vector3(INF, INF, INF))
+
+func _get_cutout_door_candidates() -> Array[VisualInstance3D]:
+	var count := door_root.get_child_count()
+	if count != _last_door_root_child_count:
+		_last_door_root_child_count = count
+		_static_cutout_door_candidates.clear()
+		_collect_static_cutout_door_candidates(door_root)
+	return _static_cutout_door_candidates
 
 func _collect_static_cutout_door_candidates(node: Node) -> void:
 	for child in node.get_children():
@@ -6861,6 +6887,33 @@ func invalidate_actor_occlusion_bounds(actor: Node2D) -> void:
 	if actor != null and is_instance_valid(actor):
 		_occlusion_bounds_cache.erase(actor.get_instance_id())
 
+
+## Text is on the clear HUD. Check the full camera ray, including height: a
+## top-down ray frequently passes above a wall between the camera and actor.
+func is_overhead_text_occluded(point: Vector3) -> bool:
+	if authored_cutout != null and authored_cutout.blocks_view(camera_3d, point):
+		return true
+	var eye := camera_3d.project_ray_origin(camera_3d.unproject_position(point))
+	var start := Vector2(eye.x, eye.z)
+	var end := Vector2(point.x, point.z)
+	var first_bin := Vector2i(((start.min(end) - Vector2.ONE) / 4.0).floor())
+	var last_bin := Vector2i(((start.max(end) + Vector2.ONE) / 4.0).floor())
+	for z in range(first_bin.y, last_bin.y + 1):
+		for x in range(first_bin.x, last_bin.x + 1):
+			for index: int in _static_cutout_wall_bins.get(Vector2i(x, z), _empty_bin_indices):
+				if _visual_blocks_overhead_text(_static_cutout_wall_meshes[index], eye, point):
+					return true
+	for door_visual in _get_cutout_door_candidates():
+		if _visual_blocks_overhead_text(door_visual, eye, point):
+			return true
+	return false
+
+func _visual_blocks_overhead_text(visual: Variant, eye: Vector3, point: Vector3) -> bool:
+	if not is_instance_valid(visual) or not visual is GeometryInstance3D:
+		return false
+	if not visual.is_visible_in_tree() or (visual.layers & camera_3d.cull_mask) == 0 or visual.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
+		return false
+	return visual.get_aabb().intersects_segment(visual.to_local(eye), visual.to_local(point)) != null
 
 func _actor_is_occluded_by_wall_or_door(actor_world: Vector3) -> bool:
 	if camera_3d == null or not is_instance_valid(camera_3d):
@@ -8223,6 +8276,7 @@ func _resolve_room_encounter_descriptor(room_id: int) -> bool:
 			drop_entries = _procedural_drop_entries(room_id, room, occupied, encounter_rng)
 	if _is_otxo_mansion() and String(room.get("archetype", "")) == "corridor":
 		drop_entries.clear()
+	var scientist_slot := _scientist_encounter_slot(room, enemy_entries.size())
 	for entry_index in range(enemy_entries.size()):
 		var entry: Dictionary = enemy_entries[entry_index]
 		if _is_otxo_mansion():
@@ -8252,8 +8306,11 @@ func _resolve_room_encounter_descriptor(room_id: int) -> bool:
 						firearms.append(candidate)
 				entry["weapon_id"] = firearms[role_rng.randi_range(0, firearms.size() - 1)] if not firearms.is_empty() else "basic"
 		entry["badge_carrier"] = room_id == badge_carrier_room_id and entry_index == badge_carrier_spawn_index
+		if entry_index == scientist_slot:
+			entry["type"] = &"scientist"
+			entry["weapon_id"] = ""
 		var etype: StringName = StringName(entry.get("type", &"employee"))
-		if not entry.has("weapon_id") or String(entry.get("weapon_id", "")).is_empty():
+		if etype != &"scientist" and String(entry.get("weapon_id", "")).is_empty():
 			if etype == &"waitress":
 				entry["weapon_id"] = "books"
 				entry["skin_index"] = 0
@@ -11081,13 +11138,47 @@ func _spawn_room_furniture(room_filter: int = -1) -> void:
 			_spawn_furniture_presentation(furniture)
 
 
+func _scientist_encounter_slot(room: Dictionary, count: int) -> int:
+	if count <= 0 or bool(room.get("authored_sample", false)):
+		return -1
+	var kind := String(room.get("archetype", ""))
+	if kind in ["archive", "laboratory"]:
+		return count - 1
+	if count >= 2 and kind not in ["corridor", "pantry", "restroom"] and posmod(_derive_room_encounter_seed(int(room.id)), 4) == 0:
+		return count - 1
+	return -1
+
+func spawn_safety_helmet_pickup(at: Vector2, room_id: int, generation_token: int = -1) -> Node2D:
+	if not is_inside_tree() or not is_instance_valid(pickup_root) \
+		or (generation_token >= 0 and generation_token != _layout_generation):
+		return null
+	var pickup := SAFETY_HELMET_PICKUP.new()
+	pickup.owner_world = self
+	pickup.position = at
+	pickup.set_meta(&"dream_room_id", room_id)
+	pickup.set_meta(&"content_kind", &"equipment_pickup")
+	pickup_root.add_child(pickup)
+	_spawn_depth_bridge(pickup, [^"HatSprite"], Vector2(64, 64), BaseMaterial3D.BILLBOARD_ENABLED, 0.35, 0.0)
+	return pickup
+
+
+func _regular_employee_scene(enemy_type: StringName) -> PackedScene:
+	match enemy_type:
+		&"employee": return RANGED_EMPLOYEE_SCENE
+		&"scientist": return SCIENTIST_SCENE
+		&"engineer": return ENGINEER_SCENE
+		_: return EMPLOYEE_SCENE
+
 func _spawn_regular_employee(room_id: int, position: Vector2, enemy_type: StringName = &"employee", badge_carrier: bool = false, weapon_id: String = "", skin_index: int = 0) -> EmployeeEnemy:
 	if enemy_root == null or EMPLOYEE_SCENE == null:
 		return null
 	weapon_id = _enemy_initial_weapon_id(weapon_id, room_id, enemy_count)
-	var employee := EMPLOYEE_SCENE.instantiate() as EmployeeEnemy
+	var scene := _regular_employee_scene(enemy_type)
+	var employee := scene.instantiate() as EmployeeEnemy
 	if employee == null:
 		return null
+	if enemy_type in [&"scientist", &"engineer"]:
+		employee._cached_dream_world = self
 	employee.position = position
 	employee.global_position = position
 	enemy_root.add_child(employee)
@@ -11107,7 +11198,7 @@ func _spawn_regular_employee(room_id: int, position: Vector2, enemy_type: String
 		# Waitress is authored with the formal Books weapon.  This does not add a
 		# second AI or weapon implementation and the Books pickup remains valid.
 		employee.call("equip_weapon", "books", 0)
-	elif employee.has_method("equip_weapon"):
+	elif enemy_type != &"scientist" and employee.has_method("equip_weapon"):
 		if weapon_id.is_empty() and _is_otxo_mansion():
 			var pool := _employee_weapon_pool()
 			var equip_rng := RandomNumberGenerator.new()
@@ -11158,6 +11249,7 @@ func _spawn_room_enemies() -> void:
 				var furniture := furniture_variant as Node2D
 				if furniture != null and int(furniture.get_meta(&"dream_room_id", -1)) == room_id:
 					placed.append(furniture.global_position)
+		var scientist_slot := _scientist_encounter_slot(room, desired)
 		for _index in range(desired):
 			if enemy_count >= effective_global_enemy_cap:
 				break
@@ -11167,7 +11259,7 @@ func _spawn_room_enemies() -> void:
 			var employee := _spawn_regular_employee(
 				room_id,
 				position,
-				&"employee",
+				&"scientist" if _index == scientist_slot else &"employee",
 				room_id == badge_carrier_room_id and _index == badge_carrier_spawn_index
 			)
 			if employee == null:
@@ -13763,6 +13855,9 @@ func is_furniture_shot_path_clear(from_position: Vector2, to_position: Vector2, 
 		var collider := hit.get("collider") as Node2D
 		if collider == null or not collider.is_in_group(&"damageable_props"):
 			return false
+		# An occupied vehicle is the intended target, not cover that prevents firing at its driver.
+		if collider.has_method("is_combat_target_for") and bool(collider.call("is_combat_target_for", source_actor)):
+			return true
 		if is_nan(height_pixels):
 			height_pixels = _actor_muzzle_visual_plane(source_actor, from_position).x * CELL_PIXELS
 		if OfficeFurnitureCatalog.allows_projectile_pass_through(collider):
@@ -13837,6 +13932,8 @@ func resolve_player_hit(enemy: Node, base_damage: float, hit_origin: Vector2, da
 	if enemy == null or not is_instance_valid(enemy) or enemy.get("dead") == true:
 		return {}
 	if enemy.has_method("is_damage_runtime_active") and not bool(enemy.is_damage_runtime_active()):
+		return {}
+	if enemy.has_method("allows_combat_damage") and not enemy.allows_combat_damage(hit_origin, damage_source):
 		return {}
 	var resolved_damage := base_damage
 	var feedback_snapshot:=_capture_player_hit_feedback(enemy)

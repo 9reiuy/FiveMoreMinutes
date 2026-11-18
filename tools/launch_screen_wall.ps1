@@ -1,14 +1,14 @@
 param(
     [switch]$Diagnostic,
     [string]$DiagnosticProfile='',
-    [ValidateSet('main','tutorial','level01','level02','level02vehicles','linked0102','level06','level11')][string]$Presentation='main',
+    [ValidateSet('main','tutorial','level01','level02','level02vehicles','linked0102','level06','h06chapter','h06boss')][string]$Presentation='main',
     [string]$Godot=''
 )
 $ErrorActionPreference='Stop'
 $projectRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$normalProfiles=@((Join-Path $projectRoot '.runtime\screen_wall_play'),(Join-Path $projectRoot '.runtime\tutorial_maintenance\user_data'),(Join-Path $projectRoot '.runtime\megastructure_whitebox\user_data'),(Join-Path $projectRoot '.runtime\parking_garage\user_data'),(Join-Path $projectRoot '.runtime\parking_vehicle_preview\user_data'),(Join-Path $projectRoot '.runtime\linked_0102\user_data'),(Join-Path $projectRoot '.runtime\train_06\user_data'))
-$normalProfiles+=Join-Path $projectRoot '.runtime\research_atrium11\user_data'
-$profileRoot=$normalProfiles[@{main=0;tutorial=1;level01=2;level02=3;level02vehicles=4;linked0102=5;level06=6;level11=7}[$Presentation]]
+$normalProfiles=@((Join-Path $projectRoot '.runtime\screen_wall_play'),(Join-Path $projectRoot '.runtime\tutorial_maintenance\user_data'),(Join-Path $projectRoot '.runtime\megastructure_whitebox\user_data'),(Join-Path $projectRoot '.runtime\parking_garage\user_data'),(Join-Path $projectRoot '.runtime\parking_vehicle_preview\user_data'),(Join-Path $projectRoot '.runtime\linked_0102\user_data'),(Join-Path $projectRoot '.runtime\train_06\user_data'),(Join-Path $projectRoot '.runtime\h06_chapter\user_data'))
+$normalProfiles+=Join-Path $projectRoot '.runtime\h06_boss_test\user_data'
+$profileRoot=$normalProfiles[@{main=0;tutorial=1;level01=2;level02=3;level02vehicles=4;linked0102=5;level06=6;h06chapter=7;h06boss=8}[$Presentation]]
 if($Diagnostic){
     if([string]::IsNullOrWhiteSpace($DiagnosticProfile)){throw 'A private diagnostic profile is required.'}
     $profileRoot=[IO.Path]::GetFullPath($DiagnosticProfile).TrimEnd([char[]]'\/')
@@ -56,7 +56,7 @@ try{
         [IO.File]::WriteAllText((Join-Path $settingsDir 'game_settings.cfg'),"[audio]`nmaster_volume=0`nmusic_volume=0`nsfx_volume=0`n",(New-Object Text.UTF8Encoding $false))
         $engineArgs+=@('--audio-driver','Dummy','--position','-30000,-30000','--quit-after','360','--print-fps','--log-file',('"'+(Join-Path $profileRoot 'engine.log')+'"'))
     }
-    $engineArgs+=@{main='res://scenes/app/main.tscn';tutorial='res://scenes/testing/TutorialMaintenanceDisplay.tscn';level01='res://scenes/testing/MegastructureWhiteboxDisplay.tscn';level02='res://scenes/testing/ParkingGarageDisplay.tscn';level02vehicles='res://scenes/testing/ParkingVehiclePreview.tscn';linked0102='res://scenes/testing/LinkedMaintenanceGarageDisplay.tscn';level06='res://scenes/testing/LinkedMaintenanceGarageDisplay.tscn';level11='res://scenes/testing/ResearchAtriumTestLab.tscn'}[$Presentation]
+    $engineArgs+=@{main='res://scenes/app/main.tscn';tutorial='res://scenes/testing/TutorialMaintenanceDisplay.tscn';level01='res://scenes/testing/MegastructureWhiteboxDisplay.tscn';level02='res://scenes/testing/ParkingGarageDisplay.tscn';level02vehicles='res://scenes/testing/ParkingVehiclePreview.tscn';linked0102='res://scenes/testing/LinkedMaintenanceGarageDisplay.tscn';level06='res://scenes/testing/LinkedMaintenanceGarageDisplay.tscn';h06chapter='res://scenes/testing/H06ChapterWhiteboxLab.tscn';h06boss='res://scenes/testing/H06BossAttackLab.tscn'}[$Presentation]
     if($Presentation -eq 'level06'){$engineArgs+=@('--','--train-only')}
     $windowStyle=if($Diagnostic){'Hidden'}else{'Normal'}
     $game=Start-Process -FilePath $enginePath -ArgumentList $engineArgs -WorkingDirectory $projectRoot -WindowStyle $windowStyle -PassThru

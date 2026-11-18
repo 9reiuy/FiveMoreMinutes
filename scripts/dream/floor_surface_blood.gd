@@ -53,6 +53,7 @@ func sync_scene() -> void:
 	_dirty = false
 
 func _eligible(mesh: MeshInstance3D) -> bool:
+	if bool(mesh.get_meta(&"surface_blood_excluded", false)): return false
 	if mesh.mesh == null: return false
 	var n := String(mesh.name).to_lower()
 	if "shadow" in n or "reflection" in n or "glow" in n or "glass" in n or "window" in n or "exterior" in n: return false

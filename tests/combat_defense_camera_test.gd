@@ -34,6 +34,9 @@ func run() -> void:
 	Engine.max_fps=60
 	var pixel:=not "--native" in OS.get_cmdline_user_args()
 	output="res://.runtime/combat_defense_20261022/"+("pixel_palette" if pixel else "native_original")
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--artifact-dir="):
+			output=arg.trim_prefix("--artifact-dir=")
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
 	root.get_node("SettingsManager").set_setting(&"pixelation_enabled",pixel)
 	main=load("res://scenes/app/main.tscn").instantiate()
@@ -83,15 +86,19 @@ func run() -> void:
 	enemy.reload_left=0
 	enemy.pickup_pause_left=0
 	enemy._update_weapon_aim()
+	enemy._update_visual_target_perception()
 	enemy._begin_ranged_attack_windup()
 	check(enemy.ranged_attack_windup_pending,"Formal enemy starts visible windup before firing")
 	check(not world.floor_root.get_node("EnemyAimTelegraph").aim_segment(enemy).is_empty(),"Visible enemy contributes a red threat line")
 	await frames(2)
 	await shot("01_aim_start")
-	enemy._update_ranged_attack_windup(.39)
+	enemy._update_ranged_attack_windup(.51)
 	await frames(2)
 	await shot("02_aim_locked")
-	enemy._update_ranged_attack_windup(.12)
+	var clock: Node = root.get_node("DreamTimeController")
+	var previous_slow_time: bool = clock.slow_time_enabled
+	clock.set_slow_time_enabled(false)
+	enemy._update_ranged_attack_windup(.20)
 	enemy.process_mode=Node.PROCESS_MODE_INHERIT
 	enemy.set_process(true)
 	enemy.set_physics_process(true)
@@ -102,13 +109,16 @@ func run() -> void:
 	var repeated_aim_samples:=0
 	for frame in 60:
 		await process_frame
+		await RenderingServer.frame_post_draw
 		var per_enemy: Array=live_presenter.prepared_lines.filter(func(line: Dictionary) -> bool: return line.id==enemy.get_instance_id())
 		if per_enemy.size()==1: live_samples+=1
 		if per_enemy.size()>1: duplicate_samples+=1
 		if enemy.ranged_attack_magazine_primed and per_enemy.size()>0: repeated_aim_samples+=1
 		if frame%2==0: await shot("aim_%03d" % (frame/2))
-	check(enemy.ranged_attack_shot_serial>live_serial and repeated_aim_samples==0,"Live automatic enemy repeats shots without repeating windup inside magazine")
+	check(enemy.ranged_attack_shot_serial>live_serial,"An active rifle burst fires follow-ups on the normal combat clock")
+	check(repeated_aim_samples==0,"The rendered rifle burst adds no new warning before its third shot")
 	check(duplicate_samples==0,"Live camera never draws two lines for the same enemy")
+	clock.set_slow_time_enabled(previous_slow_time)
 	enemy.set_process(false)
 	enemy.set_physics_process(false)
 	enemy.process_mode=Node.PROCESS_MODE_DISABLED

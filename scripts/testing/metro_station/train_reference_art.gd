@@ -25,7 +25,7 @@ func apply_train(train: Node3D) -> void:
 		dress_connector(train.get_node("Gangway_%02d" % (index + 1)))
 
 
-func apply_car(car: Node3D, index: int) -> void:
+func apply_car(car: Node3D, index: int, near_door_spill := false) -> void:
 	if car.has_meta(&"train_reference_art"): return
 	car.set_meta(&"train_reference_art", true)
 	_detail_maps(car)
@@ -43,15 +43,22 @@ func apply_car(car: Node3D, index: int) -> void:
 	for x: float in [-6.72, 6.72]:
 		var light := OmniLight3D.new()
 		light.name = "ReferenceRedSpill_%s" % ("Rear" if x < 0.0 else "Front")
-		light.position = Vector3(x, 1.12, 0.0)
 		light.light_color = Color("ed3343")
-		light.light_energy = .48
-		light.omni_range = 2.25
 		light.omni_attenuation = 1.6
-		light.light_specular = .15
 		light.light_volumetric_fog_energy = 0.0
-		light.light_cull_mask = 2 | 8
 		light.shadow_enabled = false
+		if near_door_spill:
+			light.position = Vector3(x, 1.13, -1.30)
+			light.light_energy = 1.15
+			light.omni_range = 2.35
+			light.light_specular = .38
+			light.light_cull_mask = 1 | 2 | 8
+		else:
+			light.position = Vector3(x, 1.12, 0.0)
+			light.light_energy = .48
+			light.omni_range = 2.25
+			light.light_specular = .15
+			light.light_cull_mask = 2 | 8
 		car.add_child(light)
 		for side: float in [-1.0, 1.0]:
 			var work := OmniLight3D.new()

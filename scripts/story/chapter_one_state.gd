@@ -50,6 +50,11 @@ static func submit(state: Dictionary,event: String,payload: Dictionary={}) -> bo
 		"returned":
 			if stage!="RETURN": return false
 			state.stage="WAKE" if int(state.get("flow_revision",1))>=2 else "BED"
+		"h06_exit":
+			if stage not in ["ASCENT","RETURN"]: return false
+			state.floor=3
+			if str(state.build).is_empty(): state.build="h06"
+			state.stage="WAKE" if int(state.get("flow_revision",1))>=2 else "BED"
 		"lie_down":
 			if stage!="BED": return false
 			state.stage="COAST"

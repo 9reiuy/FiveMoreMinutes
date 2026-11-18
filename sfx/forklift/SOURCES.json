@@ -1,0 +1,32 @@
+[
+  {
+    "role": "01_start_motor",
+    "url": "https://freesound.org/people/kentspublicdomain/sounds/476943/",
+    "license": "CC0 1.0",
+    "author": "kentspublicdomain",
+    "preview_url": "https://cdn.freesound.org/previews/476/476943_5583936-hq.mp3",
+    "size": 115305,
+    "sha256": "2c5196f7c9a286e5dd0f98c2a32c847eb2c5fdd81e46d2b84b9e2cb5636e2929",
+    "selected_preview_filename": "01_start_motor.mp3"
+  },
+  {
+    "role": "02_boost_rev",
+    "url": "https://freesound.org/people/PieTheAnimator45/sounds/608652/",
+    "license": "CC BY 4.0",
+    "author": "PieTheAnimator45",
+    "preview_url": "https://cdn.freesound.org/previews/608/608652_13440947-hq.mp3",
+    "size": 557808,
+    "sha256": "d8cbdd21409b0474f3607ed6331f7638fae8f876bcae46d56a81adc324184a54",
+    "selected_preview_filename": "02_boost_rev.mp3"
+  },
+  {
+    "role": "03_drift_skid",
+    "url": "https://freesound.org/people/loganzsound/sounds/774265/",
+    "license": "CC0 1.0",
+    "author": "loganzsound",
+    "preview_url": "https://cdn.freesound.org/previews/774/774265_16682330-hq.mp3",
+    "size": 36000,
+    "sha256": "09ab2f7447c511229169333952de7ac44cb11fa497feb11a51b5852e4bb6a22b",
+    "selected_preview_filename": "03_drift_skid.mp3"
+  }
+]

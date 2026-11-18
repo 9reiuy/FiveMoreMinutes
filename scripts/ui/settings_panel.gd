@@ -19,8 +19,6 @@ const CONTROL_COL_WIDTH := 120.0
 @onready var sfx_slider: HSlider = $Rows/SFX/Slider
 @onready var sfx_value: Label = $Rows/SFX/Value
 @onready var sfx_desc: Button = $Rows/SFX/Desc
-@onready var pixelation_check: CheckBox = $Rows/Pixelation/Check
-@onready var pixelation_desc: Button = $Rows/Pixelation/Desc
 @onready var shadow_quality_option: OptionButton = $Rows/ShadowQuality/Option
 @onready var shadow_quality_desc: Button = $Rows/ShadowQuality/Desc
 @onready var assistance_button: Button = $Rows/AssistanceButton
@@ -44,9 +42,6 @@ func _ready() -> void:
 	master_slider.value_changed.connect(_on_volume_changed.bind(&"master_volume"))
 	music_slider.value_changed.connect(_on_volume_changed.bind(&"music_volume"))
 	sfx_slider.value_changed.connect(_on_volume_changed.bind(&"sfx_volume"))
-	pixelation_check.focus_mode = Control.FOCUS_NONE
-	pixelation_check.mouse_entered.connect(_play_hover)
-	pixelation_check.toggled.connect(_on_pixelation_toggled)
 	shadow_quality_option.focus_mode = Control.FOCUS_NONE
 	shadow_quality_option.mouse_entered.connect(_play_hover)
 	for quality_name in ["低", "默认", "高"]:
@@ -89,7 +84,6 @@ func _wire_row_selection() -> void:
 	_bind_control_hover(master_slider, master_desc)
 	_bind_control_hover(music_slider, music_desc)
 	_bind_control_hover(sfx_slider, sfx_desc)
-	_bind_control_hover(pixelation_check, pixelation_desc)
 	_bind_control_hover(shadow_quality_option, shadow_quality_desc)
 	_bind_control_hover(auto_vault_check, auto_vault_desc)
 	_bind_control_hover(screen_shake_check, screen_shake_desc)
@@ -102,7 +96,7 @@ func _reregister_row_buttons() -> void:
 		buttons = [auto_vault_desc, screen_shake_desc, canned_laughter_desc, assistance_button]
 	else:
 		buttons = [
-			master_desc, music_desc, sfx_desc, pixelation_desc,
+			master_desc, music_desc, sfx_desc,
 			shadow_quality_desc, assistance_button,
 		]
 	for button in buttons:
@@ -152,7 +146,6 @@ func _sync_all() -> void:
 		master_slider.value = sm.call("get_volume", &"master_volume")
 		music_slider.value = sm.call("get_volume", &"music_volume")
 		sfx_slider.value = sm.call("get_volume", &"sfx_volume")
-		pixelation_check.set_pressed_no_signal(bool(sm.call("get_setting", &"pixelation_enabled", false)))
 		var quality_index := SHADOW_QUALITIES.find(String(sm.call("get_setting", &"shadow_quality", "standard")))
 		shadow_quality_option.select(quality_index if quality_index >= 0 else 1)
 		auto_vault_check.set_pressed_no_signal(bool(sm.get_setting(&"auto_vault_enabled", true)))
@@ -180,15 +173,6 @@ func _on_volume_changed(value: float, setting_name: StringName) -> void:
 		slider = sfx_slider
 	if slider != null:
 		_bounce_slider_thumb(slider)
-
-
-func _on_pixelation_toggled(pressed: bool) -> void:
-	if syncing:
-		return
-	var sm := _get_sm()
-	if sm != null:
-		sm.call("set_setting", &"pixelation_enabled", pressed)
-	SFX.play_event(&"confirm")
 
 
 func _on_setting_changed(_setting_name: StringName, _value: Variant) -> void:
@@ -256,7 +240,7 @@ func _apply_nier_control_styles() -> void:
 			node.add_theme_color_override("font_color", NIER_ACCENT)
 	for slider in [master_slider, music_slider, sfx_slider]:
 		_style_nier_slider(slider)
-	for check in [pixelation_check, auto_vault_check, screen_shake_check, canned_laughter_check]:
+	for check in [auto_vault_check, screen_shake_check, canned_laughter_check]:
 		_style_nier_checkbox(check)
 	for option in [shadow_quality_option]:
 		_style_nier_cycle(option)
@@ -422,7 +406,7 @@ func _queue_nier_checkbox_hover_refresh() -> void:
 
 
 func _refresh_all_nier_checkbox_hovers() -> void:
-	for check in [pixelation_check, auto_vault_check, screen_shake_check, canned_laughter_check]:
+	for check in [auto_vault_check, screen_shake_check, canned_laughter_check]:
 		if check != null and is_instance_valid(check):
 			_refresh_nier_checkbox_hover_visual(check)
 
@@ -443,8 +427,6 @@ func _is_nier_checkbox_hovered(check: CheckBox) -> bool:
 
 
 func _desc_for_check(check: CheckBox) -> Button:
-	if check == pixelation_check:
-		return pixelation_desc
 	if check == auto_vault_check:
 		return auto_vault_desc
 	if check == screen_shake_check:
@@ -669,11 +651,6 @@ func _on_nier_cycle_gui_input(event: InputEvent, option: OptionButton) -> void:
 
 func _wire_desc_confirm_actions() -> void:
 	# Accept / click on left description also drives the right-hand control.
-	if not bool(pixelation_desc.get_meta(&"nier_desc_confirm", false)):
-		pixelation_desc.pressed.connect(func() -> void:
-			pixelation_check.button_pressed = not pixelation_check.button_pressed
-		)
-		pixelation_desc.set_meta(&"nier_desc_confirm", true)
 	if not bool(auto_vault_desc.get_meta(&"nier_desc_confirm", false)):
 		auto_vault_desc.pressed.connect(func() -> void:
 			auto_vault_check.button_pressed = not auto_vault_check.button_pressed
@@ -767,7 +744,7 @@ func _apply_two_column_layout() -> void:
 		if box is HBoxContainer:
 			(box as HBoxContainer).alignment = BoxContainer.ALIGNMENT_BEGIN
 	var desc_nodes: Array[Button] = [
-		master_desc, music_desc, sfx_desc, pixelation_desc,
+		master_desc, music_desc, sfx_desc,
 		shadow_quality_desc, auto_vault_desc, screen_shake_desc, canned_laughter_desc,
 	]
 	for desc in desc_nodes:
@@ -779,7 +756,7 @@ func _apply_two_column_layout() -> void:
 	for slider in [master_slider, music_slider, sfx_slider]:
 		if slider != null:
 			slider.custom_minimum_size = Vector2(CONTROL_COL_WIDTH, maxf(slider.custom_minimum_size.y, 16.0))
-	for check in [pixelation_check, auto_vault_check, screen_shake_check, canned_laughter_check]:
+	for check in [auto_vault_check, screen_shake_check, canned_laughter_check]:
 		if check != null:
 			check.custom_minimum_size = Vector2(CONTROL_COL_WIDTH, maxf(check.custom_minimum_size.y, 20.0))
 	for option in [shadow_quality_option]:
@@ -808,8 +785,6 @@ func _control_for_desc(desc: Button) -> Control:
 		return music_slider
 	if desc == sfx_desc:
 		return sfx_slider
-	if desc == pixelation_desc:
-		return pixelation_check
 	if desc == shadow_quality_desc:
 		return shadow_quality_option
 	if desc == auto_vault_desc:

@@ -1,0 +1,10 @@
+[gd_scene load_steps=4 format=3]
+[ext_resource type="PackedScene" path="res://scenes/testing/H06ChapterWhitebox.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/testing/h06_chapter/boss_lab_world.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/testing/lab_player.gd" id="3"]
+[node name="H06BossAttackWorld" instance=ExtResource("1")]
+script = ExtResource("2")
+metadata/h06_soft_warnings = true
+
+[node name="DreamPlayer" parent="GameplayCanvas/GameplayWorld"]
+script = ExtResource("3")

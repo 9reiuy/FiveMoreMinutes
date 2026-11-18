@@ -345,11 +345,10 @@ func run() -> void:
 					enemies[index].random.seed=19000+index
 					enemies[index]._schedule_perception_update()
 					enemies[index].enemy_blink_time_left=enemies[index]._get_next_enemy_blink_delay()
-					enemies[index].neutral_emoji_cooldown=enemies[index].random.randf_range(4.0,8.0)
 					enemies[index].neutral_room_travel_cooldown_left=enemies[index].random.randf_range(2.0,5.0)
 					enemies[index].separation_query_left=enemies[index].random.randf_range(0.0,0.16)
 				var values: Dictionary={}
-				for property in [&"enemy_blink_time_left",&"neutral_emoji_cooldown",&"neutral_room_travel_cooldown_left",&"separation_query_left",&"perception_update_left"]:
+				for property in [&"enemy_blink_time_left",&"neutral_room_travel_cooldown_left",&"separation_query_left",&"perception_update_left"]:
 					if initial_enemy_timers.size()<=index: values[property]=enemies[index].get(property)
 					else: enemies[index].set(property,initial_enemy_timers[index][property])
 				if initial_enemy_timers.size()<=index: initial_enemy_timers.append(values)
@@ -422,7 +421,7 @@ func run() -> void:
 			var start_state: Array=[world.player.global_position,world.player.ammo_states.duplicate(true),world.player.assault_rifle_weapon.cooldown_left]
 			for enemy in enemies:
 				var values: Array=[enemy.global_position,enemy.current_health,enemy.held_weapon_id,enemy.random.state,enemy._steering_identity() if "--stable-identities" in OS.get_cmdline_user_args() or "--canonical-identities" in OS.get_cmdline_user_args() else 0]
-				for property in [&"enemy_blink_time_left",&"neutral_emoji_cooldown",&"neutral_room_travel_cooldown_left",&"separation_query_left",&"perception_update_left"]: values.append(enemy.get(property))
+				for property in [&"enemy_blink_time_left",&"neutral_room_travel_cooldown_left",&"separation_query_left",&"perception_update_left"]: values.append(enemy.get(property))
 				start_state.append(values)
 			var fingerprint:=JSON.stringify(start_state)
 			if controlled_fingerprint.is_empty(): controlled_fingerprint=fingerprint

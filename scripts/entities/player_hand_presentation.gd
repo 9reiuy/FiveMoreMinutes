@@ -64,13 +64,20 @@ func apply(melee: Node = null, aim_direction := Vector2.RIGHT) -> void:
 		# A rotated gameplay camera can supply the matching body-screen heading.
 		# Weapon/gameplay aim remains in world coordinates.
 		var provider: Callable=actor.get_meta(&"presentation_hand_direction",Callable())
-		if provider.is_valid():
+		if actor.punch_active:
+			angle = actor.punch_screen_direction.angle()
+		elif provider.is_valid():
 			var heading: Vector2=provider.call()
 			if heading.length_squared()>.0001:angle=heading.angle()
 		for pair in [[actor.left_hand_part, -0.8, actor.punch_left_hand_offset], [actor.right_hand_part, 0.8, actor.punch_right_hand_offset]]:
 			var hand: Sprite2D = pair[0]
 			var phase: float = angle + float(pair[1])
 			hand.position = POSE.orbit_center(phase) - hand.texture.get_size() * .5 + Vector2(pair[2])
+			if actor.punch_active:
+				hand.position = hand.position.round()
+				var side := -1 if hand == actor.left_hand_part else 1
+				if side == actor.PUNCH.HAND[actor.punch_move]:
+					phase += side * deg_to_rad(actor.punch_pose.fist.y)
 			hand.z_index = POSE.orbit_depth(phase,hand.z_index)
 			# Overlay lives in the matching hierarchy; no reparenting is needed.
 			var overlay: Sprite2D = actor.heal_overlay.get_node("BodyPivot/" + hand.name)

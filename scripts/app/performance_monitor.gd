@@ -149,7 +149,7 @@ func start_recording(base_dir: String = RUNS_PATH) -> Error:
 		metadata.gpu = RenderingServer.call("get_video_adapter_name")
 	if is_instance_valid(settings):
 		metadata.render_settings = {}
-		for key in [&"pixelation_enabled", &"shadow_quality"]:
+		for key in [&"shadow_quality"]:
 			metadata.render_settings[String(key)] = settings.get_setting(key)
 		_connect_once(settings, &"setting_changed", _on_setting_changed)
 	var error: Error = recorder.begin(base_dir, metadata)
@@ -404,7 +404,7 @@ func _event_value(value: Variant, kind: String) -> void:
 
 
 func _on_setting_changed(key: StringName, value: Variant) -> void:
-	if key in [&"pixelation_enabled", &"shadow_quality"]:
+	if key in [&"shadow_quality"]:
 		record_event("render_setting_changed", {"key": String(key), "value": value})
 
 

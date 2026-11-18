@@ -1,0 +1,27 @@
+VEFECTS - WIND VFX for GODOT
+END USER LICENSE AGREEMENT
+
+Copyright (c) 2026 Vefects. All rights reserved.
+
+This pack is free. By downloading it you receive a non-exclusive, worldwide, perpetual, royalty-free license to use
+it under the following terms.
+
+YOU MAY
+- Use the assets (effects, textures, meshes, sounds, shaders, materials and scenes) in an unlimited number of
+  commercial and non-commercial projects, such as games, apps, films, videos and other interactive or linear media.
+- Modify the assets and combine them with your own work for use inside those projects.
+- Distribute the assets only as an integrated part of your final product (for example, inside a compiled or exported
+  game), in a form that does not allow them to be extracted and used as standalone assets.
+
+YOU MAY NOT
+- Sell, resell, redistribute, share or sublicense the assets, whether as they are, modified, or as transformative or
+  derivative works based on them, on their own or as part of another asset pack, template, tool or library, whether
+  free or paid.
+- Upload the assets, or any part of them or any work derived from them, to marketplaces, asset stores or public
+  repositories.
+- Claim the assets as your own creation.
+
+The assets are provided "as is", without warranty of any kind. In no event shall Vefects be liable for any claim,
+damages or other liability arising from the use of the assets.
+
+Questions about licensing: info@vefects.com

@@ -25,7 +25,6 @@ var scene_halftone_enabled := true
 var extinguisher_paint: Array[ShaderMaterial] = []
 var sample_ui: CanvasLayer
 var style_buttons: Dictionary[int, Button] = {}
-var pixels_button: CheckButton
 var sample_caption: Label
 var weather_materials: Array[ShaderMaterial] = []
 var weather_binding_count := 0
@@ -78,7 +77,6 @@ func _build_ui() -> void:
 	enemies.value = 8
 	lab_enemy_archetypes = [&"employee", &"waitress"]
 	checks.special.set_pressed_no_signal(true)
-	checks.pixels.button_pressed = true
 	checks.tonal.button_pressed = false
 	checks.uncapped.button_pressed = false
 	panel.hide()
@@ -116,11 +114,6 @@ func _build_ui() -> void:
 		button.pressed.connect(apply_style.bind(i))
 		row.add_child(button)
 		style_buttons[i] = button
-	pixels_button = CheckButton.new()
-	pixels_button.text = "像素化"
-	pixels_button.focus_mode = Control.FOCUS_NONE
-	pixels_button.toggled.connect(set_sample_pixels)
-	row.add_child(pixels_button)
 	sample_caption = Label.new()
 	sample_caption.add_theme_font_size_override("font_size", 10)
 	sample_caption.modulate = Color("aca5c9")
@@ -399,25 +392,23 @@ func apply_style(index: int) -> void:
 
 func _update_sample_caption() -> void:
 	if sample_caption == null: return
-	sample_caption.text = "640×360 · 人物约32像素" if checks.pixels.button_pressed else "原生分辨率"
+	sample_caption.text = "原生分辨率"
 	if style_index == CHARACTER_INK_STYLE:
 		sample_caption.text = ("场景半调开" if environment_halftone != null and environment_halftone.enabled else "场景半调关") + " · " + sample_caption.text
 	sample_caption.text += " · " + ("室内灯对照" if _lamps_enabled else "环境光与窗光")
 	sample_caption.text += " · 墙挡视野" + ("开" if vision_enabled else "关")
 
-func set_sample_pixels(value: bool) -> void:
-	checks.pixels.set_pressed_no_signal(value)
+func set_sample_pixels(_value: bool) -> void:
 	if sample_ready: _apply_sample_display()
 
 func _apply_sample_display() -> void:
-	var pixels: bool = checks.pixels.button_pressed
+	var pixels:=false
 	display.pixel_size = Vector2i(640, 360)
 	display.set_selective_enabled(pixels)
 	display.set_visual_enhancement(checks.tonal.button_pressed)
 	world.authoritative_camera_fov = camera_zoom_fov if pixels or style_index >= 3 else original_camera_fov
 	world._update_camera_and_actor_projection(0.0)
 	if is_instance_valid(world.player_depth_bridge): world.player_depth_bridge._process(0.0)
-	pixels_button.set_pressed_no_signal(pixels)
 	_update_sample_caption()
 
 func _calibrate_camera_zoom() -> void:

@@ -44,6 +44,8 @@ var _run_scenario := 0
 var _run_duration := 30.0
 
 func _ready() -> void:
+	get_node("/root/SettingsManager").suppress_music(self)
+	preload("res://scripts/audio/sfx_manager.gd").stop_music(0.0)
 	if not presentation_scene_path.is_empty():
 		_saved_vsync = DisplayServer.window_get_vsync_mode()
 		_saved_max_fps = Engine.max_fps
@@ -79,6 +81,9 @@ func _build_ui() -> void:
 	enemies=_number(box,"敌人数（重置生成）",0,40,8)
 	_toggle(box,"furniture","场内家具（重置生效）",true)
 	_toggle(box,"ai","运行敌人 AI（重置生效）",false)
+	var cast := _options(box, ["普通员工", "药剂科学家", "员工与科学家", "服务员", "工程师"])
+	cast.item_selected.connect(func(index: int) -> void:
+		lab_enemy_archetypes.assign([[&"employee"], [&"scientist"], [&"employee", &"scientist"], [&"waitress"], [&"engineer"]][index]))
 	_toggle(box,"special","机器人 / 无人机（重置）",false)
 	_button(box,"应用配置 / 重建整个场景",rebuild)
 	station=_options(box,["加载中…"]); station.item_selected.connect(func(index:int): teleport(index))
@@ -88,10 +93,9 @@ func _build_ui() -> void:
 	_toggle(box,"cutout","Occlusion Cutout",true)
 	_toggle(box,"shadows","室内灯投影（不关灯）",true)
 	_toggle(box,"reflections","地面反射",true)
-	_toggle(box,"pixels","游戏像素化",true)
 	_toggle(box,"tonal","色调增强",true)
 	_toggle(box,"uncapped","解除垂直同步 / 限帧",true)
-	for key in ["invincible","cutout","shadows","reflections","pixels","tonal","uncapped"]:
+	for key in ["invincible","cutout","shadows","reflections","tonal","uncapped"]:
 		checks[key].toggled.connect(func(_value:bool): apply_options())
 	_label(box,"功能触发（真实系统）",12)
 	var actions:=[ ["烟雾", "smoke"],["击破灭火器","extinguisher"],["血液飞溅","blood"],["打碎最近门窗","break"],["点燃最近家具","fire"] ]
@@ -190,7 +194,6 @@ func apply_options()->void:
 	world.lab_invulnerable=checks.invincible.button_pressed
 	world.player.lab_ignore_damage=world.lab_invulnerable
 	world.set_lab_cutout(checks.cutout.button_pressed)
-	display.set_selective_enabled(checks.pixels.button_pressed)
 	display.set_visual_enhancement(checks.tonal.button_pressed)
 	var reflection:=world.get_node_or_null("FloorReflections")
 	if reflection!=null: reflection.set_enabled(checks.reflections.button_pressed and not world.lab_whitebox)
@@ -199,7 +202,7 @@ func apply_options()->void:
 
 func configuration()->Dictionary:
 	var result:=_session_config.duplicate(true)
-	for key in ["invincible","cutout","shadows","reflections","pixels","tonal","uncapped"]: result[key]=checks[key].button_pressed
+	for key in ["invincible","cutout","shadows","reflections","tonal","uncapped"]: result[key]=checks[key].button_pressed
 	result.merge({"scenario":scenario.selected,"duration_s":duration.value,"station":station.selected,"weapon":WEAPONS[weapon.selected],"engine":Engine.get_version_info(),"display_server":DisplayServer.get_name(),"output_size":str(get_viewport().get_visible_rect().size),"window_size":str(DisplayServer.window_get_size()),"scope":"Controlled lab; fixed seeds/commands, not deterministic physics replay; real F3 monitor remains present; not whole-game acceptance"})
 	if ready_world:
 		result["sparse_lighting"] = is_instance_valid(world.sparse_lighting) and world.sparse_lighting.enabled
@@ -372,6 +375,8 @@ func _notification(what:int)->void:
 		get_tree().quit()
 
 func _exit_tree()->void:
+	var settings:=get_node_or_null("/root/SettingsManager")
+	if settings!=null:settings.release_music(self)
 	if not presentation_scene_path.is_empty():
 		Engine.max_fps = _saved_max_fps
 		return

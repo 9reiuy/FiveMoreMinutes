@@ -8,6 +8,7 @@ const TUTORIAL_SCENE := preload("res://scenes/dream/Dream3D_TutorialRoom.tscn")
 const STORY_TUTORIAL_ENABLED := false
 const RECEPTION_SCENE := preload("res://scenes/dream/Dream3D_ReceptionRoom.tscn")
 const DREAM_SCENE := preload("res://scenes/dream/Dream3D_RandomDungeon.tscn")
+const H06_CHAPTER_SCENE := preload("res://scenes/testing/H06ChapterWhitebox.tscn")
 const SELECTIVE_PIXEL_SCENE := preload("res://scenes/dream/preview/SelectivePixelPreview.tscn")
 const RESULTS_SCENE := preload("res://scenes/ui/results.tscn")
 const CONFIG := preload("res://resources/demo_config.tres")
@@ -477,7 +478,8 @@ func _on_reception_elevator_entered(weapon_id: String) -> void:
 
 
 func _show_dream(weapon_id: String, from_reception: bool = false) -> void:
-	var dream := DREAM_SCENE.instantiate()
+	var use_h06_chapter: bool = chapter_one.enabled() and not bool(chapter_one.state.get("complete", false))
+	var dream := (H06_CHAPTER_SCENE if use_h06_chapter else DREAM_SCENE).instantiate()
 	dream.set_meta(&"reception_elevator_journey", from_reception)
 	# Every dream entry is a brand-new run: a fresh seed gives each day (and any
 	# same-day re-entry) a newly generated building. Tests keep seeding explicitly.
@@ -516,6 +518,8 @@ func _show_dream(weapon_id: String, from_reception: bool = false) -> void:
 		)
 		dream.weapon_equipped.connect(_on_story_weapon_equipped)
 		if chapter_one.enabled(): chapter_one.prepare_world(dream)
+		if use_h06_chapter:
+			dream.set_meta(&"story_retry_handler", Callable(self, "_retry_chapter_one_dream"))
 		dream.profile_changed.connect(_on_dream_profile_changed)
 		dream.dream_finished.connect(_show_results)
 		_transition_to_dream(dream)
@@ -523,6 +527,11 @@ func _show_dream(weapon_id: String, from_reception: bool = false) -> void:
 	# Legacy 2D Dream is retired; do not fall back to its node contract.
 	push_error("The 3D Dream scene must implement configure_campaign_run")
 	dream.free()
+
+
+func _retry_chapter_one_dream() -> void:
+	PauseManager.clear_all()
+	call_deferred("_show_dream", _validated_story_weapon_id(), false)
 
 
 func _show_results(summary: Dictionary) -> void:
@@ -652,7 +661,6 @@ func _set_screen(next_screen: Node) -> void:
 		_supported_dream_world = next_screen as Node3D
 		var pixel_screen := SELECTIVE_PIXEL_SCENE.instantiate()
 		pixel_screen.set(&"preview_mode", false)
-		pixel_screen.set(&"initial_selective_enabled", bool(SettingsManager.get_setting(&"pixelation_enabled", false)))
 		pixel_screen.set(&"world", next_screen)
 		current_screen = pixel_screen
 	else:
@@ -669,7 +677,7 @@ func _active_pixelation_screen() -> Node:
 
 
 func _is_supported_dream_world(screen: Node) -> bool:
-	return screen is Node3D and screen.scene_file_path in [TUTORIAL_SCENE.resource_path, DREAM_SCENE.resource_path, RECEPTION_SCENE.resource_path,"res://scenes/story/chapter_bedroom.tscn"]
+	return screen is Node3D and screen.scene_file_path in [TUTORIAL_SCENE.resource_path, DREAM_SCENE.resource_path, H06_CHAPTER_SCENE.resource_path, RECEPTION_SCENE.resource_path,"res://scenes/story/chapter_bedroom.tscn"]
 
 
 func _open_pause_menu() -> void:
@@ -902,8 +910,10 @@ func _run_dream_transition(dream: Node, duration: float) -> void:
 	scene_container.process_mode=previous_mode
 	var prepare_rendering: bool=dream.has_method("begin_firearm_render_preparation")
 	var was_paused:=get_tree().paused
+	var prep_report: Dictionary={}
 	if prepare_rendering:
 		dream.set("loading_render_preparation_pending",true)
+		PauseManager.request_pause(PauseManager.LOADING_PREP)
 		get_tree().paused=true
 	_set_screen(dream)
 	if prepare_rendering:
@@ -912,13 +922,20 @@ func _run_dream_transition(dream: Node, duration: float) -> void:
 			if loading_overlay!=null: loading_overlay.set_progress(0.98,"正在准备战斗光效...")
 			# Same transaction as reception and cross-floor elevators. Its receipt
 			# requires actual rendered work, cleanup and the current floor token.
-			await preload("res://scripts/dream/elevator_render_readiness.gd").run(get_tree(),dream)
-		get_tree().paused=was_paused
+			prep_report = await preload("res://scripts/dream/elevator_render_readiness.gd").run(get_tree(),dream)
+		PauseManager.release_pause(PauseManager.LOADING_PREP)
+		if was_paused:
+			get_tree().paused=true
+		else:
+			PauseManager.refresh_pause_state()
 		if is_instance_valid(dream) and dream.is_inside_tree():
 			if not bool(dream.call("finish_loading_render_preparation")):
 				# No old screen survives _set_screen. Return to a usable menu rather
 				# than revealing an unprepared floor or stranding locked controls.
-				set_meta(&"last_elevator_preparation_failure",dream.last_firearm_render_preparation.duplicate())
+				var failure_report: Dictionary = dream.last_firearm_render_preparation.duplicate()
+				if not prep_report.is_empty():
+					failure_report["prep_report"] = prep_report.duplicate()
+				set_meta(&"last_elevator_preparation_failure", failure_report)
 				_show_main_menu()
 
 	if loading_overlay != null:

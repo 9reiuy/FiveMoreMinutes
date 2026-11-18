@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/dream/dream_3d_reception_room.gd" id="1_controller"]
 [ext_resource type="Script" path="res://scripts/ui/compact_interaction_prompt.gd" id="9_prompt"]
@@ -7,9 +7,10 @@
 [ext_resource type="PackedScene" path="res://scenes/dream/reception_waitress_npc.tscn" id="3_waitress"]
 [ext_resource type="Script" path="res://scripts/dream/reception_actor_depth_bridge.gd" id="4_depth_bridge"]
 [ext_resource type="Theme" path="res://assets/fonts/pixel_theme.tres" id="5_theme"]
-[ext_resource type="PackedScene" path="res://scenes/ui/confirmation_dialog.tscn" id="6_dialogue"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue/cinematic_dialogue.tscn" id="6_dialogue"]
 [ext_resource type="PackedScene" uid="uid://d3m8y7v4x1q2w" path="res://scenes/ui/tarot/tarot_overlay.tscn" id="7_tarot"]
 [ext_resource type="PackedScene" path="res://scenes/ui/dialogue/growing_dialogue_bubble.tscn" id="8_bubble"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue/receptionist_dialogue.tscn" id="11_receptionist_dialogue"]
 
 [sub_resource type="Environment" id="Environment_reception"]
 background_mode = 1
@@ -113,7 +114,7 @@ layer = 45
 [node name="DialogueLayer" type="CanvasLayer" parent="."]
 layer = 60
 
-[node name="DreamDialogueBubble" parent="DialogueLayer" instance=ExtResource("8_bubble")]
+[node name="DreamDialogueBubble" parent="DialogueLayer" instance=ExtResource("11_receptionist_dialogue")]
 visible = false
 
 [node name="ConfirmationDialog" parent="DialogueLayer" instance=ExtResource("6_dialogue")]

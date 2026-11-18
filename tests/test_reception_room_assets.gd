@@ -205,6 +205,14 @@ func test_waitress_npc_programmatic() -> void:
 	assert(npc.blink_phase == 0, "Blink phase should return to 0 (open)")
 	assert(npc.head.texture == npc.head_frame_open, "Head texture should return to open frame")
 	print("  -> Blinking 3-phase cycle verified successfully!")
+	npc.set_character_atlas(RECEPTION_WAITRESS_NPC.NPC1_ATLAS)
+	assert(npc.head.scale == Vector2.ONE and npc.head.position == Vector2(-16, -39), "npc1 uses the original head at one texel per source pixel")
+	assert(npc.body.visible and npc.body.texture.region == Rect2(0, 30, 32, 11), "npc1 takes the complete body from the assembled atlas column")
+	assert(not npc.left_hand.visible and not npc.left_foot.visible, "The assembled body supplies the visible hands and feet")
+	assert(npc.left_foot.texture.region==Rect2(108,12,4,9) and npc.left_hand.texture.region==Rect2(134,15,5,4), "npc1 keeps its original limbs")
+	npc.set_character_atlas(RECEPTION_WAITRESS_NPC.WAITRESS_ATLAS)
+	assert(npc.left_hand.visible and npc.left_foot.visible, "The other atlas still displays its separate limbs")
+	_verify_waitress_properties(npc)
 	
 	npc.queue_free()
 	print("  -> ReceptionWaitressNPC programmatic test passed!")
@@ -251,10 +259,10 @@ func _verify_waitress_properties(npc: Node2D) -> void:
 	var lh_tex: AtlasTexture = left_hand.texture as AtlasTexture
 	var rh_tex: AtlasTexture = right_hand.texture as AtlasTexture
 	
-	assert(head_tex.region == Rect2(32, 0, 28, 32), "Head open region must be Rect2(32, 0, 28, 32)")
-	assert(body_tex.region == Rect2(64, 0, 32, 32), "Body region must be Rect2(64, 0, 32, 32)")
-	assert(lf_tex.region == Rect2(108, 12, 4, 9), "LeftFoot region must be Rect2(108, 12, 4, 9)")
-	assert(rf_tex.region == Rect2(113, 12, 4, 9), "RightFoot region must be Rect2(113, 12, 4, 9)")
-	assert(lh_tex.region == Rect2(134, 15, 5, 4), "LeftHand region must be Rect2(134, 15, 5, 4)")
-	assert(rh_tex.region == Rect2(149, 15, 5, 4), "RightHand region must be Rect2(149, 15, 5, 4)")
+	assert(head_tex.region == Rect2(32, 0, 32, 32), "Waitress uses the complete upper-body cell")
+	assert(body_tex.region == Rect2(32, 23, 32, 9) and not body.visible, "Live waitress hides the separate torso")
+	assert(lf_tex.region == Rect2(108, 76, 4, 9), "LeftFoot uses the new third-row cell")
+	assert(rf_tex.region == Rect2(113, 76, 4, 9), "RightFoot uses the new third-row cell")
+	assert(lh_tex.region == Rect2(102, 47, 5, 4), "LeftHand uses the new second-row cell")
+	assert(rh_tex.region == Rect2(117, 47, 5, 4), "RightHand uses the new second-row cell")
 	print("  -> All character atlas texture regions verified accurately!")

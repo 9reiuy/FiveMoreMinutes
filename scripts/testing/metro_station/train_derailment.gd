@@ -4,8 +4,7 @@ const CONSIST := preload("res://scripts/testing/metro_station/train_chapter_cons
 const PARTICLES := preload("res://scripts/dream/elemental_particles_3d.gd")
 const INTERVAL := 20.0
 const RETIRE_DISTANCE := CONSIST.D.TRAIN_LENGTH + CONSIST.D.CAR_LENGTH
-# Temporary: the chosen washing-machine blast stands in for the carriage explosion.
-const CRASH := preload("res://sfx/metro/train_explosion.wav")
+const CRASH := preload("res://sfx/combat_machinery/explosion.res")
 var world: Node3D
 var consist: CONSIST
 var elapsed_real := 0.0
@@ -24,6 +23,9 @@ func configure(owner_world: Node3D, player_train: CONSIST) -> void:
 	effects = PARTICLES.new()
 	effects.name = "CarExplosionEffects"
 	add_child(effects)
+	# A coupling is a gap, not a floor receiver for glowing ground cracks.
+	var deck := effects.to_local(consist.root.to_global(Vector3(0, CONSIST.DECK_OFFSET, 0))).y
+	effects.explosion.set_surface_context(deck, false)
 	effects.set_wind(Vector3(-5,0,0))
 	var pause_manager := get_node_or_null("/root/PauseManager")
 	if pause_manager != null: pause_manager.pause_state_changed.connect(_on_pause_changed)
@@ -81,7 +83,8 @@ func _derail(index: int) -> void:
 	var voice := AudioStreamPlayer3D.new()
 	voice.stream = CRASH
 	voice.bus = &"Environment"
-	voice.volume_db = -9.0
+	voice.volume_db = -27.0
+	voice.attenuation_model = AudioStreamPlayer3D.ATTENUATION_DISABLED
 	voice.max_distance = 55.0
 	effects.add_child(voice)
 	voice.global_position = at

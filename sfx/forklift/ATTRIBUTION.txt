@@ -1,0 +1,26 @@
+Forklift driving sound effects
+
+motor.res — "Electric motor engine start stop" by kentspublicdomain
+https://freesound.org/people/kentspublicdomain/sounds/476943/
+CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Changes: mono 48 kHz conversion, startup/run extraction, loop crossfade, DC removal and peak trim.
+
+boost.res — "Engine Rev.wav" by PieTheAnimator45
+https://freesound.org/people/PieTheAnimator45/sounds/608652/
+Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+Changes: excerpt 3.9–6.9 seconds, time compressed to 0.75 seconds preserving pitch,
+mono 48 kHz conversion, short edge fades, DC removal and peak trim.
+Credit to retain when distributing the game:
+"Engine Rev.wav" by PieTheAnimator45 (Freesound), CC BY 4.0.
+Adapted for FiveMinuteMore: cropped, time compressed, faded and level adjusted.
+
+skid.res — "tire_skid_02" by loganzsound
+https://freesound.org/people/loganzsound/sounds/774265/
+CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Changes: silence trimmed, mono 48 kHz conversion, loop crossfade, DC removal and peak trim.
+Runtime pitch 0.88; volume follows moving handbrake state.
+
+The user selected the three public HQ MP3 previews. These resources derive from
+those files, not the login-only original WAV downloads. Exact download URLs and
+source SHA-256 hashes are listed in SOURCES.json alongside these resources.

@@ -60,17 +60,29 @@ func machine(parent: Node3D, title: String, at: Vector2, dryer: bool) -> void:
 
 
 func folding_table(parent: Node3D, at: Vector2) -> void:
-	var root := _mount(parent, "FoldingTable", Vector3(at.x, 0, at.y))
-	for x in [-1.26, 1.26]:
-		for z in [-.27, .27]:
-			M.box(root, "SquareTubeLeg", Vector3(.083, .76, .083), Vector3(x, .38, z), _steel)
-		M.box(root, "Crossbar", Vector3(.081, .071, .62), Vector3(x, .28, 0), _steel)
-	M.box(root, "TableApron", Vector3(2.92, .15, .61), Vector3(0, .713, 0), _dark)
-	M.box(root, "FoldingSurface", Vector3(3.15, .09, .83), Vector3(0, .817, 0),
-		_paint(Color("bec6bf"), .65, .22))
+	var root := tube_frame_table(parent, "FoldingTable", at, Vector3(3.15, .862, .83), Color("bec6bf"), .65, .22)
 	for index in 2:
 		M.box(root, "FoldedLinen", Vector3(.47 - index * .041, .047, .31),
 			Vector3(-1.06 + index * .02, .886 + index * .048, -.08), _porcelain)
+
+## Reuse the concourse frame at its actual tube gauge, including on narrower benches.
+func tube_frame_table(parent: Node3D, title: String, at: Vector2, size: Vector3, finish: Color,
+		roughness := .74, wear := .36) -> Node3D:
+	var root := _mount(parent, title, Vector3(at.x, 0, at.y))
+	var leg_height := size.y - .102
+	var leg_x := size.x * .40
+	var leg_z := size.z * .5 - minf(.145, size.z * .175)
+	for x: float in [-leg_x, leg_x]:
+		for z: float in [-leg_z, leg_z]:
+			M.box(root, "SquareTubeLeg", Vector3(.083, leg_height, .083),
+				Vector3(x, leg_height * .5, z), _steel)
+		M.box(root, "Crossbar", Vector3(.081, .071, leg_z * 2.0 + .08),
+			Vector3(x, minf(.28, leg_height * .46), 0), _steel)
+	M.box(root, "TableApron", Vector3(size.x - .23, .15, size.z - .22),
+		Vector3(0, size.y - .149, 0), _dark)
+	M.box(root, "FoldingSurface", Vector3(size.x, .09, size.z), Vector3(0, size.y - .045, 0),
+		_paint(finish, roughness, wear))
+	return root
 
 
 func vanity(parent: Node3D, at: Vector2) -> void:
